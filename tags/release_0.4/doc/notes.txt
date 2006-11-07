@@ -1,0 +1,53 @@
+TODO
+
+* sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
+* enforce connection options (e.g. size limits)
+* notification dropping incl DropWarn
+* check client version numbers
+* test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
+* consistency: use multi-reader setup for changes to ensure e.g. a
+  notification not delivered for an old sub already ack'ed.
+* write a multi-threaded test thrasher to test consistency
+* write multithreaded "fuzz" test: fire random messages
+* port to MINA 1.0.0. total API change, no porting guide?! IoSession seems to replace ProtocolSession. see http://svn.apache.org/viewvc/directory/trunks/mina/example/src/main/java/org/apache/mina/example/sumup/
+
+Issues for David
+
+* What is new router.coalesce-delay?
+* Can I put je4 in distro?
+* DONE:elvind does not do byte_size_max
+* DONE:what is QosRqst? mentioned in 7.5 for changing options
+
+Router options
+
+router.vendor-identification=Mantara elvind 4.4.0
+router.recv-queue.max-length=4194304
+router.packet.max-length=2097152
+router.coalesce-delay=1
+router.recv-queue.low-water=4194304
+router.attribute.max-count=1024
+router.may-subscribe=1
+router.recv-queue.high-water=4194304
+router.subscription.max-count=2048
+router.may-quench=1
+router.send-queue.low-water=4194304
+router.send-queue.drop-policy=newest
+router.supported-keyschemes=SHA1-Producer SHA1-Consumer SHA1-Dual
+router.send-queue.high-water=4194304
+router.recv-queue.drop-policy=none
+router.send-queue.max-length=4194304
+router.may-notify=1
+
+Name                        |  Type    |  Min   Default      Max
+----------------------------+----------+-------------------------
+attribute_max               |  int32   |    64     256     2**31
+attribute_name_len_max      |  int32   |    64    2048     2**31
+byte_size_max               |  int32   |    1K      1M     2**31
+lang                        |  string  |   (router defined)
+notif_buffer_drop_policy    |  string  | { "oldest", "newest",
+                                           "largest", "fail" }
+notif_buffer_min            |  int32   |    1       1K     2**31
+opaque_len_max              |  int32   |    1K      1M     2**31
+string_len_max              |  int32   |    1K      1M     2**31
+sub_len_max                 |  int32   |    1K      2K     2**31
+sub_max                     |  int32   |    1K      8K     2**31
