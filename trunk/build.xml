@@ -14,7 +14,12 @@
 
   <property name="release" value="${avis.release}" />
   <property name="dfc.home" value="../dfc.core" />
+  
+  <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
   <property name="javacc.home" value="../javacc-4.0" />
+  
+  <!-- Markdown 1.0.1: only needed to build web page -->
+  <property name="markdown" value="/Users/matt/bin/Markdown.pl" />
   
   <path id="classpath">
     <fileset dir="lib" includes="*.jar" />
@@ -106,6 +111,7 @@
     <mkdir dir="${src_tmp}/tst" />
 
     <!-- create copy of source with license headers -->
+    
     <loadfile srcFile="resources/avis_java_header.txt" property="header" />
 
     <copy todir="${src_tmp}">
@@ -114,6 +120,11 @@
         <include name="src/**/*.jj"/>
         <include name="tst/**/*.java"/>
       </fileset>
+      <!-- todo use this instead
+      <filterchain>
+        <concatfilter prepend="apache-license-java.txt"/>
+      </filterchain> -->
+            
       <filterchain>
         <filterreader classname="dsto.dfc.tools.PrefixFilter"
                       classpathref="classpath">
@@ -149,6 +160,29 @@
     
     <!-- blow away temporary files -->
     <delete dir="${src_tmp}" />
+  </target>
+
+  <!-- Use arcane Ant-isms to build web page from text using Markdown -->
+  <target name="web">
+    <property name="root" value="doc/web" />
+    <property name="dest" value="${root}/avis.html" />
+    
+    <concat destfile="${dest}" append="false">
+      <filelist dir="${root}" files="header.htmli" />
+    </concat>
+    
+    <exec executable="perl">
+      <arg value="${markdown}" />
+      <arg value="${root}/avis.txt" />
+      
+      <redirector append="true">
+        <outputmapper type="merge" to="${dest}" />
+      </redirector>
+    </exec>
+    
+    <concat destfile="${dest}" append="true">
+      <filelist dir="${root}" files="footer.htmli" />
+    </concat>
   </target>
   
   <target name="clean">
