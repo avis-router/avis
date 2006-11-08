@@ -1,0 +1,82 @@
+About Avis
+======================================================================
+
+Avis is an event router service compatible with the commercial Elvin
+implementation produced by Mantara Software. Avis provides a
+general-purpose, high performance (eventually!) publish/subscribe
+message bus using content-based subscriptions.
+
+Elvin is a flexible event router that allows arbitrary messages
+(a.k.a.  "notifications") to be exchanged via a publish/subscribe
+model. Elvin clients subscribe to messages by specifying subscription
+expressions that match messages by their content, an approach that
+differs from most other message bus systems that operate by selecting
+messages published on pre-defined channels. Elvin routers can also be
+easily federated to construct high-efficiency, wide-area event
+networks.
+
+The name "Avis" stems from the French word "avis", meaning advice or
+notification.
+
+
+Current Status
+----------------------------------------------------------------------
+
+Avis is currently at a point where it is usable as a drop-in
+replacement for Mantara's `elvind` if quench and federation are not
+required (you can still use `ewafd`-style federation).
+
+Future development includes:
+
+ * A Java client library providing the same function as Mantara's
+   `je4` library. This will be released under the LGPL.
+
+ * An `ewafd`-style federator to tide users over until real federation
+   is implemented.
+
+ * Implementing the "quench" API for allowing producers to discover
+   what clients are listening for.
+
+
+Applications
+----------------------------------------------------------------------
+
+Current uses for Elvin include [instant messaging and virtual
+presence][tickertape.org], coordination for smart room control and
+[distributed speech transcription for meetings][AuTM]. It has also
+been used by Mantara for extremely high-volume financial transaction
+routing.
+
+
+History
+----------------------------------------------------------------------
+
+Elvin orginated at the [Distributed Systems Technology
+Centre][DSTC_wikipedia], a part government, part commercial
+Cooperative Research Centre, which operated from 1992 until June,
+2006. It was rapidly picked up by DSTC groups and several of DSTC's
+partners such as the [Australian Defence Science and Technology
+Organisation][DSTO] (DSTO) due to its ability to provide a highly
+reliable, fast, federate communication bus suitable for a wide variety
+of uses.
+
+Mantara Software was spun off from DSTC as a commercial entity in 2003
+to develop Elvin as a product. When Mantara announced it would stop
+offering Elvin as a standalone product at the end of 2007, Matthew
+Phillips, the author of Avis, began to implement the Elvin open
+specifications at [elvin.org][] to allow DSTO and other interested
+organisations to continue developing systems using the Elvin message
+bus.
+
+[DSTC_wikipedia]: http://en.wikipedia.org/wiki/Distributed_Systems_Technology_Centre
+[DSTO]: http://www.dsto.defence.gov.au
+[elvin.org]: http://elvin.org
+[AuTM]: http://www.dsto.defence.gov.au/publications/2595/
+[tickertape.org]: http://tickertape.org
+
+
+Contacts
+----------------------------------------------------------------------
+
+The author can be contacted at `avis at mattp.name` (replace "at" with
+"@") or `phillipsm at users.sourceforge.net`.
