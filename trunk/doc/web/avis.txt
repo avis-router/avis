@@ -6,16 +6,16 @@ implementation developed by Mantara Software. Avis provides a
 general-purpose, scalable publish/subscribe message bus using
 content-based subscriptions.
 
-Elvin is a flexible event router that allows arbitrary messages
-(a.k.a.  *notifications*) to be exchanged via a publish/subscribe
-model. Elvin clients subscribe to messages using subscription
-expressions that match messages by their content, an approach that
-differs from most other message bus systems that operate by selecting
-messages published on pre-defined channels. Elvin routers can also be
-federated to construct high-efficiency, wide-area event networks.
-
 The name "Avis" stems from the French word *avis*, meaning advice or
 notification.
+
+Elvin is a flexible event router that allows arbitrary messages
+(a.k.a.  *notifications*) to be exchanged via a publish/subscribe
+model. Elvin clients subscribe to messages using expressions that
+match messages by their content, an approach that differs from most
+other message bus systems that operate by selecting messages published
+on pre-defined channels. Elvin routers can also be federated to
+construct high-efficiency, wide-area event networks.
 
 
 Applications
@@ -27,6 +27,9 @@ presence][tickertape.org], coordination for smart room control and
 been used extensively by Mantara for high-volume financial transaction
 routing.
 
+Elvin has picked up in so many applications because of its lightweight
+approach and flexibility. See the [examples][] page to see how it can
+be employed.
 
 Current Status
 ----------------------------------------------------------------------
@@ -69,15 +72,16 @@ specifications at [elvin.org][] to allow DSTO and other interested
 organisations to continue developing systems using the Elvin message
 bus.
 
+Contacts
+----------------------------------------------------------------------
+
+The author can be contacted at `avis at mattp.name` or `phillipsm at
+users.sourceforge.net` (replace "at" with "@").
+
+
 [DSTC_wikipedia]: http://en.wikipedia.org/wiki/Distributed_Systems_Technology_Centre
 [DSTO]: http://www.dsto.defence.gov.au
 [elvin.org]: http://elvin.org
 [AuTM]: http://www.dsto.defence.gov.au/publications/2595/
 [tickertape.org]: http://tickertape.org
-
-
-Contacts
-----------------------------------------------------------------------
-
-The author can be contacted at `avis at mattp.name` (replace "at" with
-"@") or `phillipsm at users.sourceforge.net`.
+[examples]: examples.html
