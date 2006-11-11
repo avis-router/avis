@@ -1,15 +1,20 @@
 Avis Examples
 ======================================================================
 
+**This page is currently under construction**
+
 Tickertape Instant Messaging
 ----------------------------------------------------------------------
 
-Since its inception Elvin has been used as an instant messaging bus.
+TODO
 
 Virtual Presence
 ----------------------------------------------------------------------
 
+TODO
+
 Distributed Change Synchronisation
 ----------------------------------------------------------------------
 
+TODO
 
