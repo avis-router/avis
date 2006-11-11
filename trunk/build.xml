@@ -185,6 +185,16 @@
     </concat>
   </target>
   
+  <target name="web_deploy" depends="web">
+    <exec executable="rsync">
+      <arg value="-rlgoDv" />
+      <arg line="--exclude */.svn" />
+      <arg line="--exclude *.htmli" />
+      <arg value="doc/web/" />
+      <arg value="sourceforge:/home/groups/a/av/avis/htdocs/" />
+    </exec>
+  </target>
+    
   <target name="clean">
     <delete dir="classes" />
     <delete dir="tst_classes" />
