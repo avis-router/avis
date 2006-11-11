@@ -1,7 +1,8 @@
 TODO
 
+* port to MINA 1.0.0. total API change, no porting guide?! IoSession seems to replace ProtocolSession. see http://svn.apache.org/viewvc/directory/trunks/mina/example/src/main/java/org/apache/mina/example/sumup/
 * sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
-* enforce connection options (e.g. size limits)
+* basic enforcment of connection options (e.g. size limits)
 * notification dropping incl DropWarn
 * check client version numbers
 * test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
@@ -9,7 +10,6 @@ TODO
   notification not delivered for an old sub already ack'ed.
 * write a multi-threaded test thrasher to test consistency
 * write multithreaded "fuzz" test: fire random messages
-* port to MINA 1.0.0. total API change, no porting guide?! IoSession seems to replace ProtocolSession. see http://svn.apache.org/viewvc/directory/trunks/mina/example/src/main/java/org/apache/mina/example/sumup/
 
 Issues for David
 
