@@ -149,6 +149,7 @@
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
+        <include name="README.txt" />
         <include name="LICENSE.txt" />
         <include name="build.xml" />
         <include name="build/avisd.jar" />
