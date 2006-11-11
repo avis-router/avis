@@ -21,11 +21,11 @@ notification.
 Applications
 ----------------------------------------------------------------------
 
-Current uses for Elvin include providing messaging routing for
-[instant messaging and virtual presence][tickertape.org], device
-coordination for smart meeting rooms and [distributed speech
-transcription for meetings][AuTM]. It has also been used extensively
-by Mantara for high-volume financial transaction routing.
+Current uses for Elvin include providing the message bus for [instant
+messaging and virtual presence][tickertape.org], device coordination
+for smart meeting rooms and [distributed speech transcription for
+meetings][AuTM]. It has also been used extensively by Mantara for
+high-volume financial transaction routing.
 
 Elvin has picked up in so many applications because of its lightweight
 approach and flexibility. See the [examples][] page to see how it can
@@ -37,17 +37,20 @@ Current Status
 
 Avis is currently at a stage where it is usable as a drop-in
 replacement for Mantara's `elvind` if quench and federation are not
-required. A level of federation can currently be achieved by using
-`ewafd`-style federation which essentially federates using a special
-client to exchange notifications between servers.
+required.
 
 Future development items include:
 
  * A Java client library providing a similar capability to Mantara's
-   `je4` library. This will be released under the LGPL (Avis is GPL).
+   `je4` library. At this stage, Avis is only useful as a router for
+   existing Elvin clients using Mantara's client programming
+   libraries. This library will be released under the LGPL (Avis is
+   GPL).
 
  * An `ewafd`-style federator to tide users over until real federation
-   is implemented.
+   is implemented. This style of federation essentially federates
+   using a special client to exchange notifications between
+   servers.
 
  * Implementing the *quench* API for allowing producers to discover
    what clients are listening for.

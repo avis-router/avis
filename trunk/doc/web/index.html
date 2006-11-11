@@ -56,11 +56,11 @@ notification.</p>
 
 <h2>Applications</h2>
 
-<p>Current uses for Elvin include providing messaging routing for
-<a href="http://tickertape.org">instant messaging and virtual presence</a>, device
-coordination for smart meeting rooms and <a href="http://www.dsto.defence.gov.au/publications/2595/">distributed speech
-transcription for meetings</a>. It has also been used extensively
-by Mantara for high-volume financial transaction routing.</p>
+<p>Current uses for Elvin include providing the message bus for <a href="http://tickertape.org">instant
+messaging and virtual presence</a>, device coordination
+for smart meeting rooms and <a href="http://www.dsto.defence.gov.au/publications/2595/">distributed speech transcription for
+meetings</a>. It has also been used extensively by Mantara for
+high-volume financial transaction routing.</p>
 
 <p>Elvin has picked up in so many applications because of its lightweight
 approach and flexibility. See the <a href="examples.html">examples</a> page to see how it can
@@ -70,9 +70,7 @@ be employed.</p>
 
 <p>Avis is currently at a stage where it is usable as a drop-in
 replacement for Mantara's <code>elvind</code> if quench and federation are not
-required. A level of federation can currently be achieved by using
-<code>ewafd</code>-style federation which essentially federates using a special
-client to exchange notifications between servers.</p>
+required.</p>
 
 <p>Future development items include:</p>
 
@@ -80,7 +78,9 @@ client to exchange notifications between servers.</p>
 <li><p>A Java client library providing a similar capability to Mantara's
 <code>je4</code> library. This will be released under the LGPL (Avis is GPL).</p></li>
 <li><p>An <code>ewafd</code>-style federator to tide users over until real federation
-is implemented.</p></li>
+is implemented. This style of federation essentially federates
+using a special client to exchange notifications between
+servers.</p></li>
 <li><p>Implementing the <em>quench</em> API for allowing producers to discover
 what clients are listening for.</p></li>
 </ul>
