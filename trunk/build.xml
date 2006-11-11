@@ -103,7 +103,8 @@
 
   </target>
   
-  <target name="src_dist" depends="jar_avisd">
+  <target name="src_dist" depends="jar_avisd"
+          description="Build the source distro">
     
     <property name="ziproot" value="avis-${release}" />
     
@@ -214,7 +215,7 @@
   </target>
     
   <target name="clean"
-          description="Delete all compiled classes build directory">
+          description="Delete all compiled classes and build directory">
     <delete dir="classes" />
     <delete dir="tst_classes" />
     <delete dir="build" />
