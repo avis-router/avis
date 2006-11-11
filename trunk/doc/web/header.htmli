@@ -15,6 +15,7 @@
 
 <ul id="nav">
   <li id="nav-home"><a href="." title="Avis event router">Avis Event Router</a></li>
+</ul>
 
 </div>
 
@@ -26,9 +27,10 @@
 
 <div id="left-col">
   <ul class="sections" id="navSections">
-    <li><a href="avis.html">About Avis</a></li>
+    <li><a href="index.html">About Avis</a></li>
+    <li><a href="examples.html">Examples</a></li>
     <li><a href="http://sourceforge.net/projects/avis/">Project Site</a></li>
-    <li><a href="http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191">Downloads</a></li>
+    <li><a href="http://sourceforge.net/project/showfiles.php?group_id=181381&amp;package_id=210191">Downloads</a></li>
   </ul>
 </div>
 
