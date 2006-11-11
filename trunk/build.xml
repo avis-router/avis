@@ -165,7 +165,7 @@
   <!-- Use arcane Ant-isms to build web page from text using Markdown -->
   <target name="web">
     <property name="root" value="doc/web" />
-    <property name="dest" value="${root}/avis.html" />
+    <property name="dest" value="${root}/index.html" />
     
     <concat destfile="${dest}" append="false">
       <filelist dir="${root}" files="header.htmli" />
@@ -188,8 +188,10 @@
   <target name="web_deploy" depends="web">
     <exec executable="rsync">
       <arg value="-rlgoDv" />
+      <arg value="--delete" />
       <arg line="--exclude */.svn" />
       <arg line="--exclude *.htmli" />
+      <arg line="--exclude .*" />
       <arg value="doc/web/" />
       <arg value="sourceforge:/home/groups/a/av/avis/htdocs/" />
     </exec>
