@@ -6,7 +6,29 @@
   <title>Avis</title>
   <style type="text/css">
   </style>
+  <link  href="styles.css" media="screen" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 
+<div style="text-align:center;">
+
+<ul id="nav">
+  <li id="nav-home"><a href="." title="Avis event router">Avis Event Router</a></li>
+
+</div>
+
+<div id="main">
+
+<div id="content">
+
+<div id="right-edge"><div id="left-edge"><div id="right-col">
+
+<div id="left-col">
+  <ul class="sections" id="navSections">
+    <li><a href="avis.html">About Avis</a></li>
+  </ul>
+</div>
+
+
+<div id="article">
