@@ -5,24 +5,19 @@
 </div> <!-- content -->
 </div> <!-- main -->
 
-
-
-
-
-
 <div class="clear-all">&nbsp;</div>
 
 <div id="foot">
 <div class="outer">
 <div class="inner">
-<ul>
-  <li><a href="avis.html">Home</a></li>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+  </ul>
+</div></div>
 
-</ul>
-</div></div><div class="clear-all"></div></div>
+<div class="clear-all"></div></div>
 	
 </div>
-
 
 </body>
 </html>
