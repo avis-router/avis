@@ -2,7 +2,7 @@ Avis
 ======================================================================
 
 This package contains the Avis publish/subscribe message router. For
-more information please see:
+more information on the Avis project please see:
 
   http://avis.sourceforge.net/
 
@@ -10,7 +10,7 @@ more information please see:
 Installation
 ----------------------------------------------------------------------
 
-Simply unzip the distribution somewhere.
+Simply unzip the distribution.
 
 
 Requirements
