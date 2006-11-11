@@ -6,64 +6,87 @@
   <title>Avis</title>
   <style type="text/css">
   </style>
+  <link  href="styles.css" media="screen" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 
+<div style="text-align:center;">
+
+<ul id="nav">
+  <li id="nav-home"><a href="." title="Avis event router">Avis Event Router</a></li>
+
+</div>
+
+<div id="main">
+
+<div id="content">
+
+<div id="right-edge"><div id="left-edge"><div id="right-col">
+
+<div id="left-col">
+  <ul class="sections" id="navSections">
+    <li><a href="avis.html">About Avis</a></li>
+  </ul>
+</div>
+
+
+<div id="article">
 <h1>About Avis</h1>
 
 <p>Avis is an event router service compatible with the commercial Elvin
-implementation produced by Mantara Software. Avis provides a
-general-purpose, high performance (eventually!) publish/subscribe
-message bus using content-based subscriptions.</p>
+implementation developed by Mantara Software. Avis provides a
+general-purpose, scalable publish/subscribe message bus using
+content-based subscriptions.</p>
 
 <p>Elvin is a flexible event router that allows arbitrary messages
-(a.k.a.  "notifications") to be exchanged via a publish/subscribe
-model. Elvin clients subscribe to messages by specifying subscription
+(a.k.a.  <em>notifications</em>) to be exchanged via a publish/subscribe
+model. Elvin clients subscribe to messages using subscription
 expressions that match messages by their content, an approach that
 differs from most other message bus systems that operate by selecting
 messages published on pre-defined channels. Elvin routers can also be
-easily federated to construct high-efficiency, wide-area event
-networks.</p>
+federated to construct high-efficiency, wide-area event networks.</p>
 
-<p>The name "Avis" stems from the French word "avis", meaning advice or
+<p>The name "Avis" stems from the French word <em>avis</em>, meaning advice or
 notification.</p>
-
-<h2>Current Status</h2>
-
-<p>Avis is currently at a point where it is usable as a drop-in
-replacement for Mantara's <code>elvind</code> if quench and federation are not
-required (you can still use <code>ewafd</code>-style federation).</p>
-
-<p>Future development includes:</p>
-
-<ul>
-<li><p>A Java client library providing the same function as Mantara's
-<code>je4</code> library. This will be released under the LGPL.</p></li>
-<li><p>An <code>ewafd</code>-style federator to tide users over until real federation
-is implemented.</p></li>
-<li><p>Implementing the "quench" API for allowing producers to discover
-what clients are listening for.</p></li>
-</ul>
 
 <h2>Applications</h2>
 
 <p>Current uses for Elvin include <a href="http://tickertape.org">instant messaging and virtual
 presence</a>, coordination for smart room control and
 <a href="http://www.dsto.defence.gov.au/publications/2595/">distributed speech transcription for meetings</a>. It has also
-been used by Mantara for extremely high-volume financial transaction
+been used extensively by Mantara for high-volume financial transaction
 routing.</p>
+
+<h2>Current Status</h2>
+
+<p>Avis is currently at a stage where it is usable as a drop-in
+replacement for Mantara's <code>elvind</code> if quench and federation are not
+required. A level of federation can currently be achieved by using
+<code>ewafd</code>-style federation which essentially federates using a special
+client to exchange notifications between servers.</p>
+
+<p>Future development items include:</p>
+
+<ul>
+<li><p>A Java client library providing a similar capability to Mantara's
+<code>je4</code> library. This will be released under the LGPL (Avis is GPL).</p></li>
+<li><p>An <code>ewafd</code>-style federator to tide users over until real federation
+is implemented.</p></li>
+<li><p>Implementing the <em>quench</em> API for allowing producers to discover
+what clients are listening for.</p></li>
+</ul>
 
 <h2>History</h2>
 
 <p>Elvin orginated at the <a href="http://en.wikipedia.org/wiki/Distributed_Systems_Technology_Centre">Distributed Systems Technology
 Centre</a>, a part government, part commercial
 Cooperative Research Centre, which operated from 1992 until June,
-2006. It was rapidly picked up by DSTC groups and several of DSTC's
+2006. Elvin was rapidly picked up by DSTC groups and several of DSTC's
 partners such as the <a href="http://www.dsto.defence.gov.au">Australian Defence Science and Technology
 Organisation</a> (DSTO) due to its ability to provide a highly
-reliable, fast, federate communication bus suitable for a wide variety
-of uses.</p>
+reliable, fast, federated communication bus and became deployed in a
+variety of contexts.</p>
 
 <p>Mantara Software was spun off from DSTC as a commercial entity in 2003
 to develop Elvin as a product. When Mantara announced it would stop
@@ -77,5 +100,38 @@ bus.</p>
 
 <p>The author can be contacted at <code>avis at mattp.name</code> (replace "at" with
 "@") or <code>phillipsm at users.sourceforge.net</code>.</p>
+
+</div> <!-- article -->
+
+</div></div>
+
+</div> <!-- content -->
+</div> <!-- main -->
+
+
+
+
+
+
+<div class="clear-all">&nbsp;</div>
+
+<div id="foot">
+<div class="outer">
+<div class="inner">
+<ul>
+  <li><a href="avis.html">Home</a></li>
+
+</ul>
+</div></div><div class="clear-all"></div></div>
+	
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
 </body>
 </html>
