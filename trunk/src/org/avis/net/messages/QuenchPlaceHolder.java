@@ -12,7 +12,7 @@ import org.apache.mina.protocol.ProtocolViolationException;
  */
 public class QuenchPlaceHolder extends XidMessage
 {
-  public static final int ID = 123456;
+  public static final int ID = -2;
   
   public static final int ADD = 80;
   public static final int MODIFY = 81;
