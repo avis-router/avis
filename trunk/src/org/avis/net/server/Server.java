@@ -26,6 +26,7 @@ import org.avis.net.messages.ConnRqst;
 import org.avis.net.messages.Disconn;
 import org.avis.net.messages.DisconnRply;
 import org.avis.net.messages.DisconnRqst;
+import org.avis.net.messages.ErrorMessage;
 import org.avis.net.messages.Message;
 import org.avis.net.messages.Nack;
 import org.avis.net.messages.Notify;
@@ -146,6 +147,9 @@ public class Server implements ProtocolProvider, ProtocolHandler
                                      Connection connection)
   {
     session.setAttachment (connection);
+    
+    // used by FrameCodec
+    session.setAttribute ("connectionOptions", connection.options);
   }
   
   /**
@@ -237,6 +241,9 @@ public class Server implements ProtocolProvider, ProtocolHandler
         case UNotify.ID:
           handleUnotify ((UNotify)message);
           break;
+        case ErrorMessage.ID:
+          handleError (session, (ErrorMessage)message);
+          break;
         case QuenchPlaceHolder.ID:
           handleQuench (session, (QuenchPlaceHolder)message);
           break;
@@ -246,13 +253,15 @@ public class Server implements ProtocolProvider, ProtocolHandler
       }
     } catch (ProtocolViolationException ex)
     {
-      diagnostic ("Client protocol violation: " + ex.getMessage (), this);
+      diagnostic ("Client protocol violation for " + message + ": " + ex.getMessage (), this);
       
       if (message instanceof XidMessage)
       {
         session.write
           (new Nack ((XidMessage)message, PROT_ERROR, ex.getMessage ()));
       }
+      
+      session.close (true);
     }
   }
 
@@ -472,20 +481,37 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
 
-  private void handleTestConn (ProtocolSession session)
+  private static void handleTestConn (ProtocolSession session)
   {
     // if no other outgoing messages are waiting, send a confirm message
     if (session.getScheduledWriteRequests () == 0)
       session.write (new ConfConn ());
   }
   
-  private void handleQuench (ProtocolSession session, QuenchPlaceHolder message)
+  private static void handleQuench (ProtocolSession session, QuenchPlaceHolder message)
   {
     // TODO implement quench support here
     diagnostic
-      ("Rejecting quench request from client: quench is not supported", this);
+      ("Rejecting quench request from client: quench is not supported",
+       Server.class);
     
     session.write (new Nack (message, PROT_ERROR, "Quench not supported"));
+  }
+
+  private static void handleError (ProtocolSession session, ErrorMessage message)
+  {
+    diagnostic ("Client message rejected due to protocol violation: " +
+                message.error.getMessage (), Server.class);
+    
+    if (message.cause instanceof XidMessage)
+    {
+      session.write
+        (new Nack ((XidMessage)message.cause, PROT_ERROR,
+                   message.error.getMessage ()));
+    }
+    
+    // close and wait to avoid reading any further bogus data left in stream
+    session.close (true);
   }
 
   /**
