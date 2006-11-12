@@ -364,6 +364,7 @@ public class JUTestServer
     client.connect ();
     client.subscribe ("number == 1");
     
+    // try to send a notification with no ConnRqst
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("name", "foobar");
     ntfn.put ("number", 1);
