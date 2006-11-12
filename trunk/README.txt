@@ -17,8 +17,8 @@ Supported Platforms
 ----------------------------------------------------------------------
 
 Avis will run on any platform with a Java 5 Standard Edition
-runtime. It has been tested on Mac OS X (10.4), Windows XP and Windows
-Server 2003, Fedora Core 6 and Debian Sarge (3.1).
+runtime. It has been tested on Mac OS X Tiger (10.4), Windows XP and
+Windows Server 2003, Fedora Core 6 and Debian Sarge (3.1).
 
 
 Requirements
@@ -27,7 +27,7 @@ Requirements
 Avis requires Java 1.5.0 or later. There is no requirement to build
 Avis since binaries are included with the distribution, but if you do
 wish to compile Avis you will need a Java Development Kit
-installed. If you don't want to build Avis, you can skip to the next
+installed. If you don't need to build Avis, you can skip to the next
 section.
 
 Unless you plan to build Avis with Eclipse, you will also need Apache
@@ -42,20 +42,24 @@ Optional:
   * JavaCC 4.0 or later. Required if you wish to change the
     subscription parser. http://javacc.dev.java.net/
 
+Very optional - these only apply if you're working in the development
+tree from SVN:
+
   * Markdown 1.0.1 or later. Required to build the web
     site. http://daringfireball.net/projects/markdown/
 
   * Rsync. Required to upload web site.
 
 To build the router with Ant, change to the directory where you
-extracted Avis and run:
+extracted Avis and simply run Ant with the default build target:
 
-  > ant jar_avisd
+  > cd avis-0.5
+  > ant
 
 This will build the file "build/avisd.jar", which is the Avis event
 router executable.
 
-To see all build targets:
+To see all build targets run:
 
   > ant -projecthelp
 
