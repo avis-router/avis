@@ -194,7 +194,7 @@ class SimpleClient implements ProtocolProvider, ProtocolHandler
   public void close ()
     throws Exception
   {
-    if (connected)
+    if (connected && clientSession.isConnected ())
     {
       send (new DisconnRqst ());
       assertTrue (receive () instanceof DisconnRply);
