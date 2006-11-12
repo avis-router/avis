@@ -37,7 +37,7 @@ import org.avis.net.messages.UNotify;
 import org.avis.net.messages.XidMessage;
 import org.avis.net.server.ConnectionOptions;
 
-import static dsto.dfc.logging.Log.warn;
+import static dsto.dfc.logging.Log.internalError;
 
 /**
  * Codec for Elvin message frames. Reads/writes messages to/from the
@@ -179,7 +179,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     
       if (frameSize % 4 != 0)
         throw new ProtocolViolationException
-          ("Frame length not 4 byte aligned for " + message);
+          ("Frame length not 4 byte aligned");
       
       if (frameSize > options.getInt ("Packet.Max-Length"))
         throw new ProtocolViolationException
@@ -192,8 +192,8 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
       
       if (remainder > 0)
       {
-        warn ("Some input not read by " + message.getClass () +
-              " (" + remainder + " bytes)", this);
+        internalError ("Some input not read by " + message.getClass () +
+                       " (" + remainder + " bytes)", this);
         
         in.skip (remainder);
       }

@@ -252,7 +252,8 @@ public class Server implements ProtocolProvider, ProtocolHandler
       }
     } catch (ProtocolViolationException ex)
     {
-      diagnostic ("Client protocol violation for " + message + ": " + ex.getMessage (), this);
+      diagnostic ("Client protocol violation for " + message + ": " + 
+                  ex.getMessage (), this);
       
       if (message instanceof XidMessage)
       {
