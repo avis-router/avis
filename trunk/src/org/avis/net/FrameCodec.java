@@ -3,6 +3,8 @@ package org.avis.net;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.nio.BufferUnderflowException;
+
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.protocol.ProtocolDecoderOutput;
 import org.apache.mina.protocol.ProtocolEncoderOutput;
@@ -18,6 +20,7 @@ import org.avis.net.messages.ConnRqst;
 import org.avis.net.messages.Disconn;
 import org.avis.net.messages.DisconnRply;
 import org.avis.net.messages.DisconnRqst;
+import org.avis.net.messages.ErrorMessage;
 import org.avis.net.messages.Message;
 import org.avis.net.messages.Nack;
 import org.avis.net.messages.NotifyDeliver;
@@ -31,6 +34,8 @@ import org.avis.net.messages.SubModRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.messages.TestConn;
 import org.avis.net.messages.UNotify;
+import org.avis.net.messages.XidMessage;
+import org.avis.net.server.ConnectionOptions;
 
 import static dsto.dfc.logging.Log.warn;
 
@@ -45,6 +50,7 @@ import static dsto.dfc.logging.Log.warn;
 public class FrameCodec implements MessageDecoder, MessageEncoder
 {
   private static final Set<Class> MESSAGE_TYPES;
+  private static final ConnectionOptions DEFAULT_OPTIONS = new ConnectionOptions ();
   // private static final int MAX_BUFFER_DUMP = 512;
   
   static
@@ -68,6 +74,11 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     MESSAGE_TYPES.add (SecRqst.class);
     MESSAGE_TYPES.add (SecRply.class);
     MESSAGE_TYPES.add (UNotify.class);
+  }
+  
+  public Set<Class> getMessageTypes ()
+  {
+    return MESSAGE_TYPES;
   }
 
   public void encode (ProtocolSession session,
@@ -104,7 +115,17 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
       throw new ProtocolViolationException
         ("Frame length not 4 byte aligned for " + message.getClass ());
     
-    out.write (buffer);
+    ConnectionOptions options = optionsFor (session);
+    
+    if (frameSize <= options.getInt ("Packet.Max-Length"))
+    {
+      out.write (buffer);
+    } else
+    {
+      throw new ProtocolViolationException
+        ("Frame size of " + frameSize + " bytes is larger than maximum " + 
+            options.getInt ("Packet.Max-Length"));
+    }
   }
 
   public MessageDecoderResult decodable (ProtocolSession session,
@@ -115,7 +136,15 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     
     int frameSize = in.getInt ();
     
-    if (in.remaining () < frameSize)
+    ConnectionOptions options = optionsFor (session);
+    
+    if (frameSize > options.getInt ("Packet.Max-Length"))
+    {
+      // when frame too big, OK it and let decode () generate error
+      in.limit (options.getInt ("Packet.Max-Length"));
+      
+      return OK;
+    } else if (in.remaining () < frameSize)
     {
       if (in.limit () < frameSize + 4)
         in.limit (frameSize + 4);
@@ -135,14 +164,72 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     // if (isEnabled (TRACE) && in.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec input: " + in.getHexDump (), this);
     
+    ConnectionOptions options = optionsFor (session);
+    
     int frameSize = in.getInt ();
     int dataStart = in.position ();
-    int messageType = in.getInt ();
 
-    // if (isEnabled (TRACE))
-    //  trace ("Frame length: " + frameSize, this);
-
-    Message message;
+    Message message = null;
+    
+    try
+    {
+      int messageType = in.getInt ();
+      
+      message = newMessage (messageType, frameSize);
+    
+      if (frameSize % 4 != 0)
+        throw new ProtocolViolationException
+          ("Frame length not 4 byte aligned for " + message);
+      
+      if (frameSize > options.getInt ("Packet.Max-Length"))
+        throw new ProtocolViolationException
+          ("Frame size of " + frameSize + " bytes is larger than maximum " + 
+           options.getInt ("Packet.Max-Length"));
+      
+      message.decode (in);
+      
+      int remainder = frameSize - (in.position () - dataStart);
+      
+      if (remainder > 0)
+      {
+        warn ("Some input not read by " + message.getClass () +
+              " (" + remainder + " bytes)", this);
+        
+        in.skip (remainder);
+      }
+    } catch (Exception ex)
+    {
+      // handle client protocol violations
+      if (ex instanceof ProtocolViolationException ||
+          ex instanceof BufferUnderflowException)
+      {
+        ErrorMessage error = new ErrorMessage (ex, message);
+        
+        // fill in XID if possible
+        if (message instanceof XidMessage && in.remaining () >= 4)
+          ((XidMessage)message).xid = in.getInt ();
+        
+        in.skip (in.remaining ());
+        
+        message = error;
+      } else if (ex instanceof RuntimeException)
+      {
+        throw (RuntimeException)ex;
+      }
+    }
+    
+    out.write (message);
+    
+    return OK;
+  }
+  
+  /**
+   * Create a new message for a given type code.
+   */
+  private static Message newMessage (int messageType, int frameSize)
+    throws ProtocolViolationException
+  {
+    Message message = null;
     
     switch (messageType)
     {
@@ -207,30 +294,21 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
           ("Unknown message type: ID = " + messageType);
     }
     
-    if (frameSize % 4 != 0)
-      throw new ProtocolViolationException
-        ("Frame length not 4 byte aligned for " + message);
-    
-    // todo NACK on protocol violation and underflow using error message
-    message.decode (in);
-    
-    int remainder = frameSize - (in.position () - dataStart);
-    
-    if (remainder > 0)
-    {
-      warn ("Some input not read by " + message.getClass () +
-            " (" + remainder + " bytes)", this);
-      
-      in.skip (remainder);
-    }
-    
-    out.write (message);
-    
-    return OK;
+    return message;
   }
-
-  public Set<Class> getMessageTypes ()
+  
+  /**
+   * Get the connection options set for the given session. Returns
+   * defaults if none set.
+   */
+  private static ConnectionOptions optionsFor (ProtocolSession session)
   {
-    return MESSAGE_TYPES;
+    ConnectionOptions options =
+      (ConnectionOptions)session.getAttribute ("connectionOptions");
+    
+    if (options == null)
+      options = DEFAULT_OPTIONS;
+    
+    return options;
   }
 }
