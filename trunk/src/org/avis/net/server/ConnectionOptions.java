@@ -1,6 +1,7 @@
 package org.avis.net.server;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -61,8 +62,10 @@ import java.util.Map.Entry;
  * 
  * @author Matthew Phillips
  */
-class ConnectionOptions
+public class ConnectionOptions
 {
+  private static final Map<String, Object> EMPTY_OPTIONS = Collections.emptyMap ();
+  
   private static final Map<String, Object> DEFAULT_VALUES;
   private static final Map<String, Object> VALIDATION;
   
@@ -82,13 +85,30 @@ class ConnectionOptions
     NEW_TO_COMPAT = new HashMap<String, String> ();
     
     // required for all implementations
-    defineOption ("Attribute.Max-Count", 64, 256, MAX);    
-    defineOption ("Attribute.Name.Max-Length", 64, 2*K, MAX);
-    defineOption ("Attribute.Opaque.Max-Length", 1*K, 1*MB, MAX);
-    defineOption ("Attribute.String.Max-Length", 1*K, 1*MB, MAX);
     defineOption ("Packet.Max-Length", 1*K, 1*MB, MAX);
     
-    // need to look at defaults below
+    /*
+     * todo: we only enforce max packet length, which by implication
+     * limits the values below. Thus the correct min, default, max
+     * values are currently commented out and replaced with MAX to
+     * avoid lying to clients that actually care about this ;)
+     */
+    // defineOption ("Attribute.Max-Count", 64, 256, MAX);    
+    // defineOption ("Attribute.Name.Max-Length", 64, 2*K, MAX);
+    // defineOption ("Attribute.Opaque.Max-Length", 1*K, 1*MB, MAX);
+    // defineOption ("Attribute.String.Max-Length", 1*K, 1*MB, MAX);
+    // defineOption ("Subscription.Max-Count", 1*K, 2*K, MAX);
+    // defineOption ("Subscription.Max-Length", 1*K, 2*K, MAX);
+    defineOption ("Attribute.Max-Count", MAX, MAX, MAX);    
+    defineOption ("Attribute.Name.Max-Length", MAX, MAX, MAX);
+    defineOption ("Attribute.Opaque.Max-Length", MAX, MAX, MAX);
+    defineOption ("Attribute.String.Max-Length", MAX, MAX, MAX);
+    defineOption ("Subscription.Max-Length", MAX, MAX, MAX);
+    
+    // todo: enforce Subscription.Max-Count
+    defineOption ("Subscription.Max-Count", 1*K, 2*K, MAX);
+
+    // todo: enforce queue-related options. Also need to look at defaults
     defineOption ("Receive-Queue.Drop-Policy",
                   "oldest", "newest", "largest", "fail");
     defineOption ("Receive-Queue.High-Water", 1*MB, 4*MB, MAX);
@@ -101,15 +121,13 @@ class ConnectionOptions
     defineOption ("Send-Queue.Low-Water", 1*K, 4*MB, MAX);
     defineOption ("Send-Queue.Max-Length", 1*K, 4*MB, MAX);
 
-    defineOption ("Subscription.Max-Count", 1*K, 2*K, MAX);
-    defineOption ("Subscription.Max-Length", 1*K, 2*K, MAX);
-
     defineOption ("Supported-Key-Schemes", "SHA-1");
     
     // optional
+    // todo: need to decide on new name for Network.Coalesce-Delay
     defineOption ("Network.Coalesce-Delay", 0, 1, 1);
     
-    // compatibility
+    // compatibility mappings
     defineCompatOption ("router.attribute.max-count",
                         "Attribute.Max-Count");
     defineCompatOption ("router.attribute.name.max-length",
@@ -151,6 +169,11 @@ class ConnectionOptions
   
   private Map<String, Object> requestedOptions;
   private Map<String, Object> options;
+  
+  public ConnectionOptions ()
+  {
+    this (EMPTY_OPTIONS);
+  }
   
   public ConnectionOptions (Map<String, Object> requestedOptions)
   {
