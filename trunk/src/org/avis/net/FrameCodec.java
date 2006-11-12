@@ -311,4 +311,13 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     
     return options;
   }
+
+  /**
+   * Set the connection options for a given session.
+   */
+  public static void setOptions (ProtocolSession session,
+                                 ConnectionOptions options)
+  {
+    session.setAttribute ("connectionOptions", options);
+  }
 }

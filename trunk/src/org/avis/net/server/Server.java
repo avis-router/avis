@@ -148,8 +148,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
   {
     session.setAttachment (connection);
     
-    // used by FrameCodec
-    session.setAttribute ("connectionOptions", connection.options);
+    FrameCodec.setOptions (session, connection.options);
   }
   
   /**
