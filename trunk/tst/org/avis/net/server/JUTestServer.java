@@ -86,6 +86,7 @@ public class JUTestServer
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
     HashMap<String, Object> options = new HashMap<String, Object> ();
+    options.put ("Packet.Max-Length", 1024);
     options.put ("Attribute.Opaque.Max-Length", 2048 * 1024);
     options.put ("Network.Coalesce-Delay", 0);
     options.put ("Bogus", "not valid");
@@ -93,14 +94,26 @@ public class JUTestServer
     ConnRqst connRqst = new ConnRqst (4, 0, options);
     client.send (connRqst);
     
-    ConnRply reply = (ConnRply)client.receive ();
+    ConnRply connReply = (ConnRply)client.receive ();
     
-    assertEquals (connRqst.xid, reply.xid);
+    assertEquals (connRqst.xid, connReply.xid);
     
-    System.out.println ("options = " + reply.options);
-    assertEquals (2048 * 1024, reply.options.get ("Attribute.Opaque.Max-Length"));
-    assertEquals (0, reply.options.get ("Network.Coalesce-Delay"));
-    assertNull (reply.options.get ("Bogus"));
+    // todo: when Attribute.Opaque.Max-Length supported, switch lines below
+    // assertEquals (2048 * 1024, reply.options.get ("Attribute.Opaque.Max-Length"));
+    assertEquals (Integer.MAX_VALUE, connReply.options.get ("Attribute.Opaque.Max-Length"));
+    assertEquals (0, connReply.options.get ("Network.Coalesce-Delay"));
+    assertEquals (1024, connReply.options.get ("Packet.Max-Length"));
+    assertNull (connReply.options.get ("Bogus"));
+    
+    // try to send a frame bigger than 1K, check server rejects
+    SecRqst secRqst = new SecRqst ();
+    secRqst.addNtfnKeys = new Keys ();
+    secRqst.addNtfnKeys.add (SHA1_PRODUCER, new Key (new byte [1025]));
+    
+    client.send (secRqst);
+    Nack nack = (Nack)client.receive ();
+    
+    assertEquals (secRqst.xid, nack.xid);
     
     client.close ();
     server.close ();
@@ -368,24 +381,38 @@ public class JUTestServer
     }
     
     // try change security with no connection
-    SecRqst secRqst = new SecRqst (EMPTY_KEYS, EMPTY_KEYS, EMPTY_KEYS, EMPTY_KEYS);
+    badClient.close ();
+    badClient = new SimpleClient ();
+    
+    SecRqst secRqst = new SecRqst ();
     badClient.send (secRqst);
     Nack nack = (Nack)badClient.receive ();
+    badClient.close ();
 
     // try subscription with no connection
+    badClient = new SimpleClient ();
+    
     SubAddRqst subAddRqst = new SubAddRqst ("require (hello)", EMPTY_KEYS);
     badClient.send (subAddRqst);
     nack = (Nack)badClient.receive ();
     assertEquals (subAddRqst.xid, nack.xid);
+    badClient.close ();
     
     // try to connect twice
+    badClient = new SimpleClient ();
     badClient.connect ();
+
     ConnRqst connRqst = new ConnRqst (4, 0);
     badClient.send (connRqst);
     nack = (Nack)badClient.receive ();
     assertEquals (connRqst.xid, nack.xid);
     
+    badClient.close ();
+
     // modify non-existent sub
+    badClient = new SimpleClient ();
+    badClient.connect ();
+    
     SubModRqst subModRqst = new SubModRqst (123456, "");
     badClient.send (subModRqst);
     nack = (Nack)badClient.receive ();
