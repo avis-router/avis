@@ -55,7 +55,9 @@ public class JUTestConnectionOptions
     ConnectionOptions options = new ConnectionOptions (requested);
     Map<String, Object> valid = options.accepted ();
     
-    assertRequested (requested, valid, "router.attribute.string.max-length");
+    // todo: when Attribute.String.Max-Length supported, switch lines below
+    // assertRequested (requested, valid, "router.attribute.string.max-length");
+    assertDefault (valid, "router.attribute.string.max-length");
     assertDefault (valid, "router.attribute.max-count");
     assertRequested (requested, valid, "router.send-queue.drop-policy");
     assertRequested (requested, valid, "router.coalesce-delay");
