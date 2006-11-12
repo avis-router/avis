@@ -16,7 +16,8 @@ public class SecRqst extends XidMessage
   
   public SecRqst ()
   {
-    // zip
+    // make it easier for client to create and assign keys later
+    this (Keys.EMPTY_KEYS, Keys.EMPTY_KEYS, Keys.EMPTY_KEYS, Keys.EMPTY_KEYS);
   }
   
   public SecRqst (Keys addNtfnKeys, Keys delNtfnKeys,
