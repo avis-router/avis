@@ -199,7 +199,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
       }
     } catch (Exception ex)
     {
-      // handle client protocol violations
+      // handle client protocol violations by generating an ErrorMessage
       if (ex instanceof ProtocolViolationException ||
           ex instanceof BufferUnderflowException)
       {
@@ -212,7 +212,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
         in.skip (in.remaining ());
         
         message = error;
-      } else if (ex instanceof RuntimeException)
+      } else
       {
         throw (RuntimeException)ex;
       }
