@@ -1,4 +1,4 @@
-package org.avis.net.server;
+package org.avis.net;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,55 +9,57 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 /**
- * Handles Avis connection option definition, validation and legacy
- * compatibility.<p>
+ * Handles Avis connection options: definition, validation and legacy
+ * compatibility.
+ * <p>
  * 
  * From Sec 7.5:
  * 
  * <pre>
- *     Name                        |  Type    |  Min   Default      Max
- *     ----------------------------+----------+-------------------------
- *     Attribute.Max-Count         |  int32   |    64     256     2**31
- *     Attribute.Name.Max-Length   |  int32   |    64    2048     2**31
- *     Attribute.Opaque.Max-Length |  int32   |    1K      1M     2**31
- *     Attribute.String.Max-Length |  int32   |    1K      1M     2**31
- *     Packet.Max-Length           |  int32   |
- *     Receive-Queue.Drop-Policy   |  string  |
- *     Receive-Queue.High-Water    |  int32   |
- *     Receive-Queue.Low-Water     |  int32   |
- *     Receive-Queue.Max-Length    |  int32   |
- *     Send-Queue.Drop-Policy      |  string  |
- *     Send-Queue.High-Water       |  int32   |
- *     Send-Queue.Low-Water        |  int32   |
- *     Send-Queue.Max-Length       |  int32   |
- *     Subscription.Max-Count      |  int32   |
- *     Subscription.Max-Length     |  int32   |
- *     Supported-Key-Schemes       |  string  |
- *     ----------------------------+----------+-------------------------
+ *      Name                        |  Type    |  Min   Default      Max
+ *      ----------------------------+----------+-------------------------
+ *      Attribute.Max-Count         |  int32   |    64     256     2**31
+ *      Attribute.Name.Max-Length   |  int32   |    64    2048     2**31
+ *      Attribute.Opaque.Max-Length |  int32   |    1K      1M     2**31
+ *      Attribute.String.Max-Length |  int32   |    1K      1M     2**31
+ *      Packet.Max-Length           |  int32   |
+ *      Receive-Queue.Drop-Policy   |  string  |
+ *      Receive-Queue.High-Water    |  int32   |
+ *      Receive-Queue.Low-Water     |  int32   |
+ *      Receive-Queue.Max-Length    |  int32   |
+ *      Send-Queue.Drop-Policy      |  string  |
+ *      Send-Queue.High-Water       |  int32   |
+ *      Send-Queue.Low-Water        |  int32   |
+ *      Send-Queue.Max-Length       |  int32   |
+ *      Subscription.Max-Count      |  int32   |
+ *      Subscription.Max-Length     |  int32   |
+ *      Supported-Key-Schemes       |  string  |
+ *      ----------------------------+----------+-------------------------
  * </pre>
  * 
  * Compatibility:
+ * 
  * <pre>
- *     Standard Name               | Compatibility Name
- *     ----------------------------+------------------------------------
- *     Attribute.Max-Count         | router.attribute.max-count
- *     Attribute.Name.Max-Length   | router.attribute.name.max-length
- *     Attribute.Opaque.Max-Length | router.attribute.opaque.max-length
- *     Attribute.String.Max-Length | router.attribute.string.max-length
- *     Packet.Max-Length           | router.packet.max-length
- *     Receive-Queue.Drop-Policy   | router.recv-queue.drop-policy
- *     Receive-Queue.High-Water    | router.recv-queue.high-water
- *     Receive-Queue.Low-Water     | router.recv-queue.low-water
- *     Receive-Queue.Max-Length    | router.recv-queue.max-length
- *     Send-Queue.Drop-Policy      | router.send-queue.drop-policy
- *     Send-Queue.High-Water       | router.send-queue.high-water
- *     Send-Queue.Low-Water        | router.send-queue.low-water
- *     Send-Queue.Max-Length       | router.send-queue.max-length
- *     Subscription.Max-Count      | router.subscription.max-count
- *     Subscription.Max-Length     | router.subscription.max-length
- *     Supported-Key-Schemes       | router.supported-keyschemes
- *     Vendor-Identification       | router.vendor-identification
- *     ----------------------------+------------------------------------
+ *      Standard Name               | Compatibility Name
+ *      ----------------------------+------------------------------------
+ *      Attribute.Max-Count         | router.attribute.max-count
+ *      Attribute.Name.Max-Length   | router.attribute.name.max-length
+ *      Attribute.Opaque.Max-Length | router.attribute.opaque.max-length
+ *      Attribute.String.Max-Length | router.attribute.string.max-length
+ *      Packet.Max-Length           | router.packet.max-length
+ *      Receive-Queue.Drop-Policy   | router.recv-queue.drop-policy
+ *      Receive-Queue.High-Water    | router.recv-queue.high-water
+ *      Receive-Queue.Low-Water     | router.recv-queue.low-water
+ *      Receive-Queue.Max-Length    | router.recv-queue.max-length
+ *      Send-Queue.Drop-Policy      | router.send-queue.drop-policy
+ *      Send-Queue.High-Water       | router.send-queue.high-water
+ *      Send-Queue.Low-Water        | router.send-queue.low-water
+ *      Send-Queue.Max-Length       | router.send-queue.max-length
+ *      Subscription.Max-Count      | router.subscription.max-count
+ *      Subscription.Max-Length     | router.subscription.max-length
+ *      Supported-Key-Schemes       | router.supported-keyschemes
+ *      Vendor-Identification       | router.vendor-identification
+ *      ----------------------------+------------------------------------
  * </pre>
  * 
  * @author Matthew Phillips
@@ -89,9 +91,9 @@ public class ConnectionOptions
     
     /*
      * todo: we only enforce max packet length, which by implication
-     * limits the values below. Thus the correct min, default, max
-     * values are currently commented out and replaced with MAX to
-     * avoid lying to clients that actually care about this ;)
+     * limits the values below. The correct min, default, max values
+     * are currently commented out and replaced with MAX to avoid
+     * lying to clients that actually care about these.
      */
     // defineOption ("Attribute.Max-Count", 64, 256, MAX);    
     // defineOption ("Attribute.Name.Max-Length", 64, 2*K, MAX);
@@ -260,7 +262,7 @@ public class ConnectionOptions
    * 
    * @param option The option name.
    * @param defaultValue The default value.
-   * @param values Valid values.
+   * @param values Valid values (other than default).
    */
   private static void defineOption (String option, String defaultValue,
                                     String... values)
