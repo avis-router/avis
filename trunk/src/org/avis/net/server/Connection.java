@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.avis.net.ConnectionOptions;
 import org.avis.net.security.Keys;
 
 /**
