@@ -35,7 +35,6 @@ import org.avis.net.messages.SubRply;
 import org.avis.net.messages.TestConn;
 import org.avis.net.messages.UNotify;
 import org.avis.net.messages.XidMessage;
-import org.avis.net.server.ConnectionOptions;
 
 import static dsto.dfc.logging.Log.internalError;
 
@@ -104,9 +103,6 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     // write frame size
     buffer.putInt (0, frameSize);
     
-    // write out whole frame
-    buffer.flip ();
-    
     // if (isEnabled (TRACE) && buffer.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec output: " + buffer.getHexDump (), this);
     
@@ -119,6 +115,8 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     
     if (frameSize <= options.getInt ("Packet.Max-Length"))
     {
+      // write out whole frame
+      buffer.flip ();
       out.write (buffer);
     } else
     {

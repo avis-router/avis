@@ -2,6 +2,7 @@ package org.avis.net;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import java.nio.BufferUnderflowException;
 import java.nio.CharBuffer;
@@ -17,9 +18,6 @@ import static java.util.Collections.emptyMap;
 
 /**
  * I/O helpers for the Elvin XDR wire format.
- * 
- * todo add max length checks for arrays, strings, etc. currently allows
- * up to max heap size for any object.
  * 
  * @author Matthew Phillips
  */
@@ -162,12 +160,12 @@ public final class IO
    * Write a name/value set.
    */
   public static void putNameValues (ByteBuffer out,
-                                   Map<String, Object> nameValues)
+                                    Map<String, Object> nameValues)
     throws ProtocolViolationException
   {
     out.putInt (nameValues.size ());
     
-    for (Map.Entry<String, Object> entry : nameValues.entrySet ())
+    for (Entry<String, Object> entry : nameValues.entrySet ())
     {
       putString (out, entry.getKey ());
       putObject (out, entry.getValue ());
