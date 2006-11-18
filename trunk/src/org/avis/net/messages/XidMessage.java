@@ -3,7 +3,7 @@ package org.avis.net.messages;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 /**
  * Base class for messages that use a transaction id to identify replies.
@@ -33,17 +33,17 @@ public abstract class XidMessage extends Message
 
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     xid = in.getInt ();
   }
 
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     if (xid == -1)
-      throw new ProtocolViolationException ("No XID");
+      throw new ProtocolCodecException ("No XID");
     
     out.putInt (xid);
   }

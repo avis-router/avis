@@ -1,7 +1,7 @@
 package org.avis.net.messages;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 /**
  * Base class for all message types.
@@ -37,10 +37,10 @@ public abstract class Message
   public abstract int typeId ();
 
   public abstract void encode (ByteBuffer out)
-    throws ProtocolViolationException;
+    throws ProtocolCodecException;
 
   public abstract void decode (ByteBuffer in)
-    throws ProtocolViolationException;
+    throws ProtocolCodecException;
   
   @Override
   public String toString ()

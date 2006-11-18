@@ -6,7 +6,7 @@ import static org.avis.net.IO.putObjects;
 import static org.avis.net.IO.putString;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 public class Nack extends XidMessage
 {
@@ -49,7 +49,7 @@ public class Nack extends XidMessage
   
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     super.encode (out);
     
@@ -60,7 +60,7 @@ public class Nack extends XidMessage
   
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     super.decode (in);
     

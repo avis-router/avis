@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.net.IO.getLongArray;
 import static org.avis.net.IO.getNameValues;
@@ -40,7 +40,7 @@ public class NotifyDeliver extends Message
 
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     putNameValues (out, attributes);
     putLongArray (out, secureMatches);
@@ -49,7 +49,7 @@ public class NotifyDeliver extends Message
 
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     attributes = getNameValues (in);
     secureMatches = getLongArray (in);

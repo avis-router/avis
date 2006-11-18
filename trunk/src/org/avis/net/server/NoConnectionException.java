@@ -1,8 +1,8 @@
 package org.avis.net.server;
 
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
-public class NoConnectionException extends ProtocolViolationException
+public class NoConnectionException extends ProtocolCodecException
 {
   public NoConnectionException (String message)
   {

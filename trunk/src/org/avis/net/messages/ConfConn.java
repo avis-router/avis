@@ -1,7 +1,7 @@
 package org.avis.net.messages;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 public class ConfConn extends Message
 {
@@ -15,14 +15,14 @@ public class ConfConn extends Message
 
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     // zip
   }
 
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     // zip
   }

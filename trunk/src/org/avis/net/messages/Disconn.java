@@ -1,7 +1,7 @@
 package org.avis.net.messages;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.net.IO.getString;
 import static org.avis.net.IO.putString;
@@ -36,7 +36,7 @@ public class Disconn extends Message
   
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     reason = in.getInt ();
     args = getString (in);
@@ -44,10 +44,10 @@ public class Disconn extends Message
 
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     if (reason == -1)
-      throw new ProtocolViolationException ("Reason not set");
+      throw new ProtocolCodecException ("Reason not set");
     
     out.putInt (reason);
     putString (out, args);

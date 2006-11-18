@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.net.security.Keys;
 
@@ -62,7 +62,7 @@ public class ConnRqst extends XidMessage
   
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     super.encode (out);
     
@@ -77,7 +77,7 @@ public class ConnRqst extends XidMessage
   
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     super.decode (in);
     

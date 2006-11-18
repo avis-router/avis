@@ -4,20 +4,17 @@ import java.util.Set;
 
 import java.io.IOException;
 
-import java.net.SocketException;
+import java.net.InetSocketAddress;
 
 import org.apache.mina.common.IdleStatus;
-import org.apache.mina.common.TransportType;
-import org.apache.mina.io.socket.SocketSessionConfig;
-import org.apache.mina.protocol.ProtocolCodecFactory;
-import org.apache.mina.protocol.ProtocolHandler;
-import org.apache.mina.protocol.ProtocolProvider;
-import org.apache.mina.protocol.ProtocolSession;
-import org.apache.mina.protocol.ProtocolViolationException;
-import org.apache.mina.protocol.codec.DemuxingProtocolCodecFactory;
-import org.apache.mina.registry.Service;
-import org.apache.mina.registry.ServiceRegistry;
-import org.apache.mina.registry.SimpleServiceRegistry;
+import org.apache.mina.common.IoHandler;
+import org.apache.mina.common.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecException;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
+import org.apache.mina.transport.socket.nio.SocketAcceptor;
+import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
+import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.net.FrameCodec;
 import org.avis.net.messages.ConfConn;
@@ -60,32 +57,34 @@ import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
-public class Server implements ProtocolProvider, ProtocolHandler
+public class Server implements IoHandler
 {
-  private static final String ROUTER_VERSION;
-  private static final DemuxingProtocolCodecFactory CODEC_FACTORY;
+  private static final String ROUTER_VERSION =
+    System.getProperty ("avis.router.version", "<unknown>");
   
-  static
-  {
-    CODEC_FACTORY =
-      new DemuxingProtocolCodecFactory ();
-    CODEC_FACTORY.register (FrameCodec.class);
-    
-    ROUTER_VERSION = System.getProperty ("avis.router.version", "<unknown>");
-  }
+  private SocketAcceptor acceptor;
   
-  private ServiceRegistry registry;
   // todo surely we don't have to track sessions ourselves?
-  private Set<ProtocolSession> sessions;
-
+  private Set<IoSession> sessions;
+  
   public Server (int port)
     throws IOException
   {
-    sessions = new ConcurrentHashSet<ProtocolSession> ();
-    registry = new SimpleServiceRegistry ();
+    sessions = new ConcurrentHashSet<IoSession> ();
+    acceptor = new SocketAcceptor ();
+    
+    SocketAcceptorConfig config = new SocketAcceptorConfig ();
+    
+    config.setReuseAddress (true);
+    
+    DemuxingProtocolCodecFactory codecFactory =
+      new DemuxingProtocolCodecFactory ();
+    codecFactory.register (FrameCodec.class);
+    
+    config.getFilterChain ().addLast
+      ("codec", new ProtocolCodecFilter (codecFactory));
 
-    registry.bind
-      (new Service ("avis", TransportType.SOCKET, port), this);
+    acceptor.bind (new InetSocketAddress (port), this, config);
   }
 
   /**
@@ -95,16 +94,16 @@ public class Server implements ProtocolProvider, ProtocolHandler
   {
     synchronized (this)
     {
-      if (registry == null)
+      if (acceptor == null)
         return;
       
-      registry.unbindAll ();
-      registry = null;
+      acceptor.unbindAll ();
+      acceptor = null;
     }
     
     Disconn disconnMessage = new Disconn (REASON_SHUTDOWN, "");
     
-    for (ProtocolSession session : sessions)
+    for (IoSession session : sessions)
     {
       Connection connection = peekConnectionFor (session);
       
@@ -125,25 +124,14 @@ public class Server implements ProtocolProvider, ProtocolHandler
         }
       }
       
-      session.close (true);
+      session.close ().join ();
     }
     
     sessions.clear ();
-    sessions = null;
-    registry = null;
+    acceptor = null;
   }
 
-  public ProtocolCodecFactory getCodecFactory ()
-  {
-    return CODEC_FACTORY;
-  }
-
-  public ProtocolHandler getHandler ()
-  {
-    return this;
-  }
-  
-  private static void setConnection (ProtocolSession session,
+  private static void setConnection (IoSession session,
                                      Connection connection)
   {
     session.setAttachment (connection);
@@ -155,7 +143,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
    * Get the (open) connection associated with a session or throw
    * NoConnectionException.
    */
-  private static Connection connectionFor (ProtocolSession session)
+  private static Connection connectionFor (IoSession session)
     throws NoConnectionException
   {
     Connection connection = (Connection)session.getAttachment ();
@@ -174,7 +162,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
    * @throws NoConnectionException if there is no connection for the
    *           session or the connection is not open.
    */
-  private static Connection writeableConnectionFor (ProtocolSession session)
+  private static Connection writeableConnectionFor (IoSession session)
     throws NoConnectionException
   {
     Connection connection = connectionFor (session);
@@ -194,14 +182,14 @@ public class Server implements ProtocolProvider, ProtocolHandler
   /**
    * Get the connection associated with a session or null for no connection.
    */
-  private static Connection peekConnectionFor (ProtocolSession session)
+  private static Connection peekConnectionFor (IoSession session)
   {
     return (Connection)session.getAttachment ();
   }
 
   // ProtocolHandler interface
 
-  public void messageReceived (ProtocolSession session, Object messageObject)
+  public void messageReceived (IoSession session, Object messageObject)
     throws Exception
   {
     if (isEnabled (DIAGNOSTIC))
@@ -250,7 +238,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
           warn
             ("Server got an unhandleable message type: " + message, this);
       }
-    } catch (ProtocolViolationException ex)
+    } catch (ProtocolCodecException ex)
     {
       diagnostic ("Client protocol violation for " + message + ": " + 
                   ex.getMessage (), this);
@@ -261,15 +249,15 @@ public class Server implements ProtocolProvider, ProtocolHandler
           (new Nack ((XidMessage)message, PROT_ERROR, ex.getMessage ()));
       }
       
-      session.close (true);
+      session.close ().join ();
     }
   }
 
-  private void handleConnRqst (ProtocolSession session, ConnRqst message)
-    throws ProtocolViolationException
+  private void handleConnRqst (IoSession session, ConnRqst message)
+    throws ProtocolCodecException
   {
     if (peekConnectionFor (session) != null)
-      throw new ProtocolViolationException ("Already connected");
+      throw new ProtocolCodecException ("Already connected");
     
     Connection connection =
       new Connection (message.options,
@@ -300,7 +288,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
    * doesn't enforce this since neither of these cases has any
    * effect on its key collections and the check would add overhead.
    */
-  private void handleSecRqst (ProtocolSession session, SecRqst message)
+  private void handleSecRqst (IoSession session, SecRqst message)
     throws NoConnectionException
   {
     Connection connection = writeableConnectionFor (session);
@@ -322,7 +310,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
 
-  private void handleDisconnRqst (ProtocolSession session, DisconnRqst message)
+  private void handleDisconnRqst (IoSession session, DisconnRqst message)
     throws NoConnectionException
   {
     Connection connection = writeableConnectionFor (session);
@@ -340,7 +328,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
     session.close ();
   }
   
-  private void handleSubAddRqst (ProtocolSession session, SubAddRqst message)
+  private void handleSubAddRqst (IoSession session, SubAddRqst message)
     throws NoConnectionException
   {
     Connection connection = writeableConnectionFor (session);
@@ -367,7 +355,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
 
-  private void handleSubModRqst (ProtocolSession session, SubModRqst message)
+  private void handleSubModRqst (IoSession session, SubModRqst message)
     throws NoConnectionException  
   {
     Connection connection = writeableConnectionFor (session);
@@ -401,7 +389,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
   
-  private void handleSubDelRqst (ProtocolSession session, SubDelRqst message)
+  private void handleSubDelRqst (IoSession session, SubDelRqst message)
     throws NoConnectionException
   {
     Connection connection = writeableConnectionFor (session);
@@ -420,7 +408,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
   
-  private void handleNotifyEmit (ProtocolSession session, NotifyEmit message)
+  private void handleNotifyEmit (IoSession session, NotifyEmit message)
     throws NoConnectionException
   {
     deliverNotification (message, connectionFor (session).notificationKeys);
@@ -441,7 +429,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
    */
   private void deliverNotification (Notify message, Keys notificationKeys)
   {
-    for (ProtocolSession session : sessions)
+    for (IoSession session : sessions)
     {
       Connection connection = peekConnectionFor (session);
       
@@ -481,14 +469,14 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
 
-  private static void handleTestConn (ProtocolSession session)
+  private static void handleTestConn (IoSession session)
   {
     // if no other outgoing messages are waiting, send a confirm message
     if (session.getScheduledWriteRequests () == 0)
       session.write (new ConfConn ());
   }
   
-  private static void handleQuench (ProtocolSession session, QuenchPlaceHolder message)
+  private static void handleQuench (IoSession session, QuenchPlaceHolder message)
   {
     // TODO implement quench support here
     diagnostic
@@ -498,7 +486,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
     session.write (new Nack (message, PROT_ERROR, "Quench not supported"));
   }
 
-  private static void handleError (ProtocolSession session, ErrorMessage message)
+  private static void handleError (IoSession session, ErrorMessage message)
   {
     diagnostic ("Client message rejected due to protocol violation: " +
                 message.error.getMessage (), Server.class);
@@ -511,14 +499,14 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
     
     // close and wait to avoid reading any further bogus data left in stream
-    session.close (true);
+    session.close ().join ();
   }
 
   /**
    * Handle the Network.Coalesce-Delay/router.coalesce-delay
    * connection option if set.
    */
-  private static void updateCoalesceDelay (ProtocolSession session,
+  private static void updateCoalesceDelay (IoSession session,
                                            Connection connection)
   {
     if (session.getConfig () instanceof SocketSessionConfig)
@@ -526,16 +514,8 @@ public class Server implements ProtocolProvider, ProtocolHandler
       int coalesceDelay =
         connection.options.getInt ("Network.Coalesce-Delay");
       
-      try
-      {
-        ((SocketSessionConfig)session.getConfig ()).setTcpNoDelay
-          (coalesceDelay == 0);
-      } catch (SocketException ex)
-      {
-        warn ("Failed to set TCP nodelay", Server.class, ex);
-        
-        connection.options.remove ("Network.Coalesce-Delay"); 
-      }
+      ((SocketSessionConfig)session.getConfig ()).setTcpNoDelay
+        (coalesceDelay == 0);
     } else
     {
       connection.options.remove ("Network.Coalesce-Delay"); 
@@ -552,20 +532,25 @@ public class Server implements ProtocolProvider, ProtocolHandler
     return new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, "");
   }
   
-  public void exceptionCaught (ProtocolSession session, Throwable ex)
+  public void exceptionCaught (IoSession session, Throwable ex)
     throws Exception
   {
     warn ("Server exception", this, ex);
   }
   
-  public void messageSent (ProtocolSession session, Object message)
+  public void messageSent (IoSession session, Object message)
     throws Exception
   {
     if (isEnabled (DIAGNOSTIC))
       diagnostic ("Server sent message: " + message, this);
   }
 
-  public void sessionClosed (ProtocolSession session)
+  /**
+   * TODO this seems to be getting called *after* close () is called
+   * sometimes: investigate why join () on close isn't doing what we
+   * expect.
+   */
+  public void sessionClosed (IoSession session)
     throws Exception
   {
     diagnostic ("Server session closed", this);
@@ -593,16 +578,16 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
 
-  public void sessionCreated (ProtocolSession session)
+  public void sessionCreated (IoSession session)
     throws Exception
   {
     // set idle time for readers to 30 seconds: client has this long to connect
-    session.getConfig ().setIdleTime (READER_IDLE, 30);
+    session.setIdleTime (READER_IDLE, 30);
     
     sessions.add (session);
   }
 
-  public void sessionIdle (ProtocolSession session, IdleStatus status)
+  public void sessionIdle (IoSession session, IdleStatus status)
     throws Exception
   {
     // close idle sessions that we haven't seen a ConnRqst for yet
@@ -615,7 +600,7 @@ public class Server implements ProtocolProvider, ProtocolHandler
     }
   }
 
-  public void sessionOpened (ProtocolSession session)
+  public void sessionOpened (IoSession session)
     throws Exception
   {
     diagnostic ("Server session opened", this);

@@ -3,7 +3,7 @@ package org.avis.net.messages;
 import java.util.Map;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.net.security.Keys;
 
@@ -49,7 +49,7 @@ public class UNotify extends Notify
 
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     clientMajorVersion = in.getInt ();
     clientMinorVersion = in.getInt ();
@@ -59,7 +59,7 @@ public class UNotify extends Notify
 
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     out.putInt (clientMajorVersion);
     out.putInt (clientMinorVersion);

@@ -12,7 +12,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static java.util.Collections.emptyMap;
 
@@ -89,7 +89,7 @@ public final class IO
    * Read a length-delimited 4-byte-aligned UTF-8 string.
    */
   public static String getString (ByteBuffer in)
-    throws BufferUnderflowException, ProtocolViolationException
+    throws BufferUnderflowException, ProtocolCodecException
   {
     try
     {
@@ -108,7 +108,7 @@ public final class IO
       }
     } catch (CharacterCodingException ex)
     {
-      throw new ProtocolViolationException ("Invalid UTF-8 string", ex);
+      throw new ProtocolCodecException ("Invalid UTF-8 string", ex);
     }
   }
 
@@ -161,7 +161,7 @@ public final class IO
    */
   public static void putNameValues (ByteBuffer out,
                                     Map<String, Object> nameValues)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     out.putInt (nameValues.size ());
     
@@ -176,7 +176,7 @@ public final class IO
    * Read a name/value set.
    */
   public static Map<String, Object> getNameValues (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     int pairs = in.getInt ();
     
@@ -192,7 +192,7 @@ public final class IO
   }
 
   public static void putObjects (ByteBuffer out, Object [] objects)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     out.putInt (objects.length);
     
@@ -201,7 +201,7 @@ public final class IO
   }
   
   public static Object [] getObjects (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     Object [] objects = new Object [in.getInt ()];
     
@@ -215,7 +215,7 @@ public final class IO
    * Put an object value in type_id/value format.
    */
   public static void putObject (ByteBuffer out, Object value)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     if (value instanceof String)
     {
@@ -251,7 +251,7 @@ public final class IO
    * Read an object in type_id/value format.
    */
   public static Object getObject (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     int type = in.getInt ();
     
@@ -268,7 +268,7 @@ public final class IO
       case TYPE_OPAQUE:
         return getBytes (in);
       default:
-        throw new ProtocolViolationException ("Unknown type code: " + type);
+        throw new ProtocolCodecException ("Unknown type code: " + type);
     }
   }
   
@@ -322,7 +322,7 @@ public final class IO
   }
   
   public static boolean getBool (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     int value = in.getInt ();
     
@@ -331,7 +331,7 @@ public final class IO
     else if (value == 1)
       return true;
     else
-      throw new ProtocolViolationException
+      throw new ProtocolCodecException
         ("Cannot interpret " + value + " as boolean");
   }
   

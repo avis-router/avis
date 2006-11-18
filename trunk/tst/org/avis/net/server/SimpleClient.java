@@ -6,16 +6,14 @@ import java.net.InetSocketAddress;
 
 import junit.framework.AssertionFailedError;
 
+import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IdleStatus;
-import org.apache.mina.io.filter.IoThreadPoolFilter;
-import org.apache.mina.io.socket.SocketConnector;
-import org.apache.mina.protocol.ProtocolCodecFactory;
-import org.apache.mina.protocol.ProtocolHandler;
-import org.apache.mina.protocol.ProtocolProvider;
-import org.apache.mina.protocol.ProtocolSession;
-import org.apache.mina.protocol.codec.DemuxingProtocolCodecFactory;
-import org.apache.mina.protocol.filter.ProtocolThreadPoolFilter;
-import org.apache.mina.protocol.io.IoProtocolConnector;
+import org.apache.mina.common.IoHandler;
+import org.apache.mina.common.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
+import org.apache.mina.transport.socket.nio.SocketConnector;
+import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.Notification;
 import org.avis.net.FrameCodec;
@@ -33,6 +31,7 @@ import org.avis.net.security.Keys;
 import dsto.dfc.logging.Log;
 
 import static org.avis.net.security.Keys.EMPTY_KEYS;
+import static org.avis.net.server.JUTestServer.PORT;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,33 +39,24 @@ import static org.junit.Assert.assertTrue;
 /**
  * Basic Avis test client.
  */
-class SimpleClient implements ProtocolProvider, ProtocolHandler
+class SimpleClient implements IoHandler
 {
-  private static final DemuxingProtocolCodecFactory CODEC_FACTORY;
-  
-  private ProtocolSession clientSession;
+  private IoSession clientSession;
   private boolean connected;
   private volatile Message lastReply;
 
   public String clientName;
   
-  static
-  {
-    CODEC_FACTORY =
-      new DemuxingProtocolCodecFactory ();
-    CODEC_FACTORY.register (FrameCodec.class);
-  }
-  
   public SimpleClient ()
     throws IOException
   {
-    this ("localhost", JUTestServer.PORT);
+    this ("localhost", PORT);
   }
 
   public SimpleClient (String clientName)
     throws IOException
   {
-    this (clientName, "localhost", JUTestServer.PORT);
+    this (clientName, "localhost", PORT);
   }
   
   public SimpleClient (String hostname, int port)
@@ -80,37 +70,30 @@ class SimpleClient implements ProtocolProvider, ProtocolHandler
   {
     this.clientName = clientName;
     
-    // Create I/O and Protocol thread pool filter.
-    // I/O thread pool performs encoding and decoding of messages.
-    // Protocol thread pool performs actual protocol flow.
-    IoThreadPoolFilter ioThreadPoolFilter = new IoThreadPoolFilter ();
-    ProtocolThreadPoolFilter protocolThreadPoolFilter = new ProtocolThreadPoolFilter ();
+    SocketConnector connector = new SocketConnector ();
 
-    // and start both.
-    ioThreadPoolFilter.start ();
-    protocolThreadPoolFilter.start ();
+    /* Change the worker timeout to 1 second to make the I/O thread
+     * quit soon when there's no connection to manage. */
+    connector.setWorkerTimeout (1);
+    
+    SocketConnectorConfig cfg = new SocketConnectorConfig ();
+    cfg.setConnectTimeout (10);
+    
+    DemuxingProtocolCodecFactory codecFactory =
+      new DemuxingProtocolCodecFactory ();
+    codecFactory.register (FrameCodec.class);
+    
+    cfg.getFilterChain ().addLast
+      ("codec", new ProtocolCodecFilter (codecFactory));
+    
+    ConnectFuture future =
+      connector.connect (new InetSocketAddress (hostname, port),
+                         this, cfg);
+                                     
+    future.join ();
+    clientSession = future.getSession ();
+  }
 
-    IoProtocolConnector connector =
-      new IoProtocolConnector (new SocketConnector ());
-    connector.getIoConnector ().getFilterChain ().addFirst
-      ("threadPool", ioThreadPoolFilter);
-    connector.getFilterChain ().addFirst
-      ("threadPool", protocolThreadPoolFilter);
-
-    clientSession =
-      connector.connect (new InetSocketAddress (hostname, port), 10, this);
-  }
-  
-  public ProtocolCodecFactory getCodecFactory ()
-  {
-    return CODEC_FACTORY;
-  }
-  
-  public ProtocolHandler getHandler ()
-  {
-    return this;
-  }
-  
   public void send (Message message)
   {
     clientSession.write (message);
@@ -206,13 +189,13 @@ class SimpleClient implements ProtocolProvider, ProtocolHandler
 
   // ProtocolHandler interface
   
-  public void exceptionCaught (ProtocolSession session, Throwable ex) 
+  public void exceptionCaught (IoSession session, Throwable ex) 
     throws Exception
   {
     Log.alarm (clientName + ": client internal exception", this, ex);
   }
 
-  public synchronized void messageReceived (ProtocolSession session,
+  public synchronized void messageReceived (IoSession session,
                                             Object message)
     throws Exception
   {
@@ -228,27 +211,27 @@ class SimpleClient implements ProtocolProvider, ProtocolHandler
     notifyAll ();
   }
 
-  public void messageSent (ProtocolSession session, Object message) throws Exception
+  public void messageSent (IoSession session, Object message) throws Exception
   {
     // zip
   }
 
-  public void sessionClosed (ProtocolSession session) throws Exception
+  public void sessionClosed (IoSession session) throws Exception
   {
     // zip
   }
 
-  public void sessionCreated (ProtocolSession session) throws Exception
+  public void sessionCreated (IoSession session) throws Exception
   {
     // zip
   }
 
-  public void sessionIdle (ProtocolSession session, IdleStatus status) throws Exception
+  public void sessionIdle (IoSession session, IdleStatus status) throws Exception
   {
     // zip
   }
 
-  public void sessionOpened (ProtocolSession session) throws Exception
+  public void sessionOpened (IoSession session) throws Exception
   {
     // zip
   }

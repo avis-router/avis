@@ -3,7 +3,7 @@ package org.avis.net.messages;
 import java.util.Map;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.net.security.Keys;
 
@@ -44,7 +44,7 @@ public abstract class Notify extends Message
   
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     attributes = getNameValues (in);
     deliverInsecure = getBool (in);
@@ -53,7 +53,7 @@ public abstract class Notify extends Message
 
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     putNameValues (out, attributes);
     putBool (out, deliverInsecure);

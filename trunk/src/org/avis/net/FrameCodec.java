@@ -6,13 +6,13 @@ import java.util.Set;
 import java.nio.BufferUnderflowException;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolDecoderOutput;
-import org.apache.mina.protocol.ProtocolEncoderOutput;
-import org.apache.mina.protocol.ProtocolSession;
-import org.apache.mina.protocol.ProtocolViolationException;
-import org.apache.mina.protocol.codec.MessageDecoder;
-import org.apache.mina.protocol.codec.MessageDecoderResult;
-import org.apache.mina.protocol.codec.MessageEncoder;
+import org.apache.mina.common.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecException;
+import org.apache.mina.filter.codec.ProtocolDecoderOutput;
+import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.apache.mina.filter.codec.demux.MessageDecoder;
+import org.apache.mina.filter.codec.demux.MessageDecoderResult;
+import org.apache.mina.filter.codec.demux.MessageEncoder;
 
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
@@ -49,7 +49,8 @@ import static dsto.dfc.logging.Log.internalError;
 public class FrameCodec implements MessageDecoder, MessageEncoder
 {
   private static final Set<Class> MESSAGE_TYPES;
-  private static final ConnectionOptions DEFAULT_OPTIONS = new ConnectionOptions ();
+  private static final ConnectionOptions DEFAULT_OPTIONS =
+    new ConnectionOptions ();
   // private static final int MAX_BUFFER_DUMP = 512;
   
   static
@@ -80,10 +81,10 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     return MESSAGE_TYPES;
   }
 
-  public void encode (ProtocolSession session,
+  public void encode (IoSession session,
                       Object messageObject,
                       ProtocolEncoderOutput out)
-    throws ProtocolViolationException
+    throws Exception
   {
     ByteBuffer buffer = ByteBuffer.allocate (4096); // auto deallocated
     buffer.setAutoExpand (true);
@@ -108,7 +109,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     
     // sanity check frame is 4-byte aligned
     if (frameSize % 4 != 0)
-      throw new ProtocolViolationException
+      throw new ProtocolCodecException
         ("Frame length not 4 byte aligned for " + message.getClass ());
     
     ConnectionOptions options = optionsFor (session);
@@ -120,13 +121,13 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
       out.write (buffer);
     } else
     {
-      throw new ProtocolViolationException
+      throw new ProtocolCodecException
         ("Frame size of " + frameSize + " bytes is larger than maximum " + 
             options.getInt ("Packet.Max-Length"));
     }
   }
 
-  public MessageDecoderResult decodable (ProtocolSession session,
+  public MessageDecoderResult decodable (IoSession session,
                                          ByteBuffer in)
   {
     if (in.remaining () < 4)
@@ -154,10 +155,10 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     }
   }
 
-  public MessageDecoderResult decode (ProtocolSession session,
+  public MessageDecoderResult decode (IoSession session,
                                       ByteBuffer in,
                                       ProtocolDecoderOutput out)
-    throws ProtocolViolationException
+    throws Exception
   {
     // if (isEnabled (TRACE) && in.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec input: " + in.getHexDump (), this);
@@ -176,11 +177,11 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
       message = newMessage (messageType, frameSize);
     
       if (frameSize % 4 != 0)
-        throw new ProtocolViolationException
+        throw new ProtocolCodecException
           ("Frame length not 4 byte aligned");
       
       if (frameSize > options.getInt ("Packet.Max-Length"))
-        throw new ProtocolViolationException
+        throw new ProtocolCodecException
           ("Frame size of " + frameSize + " bytes is larger than maximum " + 
            options.getInt ("Packet.Max-Length"));
       
@@ -198,7 +199,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     } catch (Exception ex)
     {
       // handle client protocol violations by generating an ErrorMessage
-      if (ex instanceof ProtocolViolationException ||
+      if (ex instanceof ProtocolCodecException ||
           ex instanceof BufferUnderflowException)
       {
         ErrorMessage error = new ErrorMessage (ex, message);
@@ -221,11 +222,17 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     return OK;
   }
   
+  public void finishDecode (IoSession session, ProtocolDecoderOutput out)
+    throws Exception
+  {
+    // zip
+  }
+  
   /**
    * Create a new message for a given type code.
    */
   private static Message newMessage (int messageType, int frameSize)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     Message message = null;
     
@@ -288,7 +295,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
         message = new QuenchPlaceHolder (messageType, frameSize - 4);
         break;
       default:
-        throw new ProtocolViolationException
+        throw new ProtocolCodecException
           ("Unknown message type: ID = " + messageType);
     }
     
@@ -299,7 +306,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
    * Get the connection options set for the given session. Returns
    * defaults if none set.
    */
-  private static ConnectionOptions optionsFor (ProtocolSession session)
+  private static ConnectionOptions optionsFor (IoSession session)
   {
     ConnectionOptions options =
       (ConnectionOptions)session.getAttribute ("connectionOptions");
@@ -313,7 +320,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
   /**
    * Set the connection options for a given session.
    */
-  public static void setOptions (ProtocolSession session,
+  public static void setOptions (IoSession session,
                                  ConnectionOptions options)
   {
     session.setAttribute ("connectionOptions", options);

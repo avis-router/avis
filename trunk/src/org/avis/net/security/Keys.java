@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.net.IO.getBytes;
 import static org.avis.net.IO.putBytes;
@@ -431,7 +431,7 @@ public class Keys
   }
 
   public static Keys decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     int length = in.getInt ();
     
@@ -450,7 +450,7 @@ public class Keys
         if (scheme.isDual ())
         {
           if (keySetCount != 2)
-            throw new ProtocolViolationException
+            throw new ProtocolCodecException
               ("Dual key scheme with " + keySetCount + " key sets");
           
           DualKeySet keyset = (DualKeySet)keys.newKeysetFor (scheme);
@@ -460,7 +460,7 @@ public class Keys
         } else
         {
           if (keySetCount != 1)
-            throw new ProtocolViolationException
+            throw new ProtocolCodecException
               ("Single key scheme with " + keySetCount + " key sets");
           
           decodeKeys (in, (SingleKeySet)keys.newKeysetFor (scheme));
@@ -471,7 +471,7 @@ public class Keys
     } catch (IllegalArgumentException ex)
     {
       // most likely an invalid KeyScheme ID
-      throw new ProtocolViolationException (ex);
+      throw new ProtocolCodecException (ex);
     }
   }
   

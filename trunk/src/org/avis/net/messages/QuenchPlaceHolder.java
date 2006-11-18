@@ -1,7 +1,7 @@
 package org.avis.net.messages;
 
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.protocol.ProtocolViolationException;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 /**
  * Placeholder for QnchAddRqst, QnchModRqst and QnchDelRqst that
@@ -35,7 +35,7 @@ public class QuenchPlaceHolder extends XidMessage
   
   @Override
   public void decode (ByteBuffer in)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     super.decode (in);
     
@@ -44,7 +44,7 @@ public class QuenchPlaceHolder extends XidMessage
   
   @Override
   public void encode (ByteBuffer out)
-    throws ProtocolViolationException
+    throws ProtocolCodecException
   {
     throw new UnsupportedOperationException
       ("This is just a quench placeholder for now");
