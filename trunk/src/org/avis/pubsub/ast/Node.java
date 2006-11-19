@@ -60,6 +60,8 @@ public abstract class Node<EVAL_TYPE>
   /**
    * A string version of the node suitable for use in generating a
    * formal tree expression.
+   * 
+   * @see Nodes#unparse(Node)
    */
   public abstract String expr ();
 

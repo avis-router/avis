@@ -1,5 +1,7 @@
 package org.avis.pubsub.ast;
 
+import static org.avis.pubsub.ast.Nodes.className;
+
 /**
  * Base class for math nodes that require integer arguments.
  * 
@@ -29,7 +31,7 @@ public abstract class MathIntParentNode extends MathParentNode
     else if (!(Integer.class.isAssignableFrom (childType) ||
                Long.class.isAssignableFrom (childType)))
       return expr () + " needs an integer as an argument (was " +
-             Nodes.className (child.evalType ()) + ")";
+             className (child.evalType ()) + ")";
     else
       return null;
   }
@@ -43,6 +45,6 @@ public abstract class MathIntParentNode extends MathParentNode
   @Override
   protected double evaluateReal64 (double number1, double number2)
   {
-    throw new UnsupportedOperationException ("Not applicable to real64");
+    throw new UnsupportedOperationException ("Not applicable for Real64 values");
   }
 }

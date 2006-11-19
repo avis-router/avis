@@ -65,6 +65,7 @@ public final class Nodes
    * <code>(&& (> (field 'field1') (int32 2))
    * (== (field 'field2') (string 'hello there')))</code>
    * 
+   * @see Node#expr()
    * @see #toString(Node)
    */
   public static String unparse (Node<?> node)

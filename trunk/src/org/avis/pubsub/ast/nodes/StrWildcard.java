@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.avis.pubsub.ast.Node;
-import org.avis.pubsub.ast.Nodes;
 import org.avis.pubsub.ast.StringCompareNode;
+
+import static java.lang.Character.isLetterOrDigit;
+import static java.lang.Character.isWhitespace;
+import static java.util.regex.Pattern.compile;
+import static org.avis.pubsub.ast.Nodes.createNary;
 
 /**
  * NOTE: no real spec for wildcard exists. This implements ? and *
- * only which David Arnold comfirmed is sufficient.
+ * only, which is what is supported by Mantara elvind 4.4.0.
  * 
  * @author Matthew Phillips
  */
@@ -22,19 +26,19 @@ public class StrWildcard extends StringCompareNode
    */
   public static Node<Boolean> create (List<Node<String>> args)
   {
-    return Nodes.createNary (StrWildcard.class, Node.class, Const.class, args);
+    return createNary (StrWildcard.class, Node.class, Const.class, args);
   }
   
   public StrWildcard (Node<String> stringExpr, Const<String> stringConst)
   {
     super (stringExpr, stringConst);
     
-    this.regex = Pattern.compile (toRegex (string));
+    this.regex = compile (toRegex (string));
   }
 
   /**
-   * Fairly dumb wildcard -> regex converter. Handles * and ?, does
-   * not handle [] or other more advanced globs.
+   * Fairly dumb wildcard -> regex converter. Handles * and ? by
+   * generating regex equivalents.
    */
   private static String toRegex (String wildcard)
   {
@@ -53,7 +57,7 @@ public class StrWildcard extends StringCompareNode
           regex.append ('.');
           break;
         default:
-          if (Character.isWhitespace (c) || Character.isLetterOrDigit (c))
+          if (isWhitespace (c) || isLetterOrDigit (c))
             regex.append (c);
           else
             regex.append ('\\').append (c);

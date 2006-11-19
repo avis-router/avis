@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Base class for nodes with an arbitrary number of children.
+ * Base class for nodes with an arbitrary number of children. This
+ * class requires that all children have the same evaluation type.
+ * 
+ * @param EVAL_TYPE The type of value that this node evaluates to.
+ * @param CHILD_TYPE The type that children of this node evaluate to.
  * 
  * @author Matthew Phillips
  */

@@ -1,10 +1,11 @@
 package org.avis.pubsub.ast.nodes;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import org.avis.pubsub.ast.Node;
+
+import static java.util.Collections.singleton;
 
 public class StrFoldCase extends Node<String>
 {
@@ -58,6 +59,6 @@ public class StrFoldCase extends Node<String>
   @Override
   public Collection<? extends Node<?>> children ()
   {
-    return Collections.singleton (stringExpr);
+    return singleton (stringExpr);
   }
 }

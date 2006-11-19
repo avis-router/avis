@@ -2,6 +2,7 @@ package org.avis.pubsub.ast;
 
 import java.util.Map;
 
+import static org.avis.pubsub.ast.Nodes.className;
 import static org.avis.util.Numbers.highestPrecision;
 import static org.avis.util.Numbers.upconvert;
 
@@ -28,7 +29,7 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
       return null; // allow generic nodes such as fields
     else if (!Number.class.isAssignableFrom (childType))
       return expr () + " needs a number as an argument (was " +
-             Nodes.className (child.evalType ()) + ")";
+             className (child.evalType ()) + ")";
     else
       return null;
   }

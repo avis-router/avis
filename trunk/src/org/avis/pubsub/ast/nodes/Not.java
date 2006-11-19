@@ -1,10 +1,11 @@
 package org.avis.pubsub.ast.nodes;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import org.avis.pubsub.ast.Node;
+
+import static java.util.Collections.singleton;
 
 public class Not extends Node<Boolean>
 {
@@ -60,7 +61,7 @@ public class Not extends Node<Boolean>
   @Override
   public Collection<? extends Node<?>> children ()
   {
-    return Collections.singleton (child);
+    return singleton (child);
   }
   
   @Override

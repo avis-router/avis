@@ -348,7 +348,7 @@ public class Server implements IoHandler
                   ex.getMessage (), this);
       diagnostic ("Subscription was: " + message.subscriptionExpr, this);
       
-      session.write (nackParseError (message, ex));
+      session.write (nackForParseError (message, ex));
     } finally
     {
       connection.unlockWrite ();
@@ -378,7 +378,7 @@ public class Server implements IoHandler
                   ex.getMessage (), this);
       diagnostic ("Subscription was: " + message.subscriptionExpr, this);
       
-      session.write (nackParseError (message, ex));
+      session.write (nackForParseError (message, ex));
     } catch (InvalidSubscriptionException ex)
     {
       session.write (new Nack (message, NO_SUCH_SUB, ex.getMessage (),
@@ -527,7 +527,8 @@ public class Server implements IoHandler
    * 
    * todo should provide better error info (see sec 7.4.2 and 6.3)
    */
-  private static Nack nackParseError (XidMessage inReplyTo, ParseException ex)
+  private static Nack nackForParseError (XidMessage inReplyTo,
+                                         ParseException ex)
   {
     return new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, "");
   }

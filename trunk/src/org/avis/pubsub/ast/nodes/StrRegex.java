@@ -5,8 +5,11 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.avis.pubsub.ast.Node;
-import org.avis.pubsub.ast.Nodes;
 import org.avis.pubsub.ast.StringCompareNode;
+
+import static java.util.regex.Pattern.DOTALL;
+import static java.util.regex.Pattern.compile;
+import static org.avis.pubsub.ast.Nodes.createNary;
 
 public class StrRegex extends StringCompareNode
 {
@@ -17,7 +20,7 @@ public class StrRegex extends StringCompareNode
    */
   public static Node<Boolean> create (List<Node<String>> args)
   {
-    return Nodes.createNary (StrRegex.class, Node.class, Const.class, args);
+    return createNary (StrRegex.class, Node.class, Const.class, args);
   }
   
   public StrRegex (Node<String> stringExpr, Const<String> stringConst)
@@ -25,7 +28,7 @@ public class StrRegex extends StringCompareNode
   {
     super (stringExpr, stringConst);
     
-    this.regex = Pattern.compile (string, Pattern.DOTALL);
+    this.regex = compile (string, DOTALL);
   }
 
   @Override

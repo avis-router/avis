@@ -6,7 +6,7 @@ import java.util.Collection;
 import org.avis.pubsub.ast.nodes.Const;
 
 /**
- * Base class for nodes that take only two children.
+ * Utility base class for nodes that take only two children.
  * 
  * @author Matthew Phillips
  */

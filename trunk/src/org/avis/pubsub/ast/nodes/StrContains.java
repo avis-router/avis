@@ -3,8 +3,9 @@ package org.avis.pubsub.ast.nodes;
 import java.util.List;
 
 import org.avis.pubsub.ast.Node;
-import org.avis.pubsub.ast.Nodes;
 import org.avis.pubsub.ast.StringCompareNode;
+
+import static org.avis.pubsub.ast.Nodes.createNary;
 
 public class StrContains extends StringCompareNode
 {
@@ -13,7 +14,7 @@ public class StrContains extends StringCompareNode
    */
   public static Node<Boolean> create (List<Node<String>> args)
   {
-    return Nodes.createNary (StrContains.class, Node.class, Const.class, args);
+    return createNary (StrContains.class, Node.class, Const.class, args);
   }
   
   public StrContains (Node<String> stringExpr, Const<String> stringConst)

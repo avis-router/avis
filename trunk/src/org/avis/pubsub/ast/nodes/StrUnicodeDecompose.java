@@ -1,12 +1,15 @@
 package org.avis.pubsub.ast.nodes;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import org.avis.pubsub.ast.Node;
 
 import sun.text.Normalizer;
+import sun.text.Normalizer.Mode;
+
+import static java.util.Collections.singleton;
+import static sun.text.Normalizer.normalize;
 
 /**
  * TODO remove use of non-portable sun.text.Normalizer. Java 6 has new
@@ -16,13 +19,13 @@ import sun.text.Normalizer;
  */
 public class StrUnicodeDecompose extends Node<String>
 {
-  public static final Normalizer.Mode DECOMPOSE = Normalizer.DECOMP;
-  public static final Normalizer.Mode DECOMPOSE_COMPAT = Normalizer.DECOMP_COMPAT;
+  public static final Mode DECOMPOSE = Normalizer.DECOMP;
+  public static final Mode DECOMPOSE_COMPAT = Normalizer.DECOMP_COMPAT;
   
   private Node<String> stringExpr;
-  private Normalizer.Mode mode;
+  private Mode mode;
 
-  public StrUnicodeDecompose (Node<String> stringExpr, Normalizer.Mode mode)
+  public StrUnicodeDecompose (Node<String> stringExpr, Mode mode)
   {
     this.stringExpr = stringExpr;
     this.mode = mode;
@@ -39,7 +42,7 @@ public class StrUnicodeDecompose extends Node<String>
   {
     String result = stringExpr.evaluate (attrs);
     
-    return result == null ? null : Normalizer.normalize (result, mode, 0);
+    return result == null ? null : normalize (result, mode, 0);
   }
 
   @Override
@@ -71,6 +74,6 @@ public class StrUnicodeDecompose extends Node<String>
   @Override
   public Collection<? extends Node<?>> children ()
   {
-    return Collections.singleton (stringExpr);
+    return singleton (stringExpr);
   }
 }

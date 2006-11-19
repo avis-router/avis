@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.avis.pubsub.ast.Node;
-import org.avis.pubsub.ast.Nodes;
 import org.avis.pubsub.ast.ParentBiNode;
 
+import static org.avis.pubsub.ast.Nodes.className;
 import static org.avis.util.Numbers.highestPrecision;
 import static org.avis.util.Numbers.upconvert;
 
@@ -18,9 +18,16 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
   private int inequality;
   private int equality;
   
+  /**
+   * Create compare node from a list of comparable children (size >=
+   * 2). If more than two children, generates an OR wrapper.
+   */
   public static Node<Boolean> create (List<Node<? extends Comparable>> args)
   {
-    if (args.size () == 2)
+    if (args.size () < 2)
+    {
+      throw new IllegalArgumentException ("Two or more children required");
+    } else if (args.size () == 2)
     {
       return new Compare (args.get (0), args.get (1), 0, 0);
     } else
@@ -60,7 +67,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
                 !Comparable.class.isAssignableFrom (childType)))
     {
       return expr () + " cannot have expression of type " +
-             Nodes.className (childType) + " as an argument";
+             className (childType) + " as an argument";
     } else if (child1 != null)
     {
       Class evalType = child1.evalType ();
