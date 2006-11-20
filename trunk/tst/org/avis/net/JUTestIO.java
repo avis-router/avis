@@ -79,7 +79,7 @@ public class JUTestIO
       assertEquals (o1 [i], o2 [i]);
   }
 
-  private void assertMapsEqual (HashMap<String, Object> map1,
+  private void assertMapsEqual (Map<String, Object> map1,
                                 Map<String, Object> map2)
   {
     assertEquals (map1.size (), map2.size ());
