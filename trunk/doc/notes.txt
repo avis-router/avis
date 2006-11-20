@@ -20,6 +20,18 @@ Issues for David
 * DONE:elvind does not do byte_size_max
 * DONE:what is QosRqst? mentioned in 7.5 for changing options
 
+Changelog
+----------------------------------------------------------------------
+
+to find revision of tag:
+
+svn log --stop-on-copy https://svn.sourceforge.net/svnroot/avis/tags/release_0.4
+
+to create change log since tag
+
+svn2cl -r XXXX:HEAD https://svn.sourceforge.net/svnroot/avis/trunk
+
+
 Router options
 
 router.vendor-identification=Mantara elvind 4.4.0
