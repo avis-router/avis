@@ -183,9 +183,40 @@ public class ConnectionOptions
     this.options = validate (requestedOptions);
   }
   
+  /**
+   * Put an option value.
+   * 
+   * @param name The option name.
+   * @param value The new value.
+   * 
+   * @see #putWithCompat(String, Object)
+   */
   public void put (String name, Object value)
   {
+    if (!(value instanceof Integer || value instanceof String))
+      throw new IllegalArgumentException
+        ("Value must be an integer or a string: " + value);
+    
     options.put (name, value);
+  }
+  
+  /**
+   * Put a value both both under the standard option name and it's
+   * older compatible name (if any).
+   * 
+   * @param name The option name.
+   * @param value The new value.
+   * 
+   * @see #put(String, Object)
+   */
+  public void putWithCompat (String name, Object value)
+  {
+    put (name, value);
+    
+    String oldName = NEW_TO_COMPAT.get (name);
+    
+    if (oldName != null)
+      put (oldName, value);
   }
   
   /**
