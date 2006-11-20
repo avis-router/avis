@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import java.nio.BufferUnderflowException;
-import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -14,6 +13,7 @@ import java.nio.charset.CharsetEncoder;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import static java.nio.CharBuffer.wrap;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -77,7 +77,7 @@ public final class IO
       if (string.length () == 0)
         return EMPTY_BYTES;
       else
-        return UTF8_ENCODER.get ().encode (CharBuffer.wrap (string)).array ();
+        return UTF8_ENCODER.get ().encode (wrap (string)).array ();
     } catch (CharacterCodingException ex)
     {
       // shouldn't be possible to get an error encoding from UTF-16 to UTF-8.
