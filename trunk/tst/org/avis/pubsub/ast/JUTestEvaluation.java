@@ -7,6 +7,8 @@ import java.io.StringReader;
 
 import java.lang.reflect.Constructor;
 
+import org.junit.Test;
+
 import org.avis.Notification;
 import org.avis.pubsub.ast.nodes.And;
 import org.avis.pubsub.ast.nodes.Compare;
@@ -41,10 +43,13 @@ import org.avis.pubsub.ast.nodes.Xor;
 import org.avis.pubsub.parser.ParseException;
 import org.avis.pubsub.parser.SubscriptionParser;
 
-import org.junit.Test;
-
+import static java.lang.Double.NaN;
+import static org.avis.pubsub.ast.Node.BOTTOM;
 import static org.avis.pubsub.ast.Node.EMPTY_NOTIFICATION;
-
+import static org.avis.pubsub.ast.Node.FALSE;
+import static org.avis.pubsub.ast.Node.TRUE;
+import static org.avis.pubsub.ast.nodes.StrUnicodeDecompose.DECOMPOSE;
+import static org.avis.pubsub.ast.nodes.StrUnicodeDecompose.DECOMPOSE_COMPAT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -56,10 +61,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class JUTestEvaluation
 {
-  private static final Boolean TRUE = Node.TRUE;
-  private static final Boolean FALSE = Node.FALSE;
-  private static final Boolean BOTTOM = Node.BOTTOM;
-  
   /** All tri-state logic states. */
   private static final Boolean [] LOGIC_STATES =
     new Boolean [] {TRUE, BOTTOM, FALSE};
@@ -80,7 +81,8 @@ public class JUTestEvaluation
    * Test NOT, AND, OR and XOR logic operators against their tri-state
    * truth tables.
    */
-  @Test public void logicOps ()
+  @Test
+  public void logicOps ()
     throws Exception
   {
     int index;
@@ -113,7 +115,8 @@ public class JUTestEvaluation
   /**
    * Basic test for the Compare operator minus numeric conversion.
    */
-  @Test public void compare ()
+  @Test
+  public void compare ()
   {
     // less than: 10 < 20
     assertTrue ("10 < 20", compare (10, 20, -1, 2));
@@ -142,7 +145,8 @@ public class JUTestEvaluation
    * Test logic operator expressions using operators in LOGIC_OP_EXPR1
    * and LOGIC_OP_EXPR2.
    */
-  @Test public void logicOpExprs ()
+  @Test
+  public void logicOpExprs ()
   {
     Node<Boolean> expr1 = logicOpExpr1 ();
     
@@ -202,7 +206,8 @@ public class JUTestEvaluation
     assertEquals (BOTTOM, expr2.evaluate (n8));
   }
   
-  @Test public void functions ()
+  @Test
+  public void functions ()
     throws Exception
   {
     Notification ntfn;
@@ -253,19 +258,19 @@ public class JUTestEvaluation
     assertEquals ("\u0041\u0301",
                   new StrUnicodeDecompose
                     (new Const<String> ("\u00C1"),
-                     StrUnicodeDecompose.DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
+                     DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
     assertEquals ("A\u0308\uFB03n",
                   new StrUnicodeDecompose
                     (new Const<String> ("\u00C4\uFB03n"),
-                     StrUnicodeDecompose.DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
+                     DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
     assertEquals ("A\u0308ffin",
                   new StrUnicodeDecompose
                     (new Const<String> ("\u00C4\uFB03n"),
-                     StrUnicodeDecompose.DECOMPOSE_COMPAT).evaluate (Node.EMPTY_NOTIFICATION));
+                     DECOMPOSE_COMPAT).evaluate (EMPTY_NOTIFICATION));
     
     // nan
     ntfn = new Notification ();
-    ntfn.put ("nan", Double.NaN);
+    ntfn.put ("nan", NaN);
     ntfn.put ("notnan", 42.0);
     ntfn.put ("notnan_int", 42);
     
@@ -307,7 +312,8 @@ public class JUTestEvaluation
    * 42) work.
    */
   @SuppressWarnings("unchecked")
-  @Test public void compareMultitype ()
+  @Test
+  public void compareMultitype ()
   {
     Notification ntfn = new Notification ();
     ntfn.put ("name", "foobar");
@@ -315,16 +321,17 @@ public class JUTestEvaluation
     Node<Boolean> node = Compare.create (argsList (new Field<String> ("name"),
                                                    Const.string ("foobar"),
                                                    Const.int32 (42)));
-    assertEquals (Node.TRUE, node.evaluate (ntfn));
+    assertEquals (TRUE, node.evaluate (ntfn));
     
     ntfn.put ("name", 42);
-    assertEquals (Node.TRUE, node.evaluate (ntfn));
+    assertEquals (TRUE, node.evaluate (ntfn));
     
     ntfn.put ("name", new byte [] {1, 2, 3});
-    assertEquals (Node.BOTTOM, node.evaluate (ntfn));
+    assertEquals (BOTTOM, node.evaluate (ntfn));
   }
   
-  @Test public void mathOps ()
+  @Test
+  public void mathOps ()
     throws Exception
   {
     testMathOp (MathMinus.class, 20 - 30, Const.int32 (20), Const.int32 (30));
@@ -407,7 +414,8 @@ public class JUTestEvaluation
   /**
    * Test that the Compare node handles upconverting numeric children.
    */
-  @Test public void numericPromotion ()
+  @Test
+  public void numericPromotion ()
   {
     Const<Long> thirtyTwoLong = new Const<Long> (32L);
     Const<Integer> thirtyTwoInt = new Const<Integer> (32);
@@ -446,7 +454,8 @@ public class JUTestEvaluation
    * Test inlining of constant sub-expressions. NOTE: this depends on
    * the parser to generate AST's.
    */
-  @Test public void constantExpressions ()
+  @Test
+  public void constantExpressions ()
     throws ParseException
   {
     // test reduction to constant
@@ -535,8 +544,8 @@ public class JUTestEvaluation
   private static void assertReducesTo (String subExpr, String treeExpr)
     throws ParseException
   {
-//    System.out.println ("tree: " +
-//                        Nodes.unparse (parse (subExpr).expandConstants ()));
+    // System.out.println ("tree: " +
+    //                     Nodes.unparse (parse (subExpr).expandConstants ()));
     assertEquals (treeExpr,
                   Nodes.unparse (parse (subExpr).inlineConstants ()));
   }
@@ -594,7 +603,7 @@ public class JUTestEvaluation
     return new Compare
       (new Const<Integer> (n1),
        new Const<Integer> (n2),
-       inequality, equality).evaluate (new Notification ());
+       inequality, equality).evaluate (EMPTY_NOTIFICATION);
   }
   
  /**
