@@ -266,7 +266,8 @@ public class Server implements IoHandler
     // todo support other standard connection options
     updateCoalesceDelay (session, connection);
     
-    connection.options.put ("Vendor-Identification", "Avis " + ROUTER_VERSION);
+    connection.options.putWithCompat
+      ("Vendor-Identification", "Avis " + ROUTER_VERSION);
     
     connection.lockWrite ();
     
