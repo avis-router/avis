@@ -187,7 +187,7 @@ public class Server implements IoHandler
     return (Connection)session.getAttachment ();
   }
 
-  // ProtocolHandler interface
+  // IoHandler interface
 
   public void messageReceived (IoSession session, Object messageObject)
     throws Exception
@@ -424,8 +424,8 @@ public class Server implements IoHandler
    * 
    * @param message The message (a UNotify or a NotifyEmit).
    * @param notificationKeys The global notification keys that apply
-   *          to message. These are in addition to any keys attached
-   *          to the message itself.
+   *          to the message. These are in addition to any keys
+   *          attached to the message itself.
    */
   private void deliverNotification (Notify message, Keys notificationKeys)
   {
