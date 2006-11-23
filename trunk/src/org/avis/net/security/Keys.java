@@ -248,21 +248,6 @@ public class Keys
       }
     }
   }
-  
-  /**
-   * Create a new key collection with some keys added/removed. NOTE:
-   * this does not modify the current collection.
-   * 
-   * @param addKeys Keys to add.
-   * @param removeKeys Keys to remove
-   * 
-   * @return A new key set with keys added remove. If both add/remove
-   *         key sets are empty, this returns the current instance.
-   */
-  public Keys newWithDelta (Keys addKeys, Keys removeKeys)
-  {
-    return delta (addKeys, removeKeys);
-  }
 
   /**
    * Create a new key collection with some keys added/removed. This
