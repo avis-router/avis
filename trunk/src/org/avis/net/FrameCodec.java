@@ -143,10 +143,8 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
       return OK;
     } else if (in.remaining () < frameSize)
     {
-      // TODO: this causes errors for big (but valid) packets. why?
-      // does MINA not want us to change the limit in this method?
-      // if (in.limit () < frameSize + 4)
-      //   in.limit (frameSize + 4);
+      if (in.capacity () < frameSize + 4)
+        in.expand (frameSize + 4);
       
       return NEED_DATA;
     } else
