@@ -44,9 +44,11 @@ import org.avis.pubsub.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
+import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.diagnostic;
 import static dsto.dfc.logging.Log.isEnabled;
+import static dsto.dfc.logging.Log.trace;
 import static dsto.dfc.logging.Log.warn;
 
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
@@ -59,6 +61,8 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 public class Server implements IoHandler
 {
+  public static final int DEFAULT_PORT = 2917;
+  
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
   
@@ -66,6 +70,12 @@ public class Server implements IoHandler
   
   // todo surely we don't have to track sessions ourselves?
   private Set<IoSession> sessions;
+  
+  public Server ()
+    throws IOException
+  {
+    this (DEFAULT_PORT);
+  }
   
   public Server (int port)
     throws IOException
@@ -192,8 +202,8 @@ public class Server implements IoHandler
   public void messageReceived (IoSession session, Object messageObject)
     throws Exception
   {
-    if (isEnabled (DIAGNOSTIC))
-      diagnostic ("Server got message: " + messageObject, this);
+    if (isEnabled (TRACE))
+      trace ("Server got message: " + messageObject, this);
     
     Message message = (Message)messageObject;
 
