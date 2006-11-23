@@ -28,7 +28,10 @@ import org.avis.net.messages.SubAddRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.security.Keys;
 
-import dsto.dfc.logging.Log;
+import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.trace;
+
+import static java.lang.System.currentTimeMillis;
 
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.net.server.JUTestServer.PORT;
@@ -41,9 +44,9 @@ import static org.junit.Assert.assertTrue;
  */
 class SimpleClient implements IoHandler
 {
-  private IoSession clientSession;
-  private boolean connected;
-  private volatile Message lastReply;
+  protected IoSession clientSession;
+  protected boolean connected;
+  protected volatile Message lastReceived;
 
   public String clientName;
   
@@ -108,14 +111,14 @@ class SimpleClient implements IoHandler
   public synchronized Message receive (int timeout)
     throws InterruptedException, MessageTimeoutException
   {
-    if (lastReply == null)
+    if (lastReceived == null)
       wait (timeout);
     
-    if (lastReply != null)
+    if (lastReceived != null)
     {
-      Message message = lastReply;
+      Message message = lastReceived;
       
-      lastReply = null;
+      lastReceived = null;
       
       return message;
     } else
@@ -180,33 +183,54 @@ class SimpleClient implements IoHandler
     if (connected && clientSession.isConnected ())
     {
       send (new DisconnRqst ());
-      assertTrue (receive () instanceof DisconnRply);
+      //assertTrue ("No disconnect reply", receive () instanceof DisconnRply);
+      waitFor (DisconnRply.class);
     }
     
     clientSession.close ();
     clientSession = null;
   }
-
-  // ProtocolHandler interface
   
+  /**
+   * Wait until we receive a message of a given type.
+   */
+  protected Message waitFor (Class<? extends Message> type)
+    throws MessageTimeoutException, InterruptedException
+  {
+    long start = currentTimeMillis ();
+    
+    while (currentTimeMillis () - start <= 5000)
+    {
+      Message message = receive ();
+      
+      if (type.isAssignableFrom (message.getClass ()))
+        return message;
+    }
+    
+    throw new MessageTimeoutException
+      ("Failed to receive a " + type.getName ());
+  }
+
+  // IoHandler interface
+
   public void exceptionCaught (IoSession session, Throwable ex) 
     throws Exception
   {
-    Log.alarm (clientName + ": client internal exception", this, ex);
+    alarm (clientName + ": client internal exception", this, ex);
   }
 
   public synchronized void messageReceived (IoSession session,
                                             Object message)
     throws Exception
   {
-    if (lastReply != null)
+    if (lastReceived != null)
       throw new AssertionFailedError
-        (clientName + ": uncollected reply: " + lastReply +
+        (clientName + ": uncollected reply: " + lastReceived +
          " (replacement is " + message + ")");
     
-    Log.trace (clientName + ": message received: " + message, this);
+    trace (clientName + ": message received: " + message, this);
     
-    lastReply = (Message)message;
+    lastReceived = (Message)message;
     
     notifyAll ();
   }
