@@ -5,7 +5,8 @@ TODO
 * how do we handle other langs in SVN? do we need to? e.g. should
   Python binding be a separate project?
 * add basic settings to become net ready: limit connection counts,
-  subs, bandwidth etc to avoid DOS attacks
+  subs, bandwidth etc to avoid DOS attacks possible to OOM the server by
+  flooding it with fairly large packets.
 * add Unix and windows service wrappers and installers
 * add message logging via MINA filter, remove current crusty approach
 * what happens when sending ntfn to client that's too big?
