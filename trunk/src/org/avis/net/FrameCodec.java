@@ -140,13 +140,13 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     if (frameSize > options.getInt ("Packet.Max-Length"))
     {
       // when frame too big, OK it and let decode () generate error
-      in.limit (options.getInt ("Packet.Max-Length"));
-      
       return OK;
     } else if (in.remaining () < frameSize)
     {
-      if (in.limit () < frameSize + 4)
-        in.limit (frameSize + 4);
+      // TODO: this causes errors for big (but valid) packets. why?
+      // does MINA not want us to change the limit in this method?
+      // if (in.limit () < frameSize + 4)
+      //   in.limit (frameSize + 4);
       
       return NEED_DATA;
     } else
