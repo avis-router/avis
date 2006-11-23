@@ -43,8 +43,15 @@ class Connection
    * accessed and modified across sessions.
    */
   private Map<Long, Subscription> subscriptions;
-  
-  private ReentrantReadWriteLock locks;
+
+  /**
+   * TODO opt: could look at using the concept of a SeqLock for this
+   * instead of a traditional lock. For our situation where we mainly
+   * read, SeqLock's greatly reduce cache invalidation due to repeatedly
+   * modifying the lock.
+   * See http://blogs.sun.com/dave/entry/seqlocks_in_java.
+   */
+  private ReentrantReadWriteLock lock;
 
   public Connection (Map<String, Object> options,
                      Keys subscriptionKeys, Keys notificationKeys)
@@ -53,7 +60,7 @@ class Connection
     this.subscriptionKeys = subscriptionKeys;
     this.notificationKeys = notificationKeys;
     this.options = new ConnectionOptions (options);
-    this.locks = new ReentrantReadWriteLock (true);
+    this.lock = new ReentrantReadWriteLock (true);
   }
 
   /**
@@ -76,12 +83,12 @@ class Connection
    */
   public void lockWrite ()
   {
-    locks.writeLock ().lock ();
+    lock.writeLock ().lock ();
   }
 
   public void unlockWrite ()
   {
-    locks.writeLock ().unlock ();
+    lock.writeLock ().unlock ();
   }
   
   /**
@@ -90,12 +97,12 @@ class Connection
    */
   public void lockRead ()
   {
-    locks.readLock ().lock ();
+    lock.readLock ().lock ();
   }
 
   public void unlockRead ()
   {
-    locks.readLock ().unlock ();
+    lock.readLock ().unlock ();
   }
   
   public void addSubscription (Subscription sub)
@@ -112,10 +119,6 @@ class Connection
    * Match a given set of attributes against this connection's
    * subscriptions and return the ID's of those subscriptions that
    * match.
-   * <p>
-   * This is the one method that may be called from multiple sessions.
-   * It is made thread safe by the classes' use of
-   * {@link ConcurrentHashMap}.
    * 
    * @param attributes The attributes to match.
    * @param globalKeys The set of notification keys that apply to all
