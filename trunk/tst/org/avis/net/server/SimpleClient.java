@@ -44,6 +44,8 @@ import static org.junit.Assert.assertTrue;
  */
 class SimpleClient implements IoHandler
 {
+  protected static final int RECEIVE_TIMEOUT = 5000;
+  
   protected IoSession clientSession;
   protected boolean connected;
   protected volatile Message lastReceived;
@@ -98,19 +100,24 @@ class SimpleClient implements IoHandler
   }
 
   public void send (Message message)
+    throws NoConnectionException
   {
+    checkConnected ();
     clientSession.write (message);
   }
   
   public Message receive ()
-    throws InterruptedException, MessageTimeoutException
+    throws InterruptedException, MessageTimeoutException, NoConnectionException
   {
-    return receive (5000);
+    return receive (RECEIVE_TIMEOUT);
   }
 
   public synchronized Message receive (int timeout)
-    throws InterruptedException, MessageTimeoutException
+    throws InterruptedException, MessageTimeoutException,
+           NoConnectionException
   {
+    checkConnected ();
+    
     if (lastReceived == null)
       wait (timeout);
     
@@ -126,6 +133,35 @@ class SimpleClient implements IoHandler
       throw new MessageTimeoutException
         (clientName + " did not receive a reply");
     }
+  }
+
+  private void checkConnected ()
+    throws NoConnectionException
+  {
+    if (!clientSession.isConnected ())
+      throw new NoConnectionException ("Not connected");
+  }
+  
+  /**
+   * Wait until we receive a message of a given type. Other messages
+   * are discarded.
+   * @throws NoConnectionException 
+   */
+  public Message receive (Class<? extends Message> type)
+    throws MessageTimeoutException, InterruptedException, NoConnectionException
+  {
+    long start = currentTimeMillis ();
+    
+    while (currentTimeMillis () - start <= RECEIVE_TIMEOUT)
+    {
+      Message message = receive ();
+      
+      if (type.isAssignableFrom (message.getClass ()))
+        return message;
+    }
+    
+    throw new MessageTimeoutException
+      ("Failed to receive a " + type.getName ());
   }
 
   public void notify (Notification ntfn, boolean deliverInsecure)
@@ -172,6 +208,8 @@ class SimpleClient implements IoHandler
   public void connect ()
     throws Exception
   {
+    checkConnected ();
+    
     send (new ConnRqst (4, 0));
     assertTrue (receive () instanceof ConnRply);
     connected = true;
@@ -183,8 +221,7 @@ class SimpleClient implements IoHandler
     if (connected && clientSession.isConnected ())
     {
       send (new DisconnRqst ());
-      //assertTrue ("No disconnect reply", receive () instanceof DisconnRply);
-      waitFor (DisconnRply.class);
+      receive (DisconnRply.class);
     }
     
     clientSession.close ();
@@ -192,23 +229,13 @@ class SimpleClient implements IoHandler
   }
   
   /**
-   * Wait until we receive a message of a given type.
+   * Close session with no disconnect request.
    */
-  protected Message waitFor (Class<? extends Message> type)
-    throws MessageTimeoutException, InterruptedException
+  public void closeImmediately ()
   {
-    long start = currentTimeMillis ();
-    
-    while (currentTimeMillis () - start <= 5000)
-    {
-      Message message = receive ();
-      
-      if (type.isAssignableFrom (message.getClass ()))
-        return message;
-    }
-    
-    throw new MessageTimeoutException
-      ("Failed to receive a " + type.getName ());
+    connected = false;
+    clientSession.close ();
+    clientSession = null;
   }
 
   // IoHandler interface
