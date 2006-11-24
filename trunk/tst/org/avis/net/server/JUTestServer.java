@@ -408,7 +408,8 @@ public class JUTestServer
     nack = (Nack)badClient.receive ();
     assertEquals (connRqst.xid, nack.xid);
     
-    badClient.close ();
+    // server will have disconnected us for being Bad, so just kill socket
+    badClient.closeImmediately ();
 
     // modify non-existent sub
     badClient = new SimpleClient ();
