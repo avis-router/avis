@@ -201,7 +201,7 @@ public class ConnectionOptions
   }
   
   /**
-   * Put a value both both under the standard option name and it's
+   * Put a value both under the standard option name and its
    * older compatible name (if any).
    * 
    * @param name The option name.
