@@ -23,7 +23,7 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
  */
 public class ConnRqst extends XidMessage
 {
-  private static final Map<String, Object> EMPTY_OPTIONS = Collections.emptyMap ();
+  public static final Map<String, Object> EMPTY_OPTIONS = Collections.emptyMap ();
 
   public static final int ID = 49;
   
