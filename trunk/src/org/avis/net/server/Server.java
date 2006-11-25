@@ -57,6 +57,7 @@ import static dsto.dfc.logging.Log.warn;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
+import static org.avis.net.messages.Nack.IMPL_LIMIT;
 import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
@@ -365,13 +366,19 @@ public class Server implements IoHandler
 
     try
     {
-      Subscription subscription =
-        new Subscription (message.subscriptionExpr,
-                          message.keys, message.acceptInsecure);
-     
-      connection.addSubscription (subscription);
-
-      session.write (new SubRply (message, subscription.id));
+      if (!connection.subscriptionsFull ())
+      {
+        Subscription subscription =
+          new Subscription (message.subscriptionExpr,
+                            message.keys, message.acceptInsecure);
+       
+        connection.addSubscription (subscription);
+  
+        session.write (new SubRply (message, subscription.id));
+      } else
+      {
+        session.write (new Nack (message, IMPL_LIMIT, "Too many subscriptions"));
+      }
     } catch (ParseException ex)
     {
       diagnostic ("Subscription add failed with parse error: " +
@@ -628,7 +635,8 @@ public class Server implements IoHandler
   public void sessionCreated (IoSession session)
     throws Exception
   {
-    // set idle time for readers to 15 seconds: client has this long to connect
+    // set idle time to 15 seconds: client has this long to connect or UNotify
+    // todo idle time should be configurable
     session.setIdleTime (READER_IDLE, 15);
     
     // install read throttle
