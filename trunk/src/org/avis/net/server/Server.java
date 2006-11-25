@@ -1,14 +1,17 @@
 package org.avis.net.server;
 
-import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
 
+import org.apache.mina.common.ExecutorThreadModel;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
+import org.apache.mina.common.IoService;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.filter.ReadThrottleFilterBuilder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
@@ -16,6 +19,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
+import org.avis.net.ConnectionOptions;
 import org.avis.net.FrameCodec;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
@@ -43,7 +47,6 @@ import org.avis.net.security.Keys;
 import org.avis.pubsub.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 
-import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.diagnostic;
@@ -68,8 +71,16 @@ public class Server implements IoHandler
   
   private SocketAcceptor acceptor;
   
-  // todo surely we don't have to track sessions ourselves?
-  private Set<IoSession> sessions;
+  /**
+   * Server maintains its own concurrently-accessible session set
+   * rather than use
+   * {@link IoService#getManagedSessions(java.net.SocketAddress)} in
+   * order to avoid overhead of copying on every traversal. This may
+   * be a premature optimization since the concurrent hash set may
+   * have just as large an overhead: if anyone cares they should
+   * profile this.
+   */
+  private ConcurrentHashSet<IoSession> sessions;
   
   public Server ()
     throws IOException
@@ -91,9 +102,16 @@ public class Server implements IoHandler
       new DemuxingProtocolCodecFactory ();
     codecFactory.register (FrameCodec.class);
     
+    // todo allow thread pool to be configured
+    ExecutorThreadModel threadModel = ExecutorThreadModel.getInstance ("avis");
+    ThreadPoolExecutor executor = (ThreadPoolExecutor)threadModel.getExecutor ();
+    executor.setCorePoolSize (16);
+    
+    config.setThreadModel (threadModel);
+    
     config.getFilterChain ().addLast
       ("codec", new ProtocolCodecFilter (codecFactory));
-
+    
     acceptor.bind (new InetSocketAddress (port), this, config);
   }
 
@@ -275,6 +293,7 @@ public class Server implements IoHandler
     
     // todo support other standard connection options
     updateCoalesceDelay (session, connection);
+    updateQueueLength (session, connection);
     
     connection.options.putWithCompat
       ("Vendor-Identification", "Avis " + ROUTER_VERSION);
@@ -487,7 +506,8 @@ public class Server implements IoHandler
       session.write (new ConfConn ());
   }
   
-  private static void handleQuench (IoSession session, QuenchPlaceHolder message)
+  private static void handleQuench (IoSession session,
+                                    QuenchPlaceHolder message)
   {
     // TODO implement quench support here
     diagnostic
@@ -532,6 +552,21 @@ public class Server implements IoHandler
       connection.options.remove ("Network.Coalesce-Delay"); 
     }
   }
+  
+  /**
+   * Update the receive/send queue lengths based on connection
+   * options. Currently only implements Receive-Queue.Max-Length using
+   * MINA's ReadThrottleFilterBuilder filter.
+   */
+  private static void updateQueueLength (IoSession session,
+                                         Connection connection)
+  {
+    ReadThrottleFilterBuilder readThrottle =
+      (ReadThrottleFilterBuilder)session.getAttribute ("readThrottle");
+    
+    readThrottle.setMaximumConnectionBufferSize
+      (connection.options.getInt ("Receive-Queue.Max-Length"));
+  }
 
   /**
    * Create a NACK response for a parse error with error info.
@@ -547,14 +582,14 @@ public class Server implements IoHandler
   public void exceptionCaught (IoSession session, Throwable ex)
     throws Exception
   {
-    warn ("Server exception", this, ex);
+    alarm ("Server exception", this, ex);
   }
   
   public void messageSent (IoSession session, Object message)
     throws Exception
   {
-    if (isEnabled (DIAGNOSTIC))
-      diagnostic ("Server sent message: " + message, this);
+    if (isEnabled (TRACE))
+      trace ("Server sent message: " + message, this);
   }
 
   /**
@@ -593,8 +628,17 @@ public class Server implements IoHandler
   public void sessionCreated (IoSession session)
     throws Exception
   {
-    // set idle time for readers to 30 seconds: client has this long to connect
-    session.setIdleTime (READER_IDLE, 30);
+    // set idle time for readers to 15 seconds: client has this long to connect
+    session.setIdleTime (READER_IDLE, 15);
+    
+    // install read throttle
+    ReadThrottleFilterBuilder readThrottle = new ReadThrottleFilterBuilder ();
+    readThrottle.setMaximumConnectionBufferSize
+      (ConnectionOptions.getDefaultInt ("Receive-Queue.Max-Length"));
+    
+    readThrottle.attach (session.getFilterChain ());
+    
+    session.setAttribute ("readThrottle", readThrottle);
     
     sessions.add (session);
   }
