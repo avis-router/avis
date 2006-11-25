@@ -107,8 +107,7 @@ public class ConnectionOptions
     defineOption ("Attribute.String.Max-Length", MAX, MAX, MAX);
     defineOption ("Subscription.Max-Length", MAX, MAX, MAX);
     
-    // todo: enforce Subscription.Max-Count
-    defineOption ("Subscription.Max-Count", 1*K, 2*K, MAX);
+    defineOption ("Subscription.Max-Count", 16, 2*K, 8*K);
 
     defineOption ("Receive-Queue.Max-Length", 1*K, 1*MB, 1*MB);
 
