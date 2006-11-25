@@ -1,5 +1,7 @@
 package org.avis.net.server;
 
+import java.util.Map;
+
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -33,6 +35,7 @@ import static dsto.dfc.logging.Log.trace;
 
 import static java.lang.System.currentTimeMillis;
 
+import static org.avis.net.messages.ConnRqst.EMPTY_OPTIONS;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.net.server.JUTestServer.PORT;
 
@@ -116,11 +119,9 @@ class SimpleClient implements IoHandler
     throws InterruptedException, MessageTimeoutException,
            NoConnectionException
   {
-    checkConnected ();
-    
     if (lastReceived == null)
       wait (timeout);
-    
+
     if (lastReceived != null)
     {
       Message message = lastReceived;
@@ -130,6 +131,9 @@ class SimpleClient implements IoHandler
       return message;
     } else
     {
+      // may have failed because we are simply not connected any more
+      checkConnected ();
+      
       throw new MessageTimeoutException
         (clientName + " did not receive a reply");
     }
@@ -205,14 +209,25 @@ class SimpleClient implements IoHandler
     }
   }
 
-  public void connect ()
+  public ConnRply connect ()
+    throws Exception
+  {
+    return connect (EMPTY_OPTIONS);
+  }
+  
+  public ConnRply connect (Map<String, Object> options)
     throws Exception
   {
     checkConnected ();
     
-    send (new ConnRqst (4, 0));
-    assertTrue (receive () instanceof ConnRply);
+    send (new ConnRqst (4, 0, options));
+    
+    Message reply = receive ();
+    
+    assertTrue (reply instanceof ConnRply);
     connected = true;
+    
+    return (ConnRply)reply;
   }
 
   public void close ()
