@@ -7,6 +7,7 @@ import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.info;
 import static dsto.dfc.logging.Log.setEnabled;
+import static dsto.dfc.logging.Log.warn;
 
 import static java.lang.Thread.sleep;
 
@@ -25,7 +26,11 @@ public class JUTestServerRobustness
   
   /**
    * A bad client sends a continuous flood of large messages while
-   * three others try to exchange messages.
+   * three others try to exchange messages. This test doesn't actually
+   * assert anything, but does test througput and failure modes.
+   * Without a read throttling feature either server or clients
+   * generally blow the heap in this test. Obviously we're trying to
+   * avoid allowing a client to nuke the server's heap.
    */
   @Test
   public void flooding ()
@@ -55,7 +60,14 @@ public class JUTestServerRobustness
     goodClient2.stopSending ();    
     goodClient3.stopSending ();    
     
-    badClient.close ();
+    try
+    {
+      badClient.close ();
+    } catch (MessageTimeoutException ex)
+    {
+      warn ("Bad client close () failed: " + ex.getMessage (), this);
+    }
+    
     goodClient1.close ();
     goodClient2.close ();
     goodClient3.close ();
