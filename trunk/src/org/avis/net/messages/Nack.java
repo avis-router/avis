@@ -13,8 +13,9 @@ public class Nack extends XidMessage
   public static final int ID = 48;
 
   public static final int PROT_ERROR = 1001;
-  public static final int PARSE_ERROR = 2101;
   public static final int NO_SUCH_SUB = 1002;
+  public static final int IMPL_LIMIT = 2006;
+  public static final int PARSE_ERROR = 2101;
  
   private static final Object [] EMPTY_ARGS = new Object [0];
   
