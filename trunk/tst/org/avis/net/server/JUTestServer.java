@@ -87,22 +87,19 @@ public class JUTestServer
     
     HashMap<String, Object> options = new HashMap<String, Object> ();
     options.put ("Packet.Max-Length", 1024);
+    options.put ("Subscription.Max-Count", 16);
     options.put ("Attribute.Opaque.Max-Length", 2048 * 1024);
     options.put ("Network.Coalesce-Delay", 0);
     options.put ("Bogus", "not valid");
     
-    ConnRqst connRqst = new ConnRqst (4, 0, options);
-    client.send (connRqst);
-    
-    ConnRply connReply = (ConnRply)client.receive ();
-    
-    assertEquals (connRqst.xid, connReply.xid);
+    ConnRply connReply = client.connect (options);
     
     // todo: when Attribute.Opaque.Max-Length supported, switch lines below
     // assertEquals (2048 * 1024, reply.options.get ("Attribute.Opaque.Max-Length"));
     assertEquals (Integer.MAX_VALUE, connReply.options.get ("Attribute.Opaque.Max-Length"));
     assertEquals (0, connReply.options.get ("Network.Coalesce-Delay"));
     assertEquals (1024, connReply.options.get ("Packet.Max-Length"));
+    assertEquals (16, connReply.options.get ("Subscription.Max-Count"));
     assertNull (connReply.options.get ("Bogus"));
     
     // try to send a frame bigger than 1K, check server rejects
@@ -114,6 +111,22 @@ public class JUTestServer
     Nack nack = (Nack)client.receive ();
     
     assertEquals (secRqst.xid, nack.xid);
+    
+    client.closeImmediately ();
+    
+    // test Subscription.Max-Count enforcement
+    
+    client = new SimpleClient ("localhost", PORT);
+    client.connect (options);
+    
+    for (int i = 0; i < 16; i++)
+      client.subscribe ("Count == " + i);
+    
+    SubAddRqst subAddRqst = new SubAddRqst ("Invalid == 1");
+    client.send (subAddRqst);
+    nack = (Nack)client.receive ();
+    
+    assertEquals (subAddRqst.xid, nack.xid);
     
     client.close ();
     server.close ();
