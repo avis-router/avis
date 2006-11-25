@@ -33,7 +33,7 @@ public class MaliciousClient extends AgentClient
   
   class FloodTask extends TimerTask
   {
-    private final byte [] BIG_BLOB = new byte [50 * 1024];
+    private final byte [] BIG_BLOB = new byte [500 * 1024];
 
     @Override
     public void run ()
