@@ -114,6 +114,15 @@ class Connection
   {
     return subscriptions.remove (subscriptionId);
   }
+  
+  /**
+   * Test if subscriptions are at or exceed the limit set by the
+   * Subscription.Max-Count connection option.
+   */
+  public boolean subscriptionsFull ()
+  {
+    return subscriptions.size () >= options.getInt ("Subscription.Max-Count");
+  }
 
   /**
    * Match a given set of attributes against this connection's
