@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import static org.avis.Common.K;
+import static org.avis.Common.MAX;
+import static org.avis.Common.MB;
+
 /**
  * Handles Avis connection options: definition, validation and legacy
  * compatibility.
@@ -75,10 +79,6 @@ public class ConnectionOptions
   private static final Map<String, String> COMPAT_TO_NEW;
   private static final Map<String, String> NEW_TO_COMPAT;
   
-  private static final int K = 1024;
-  private static final int MB = 1024 * 1024;
-  private static final int MAX = Integer.MAX_VALUE;
-  
   static
   {
     DEFAULT_VALUES = new HashMap<String, Object> ();
@@ -110,18 +110,19 @@ public class ConnectionOptions
     // todo: enforce Subscription.Max-Count
     defineOption ("Subscription.Max-Count", 1*K, 2*K, MAX);
 
-    // todo: enforce queue-related options. Also need to look at defaults
+    defineOption ("Receive-Queue.Max-Length", 1*K, 1*MB, 1*MB);
+
+    // todo: enforce following queue-related options
     defineOption ("Receive-Queue.Drop-Policy",
                   "oldest", "newest", "largest", "fail");
-    defineOption ("Receive-Queue.High-Water", 1*MB, 4*MB, MAX);
-    defineOption ("Receive-Queue.Low-Water", 1*K, 4*MB, MAX);
-    defineOption ("Receive-Queue.Max-Length", 1*K, 4*MB, MAX);
+    defineOption ("Receive-Queue.High-Water", MAX, MAX, MAX);
+    defineOption ("Receive-Queue.Low-Water", MAX, MAX, MAX);
     
     defineOption ("Send-Queue.Drop-Policy",
                   "oldest", "newest", "largest", "fail");
-    defineOption ("Send-Queue.High-Water", 1*MB, 4*MB, MAX);
-    defineOption ("Send-Queue.Low-Water", 1*K, 4*MB, MAX);
-    defineOption ("Send-Queue.Max-Length", 1*K, 4*MB, MAX);
+    defineOption ("Send-Queue.High-Water", MAX, MAX, MAX);
+    defineOption ("Send-Queue.Low-Water", MAX, MAX, MAX);
+    defineOption ("Send-Queue.Max-Length", MAX, MAX, MAX);
 
     defineOption ("Supported-Key-Schemes", "SHA-1");
     
@@ -242,20 +243,28 @@ public class ConnectionOptions
     return DEFAULT_VALUES.get (compatToNew (name));
   }
   
+  public static int getDefaultInt (String name)
+  {
+    return intValue (name, getDefault (name));
+  }
+
   public int getInt (String name)
   {
-    Object value = get (name);
-    
-    if (value instanceof Integer)
-      return (Integer)value;
-    else
-      throw new IllegalArgumentException
-        (name + " does not refer to an integer value");
+    return intValue (name, get (name));
   }
   
   public void remove (String name)
   {
     options.remove (name);
+  }
+  
+  private static int intValue (String name, Object value)
+  {
+    if (value instanceof Integer)
+      return (Integer)value;
+    else
+      throw new IllegalArgumentException
+        (name + " does not refer to an integer value: " + value);
   }
 
   /**
