@@ -1,12 +1,11 @@
 TODO
 
+* router-wide options like max connections, thread pool size, etc. some could
+  apply as max/min for connection options.
 * ewafd-equivalent. built in?
 * do we need SSL/TLS in 1.0?
 * how do we handle other langs in SVN? do we need to? e.g. should
   Python binding be a separate project?
-* add basic settings to become net ready: limit connection counts,
-  subs, bandwidth etc to avoid DOS attacks possible to OOM the server by
-  flooding it with fairly large packets.
 * add Unix and windows service wrappers and installers
 * add message logging via MINA filter, remove current crusty approach
 * what happens when sending ntfn to client that's too big?
@@ -17,6 +16,9 @@ TODO
 * write a multi-threaded test thrasher to test consistency
 * write a multi-threaded test thrasher to try to crash server
 * write multithreaded "fuzz" test: fire random messages
+* DONE: add basic settings to become net ready: limit connection counts,
+  subs, bandwidth etc to avoid DOS attacks possible to OOM the server by
+  flooding it with fairly large packets.
 * DONE: basic enforcment of connection options
 * DONE: test performance after MINA 1.0 port. seems to be slower on
   test_threaded_clients (old 6s, new 12s)
