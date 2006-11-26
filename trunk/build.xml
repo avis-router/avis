@@ -17,6 +17,8 @@
   
   <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
   <property name="javacc.home" value="../javacc-4.0" />
+
+  <property name="javancss.home" value="../javancss28.49" />
   
   <!-- Markdown 1.0.1: only needed to build web page -->
   <property name="markdown" value="/Users/matt/bin/Markdown.pl" />
@@ -213,6 +215,23 @@
       <arg value="doc/web/" />
       <arg value="sourceforge:/home/groups/a/av/avis/htdocs/" />
     </exec>
+  </target>
+
+  <target name="code_size"
+          description="Generate code size metrics with JavaNCSS">
+    
+    <path id="javancss.classpath">
+      <fileset dir="${javancss.home}/lib" includes="*.jar" />
+    </path>
+
+    <taskdef name="javancss"
+             classname="javancss.JavancssAntTask"
+             classpathref="javancss.classpath" />
+
+    <javancss srcdir="src"
+              abortOnFail="true" generateReport="true"
+              functionMetrics="false" classMetrics="false"
+              includes="**/*.java" />
   </target>
     
   <target name="clean"
