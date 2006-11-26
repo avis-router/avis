@@ -397,6 +397,7 @@ public class Server implements IoHandler
   {
     Connection connection = writeableConnectionFor (session);
 
+    // todo limit number of keys
     try
     {
       Subscription subscription =
