@@ -87,7 +87,7 @@ public class ConnectionOptions
     NEW_TO_COMPAT = new HashMap<String, String> ();
     
     // required for all implementations
-    defineOption ("Packet.Max-Length", 1*K, 1*MB, MAX);
+    defineOption ("Packet.Max-Length", 1*K, 1*MB, 10*MB);
     
     /*
      * todo: we only enforce max packet length, which by implication
