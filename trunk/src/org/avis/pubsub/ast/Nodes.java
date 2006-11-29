@@ -94,6 +94,9 @@ public final class Nodes
     str.append (')');
   }
 
+  /**
+   * Return just the name (minus the package) of a class.
+   */
   public static String className (Class type)
   {
     String name = type.getName ();
@@ -103,7 +106,7 @@ public final class Nodes
 
   /**
    * Allow a node that usually operates on two arguments to optionally
-   * operate on any number with an OR connection. e.g. can be used to
+   * operate on any number with an OR conjunction. e.g. can be used to
    * turn <tt>begins-with (name, 'value1', 'value2')</tt> into
    * <tt>begins-with (name, 'value') || begins-with (name, 'value2')</tt>.
    * 
