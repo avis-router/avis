@@ -21,7 +21,8 @@ public class JUTestParser
   /**
    * Test handling of backslash escapes in strings and identifiers.
    */
-  @Test public void escapeHandling ()
+  @Test
+  public void escapeHandling ()
   {
     String expanded;
     
@@ -64,7 +65,8 @@ public class JUTestParser
   /**
    * Test parser doesn't get confused by a function names as a field.
    */
-  @Test public void functionsAsFields ()
+  @Test
+  public void functionsAsFields ()
     throws Exception
   {
     assertParsesTo ("begins-with == 'hello'",
@@ -74,9 +76,10 @@ public class JUTestParser
   }
   
   /**
-   * Basic parse tests using comparsion and logical comparators.
+   * Basic parse tests using comparison and logical comparators.
    */
-  @Test public void basic () 
+  @Test
+  public void basic () 
     throws Exception
   {
     assertParsesTo ("field1 > 2 && field2 == 'hello\\tthere\\x23'",
@@ -92,7 +95,8 @@ public class JUTestParser
   /**
    * Test the various functions.
    */
-  @Test public void functions () 
+  @Test
+  public void functions () 
     throws Exception
   {
     assertParsesTo ("size (name)", "(size 'name')");
@@ -128,7 +132,8 @@ public class JUTestParser
   /**
    * Test infix/prefix math ops.
    */
-  @Test public void mathOps ()
+  @Test
+  public void mathOps ()
     throws Exception
   {
     assertParsesTo ("1 + 2", "(+ (int32 1) (int32 2))");
@@ -177,7 +182,9 @@ public class JUTestParser
    * Test error basic parse error detection. Some error detection
    * testing is also done as part of other tests.
    */
-  @Test public void errors () throws Exception
+  @Test
+  public void errors ()
+    throws Exception
   {
     // token errors
     assertParseError ("'\\x'");
@@ -271,7 +278,8 @@ public class JUTestParser
     return new SubscriptionParser (new StringReader (expr)).parseAndValidate ();
   }
   
-  private static Node parse (String expr) throws ParseException
+  private static Node parse (String expr)
+    throws ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parse ();
   }
