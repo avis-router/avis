@@ -70,6 +70,10 @@ import static org.avis.Common.MB;
  */
 public class ConnectionOptions
 {
+  // todo: this should be server config option
+  /** Maximum number of connection keys */
+  public static final int MAX_CONNECTION_KEYS = 1*K;
+  
   private static final Map<String, Object> EMPTY_OPTIONS = Collections.emptyMap ();
   
   private static final Map<String, Object> DEFAULT_VALUES;
@@ -78,6 +82,7 @@ public class ConnectionOptions
   // map compatibility names <-> new ones
   private static final Map<String, String> COMPAT_TO_NEW;
   private static final Map<String, String> NEW_TO_COMPAT;
+
   
   static
   {
@@ -126,8 +131,13 @@ public class ConnectionOptions
     defineOption ("Supported-Key-Schemes", "SHA-1");
     
     // optional
-    // todo: need to decide on new name for Network.Coalesce-Delay
-    defineOption ("Network.Coalesce-Delay", 0, 1, 1);
+    // todo: need to decide on new name for Transport.TCP.Coalesce-Delay
+    defineOption ("Transport.TCP.Coalesce-Delay", 0, 1, 1);
+    
+    // Avis-specific
+    // Max connection keys for ntfn/sub
+    defineOption ("Connection.Max-Keys", 1*K, 1*K, 1*K);
+    defineOption ("Subscription.Max-Keys", 1*K, 1*K, 1*K);
     
     // compatibility mappings
     defineCompatOption ("router.attribute.max-count",
@@ -166,7 +176,7 @@ public class ConnectionOptions
                         "Vendor-Identification");
         
     defineCompatOption ("router.coalesce-delay",
-                        "Network.Coalesce-Delay");
+                        "Transport.TCP.Coalesce-Delay");
   }
   
   private Map<String, Object> requestedOptions;
