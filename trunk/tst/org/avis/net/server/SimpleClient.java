@@ -180,13 +180,13 @@ class SimpleClient implements IoHandler
     send (new NotifyEmit (ntfn, deliverInsecure, ntfn.keys));
   }
 
-  public void subscribe (String subExpr)
+  public SubRply subscribe (String subExpr)
     throws Exception
   {
-    subscribe (subExpr, EMPTY_KEYS);
+    return subscribe (subExpr, EMPTY_KEYS);
   }
   
-  public synchronized void subscribe (String subExpr, Keys keys)
+  public synchronized SubRply subscribe (String subExpr, Keys keys)
     throws Exception
   {
     SubAddRqst subAddRqst = new SubAddRqst (subExpr, keys);
@@ -197,7 +197,11 @@ class SimpleClient implements IoHandler
     
     if (reply instanceof SubRply)
     {
-      assertEquals (subAddRqst.xid, ((SubRply)reply).xid);
+      SubRply subRply = (SubRply)reply;
+      
+      assertEquals (subAddRqst.xid, subRply.xid);
+      
+      return subRply;
     } else if (reply instanceof Nack)
     {
       throw new AssertionFailedError
