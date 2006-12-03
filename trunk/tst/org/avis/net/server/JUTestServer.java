@@ -88,6 +88,7 @@ public class JUTestServer
     HashMap<String, Object> options = new HashMap<String, Object> ();
     options.put ("Packet.Max-Length", 1024);
     options.put ("Subscription.Max-Count", 16);
+    options.put ("Subscription.Max-Length", 1024);
     options.put ("Attribute.Opaque.Max-Length", 2048 * 1024);
     options.put ("Network.Coalesce-Delay", 0);
     options.put ("Bogus", "not valid");
@@ -100,6 +101,7 @@ public class JUTestServer
     assertEquals (0, connReply.options.get ("Network.Coalesce-Delay"));
     assertEquals (1024, connReply.options.get ("Packet.Max-Length"));
     assertEquals (16, connReply.options.get ("Subscription.Max-Count"));
+    assertEquals (1024, connReply.options.get ("Subscription.Max-Length"));
     assertNull (connReply.options.get ("Bogus"));
     
     // try to send a frame bigger than 1K, check server rejects
@@ -127,8 +129,19 @@ public class JUTestServer
     nack = (Nack)client.receive ();
     
     assertEquals (subAddRqst.xid, nack.xid);
-    
     client.close ();
+    
+    // test Subscription.Max-Length enforcement
+    
+    client = new SimpleClient ("localhost", PORT);
+    client.connect (options);
+    
+    subAddRqst = new SubAddRqst (dummySubscription (2048));
+    client.send (subAddRqst);
+    nack = (Nack)client.receive ();
+    
+    assertEquals (subAddRqst.xid, nack.xid);
+    
     server.close ();
   }
   
@@ -435,5 +448,15 @@ public class JUTestServer
     
     badClient.close ();
     client.close ();
+  }
+  
+  private static String dummySubscription (int length)
+  {
+    StringBuilder str = new StringBuilder ("i == -1");
+    
+    for (int i = 0; str.length () + 15 < length; i++)
+      str.append (" && i == " + i);
+    
+    return str.toString ();
   }
 }
