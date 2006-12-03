@@ -24,6 +24,12 @@ import static dsto.dfc.logging.Log.setEnabled;
 import static org.avis.net.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.net.server.JUTestServer.PORT;
 
+/**
+ * Test attacks deliberately designed to DOS/crash the server by
+ * exhausting resources.
+ * 
+ * @author Matthew Phillips
+ */
 public class JUTestServerAttack
 {
   private Random random;
@@ -83,36 +89,38 @@ public class JUTestServerAttack
 
   /**
    * Attack server by sending the max number of subs with very long
-   * expressions.
+   * expressions. Takes about 2 mins to kill server on Powerbook G4.
    */
   @Test
   public void attackSubscriptions ()
     throws Exception
   {
     int maxSubs = ConnectionOptions.getMaxValue ("Subscription.Max-Count");
+    int maxLength = ConnectionOptions.getMaxValue ("Subscription.Max-Length");
 
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
     Map<String, Object> options = new HashMap<String, Object> ();
     options.put ("Subscription.Max-Count", maxSubs);
+    options.put ("Subscription.Max-Length", maxLength);
     
     client.connect (options);
     
     info ("Subscribing...", this);
     
-    String  subscriptionExpr = longSubscription (1000);
+    String subscriptionExpr = dummySubscription (maxLength);
     
-    for (int i = maxSubs; i >= 0; i--)
+    for (int i = 0; i < maxSubs; i++)
       client.subscribe (subscriptionExpr);
     
     client.close ();
   }
 
-  private static String longSubscription (int terms)
+  private static String dummySubscription (int length)
   {
     StringBuilder str = new StringBuilder ("i == -1");
     
-    for (int i = 0; i < terms; i++)
+    for (int i = 0; str.length () + 15 < length; i++)
       str.append (" && i == " + i);
     
     return str.toString ();
