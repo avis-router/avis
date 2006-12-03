@@ -1,6 +1,12 @@
 package org.avis.net.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import java.io.IOException;
+
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
@@ -13,10 +19,30 @@ import static java.lang.Thread.sleep;
 
 import static org.avis.net.server.JUTestServer.PORT;
 
+/**
+ * Tests for the server's robustness to clients spamming with large
+ * numbers of big messages. By default a local server is started, but
+ * the tests work best with serevr started in a separate VM. Set
+ * USE_EXTERNAL_SERVER to true if you want to do this and run a server
+ * on port 29170.
+ */
 public class JUTestServerRobustness
 {
+  private static final boolean USE_EXTERNAL_SERVER = false;
+
+  /** Time in millis to run flood tests. */
+  private static final long FLOODING_TIME = 10 * 1000;
+  
   private Server server;
 
+  @Before
+  public void startServer ()
+    throws IOException
+  {
+    if (!USE_EXTERNAL_SERVER)
+      server = new Server (PORT);
+  }
+  
   @After
   public void tearDown ()
   {
@@ -25,20 +51,16 @@ public class JUTestServerRobustness
   }
   
   /**
-   * A bad client sends a continuous flood of large messages while
+   * A "bad" client sends a continuous flood of large messages while
    * three others try to exchange messages. This test doesn't actually
-   * assert anything, but does test througput and failure modes.
-   * Without a read throttling feature either server or clients
-   * generally blow the heap in this test. Obviously we're trying to
-   * avoid allowing a client to nuke the server's heap.
+   * assert anything, but simply tests whether server can keep serving
+   * while being flooded.
    */
   @Test
-  public void flooding ()
+  public void floodingFairness ()
     throws Exception
   {
     setEnabled (TRACE, false);
-
-    server = new Server (PORT);
     setEnabled (DIAGNOSTIC, false);
     
     MaliciousClient badClient = new MaliciousClient ("Bad client", "localhost", PORT);
@@ -53,7 +75,7 @@ public class JUTestServerRobustness
     
     info ("Waiting while clients do their thing...", this);
     
-    sleep (5000);
+    sleep (FLOODING_TIME);
     
     badClient.stopFlooding ();
     goodClient1.stopSending ();
@@ -62,19 +84,57 @@ public class JUTestServerRobustness
     
     try
     {
-      badClient.close ();
+      badClient.close (20000);
     } catch (MessageTimeoutException ex)
     {
       warn ("Bad client close () failed: " + ex.getMessage (), this);
     }
     
-    goodClient1.close ();
-    goodClient2.close ();
-    goodClient3.close ();
+    goodClient1.close (10000);
+    goodClient2.close (10000);
+    goodClient3.close (10000);
     
     info (badClient.report (), this);
     info (goodClient1.report (), this);
     info (goodClient2.report (), this);
     info (goodClient3.report (), this);
+  }
+  
+  /**
+   * Try to blow server's heap by setting up a number of "bad" clients
+   * all spamming large messags at server.
+   */
+  @Test
+  public void floodingHeap ()
+    throws Exception
+  {
+    setEnabled (TRACE, false);
+    setEnabled (DIAGNOSTIC, false);
+    
+    List<MaliciousClient> badClients = new ArrayList<MaliciousClient> ();
+    
+    for (int i = 0; i < 4; i++)
+      badClients.add (new MaliciousClient ("Bad client " + i, "localhost", PORT));
+    
+    for (MaliciousClient client : badClients)
+      client.startFlooding ();
+
+    info ("Waiting while clients do their thing...", this);
+    
+    sleep (FLOODING_TIME);
+    
+    for (MaliciousClient client : badClients)
+      client.stopFlooding ();
+    
+    for (MaliciousClient client : badClients)
+      client.report ();
+    
+    info ("Closing clients...", this);
+    
+    // close () can take a long time when queues backed up...
+    for (MaliciousClient client : badClients)
+      client.close (30000);
+    
+    info ("Done", this);
   }
 }
