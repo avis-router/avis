@@ -1,8 +1,13 @@
 TODO
 
 * full test with Sticker
-* need separate VM's for MaliciousClient test
-* router-wide options like max connections, thread pool size, etc. some could
+* DONE: need separate VM's for MaliciousClient test
+* partly done: router-wide options that allow client to grow connection
+  footprint such like as keys, subscriptions. client can still easily kill
+  server using long subs atm. keys attack window reduced but still may be
+  possible using sub/ntfn keys plus long keys. need to check max size of key
+  data.
+* need general options for thread pool size, max connections, etc. some could
   apply as max/min for connection options.
 * ewafd-equivalent. built in?
 * do we need SSL/TLS in 1.0?
@@ -29,6 +34,11 @@ TODO
 * DONE: port to MINA 1.0.0. total API change, no porting guide?!
   IoSession seems to replace ProtocolSession. see
   http://svn.apache.org/viewvc/directory/trunks/mina/example/src/main/java/org/apache/mina/example/sumup/
+
+Notes
+----
+* JUTestServerAttack: Client can exhaust default server heap with
+  2K max-sub-count x 3K max-sub-length
 
 Issues for David
 
