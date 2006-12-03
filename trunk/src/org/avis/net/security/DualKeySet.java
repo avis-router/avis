@@ -56,6 +56,11 @@ public final class DualKeySet implements KeySet
     return producerKeys.isEmpty () && consumerKeys.isEmpty ();
   }
   
+  public int size ()
+  {
+    return producerKeys.size () + consumerKeys.size ();
+  }
+  
   public void add (KeySet theKeys)
     throws IllegalArgumentException
   {

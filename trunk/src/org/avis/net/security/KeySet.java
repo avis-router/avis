@@ -9,6 +9,8 @@ package org.avis.net.security;
  */
 public interface KeySet
 {
+  public int size ();
+  
   public boolean isEmpty ();
   
   public void add (KeySet keys)

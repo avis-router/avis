@@ -35,72 +35,10 @@ public class Keys
   /**
    * An empty, immutable collection of keys.
    */
-  public static final Keys EMPTY_KEYS = new Keys ()
-  {
-    @Override
-    public void add (Keys keys)
-    {
-      throw new UnsupportedOperationException ();
-    }
-    
-    @Override
-    public void remove (Keys keys)
-    {
-      throw new UnsupportedOperationException ();
-    }
-    
-    @Override
-    public void add (SingleKeyScheme scheme, Key key)
-    {
-      throw new UnsupportedOperationException ();
-    }
-    
-    @Override
-    public void remove (SingleKeyScheme scheme, Key key)
-    {
-      throw new UnsupportedOperationException ();
-    }
-    
-    @Override
-    public void add (DualKeyScheme scheme, int prodOrCon, Key key)
-    {
-      throw new UnsupportedOperationException ();
-    }
-    
-    @Override
-    public void remove (DualKeyScheme scheme, int prodOrCon, Key key)
-    {
-      throw new UnsupportedOperationException ();
-    }
-  };
+  public static final Keys EMPTY_KEYS = new EmptyKeys ();
 
   private static final DualKeySet EMPTY_DUAL_KEYSET =  new DualKeySet (true);
-  
-  private static final SingleKeySet EMPTY_SINGLE_KEYSET = new SingleKeySet ()
-  {
-    public boolean add (Key key) throws IllegalArgumentException
-    {
-      throw new UnsupportedOperationException ();
-    }
-
-    public void add (KeySet keys)
-      throws IllegalArgumentException, UnsupportedOperationException
-    {
-      throw new UnsupportedOperationException ();
-    }
-
-    public boolean remove (Key key)
-      throws IllegalArgumentException, UnsupportedOperationException
-    {
-      return false;
-    }
-
-    public void remove (KeySet keys)
-      throws IllegalArgumentException
-    {
-      // zip
-    }
-  };
+  private static final SingleKeySet EMPTY_SINGLE_KEYSET = new EmptySingleKeys ();
   
   private Map<KeyScheme, KeySet> keySets;
 
@@ -123,6 +61,22 @@ public class Keys
   public boolean isEmpty ()
   {
     return keySets.isEmpty ();
+  }
+  
+  /**
+   * Return the total number of keys in this key collection.
+   */
+  public int size ()
+  {
+    if (isEmpty ())
+      return 0;
+
+    int size = 0;
+    
+    for (KeySet keyset : keySets.values ())
+      size += keyset.size ();
+    
+    return size;
   }
   
   /**
@@ -506,5 +460,70 @@ public class Keys
       hash ^= 1 << scheme.id;
     
     return hash;
+  }
+  
+  static class EmptySingleKeys extends SingleKeySet
+  {
+    public boolean add (Key key) throws IllegalArgumentException
+    {
+      throw new UnsupportedOperationException ();
+    }
+
+    public void add (KeySet keys)
+      throws IllegalArgumentException, UnsupportedOperationException
+    {
+      throw new UnsupportedOperationException ();
+    }
+
+    public boolean remove (Key key)
+      throws IllegalArgumentException, UnsupportedOperationException
+    {
+      return false;
+    }
+
+    public void remove (KeySet keys)
+      throws IllegalArgumentException
+    {
+      // zip
+    }
+  }
+
+  static class EmptyKeys extends Keys
+  {
+    @Override
+    public void add (Keys keys)
+    {
+      throw new UnsupportedOperationException ();
+    }
+
+    @Override
+    public void remove (Keys keys)
+    {
+      throw new UnsupportedOperationException ();
+    }
+
+    @Override
+    public void add (SingleKeyScheme scheme, Key key)
+    {
+      throw new UnsupportedOperationException ();
+    }
+
+    @Override
+    public void remove (SingleKeyScheme scheme, Key key)
+    {
+      throw new UnsupportedOperationException ();
+    }
+
+    @Override
+    public void add (DualKeyScheme scheme, int prodOrCon, Key key)
+    {
+      throw new UnsupportedOperationException ();
+    }
+
+    @Override
+    public void remove (DualKeyScheme scheme, int prodOrCon, Key key)
+    {
+      throw new UnsupportedOperationException ();
+    }
   }
 }
