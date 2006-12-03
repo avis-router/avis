@@ -604,6 +604,9 @@ public class Server implements IoHandler
    * TODO this seems to be getting called *after* close () is called
    * sometimes: investigate why join () on close isn't doing what we
    * expect.
+   * <p>
+   * TODO should we handle close directly rather than session.close?
+   * this leaves a window open where a closed session is in the set.
    */
   public void sessionClosed (IoSession session)
     throws Exception
