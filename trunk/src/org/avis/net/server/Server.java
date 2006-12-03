@@ -292,23 +292,32 @@ public class Server implements IoHandler
       new Connection (message.options,
                       message.subscriptionKeys, message.notificationKeys);
     
-    // todo support other standard connection options
-    updateCoalesceDelay (session, connection);
-    updateQueueLength (session, connection);
+    int maxKeys = connection.options.getInt ("Connection.Max-Keys");
     
-    connection.options.putWithCompat
-      ("Vendor-Identification", "Avis " + ROUTER_VERSION);
-    
-    connection.lockWrite ();
-    
-    try
+    if (message.notificationKeys.size () > maxKeys ||
+        message.subscriptionKeys.size () > maxKeys)
     {
-      setConnection (session, connection);
+      nackLimit (session, message, "Too many keys");
+    } else
+    {
+      // todo support other standard connection options
+      updateCoalesceDelay (session, connection);
+      updateQueueLength (session, connection);
       
-      session.write (new ConnRply (message, connection.options.accepted ()));
-    } finally
-    {
-      connection.unlockWrite ();
+      connection.options.putWithCompat
+        ("Vendor-Identification", "Avis " + ROUTER_VERSION);
+      
+      connection.lockWrite ();
+      
+      try
+      {
+        setConnection (session, connection);
+        
+        session.write (new ConnRply (message, connection.options.accepted ()));
+      } finally
+      {
+        connection.unlockWrite ();
+      }
     }
   }
 
@@ -326,15 +335,22 @@ public class Server implements IoHandler
     
     try
     {
-      connection.notificationKeys =
-        connection.notificationKeys.delta
-          (message.addNtfnKeys, message.delNtfnKeys);
+      Keys newNtfnKeys = connection.notificationKeys.delta
+        (message.addNtfnKeys, message.delNtfnKeys);
   
-      connection.subscriptionKeys =
-        connection.subscriptionKeys.delta
-          (message.addSubKeys, message.delSubKeys);
+      Keys newSubKeys = connection.subscriptionKeys.delta
+        (message.addSubKeys, message.delSubKeys);
+  
+      if (connection.connectionKeysFull (newNtfnKeys, newSubKeys))
+      {
+        nackLimit (session, message, "Too many keys");
+      } else
+      {
+        connection.notificationKeys = newNtfnKeys;
+        connection.subscriptionKeys = newSubKeys;
       
-      session.write (new SecRply (message));
+        session.write (new SecRply (message));
+      }
     } finally
     {
       connection.unlockWrite ();
@@ -368,10 +384,13 @@ public class Server implements IoHandler
     {
       if (connection.subscriptionsFull ())
       {
-        session.write (new Nack (message, IMPL_LIMIT, "Too many subscriptions"));
+        nackLimit (session, message, "Too many subscriptions");
       } else if (connection.subscriptionTooLong (message.subscriptionExpr))
       {
-        session.write (new Nack (message, IMPL_LIMIT, "Subscription too long"));
+        nackLimit (session, message, "Subscription too long");
+      } else if (connection.subscriptionKeysFull (message.keys))
+      {
+        nackLimit (session, message, "Too many keys");
       } else
       {
         Subscription subscription =
@@ -388,7 +407,7 @@ public class Server implements IoHandler
                   ex.getMessage (), this);
       diagnostic ("Subscription was: " + message.subscriptionExpr, this);
       
-      session.write (nackForParseError (message, ex));
+      nackParseError (session, message, ex);
     } finally
     {
       connection.unlockWrite ();
@@ -406,30 +425,39 @@ public class Server implements IoHandler
       Subscription subscription =
         connection.subscriptionFor (message.subscriptionId);
       
-      if (message.subscriptionExpr.length () > 0)
-        subscription.updateExpression (message.subscriptionExpr);
+      Keys newKeys = subscription.keys.delta (message.addKeys, message.delKeys);
 
-      subscription.keys =
-        subscription.keys.delta (message.addKeys, message.delKeys);
-      
-      session.write (new SubRply (message, subscription.id));
+      if (connection.subscriptionKeysFull (newKeys))
+      {
+        nackLimit (session, message, "Too many keys");
+      } else if (connection.subscriptionTooLong (message.subscriptionExpr))
+      {
+        nackLimit (session, message, "Subscription too long");
+      } else
+      {
+        if (message.subscriptionExpr.length () > 0)
+          subscription.updateExpression (message.subscriptionExpr);
+  
+        subscription.keys = newKeys;
+        
+        session.write (new SubRply (message, subscription.id));
+      }
     } catch (ParseException ex)
     {
       diagnostic ("Subscription modify failed with parse error: " +
                   ex.getMessage (), this);
       diagnostic ("Subscription was: " + message.subscriptionExpr, this);
       
-      session.write (nackForParseError (message, ex));
+      nackParseError (session, message, ex);
     } catch (InvalidSubscriptionException ex)
     {
-      session.write (new Nack (message, NO_SUCH_SUB, ex.getMessage (),
-                               message.subscriptionId));
+      nackNoSub (session, message, message.subscriptionId, ex.getMessage ());
     } finally
     {
       connection.unlockWrite ();
     }
   }
-  
+
   private void handleSubDelRqst (IoSession session, SubDelRqst message)
     throws NoConnectionException
   {
@@ -440,9 +468,8 @@ public class Server implements IoHandler
       if (connection.removeSubscription (message.subscriptionId) != null)
         session.write (new SubRply (message, message.subscriptionId));
       else
-        session.write (new Nack (message, NO_SUCH_SUB,
-                                 "Invalid subscription ID",
-                                 message.subscriptionId));
+        nackNoSub (session, message, message.subscriptionId,
+                   "Invalid subscription ID");
     } finally
     {
       connection.unlockWrite ();
@@ -545,7 +572,7 @@ public class Server implements IoHandler
   }
 
   /**
-   * Handle the Network.Coalesce-Delay/router.coalesce-delay
+   * Handle the Transport.TCP.Coalesce-Delay/router.coalesce-delay
    * connection option if set.
    */
   private static void updateCoalesceDelay (IoSession session,
@@ -554,13 +581,13 @@ public class Server implements IoHandler
     if (session.getConfig () instanceof SocketSessionConfig)
     {
       int coalesceDelay =
-        connection.options.getInt ("Network.Coalesce-Delay");
+        connection.options.getInt ("Transport.TCP.Coalesce-Delay");
       
       ((SocketSessionConfig)session.getConfig ()).setTcpNoDelay
         (coalesceDelay == 0);
     } else
     {
-      connection.options.remove ("Network.Coalesce-Delay"); 
+      connection.options.remove ("Transport.TCP.Coalesce-Delay"); 
     }
   }
   
@@ -580,14 +607,33 @@ public class Server implements IoHandler
   }
 
   /**
-   * Create a NACK response for a parse error with error info.
+   * Send a NACK response for a parse error with error info.
    * 
    * todo should provide better error info (see sec 7.4.2 and 6.3)
    */
-  private static Nack nackForParseError (XidMessage inReplyTo,
-                                         ParseException ex)
+  private static void nackParseError (IoSession session, XidMessage inReplyTo,
+                                      ParseException ex)
   {
-    return new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, "");
+    session.write (new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, ""));
+  }
+  
+  /**
+   * Send a NACK due to a blown limit, e.g. Subscription.Max-Count.
+   */
+  private static void nackLimit (IoSession session, XidMessage inReplyTo,
+                                 String message)
+  {
+    session.write (new Nack (inReplyTo, IMPL_LIMIT, message));
+  }
+  
+  /**
+   * Send a NACK due to an invalid subscription ID.
+   */
+  private static void nackNoSub (IoSession session, XidMessage inReplyTo,
+                                 long subscriptionId, String message)
+  {
+    session.write (new Nack (inReplyTo, NO_SUCH_SUB, message,
+                             subscriptionId));
   }
   
   public void exceptionCaught (IoSession session, Throwable ex)
