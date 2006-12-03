@@ -6,9 +6,10 @@ import org.junit.Test;
 
 import static org.avis.net.security.DualKeyScheme.CONSUMER;
 import static org.avis.net.security.DualKeyScheme.PRODUCER;
-import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.net.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.net.security.KeyScheme.SHA1_DUAL;
+import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
+import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -125,7 +126,8 @@ public class JUTestKeys
   /**
    * Test add/remove of entire keysets.
    */
-  @Test public void addRemoveSets ()
+  @Test
+  public void addRemoveSets ()
     throws Exception
   {
     Keys keys1 = new Keys ();
@@ -164,6 +166,44 @@ public class JUTestKeys
     keys3.remove (keys2);
     
     assertTrue (keys3.isEmpty ());
+  }
+  
+  @Test
+  public void delta ()
+    throws Exception
+  {
+    Keys addedKeys = new Keys ();
+    Keys removedKeys = new Keys ();
+    Keys baseKeys = new Keys ();
+    
+    addedKeys.add (SHA1_DUAL, PRODUCER, new Key ("added/removed key"));
+    addedKeys.add (SHA1_DUAL, CONSUMER, new Key ("added key 1"));
+    addedKeys.add (SHA1_PRODUCER, new Key ("added key 2"));
+    
+    removedKeys.add (SHA1_DUAL, PRODUCER, new Key ("added/removed key"));
+    removedKeys.add (SHA1_DUAL, CONSUMER, new Key ("non existent key"));
+    removedKeys.add (SHA1_DUAL, CONSUMER, new Key ("removed key"));
+    
+    baseKeys.add (SHA1_DUAL, PRODUCER, new Key ("kept key"));
+    baseKeys.add (SHA1_DUAL, CONSUMER, new Key ("removed key"));
+    
+    Keys delta = baseKeys.delta (addedKeys, removedKeys);
+    
+    Keys correctKeys = new Keys ();
+    correctKeys.add (SHA1_DUAL, CONSUMER, new Key ("added key 1"));
+    correctKeys.add (SHA1_PRODUCER, new Key ("added key 2"));
+    correctKeys.add (SHA1_DUAL, PRODUCER, new Key ("kept key"));
+    
+    assertEquals (correctKeys, delta);
+    
+    // check delta works with empty keys
+    Keys keys4 = EMPTY_KEYS.delta (addedKeys, removedKeys);
+    
+    correctKeys = new Keys ();
+    correctKeys.add (SHA1_DUAL, CONSUMER, new Key ("added key 1"));
+    correctKeys.add (SHA1_PRODUCER, new Key ("added key 2"));
+    
+    assertEquals (correctKeys, keys4);
   }
   
   @Test
