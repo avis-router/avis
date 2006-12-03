@@ -123,6 +123,11 @@ class Connection
   {
     return subscriptions.size () >= options.getInt ("Subscription.Max-Count");
   }
+  
+  public boolean subscriptionTooLong (String subscriptionExpr)
+  {
+    return subscriptionExpr.length () > options.getInt ("Subscription.Max-Length");
+  }
 
   /**
    * Match a given set of attributes against this connection's
