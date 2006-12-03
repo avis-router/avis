@@ -366,7 +366,13 @@ public class Server implements IoHandler
 
     try
     {
-      if (!connection.subscriptionsFull ())
+      if (connection.subscriptionsFull ())
+      {
+        session.write (new Nack (message, IMPL_LIMIT, "Too many subscriptions"));
+      } else if (connection.subscriptionTooLong (message.subscriptionExpr))
+      {
+        session.write (new Nack (message, IMPL_LIMIT, "Subscription too long"));
+      } else
       {
         Subscription subscription =
           new Subscription (message.subscriptionExpr,
@@ -375,9 +381,6 @@ public class Server implements IoHandler
         connection.addSubscription (subscription);
   
         session.write (new SubRply (message, subscription.id));
-      } else
-      {
-        session.write (new Nack (message, IMPL_LIMIT, "Too many subscriptions"));
       }
     } catch (ParseException ex)
     {
