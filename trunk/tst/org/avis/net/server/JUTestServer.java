@@ -319,7 +319,7 @@ public class JUTestServer
     ntfn.put ("From-Alice", 1);
     ntfn.keys = aliceNtfnKeys;
     
-    alice.emitNotify (ntfn, false);
+    alice.sendNotify (ntfn, false);
     
     NotifyDeliver bobNtfn = (NotifyDeliver)bob.receive ();
     assertEquals (1, bobNtfn.attributes.get ("From-Alice"));
