@@ -102,7 +102,7 @@ class SimpleClient implements IoHandler
     clientSession = future.getSession ();
   }
 
-  public void send (Message message)
+  public synchronized void send (Message message)
     throws NoConnectionException
   {
     checkConnected ();
@@ -115,7 +115,7 @@ class SimpleClient implements IoHandler
     return receive (RECEIVE_TIMEOUT);
   }
 
-  public synchronized Message receive (int timeout)
+  public synchronized Message receive (long timeout)
     throws InterruptedException, MessageTimeoutException,
            NoConnectionException
   {
@@ -146,19 +146,25 @@ class SimpleClient implements IoHandler
       throw new NoConnectionException ("Not connected");
   }
   
+  public Message receive (Class<? extends Message> type)
+    throws MessageTimeoutException, InterruptedException, NoConnectionException
+  {
+    return receive (type, RECEIVE_TIMEOUT);
+  }
+  
   /**
    * Wait until we receive a message of a given type. Other messages
    * are discarded.
    * @throws NoConnectionException 
    */
-  public Message receive (Class<? extends Message> type)
+  public synchronized Message receive (Class<? extends Message> type, long timeout)
     throws MessageTimeoutException, InterruptedException, NoConnectionException
   {
     long start = currentTimeMillis ();
     
-    while (currentTimeMillis () - start <= RECEIVE_TIMEOUT)
+    while (currentTimeMillis () - start <= timeout)
     {
-      Message message = receive ();
+      Message message = receive (timeout);
       
       if (type.isAssignableFrom (message.getClass ()))
         return message;
@@ -168,13 +174,7 @@ class SimpleClient implements IoHandler
       ("Failed to receive a " + type.getName ());
   }
 
-  public void notify (Notification ntfn, boolean deliverInsecure)
-    throws Exception
-  {
-    emitNotify (ntfn, deliverInsecure);
-  }
-
-  public void emitNotify (Notification ntfn, boolean deliverInsecure)
+  public void sendNotify (Notification ntfn, boolean deliverInsecure)
     throws Exception
   {
     send (new NotifyEmit (ntfn, deliverInsecure, ntfn.keys));
@@ -186,7 +186,7 @@ class SimpleClient implements IoHandler
     subscribe (subExpr, EMPTY_KEYS);
   }
   
-  public void subscribe (String subExpr, Keys keys)
+  public synchronized void subscribe (String subExpr, Keys keys)
     throws Exception
   {
     SubAddRqst subAddRqst = new SubAddRqst (subExpr, keys);
@@ -215,7 +215,7 @@ class SimpleClient implements IoHandler
     return connect (EMPTY_OPTIONS);
   }
   
-  public ConnRply connect (Map<String, Object> options)
+  public synchronized ConnRply connect (Map<String, Object> options)
     throws Exception
   {
     checkConnected ();
@@ -233,20 +233,26 @@ class SimpleClient implements IoHandler
   public void close ()
     throws Exception
   {
+    close (RECEIVE_TIMEOUT);
+  }
+  
+  public synchronized void close (long timeout)
+    throws Exception
+  {
     if (connected && clientSession.isConnected ())
     {
       send (new DisconnRqst ());
-      receive (DisconnRply.class);
+      receive (DisconnRply.class, timeout);
     }
     
-    clientSession.close ();
+    clientSession.close ().join ();
     clientSession = null;
   }
   
   /**
    * Close session with no disconnect request.
    */
-  public void closeImmediately ()
+  public synchronized void closeImmediately ()
   {
     connected = false;
     clientSession.close ();
