@@ -2,8 +2,10 @@ package org.avis.net.server;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.avis.Notification;
+import org.avis.net.ConnectionOptions;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -20,9 +22,11 @@ import org.avis.net.messages.SubRply;
 import org.avis.net.messages.TestConn;
 import org.avis.net.messages.UNotify;
 import org.avis.net.security.Key;
+import org.avis.net.security.KeyScheme;
 import org.avis.net.security.Keys;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
@@ -43,8 +47,16 @@ public class JUTestServer
   static final int PORT = 29170;
 
   private Server server;
+  private Random random;
 
-  @After public void tearDown ()
+  @Before
+  public void setup ()
+  {
+    random = new Random ();
+  }
+  
+  @After
+  public void tearDown ()
   {
     if (server != null)
       server.close ();
@@ -90,7 +102,7 @@ public class JUTestServer
     options.put ("Subscription.Max-Count", 16);
     options.put ("Subscription.Max-Length", 1024);
     options.put ("Attribute.Opaque.Max-Length", 2048 * 1024);
-    options.put ("Network.Coalesce-Delay", 0);
+    options.put ("Transport.TCP.Coalesce-Delay", 0);
     options.put ("Bogus", "not valid");
     
     ConnRply connReply = client.connect (options);
@@ -98,7 +110,7 @@ public class JUTestServer
     // todo: when Attribute.Opaque.Max-Length supported, switch lines below
     // assertEquals (2048 * 1024, reply.options.get ("Attribute.Opaque.Max-Length"));
     assertEquals (Integer.MAX_VALUE, connReply.options.get ("Attribute.Opaque.Max-Length"));
-    assertEquals (0, connReply.options.get ("Network.Coalesce-Delay"));
+    assertEquals (0, connReply.options.get ("Transport.TCP.Coalesce-Delay"));
     assertEquals (1024, connReply.options.get ("Packet.Max-Length"));
     assertEquals (16, connReply.options.get ("Subscription.Max-Count"));
     assertEquals (1024, connReply.options.get ("Subscription.Max-Length"));
@@ -141,6 +153,38 @@ public class JUTestServer
     nack = (Nack)client.receive ();
     
     assertEquals (subAddRqst.xid, nack.xid);
+    client.close ();
+    
+    // test Subscription.Max-Keys and Connection.Max-Keys enforcement
+    
+    int maxConnKeys = ConnectionOptions.getMaxValue ("Connection.Max-Keys");
+    int maxSubKeys = ConnectionOptions.getMaxValue ("Subscription.Max-Keys");
+
+    options = new HashMap<String, Object> ();
+    options.put ("Connection.Max-Keys", maxConnKeys);
+    options.put ("Subscription.Max-Keys", maxSubKeys);
+    
+    client = new SimpleClient ("localhost", PORT);
+    client.connect (options);
+    
+    Keys keys = new Keys ();
+    
+    for (int i = 0; i < maxConnKeys + 1; i++)
+      keys.add (KeyScheme.SHA1_CONSUMER, new Key (randomBytes (128)));
+    
+    secRqst = new SecRqst (keys, EMPTY_KEYS, EMPTY_KEYS, EMPTY_KEYS);
+    client.send (secRqst);
+    nack = (Nack)client.receive ();
+    assertEquals (secRqst.xid, nack.xid);
+    
+    subAddRqst = new SubAddRqst ("n == 1");
+    subAddRqst.keys = keys;
+    
+    client.send (subAddRqst);
+    nack = (Nack)client.receive ();
+    assertEquals (subAddRqst.xid, nack.xid);
+    
+    client.close ();
     
     server.close ();
   }
@@ -458,5 +502,14 @@ public class JUTestServer
       str.append (" && i == " + i);
     
     return str.toString ();
+  }
+  
+  private byte [] randomBytes (int length)
+  {
+    byte [] data = new byte [length];
+    
+    random.nextBytes (data);
+    
+    return data;
   }
 }
