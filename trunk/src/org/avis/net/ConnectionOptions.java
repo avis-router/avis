@@ -242,16 +242,41 @@ public class ConnectionOptions
     return DEFAULT_VALUES.get (compatToNew (name));
   }
   
+  /**
+   * Get the maximum value for an option.
+   */
+  public static int getMaxValue (String name)
+  {
+    return intRange (name) [1];
+  }
+  
+  /**
+   * Get the minimum value for an option.
+   */
+  public static int getMinValue (String name)
+  {
+    return intRange (name) [0];
+  }
+
+  /**
+   * Get the default value for an integer option.
+   */
   public static int getDefaultInt (String name)
   {
     return intValue (name, getDefault (name));
   }
-
+  
+  /**
+   * Get the integer value of an option.
+   */
   public int getInt (String name)
   {
     return intValue (name, get (name));
   }
   
+  /**
+   * Remove the option from this set.
+   */
   public void remove (String name)
   {
     options.remove (name);
@@ -264,6 +289,15 @@ public class ConnectionOptions
     else
       throw new IllegalArgumentException
         (name + " does not refer to an integer value: " + value);
+  }
+  
+  private static int [] intRange (String name)
+  {
+    if (DEFAULT_VALUES.get (name) instanceof Integer)
+      return ((int [])VALIDATION.get (name));
+    else
+      throw new IllegalArgumentException
+        (name + " does not refer to an integer value");  
   }
 
   /**
