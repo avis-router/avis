@@ -112,6 +112,8 @@ public class Keys
   
    public Keys (Keys keys)
    {
+     this ();
+     
      add (keys);
    }
   
