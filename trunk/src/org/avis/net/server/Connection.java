@@ -124,9 +124,23 @@ class Connection
     return subscriptions.size () >= options.getInt ("Subscription.Max-Count");
   }
   
-  public boolean subscriptionTooLong (String subscriptionExpr)
+  public boolean subscriptionTooLong (String expr)
   {
-    return subscriptionExpr.length () > options.getInt ("Subscription.Max-Length");
+    return expr.length () > options.getInt ("Subscription.Max-Length");
+  }
+  
+  public boolean connectionKeysFull (Keys ntfnKeys, Keys subKeys)
+  {
+    int maxKeys = options.getInt ("Connection.Max-Keys");
+    
+    return ntfnKeys.size () > maxKeys || subKeys.size () > maxKeys;
+  }
+  
+  public boolean subscriptionKeysFull (Keys keys)
+  {
+    int maxKeys = options.getInt ("Subscription.Max-Keys");
+    
+    return keys.size () > maxKeys;
   }
 
   /**
