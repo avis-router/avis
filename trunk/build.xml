@@ -233,6 +233,18 @@
               functionMetrics="false" classMetrics="false"
               includes="**/*.java" />
   </target>
+ 
+  <target name="changelog"
+          description="Generate a change log (needs previous rev #)">
+    <!-- Use command below to get previous release rev #
+           svn log -stop-on-copy https://svn.sourceforge.net/svnroot/avis/tags/release_0.5 -->
+    <input addproperty="release_rev" message="Enter rev # of last release" />
+    
+    <exec executable="/usr/local/bin/svn2cl" searchpath="true">
+      <env key="PATH" path="/bin:/usr/bin:/usr/local/bin:/opt/local/bin" />
+      <arg line="-r ${release_rev}:HEAD https://svn.sourceforge.net/svnroot/avis/trunk" />
+    </exec>
+  </target>
     
   <target name="clean"
           description="Delete all compiled classes and build directory">
