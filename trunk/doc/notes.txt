@@ -1,5 +1,6 @@
 TODO
 
+* full test with Sticker
 * need separate VM's for MaliciousClient test
 * router-wide options like max connections, thread pool size, etc. some could
   apply as max/min for connection options.
