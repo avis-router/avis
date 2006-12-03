@@ -1,3 +1,38 @@
+Release 0.6 (December 3, 2006)
+----------------------------------------------------------------------
+
+Release focus: improve server's ability to handle misbehaved/malicious
+clients.
+
+Change summary:
+
+ * Fixed error in buffer-limiting code which caused errors for large
+   packets.
+
+ * Added input queue bandwidth throttling to enforce
+   Receive-Queue.Max-Length. This should go a long way towards
+   protecting server from being swamped by noisy clients.
+
+ * Added various malicious client tests to observer server's response
+   to high loads, large frames and deliberate attempts to exhaust
+   resources.
+
+ * Some attack windows reduced by implementing limits for
+   Subscription.Max-Count, Subscription.Max-Length,
+   Connection.Max-Keys and Subscription.Max-Keys. Still lots of work
+   to do here though: for example client can still trigger server to
+   run out of heap using lots of subscriptions of
+   Subscription.Max-Length.
+
+ * Various extensions and fixes for SimpleClient used for testing.
+
+ * Network.Coalesce-Delay option is now Transport.TCP.Coalesce-Delay.
+
+ * Vendor ID is now sent with compatible name also.
+
+ * Reduced verbosity of -v option.
+
+
 Release 0.5 (November 20, 2006)
 ----------------------------------------------------------------------
 
