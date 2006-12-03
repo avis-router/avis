@@ -1,9 +1,12 @@
 package org.avis.net.server;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import java.io.IOException;
 
+import org.avis.net.ConnectionOptions;
 import org.avis.net.messages.SubModRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.security.Key;
@@ -76,6 +79,43 @@ public class JUTestServerAttack
     }
     
     client.close ();
+  }
+
+  /**
+   * Attack server by sending the max number of subs with very long
+   * expressions.
+   */
+  @Test
+  public void attackSubscriptions ()
+    throws Exception
+  {
+    int maxSubs = ConnectionOptions.getMaxValue ("Subscription.Max-Count");
+
+    SimpleClient client = new SimpleClient ("localhost", PORT);
+    
+    Map<String, Object> options = new HashMap<String, Object> ();
+    options.put ("Subscription.Max-Count", maxSubs);
+    
+    client.connect (options);
+    
+    info ("Subscribing...", this);
+    
+    String  subscriptionExpr = longSubscription (1000);
+    
+    for (int i = maxSubs; i >= 0; i--)
+      client.subscribe (subscriptionExpr);
+    
+    client.close ();
+  }
+
+  private static String longSubscription (int terms)
+  {
+    StringBuilder str = new StringBuilder ("i == -1");
+    
+    for (int i = 0; i < terms; i++)
+      str.append (" && i == " + i);
+    
+    return str.toString ();
   }
 
   private byte [] randomBytes (int length)
