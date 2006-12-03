@@ -46,7 +46,7 @@ public class MaliciousClient extends AgentClient
         ntfn.put ("Time", new Date ().toString ());
         ntfn.put ("Payload", BIG_BLOB);
         
-        emitNotify (ntfn, true);
+        sendNotify (ntfn, true);
         
         sentMessageCount++;
       } catch (Exception ex)
