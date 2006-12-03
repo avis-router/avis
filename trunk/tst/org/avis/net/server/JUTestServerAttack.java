@@ -55,8 +55,8 @@ public class JUTestServerAttack
   
   /**
    * Attack the server's heap space by adding unlimited numbers of
-   * keys. Takes around 3 mins to exhaust server's heap space on
-   * Powerbook G4.
+   * keys. Without key limits, takes around 3 mins to exhaust server's
+   * heap space on Powerbook G4.
    */
   @Test
   public void attackKeys ()
