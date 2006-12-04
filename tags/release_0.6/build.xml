@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<!--
+  ====================================================================== 
+  Avis event notification service
+  
+  Matthew Phillips  
+  ======================================================================
+-->
+<project name="avis" default="jar_avisd">
+  
+  <description>Avis event notification service</description>
+
+  <property file="avis.properties" />
+
+  <property name="release" value="${avis.release}" />
+  <property name="dfc.home" value="../dfc.core" />
+  
+  <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
+  <property name="javacc.home" value="../javacc-4.0" />
+
+  <property name="javancss.home" value="../javancss28.49" />
+  
+  <!-- Markdown 1.0.1: only needed to build web page -->
+  <property name="markdown" value="/Users/matt/bin/Markdown.pl" />
+  
+  <path id="classpath">
+    <fileset dir="lib" includes="*.jar" />
+    <pathelement path="classes" />
+    <pathelement path="tst_classes" />
+  </path>
+  
+  <tstamp>
+    <format property="build_date" pattern="dd-MMM-yyyy HH:mm:ss" locale="en" />
+  </tstamp>
+  
+  <target name="javacc_sub_parser"
+          description="Generate the subscription parser with JavaCC">
+    <javacc javacchome="${javacc.home}"
+            target="src/org/avis/pubsub/parser/SubscriptionParser.jj" />
+  </target>
+  
+  <target name="compile_dfc">
+    <ant dir="${dfc.home}" target="compile" />
+  </target>
+  
+  <target name="jar_dfc" depends="compile_dfc">
+    <jar destfile="lib/dfc.jar">
+      <fileset dir="${dfc.home}/classes">
+        <include name="dsto/dfc/tools/**/*.class" />
+        <include name="dsto/dfc/util/IndentPrintWriter*.class" />
+        <include name="dsto/dfc/logging/Log*.class" />
+        <include name="dsto/dfc/logging/LogFilter*.class" />
+        <include name="dsto/dfc/logging/LogEvent*.class" />
+        <include name="dsto/dfc/logging/LogListener*.class" />
+      </fileset>
+    </jar>
+  </target>
+  
+  <target name="properties">
+    <mkdir dir="classes" />
+  
+    <filter token="build_date" value="${build_date}" />
+    
+    <copy file="avis.properties" todir="classes"
+          overwrite="yes" filtering="yes" />
+  </target>
+  
+  <target name="compile"
+          description="Compile source and tests">
+    <mkdir dir="classes" />
+    <mkdir dir="tst_classes" />
+
+    <javac classpathref="classpath" srcdir="src" destdir="classes"/>
+    <javac classpathref="classpath" srcdir="tst" destdir="tst_classes"/>
+  </target>
+  
+  <!-- TODO: currently does not work. Does Ant 1.6 support JUnit 4? -->
+  <target name="tests" description="Run test cases (currently broken)">
+    <junit fork="yes" haltonfailure="no" printsummary="true">
+      <formatter type="plain" usefile="false" />
+      <classpath refid="classpath" />
+      
+      <batchtest fork="yes" todir=".">
+        <fileset dir="tst">
+          <include name="**/JU*.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  
+  <target name="jar_avisd" depends="compile,properties"
+          description="Build the avisd.jar executable">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="lib/dfc.jar" />
+
+    <mkdir dir="build" />
+
+    <jarx archive="build/avisd.jar"
+          mainClass="org.avis.net.server.Main"
+          classpathref="classpath">
+      
+      <include name="avis.properties" />
+    </jarx>
+
+  </target>
+  
+  <target name="src_dist" depends="jar_avisd"
+          description="Build the source distro">
+    
+    <property name="ziproot" value="avis-${release}" />
+    
+    <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
+ 
+    <mkdir dir="${src_tmp}" />
+    <mkdir dir="${src_tmp}/src" />
+    <mkdir dir="${src_tmp}/tst" />
+
+    <!-- create copy of source with license headers -->
+    
+    <loadfile srcFile="resources/avis_java_header.txt" property="header" />
+
+    <copy todir="${src_tmp}">
+      <fileset dir=".">
+        <include name="src/**/*.java"/>
+        <include name="src/**/*.jj"/>
+        <include name="tst/**/*.java"/>
+      </fileset>
+      <!-- todo use this instead
+      <filterchain>
+        <concatfilter prepend="apache-license-java.txt"/>
+      </filterchain> -->
+            
+      <filterchain>
+        <filterreader classname="dsto.dfc.tools.PrefixFilter"
+                      classpathref="classpath">
+          <param name="prefix" value="${header}" />
+        </filterreader>
+      </filterchain>
+    </copy>
+       
+    <zip destfile="build/avis-src-${release}.zip">
+      
+      <!-- source -->
+      <zipfileset dir="${src_tmp}" prefix="${ziproot}">
+        <include name="**/*" />
+      </zipfileset>
+      
+      <!-- others -->
+      <zipfileset dir="." prefix="${ziproot}">
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name=".settings/*" />
+        <include name="README.txt" />
+        <include name="LICENSE.txt" />
+        <include name="build.xml" />
+        <include name="build/avisd.jar" />
+        <include name="lib/*.jar" />
+        <include name="resources/*" />
+        <include name="avis.properties" />
+      </zipfileset>
+      
+      <zipfileset dir="." prefix="${ziproot}" filemode="755">
+        <include name="bin/avisd.sh" />
+      </zipfileset>
+    </zip>
+    
+    <!-- blow away temporary files -->
+    <delete dir="${src_tmp}" />
+  </target>
+
+  <!-- Use arcane Ant-isms to build web page from text using Markdown -->
+  <target name="web"
+          description="Build HTML files in doc/web from sources">  
+    <antcall target="make_html">
+      <param name="src" value="avis.txt" />
+      <param name="dest" value="index.html" />
+    </antcall>
+  
+    <antcall target="make_html">
+      <param name="src" value="examples.txt" />
+      <param name="dest" value="examples.html" />
+    </antcall>
+  </target>
+  
+  <target name="make_html">
+    <property name="root" value="doc/web" />
+    
+    <concat destfile="${root}/${dest}" append="false">
+      <filelist dir="${root}" files="header.htmli" />
+    </concat>
+    
+    <exec executable="perl">
+      <arg value="${markdown}" />
+      <arg value="${root}/${src}" />
+      
+      <redirector append="true">
+        <outputmapper type="merge" to="${root}/${dest}" />
+      </redirector>
+    </exec>
+    
+    <concat destfile="${root}/${dest}" append="true">
+      <filelist dir="${root}" files="footer.htmli" />
+    </concat>
+  </target>
+  
+  <target name="web_deploy" depends="web"
+          description="Rsync web site to sourceforge">
+    <exec executable="rsync">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg line="--exclude */.svn" />
+      <arg line="--exclude *.htmli" />
+      <arg line="--exclude .*" />
+      <arg value="doc/web/" />
+      <arg value="sourceforge:/home/groups/a/av/avis/htdocs/" />
+    </exec>
+  </target>
+
+  <target name="code_size"
+          description="Generate code size metrics with JavaNCSS">
+    
+    <path id="javancss.classpath">
+      <fileset dir="${javancss.home}/lib" includes="*.jar" />
+    </path>
+
+    <taskdef name="javancss"
+             classname="javancss.JavancssAntTask"
+             classpathref="javancss.classpath" />
+
+    <javancss srcdir="src"
+              abortOnFail="true" generateReport="true"
+              functionMetrics="false" classMetrics="false"
+              includes="**/*.java" />
+  </target>
+ 
+  <target name="changelog"
+          description="Generate a change log (needs previous rev #)">
+    <!-- Use command below to get previous release rev #
+           svn log -stop-on-copy https://svn.sourceforge.net/svnroot/avis/tags/release_0.5 -->
+    <input addproperty="release_rev" message="Enter rev # of last release" />
+    
+    <exec executable="/usr/local/bin/svn2cl" searchpath="true">
+      <env key="PATH" path="/bin:/usr/bin:/usr/local/bin:/opt/local/bin" />
+      <arg line="-r ${release_rev}:HEAD https://svn.sourceforge.net/svnroot/avis/trunk" />
+    </exec>
+  </target>
+    
+  <target name="clean"
+          description="Delete all compiled classes and build directory">
+    <delete dir="classes" />
+    <delete dir="tst_classes" />
+  </target>
+
+  <!-- Clean everything, including the build dir and autogenerated
+       stuff like the JavaCC parser -->
+  <target name="clean_all" depends="clean"
+          description="Clean everything, including all generated files">
+    <delete dir="build" />
+
+    <delete>
+      <fileset dir="src/org/avis/pubsub/parser">
+        <include name="SubscriptionParser.java" />
+        <include name="SubscriptionParserConstants.java" />
+        <include name="SubscriptionParserTokenManager.java" />
+        <include name="TokenMgrError.java" />
+        <include name="Token.java" />
+        <include name="SimpleCharStream.java" />
+        <include name="ParseExceptionjava" />
+      </fileset>
+      
+      <fileset dir="doc/web">
+        <include name="index.html" />
+        <include name="examples.html" />
+      </fileset>
+    </delete>
+  </target>
+</project>
