@@ -300,7 +300,6 @@ public class Server implements IoHandler
       nackLimit (session, message, "Too many keys");
     } else
     {
-      // todo support other standard connection options
       updateCoalesceDelay (session, connection);
       updateQueueLength (session, connection);
       
@@ -403,11 +402,7 @@ public class Server implements IoHandler
       }
     } catch (ParseException ex)
     {
-      diagnostic ("Subscription add failed with parse error: " +
-                  ex.getMessage (), this);
-      diagnostic ("Subscription was: " + message.subscriptionExpr, this);
-      
-      nackParseError (session, message, ex);
+      nackParseError (session, message, message.subscriptionExpr, ex);
     } finally
     {
       connection.unlockWrite ();
@@ -419,7 +414,6 @@ public class Server implements IoHandler
   {
     Connection connection = writeableConnectionFor (session);
 
-    // todo limit number of keys
     try
     {
       Subscription subscription =
@@ -444,11 +438,7 @@ public class Server implements IoHandler
       }
     } catch (ParseException ex)
     {
-      diagnostic ("Subscription modify failed with parse error: " +
-                  ex.getMessage (), this);
-      diagnostic ("Subscription was: " + message.subscriptionExpr, this);
-      
-      nackParseError (session, message, ex);
+      nackParseError (session, message, message.subscriptionExpr, ex);
     } catch (InvalidSubscriptionException ex)
     {
       nackNoSub (session, message, message.subscriptionId, ex.getMessage ());
@@ -547,7 +537,6 @@ public class Server implements IoHandler
   private static void handleQuench (IoSession session,
                                     QuenchPlaceHolder message)
   {
-    // TODO implement quench support here
     diagnostic
       ("Rejecting quench request from client: quench is not supported",
        Server.class);
@@ -610,10 +599,17 @@ public class Server implements IoHandler
    * Send a NACK response for a parse error with error info.
    * 
    * todo should provide better error info (see sec 7.4.2 and 6.3)
+   * @param expr 
    */
-  private static void nackParseError (IoSession session, XidMessage inReplyTo,
+  private static void nackParseError (IoSession session,
+                                      XidMessage inReplyTo,
+                                      String expr,
                                       ParseException ex)
   {
+    diagnostic ("Subscription add/modify failed with parse error: " +
+                ex.getMessage (), Server.class);
+    diagnostic ("Subscription was: " + expr, Server.class);
+    
     session.write (new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, ""));
   }
   
