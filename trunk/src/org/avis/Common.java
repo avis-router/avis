@@ -15,4 +15,14 @@ public final class Common
   {
     // cannot be instantiated
   }
+
+  /**
+   * Return just the name (minus the package) of a class.
+   */
+  public static String className (Class type)
+  {
+    String name = type.getName ();
+    
+    return name.substring (name.lastIndexOf ('.') + 1);
+  }
 }
