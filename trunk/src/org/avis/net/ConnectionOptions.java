@@ -79,7 +79,6 @@ public class ConnectionOptions
   private static final Map<String, String> COMPAT_TO_NEW;
   private static final Map<String, String> NEW_TO_COMPAT;
 
-  
   static
   {
     DEFAULT_VALUES = new HashMap<String, Object> ();
