@@ -61,6 +61,7 @@ import static org.avis.net.messages.Nack.IMPL_LIMIT;
 import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
+import static org.avis.net.messages.Nack.QUENCH_NOT_IMPL;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 public class Server implements IoHandler
@@ -541,7 +542,7 @@ public class Server implements IoHandler
       ("Rejecting quench request from client: quench is not supported",
        Server.class);
     
-    session.write (new Nack (message, PROT_ERROR, "Quench not supported"));
+    session.write (new Nack (message, QUENCH_NOT_IMPL, "Quench not supported"));
   }
 
   private static void handleError (IoSession session, ErrorMessage message)
