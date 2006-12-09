@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.avis.Common;
 import org.avis.Notification;
 import org.avis.pubsub.ast.nodes.Const;
 
@@ -79,7 +80,7 @@ public abstract class Node<EVAL_TYPE>
    */
   public String name ()
   {
-    return Nodes.className (getClass ());
+    return Common.className (getClass ());
   }
   
   /**
