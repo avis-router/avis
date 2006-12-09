@@ -14,6 +14,7 @@ import org.avis.net.security.Keys;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
@@ -59,6 +60,7 @@ public class JUTestServerAttack
    * heap space on Powerbook G4.
    */
   @Test
+  @Ignore
   public void attackKeys ()
     throws Exception
   {
@@ -92,6 +94,7 @@ public class JUTestServerAttack
    * expressions. Takes about 2 mins to kill server on Powerbook G4.
    */
   @Test
+  @Ignore
   public void attackSubscriptions ()
     throws Exception
   {
