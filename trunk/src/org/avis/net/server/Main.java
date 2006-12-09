@@ -5,12 +5,16 @@ import java.util.Properties;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.mina.common.ByteBuffer;
+
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.info;
 import static dsto.dfc.logging.Log.setEnabled;
 import static dsto.dfc.logging.Log.warn;
+
+import static org.avis.net.server.Server.DEFAULT_PORT;
 
 /**
  * Run the router from the command line.
@@ -31,13 +35,22 @@ public class Main
     setEnabled (TRACE, false);
     setEnabled (DIAGNOSTIC, false);
     
+    /*
+     * todo opt: consider heap or direct buffer setting. Some
+     * anecdotal evidence on the MINA mailing list indicates heap
+     * buffers are faster than direct ones, but basic multi-client
+     * profiling seems to indicate heap buffers are actually slightly
+     * slower, at least on a G4 with 1.5.0_06.
+     */
+    ByteBuffer.setUseDirectBuffers (true);
+    
     Properties properties = loadProperties ();
     System.getProperties ().putAll (properties);
     
     info ("Avis router version " +
           properties.getProperty ("avis.router.version"), Main.class);
     
-    int port = 2917;
+    int port = DEFAULT_PORT;
 
     try
     {
