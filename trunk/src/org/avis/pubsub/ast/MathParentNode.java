@@ -2,7 +2,7 @@ package org.avis.pubsub.ast;
 
 import java.util.Map;
 
-import static org.avis.pubsub.ast.Nodes.className;
+import static org.avis.Common.className;
 import static org.avis.util.Numbers.highestPrecision;
 import static org.avis.util.Numbers.upconvert;
 
@@ -43,43 +43,54 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
   @Override
   public Number evaluate (Map<String, Object> attrs)
   {
-    Object result1 = child1.evaluate (attrs);
+    Number number1 = evaluate (child1, attrs);
     
-    if (!validOperand (result1))
-      return null;
-
-    Object result2 = child2.evaluate (attrs);
-    
-    if (!validOperand (result2))
+    if (number1 == null)
       return null;
     
-    Class class1 = result1.getClass ();
-    Class class2 = result2.getClass ();
+    Number number2 = evaluate (child2, attrs);
+    
+    if (number2 == null)
+      return null;
+    
+    Class<? extends Number> type1 = number1.getClass ();
+    Class<? extends Number> type2 = number2.getClass ();
     
     // check if upconvert needed
-    if (class1 != class2)
+    if (type1 != type2)
     {
-      Class newType = highestPrecision (class1, class2);
+      Class<? extends Number> newType = highestPrecision (type1, type2);
       
-      if (class1 != newType)
-        result1 = upconvert ((Number)result1, class2);
+      if (type1 != newType)
+        number1 = upconvert (number1, type2);
       else
-        result2 = upconvert ((Number)result2, class1);
+        number2 = upconvert (number2, type1);
     }
     
     try
     {
-      if (result1 instanceof Integer)
-        return evaluateInt32 ((Integer)result1, (Integer)result2);
-      else if (result1 instanceof Long)
-        return evaluateInt64 ((Long)result1, (Long)result2);
+      if (number1 instanceof Integer)
+        return evaluateInt32 ((Integer)number1, (Integer)number2);
+      else if (number1 instanceof Long)
+        return evaluateInt64 ((Long)number1, (Long)number2);
       else
-        return evaluateReal64 ((Double)result1, (Double)result2);
+        return evaluateReal64 ((Double)number1, (Double)number2);
     } catch (ArithmeticException ex)
     {
       // e.g. div by zero. treat this is a bottom'ing condition
       return null;
     }
+  }
+
+  private Number evaluate (Node<? extends Number> child,
+                           Map<String, Object> attrs)
+  {
+    Object result = child.evaluate (attrs);
+    
+    if (result == null || !validOperand (result))
+      return null;
+
+    return (Number)result;
   }
 
   /**
