@@ -1,3 +1,13 @@
+Roadmap
+----------------------------------------------------------------------
+
+* packaging
+* demos: perhaps a little ec/ep using simple client
+* router options
+* resource protection: throttle clients based on total resources
+* web site PR: why use Avis? examples
+
+
 TODO
 
 * full test with Sticker
