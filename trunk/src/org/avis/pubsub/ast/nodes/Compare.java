@@ -6,7 +6,7 @@ import java.util.Map;
 import org.avis.pubsub.ast.Node;
 import org.avis.pubsub.ast.ParentBiNode;
 
-import static org.avis.pubsub.ast.Nodes.className;
+import static org.avis.Common.className;
 import static org.avis.util.Numbers.highestPrecision;
 import static org.avis.util.Numbers.upconvert;
 
