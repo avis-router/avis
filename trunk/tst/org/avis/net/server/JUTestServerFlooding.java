@@ -102,7 +102,7 @@ public class JUTestServerFlooding
   
   /**
    * Try to blow server's heap by setting up a number of "bad" clients
-   * all spamming large messags at server.
+   * all spamming large messages at server.
    */
   @Test
   public void floodingHeap ()
