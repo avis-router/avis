@@ -70,10 +70,6 @@ import static org.avis.Common.MB;
  */
 public class ConnectionOptions
 {
-  // todo: this should be server config option
-  /** Maximum number of connection keys */
-  public static final int MAX_CONNECTION_KEYS = 1*K;
-  
   private static final Map<String, Object> EMPTY_OPTIONS = Collections.emptyMap ();
   
   private static final Map<String, Object> DEFAULT_VALUES;
