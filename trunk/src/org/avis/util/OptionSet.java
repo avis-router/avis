@@ -23,7 +23,8 @@ public class OptionSet
   public static final OptionSet EMPTY_OPTION_SET = new OptionSet ();
 
   /** The default values for each option. */
-  protected Options defaults;
+  public final Options defaults;
+  
   /** The inherited sets. */
   private List<OptionSet> inherited;
   /** Maps option names to validation info. */
@@ -82,6 +83,43 @@ public class OptionSet
   public final boolean isValid (String option, Object value)
   { 
     return validate (option, value) == null; 
+  }
+  
+  /**
+   * Test if a given option name is defined by this set or a subset.
+   */
+  public boolean isOption (String option)
+  {
+    return findValidationInfo (option) != null;
+  }
+  
+  /**
+   * Get the maximum value for an option.
+   */
+  public int getMaxValue (String name)
+    throws IllegalOptionException
+  {
+    return intRange (name) [1];
+  }
+  
+  /**
+   * Get the minimum value for an option.
+   */
+  public int getMinValue (String name)
+    throws IllegalOptionException
+  {
+    return intRange (name) [0];
+  }
+  
+  private int [] intRange (String name)
+    throws IllegalOptionException
+  {
+    Object info = findValidationInfo (name);
+    
+    if (info instanceof int [])
+      return (int [])info;
+    else
+      throw new IllegalOptionException (name, "Not an integer value");  
   }
   
   /**
@@ -242,25 +280,31 @@ public class OptionSet
   protected final Class<?> optionType (String option)
     throws IllegalOptionException
   {
-    Object validationInfo = validation.get (option);
+    Object validationInfo = findValidationInfo (option);
     
     if (validationInfo instanceof int [])
-    {
       return Integer.class;
-    } else if (validationInfo != null)
-    {
+    else if (validationInfo != null)
       return String.class;
-    } else
+    else
+      throw new IllegalOptionException (option, "Unknown option");
+  }
+
+  private Object findValidationInfo (String option)
+  {
+    Object validationInfo = validation.get (option);
+    
+    if (validationInfo == null)
     {
       for (OptionSet inheritedSet : inherited)
       {
-        Class<?> type = inheritedSet.optionType (option);
+        validationInfo = inheritedSet.findValidationInfo (option);
         
-        if (type != null)
-          return type;
+        if (validationInfo != null)
+          break;
       }
-      
-      throw new IllegalOptionException (option, "Unknown option");
     }
+    
+    return validationInfo;
   }
 }
