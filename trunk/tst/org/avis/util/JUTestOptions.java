@@ -24,6 +24,12 @@ public class JUTestOptions
     
     Options routerOptions = new Options (routerOptionSet);
     
+    Properties loadedProperties = new Properties ();
+    loadedProperties.setProperty ("Port", "29170");
+    loadedProperties.setProperty ("Keys.Max-Count", "42");
+    
+    routerOptions.setAll (loadedProperties);
+    
     Map<String, Object> requestedOptions = new HashMap<String, Object> ();
     requestedOptions.put ("Packet.Max-Length", 20*K);
     requestedOptions.put ("router.subscription.max-count", 1234);
@@ -32,18 +38,13 @@ public class JUTestOptions
     connectionOptions.addDefaults (routerOptions);
     connectionOptions.setAll (requestedOptions);
     
-    Properties loadedProperties = new Properties ();
-    loadedProperties.setProperty ("Port", "29170");
-    loadedProperties.setProperty ("Keys.Max-Count", "42");
-    
-    routerOptions.setAll (loadedProperties);
-    
     Map<String, Object> accepted =
       connectionOptionSet.accepted (connectionOptions, requestedOptions);
     
     assertEquals (29170, routerOptions.getInt ("Port"));
     assertEquals (20*K, connectionOptions.getInt ("Packet.Max-Length"));
     assertEquals (42, connectionOptions.getInt ("Keys.Max-Count"));
+    assertEquals (1234, connectionOptions.getInt ("Subscription.Max-Count"));
     assertEquals (1234, accepted.get ("router.subscription.max-count"));
   }
   
