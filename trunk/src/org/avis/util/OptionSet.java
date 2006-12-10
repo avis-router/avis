@@ -227,7 +227,7 @@ public class OptionSet
   /**
    * Try to auto-convert a value to be the valid type for a given
    * option. Currently tries to convert String -> int (using
-   * Integer.valueOf()) and [anything] -> String (using toString().
+   * Integer.valueOf()) and [anything] -> String (using toString()).
    * 
    * @param option The option.
    * @param value The value.
