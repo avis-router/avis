@@ -11,6 +11,12 @@ import java.util.Map.Entry;
 
 import static org.avis.util.OptionSet.EMPTY_OPTION_SET;
 
+/**
+ * Defines a set of configuration options. The options are validated
+ * against an {@link OptionSet}.
+ * 
+ * @author Matthew Phillips
+ */
 public class Options
 {
   private Map<String, Object> values;
@@ -58,6 +64,17 @@ public class Options
     else
       throw new IllegalOptionException (option, "Not an integer");
   }
+  
+  public String getString (String option)
+    throws IllegalOptionException
+  {
+    Object value = get (option);
+    
+    if (value instanceof String)
+      return (String)value;
+    else
+      throw new IllegalOptionException (option, "Not a string");
+  }
 
   public void set (String option, Object value)
     throws IllegalOptionException
@@ -93,7 +110,7 @@ public class Options
 
   /**
    * Return an unmodifiable, live set of the options just for this
-   * instance (i.e. not including defaults).
+   * instance (not including defaults).
    */
   public Set<String> options ()
   {

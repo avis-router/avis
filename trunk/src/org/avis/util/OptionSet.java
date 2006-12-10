@@ -10,15 +10,23 @@ import java.util.Set;
 
 import static org.avis.Common.className;
 
+/**
+ * Defines the set of valid options for an {@link Options} instance.
+ * An option set can inherit from one or more subsets. An option set
+ * includes the valid option names, value type, valid value ranges and
+ * default values.
+ * 
+ * @author Matthew Phillips
+ */
 public class OptionSet
 {
   public static final OptionSet EMPTY_OPTION_SET = new OptionSet ();
 
-  private static final String UNKNOWN_OPTION = "Uknown option";
-  
-  public final Options defaults;
-  
+  /** The default values for each option. */
+  protected Options defaults;
+  /** The inherited sets. */
   private List<OptionSet> inherited;
+  /** Maps option names to validation info. */
   private Map<String, Object> validation;
   
   public OptionSet ()
@@ -39,12 +47,11 @@ public class OptionSet
    * Define a int-valued option.
    * 
    * @param option The option name.
-   * @param min min value
+   * @param min The minimum value
    * @param defaultValue The default value
-   * @param max max value
+   * @param max The maximum value
    */
-  public void add (String option,
-                   int min, int defaultValue, int max)
+  public void add (String option, int min, int defaultValue, int max)
   {
     validation.put (option, new int [] {min, max});
     defaults.set (option, defaultValue);
@@ -67,11 +74,61 @@ public class OptionSet
     defaults.set (option, defaultValue);
   }
 
+  /**
+   * Test if value is valid for a given option (does not set the value).
+   * 
+   * @see #validate(String, Object)
+   */
   public final boolean isValid (String option, Object value)
   { 
     return validate (option, value) == null; 
   }
   
+  /**
+   * Test if value is valid for a given option in this set or any
+   * inherited sets. (does not set the value).
+   * 
+   * @return Null if valid, a message describing why the value is
+   *         invalid otherwise.
+   */
+  public final String validate (String option, Object value)
+  {
+    String message = null;
+    
+    if (validation.containsKey (option))
+    {
+      message = testValid (option, value);
+    } else
+    {
+      for (OptionSet inheritedSet : inherited)
+      {
+        message = inheritedSet.testValid (option, value);
+        
+        if (message != null)
+          break;
+      }
+    }
+    
+    return message;
+  }
+  
+  /**
+   * Called by {@link Options#set(String, Object)} to validate and set
+   * the value. If the value is valid, it should be set in the values
+   * map, otherwise an IllegalOptionException should be thrown. This
+   * method is also responsible for any automatic value conversion
+   * (see {@link #convert(String, Object)}).
+   * <p>
+   * Subclasses may override to customise validation behaviour.
+   * 
+   * @param values The value set to update.
+   * @param option The option.
+   * @param value The value to validate and set.
+   * 
+   * @throws IllegalOptionException if the value or option are not valid.
+   * 
+   * @see #validate(String, Object)
+   */
   protected void validateAndPut (Map<String, Object> values,
                                  String option, Object value)
     throws IllegalOptionException
@@ -86,6 +143,62 @@ public class OptionSet
     values.put (option, value);
   }
   
+  /**
+   * Check the validity of an option/value pair against this set only
+   * (no inherited checks).
+   * 
+   * @see #validate(String, Object)
+   */
+  protected String testValid (String option, Object value)
+    throws IllegalOptionException
+  {
+    Object validationInfo = validation.get (option);
+    String message = null;
+    
+    if (validationInfo != null)
+    {
+      Class<?> type = optionType (option);
+
+      if (type != value.getClass ())
+      {
+        message = "Value is not a " + className (type).toLowerCase ();
+      } else if (value instanceof Integer)
+      {
+        int intValue = (Integer)value;
+        int [] minMax = (int [])validation.get (option);
+        
+        if (!(intValue >= minMax [0] && intValue <= minMax [1]))
+          message = "Value must be in range " + minMax [0] + "..." + minMax [1];
+      } else if (value instanceof String)
+      {
+        if (!((Set)validation.get (option)).contains (value))
+          message = "Value must be a string";
+      } else
+      {
+        // should not be able to get here if options defined correctly
+        throw new Error ();
+      }
+    } else
+    {
+      message = "Unknown option";
+    }
+    
+    return message;
+  }
+  
+  /**
+   * Try to auto-convert a value to be the valid type for a given
+   * option. Currently tries to convert String -> int (using
+   * Integer.valueOf()) and [anything] -> String (using toString().
+   * 
+   * @param option The option.
+   * @param value The value.
+   * @return The converted value, or the original value if no
+   *         conversion needed.
+   *         
+   * @throws IllegalOptionException if the value needed conversion but
+   *           was not compatible.
+   */
   protected final Object convert (String option, Object value)
     throws IllegalOptionException
   {
@@ -120,73 +233,24 @@ public class OptionSet
     return value;
   }
 
-  protected final String validate (String option, Object value)
-  {
-    String message = null;
-    
-    if (validation.containsKey (option))
-    {
-      message = checkValidity (option, value);
-    } else
-    {
-      for (OptionSet inheritedSet : inherited)
-      {
-        message = inheritedSet.checkValidity (option, value);
-        
-        if (message != null)
-          break;
-      }
-    }
-    
-    return message;
-  }
-  
-  protected String checkValidity (String option, Object value)
-    throws IllegalOptionException
-  {
-    Object validationInfo = validation.get (option);
-    String message = null;
-    
-    if (validationInfo != null)
-    {
-      Class<?> type = optionType (option);
-
-      if (type != value.getClass ())
-      {
-        message = "Value is not a " + className (type).toLowerCase ();
-      } else if (value instanceof Integer)
-      {
-        int intValue = (Integer)value;
-        int [] minMax = (int [])validation.get (option);
-        
-        if (!(intValue >= minMax [0] && intValue <= minMax [1]))
-          message = "Value must be in range " + minMax [0] + "..." + minMax [1];
-      } else if (value instanceof String)
-      {
-        if (!((Set)validation.get (option)).contains (value))
-          message = "Value must be a string";
-      } else
-      {
-        // should not be able to get here if options defined correctly
-        throw new Error ();
-      }
-    } else
-    {
-      message = UNKNOWN_OPTION;
-    }
-    
-    return message;
-  }
-
+  /**
+   * Get the type of value required by an option, including inherited
+   * options.
+   * 
+   * @throws IllegalOptionException if the option is not defined.
+   */
   protected final Class<?> optionType (String option)
+    throws IllegalOptionException
   {
     Object validationInfo = validation.get (option);
     
     if (validationInfo instanceof int [])
+    {
       return Integer.class;
-    else if (validationInfo != null)
+    } else if (validationInfo != null)
+    {
       return String.class;
-    else
+    } else
     {
       for (OptionSet inheritedSet : inherited)
       {
