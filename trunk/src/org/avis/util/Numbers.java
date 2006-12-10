@@ -38,7 +38,7 @@ public class Numbers
       return class2;
   }
 
-  private static int precision (Class type)
+  private static int precision (Class<? extends Number> type)
   {
     if (type == Integer.class)
       return 0;
