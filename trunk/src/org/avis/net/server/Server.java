@@ -19,7 +19,6 @@ import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
-import org.avis.net.ConnectionOptions;
 import org.avis.net.FrameCodec;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
@@ -56,6 +55,7 @@ import static dsto.dfc.logging.Log.warn;
 
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
+import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
 import static org.avis.net.messages.Nack.NO_SUCH_SUB;
@@ -304,7 +304,7 @@ public class Server implements IoHandler
       updateCoalesceDelay (session, connection);
       updateQueueLength (session, connection);
       
-      connection.options.putWithCompat
+      connection.options.setWithLegacy
         ("Vendor-Identification", "Avis " + ROUTER_VERSION);
       
       connection.lockWrite ();
@@ -577,7 +577,7 @@ public class Server implements IoHandler
         (coalesceDelay == 0);
     } else
     {
-      connection.options.remove ("Transport.TCP.Coalesce-Delay"); 
+      connection.options.clear ("Transport.TCP.Coalesce-Delay"); 
     }
   }
   
@@ -692,7 +692,7 @@ public class Server implements IoHandler
     // install read throttle
     ReadThrottleFilterBuilder readThrottle = new ReadThrottleFilterBuilder ();
     readThrottle.setMaximumConnectionBufferSize
-      (ConnectionOptions.getDefaultInt ("Receive-Queue.Max-Length"));
+      (CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length"));
     
     readThrottle.attach (session.getFilterChain ());
     

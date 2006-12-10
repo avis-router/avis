@@ -7,7 +7,7 @@ import org.avis.net.ConnectionOptions;
 
 import org.junit.Test;
 
-import static org.avis.net.ConnectionOptions.getDefault;
+import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -25,7 +25,7 @@ public class JUTestConnectionOptions
     HashMap<String, Object> requested = new HashMap<String, Object> ();
     
     requested.put ("Packet.Max-Length", 8 * 1024 * 1024); // valid
-    requested.put ("Attribute.Max-Count", 63); // bogus
+    requested.put ("Attribute.Max-Count", 63); // bogus value
     requested.put ("Bogus", 42); // bogus
     requested.put ("Receive-Queue.Drop-Policy", "bogus"); // bogus
     requested.put ("Send-Queue.Drop-Policy", "fail"); // valid
@@ -45,7 +45,7 @@ public class JUTestConnectionOptions
   }
   
   @Test
-  public void compatbility ()
+  public void compatibility ()
   {
     HashMap<String, Object> requested = new HashMap<String, Object> ();
     
@@ -55,20 +55,22 @@ public class JUTestConnectionOptions
     requested.put ("router.coalesce-delay", 0); // valid
     
     ConnectionOptions options = new ConnectionOptions (requested);
-    Map<String, Object> valid = options.accepted ();
+    Map<String, Object> accepted = options.accepted ();
     
     // todo: when Attribute.String.Max-Length supported, switch lines below
     // assertRequested (requested, valid, "router.attribute.string.max-length");
-    assertDefault (valid, "router.attribute.string.max-length");
-    assertDefault (valid, "router.attribute.max-count");
-    assertRequested (requested, valid, "router.send-queue.drop-policy");
-    assertRequested (requested, valid, "router.coalesce-delay");
+    assertDefault (accepted, "router.attribute.string.max-length");
+    assertDefault (accepted, "router.attribute.max-count");
+    assertRequested (requested, accepted, "router.send-queue.drop-policy");
+    assertRequested (requested, accepted, "router.coalesce-delay");
   }
 
-  private static void assertDefault (Map<String, Object> valid,
+  private static void assertDefault (Map<String, Object> accepted,
                                      String name)
   {
-    assertEquals (getDefault (name), valid.get (name));
+    assertEquals
+      (CONNECTION_OPTION_SET.defaults.get
+        (CONNECTION_OPTION_SET.legacyToNew (name)), accepted.get (name));
   }
 
   private static void assertRequested (Map<String, Object> requested,

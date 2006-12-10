@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.avis.Notification;
-import org.avis.net.ConnectionOptions;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -29,6 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
@@ -157,8 +157,8 @@ public class JUTestServer
     
     // test Subscription.Max-Keys and Connection.Max-Keys enforcement
     
-    int maxConnKeys = ConnectionOptions.getMaxValue ("Connection.Max-Keys");
-    int maxSubKeys = ConnectionOptions.getMaxValue ("Subscription.Max-Keys");
+    int maxConnKeys = CONNECTION_OPTION_SET.getMaxValue ("Connection.Max-Keys");
+    int maxSubKeys = CONNECTION_OPTION_SET.getMaxValue ("Subscription.Max-Keys");
 
     options = new HashMap<String, Object> ();
     options.put ("Connection.Max-Keys", maxConnKeys);

@@ -6,7 +6,6 @@ import java.util.Random;
 
 import java.io.IOException;
 
-import org.avis.net.ConnectionOptions;
 import org.avis.net.messages.SubModRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.security.Key;
@@ -22,6 +21,7 @@ import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.info;
 import static dsto.dfc.logging.Log.setEnabled;
 
+import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.net.server.JUTestServer.PORT;
 
@@ -98,8 +98,8 @@ public class JUTestServerAttack
   public void attackSubscriptions ()
     throws Exception
   {
-    int maxSubs = ConnectionOptions.getMaxValue ("Subscription.Max-Count");
-    int maxLength = ConnectionOptions.getMaxValue ("Subscription.Max-Length");
+    int maxSubs = CONNECTION_OPTION_SET.getMaxValue ("Subscription.Max-Count");
+    int maxLength = CONNECTION_OPTION_SET.getMaxValue ("Subscription.Max-Length");
 
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
