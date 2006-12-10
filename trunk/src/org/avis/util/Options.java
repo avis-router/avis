@@ -36,7 +36,8 @@ public class Options
     this.defaults = new ArrayList<Options> ();
     this.optionSet = optionSet;
     
-    defaults.add (optionSet.defaults);
+    if (optionSet.defaults != null)
+      defaults.add (optionSet.defaults);
   }
   
   /**
@@ -155,7 +156,7 @@ public class Options
     {
       for (Options defaultOptions : defaults)
       {
-        value =  defaultOptions.get (option);
+        value = defaultOptions.peek (option);
         
         if (value != null)
           break;
@@ -175,6 +176,7 @@ public class Options
    *           the value is invalid.
    *           
    * @see #get(String)
+   * @see #clear(String)
    * @see OptionSet#validateAndPut(Map, String, Object)
    */
   public void set (String option, Object value)
@@ -186,6 +188,18 @@ public class Options
     optionSet.validateAndPut (values, option, value);
   }
 
+  /**
+   * Undo the effect of set ().
+   * 
+   * @param option The option to remove.
+   * 
+   * @see #set(String, Object)
+   */
+  public void clear (String option)
+  {
+    values.remove (option);
+  }
+  
   /**
    * Test if an option is defined.
    */
