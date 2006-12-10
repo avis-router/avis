@@ -13,7 +13,9 @@ import static org.avis.util.OptionSet.EMPTY_OPTION_SET;
 
 /**
  * Defines a set of configuration options. The options are validated
- * against an {@link OptionSet}.
+ * against an {@link OptionSet}. Default values are taken from the
+ * option set, but may be overridden/added in this instance using
+ * {@link #addDefaults(Options)}.
  * 
  * @author Matthew Phillips
  */
@@ -36,24 +38,53 @@ public class Options
     
     defaults.add (optionSet.defaults);
   }
-
-  public void setAll (Map<String, Object> options)
-  {
-    for (Entry<String, Object> entry : options.entrySet ())
-      set (entry.getKey (), entry.getValue ());
-  }
-
-  public void setAll (Properties properties)
-  {
-    for (Entry<Object, Object> entry : properties.entrySet ())
-      set ((String)entry.getKey (), entry.getValue ());
-  }
-
+  
+  /**
+   * Add a set of options as defaults. Any overlapping values override
+   * existing option defaults in this set or in the validating option
+   * set.
+   */
   public void addDefaults (Options newDefaults)
   {
     defaults.add (0, newDefaults);
   }
 
+  /**
+   * Set a bulk lot of options. This is equivalent to calling
+   * {@link #set(String, Object)} for each entry.
+   * 
+   * @throws IllegalOptionException
+   */
+  public void setAll (Map<String, Object> options)
+    throws IllegalOptionException
+  {
+    for (Entry<String, Object> entry : options.entrySet ())
+      set (entry.getKey (), entry.getValue ());
+  }
+
+  /**
+   * Set a bulk lot of options from java.util.Properties source.
+   * 
+   * @throws IllegalOptionException
+   */
+  public void setAll (Properties properties)
+    throws IllegalOptionException
+  {
+    for (Entry<Object, Object> entry : properties.entrySet ())
+      set ((String)entry.getKey (), entry.getValue ());
+  }
+
+  /**
+   * Get an integer option.
+   * 
+   * @param option The option name.
+   * @return The value.
+   * 
+   * @throws IllegalOptionException if the option is not defined or is
+   *           not an integer.
+   *           
+   * @see #get(String)
+   */
   public int getInt (String option)
     throws IllegalOptionException
   {
@@ -65,6 +96,17 @@ public class Options
       throw new IllegalOptionException (option, "Not an integer");
   }
   
+  /**
+   * Get a string option.
+   * 
+   * @param option The option name.
+   * @return The value.
+   * 
+   * @throws IllegalOptionException if the option is not defined or is
+   *           not a string.
+   *           
+   * @see #get(String)
+   */
   public String getString (String option)
     throws IllegalOptionException
   {
@@ -76,16 +118,36 @@ public class Options
       throw new IllegalOptionException (option, "Not a string");
   }
 
-  public void set (String option, Object value)
+  /**
+   * Get the value of an option, searching defaults if needed.
+   * 
+   * @param option The option name
+   * @return The value.
+   * 
+   * @throws IllegalOptionException if the option is not defined.
+   * 
+   * @see #peek(String)
+   * @see #set(String, Object)
+   * @see #hasOption(String)
+   */
+  public Object get (String option)
     throws IllegalOptionException
   {
-    if (value == null)
-      throw new IllegalOptionException (option, "Value cannot be null");
+    Object value = peek (option);
     
-    optionSet.validateAndPut (values, option, value);
+    if (value != null)
+      return value;
+    else
+      throw new IllegalOptionException (option, "No such option");
   }
   
-  public Object get (String option)
+  /**
+   * Same as get(), but returns null if no value found rather than
+   * throwing an exception.
+   * 
+   * @see #get(String)
+   */
+  public Object peek (String option)
   {
     Object value = values.get (option);
     
@@ -103,9 +165,33 @@ public class Options
     return value;
   }
 
+  /**
+   * Set the value of an option.
+   * 
+   * @param option The option name.
+   * @param value The option value.
+   * 
+   * @throws IllegalOptionException if the option is not defined or
+   *           the value is invalid.
+   *           
+   * @see #get(String)
+   * @see OptionSet#validateAndPut(Map, String, Object)
+   */
+  public void set (String option, Object value)
+    throws IllegalOptionException
+  {
+    if (value == null)
+      throw new IllegalOptionException (option, "Value cannot be null");
+    
+    optionSet.validateAndPut (values, option, value);
+  }
+
+  /**
+   * Test if an option is defined.
+   */
   public boolean hasOption (String option)
   {
-    return get (option) != null;
+    return peek (option) != null;
   }
 
   /**
