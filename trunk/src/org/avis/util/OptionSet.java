@@ -214,7 +214,7 @@ public class OptionSet
         int [] minMax = (int [])validation.get (option);
         
         if (!(intValue >= minMax [0] && intValue <= minMax [1]))
-          message = "Value must be in range " + minMax [0] + "..." + minMax [1];
+          message = "Value must be in range " + minMax [0] + ".." + minMax [1];
       } else if (value instanceof String)
       {
         if (!((Set)validation.get (option)).contains (value))
