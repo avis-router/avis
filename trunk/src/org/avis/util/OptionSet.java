@@ -339,7 +339,7 @@ public class OptionSet
     else if (validationInfo != null)
       return String.class;
     else
-      throw new IllegalArgumentException ("Value cannot be null");
+      return null;
   }
 
   /**
