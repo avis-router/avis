@@ -12,6 +12,7 @@ import org.apache.mina.common.ByteBuffer;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.diagnostic;
 import static dsto.dfc.logging.Log.info;
 import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.setEnabled;
@@ -72,7 +73,11 @@ public class Main
           config.set ("Port", intArg (args, ++i));
         } else if (arg.equals ("-c"))
         {
-          config.setAll (propertiesFrom (fileStream (stringArg (args, ++i))));
+          String configFile = stringArg (args, ++i);
+          
+          config.setAll (propertiesFrom (fileStream (configFile)));
+          
+          diagnostic ("Read configuration from " + configFile, Main.class);
         } else
         {
           System.out.println ();
@@ -96,7 +101,6 @@ public class Main
     
     Runtime.getRuntime ().addShutdownHook (new Thread ()
     {
-      @Override
       public void run ()
       {
         info ("Shutting down...", Main.class);
