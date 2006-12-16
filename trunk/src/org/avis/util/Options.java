@@ -2,12 +2,14 @@ package org.avis.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Map.Entry;
+
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 import static org.avis.util.OptionSet.EMPTY_OPTION_SET;
 
@@ -32,7 +34,7 @@ public class Options
   
   public Options (OptionSet optionSet)
   {
-    this.values = new HashMap<String, Object> ();
+    this.values = new TreeMap<String, Object> (CASE_INSENSITIVE_ORDER);
     this.defaults = new ArrayList<Options> ();
     this.optionSet = optionSet;
     
@@ -185,9 +187,9 @@ public class Options
     if (value == null)
       throw new IllegalOptionException (option, "Value cannot be null");
     
-    optionSet.validateAndPut (values, option, value);
+    optionSet.validateAndPut (this, option, value);
   }
-
+  
   /**
    * Undo the effect of set ().
    * 

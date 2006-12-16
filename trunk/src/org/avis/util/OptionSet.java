@@ -2,11 +2,13 @@ package org.avis.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 import static org.avis.Common.className;
 
@@ -14,7 +16,8 @@ import static org.avis.Common.className;
  * Defines the set of valid options for an {@link Options} instance.
  * An option set can inherit from one or more subsets. An option set
  * includes the valid option names, value type, valid value ranges and
- * default values.
+ * default values. Option names are stored in a case-preserving
+ * manner, but are matched case-insensitively.
  * 
  * @author Matthew Phillips
  */
@@ -34,7 +37,7 @@ public class OptionSet
   {
     this.defaults = new Options (this);
     this.inherited = new ArrayList<OptionSet> ();
-    this.validation = new HashMap<String, Object> ();
+    this.validation = new TreeMap<String, Object> (CASE_INSENSITIVE_ORDER);
   }
   
   public OptionSet (OptionSet inheritedOptions)
@@ -160,22 +163,24 @@ public class OptionSet
   
   /**
    * Called by {@link Options#set(String, Object)} to validate and set
-   * the value. If the value is valid, it should be set in the values
-   * map, otherwise an IllegalOptionException should be thrown. This
-   * method is also responsible for any automatic value conversion
-   * (see {@link #convert(String, Object)}).
+   * the value. If the value is valid, it should be set with a call to
+   * {@link #set(Options, String, Object)}, otherwise an
+   * IllegalOptionException should be thrown. This method is also
+   * responsible for any automatic value conversion (see
+   * {@link #convert(String, Object)}).
    * <p>
    * Subclasses may override to customise validation behaviour.
    * 
-   * @param values The value set to update.
+   * @param options The options to update.
    * @param option The option.
    * @param value The value to validate and set.
    * 
-   * @throws IllegalOptionException if the value or option are not valid.
+   * @throws IllegalOptionException if the value or option are not
+   *           valid.
    * 
    * @see #validate(String, Object)
    */
-  protected void validateAndPut (Map<String, Object> values,
+  protected void validateAndPut (Options options,
                                  String option, Object value)
     throws IllegalOptionException
   {
@@ -186,9 +191,18 @@ public class OptionSet
     if (message != null)
       throw new IllegalOptionException (option, message);
     
-    values.put (option, value);
+    set (options, option, value);
   }
   
+  /**
+   * Called by {@link #validateAndPut(Options, String, Object)} to set
+   * a value.
+   */
+  protected final void set (Options options, String option, Object value)
+  {
+    options.values.put (option, value);
+  }
+
   /**
    * Check the validity of an option/value pair against this set only
    * (no inherited checks).
@@ -203,22 +217,24 @@ public class OptionSet
     
     if (validationInfo != null)
     {
-      Class<?> type = optionType (option);
+      Class<?> type = optionType (validationInfo);
 
       if (type != value.getClass ())
       {
-        message = "Value is not a " + className (type).toLowerCase ();
+        message = "Value is not a " + className (type);
       } else if (value instanceof Integer)
       {
         int intValue = (Integer)value;
-        int [] minMax = (int [])validation.get (option);
+        int [] minMax = (int [])validationInfo;
         
         if (!(intValue >= minMax [0] && intValue <= minMax [1]))
           message = "Value must be in range " + minMax [0] + ".." + minMax [1];
       } else if (value instanceof String)
       {
-        if (!((Set)validation.get (option)).contains (value))
-          message = "Value must be a string";
+        Set<?> values = (Set<?>)validationInfo;
+        
+        if (!values.contains (value))
+          message = "Value must be one of: " + values.toString ();
       } else
       {
         // should not be able to get here if options defined correctly
@@ -272,7 +288,7 @@ public class OptionSet
       {
         throw new IllegalOptionException
           (option, "Cannot convert " + value + " to a " +
-                    className (type).toLowerCase ());
+                    className (type));
       }
     }
     
@@ -288,16 +304,36 @@ public class OptionSet
   protected final Class<?> optionType (String option)
     throws IllegalOptionException
   {
-    Object validationInfo = findValidationInfo (option);
+    Class<?> type = optionType (findValidationInfo (option));
     
+    if (type !=  null)
+      return type;
+    else
+      throw new IllegalOptionException (option, "Unknown option");
+  }
+  
+  /**
+   * Get the type of value required by an option using supplied
+   * validation info.
+   * 
+   * @throws IllegalOptionException if the option is not defined.
+   */
+  protected final Class<?> optionType (Object validationInfo)
+    throws IllegalOptionException
+  {
     if (validationInfo instanceof int [])
       return Integer.class;
     else if (validationInfo != null)
       return String.class;
     else
-      throw new IllegalOptionException (option, "Unknown option");
+      throw new IllegalArgumentException ("Value cannot be null");
   }
 
+  /**
+   * Recursively search this set and subsets for validation info.
+   * 
+   * @param option Name of option. Must be lower case.
+   */
   private Object findValidationInfo (String option)
   {
     Object validationInfo = validation.get (option);
