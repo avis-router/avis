@@ -93,12 +93,18 @@ public class Server implements IoHandler
   public Server (int port)
     throws IOException
   {
+    this (new ServerOptions (port));
+  }
+  
+  public Server (ServerOptions options)
+    throws IOException
+  {
     sessions = new ConcurrentHashSet<IoSession> ();
     acceptor = new SocketAcceptor ();
     
-    SocketAcceptorConfig config = new SocketAcceptorConfig ();
+    SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
     
-    config.setReuseAddress (true);
+    acceptorConfig.setReuseAddress (true);
     
     DemuxingProtocolCodecFactory codecFactory =
       new DemuxingProtocolCodecFactory ();
@@ -109,12 +115,13 @@ public class Server implements IoHandler
     ThreadPoolExecutor executor = (ThreadPoolExecutor)threadModel.getExecutor ();
     executor.setCorePoolSize (16);
     
-    config.setThreadModel (threadModel);
+    acceptorConfig.setThreadModel (threadModel);
     
-    config.getFilterChain ().addLast
+    acceptorConfig.getFilterChain ().addLast
       ("codec", new ProtocolCodecFilter (codecFactory));
     
-    acceptor.bind (new InetSocketAddress (port), this, config);
+    acceptor.bind (new InetSocketAddress (options.getInt ("Port")),
+                   this, acceptorConfig);
   }
 
   /**
