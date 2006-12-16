@@ -10,6 +10,7 @@ import static org.avis.Common.K;
 import static org.avis.Common.MB;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JUTestOptions
 {
@@ -46,6 +47,29 @@ public class JUTestOptions
     assertEquals (42, connectionOptions.getInt ("Keys.Max-Count"));
     assertEquals (1234, connectionOptions.getInt ("Subscription.Max-Count"));
     assertEquals (1234, accepted.get ("router.subscription.max-count"));
+  }
+  
+  /**
+   * Test that options are case-preserving but case independent for lookup.
+   */
+  @Test
+  public void caseIndependence ()
+  {
+    OptionSet optionSet = new OptionSet ();
+    optionSet.add ("Port", 0, 2917, 65536);
+    optionSet.add ("foobar", "frob", "wibble");
+    
+    Options options = new Options (optionSet);
+    
+    options.set ("port", 1234);
+    options.set ("FooBar", "wibble");
+    
+    assertEquals (1234, options.get ("Port"));
+    assertEquals (1234, options.get ("port"));
+    assertEquals ("wibble", options.get ("foobar"));
+    assertEquals ("wibble", options.get ("FOOBAR"));
+    
+    assertTrue (options.options ().contains ("FooBar"));
   }
   
   static class ConnectionOptionSet extends OptionSet
@@ -94,7 +118,7 @@ public class JUTestOptions
     }
     
     @Override
-    protected void validateAndPut (Map<String, Object> values,
+    protected void validateAndPut (Options options,
                                    String option, Object value)
       throws IllegalOptionException
     {
@@ -102,7 +126,7 @@ public class JUTestOptions
         option = legacyToNew.get (option);
       
       if (validate (option, value) == null)
-        values.put (option, value);
+        set (options, option, value);
     }
   }
 }
