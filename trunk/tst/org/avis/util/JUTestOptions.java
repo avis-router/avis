@@ -72,6 +72,25 @@ public class JUTestOptions
     assertTrue (options.options ().contains ("FooBar"));
   }
   
+  /**
+   * Test unit conversion.
+   */
+  @Test
+  public void units ()
+  {
+    OptionSet optionSet = new OptionSet ();
+    optionSet.add ("Packet.Max-Length", 0, 100, 10000);
+    optionSet.add ("Attribute.Max-Count", 0, 100, 5000000);
+    
+    Options options = new Options (optionSet);
+    
+    options.set ("Packet.Max-Length", "5K");
+    options.set ("Attribute.Max-Count", "1M");
+    
+    assertEquals (5*1024, options.get ("Packet.Max-Length"));
+    assertEquals (1*1024*1024, options.get ("Attribute.Max-Count"));
+  }
+  
   static class ConnectionOptionSet extends OptionSet
   {
     private Map<String, String> legacyToNew;
