@@ -45,7 +45,15 @@ public class OptionSet
   }
   
   /**
-   * Define a int-valued option.
+   * Inherit from a given option set.
+   */
+  public void inheritFrom (OptionSet optionSet)
+  {
+    inherited.add (optionSet);
+  }
+  
+  /**
+   * Define an int-valued option.
    * 
    * @param option The option name.
    * @param min The minimum value
