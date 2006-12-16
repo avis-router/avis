@@ -2,6 +2,9 @@ package org.avis.net.server;
 
 import java.util.Properties;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,25 +12,23 @@ import org.apache.mina.common.ByteBuffer;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.info;
 import static dsto.dfc.logging.Log.setEnabled;
 import static dsto.dfc.logging.Log.warn;
 
-import static org.avis.net.server.Server.DEFAULT_PORT;
-
 /**
- * Run the router from the command line.
+ * Invokes the Avis router from the command line.
  * 
  * @author Matthew Phillips
  */
 public class Main
 {
   private static final String USAGE =
-    "Usage: avisd [-h] [-v] [-vv] [-p port]\n\n" +
-    " -h This text\n" +
-    " -v and -vv increase verbosity\n" +
-    " -p port set port to listen on\n";
+    "Usage: avisd [-h] [-v] [-vv] [-p port] [-c file]\n\n" +
+    " -h         : This text\n" +
+    " -v and -vv : Increase verbosity\n" +
+    " -p port    : Set port to listen on\n" +
+    " -c file    : Load config from file\n";
   
   public static void main (String [] args)
     throws Exception
@@ -44,13 +45,13 @@ public class Main
      */
     ByteBuffer.setUseDirectBuffers (true);
     
-    Properties properties = loadProperties ();
-    System.getProperties ().putAll (properties);
+    Properties avisProperties = readAvisProperties ();
+    System.getProperties ().putAll (avisProperties);
     
     info ("Avis router version " +
-          properties.getProperty ("avis.router.version"), Main.class);
+          avisProperties.getProperty ("avis.router.version"), Main.class);
     
-    int port = DEFAULT_PORT;
+    ServerOptions config = new ServerOptions ();
 
     try
     {
@@ -67,20 +68,25 @@ public class Main
           setEnabled (TRACE, true);
         } else if (arg.equals ("-p"))
         {
-          port = intArg (args, ++i);
+          config.set ("Port", intArg (args, ++i));
+        } else if (arg.equals ("-c"))
+        {
+          config.setAll (propertiesFrom (fileStream (stringArg (args, ++i))));
         } else
         {
           System.out.println (USAGE);
           System.exit (0);
         }
       }
-    } catch (IllegalArgumentException ex)
+    } catch (Exception ex)
     {
-      System.out.println (ex.getMessage ());
+      System.err.println ();
+      
+      System.err.println ("Error starting server: " + ex.getMessage ());
       System.exit (1);
     }
-
-    final Server server = new Server (port);
+    
+    final Server server = new Server (config);
     
     Runtime.getRuntime ().addShutdownHook (new Thread ()
     {
@@ -93,41 +99,67 @@ public class Main
       }
     });
     
-    info ("Server listening on port " + port, Main.class);
+    info ("Server listening on port " + config.get ("Port"), Main.class);
   }
 
-  private static Properties loadProperties ()
+  private static Properties readAvisProperties ()
+    throws IOException
+  {
+    Properties properties;
+    
+    try
+    {
+      properties = propertiesFrom (resourceStream ("/avis.properties"));
+    } catch (IOException ex)
+    {
+      warn ("Failed to load Avis property file: " + ex.getMessage (),
+            Main.class);
+      
+      properties = new Properties ();
+    }
+    
+    if (!properties.containsKey ("avis.router.version"))
+      properties.put ("avis.router.version", "<unknown>");
+    
+    return properties;
+  }
+
+  private static InputStream fileStream (String filename)
+    throws FileNotFoundException
+  {
+    return new BufferedInputStream (new FileInputStream (filename));
+  }
+
+  private static InputStream resourceStream (String resource)
+    throws FileNotFoundException
+  {
+    InputStream in = Main.class.getResourceAsStream (resource);
+    
+    if (in == null)
+      throw new FileNotFoundException ("Missing resource: " + resource);
+    else
+      return in;
+  }
+  
+  private static Properties propertiesFrom (InputStream in)
+    throws IOException
   {
     Properties properties = new Properties ();
     
-    InputStream in = Main.class.getResourceAsStream ("/avis.properties");
-    
-    if (in != null)
-    {  
+    try
+    {
+      properties.load (in);
+    } finally
+    {
       try
       {
-        properties.load (in);
+        in.close ();
       } catch (IOException ex)
       {
-        alarm ("Error loading Avis property file", Main.class, ex);
-      } finally
-      {
-        try
-        {
-          in.close ();
-        } catch (IOException ex)
-        {
-          // zip
-        }
-      } 
-    } else
-    {
-      warn ("Failed to find Avis property file", Main.class);
-    }
+        // zip
+      }
+    } 
    
-    if (!properties.containsKey ("avis.router.version"))
-       properties.put ("avis.router.version", "<unknown>");
-    
     return properties;
   }
 
@@ -135,15 +167,23 @@ public class Main
   {
     try
     {
-      return Integer.parseInt (args [i]);
-    } catch (ArrayIndexOutOfBoundsException ex)
-    {
-      throw new IllegalArgumentException
-        ("Missing parameter for \"" + args [i - 1] + "\" option");
+      return Integer.parseInt (stringArg (args, i));
     } catch (NumberFormatException ex)
     {
       throw new IllegalArgumentException
         (args [i - 1] + ": not a number: " + args [i]);
+    }
+  }
+  
+  private static String stringArg (String [] args, int i)
+  {
+    try
+    {
+      return args [i];
+    } catch (ArrayIndexOutOfBoundsException ex)
+    {
+      throw new IllegalArgumentException
+        ("Missing parameter for \"" + args [i - 1] + "\" option");
     }
   }
 }
