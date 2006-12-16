@@ -212,14 +212,14 @@ public class ConnectionOptionSet extends OptionSet
    * values as invalid.
    */
   @Override
-  protected void validateAndPut (Map<String, Object> values,
+  protected void validateAndPut (Options options,
                                  String option, Object value)
     throws IllegalOptionException
   {
     option = legacyToNew (option);
     
     if (validate (option, value) == null)
-      values.put (option, value);
+      set (options, option, value);
   }
 
   public String legacyToNew (String option)
