@@ -13,6 +13,7 @@ import org.apache.mina.common.ByteBuffer;
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.info;
+import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.setEnabled;
 import static dsto.dfc.logging.Log.warn;
 
@@ -84,6 +85,10 @@ public class Main
       System.err.println ();
       
       System.err.println ("Error starting server: " + ex.getMessage ());
+      
+      if (isEnabled (DIAGNOSTIC))
+        ex.printStackTrace ();
+      
       System.exit (1);
     }
     
