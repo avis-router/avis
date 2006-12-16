@@ -48,7 +48,7 @@ public class Main
     Properties avisProperties = readAvisProperties ();
     System.getProperties ().putAll (avisProperties);
     
-    info ("Avis router version " +
+    info ("Avis event router version " +
           avisProperties.getProperty ("avis.router.version"), Main.class);
     
     ServerOptions config = new ServerOptions ();
@@ -74,6 +74,7 @@ public class Main
           config.setAll (propertiesFrom (fileStream (stringArg (args, ++i))));
         } else
         {
+          System.out.println ();
           System.out.println (USAGE);
           System.exit (0);
         }
