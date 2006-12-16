@@ -42,7 +42,7 @@ public class Options
   
   /**
    * Add a set of options as defaults. Any overlapping values override
-   * existing option defaults in this set or in the validating option
+   * existing option defaults in this set and the validating option
    * set.
    */
   public void addDefaults (Options newDefaults)
@@ -129,7 +129,7 @@ public class Options
    * 
    * @see #peek(String)
    * @see #set(String, Object)
-   * @see #hasOption(String)
+   * @see #isDefined(String)
    */
   public Object get (String option)
     throws IllegalOptionException
@@ -154,9 +154,9 @@ public class Options
     
     if (value == null)
     {
-      for (Options defaultOptions : defaults)
+      for (Options options : defaults)
       {
-        value = defaultOptions.peek (option);
+        value = options.peek (option);
         
         if (value != null)
           break;
@@ -176,7 +176,7 @@ public class Options
    *           the value is invalid.
    *           
    * @see #get(String)
-   * @see #clear(String)
+   * @see #remove(String)
    * @see OptionSet#validateAndPut(Map, String, Object)
    */
   public void set (String option, Object value)
@@ -195,7 +195,7 @@ public class Options
    * 
    * @see #set(String, Object)
    */
-  public void clear (String option)
+  public void remove (String option)
   {
     values.remove (option);
   }
@@ -203,7 +203,7 @@ public class Options
   /**
    * Test if an option is defined.
    */
-  public boolean hasOption (String option)
+  public boolean isDefined (String option)
   {
     return peek (option) != null;
   }

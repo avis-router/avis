@@ -191,7 +191,7 @@ public class ConnectionOptionSet extends OptionSet
     {
       String option = legacyToNew (requestedOption);
       
-      if (isOption (option))
+      if (isDefined (option))
       {
         Object value = connectionOptions.peek (option);
 
@@ -208,16 +208,15 @@ public class ConnectionOptionSet extends OptionSet
   /**
    * Override validation to add legacy support and to simply not
    * include invalid options rather than explode violently. Also
-   * removes auto value conversion, since we treat these as invalid
-   * options.
+   * removes auto value conversion, since we should treat mismatched
+   * values as invalid.
    */
   @Override
   protected void validateAndPut (Map<String, Object> values,
                                  String option, Object value)
     throws IllegalOptionException
   {
-    if (legacyToNew.containsKey (option))
-      option = legacyToNew.get (option);
+    option = legacyToNew (option);
     
     if (validate (option, value) == null)
       values.put (option, value);

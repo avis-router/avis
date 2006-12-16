@@ -577,7 +577,7 @@ public class Server implements IoHandler
         (coalesceDelay == 0);
     } else
     {
-      connection.options.clear ("Transport.TCP.Coalesce-Delay"); 
+      connection.options.remove ("Transport.TCP.Coalesce-Delay"); 
     }
   }
   

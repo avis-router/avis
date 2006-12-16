@@ -88,7 +88,7 @@ public class OptionSet
   /**
    * Test if a given option name is defined by this set or a subset.
    */
-  public boolean isOption (String option)
+  public boolean isDefined (String option)
   {
     return findValidationInfo (option) != null;
   }

@@ -45,7 +45,7 @@ public final class Nodes
     {
       out.indent ();
       
-      for (Node child : node.children ())
+      for (Node<?> child : node.children ())
       {
         out.println ();
         
@@ -83,7 +83,7 @@ public final class Nodes
     
     if (node.hasChildren ())
     {
-      for (Node child : node.children ())
+      for (Node<?> child : node.children ())
       {
         str.append (' ');
        
@@ -111,7 +111,8 @@ public final class Nodes
    */
   public static <T extends Node<Boolean>> 
     Node<Boolean> createNary (Class<T> type,
-                              Class constParam1, Class constParam2,
+                              Class<?> constParam1,
+                              Class<?> constParam2,
                               List<? extends Node<?>> args)
   {
     try
