@@ -21,9 +21,9 @@ import static org.avis.util.OptionSet.EMPTY_OPTION_SET;
  */
 public class Options
 {
-  private Map<String, Object> values;
-  private List<Options> defaults;
-  private OptionSet optionSet;
+  protected Map<String, Object> values;
+  protected List<Options> defaults;
+  protected OptionSet optionSet;
   
   public Options ()
   {
