@@ -278,11 +278,24 @@ public class OptionSet
       {
         try
         {
-          value = Integer.valueOf (value.toString ());
+          String text = value.toString ().toLowerCase ();
+          int unit = 1;
+          
+          if (text.endsWith ("m"))
+          {
+            unit = 1024*1024;
+            text = text.substring (0, text.length () - 1);
+          } else if (text.endsWith ("k"))
+          {
+            unit = 1024;
+            text = text.substring (0, text.length () - 1);
+          }
+          
+          value = Integer.parseInt (text) * unit;
         } catch (NumberFormatException ex)
         {
           throw new IllegalOptionException
-            (option, "\"" + value + "\" is not a number");
+            (option, "\"" + value + "\" is not a valid 32-bit integer");
         }
       } else
       {
