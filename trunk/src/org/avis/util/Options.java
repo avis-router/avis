@@ -85,7 +85,7 @@ public class Options
    * 
    * @throws IllegalOptionException if the option is not defined or is
    *           not an integer.
-   *           
+   * 
    * @see #get(String)
    */
   public int getInt (String option)
@@ -107,7 +107,7 @@ public class Options
    * 
    * @throws IllegalOptionException if the option is not defined or is
    *           not a string.
-   *           
+   * 
    * @see #get(String)
    */
   public String getString (String option)
@@ -141,7 +141,7 @@ public class Options
     if (value != null)
       return value;
     else
-      throw new IllegalOptionException (option, "No such option");
+      throw new IllegalOptionException (option, "Undefined option");
   }
   
   /**
