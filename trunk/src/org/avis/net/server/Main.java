@@ -30,7 +30,8 @@ public class Main
     " -h         : This text\n" +
     " -v and -vv : Increase verbosity\n" +
     " -p port    : Set port to listen on\n" +
-    " -c file    : Load config from file\n";
+    " -c file    : Load config from file\n" +
+    " -pid file  : Write process ID of router to file (Unix and OS X only)\n";
   
   public static void main (String [] args)
     throws Exception
@@ -78,6 +79,9 @@ public class Main
           config.setAll (propertiesFrom (fileStream (configFile)));
           
           diagnostic ("Read configuration from " + configFile, Main.class);
+        } else if (arg.equals ("-pid"))
+        {
+          createPidFile (stringArg (args, ++i));
         } else
         {
           System.out.println ();
@@ -88,7 +92,6 @@ public class Main
     } catch (Exception ex)
     {
       System.err.println ();
-      
       System.err.println ("Error starting server: " + ex.getMessage ());
       
       if (isEnabled (DIAGNOSTIC))
@@ -110,6 +113,22 @@ public class Main
     });
     
     info ("Server listening on port " + config.get ("Port"), Main.class);
+  }
+
+  private static void createPidFile (String pidFile)
+    throws IOException, InterruptedException
+  {
+    if (System.getProperty  ("os.name").toLowerCase ().startsWith ("windows"))
+      throw new IOException ("PID detection not supported on Windows");
+
+    // Yuck! Someone please tell me a better way to get the PID in Java
+    ProcessBuilder builder =
+      new ProcessBuilder
+        ("/bin/sh", "-c",
+         "echo $PPID > \"" + pidFile + "\"");
+    
+    if (builder.start ().waitFor () != 0)
+      throw new IOException ("Failed to create PID file: " + pidFile);
   }
 
   private static Properties readAvisProperties ()
