@@ -80,7 +80,8 @@ public class ConnectionOptionSet extends OptionSet
     this.legacyToNew = new HashMap<String, String> ();
     this.newToLegacy = new HashMap<String, String> ();
     
-    // required for all implementations
+    // ------------ Options required for all Elvin implementations
+    
     add ("Packet.Max-Length", 1*K, 1*MB, 10*MB);
     
     /*
@@ -119,8 +120,9 @@ public class ConnectionOptionSet extends OptionSet
 
     add ("Supported-Key-Schemes", "SHA-1");
     
-    // optional
-    // todo: need to decide on new name for Transport.TCP.Coalesce-Delay
+    // ------------ Avis-specific options
+    
+    // todo: need to decide on standard name for Transport.TCP.Coalesce-Delay
     add ("Transport.TCP.Coalesce-Delay", 0, 1, 1);
     
     // Avis-specific
@@ -128,7 +130,8 @@ public class ConnectionOptionSet extends OptionSet
     add ("Connection.Max-Keys", 1*K, 1*K, 1*K);
     add ("Subscription.Max-Keys", 1*K, 1*K, 1*K);
     
-    // compatibility mappings
+    // ------------ Legacy options
+    
     addLegacy ("router.attribute.max-count", "Attribute.Max-Count");
     addLegacy ("router.attribute.name.max-length",
                "Attribute.Name.Max-Length");
@@ -159,7 +162,6 @@ public class ConnectionOptionSet extends OptionSet
     addLegacy ("router.supported-keyschemes", "Supported-Key-Schemes");
     addLegacy ("router.vendor-identification",
                "Vendor-Identification");
-
     addLegacy ("router.coalesce-delay",
                "Transport.TCP.Coalesce-Delay");
   }
