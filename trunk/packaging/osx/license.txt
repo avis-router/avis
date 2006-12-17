@@ -1,5 +1,0 @@
-Avis is made freely available under the GNU General Public License version 2.0. This means you may freely use this Avis distribution for your own use and redistribute this package freely without modification.
-
-The source code for Avis is available from http://avis.sourceforge.net.
-
-Avis remains Copyright (C) 2006, Matthew Phillips.
