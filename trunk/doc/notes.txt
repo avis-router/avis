@@ -1,15 +1,16 @@
 Roadmap
 ----------------------------------------------------------------------
 
+* router options
 * packaging
 * demos: perhaps a little ec/ep using simple client
-* router options
 * resource protection: throttle clients based on total resources
 * web site PR: why use Avis? examples
 
 
 TODO
 
+* case-independent options
 * full test with Sticker
 * DONE: need separate VM's for MaliciousClient test
 * partly done: router-wide options that allow client to grow connection
