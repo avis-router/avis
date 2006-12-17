@@ -13,7 +13,7 @@ import static org.avis.net.server.Server.DEFAULT_PORT;
  */
 public class ServerOptions extends Options
 {
-  private static final OptionSet SERVER_OPTIONS = new ServerOptionSet ();
+  private static final OptionSet OPTION_SET = new ServerOptionSet ();
 
   static class ServerOptionSet extends OptionSet
   {
@@ -25,11 +25,10 @@ public class ServerOptions extends Options
   
   public ServerOptions ()
   {
-    super (SERVER_OPTIONS);
+    super (OPTION_SET);
     
+    // allow default connection options to be specified also
     optionSet.inheritFrom (CONNECTION_OPTION_SET);
-    
-    optionSet.add ("Port", 1, Server.DEFAULT_PORT, 65535);
   }
 
   public ServerOptions (int port)
