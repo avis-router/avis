@@ -1,11 +1,12 @@
 #!/bin/sh
 
-if [ -e build/avisd.jar ]; then
-  AVISD=build/avisd.jar
-elif [ -e avisd.jar ]; then
-  AVISD=avisd.jar
+if [ -e ../lib/avisd.jar ]; then
+  AVISD=../lib/avisd.jar
+elif [ -e lib/avisd.jar ]; then
+  AVISD=lib/avisd.jar
 else
-  AVISD=../build/avisd.jar
+  echo "Cannot find avisd.jar"
+  exit 1
 fi
 
 java -server -jar $AVISD $*
