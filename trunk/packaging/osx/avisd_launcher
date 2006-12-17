@@ -1,0 +1,46 @@
+#! /bin/sh
+
+# Avis startup script for Mac OS X (10.4 and later)
+
+# Standard system config
+. /etc/rc.common
+
+# Set default parameters
+AVISD=/usr/local/sbin/avisd
+AVISD_CONFDIR=/usr/local/etc/avisd
+AVISD_CONF=$AVISD_CONFDIR/avisd.config
+AVISD_OPTS=""
+AVISD_PIDFILE=/var/run/avisd.pid
+
+# AVISD=/Users/matt/Development/avis/bin/avisd.sh
+# AVISD_CONFDIR=/Users/matt/Development/avis/etc
+# AVISD_CONF=$AVISD_CONFDIR/router.config
+# AVISD_OPTS=""
+# AVISD_PIDFILE=/var/run/avisd.pid
+
+StartService ()
+{
+    ##
+    # Start Avis Router
+    ##
+    PIDFILE=$AVISD_PIDFILE
+    if ! pid=$(GetPID avisd); then
+      ConsoleMessage "Starting Avis Event Router"
+      $AVISD -pid $AVISD_PIDFILE -c $AVISD_CONF $AVISD_OPTS
+    fi
+}
+
+StopService ()
+{
+    ConsoleMessage "Stopping Avis Event Router"
+    kill -INT $(cat $AVISD_PIDFILE)
+}
+
+RestartService () 
+{
+    StopService
+    sleep 5
+    StartService
+}
+
+RunService "$1"

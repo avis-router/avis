@@ -1,0 +1,6 @@
+{
+  Description     = "Avis Event Router";
+  Provides        = ("avisd");
+  Requires        = ("Network");
+  OrderPreference = "None";
+}
