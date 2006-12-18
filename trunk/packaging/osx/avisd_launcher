@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 # Avis startup script for Mac OS X (10.4 and later)
 
