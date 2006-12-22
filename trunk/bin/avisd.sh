@@ -4,8 +4,8 @@ set -e
 
 daemon=0
 avisd_opts=""
-logfile="/dev/null" 
-avisd_jar=`dirname $0`/../lib/avisd.jar
+logfile=/dev/null
+avisd_jar=$(dirname $0)/../lib/avisd.jar
 
 usage ()
 {
