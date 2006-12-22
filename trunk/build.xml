@@ -219,11 +219,13 @@
       <param name="root" value="${temp}" />
     </antcall>
 
-    <!-- copy OS X startup items -->
+    <!-- copy startup items -->
     <copy file="packaging/osx/avisd_launcher"
           tofile="${startup}/Avis" preservelastmodified="true" />
     <copy file="packaging/osx/StartupParameters.plist"
           todir="${startup}" preservelastmodified="true" />
+    
+    <!-- copy package items -->
     <copy file="packaging/osx/welcome.txt"
           tofile="${resources}/Welcome.txt" preservelastmodified="true" />
     <copy file="packaging/osx/license.rtf"
@@ -231,11 +233,12 @@
     <copy file="packaging/osx/Info.plist"
           todir="${temp}" preservelastmodified="true" filtering="yes" />
    
-    <!-- add standard Unix layout -->
+    <!-- add standard Unix distro -->
     <antcall target="fn:build_unix_dist_layout">
       <param name="root" value="${root}" />
     </antcall>
    
+    <!-- fix perms, set ownership -->
     <chmod perm="0755" file="${startup}/Avis" />
     <chmod perm="1775" dir="${root}/Library" />
  
@@ -274,6 +277,7 @@
 
   </target>
   
+  <!-- build standard Unix distro layout in ${root} -->
   <target name="fn:build_unix_dist_layout">
 
     <copy file="bin/avisd.sh" tofile="${root}/usr/local/sbin/avisd" preservelastmodified="true" overwrite="true" />
@@ -293,6 +297,7 @@
     </chmod>
   </target>
 
+  <!-- run "sudo rm -rf ${root}" -->
   <target name="fn:rm_as_root">
      <exec executable="sudo">
       <arg line="-p 'Please enter sudo password for rm -rf ${root}: '" />
@@ -301,6 +306,7 @@
     </exec>
   </target>
   
+  <!-- run "sudo chown -R root:wheel ${root}" -->
   <target name="fn:set_unix_admin_ownership">
     <exec executable="sudo">
       <arg line="-p 'Please enter sudo password for chown -R root:wheel ${root}: '" />
