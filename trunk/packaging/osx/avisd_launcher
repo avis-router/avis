@@ -11,6 +11,7 @@ AVISD_CONFDIR=/usr/local/etc/avisd
 AVISD_CONF=$AVISD_CONFDIR/avisd.config
 AVISD_OPTS=""
 AVISD_PIDFILE=/var/run/avisd.pid
+AVISD_LOGILE=/dev/console
 
 # AVISD=/Users/matt/Development/avis/bin/avisd.sh
 # AVISD_CONFDIR=/Users/matt/Development/avis/etc
@@ -26,7 +27,8 @@ StartService ()
     PIDFILE=$AVISD_PIDFILE
     if ! pid=$(GetPID avisd); then
       ConsoleMessage "Starting Avis Event Router"
-      $AVISD -pid $AVISD_PIDFILE -c $AVISD_CONF $AVISD_OPTS
+      $AVISD -daemon -pidfile $AVISD_PIDFILE -logfile $AVISD_LOGILE \
+        -c $AVISD_CONF $AVISD_OPTS
     fi
 }
 
