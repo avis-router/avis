@@ -44,17 +44,11 @@ done
 command="java -server -jar $avisd_jar $avisd_opts"
 
 if [ $daemon == 1 ]; then
-  (
-    exec $command < /dev/null 2>&1 > $logfile
-  ) &
+  ( exec $command < /dev/null > $logfile 2>&1 ) &
   
-  if [ "x$pidfile" != "x" ]; then
-    echo $! > "$pidfile"
-  fi
+  if [ "x$pidfile" != "x" ]; then echo $! > "$pidfile"; fi
 else
-  if [ "x$pidfile" != "x" ]; then
-    echo $$ > "$pidfile"
-  fi
+  if [ "x$pidfile" != "x" ]; then echo $$ > "$pidfile"; fi
   
   exec $command
 fi
