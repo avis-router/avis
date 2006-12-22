@@ -203,27 +203,112 @@
   
   <target name="dist_osx" depends="jar_avisd"
             description="Build the Mac OS X binary distro">
-    <property name="root" value="build/tmp/osx_package/root" />
+
+    <property name="temp" value="${basedir}/build/tmp/osx_package" />
+    <property name="root" value="${temp}/root" />
+    <property name="resources" value="${temp}/resources" />
     <property name="startup" value="${root}/Library/StartupItems/Avis" />
 
+    <filter token="version"
+            value="${avis.version.major}.${avis.version.minor}" />
+    <filter token="major_version" value="${avis.version.major}" />
+    <filter token="minor_version" value="${avis.version.minor}" />
+    
+    <!-- clean temp area -->
+    <antcall target="fn:rm_as_root">
+      <param name="root" value="${temp}" />
+    </antcall>
+
+    <!-- copy OS X startup items -->
+    <copy file="packaging/osx/avisd_launcher"
+          tofile="${startup}/Avis" preservelastmodified="true" />
+    <copy file="packaging/osx/StartupParameters.plist"
+          todir="${startup}" preservelastmodified="true" />
+    <copy file="packaging/osx/welcome.txt"
+          tofile="${resources}/Welcome.txt" preservelastmodified="true" />
+    <copy file="packaging/osx/license.rtf"
+          tofile="${resources}/License.rtf" preservelastmodified="true" />
+    <copy file="packaging/osx/Info.plist"
+          todir="${temp}" preservelastmodified="true" filtering="yes" />
+   
+    <!-- add standard Unix layout -->
     <antcall target="fn:build_unix_dist_layout">
       <param name="root" value="${root}" />
     </antcall>
-
-    <copy file="packaging/osx/avisd_launcher" tofile="${startup}/Avis" preservelastmodified="true" overwrite="true" />
-    <copy file="packaging/osx/StartupParameters.plist" todir="${startup}" preservelastmodified="true" overwrite="true" />
-    
+   
     <chmod perm="0755" file="${startup}/Avis" />
+    <chmod perm="1775" dir="${root}/Library" />
+ 
+    <antcall target="fn:set_unix_admin_ownership">
+      <param name="root" value="${root}" />
+    </antcall>
+
+    <!-- /Library should be root:admin -->
+    <exec executable="sudo">
+      <arg line="-p 'Please enter sudo password for chown: '" />
+      <arg line="chown root:admin" />
+      <arg value="${root}/Library" />
+    </exec>
+
+    <mkdir dir="build" />
+
+    <exec executable="/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker">
+      <arg value="-build" />
+      <arg value="-p" />
+      <arg value="${basedir}/build/avis.pkg" />
+      <arg value="-f" />
+      <arg value="${root}" />
+      <arg value="-r" />
+      <arg value="${resources}" />
+      <arg value="-i" />
+      <arg value="${temp}/Info.plist" />
+      <arg value="-d" />
+      <arg value="${basedir}/packaging/osx/Description.plist" />
+      <arg value="-v" />
+    </exec>
+
+    <!-- clean temp area -->
+    <antcall target="fn:rm_as_root">
+      <param name="root" value="${temp}" />
+    </antcall>
+
   </target>
   
   <target name="fn:build_unix_dist_layout">
+
     <copy file="bin/avisd.sh" tofile="${root}/usr/local/sbin/avisd" preservelastmodified="true" overwrite="true" />
     <copy file="lib/avisd.jar" tofile="${root}/usr/local/lib/avisd.jar" preservelastmodified="true" overwrite="true" />
     <copy file="etc/avisd.config" tofile="${root}/usr/local/etc/avisd/avisd.config" preservelastmodified="true" overwrite="true" />
-    
-    <chmod perm="0755" file="${root}/usr/local/sbin/avisd" />
+
+    <chmod perm="0755">
+      <dirset dir="${root}" />
+    </chmod>
+
+    <chmod perm="0664">
+      <fileset dir="${root}" />
+    </chmod>
+
+    <chmod perm="0775">
+      <fileset dir="${root}/usr/local/sbin" />
+    </chmod>
+  </target>
+
+  <target name="fn:rm_as_root">
+     <exec executable="sudo">
+      <arg line="-p 'Please enter sudo password for rm -rf ${root}: '" />
+      <arg line="rm -rf" />
+      <arg value="${root}" />
+    </exec>
   </target>
   
+  <target name="fn:set_unix_admin_ownership">
+    <exec executable="sudo">
+      <arg line="-p 'Please enter sudo password for chown -R root:wheel ${root}: '" />
+      <arg line="chown -R root:wheel" />
+      <arg value="${root}" />
+    </exec>
+  </target>
+
   <target name="web_deploy" depends="web"
           description="Rsync web site to sourceforge">
     <exec executable="rsync">
