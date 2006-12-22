@@ -7,7 +7,25 @@ avisd_opts=""
 logfile="/dev/null" 
 avisd_jar=`dirname $0`/../lib/avisd.jar
 
-if [ ! -e $avisd_jar ]; then
+usage ()
+{
+  local NL=$'\x0a'
+  local help="\
+  Usage: $0 [-h] [-v] [-vv] [-p port] [-c file] $NL\
+            [-daemon] [-pidfile file] [-logfile file] $NL\
+
+     -h               : This text$NL\
+     -v and -vv       : Increase verbosity$NL\
+     -p port          : Set port to listen on$NL\
+     -c file          : Load config from file$NL\
+     -daemon          : Run as daemon$NL\
+     -pidfile file    : Output process ID to file$NL\
+     -logfile file    : Log output to file (only with -daemon)$NL"
+ 
+  echo "$help" >&2
+}
+
+if [ ! -e "$avisd_jar" ]; then
   echo "Cannot find avisd.jar"
   exit 1
 fi
@@ -17,7 +35,9 @@ while [ $# -gt 0 ]; do
     -pidfile) pidfile=$2; shift 2;;
     -daemon)  daemon=1; shift;;
     -logfile) logfile=$2; shift 2;;
-    *)        avisd_opts="$avisd_opts $1"; shift;;
+    -v|-vv)   avisd_opts="$avisd_opts $1"; shift;;
+    -p|-c)    avisd_opts="$avisd_opts $1 $2"; shift 2;;
+    *)        usage; exit 1;;
   esac
 done
 
