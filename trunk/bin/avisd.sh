@@ -1,12 +1,10 @@
 #!/bin/sh
 
-if [ -e ../lib/avisd.jar ]; then
-  AVISD=../lib/avisd.jar
-elif [ -e lib/avisd.jar ]; then
-  AVISD=lib/avisd.jar
-else
+avisd_jar=`dirname $0`/../lib/avisd.jar
+
+if [ ! -e $avisd_jar ]; then
   echo "Cannot find avisd.jar"
   exit 1
 fi
 
-java -server -jar $AVISD $*
+java -server -jar $avisd_jar $*
