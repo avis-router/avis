@@ -202,7 +202,7 @@
   </target>
   
   <target name="dist_osx" depends="jar_avisd"
-            description="Build a Mac OS X binary distro (OS X command line only)">
+            description="Build the Mac OS X binary distro (OS X command line only)">
 
     <property name="temp" value="${basedir}/build/tmp/osx_package" />
     <property name="root" value="${temp}/root" />
@@ -259,7 +259,7 @@
     <exec executable="/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker">
       <arg value="-build" />
       <arg value="-p" />
-      <arg value="${basedir}/build/avis.pkg" />
+      <arg value="${basedir}/build/Avis-${release}.pkg" />
       <arg value="-f" />
       <arg value="${root}" />
       <arg value="-r" />
