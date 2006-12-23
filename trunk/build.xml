@@ -278,6 +278,42 @@
 
   </target>
   
+  <target name="dist_redhat" depends="jar_avisd"
+            description="Build the Red Hat Linux binary distro">
+    <property name="temp" value="${basedir}/build/tmp/redhat" />
+    <property name="root" value="${temp}/root" />
+
+    <!-- clean temp area -->
+    <delete dir="${temp}" />
+    
+    <!-- create standard Unix distro -->
+    <antcall target="fn:build_unix_dist_layout">
+      <param name="root" value="${root}" />
+    </antcall>
+   
+    <!-- add init script -->
+    <copy file="packaging/redhat/init_script"
+          tofile="${root}/etc/init.d/avisd" />
+
+    <copy file="packaging/redhat/README.txt" todir="${temp}" />
+    <copy file="packaging/redhat/install.sh" todir="${temp}" />
+
+    <chmod perm="0755">
+      <fileset dir="${root}/etc/init.d" />
+    </chmod>
+
+    <chmod perm="0755">
+      <fileset file="${temp}/install.sh" />
+    </chmod>
+
+    <!-- tar it up -->
+    <tar destfile="build/avisd_redhat-${release}.tar.bz2"
+         basedir="${temp}" compression="bzip2" />
+
+    <!-- clean temp area -->
+    <delete dir="${temp}" />    
+  </target>
+
   <!-- build standard Unix distro layout in ${root} -->
   <target name="fn:build_unix_dist_layout">
 
