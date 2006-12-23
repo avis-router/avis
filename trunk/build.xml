@@ -281,9 +281,15 @@
   <!-- build standard Unix distro layout in ${root} -->
   <target name="fn:build_unix_dist_layout">
 
-    <copy file="bin/avisd.sh" tofile="${root}/usr/local/sbin/avisd" preservelastmodified="true" overwrite="true" />
-    <copy file="lib/avisd.jar" tofile="${root}/usr/local/lib/avisd.jar" preservelastmodified="true" overwrite="true" />
-    <copy file="etc/avisd.config" tofile="${root}/usr/local/etc/avisd/avisd.config" preservelastmodified="true" overwrite="true" />
+    <copy file="bin/avisd.sh"
+          tofile="${root}/usr/local/sbin/avisd"
+          preservelastmodified="true" />
+    <copy file="lib/avisd.jar"
+          tofile="${root}/usr/local/lib/avisd.jar"
+          preservelastmodified="true" />
+    <copy file="etc/avisd.config"
+          tofile="${root}/usr/local/etc/avisd/avisd.config"
+          preservelastmodified="true" />
 
     <chmod perm="0755">
       <dirset dir="${root}" />
