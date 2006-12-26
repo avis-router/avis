@@ -1,21 +1,28 @@
 #!/bin/sh
 
+# Avis install script for Redhat/Fedora.
+#
+# Run with -h option for usage
+
 home=$(dirname $0)
-prefix=/
+root=$home/root
+prefix=/usr/local
+install_service=0
 
 usage ()
 {
   local NL=$'\x0a'
   local help="\
-  Usage: $0 [-h|--help] [-p|--prefix dir] $NL\
+  Usage: $0 [-h|--help] [--prefix dir] [--service]$NL\
 
      -h|--help      : This text$NL\
-     -p--prefix dir : Set install dir prefix (default is \"/\")"
- 
+     --prefix dir   : Set install dir prefix (default is \"/usr/local\")$NL\
+     --service      : Install as service in etc/rc.d"
+
   echo "$help" >&2
 }
 
-OPTS=`getopt -a -o p:h --long prefix:,help -n '$0' -- "$@"`
+OPTS=`getopt -o h --long prefix:,service,help -n '$0' -- "$@"`
 
 if [ $? != 0 ] ; then exit 1 ; fi
 
@@ -23,15 +30,26 @@ eval set -- "$OPTS"
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --prefix|-p) prefix=$2 ; shift 2 ;;
+    --prefix) prefix=$2 ; shift 2 ;;
+    --service) install_service=1 ; shift 1 ;;
     -h|--help) usage ; exit 0 ;;
     --) shift ; break ;;
     *) echo "!error" ; shift 1 ;;
   esac
 done
 
-chmod -R 0644 $home && \
-chmod 0755 $home/usr/local/sbin/avisd && \
-chmod 0755 $home/etc/init.d/avisd && \
-chown -R root:root $home/root && \
-cp -rpv $home/root/* $prefix
+# install if no --service OR if avisd not already installed
+if [ $install_service == 0 ] || [ ! -e $prefix/sbin/avisd ]; then
+  install -DCp -m 0755 -o root -g root $root/sbin/avisd $prefix/sbin/avisd && \
+  install -DCp -m 0644 -o root -g root $root/lib/avisd.jar $prefix/lib/avisd.jar && \
+  install -DCp -m 0644 -o root -g root $root/etc/avis/avisd.config $prefix/etc/avis/avisd.config
+fi
+
+if [ $install_service == 1 ]; then
+  sed -e "s|__PREFIX__|$prefix|g" < init_script.in > avisd.tmp && \
+  install -DCp -m 0755 -o root -g root avisd.tmp /etc/init.d/avisd && \
+  rm avisd.tmp && \
+  chkconfig --add avisd && \
+  chkconfig avisd on
+fi
+
