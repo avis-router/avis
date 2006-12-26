@@ -37,16 +37,16 @@ Optional:
 
   * Eclipse 3.2 or later. Project files are included with the
     distribution. The version of Ant bundled with Eclipse is
-    sufficient to build Avis.
+    sufficient to build Avis. http://www.eclipse.org/downloads.
 
   * JavaCC 4.0 or later. Required if you wish to change the
-    subscription parser. http://javacc.dev.java.net/
+    subscription parser. http://javacc.dev.java.net.
 
 Very optional -- these only apply if you're working in the development
-tree from SVN:
+tree from SVN and need to update the web site:
 
   * Markdown 1.0.1 or later. Required to build the web
-    site. http://daringfireball.net/projects/markdown/
+    site. http://daringfireball.net/projects/markdown.
 
   * rsync. Required to upload web site.
 
