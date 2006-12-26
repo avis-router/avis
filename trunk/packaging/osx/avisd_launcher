@@ -13,12 +13,6 @@ AVISD_OPTS=""
 AVISD_PIDFILE=/var/run/avisd.pid
 AVISD_LOGILE=/dev/console
 
-# AVISD=/Users/matt/Development/avis/bin/avisd.sh
-# AVISD_CONFDIR=/Users/matt/Development/avis/etc
-# AVISD_CONF=$AVISD_CONFDIR/router.config
-# AVISD_OPTS=""
-# AVISD_PIDFILE=/var/run/avisd.pid
-
 StartService ()
 {
     ##
