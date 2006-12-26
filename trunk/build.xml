@@ -292,7 +292,7 @@
   
   <target name="dist_fedora" depends="jar_avisd"
             description="Build the Red Hat Fedora Core binary distro">
-    <property name="temp" value="${basedir}/build/tmp/redhat" />
+    <property name="temp" value="${basedir}/build/tmp/fedora" />
     <property name="root" value="${temp}/root" />
 
     <!-- clean temp area -->
@@ -304,9 +304,9 @@
     </antcall>
    
     <!-- add installer files -->
-    <copy file="packaging/redhat/init_script.in" todir="${temp}" />
-    <copy file="packaging/redhat/README.txt" todir="${temp}" />
-    <copy file="packaging/redhat/install.sh" todir="${temp}" />
+    <copy file="packaging/fedora/init_script.in" todir="${temp}" />
+    <copy file="packaging/fedora/README.txt" todir="${temp}" />
+    <copy file="packaging/fedora/install.sh" todir="${temp}" />
 
     <!-- tar it up -->
     <tar destfile="build/avisd_fedora-${release}.tar.bz2"
