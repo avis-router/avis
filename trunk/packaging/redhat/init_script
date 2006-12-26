@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# chkconfig: - 86 14
+# chkconfig: 2345 86 14
 # description: Starts and stops the Avis event router daemon.
 #
 # pidfile: /var/run/avisd.pid
