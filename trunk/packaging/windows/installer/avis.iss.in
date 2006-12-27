@@ -3,6 +3,9 @@
 [Setup]
 AppName=Avis
 AppVerName=Avis @release@
+AppPublisher=Matthew Phillips
+AppPublisherURL=http://avis.sourceforge.net
+AppVersion=@version@
 DefaultDirName={pf}\Avis
 DefaultGroupName=Avis
 SourceDir=..
@@ -18,10 +21,13 @@ Source: "bin\uninstall_avis_service.cmd"; DestDir: "{app}\bin"
 Source: "bin\start_avis_service.cmd"; DestDir: "{app}\bin"
 Source: "bin\stop_avis_service.cmd"; DestDir: "{app}\bin"
 Source: "config\wrapper.conf"; DestDir: "{app}\config"
-Source: "logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"
+Source: "logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"; Flags: onlyifdoesntexist
 Source: "..\..\lib\avisd.jar"; DestDir: "{app}\lib"
-Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"
+Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
 Source: "..\..\LICENSE.txt"; DestDir: "{app}"
+
+; Make a backup of config if we're going to overwrite it
+; Source: "{app}\config\avisd.config"; DestDir: "{app}\config\avisd.config.orig"; Flags: external skipifsourcedoesntexist uninsneveruninstall
 
 ; JRE Files
 ; Source: "@jre_installer@"; DestDir: "{app}"; DestName: "jre.exe"; Flags: deleteafterinstall
@@ -35,6 +41,7 @@ Name: "{group}\Start Avis"; Filename: "{app}\bin\avis.cmd"; WorkingDir: "{app}\b
 Name: "{group}\Uninstall Avis"; Filename: "{app}\unins000.exe"; Tasks: programicon
 
 [Run]
+Filename: "{app}\bin\uninstall_avis_service.cmd"; Description: "Install as a Windows service"; StatusMsg: "Installing Avis as a Windows service..."; Flags: runhidden; Tasks: installservice
 Filename: "{app}\bin\install_avis_service.cmd"; Description: "Install as a Windows service"; StatusMsg: "Installing Avis as a Windows service..."; Flags: runhidden; Tasks: installservice
 Filename: "{app}\bin\start_avis_service.cmd"; Description: "Start the Avis Windows service"; StatusMsg: "Starting the Avis Windows service..."; Flags: runhidden; Tasks: installservice
 ; Filename: "{app}\jre.exe"; Parameters: "/s /v""/qn ADDLOCAL=jrecore IEXPLORER=1 MOZILLA=1"" "; Description: "Install Java runtime"; StatusMsg: "Installing Java..."; Check: JavaCheck
