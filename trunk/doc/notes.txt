@@ -10,7 +10,8 @@ Roadmap
 
 TODO
 
-* pkg permissions
+* windows JRE does not have -server, need to add installer option
+* DONE: pkg permissions
 * DONE: case-independent options
 * DONE: full test with Sticker
 * DONE: need separate VM's for MaliciousClient test
