@@ -1,3 +1,30 @@
+Release 0.7 (December 27, 2006)
+----------------------------------------------------------------------
+
+Release focus: improve ease of router installation and
+configuration. Added installers/packages for Mac OS X, Fedora Core and
+Windows. Router now supports configuration options via -c switch.
+
+Change summary:
+
+ * Upgraded to Apache Mina 1.0.1.
+
+ * Quench requests now generate (non-standard) 2299 NACK code to avoid
+   making clients think they've triggered a protocol violation. This
+   results in better behaviour when using quench from je4.
+
+ * Added support for configuring server using configuration file with
+   -c option.
+
+ * Added Unix-specific options -pidfile, -logfile and -daemon to
+   bin/avisd.sh.
+
+ * Client connection options are now case-independent.
+
+ * Added packaging wrappers for Mac OS X, Fedora Core (should be
+   fairly straightforward to port to other *nix) and Windows.
+
+
 Release 0.6 (December 3, 2006)
 ----------------------------------------------------------------------
 
