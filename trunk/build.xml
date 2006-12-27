@@ -329,10 +329,11 @@
   </target>
   
   <target name="dist_windows" depends="jar_avisd"
-          description="Build the Windows self-installer package">
+          description="Build the Windows self-installer distro">
     <mkdir dir="build" />
     
     <filter token="release" value="${release}" />
+    <filter token="version" value="${avis.version.major}.${avis.version.minor}" />
     <!-- <filter token="jre_installer" value="${jre.installer}" /> -->
     
     <copy file="packaging/windows/installer/avis.iss.in"
