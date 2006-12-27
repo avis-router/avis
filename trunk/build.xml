@@ -23,6 +23,10 @@
   <!-- Markdown 1.0.1: only needed to build web page -->
   <property name="markdown" value="/Users/matt/bin/Markdown.pl" />
   
+  <!-- InnoSetup installation (5.1.9 or later): Only needed if building the
+       Windows self-installer. -->
+  <property name="innosetup.home" value="C:\Program Files\Inno Setup 5" />
+  
   <path id="classpath">
     <fileset dir="lib" includes="*.jar" excludes="avisd.jar"/>
     <pathelement path="classes" />
@@ -228,7 +232,7 @@
     <!-- copy package items -->
     <copy file="packaging/osx/welcome.txt"
           tofile="${resources}/Welcome.txt" preservelastmodified="true" />
-    <copy file="packaging/osx/license.rtf"
+    <copy file="packaging/common/license.rtf"
           tofile="${resources}/License.rtf" preservelastmodified="true" />
     <copy file="packaging/osx/Info.plist"
           todir="${temp}" preservelastmodified="true" filtering="yes" />
@@ -322,6 +326,27 @@
 
     <!-- clean temp area -->
     <delete dir="${temp}" />    
+  </target>
+  
+  <target name="dist_windows" depends="jar_avisd"
+          description="Build the Windows self-installer package">
+    <mkdir dir="build" />
+    
+    <filter token="release" value="${release}" />
+    <!-- <filter token="jre_installer" value="${jre.installer}" /> -->
+    
+    <copy file="packaging/windows/installer/avis.iss.in"
+          tofile="packaging/windows/installer/avis.iss" overwrite="true"
+          filtering="true" />
+        
+    <exec executable="${innosetup.home}/iscc.exe">
+      <arg value="/O${basedir}\build" />
+      <arg value="/Favis-${release}" />
+      <arg value="/Q" />
+      <arg value="${basedir}\packaging\windows\installer\avis.iss" />
+    </exec>
+
+    <delete file="packaging/windows/installer/avis.iss" />
   </target>
 
   <!-- build standard Unix distro layout in ${root} -->
