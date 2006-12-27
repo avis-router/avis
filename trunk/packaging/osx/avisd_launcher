@@ -7,7 +7,7 @@
 
 # Set default parameters
 AVISD=/usr/local/sbin/avisd
-AVISD_CONFDIR=/usr/local/etc/avisd
+AVISD_CONFDIR=/usr/local/etc/avis
 AVISD_CONF=$AVISD_CONFDIR/avisd.config
 AVISD_OPTS=""
 AVISD_PIDFILE=/var/run/avisd.pid
