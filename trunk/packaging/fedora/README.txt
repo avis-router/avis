@@ -26,7 +26,7 @@ with:
 
   > sudo chkconfig avisd --del
   > sudo rm /etc/init.d/avisd
-  >  (cd $AVIS_HOME/.. && sudo stow --delete $(basename $AVIS_HOME))
+  > (cd $AVIS_HOME/.. && sudo stow --delete $(basename $AVIS_HOME))
 
 To start the service:
 
