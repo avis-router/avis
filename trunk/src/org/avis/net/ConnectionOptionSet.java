@@ -127,8 +127,8 @@ public class ConnectionOptionSet extends OptionSet
     
     // Avis-specific
     // Max connection keys for ntfn/sub
-    add ("Connection.Max-Keys", 1*K, 1*K, 1*K);
-    add ("Subscription.Max-Keys", 1*K, 1*K, 1*K);
+    add ("Connection.Max-Keys", 8, 1*K, 1*K);
+    add ("Subscription.Max-Keys", 8, 1*K, 1*K);
     
     // ------------ Legacy options
     
