@@ -45,6 +45,3 @@ rem Install the Wrapper as an NT service.
 rem
 :startup
 "%_WRAPPER_EXE%" -i %_WRAPPER_CONF%
-if not errorlevel 1 goto :eof
-pause
-
