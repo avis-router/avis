@@ -1,0 +1,16 @@
+* flexible
+
+* easy
+
+* fast
+
+* federatable
+
+* stop thinking in terms of protocols & networks, point to point:
+  think bus instead one to one, one to many, one to none. Protocol
+  becomes simpler, extension possible. Removes distinction between
+  server and client, who initiates connection, auto reconnection,
+  service discovery. Security standard.
+
+* Bus allows snooping, proxying, logging, etc. Like HTTP don't need to
+  understand contents
