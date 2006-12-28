@@ -80,22 +80,19 @@ public class Main
           diagnostic ("Read configuration from " + configFile, Main.class);
         } else
         {
-          System.out.println ();
-          System.out.println ("Unknown option: \"" + arg + "\"");
-          System.out.println ();
-          System.out.println (USAGE);
-          System.exit (0);
+          System.err.println ("\nUnknown option: \"" + arg + "\"\n");
+          System.err.println (USAGE);
+          System.exit (1);
         }
       }
     } catch (Exception ex)
     {
-      System.err.println ();
-      System.err.println ("Error starting server: " + ex.getMessage ());
+      System.err.println ("\nError starting server: " + ex.getMessage ());
       
       if (isEnabled (DIAGNOSTIC))
         ex.printStackTrace ();
       
-      System.exit (1);
+      System.exit (2);
     }
     
     final Server server = new Server (config);
