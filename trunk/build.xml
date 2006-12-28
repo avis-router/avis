@@ -214,6 +214,7 @@
     <property name="root" value="${temp}/root" />
     <property name="resources" value="${temp}/resources" />
     <property name="startup" value="${root}/Library/StartupItems/Avis" />
+    <property name="package" value="Avis-${release}.pkg" />
 
     <filter token="version"
             value="${avis.version.major}.${avis.version.minor}" />
@@ -277,7 +278,7 @@
     <exec executable="/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker">
       <arg value="-build" />
       <arg value="-p" />
-      <arg value="${basedir}/build/Avis-${release}.pkg" />
+      <arg value="${basedir}/build/${package}" />
       <arg value="-f" />
       <arg value="${root}" />
       <arg value="-r" />
@@ -289,9 +290,14 @@
       <arg value="-v" />
     </exec>
 
-    <zip destfile="build/Avis-OSX-${release}.zip">
-      <fileset dir="build" includes="Avis-${release}.pkg/**" />
-    </zip>
+    <!-- OS X package files use symlinks, use system tar to preserve -->
+    <exec executable="tar">
+      <arg value="jcvf" />
+      <arg value="build/Avis-OSX-${release}.tar.bz2" />
+      <arg value="-C" />
+      <arg value="build" />
+      <arg value="${package}" />
+    </exec>
 
     <!-- clean temp area -->
     <antcall target="fn:rm_as_root">
