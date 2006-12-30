@@ -112,3 +112,25 @@ Nr.   Classes Functions      NCSS  Javadocs Package
               10.33     76.44    585.44     18.11 | Package
                          7.40     56.66      1.75 | Class
                                    7.66      0.24 | Function
+
+release 0.7
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1         2        19        56         2 org.avis
+  2         4        38       439        24 org.avis.net
+  3        22        99       488         7 org.avis.net.messages
+  4        10        73       590        42 org.avis.net.security
+  5         8        68       551        22 org.avis.net.server
+  6         9        64       278        22 org.avis.pubsub.ast
+  7        30       175       777        11 org.avis.pubsub.ast.nodes
+  8         8       132      2016        19 org.avis.pubsub.parser
+  9         5        50       278        32 org.avis.util
+    --------- --------- --------- ---------
+           98       718      5473       181 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+     9.00     98.00    718.00   5473.00    181.00 | Project
+              10.89     79.78    608.11     20.11 | Package
+                         7.33     55.85      1.85 | Class
+                                   7.62      0.25 | Function
