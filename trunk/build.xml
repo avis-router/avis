@@ -175,18 +175,18 @@
   <!-- Use arcane Ant-isms to build web page from text using Markdown -->
   <target name="web"
           description="Build HTML files in doc/web from sources">  
-    <antcall target="make_html">
+    <antcall target="fn:make_html">
       <param name="src" value="avis.txt" />
       <param name="dest" value="index.html" />
     </antcall>
   
-    <antcall target="make_html">
+    <antcall target="fn:make_html">
       <param name="src" value="examples.txt" />
       <param name="dest" value="examples.html" />
     </antcall>
   </target>
   
-  <target name="make_html">
+  <target name="fn:make_html">
     <property name="root" value="doc/web" />
     
     <concat destfile="${root}/${dest}" append="false">
