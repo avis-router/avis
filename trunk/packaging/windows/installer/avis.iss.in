@@ -12,6 +12,9 @@ SourceDir=..
 LicenseFile=..\common\license.rtf
 
 [Files]
+; Make a backup of wrapper config
+Source: "{app}\config\wrapper.conf"; DestDir: "{app}\config\wrapper.conf.orig"; Flags: external skipifsourcedoesntexist
+
 Source: "service\lib\wrapper.jar"; DestDir: "{app}\lib"
 Source: "service\lib\wrapper.dll"; DestDir: "{app}\lib"
 Source: "service\bin\wrapper.exe"; DestDir: "{app}\bin"
@@ -25,9 +28,6 @@ Source: "service\logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"; F
 Source: "..\..\lib\avisd.jar"; DestDir: "{app}\lib"
 Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
 Source: "..\..\LICENSE.txt"; DestDir: "{app}"
-
-; Make a backup of config if we're going to overwrite it
-; Source: "{app}\config\avisd.config"; DestDir: "{app}\config\avisd.config.orig"; Flags: external skipifsourcedoesntexist uninsneveruninstall
 
 ; JRE Files
 ; Source: "@jre_installer@"; DestDir: "{app}"; DestName: "jre.exe"; Flags: deleteafterinstall
