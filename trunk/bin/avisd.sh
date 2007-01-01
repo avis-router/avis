@@ -41,7 +41,9 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-command="java -server -jar $avisd_jar $avisd_opts"
+jvm_options="-server -Xms128M -Xmx256M -XX:+UseParallelGC"
+
+command="java $jvm_options -jar $avisd_jar $avisd_opts"
 
 if [ $daemon == 1 ]; then
   ( exec $command < /dev/null > $logfile 2>&1 ) &
