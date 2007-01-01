@@ -1,12 +1,14 @@
 package org.avis.pubsub.ast;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
-import org.avis.Common;
 import org.avis.Notification;
 import org.avis.pubsub.ast.nodes.Const;
+
+import static java.util.Collections.emptySet;
+
+import static org.avis.Common.className;
 
 /**
  * The base class for all nodes in a subscription expression abstract
@@ -19,7 +21,6 @@ import org.avis.pubsub.ast.nodes.Const;
  */
 public abstract class Node<E>
 {
-  // todo opt: using Boolean for tri-state logic is dodgy: use a class instead
   public static final Boolean TRUE = Boolean.TRUE;
   public static final Boolean FALSE = Boolean.FALSE;
   public static final Boolean BOTTOM = null;
@@ -80,7 +81,7 @@ public abstract class Node<E>
    */
   public String name ()
   {
-    return Common.className (getClass ());
+    return className (getClass ());
   }
   
   /**
@@ -100,6 +101,6 @@ public abstract class Node<E>
    */
   public Collection<? extends Node<?>> children ()
   {
-    return Collections.emptySet ();
+    return emptySet ();
   }
 }
