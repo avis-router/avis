@@ -4,6 +4,8 @@ TODO
 * windows JRE does not have -server, need to add installer option
 * switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
   (10.4 only, but Java 5 only works there anyway)
+* constant pool for Const?
+* profile performance
 * DONE: pkg permissions
 * DONE: case-independent options
 * DONE: full test with Sticker
