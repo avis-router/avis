@@ -12,16 +12,16 @@ SourceDir=..
 LicenseFile=..\common\license.rtf
 
 [Files]
-Source: "lib\wrapper.jar"; DestDir: "{app}\lib"
-Source: "lib\wrapper.dll"; DestDir: "{app}\lib"
-Source: "bin\wrapper.exe"; DestDir: "{app}\bin"
-Source: "bin\avis.cmd"; DestDir: "{app}\bin"
-Source: "bin\install_avis_service.cmd"; DestDir: "{app}\bin"
-Source: "bin\uninstall_avis_service.cmd"; DestDir: "{app}\bin"
-Source: "bin\start_avis_service.cmd"; DestDir: "{app}\bin"
-Source: "bin\stop_avis_service.cmd"; DestDir: "{app}\bin"
-Source: "config\wrapper.conf"; DestDir: "{app}\config"
-Source: "logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"; Flags: onlyifdoesntexist
+Source: "service\lib\wrapper.jar"; DestDir: "{app}\lib"
+Source: "service\lib\wrapper.dll"; DestDir: "{app}\lib"
+Source: "service\bin\wrapper.exe"; DestDir: "{app}\bin"
+Source: "service\bin\avis.cmd"; DestDir: "{app}\bin"
+Source: "service\bin\install_avis_service.cmd"; DestDir: "{app}\bin"
+Source: "service\bin\uninstall_avis_service.cmd"; DestDir: "{app}\bin"
+Source: "service\bin\start_avis_service.cmd"; DestDir: "{app}\bin"
+Source: "service\bin\stop_avis_service.cmd"; DestDir: "{app}\bin"
+Source: "service\config\wrapper.conf"; DestDir: "{app}\config"
+Source: "service\logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"; Flags: onlyifdoesntexist
 Source: "..\..\lib\avisd.jar"; DestDir: "{app}\lib"
 Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
 Source: "..\..\LICENSE.txt"; DestDir: "{app}"
