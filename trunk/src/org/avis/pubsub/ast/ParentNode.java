@@ -8,29 +8,29 @@ import java.util.Collection;
  * Base class for nodes with an arbitrary number of children. This
  * class requires that all children have the same evaluation type.
  * 
- * @param EVAL_TYPE The type of value that this node evaluates to.
- * @param CHILD_TYPE The type that children of this node evaluate to.
+ * @param E The type of value that this node evaluates to.
+ * @param CHILD_E The type that children of this node evaluate to.
  * 
  * @author Matthew Phillips
  */
-public abstract class ParentNode<EVAL_TYPE, CHILD_TYPE> extends Node<EVAL_TYPE>
+public abstract class ParentNode<E, CHILD_E> extends Node<E>
 {
-  protected ArrayList<Node<CHILD_TYPE>> children;
+  protected ArrayList<Node<CHILD_E>> children;
   
   public ParentNode ()
   {
-    this.children = new ArrayList<Node<CHILD_TYPE>> (2);
+    this.children = new ArrayList<Node<CHILD_E>> (2);
   }
 
-  public ParentNode (Node<? extends CHILD_TYPE> node1)
+  public ParentNode (Node<? extends CHILD_E> node1)
   {
     this ();
     
     addChild (node1);
   }
   
-  public ParentNode (Node<? extends CHILD_TYPE> node1,
-                     Node<? extends CHILD_TYPE> node2)
+  public ParentNode (Node<? extends CHILD_E> node1,
+                     Node<? extends CHILD_E> node2)
     throws IllegalChildException
   {
     this ();
@@ -44,10 +44,10 @@ public abstract class ParentNode<EVAL_TYPE, CHILD_TYPE> extends Node<EVAL_TYPE>
    * 
    * @param children
    */
-  public ParentNode (Node<CHILD_TYPE> ...children)
+  public ParentNode (Node<CHILD_E> ...children)
   {
     this.children =
-      new ArrayList<Node<CHILD_TYPE>> (Arrays.asList (children));
+      new ArrayList<Node<CHILD_E>> (Arrays.asList (children));
   }
 
   /**
@@ -59,7 +59,7 @@ public abstract class ParentNode<EVAL_TYPE, CHILD_TYPE> extends Node<EVAL_TYPE>
    * @return An error message if not valid, null if child is OK to be
    *         added.
    */
-  public abstract String validateChild (Node child);
+  protected abstract String validateChild (Node child);
   
   @SuppressWarnings("unchecked")
   public void addChild (Node child)

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.avis.pubsub.ast.Node;
 
-public class Const<EVAL_TYPE> extends Node<EVAL_TYPE>
+public class Const<E> extends Node<E>
 {
   public static final Const<Boolean> CONST_FALSE = new Const<Boolean> (FALSE);
   public static final Const<Boolean> CONST_TRUE = new Const<Boolean> (TRUE);
@@ -12,7 +12,7 @@ public class Const<EVAL_TYPE> extends Node<EVAL_TYPE>
 
   public static final Const<Integer> CONST_ZERO = new Const<Integer> (0);
   
-  private EVAL_TYPE value;
+  private E value;
 
   public static Const<Boolean> bool (Boolean value)
   {
@@ -47,12 +47,12 @@ public class Const<EVAL_TYPE> extends Node<EVAL_TYPE>
     return new Const<Double> (value);
   }
    
-  public Const (EVAL_TYPE value)
+  public Const (E value)
   {
     this.value = value;
   }
   
-  public EVAL_TYPE value ()
+  public E value ()
   {
     return value;
   }
@@ -67,13 +67,13 @@ public class Const<EVAL_TYPE> extends Node<EVAL_TYPE>
   }
 
   @Override
-  public Node<EVAL_TYPE> inlineConstants ()
+  public Node<E> inlineConstants ()
   {
     return this;
   }
   
   @Override
-  public EVAL_TYPE evaluate (Map<String, Object> attrs)
+  public E evaluate (Map<String, Object> attrs)
   {
     return value;
   }
