@@ -24,6 +24,8 @@
 
 * ewafd-style federator as an OSGi add-on
 
+* performance optimization work on subscription matching
+
 1.3 (Sep 2007)
 
 * Real federation (assuming spec is available)
