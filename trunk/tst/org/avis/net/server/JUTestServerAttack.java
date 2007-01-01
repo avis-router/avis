@@ -6,8 +6,7 @@ import java.util.Random;
 
 import java.io.IOException;
 
-import org.avis.net.messages.SubModRqst;
-import org.avis.net.messages.SubRply;
+import org.avis.net.messages.SubAddRqst;
 import org.avis.net.security.Key;
 import org.avis.net.security.Keys;
 
@@ -55,34 +54,32 @@ public class JUTestServerAttack
   }
   
   /**
-   * Attack the server's heap space by adding unlimited numbers of
-   * keys. Without key limits, takes around 3 mins to exhaust server's
-   * heap space on Powerbook G4.
+   * Attack the server's heap space by adding the default max
+   * keys/subs. Will pass with -Xmx120M setting.
    */
   @Test
   @Ignore
   public void attackKeys ()
     throws Exception
   {
+    int numKeys = CONNECTION_OPTION_SET.defaults.getInt ("Subscription.Max-Keys");
+    int numSubs = CONNECTION_OPTION_SET.defaults.getInt ("Subscription.Max-Count");
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
     client.connect ();
     
-    SubRply subRply = client.subscribe ("number == 1");
-    
     info ("Sending keys...", this);
     
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < numSubs; i++)
     {
       Keys keys = new Keys ();
       
-      for (int j = 0; j < 2000; j++)
+      for (int j = 0; j < numKeys; j++)
         keys.add (SHA1_CONSUMER, new Key (randomBytes (128)));
       
-      SubModRqst subMod = new SubModRqst (subRply.subscriptionId, "");
-      subMod.addKeys = keys;
+      SubAddRqst subAddRqst = new SubAddRqst ("number == " + i, keys);
       
-      client.send (subMod);
+      client.send (subAddRqst);
       client.receive (60 * 1000);
     }
     
@@ -92,6 +89,7 @@ public class JUTestServerAttack
   /**
    * Attack server by sending the max number of subs with very long
    * expressions. Takes about 2 mins to kill server on Powerbook G4.
+   * Adding -Xmx120M allows it to pass.
    */
   @Test
   @Ignore
