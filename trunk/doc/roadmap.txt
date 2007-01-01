@@ -8,6 +8,8 @@
 * Installation packages for Mac OS X, Linux/Unix (tar-style package,
   not rpm, deb) and Windows
 
+* Examples/demos
+
 1.1 (Mar 2007)
 
 * SSL/TLS support.
