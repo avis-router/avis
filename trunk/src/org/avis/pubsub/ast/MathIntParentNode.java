@@ -27,13 +27,17 @@ public abstract class MathIntParentNode extends MathParentNode
     Class childType = child.evalType ();
     
     if (childType == Object.class)
+    {
       return null; // allow generic nodes such as fields
-    else if (!(Integer.class.isAssignableFrom (childType) ||
-               Long.class.isAssignableFrom (childType)))
+    } else if (!(Integer.class.isAssignableFrom (childType) ||
+                 Long.class.isAssignableFrom (childType)))
+    {
       return expr () + " needs an integer as an argument (was " +
              className (child.evalType ()) + ")";
-    else
+    } else 
+    {
       return null;
+    }
   }
   
   @Override
