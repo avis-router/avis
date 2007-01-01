@@ -5,6 +5,9 @@ import java.util.Map;
 import org.avis.pubsub.ast.BoolParentNode;
 import org.avis.pubsub.ast.Node;
 
+import static org.avis.pubsub.ast.nodes.Const.CONST_FALSE;
+import static org.avis.pubsub.ast.nodes.Const.CONST_TRUE;
+
 public class Or extends BoolParentNode
 {
   public Or ()
@@ -39,7 +42,7 @@ public class Or extends BoolParentNode
       Boolean result = newChild.evaluate (EMPTY_NOTIFICATION);
       
       if (result == TRUE)
-        return Const.CONST_TRUE;
+        return CONST_TRUE;
       else if (result == FALSE)
         children.remove (i);
       else if (child != newChild)
@@ -47,7 +50,7 @@ public class Or extends BoolParentNode
     }
     
     if (children.isEmpty ())
-      return Const.CONST_FALSE;
+      return CONST_FALSE;
     else if (children.size () == 1)
       return children.get (0);
     else

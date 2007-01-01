@@ -57,7 +57,7 @@ public class StrWildcard extends StringCompareNode
           regex.append ('.');
           break;
         default:
-          if (isWhitespace (c) || isLetterOrDigit (c))
+          if (isLetterOrDigit (c) || isWhitespace (c))
             regex.append (c);
           else
             regex.append ('\\').append (c);
