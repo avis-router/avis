@@ -28,7 +28,8 @@ public abstract class MathIntParentNode extends MathParentNode
     
     if (childType == Object.class)
     {
-      return null; // allow generic nodes such as fields
+      // allow generic nodes such as fields
+      return null; 
     } else if (!(Integer.class.isAssignableFrom (childType) ||
                  Long.class.isAssignableFrom (childType)))
     {

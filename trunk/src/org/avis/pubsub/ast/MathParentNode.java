@@ -26,12 +26,17 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
     Class childType = child.evalType ();
     
     if (childType == Object.class)
-      return null; // allow generic nodes such as fields
-    else if (!Number.class.isAssignableFrom (childType))
+    {
+      // allow generic nodes such as fields    
+      return null; 
+    } else if (!Number.class.isAssignableFrom (childType))
+    {
       return expr () + " needs a number as an argument (was " +
              className (child.evalType ()) + ")";
-    else
+    } else
+    {
       return null;
+    }
   }
   
   @Override
@@ -89,8 +94,8 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
     
     if (result == null || !validOperand (result))
       return null;
-
-    return (Number)result;
+    else
+      return (Number)result;
   }
 
   /**
