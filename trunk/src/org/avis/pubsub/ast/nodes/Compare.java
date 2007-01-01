@@ -11,12 +11,15 @@ import static org.avis.util.Numbers.highestPrecision;
 import static org.avis.util.Numbers.upconvert;
 
 /**
+ * Comparison operator that can implement equals, greater than, less
+ * than and any combination of those.
+ * 
  * @author Matthew Phillips
  */
 public class Compare extends ParentBiNode<Boolean, Comparable>
 {
   private int inequality;
-  private int equality;
+  private boolean equality;
   
   /**
    * Create compare node from a list of comparable children (size >=
@@ -29,7 +32,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
       throw new IllegalArgumentException ("Two or more children required");
     } else if (args.size () == 2)
     {
-      return new Compare (args.get (0), args.get (1), 0, 0);
+      return new Compare (args.get (0), args.get (1), 0, true);
     } else
     {
       Node<? extends Comparable> arg0 = args.get (0);
@@ -37,15 +40,26 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
       Or or = new Or ();
       
       for (int i = 1; i < args.size (); i++)
-        or.addChild (new Compare (arg0, args.get (i), 0, 0));
+        or.addChild (new Compare (arg0, args.get (i), 0, true));
       
       return or;
     }
   }
   
+  /**
+   * Create a new instance. e.g. Compare (n1, n2, 1, true) => n1 >=
+   * n2. Compare (n1, n2, -1, false) => n1 &lt; n2. Compare (n1, n2,
+   * 0, true) => n1 == n2.
+   * 
+   * @param child1 Left operand.
+   * @param child2 Right operand.
+   * @param inequality > 0 => true if left > right, &lt; 0 => true if left
+   *          &lt; right.
+   * @param equality True => true if equal.
+   */
   public Compare (Node<? extends Comparable> child1,
                   Node<? extends Comparable> child2,
-                  int inequality, int equality)
+                  int inequality, boolean equality)
   {
     this.inequality = inequality;
     this.equality = equality;
@@ -104,7 +118,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
     else if (inequality > 0)
       str.append ('>');
     
-    if (equality == 0)
+    if (equality)
     {
       if (str.length () == 0)
         str.append ("==");
@@ -161,7 +175,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
     int compare = ((Comparable)result1).compareTo (result2);
     
     if (compare == 0)
-      return equality == 0;
+      return equality;
     else if (compare < 0)
       return inequality < 0;
     else

@@ -181,32 +181,32 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
         case 24:
           jj_consume_token(24);
           node2 = MathExp();
-                              {if (true) return new Compare (node1, node2,  1, 2);}
+                              {if (true) return new Compare (node1, node2,  1, false);}
           break;
         case 25:
           jj_consume_token(25);
           node2 = MathExp();
-                              {if (true) return new Compare (node1, node2,  1, 0);}
+                              {if (true) return new Compare (node1, node2,  1, true);}
           break;
         case 26:
           jj_consume_token(26);
           node2 = MathExp();
-                              {if (true) return new Compare (node1, node2, -1, 2);}
+                              {if (true) return new Compare (node1, node2, -1, false);}
           break;
         case 27:
           jj_consume_token(27);
           node2 = MathExp();
-                              {if (true) return new Compare (node1, node2, -1, 0);}
+                              {if (true) return new Compare (node1, node2, -1, true);}
           break;
         case 28:
           jj_consume_token(28);
           node2 = MathExp();
-                              {if (true) return new Compare (node1, node2,  0, 0);}
+                              {if (true) return new Compare (node1, node2,  0, true);}
           break;
         case 29:
           jj_consume_token(29);
           node2 = MathExp();
-                              {if (true) return new Not (new Compare (node1, node2,  0, 0));}
+                              {if (true) return new Not (new Compare (node1, node2,  0, true));}
           break;
         default:
           jj_la1[3] = jj_gen;

@@ -119,26 +119,26 @@ public class JUTestEvaluation
   public void compare ()
   {
     // less than: 10 < 20
-    assertTrue ("10 < 20", compare (10, 20, -1, 2));
-    assertFalse ("10 < 10", compare (10, 10, -1, 2));
+    assertTrue ("10 < 20", compare (10, 20, -1, false));
+    assertFalse ("10 < 10", compare (10, 10, -1, false));
         
     // less than or equal
-    assertTrue ("10 <= 20", compare (10, 20, -1, 0));
-    assertTrue ("10 <= 10", compare (10, 10, -1, 0));
-    assertFalse ("20 <= 10", compare (20, 10, -1, 0));
+    assertTrue ("10 <= 20", compare (10, 20, -1, true));
+    assertTrue ("10 <= 10", compare (10, 10, -1, true));
+    assertFalse ("20 <= 10", compare (20, 10, -1, true));
     
     // greater than
-    assertTrue ("20 > 10", compare (20, 10, 1, 2));
-    assertFalse ("10 > 10", compare (10, 10, 1, 2));
+    assertTrue ("20 > 10", compare (20, 10, 1, false));
+    assertFalse ("10 > 10", compare (10, 10, 1, false));
     
     //  greater than or equal
-    assertTrue ("20 >= 10", compare (20, 10, 1, 0));
-    assertTrue ("10 >= 10", compare (10, 10, 1, 0));
-    assertFalse ("10 > 20", compare (10, 20, 1, 0));
+    assertTrue ("20 >= 10", compare (20, 10, 1, true));
+    assertTrue ("10 >= 10", compare (10, 10, 1, true));
+    assertFalse ("10 > 20", compare (10, 20, 1, true));
     
     // equal
-    assertTrue ("10 == 10", compare (10, 10, 0, 0));
-    assertFalse ("10 == 20", compare (10, 20, 0, 0));
+    assertTrue ("10 == 10", compare (10, 10, 0, true));
+    assertFalse ("10 == 20", compare (10, 20, 0, true));
   }
 
   /**
@@ -425,27 +425,27 @@ public class JUTestEvaluation
     Compare compare;
    
     // 32L < 10
-    compare = new Compare (thirtyTwoLong, tenInt, -1, 2);
+    compare = new Compare (thirtyTwoLong, tenInt, -1, false);
     
     assertEquals (FALSE, compare.evaluate (new Notification ()));
     
     // 10 > 32L
-    compare = new Compare (tenInt, thirtyTwoLong, -1, 2);
+    compare = new Compare (tenInt, thirtyTwoLong, -1, false);
     
     assertEquals (TRUE, compare.evaluate (new Notification ()));
     
     // 10 > pi
-    compare = new Compare (tenInt, piDouble, 1, 2);
+    compare = new Compare (tenInt, piDouble, 1, false);
     
     assertEquals (TRUE, compare.evaluate (new Notification ()));
     
     // 32 > pi
-    compare = new Compare (thirtyTwoLong, piDouble, 1, 2);
+    compare = new Compare (thirtyTwoLong, piDouble, 1, false);
     
     assertEquals (TRUE, compare.evaluate (new Notification ()));
     
     //  32 == 32L
-    compare = new Compare (thirtyTwoInt, thirtyTwoLong, 0, 0);
+    compare = new Compare (thirtyTwoInt, thirtyTwoLong, 0, true);
     
     assertEquals (TRUE, compare.evaluate (new Notification ()));
   }
@@ -598,7 +598,7 @@ public class JUTestEvaluation
   /**
    * Use the Compare node to compare two numbers.
    */
-  private Boolean compare (int n1, int n2, int inequality, int equality)
+  private Boolean compare (int n1, int n2, int inequality, boolean equality)
   {
     return new Compare
       (new Const<Integer> (n1),
@@ -616,14 +616,14 @@ public class JUTestEvaluation
   {
     return new And
       (new Compare
-        (new Field<String> ("name"), new Const<String> ("Matt"), 0, 0),
+        (new Field<String> ("name"), new Const<String> ("Matt"), 0, true),
        new Or
          (new Compare
-           (new Field<Integer> ("age"), new Const<Integer> (20), -1, 2),
+           (new Field<Integer> ("age"), new Const<Integer> (20), -1, false),
           new Compare
-           (new Field<Integer> ("age"), new Const<Integer> (50), 1, 0)),
+           (new Field<Integer> ("age"), new Const<Integer> (50), 1, true)),
        new Not
-         (new Compare (new Field<String> ("blah"), new Const<String> ("frob"), 0, 0)));
+         (new Compare (new Field<String> ("blah"), new Const<String> ("frob"), 0, true)));
   }
 
  /**
@@ -635,8 +635,8 @@ public class JUTestEvaluation
   {
     return new Xor
       (new Compare
-        (new Field<String> ("name"), new Const<String> ("Matt"), 0, 0),
+        (new Field<String> ("name"), new Const<String> ("Matt"), 0, true),
        new Compare
-        (new Field<Integer> ("age"), new Const<Integer> (30), 0, 0));
+        (new Field<Integer> ("age"), new Const<Integer> (30), 0, true));
   }
 }

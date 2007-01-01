@@ -229,12 +229,12 @@ Node BoolExp () :
   "!" node1 = BoolExp ()     {return new Not (node1);} |  
   node1 = MathExp ()
   (
-    ">"  node2 = MathExp ()  {return new Compare (node1, node2,  1, 2);} |
-    ">=" node2 = MathExp ()  {return new Compare (node1, node2,  1, 0);} |
-    "<"  node2 = MathExp ()  {return new Compare (node1, node2, -1, 2);} |
-    "<=" node2 = MathExp ()  {return new Compare (node1, node2, -1, 0);} |
-    "==" node2 = MathExp ()  {return new Compare (node1, node2,  0, 0);} |
-    "!=" node2 = MathExp ()  {return new Not (new Compare (node1, node2,  0, 0));}    
+    ">"  node2 = MathExp ()  {return new Compare (node1, node2,  1, false);} |
+    ">=" node2 = MathExp ()  {return new Compare (node1, node2,  1, true);} |
+    "<"  node2 = MathExp ()  {return new Compare (node1, node2, -1, false);} |
+    "<=" node2 = MathExp ()  {return new Compare (node1, node2, -1, true);} |
+    "==" node2 = MathExp ()  {return new Compare (node1, node2,  0, true);} |
+    "!=" node2 = MathExp ()  {return new Not (new Compare (node1, node2,  0, true));}    
   )? {return node1;}
 }
 
