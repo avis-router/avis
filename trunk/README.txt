@@ -18,17 +18,26 @@ Supported Platforms
 
 Avis will run on platforms with a Java 5 Standard Edition runtime. It
 has been tested on Mac OS X Tiger (10.4), Windows XP and Windows
-Server 2003, Fedora Core 6 and Debian Sarge (3.1).
+Server 2003, Fedora Core (3 & 6) and Debian Sarge (3.1).
+
+NOTE: although Avis is platform-independent, the "avis.sh" script and
+example command lines appearing later are for Unix environments.
+Windows users can either translate as needed or run under cygwin
+(http://www.cygwin.com).
 
 
 Requirements
 ----------------------------------------------------------------------
 
-Avis requires Java 1.5.0 or later. There is no requirement to build
-from source since platform-independent binaries are included with the
-distribution, but if you do wish to compile Avis you will need a Java
-Development Kit installed. If you don't need to build Avis, you can
-skip to the next section.
+Avis requires a Java 1.5 or later runtime. It will run fine with a
+minimal Java Runtime Environment (JRE) but, if you wish to get optimal
+performance, it is recommended you install the full Java 5 or Java 6
+JDK to gain access to the "server" optimizing VM.
+
+There is no requirement to build from source since platform-
+independent binaries are included with the distribution, but if you do
+wish to compile Avis you will need a Java Development Kit installed.
+If you don't need to build Avis, you can skip to the next section.
 
 Unless you plan to build Avis with Eclipse, you will also need Apache
 Ant 1.6.0 or later (http://ant.apache.org).
@@ -75,14 +84,6 @@ To run the Avis event router service using the bash helper script:
 To see command line options:
 
   > ./bin/avis.sh -h
-
-You can also just use:
-
-  > java -server -jar build/avisd.jar
-
-The "-server" switch is optional: it enables the HotSpot Server VM
-which performs more advanced optimizations targeted at long-running
-servers.
 
 If you don't have a client for testing the server, you can try one of
 the tickertape messaging clients at tickertape.org:
