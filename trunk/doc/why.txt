@@ -14,3 +14,92 @@
 
 * Bus allows snooping, proxying, logging, etc. Like HTTP don't need to
   understand contents
+
+Why would you want to use something like Avis? Well, the key feature
+of Avis is that it allows you to stop thinking in terms of protocols &
+networks, point to point, and think in terms of a message bus
+instead. instead of designing using low-level, point to point,
+connection oriented communications between a "client" and a "server",
+you can use Avis' message bus paradigm to support one to one, one to
+many, one to none. Clients simply emit and receive messages on a
+"flat" bus. There is no connection between clients, they receive
+messages they've nominated an interest in if another client somewhere
+on the bus sends it.
+
+Message buses go a level above networks
+
+The message bus approach can be used to implement client-server remote
+procedure call (RPC) architectures, but can also implement all kinds
+of other communication architectures as well, such as broadcast
+(e.g. instant messaging, SNMP, stock tickers, RSS news), discovery
+(service discovery, Bonjour device discovery), and just about any
+other arrangement you can think of.
+
+Also, because the bus is flat and uses a uniform message format,
+anything on the bus can monitor, consume, modify, augment, forward,
+proxy and generate messages, allowing on-the-fly extendability beyond
+that of opaque RPC and simpler multicast-style systems
+
+A standard message bus format means protocols become simpler. The bus
+concept removes the distinction between server and client, and
+obsoletes the problems of deciding who initiates a connection, how to
+handle discnnection and reconnection, and how to implement service
+discovery. Security becomes a matter of deciding who can and cannot
+receive which messages.
+
+Why choose Avis?
+
+So a message bus architecture can a good choice for many ICT systems.
+And there are quite a few available, including enterprise-standard
+systems such as JMS and open messaging systems such as XMPP. So why
+would you choose Avis over one of these?
+ 
+Avis has two features not found in message buses such as JMS:
+
+ * It supports content-based message selection, rather than
+   "channel" or "topic"-based.
+
+ * It's considerable lighter-weight, both in programming complexity
+   and processing overhead.
+
+It's also an open standard and Free Software, which can't hurt either.
+
+
+Content-based subscription
+----------------------------------------------------------------------
+
+Low-overhead
+----------------------------------------------------------------------
+
+Avis is very simple to set up and use. It has a small overhead on the
+cliet, both in terms of resources and in terms of how much code you
+need to write to manage it. The overhead of using and maintaining it
+will not dominate even a fairly small project, as would something
+larger like JMS -- you can set up and use Avis in a few lines of code,
+no factories, registries or network configuration needed.
+
+Avis' simplicity works to make it easy to get started, and its
+flexibility will allow you to scale upwards to more complex things if
+you decide to extend it. And, once you've set up an Avis server
+somewhere on the network for one project, you can use it for later
+projects with an even lower cost of entry.
+
+A testament to how addictive an Avis-style message bus can be is the
+enthusiastic adoption of Avis' commercial big brother, Elvin. Elvin
+has become a core component of a number of projects at DSTC, DSTO, and
+several universities. Avis and Elvin have been used:
+
+ * to implement a wide-area instant messaging and presence network
+across several organisations,
+
+ * to provide communication and service control for smart meeting
+spaces
+
+ * news dissemnintion
+
+ * stock trade message routing
+
+and for many other projects where it simply provides a convenient way
+to instrument or otherwise send a message from a program that is
+otherwise not communication oriented at all (e.g. instrumenting a web
+application).
