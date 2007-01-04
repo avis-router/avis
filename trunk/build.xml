@@ -298,7 +298,7 @@
     <!-- OS X package files use symlinks, use system tar to preserve -->
     <exec executable="tar">
       <arg value="jcvf" />
-      <arg value="build/Avis-OSX-${release}.tar.bz2" />
+      <arg value="build/Avis-OSX-${release}.tbz" />
       <arg value="-C" />
       <arg value="build" />
       <arg value="${package}" />
@@ -330,7 +330,7 @@
     <copy file="packaging/fedora/install.sh" todir="${temp}" />
 
     <!-- tar it up -->
-    <tar destfile="build/avisd_fedora-${release}.tar.bz2"
+    <tar destfile="build/avis-fedora-${release}.tar.bz2"
          compression="bzip2">
       <tarfileset prefix="avis-${release}" dir="${temp}"
                   mode="0755">
