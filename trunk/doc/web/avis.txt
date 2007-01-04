@@ -27,16 +27,16 @@ for smart meeting rooms and [distributed speech transcription for
 meetings][AuTM]. It has also been used extensively by Mantara for
 high-volume financial transaction routing.
 
-Elvin has picked up in so many applications because of its lightweight
-approach and flexibility. See the [examples][] page for an example of
+Elvin has been picked up in so many applications because of its
+lightweight approach and flexibility. See the [examples][] page to see
 how it can be employed.
 
 
 Current Status
 ----------------------------------------------------------------------
 
-Avis is currently at a stage where it is usable as a drop-in
-replacement for Mantara's `elvind` if quench and federation are not
+Avis is currently stable enough to be usable as a drop-in replacement
+for Mantara's `elvind` as long as quench and federation are not
 required.
 
 Future development items include:
@@ -54,28 +54,32 @@ Future development items include:
  * Implementing the *quench* API for allowing producers to discover
    what clients are listening for.
 
-See the [roadmap page][] for more information on what's planned for
-Avis.
+See the [roadmap page][roadmap] for more information on what's planned
+for Avis.
 
 
 History
 ----------------------------------------------------------------------
 
-Elvin orginated as a project of the [Distributed Systems Technology
+Elvin orginated as a project at the [Distributed Systems Technology
 Centre][DSTC_wikipedia] (DSTC), a part government, part commercial
 Cooperative Research Centre, which operated from 1992 until mid
 2006. Elvin was rapidly picked up by internal DSTC projects and by
-several of DSTC's partners such as the [Australian Defence Science and
-Technology Organisation][DSTO] (DSTO) due to its ability to provide a
-highly reliable, fast, federated communication bus.
+several of DSTC's partners, such as the [Australian Defence Science
+and Technology Organisation][DSTO] (DSTO), due to its ability to
+provide a highly reliable, fast, wide-area communication bus.
 
-Mantara Software span off from DSTC as a commercial entity in 2003 to
-further develop and market Elvin as a supported product. When Mantara
-announced it would stop offering Elvin as a standalone product,
-Matthew Phillips began to implement the Elvin open specifications
-published at [elvin.org][] as part of the Open Source Avis
-project. Avis will allow DSTO and other parties to continue developing
-systems using the proven Elvin message bus technology.
+Mantara Software was created as a DSTC spin-off commercial entity in
+2003 in order to further develop and market Elvin as a supported
+product. When Mantara announced it would stop offering Elvin as a
+standalone supported product, Matthew Phillips began to implement the
+Elvin open specifications published at [elvin.org][] as part of the
+Open Source Avis project.
+
+Avis' goal is to allow DSTO and other parties to continue developing
+systems using the proven Elvin message bus technology. It is intended
+that the Avis project will track developments in Elvin to remain a
+compatible long-term option.
 
 
 Contacts
