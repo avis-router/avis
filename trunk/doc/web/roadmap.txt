@@ -1,0 +1,46 @@
+Avis Roadmap
+======================================================================
+
+1.0 (Jan 2007)
+
+* Support A & B subsets of the final 4.0 [protocol spec][client_spec].
+
+* Some inbuilt robustness against internet nasties, but probably not
+  something you want directly internet-facing yet.
+
+* Installation packages for Mac OS X, Linux/Unix (tar-style package,
+  not rpm, deb) and Windows.
+
+* Examples/demos.
+
+1.1 (Mar 2007)
+
+* SSL/TLS support.
+
+* Improved robustness via server-wide resource monitoring.
+
+* Better packaging for Linux (rpm, deb).
+
+1.2 (June 2007)
+
+* OSGi integration for router.
+
+* Basic web monitoring interface OSGi add-on.
+
+* ewafd-style federator as an OSGi add-on.
+
+* Performance optimization work on subscription matching.
+
+1.3 (Sep 2007)
+
+* Real federation (assuming spec is available)
+
+----------------------------------------------------------------------
+
+Others (not scheduled)
+
+* Quench?
+
+* Bonjour (mDNS) server discovery?
+
+[client_spec]: http://elvin.org/specs
