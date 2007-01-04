@@ -173,7 +173,7 @@
   </target>
 
   <!-- Use arcane Ant-isms to build web page from text using Markdown -->
-  <target name="web"
+  <target name="website"
           description="Build HTML files in doc/web from sources">  
     <antcall target="fn:make_html">
       <param name="src" value="avis.txt" />
@@ -183,6 +183,11 @@
     <antcall target="fn:make_html">
       <param name="src" value="examples.txt" />
       <param name="dest" value="examples.html" />
+    </antcall>
+
+    <antcall target="fn:make_html">
+      <param name="src" value="roadmap.txt" />
+      <param name="dest" value="roadmap.html" />
     </antcall>
   </target>
   
@@ -394,7 +399,7 @@
     </exec>
   </target>
 
-  <target name="web_deploy" depends="web"
+  <target name="deploy_website" depends="website"
           description="Rsync web site to sourceforge">
     <exec executable="rsync">
       <arg value="-rlgoDv" />
