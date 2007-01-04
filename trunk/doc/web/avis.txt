@@ -2,12 +2,12 @@ About Avis
 ======================================================================
 
 Avis is an event router service compatible with the commercial Elvin
-implementation developed by Mantara Software. Avis provides a
-general-purpose, scalable publish/subscribe message bus using
+implementation developed by [Mantara Software][mantara]. Avis provides
+a general-purpose, scalable publish/subscribe message bus using
 content-based subscriptions.
 
 Elvin is a flexible event router that allows arbitrary messages
-(a.k.a.  *notifications*) to be exchanged via a publish/subscribe
+(a.k.a. *notifications*) to be exchanged via a publish/subscribe
 model. Elvin clients subscribe to messages using expressions that
 match messages by their content, an approach that differs from most
 other message bus systems that operate by selecting messages published
@@ -28,8 +28,8 @@ meetings][AuTM]. It has also been used extensively by Mantara for
 high-volume financial transaction routing.
 
 Elvin has picked up in so many applications because of its lightweight
-approach and flexibility. See the [examples][] page to see how it can
-be employed.
+approach and flexibility. See the [examples][] page for an example of
+how it can be employed.
 
 
 Current Status
@@ -44,8 +44,7 @@ Future development items include:
  * A Java client library providing a similar capability to Mantara's
    `je4` library. At this stage, Avis is only useful as a router for
    existing Elvin clients using Mantara's client programming
-   libraries. This library will be released under the LGPL (Avis is
-   GPL).
+   libraries. This library will be released under the LGPL.
 
  * An `ewafd`-style federator to tide users over until real federation
    is implemented. This style of federation essentially federates
@@ -55,26 +54,29 @@ Future development items include:
  * Implementing the *quench* API for allowing producers to discover
    what clients are listening for.
 
+See the [roadmap page][] for more information on what's planned for
+Avis.
+
 
 History
 ----------------------------------------------------------------------
 
-Elvin orginated at the [Distributed Systems Technology
+Elvin orginated as a project of the [Distributed Systems Technology
 Centre][DSTC_wikipedia] (DSTC), a part government, part commercial
-Cooperative Research Centre, which operated from 1992 until June,
-2006. Elvin was rapidly picked up internally by DSTC projects and
+Cooperative Research Centre, which operated from 1992 until mid
+2006. Elvin was rapidly picked up by internal DSTC projects and by
 several of DSTC's partners such as the [Australian Defence Science and
 Technology Organisation][DSTO] (DSTO) due to its ability to provide a
-highly reliable, fast, federated communication bus and became deployed
-in a variety of contexts.
+highly reliable, fast, federated communication bus.
 
-Mantara Software was spun off from DSTC as a commercial entity in 2003
-to develop Elvin as a product. When Mantara announced it would stop
-offering Elvin as a standalone product at the end of 2007, Matthew
-Phillips, the author of Avis, began to implement the Elvin open
-specifications at [elvin.org][] to allow DSTO and other interested
-organisations to continue developing systems using the Elvin message
-bus.
+Mantara Software span off from DSTC as a commercial entity in 2003 to
+further develop and market Elvin as a supported product. When Mantara
+announced it would stop offering Elvin as a standalone product,
+Matthew Phillips began to implement the Elvin open specifications
+published at [elvin.org][] as part of the Open Source Avis
+project. Avis will allow DSTO and other parties to continue developing
+systems using the proven Elvin message bus technology.
+
 
 Contacts
 ----------------------------------------------------------------------
@@ -89,3 +91,5 @@ users.sourceforge.net` (replace "at" with "@").
 [AuTM]: http://www.dsto.defence.gov.au/publications/2595/
 [tickertape.org]: http://tickertape.org
 [examples]: examples.html
+[roadmap]: roadmap.html
+[mantara]: http://mantara.com
