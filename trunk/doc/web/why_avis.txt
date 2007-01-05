@@ -24,11 +24,11 @@ news) and discovery (e.g. software service discovery, Bonjour, UPnP).
 Extension and Monitoring
 ----------------------------------------------------------------------
 
-Because the bus can be joined from
-anywhere on the network and uses a uniform message format, any client
-can monitor, consume, modify, augment, forward, proxy and generate
-messages, making on-the-fly extendability and monitoring far more
-straightforward than with opaque RPC and multicast-style systems
+Because the bus can be joined from anywhere on the network and uses a
+uniform message format, any client can monitor, consume, modify,
+augment, forward, proxy and generate messages, making on-the-fly
+extendability and monitoring far more straightforward than with opaque
+RPC and multicast-style systems
 
 Protocols, Statelessness, Security
 ----------------------------------------------------------------------
@@ -166,9 +166,9 @@ Footnotes
 <li id="fn1-why">
 
 <p>A real application of this uses Avis for sending remote mouse
-   control events to a display server computer, where speed of
-   delivery is crucial in order for the remote mouse cursor movement
-   to feel smooth.</p>
+   control events to a display server computer, where timely delivery
+   is crucial in order for the remote mouse cursor movement to feel
+   smooth.</p>
 
 </li>
 
