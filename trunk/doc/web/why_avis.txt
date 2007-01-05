@@ -164,9 +164,12 @@ Footnotes
 <ol>
 
 <li id="fn1-why">
+
 <p>A real application of this uses Avis for sending remote mouse
    control events to a display server computer, where speed of
-   delivery is required for the movement to appear smooth.</p>
+   delivery is crucial in order for the remote mouse cursor movement
+   to feel smooth.</p>
+
 </li>
 
 <li id="fn2-why">
