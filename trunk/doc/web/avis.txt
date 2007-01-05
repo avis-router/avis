@@ -28,8 +28,9 @@ meetings][AuTM]. It has also been used extensively by Mantara for
 high-volume financial transaction routing.
 
 Elvin has been picked up in so many applications because of its
-lightweight approach and flexibility. See the [examples][] page to see
-how it can be employed.
+lightweight approach and flexibility. Please see [this page][why_avis]
+for more discussion on why you might want to use Avis. The
+[examples][] page shows how it can be employed.
 
 
 Current Status
@@ -96,4 +97,5 @@ users.sourceforge.net` (replace "at" with "@").
 [tickertape.org]: http://tickertape.org
 [examples]: examples.html
 [roadmap]: roadmap.html
+[why_avis]: why_avis.html
 [mantara]: http://mantara.com
