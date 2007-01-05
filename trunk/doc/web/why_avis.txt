@@ -112,10 +112,11 @@ associated with providing such guarantees.
 
 Costs of guaranteed delivery include slower delivery speed and much
 more complex supporting infrastructure: a guaranteed delivery system
-needs a persistent message store, tracking for which clients have
-received which messages, acknowledgment of message receipt, etc. Such
-systems also store a lot of state on the server, which makes server
-failover, load-balancing and federation much harder.
+needs a persistent, transactional message store, tracking for what
+clients have received which messages, acknowledgment of message
+receipt, etc. Such systems also store a lot of state on the server,
+which makes server failover, load-balancing and federation much
+harder.
 
 
 Where Not To Use It
@@ -125,7 +126,7 @@ If you need absolute guaranteed message delivery or durable
 subscriptions, you'll find something like JMS a more appropriate
 choice, especially if you're already using a Java Enterprise or .NET
 system where such a choice will allow you to integrate better with
-other components.
+other components.<sup>[2][]</sup>
 
 
 Current Users
@@ -167,10 +168,21 @@ Footnotes
    control events to a display server computer, where speed of
    delivery is required for the movement to appear smooth.</p>
 </li>
+
+<li id="fn2-why">
+
+<p>A JMS-to-Elvin adapter has been developed by Mantara and is thus a
+   theoretical third option, allowing the use of Elvin/Avis and JMS as
+   needed. This adapter is not currently publically availble
+   however.</p>
+
+</li>
+
 </ol>
 </div>
 
 [1]: #fn1-why
+[2]: #fn2-why
 
 [examples]: examples.html
 
