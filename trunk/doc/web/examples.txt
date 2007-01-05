@@ -100,9 +100,9 @@ More Information
 While Elvin has been used in many projects, most of these have been
 internal and aren't publically available. One open project written in
 Java that uses Elvin is the [Sticker tickertape messaging
-client][sticker]. Sticker is both a useful testing client for Avis an
-example of using Elvin: Sticker uses Elvin both for instant messaging
-and virtual presence.
+client][sticker]. Sticker is both a useful testing client for Avis and
+a real world example of using Elvin (Sticker uses Elvin both for
+instant messaging and virtual presence).
 
 If you're interested in a real Elvin/Avis client, the source code for
 Sticker is available at [the tickertape.org downloads
