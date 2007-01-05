@@ -189,6 +189,11 @@
       <param name="src" value="roadmap.txt" />
       <param name="dest" value="roadmap.html" />
     </antcall>
+
+    <antcall target="fn:make_html">
+      <param name="src" value="why_avis.txt" />
+      <param name="dest" value="why_avis.html" />
+    </antcall>
   </target>
   
   <target name="fn:make_html">
