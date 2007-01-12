@@ -16,13 +16,9 @@ public class Nack extends XidMessage
   public static final int PROT_ERROR  = 1001;
   public static final int NO_SUCH_SUB = 1002;
   public static final int IMPL_LIMIT  = 2006;
+  public static final int NOT_IMPL    = 2007;
   public static final int PARSE_ERROR = 2101;
   
-  /* todo: this is kind of bogus, but allows clients (je4 at least) to
-   * treat the error as a quench-related failure rather than a protocol
-   * error. */
-  public static final int QUENCH_NOT_IMPL = 2299;
- 
   private static final Object [] EMPTY_ARGS = new Object [0];
   
   public int error;
