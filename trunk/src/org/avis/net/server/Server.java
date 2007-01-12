@@ -52,16 +52,14 @@ import static dsto.dfc.logging.Log.diagnostic;
 import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.trace;
 import static dsto.dfc.logging.Log.warn;
-
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
-
 import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
+import static org.avis.net.messages.Nack.NOT_IMPL;
 import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
-import static org.avis.net.messages.Nack.QUENCH_NOT_IMPL;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 public class Server implements IoHandler
@@ -166,62 +164,6 @@ public class Server implements IoHandler
     
     sessions.clear ();
     acceptor = null;
-  }
-
-  private static void setConnection (IoSession session,
-                                     Connection connection)
-  {
-    session.setAttachment (connection);
-    
-    FrameCodec.setOptions (session, connection.options);
-  }
-  
-  /**
-   * Get the (open) connection associated with a session or throw
-   * NoConnectionException.
-   */
-  private static Connection connectionFor (IoSession session)
-    throws NoConnectionException
-  {
-    Connection connection = (Connection)session.getAttachment ();
-    
-    if (connection == null)
-      throw new NoConnectionException ("No connection established for session");
-    else if (!connection.isOpen ())
-      throw new NoConnectionException ("Connection is closed");
-    else
-      return connection;
-  }
-  
-  /**
-   * Like connectionFor () but also acquires a write lock.
-   * 
-   * @throws NoConnectionException if there is no connection for the
-   *           session or the connection is not open.
-   */
-  private static Connection writeableConnectionFor (IoSession session)
-    throws NoConnectionException
-  {
-    Connection connection = connectionFor (session);
-    
-    connection.lockWrite ();
-    
-    if (!connection.isOpen ())
-    {
-      connection.unlockWrite ();
-      
-      throw new NoConnectionException ("Connection is closed");
-    }
-    
-    return connection;
-  }
-  
-  /**
-   * Get the connection associated with a session or null for no connection.
-   */
-  private static Connection peekConnectionFor (IoSession session)
-  {
-    return (Connection)session.getAttachment ();
   }
 
   // IoHandler interface
@@ -549,7 +491,7 @@ public class Server implements IoHandler
       ("Rejecting quench request from client: quench is not supported",
        Server.class);
     
-    session.write (new Nack (message, QUENCH_NOT_IMPL, "Quench not supported"));
+    session.write (new Nack (message, NOT_IMPL, "Quench not supported"));
   }
 
   private static void handleError (IoSession session, ErrorMessage message)
@@ -725,5 +667,61 @@ public class Server implements IoHandler
     throws Exception
   {
     diagnostic ("Server session opened", this);
+  }
+  
+  private static void setConnection (IoSession session,
+                                     Connection connection)
+  {
+    session.setAttachment (connection);
+    
+    FrameCodec.setOptions (session, connection.options);
+  }
+  
+  /**
+   * Get the (open) connection associated with a session or throw
+   * NoConnectionException.
+   */
+  private static Connection connectionFor (IoSession session)
+    throws NoConnectionException
+  {
+    Connection connection = (Connection)session.getAttachment ();
+    
+    if (connection == null)
+      throw new NoConnectionException ("No connection established for session");
+    else if (!connection.isOpen ())
+      throw new NoConnectionException ("Connection is closed");
+    else
+      return connection;
+  }
+  
+  /**
+   * Like connectionFor () but also acquires a write lock.
+   * 
+   * @throws NoConnectionException if there is no connection for the
+   *           session or the connection is not open.
+   */
+  private static Connection writeableConnectionFor (IoSession session)
+    throws NoConnectionException
+  {
+    Connection connection = connectionFor (session);
+    
+    connection.lockWrite ();
+    
+    if (!connection.isOpen ())
+    {
+      connection.unlockWrite ();
+      
+      throw new NoConnectionException ("Connection is closed");
+    }
+    
+    return connection;
+  }
+  
+  /**
+   * Get the connection associated with a session or null for no connection.
+   */
+  private static Connection peekConnectionFor (IoSession session)
+  {
+    return (Connection)session.getAttachment ();
   }
 }
