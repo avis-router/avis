@@ -219,6 +219,10 @@ public class Server implements IoHandler
       }
     } catch (ProtocolCodecException ex)
     {
+      /*
+       * A message processing method detected a protocol violation
+       * e.g. attempt to remove non existent subscription.
+       */
       diagnostic ("Client protocol violation for " + message + ": " + 
                   ex.getMessage (), this);
       
