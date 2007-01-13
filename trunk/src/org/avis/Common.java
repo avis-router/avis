@@ -25,4 +25,16 @@ public final class Common
     
     return name.substring (name.lastIndexOf ('.') + 1);
   }
+
+  /**
+   * Generate a short exception message without package name and
+   * message (if null).
+   */
+  public static String shortException (Throwable ex)
+  {
+    if (ex.getMessage () == null)
+      return className (ex.getClass ());
+    else
+      return className (ex.getClass ()) + ": " + ex.getMessage ();
+  } 
 }
