@@ -1,10 +1,11 @@
 Why Choose Avis?
 ======================================================================
 
-Avis supports building systems using a publish/subscribe message bus
-architecture, an approach which shifts you up a level from thinking of
-communication in terms of protocols and point to point networking, and
-instead think in terms of a connectionless, flat communication space.
+Avis supports building systems using the Elvin publish/subscribe
+message bus architecture, an approach which shifts the systems
+architect up a level from thinking of communication in terms of
+protocols and point to point networking, and instead think in terms of
+a connectionless, flat communication space.
 
 Adaptable Communications
 ----------------------------------------------------------------------
@@ -34,24 +35,25 @@ Protocols, Statelessness, Security
 ----------------------------------------------------------------------
 
 A standard messaging format means communication protocols become more
-uniform: you design the content rather than worry about on-the-wire
-encoding, network stacks, etc. The bus architecture also encourages a
-more stateless connection between clients and obsoletes the issues of
-deciding who initiates a connection, how to handle disconnection and
-reconnection, and how to find the service to connect to. And security
-becomes a matter of deciding who can and cannot receive which messages
-and how they're federated outside &mdash; security is never easy, but this
-can help to narrow the number of issues to cover.
+uniform: you design the content independent of on-the-wire encoding,
+network stacks, etc. The bus architecture also encourages a stateless
+connection between clients and obsoletes the issues of deciding who
+initiates a connection, how to handle disconnection and reconnection,
+and how to find the service to connect to.
+
+Security becomes a matter of deciding who can and cannot receive which
+messages and how they're federated outside &mdash; security is never
+easy, but this can help to narrow the number of issues to cover.
 
 
 Where To Use Avis
 ----------------------------------------------------------------------
 
-Hopefully the above will have convinced you that a message bus
-architecture can be a good choice for many communication-based
-systems. Avis is one of a number of message bus "middleware" systems,
-which include enterprise standards such as the Java Messaging System
-(JMS) and wide-area messaging systems such as XMPP.
+Hopefully the above will have described how a message bus architecture
+can be a good choice for many communication-based systems. Avis is one
+of a number of message bus "middleware" systems, which include
+enterprise standards such as the Java Messaging System (JMS) and
+wide-area messaging systems such as XMPP.
  
 Avis has two key features that make it different:
 
@@ -67,7 +69,7 @@ means no licensing issues and unlimited deployment.
 
 Many middleware systems are claimed to be simple, possibly because
 middleware is traditionally thought to be hard. We think the claim is
-truly justified in this case, the next two sections will explain.
+justified in this case &mdash; the next two sections will elaborate.
 
 
 Lightweight
@@ -88,7 +90,6 @@ network for one project, you'll find it even easier to use it for
 other projects and, by federating it with other routers, scaled up to
 bigger networks.
 
-
 Routing Speed
 ----------------------------------------------------------------------
 
@@ -102,6 +103,10 @@ transactions or durable subscriptions, and optimises the way it scans
 for matching subscriptions, it can handle very large message
 volumes. This allows it to be used for semi real-time
 applications.<sup>[1][]</sup>
+
+In fact, although we've compared Avis to enterprise messaging systems
+such as JMS, Avis really falls somwhere between low-level IP
+multicast-style messaging and more heavyweight messaging systems.
 
 Note that Avis *is* reliable in the sense that it's stable and well
 tested, but it does not provide an absolute guarantee of delivery,
@@ -119,7 +124,7 @@ which makes server failover, load-balancing and federation much
 harder.
 
 
-Where Not To Use It
+Where Avis May Not Be Appropriate
 ----------------------------------------------------------------------
 
 If you need absolute guaranteed message delivery or durable
