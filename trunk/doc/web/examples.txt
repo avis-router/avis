@@ -14,10 +14,10 @@ Monitor
   
   <span class="type">Notification</span> <span class="variable-name">ntfn</span> = <span class="keyword">new</span> <span class="type">Notification</span> ();
   
-  ntfn.put (<span class="string">"host_status_message"</span>, 1000);
-  ntfn.put (<span class="string">"host_name"</span>, hostName ());
-  ntfn.put (<span class="string">"department"</span>,  lookupDepartment ());
-  ntfn.put (<span class="string">"percent_disk_free"</span>, diskFreePercentage ());
+  ntfn.put (<span class="string">"Host-Status-Message"</span>, 1000);
+  ntfn.put (<span class="string">"Host-Name"</span>, hostName ());
+  ntfn.put (<span class="string">"Department"</span>,  lookupDepartment ());
+  ntfn.put (<span class="string">"Percent-Disk-Free"</span>, diskFreePercentage ());
   
   avis.send (ntfn);
   
@@ -41,14 +41,14 @@ status message.
 
   <span class="comment-delimiter">// </span><span class="comment">Listen for any version 1.x status message 
 </span>  <span class="type">Subscription</span> <span class="variable-name">statusSub</span> =
-    <span class="keyword">new</span> <span class="type">Subscription</span> (<span class="string">"host_status_message &lt; 2000"</span>);
+    <span class="keyword">new</span> <span class="type">Subscription</span> (<span class="string">"Host-Status-Message &lt; 2000"</span>);
 
   statusSub.addListener (<span class="keyword">new</span> <span class="type">SubscriptionListener</span> ()
   {
     <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">messageReceived</span> (<span class="type">Notification</span> <span class="variable-name">ntfn</span>)
     {
-      addLog (ntfn.getString (<span class="string">"host_name"</span>),
-              ntfn.getInt (<span class="string">"percent_disk_free"</span>));
+      addLog (ntfn.getString (<span class="string">"Host-Name"</span>),
+              ntfn.getInt (<span class="string">"Percent-Disk-Free"</span>));
     }
   });
 
@@ -68,17 +68,17 @@ in in the "IT" department get too low on disk space.
 </span>  <span class="comment-delimiter">// </span><span class="comment">department where disk space is 10% or less
 </span>  <span class="type">Subscription</span> <span class="variable-name">alertSub</span> =
     <span class="keyword">new</span> <span class="type">Subscription</span>
-      (<span class="string">"host_status_message &lt; 2000 &amp;&amp; "</span> +
-       <span class="string">"department == 'IT' &amp;&amp; "</span> +
-       <span class="string">"percent_disk_free &lt;= 10"</span>);
+      (<span class="string">"Host-Status-Message &lt; 2000 &amp;&amp; "</span> +
+       <span class="string">"Department == 'IT' &amp;&amp; "</span> +
+       <span class="string">"Percent-Disk-Free &lt;= 10"</span>);
 
   alertSub.addListener (<span class="keyword">new</span> <span class="type">SubscriptionListener</span> ()
   {
     <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">messageReceived</span> (<span class="type">Notification</span> <span class="variable-name">ntfn</span>)
     {
       alert (<span class="string">"Host %s has low disk space (%i percent)"</span>,
-             ntfn.get (<span class="string">"host_name"</span>),
-             ntfn.get (<span class="string">"percent_disk_free"</span>));
+             ntfn.get (<span class="string">"Host-Name"</span>),
+             ntfn.get (<span class="string">"Percent-Disk-Free"</span>));
     }
   });
 </pre>
