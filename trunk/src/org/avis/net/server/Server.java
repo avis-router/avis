@@ -61,6 +61,7 @@ import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
+import static org.avis.Common.shortException;
 
 public class Server implements IoHandler
 {
@@ -500,8 +501,8 @@ public class Server implements IoHandler
 
   private static void handleError (IoSession session, ErrorMessage message)
   {
-    diagnostic ("Client message rejected due to protocol violation: " +
-                message.error.getMessage (), Server.class);
+    diagnostic ("Disconnecting client due to protocol violation: " +
+                shortException (message.error), Server.class);
     
     if (message.cause instanceof XidMessage)
     {
