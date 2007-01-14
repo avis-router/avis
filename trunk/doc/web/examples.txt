@@ -1,32 +1,38 @@
-Avis Examples
+Avis Example
 ======================================================================
 
 In this example we imagine a scenario where we have a large number of
 servers in several company departments that we wish to monitor. We
-install a small Avis client on each host we want to monitor that runs
+install a small Elvin client on each host we want to monitor that runs
 the code below every minute:<sup>[1][]</sup>
+
+The diagram below is an overview of the example scenario. We'll expand
+on what this means in the following sections.
+
+<img src="images/example overview.png" alt="Example overview diagram" border="0" />
 
 Monitor
 ----------------------------------------------------------------------
 
+The code below runs on each host we wish to monitor. It puts a message
+on the Elvin bus tagged with the message type and
+version.<sup>[2][]</sup> The messages describe the host's name,
+department and percentage of free disk space.
+
 <pre class="java">
-  <span class="type">Avis</span> <span class="variable-name">avis</span> = <span class="keyword">new</span> <span class="type">Avis</span> (<span class="string">"avis_server"</span>);
+  <span class="type">Router</span> <span class="variable-name">router</span> = <span class="keyword">new</span> <span class="type">Router</span> (<span class="string">"elvin_router"</span>);
   
   <span class="type">Notification</span> <span class="variable-name">ntfn</span> = <span class="keyword">new</span> <span class="type">Notification</span> ();
   
-  ntfn.put (<span class="string">"Host-Status-Message"</span>, 1000);
+  ntfn.put (<span class="string">"Status-Message"</span>, 1000);
   ntfn.put (<span class="string">"Host-Name"</span>, hostName ());
   ntfn.put (<span class="string">"Department"</span>,  lookupDepartment ());
   ntfn.put (<span class="string">"Percent-Disk-Free"</span>, diskFreePercentage ());
   
-  avis.send (ntfn);
+  router.send (ntfn);
   
-  avis.close ();
+  router.close ();
 </pre>
-
-This code puts a message on the bus tagged with the message type and
-version.<sup>[2][]</sup> The messages describe the host's name,
-department and percentage of free disk space.
 
 Logger
 ----------------------------------------------------------------------
@@ -37,11 +43,11 @@ rotating log file. The code below does this by listening for any
 status message.
 
 <pre class="java">
-  <span class="type">Avis</span> <span class="variable-name">avis</span> = <span class="keyword">new</span> <span class="type">Avis</span> (<span class="string">"avis_server"</span>);
+  <span class="type">Router</span> <span class="variable-name">router</span> = <span class="keyword">new</span> <span class="type">Router</span> (<span class="string">"elvin_router"</span>);
 
   <span class="comment-delimiter">// </span><span class="comment">Listen for any version 1.x status message 
 </span>  <span class="type">Subscription</span> <span class="variable-name">statusSub</span> =
-    <span class="keyword">new</span> <span class="type">Subscription</span> (<span class="string">"Host-Status-Message &lt; 2000"</span>);
+    <span class="keyword">new</span> <span class="type">Subscription</span> (<span class="string">"Status-Message &lt; 2000"</span>);
 
   statusSub.addListener (<span class="keyword">new</span> <span class="type">SubscriptionListener</span> ()
   {
@@ -62,13 +68,13 @@ Perhaps later on we decide we need to be alerted if any of the servers
 in in the "IT" department get too low on disk space.
 
 <pre class="java">
-  <span class="type">Avis</span> <span class="variable-name">avis</span> = <span class="keyword">new</span> <span class="type">Avis</span> (<span class="string">"avis_server"</span>);
+  <span class="type">Router</span> <span class="variable-name">router</span> = <span class="keyword">new</span> <span class="type">Router</span> (<span class="string">"elvin_router"</span>);
 
-  <span class="comment-delimiter">// </span><span class="comment">Listen for any compatible status message in the IT
+  <span class="comment-delimiter">// </span><span class="comment">Listen status messages in the IT
 </span>  <span class="comment-delimiter">// </span><span class="comment">department where disk space is 10% or less
 </span>  <span class="type">Subscription</span> <span class="variable-name">alertSub</span> =
     <span class="keyword">new</span> <span class="type">Subscription</span>
-      (<span class="string">"Host-Status-Message &lt; 2000 &amp;&amp; "</span> +
+      (<span class="string">"Status-Message &lt; 2000 &amp;&amp; "</span> +
        <span class="string">"Department == 'IT' &amp;&amp; "</span> +
        <span class="string">"Percent-Disk-Free &lt;= 10"</span>);
 
@@ -81,12 +87,15 @@ in in the "IT" department get too low on disk space.
              ntfn.get (<span class="string">"Percent-Disk-Free"</span>));
     }
   });
+
+  router.addSubscription (alertSub);
 </pre>
 
-The `alert ()` routine above might do something like flash the message
-on a big display, send an email or SMS. In fact `alert ()` might be
-better off emittng another kind of "alert" Avis message that is
-handled by several listening services that could do any of the above.
+The `alert ()` routine called by the subscription handler above might
+do something like flash the message on a big display, send an email or
+SMS. In fact `alert ()` might be better off emittng another kind of
+"alert" Elvin notification that is handled by several listening
+services that could do any of the above.
 
 One useful example of a service that reacts to alerts would be one
 that emits a text message in the [tickertape instant messaging
@@ -98,13 +107,13 @@ More Information
 ----------------------------------------------------------------------
 
 While Elvin has been used in many projects, most of these have been
-internal and aren't publically available. One open project written in
-Java that uses Elvin is the [Sticker tickertape messaging
+internal and aren't publically available. One openly-available project
+written in Java that uses Elvin is the [Sticker tickertape messaging
 client][sticker]. Sticker is both a useful testing client for Avis and
-a real world example of using Elvin (Sticker uses Elvin both for
-instant messaging and virtual presence).
+a real world example of using Elvin messaging (Sticker uses Elvin both
+for instant messaging and virtual presence).
 
-If you're interested in a real Elvin/Avis client, the source code for
+If you're interested in a real Elvin client, the source code for
 Sticker is available at [the tickertape.org downloads
 page][tickertape_downloads].
 
@@ -117,11 +126,11 @@ Footnotes
 
 <li id="fn1-examples">
 <p>NOTE: these examples are written using a (currently) fictitious
-   Java client library. The API in this example is very similar to the
-   commercial <code>je4</code> Java API shipped by Mantara. An open
-   source library is scheduled for availability by end of April,
-   2007. See the <a href="roadmap.html">roadmap</a> for more
-   information.</p>
+   Java client library for Elvin, although the API in this example is
+   very similar to the commercial <code>je4</code> Java API shipped by
+   Mantara. An open source library is scheduled for availability by
+   end of April, 2007. See the <a href="roadmap.html">roadmap</a> for
+   more information.</p>
 </li>
 
 <li id="fn2-examples">
