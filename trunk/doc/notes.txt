@@ -1,36 +1,42 @@
 TODO
 
-* web site PR: why use Avis? examples see why.txt
+* Ian's suggestions + diagrams
+* RPM + DEB? (currently 1.1)
 * windows JRE does not have -server, need to add installer option
-* switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
-  (10.4 only, but Java 5 only works there anyway)
+* need general options for thread pool size, max connections, etc. some could
+  apply as max/min for connection options.
+* what happens when sending ntfn to client that's too big?
+* sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
+* check client version numbers
+
+After R1.0
+
+* test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
 * constant pool for Const?
 * profile performance
-* DONE: pkg permissions
-* DONE: case-independent options
-* DONE: full test with Sticker
-* DONE: need separate VM's for MaliciousClient test
+* switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
+  (10.4 only, but Java 5 only works there anyway)
 * partly done: router-wide options that allow client to grow connection
   footprint such like as keys, subscriptions. client can still easily kill
   server using long subs atm. keys attack window reduced but still may be
   possible using sub/ntfn keys plus long keys. need to check max size of key
   data.
-* need general options for thread pool size, max connections, etc. some could
-  apply as max/min for connection options.
+* add message logging via MINA filter, remove current crusty approach
+* notification dropping incl DropWarn
+* write a multi-threaded test thrasher to test consistency
+* write a multi-threaded test thrasher to try to crash server
+* write multithreaded "fuzz" test: fire random messages
+
+* DONE: web site PR: why use Avis? examples see why.txt
+* DONE: pkg permissions
+* DONE: case-independent options
+* DONE: full test with Sticker
+* DONE: need separate VM's for MaliciousClient test
 * DONE: roadmap. ewafd-equivalent. built in?
 * DONE: no. do we need SSL/TLS in 1.0?
 * how do we handle other langs in SVN? do we need to? e.g. should
   Python binding be a separate project?
 * DONE: add Unix and windows service wrappers and installers
-* add message logging via MINA filter, remove current crusty approach
-* what happens when sending ntfn to client that's too big?
-* sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
-* notification dropping incl DropWarn
-* check client version numbers
-* test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
-* write a multi-threaded test thrasher to test consistency
-* write a multi-threaded test thrasher to try to crash server
-* write multithreaded "fuzz" test: fire random messages
 * DONE: add basic settings to become net ready: limit connection counts,
   subs, bandwidth etc to avoid DOS attacks possible to OOM the server by
   flooding it with fairly large packets.
