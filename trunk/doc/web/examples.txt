@@ -21,7 +21,6 @@ department and percentage of free disk space.
 
 <pre class="java">
   <span class="type">Router</span> <span class="variable-name">router</span> = <span class="keyword">new</span> <span class="type">Router</span> (<span class="string">"elvin_router"</span>);
-  
   <span class="type">Notification</span> <span class="variable-name">ntfn</span> = <span class="keyword">new</span> <span class="type">Notification</span> ();
   
   ntfn.put (<span class="string">"Status-Message"</span>, 1000);
@@ -57,6 +56,8 @@ status message.
               ntfn.getInt (<span class="string">"Percent-Disk-Free"</span>));
     }
   });
+
+  router.addSubscription (statusSub);
 
   ...
 </pre>
