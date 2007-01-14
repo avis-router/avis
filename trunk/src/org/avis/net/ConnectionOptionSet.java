@@ -122,8 +122,7 @@ public class ConnectionOptionSet extends OptionSet
     
     // ------------ Avis-specific options
     
-    // todo: need to decide on standard name for Transport.TCP.Coalesce-Delay
-    add ("Transport.TCP.Coalesce-Delay", 0, 1, 1);
+    add ("TCP.Send-Immediately", 0, 0, 1);
     
     // Avis-specific
     // Max connection keys for ntfn/sub
@@ -163,7 +162,7 @@ public class ConnectionOptionSet extends OptionSet
     addLegacy ("router.vendor-identification",
                "Vendor-Identification");
     addLegacy ("router.coalesce-delay",
-               "Transport.TCP.Coalesce-Delay");
+               "TCP.Send-Immediately");
   }
   
   private void addLegacy (String oldOption, String newOption)
@@ -199,6 +198,18 @@ public class ConnectionOptionSet extends OptionSet
 
         if (value == null)
           value = defaults.get (option);
+
+        /*
+         * Special handling for old router.coalesce-delay, which has the
+         * opposite meaning to its replacement, TCP.Send-Immediately.
+         */
+        if (requestedOption.equals ("router.coalesce-delay"))
+        {
+          if (value.equals (0))
+            value = 1;
+          else if (value.equals (1))
+            value = 0;
+        }
         
         accepted.put (requestedOption, value);
       }
@@ -218,6 +229,18 @@ public class ConnectionOptionSet extends OptionSet
                                  String option, Object value)
     throws IllegalOptionException
   {
+    /*
+     * Special handling for old router.coalesce-delay, which has the
+     * opposite meaning to its replacement, TCP.Send-Immediately.
+     */
+    if (option.equals ("router.coalesce-delay"))
+    {
+      if (value.equals (0))
+        value = 1;
+      else if (value.equals (1))
+        value = 0;
+    }
+    
     option = legacyToNew (option);
     
     if (validate (option, value) == null)

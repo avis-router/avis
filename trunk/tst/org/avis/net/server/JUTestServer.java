@@ -102,7 +102,7 @@ public class JUTestServer
     options.put ("Subscription.Max-Count", 16);
     options.put ("Subscription.Max-Length", 1024);
     options.put ("Attribute.Opaque.Max-Length", 2048 * 1024);
-    options.put ("Transport.TCP.Coalesce-Delay", 0);
+    options.put ("TCP.Send-Immediately", 1);
     options.put ("Bogus", "not valid");
     
     ConnRply connReply = client.connect (options);
@@ -110,7 +110,7 @@ public class JUTestServer
     // todo: when Attribute.Opaque.Max-Length supported, switch lines below
     // assertEquals (2048 * 1024, reply.options.get ("Attribute.Opaque.Max-Length"));
     assertEquals (Integer.MAX_VALUE, connReply.options.get ("Attribute.Opaque.Max-Length"));
-    assertEquals (0, connReply.options.get ("Transport.TCP.Coalesce-Delay"));
+    assertEquals (1, connReply.options.get ("TCP.Send-Immediately"));
     assertEquals (1024, connReply.options.get ("Packet.Max-Length"));
     assertEquals (16, connReply.options.get ("Subscription.Max-Count"));
     assertEquals (1024, connReply.options.get ("Subscription.Max-Length"));

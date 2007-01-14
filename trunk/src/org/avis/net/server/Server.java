@@ -255,7 +255,7 @@ public class Server implements IoHandler
       nackLimit (session, message, "Too many keys");
     } else
     {
-      updateCoalesceDelay (session, connection);
+      updateTcpSendImmediately (session, connection);
       updateQueueLength (session, connection);
       
       connection.options.setWithLegacy
@@ -516,22 +516,21 @@ public class Server implements IoHandler
   }
 
   /**
-   * Handle the Transport.TCP.Coalesce-Delay/router.coalesce-delay
-   * connection option if set.
+   * Handle the TCP.Send-Immediately connection option if set.
    */
-  private static void updateCoalesceDelay (IoSession session,
-                                           Connection connection)
+  private static void updateTcpSendImmediately (IoSession session,
+                                                Connection connection)
   {
     if (session.getConfig () instanceof SocketSessionConfig)
     {
-      int coalesceDelay =
-        connection.options.getInt ("Transport.TCP.Coalesce-Delay");
+      int sendImmediately =
+        connection.options.getInt ("TCP.Send-Immediately");
       
       ((SocketSessionConfig)session.getConfig ()).setTcpNoDelay
-        (coalesceDelay == 0);
+        (sendImmediately == 1);
     } else
     {
-      connection.options.remove ("Transport.TCP.Coalesce-Delay"); 
+      connection.options.remove ("TCP.Send-Immediately"); 
     }
   }
   
