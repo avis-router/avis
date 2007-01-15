@@ -148,6 +148,6 @@ Footnotes
 [1]: #fn1-examples
 [2]: #fn2-examples
 [about_tickertape]: http://tickertape.org/documents/what_is_tickertape.html
-[ticker_clients]: http://tickertape.org/documents/get_tickertape.html
+[ticker_clients]: http://tickertape.org/get_tickertape.html
 [tickertape_downloads]: http://tickertape.org/download
 [sticker]: http://tickertape.org/projects/sticker
