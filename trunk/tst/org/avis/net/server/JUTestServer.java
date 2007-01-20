@@ -62,7 +62,8 @@ public class JUTestServer
       server.close ();
   }
   
-  @Test public void connect ()
+  @Test
+  public void connect ()
     throws Exception
   {
     server = new Server (PORT);
@@ -193,7 +194,8 @@ public class JUTestServer
    * Use the simple client to run through a connect, subscribe, emit,
    * change sub, disconnect sequence.
    */
-  @Test public void subscribe ()
+  @Test
+  public void subscribe ()
     throws Exception
   {
     server = new Server (PORT);
@@ -267,7 +269,8 @@ public class JUTestServer
   /**
    * Test multiple clients sending messages between each other.
    */
-  @Test public void multiClient ()
+  @Test
+  public void multiClient ()
     throws Exception
   {
     server = new Server (PORT);
@@ -398,7 +401,8 @@ public class JUTestServer
     eve.close ();
   }
   
-  @Test public void unotify ()
+  @Test
+  public void unotify ()
     throws Exception
   {
     server = new Server (PORT);
@@ -424,7 +428,8 @@ public class JUTestServer
   /**
    * Test handling of client that does Bad Things.
    */
-  @Test public void badClient ()
+  @Test
+  public void badClient ()
     throws Exception
   {
     server = new Server (PORT);
