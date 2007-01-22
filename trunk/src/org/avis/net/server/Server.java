@@ -52,11 +52,8 @@ import static dsto.dfc.logging.Log.diagnostic;
 import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.trace;
 import static dsto.dfc.logging.Log.warn;
-
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
-
 import static org.avis.Common.DEFAULT_PORT;
-import static org.avis.Common.shortException;
 import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
@@ -65,6 +62,7 @@ import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
+import static org.avis.util.Format.shortException;
 
 public class Server implements IoHandler
 {

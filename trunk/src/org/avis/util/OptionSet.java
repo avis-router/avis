@@ -9,8 +9,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
-
-import static org.avis.Common.className;
+import static org.avis.util.Format.className;
 
 /**
  * Defines the set of valid options for an {@link Options} instance.
