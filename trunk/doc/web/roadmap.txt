@@ -9,7 +9,7 @@ Avis Roadmap
   something you want directly internet-facing yet.
 
 * Installation packages for Mac OS X, Linux/Unix (tar-style package,
-  not rpm, deb) and Windows.
+  not RPM, DEB) and Windows.
 
 * Examples/demos.
 

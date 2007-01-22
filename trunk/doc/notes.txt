@@ -1,16 +1,16 @@
 TODO
 
-* Ian's suggestions + diagrams
 * RPM + DEB? (currently 1.1)
 * windows JRE does not have -server, need to add installer option
 * need general options for thread pool size, max connections, etc. some could
   apply as max/min for connection options.
 * what happens when sending ntfn to client that's too big?
-* sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
 * check client version numbers
+* ec/ep
 
 After R1.0
 
+* sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
 * test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
 * constant pool for Const?
 * profile performance
@@ -27,6 +27,7 @@ After R1.0
 * write a multi-threaded test thrasher to try to crash server
 * write multithreaded "fuzz" test: fire random messages
 
+* DONE: Ian's suggestions + diagrams
 * DONE: web site PR: why use Avis? examples see why.txt
 * DONE: pkg permissions
 * DONE: case-independent options
