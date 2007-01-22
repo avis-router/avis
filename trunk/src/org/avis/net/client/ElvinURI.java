@@ -1,6 +1,5 @@
 package org.avis.net.client;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,6 +12,7 @@ import java.net.URISyntaxException;
 import org.avis.Common;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 
 import static org.avis.Common.CLIENT_VERSION_MAJOR;
@@ -235,17 +235,9 @@ public final class ElvinURI
     if (protocolMatch.matches ())
     {
       if (protocolMatch.group (1) != null)
-      {
-        protocol = new ArrayList<String> (3);
-        
-        String [] items = protocolExpr.split ("\\s*,\\s*");
-        
-        for (int i = 0; i < items.length; i++)
-          protocol.add (items [i]);
-      } else
-      {
+        protocol = asList (protocolExpr.split (","));
+      else
         protocol = SECURE_PROTOCOL;
-      }
     } else
     {
       throw new URISyntaxException (uriString,
