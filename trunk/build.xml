@@ -406,13 +406,18 @@
 
   <target name="deploy_website" depends="website"
           description="Rsync web site to sourceforge">
-    <exec executable="rsync">
+    <exec executable="rsync" dir="doc/web">
       <arg value="-rlgoDv" />
       <arg value="--delete" />
+      <arg line="--include *.html" />
+      <arg line="--include *.png" />
+      <arg line="--include *.gif" />
+      <arg line="--exclude *" />
       <arg line="--exclude */.svn" />
       <arg line="--exclude *.htmli" />
+      <arg line="--exclude *.txt" />
       <arg line="--exclude .*" />
-      <arg value="doc/web/" />
+      <arg value="." />
       <arg value="sourceforge:/home/groups/a/av/avis/htdocs/" />
     </exec>
   </target>
