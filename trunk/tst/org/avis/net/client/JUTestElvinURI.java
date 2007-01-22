@@ -11,6 +11,7 @@ import static org.avis.util.Collections.list;
 import static org.avis.util.Collections.map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 public class JUTestElvinURI
@@ -101,6 +102,30 @@ public class JUTestElvinURI
     assertInvalid ("elvin://elvin_host;");
   }
   
+  @Test
+  public void equality ()
+    throws URISyntaxException
+  {
+    assertSameUri ("elvin://elvin_host", "elvin://elvin_host:2917");
+    assertSameUri ("elvin://elvin_host", "elvin:/tcp,none,xdr/elvin_host");
+    
+    assertNotSameUri ("elvin://elvin_host", "elvin:/tcp,ssl,xdr/elvin_host");
+    assertNotSameUri ("elvin://elvin_host", "elvin://elvin_host:29170");
+    assertNotSameUri ("elvin://elvin_host", "elvin://elvin_host;name=value");
+  }
+  
+  private static void assertSameUri (String uri1, String uri2)
+    throws URISyntaxException
+  {
+    assertEquals (new ElvinURI (uri1), new ElvinURI (uri2));
+  }
+  
+  private static void assertNotSameUri (String uri1, String uri2)
+    throws URISyntaxException
+  {
+    assertFalse (new ElvinURI (uri1).equals (new ElvinURI (uri2)));
+  }
+
   private static void assertInvalid (String uriString)
   {
     try

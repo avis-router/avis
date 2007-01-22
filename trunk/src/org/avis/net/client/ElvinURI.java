@@ -36,11 +36,11 @@ import static org.avis.util.Collections.list;
  * 
  * Example URI 1: <code>elvin://localhost:2917</code>.
  * <p>
- * Example URI 2: <code>elvin:4.0/tcp,xdr,ssl/localhost:29170</code>.
+ * Example URI 2: <code>elvin:4.0/tcp,ssl,xdr/localhost:29170</code>.
  * 
  * @author Matthew Phillips
  */
-public class ElvinURI
+public final class ElvinURI
 {
   private static final List<String> DEFAULT_PROTOCOL =
     list ("tcp", "none", "xdr");
@@ -91,6 +91,8 @@ public class ElvinURI
    */
   public Map<String, String> options;
 
+  private int hash;
+
   /**
    * Create a new instance.
    * 
@@ -110,8 +112,44 @@ public class ElvinURI
     this.options = emptyMap ();
     
     parseUrl ();
+    
+    this.hash = computeHash ();
   }
 
+  @Override
+  public String toString ()
+  {
+    return uriString;
+  }
+  
+  @Override
+  public int hashCode ()
+  {
+    return hash;
+  }
+  
+  @Override
+  public boolean equals (Object obj)
+  {
+    return obj instanceof ElvinURI && equals ((ElvinURI)obj);
+  }
+
+  public boolean equals (ElvinURI uri)
+  {
+    return hash == uri.hash &&
+           host.equals (uri.host) &&
+           port == uri.port &&
+           versionMajor == uri.versionMajor &&
+           versionMinor == uri.versionMinor && 
+           options.equals (uri.options) &&
+           protocol.equals (uri.protocol);
+  }
+  
+  private int computeHash ()
+  {
+    return host.hashCode () ^ port ^ protocol.hashCode ();
+  }
+  
   private void parseUrl ()
     throws URISyntaxException
   { 
