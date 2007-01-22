@@ -137,49 +137,9 @@ public class ElvinURI
     // endpoint (host/port)
     parseEndpoint (matcher.group (4));
     
+    // options
     if (matcher.group (5) != null)
       parseOptions (matcher.group (5));
-  }
-
-  private void parseOptions (String optionsExpr)
-    throws URISyntaxException
-  {
-    Matcher optionMatch =
-      Pattern.compile (";([^=;]+)=([^=;]*)").matcher (optionsExpr);
-    
-    options = new HashMap<String, String> ();
-    
-    int index = 0;
-    
-    while (optionMatch.lookingAt ())
-    {
-      options.put (optionMatch.group (1), optionMatch.group (2));
-      
-      index = optionMatch.end ();
-      optionMatch.region (index, optionsExpr.length ());
-    }
-    
-    if (index != optionsExpr.length ())
-      throw new URISyntaxException
-        (uriString, "Invalid options: \"" + optionsExpr + "\"");
-  }
-
-  private void parseEndpoint (String endpoint)
-    throws URISyntaxException
-  {
-    Matcher endpointMatch =
-      Pattern.compile ("([^:]+)(?::(\\d+))?").matcher (endpoint);
-    
-    if (endpointMatch.matches ())
-    {
-      host = endpointMatch.group (1);
-      
-      if (endpointMatch.group (2) != null)
-        port = parseInt (endpointMatch.group (2));
-    } else
-    {
-      throw new URISyntaxException (uriString, "Invalid port number");
-    }
   }
 
   private void parseVersion (String versionExpr)
@@ -228,6 +188,47 @@ public class ElvinURI
                                     "Invalid protocol: \"" +
                                     protocolExpr + "\"");
     }
+  }
+  
+  private void parseEndpoint (String endpoint)
+    throws URISyntaxException
+  {
+    Matcher endpointMatch =
+      Pattern.compile ("([^:]+)(?::(\\d+))?").matcher (endpoint);
+    
+    if (endpointMatch.matches ())
+    {
+      host = endpointMatch.group (1);
+      
+      if (endpointMatch.group (2) != null)
+        port = parseInt (endpointMatch.group (2));
+    } else
+    {
+      throw new URISyntaxException (uriString, "Invalid port number");
+    }
+  }
+  
+  private void parseOptions (String optionsExpr)
+    throws URISyntaxException
+  {
+    Matcher optionMatch =
+      Pattern.compile (";([^=;]+)=([^=;]*)").matcher (optionsExpr);
+    
+    options = new HashMap<String, String> ();
+    
+    int index = 0;
+    
+    while (optionMatch.lookingAt ())
+    {
+      options.put (optionMatch.group (1), optionMatch.group (2));
+      
+      index = optionMatch.end ();
+      optionMatch.region (index, optionsExpr.length ());
+    }
+    
+    if (index != optionsExpr.length ())
+      throw new URISyntaxException
+        (uriString, "Invalid options: \"" + optionsExpr + "\"");
   }
 
   /**
