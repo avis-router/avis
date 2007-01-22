@@ -1,7 +1,7 @@
 package org.avis.net.client;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +14,7 @@ import static java.lang.Integer.parseInt;
 import static org.avis.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.Common.CLIENT_VERSION_MINOR;
 import static org.avis.Common.DEFAULT_PORT;
-import static org.avis.util.Collections.set;
+import static org.avis.util.Collections.list;
 
 /**
  * An Elvin URI identifying an Elvin router as described in the "Elvin
@@ -36,15 +36,18 @@ import static org.avis.util.Collections.set;
  */
 public class ElvinURI
 {
-  private static final Set<String> DEFAULT_PROTOCOL =
-    set ("tcp", "none", "xdr");
+  private static final List<String> DEFAULT_PROTOCOL =
+    list ("tcp", "none", "xdr");
+  
+  private static final List<String> SECURE_PROTOCOL =
+    list ("tcp", "ssl", "xdr");
   
   /**
    * Basic matcher for URI's. Detail parsing is done as a separate pass.
    */
   private static final Pattern URL_PATTERN =
     Pattern.compile ("(\\w+):(?:([^/]+))?/([^/]+)?/([^/].*)");
-  
+
   /**
    * The URI string as passed into the constructor.
    */
@@ -61,10 +64,11 @@ public class ElvinURI
   public int versionMinor;
   
   /**
-   * The set of protocol modules. e.g. "tcp", "xdr", "ssl". See also
+   * The stack of protocol modules in (transport,security,marshalling)
+   * order. e.g. "tcp", "none", "xdr". See also
    * {@link #defaultProtocol()}
    */
-  public Set<String> protocol;
+  public List<String> protocol;
   
   /**
    * Host name.
@@ -164,16 +168,22 @@ public class ElvinURI
     throws URISyntaxException
   {
     Matcher protocolMatch =
-      Pattern.compile ("(\\w+)(\\s*,\\s*(\\w+))*").matcher (protocolExpr);
+      Pattern.compile ("(?:(\\w+),(\\w+),(\\w+))|secure").matcher (protocolExpr);
     
     if (protocolMatch.matches ())
     {
-      protocol = new HashSet<String> ();
-      
-      String [] items = protocolExpr.split ("\\s*,\\s*");
-      
-      for (int i = 0; i < items.length; i++)
-        protocol.add (items [i]);
+      if (protocolMatch.group (1) != null)
+      {
+        protocol = new ArrayList<String> (3);
+        
+        String [] items = protocolExpr.split ("\\s*,\\s*");
+        
+        for (int i = 0; i < items.length; i++)
+          protocol.add (items [i]);
+      } else
+      {
+        protocol = SECURE_PROTOCOL;
+      }
     } else
     {
       throw new URISyntaxException (uriString,
@@ -183,10 +193,18 @@ public class ElvinURI
   }
 
   /**
-   * The default URI protocol: "tcp", "xdr", "none"
+   * The default URI protocol stack: "tcp", "none", "xdr"
    */
-  public static Set<String> defaultProtocol ()
+  public static List<String> defaultProtocol ()
   {
     return DEFAULT_PROTOCOL;
+  }
+
+  /**
+   * The secure URI protocol stack: "tcp", "ssl", "xdr"
+   */
+  public static List<String> secureProtocol ()
+  {
+    return SECURE_PROTOCOL;
   }
 }

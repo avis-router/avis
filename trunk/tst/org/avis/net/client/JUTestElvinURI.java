@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.avis.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.Common.CLIENT_VERSION_MINOR;
 import static org.avis.Common.DEFAULT_PORT;
-import static org.avis.util.Collections.set;
+import static org.avis.util.Collections.list;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -52,9 +52,15 @@ public class JUTestElvinURI
     
     uri = new ElvinURI ("elvin:/tcp,xdr,ssl/elvin_host");
     
-    assertEquals (set ("tcp", "xdr", "ssl"), uri.protocol);
+    assertEquals (list ("tcp", "xdr", "ssl"), uri.protocol);
     assertEquals ("elvin_host", uri.host);
     
+    uri = new ElvinURI ("elvin:/secure/elvin_host");
+    
+    assertEquals (ElvinURI.secureProtocol (), uri.protocol);
+    
+    assertInvalid ("elvin:/abc,xyz/elvin_host");
+    assertInvalid ("elvin:/abc,xyz,dfg,qwe/elvin_host");
     assertInvalid ("elvin:/abc,/elvin_host");
     assertInvalid ("elvin:/,abc/elvin_host");
     assertInvalid ("elvin:/abc,,xyz/elvin_host");
