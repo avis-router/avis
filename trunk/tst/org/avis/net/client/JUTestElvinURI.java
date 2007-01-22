@@ -8,6 +8,7 @@ import static org.avis.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.Common.CLIENT_VERSION_MINOR;
 import static org.avis.Common.DEFAULT_PORT;
 import static org.avis.util.Collections.list;
+import static org.avis.util.Collections.map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -81,6 +82,23 @@ public class JUTestElvinURI
     
     assertInvalid ("elvin://");
     assertInvalid ("elvin://hello:there");
+  }
+  
+  @Test
+  public void options ()
+    throws URISyntaxException
+  {
+    ElvinURI uri = new ElvinURI ("elvin://elvin_host;name1=value1");
+    
+    assertEquals (map ("name1", "value1"), uri.options);
+    
+    uri = new ElvinURI ("elvin://elvin_host;name1=value1;name2=value2");
+    
+    assertEquals (map ("name1", "value1", "name2", "value2"), uri.options);
+    
+    assertInvalid ("elvin://elvin_host;name1;name2=value2");
+    assertInvalid ("elvin://elvin_host;=name1;name2=value2");
+    assertInvalid ("elvin://elvin_host;");
   }
   
   private static void assertInvalid (String uriString)

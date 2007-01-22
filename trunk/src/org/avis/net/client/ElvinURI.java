@@ -1,7 +1,9 @@
 package org.avis.net.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +12,7 @@ import java.net.URISyntaxException;
 import org.avis.Common;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Collections.emptyMap;
 
 import static org.avis.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.Common.CLIENT_VERSION_MINOR;
@@ -23,7 +26,10 @@ import static org.avis.util.Collections.list;
  * common Elvin URI for a TCP endpoint is of the form:
  * 
  * <pre>
- *   elvin:[version]/[protocol]/hostname[:port] [options]
+ *   elvin:[version]/[protocol]/hostname[:port];[options]
+ *   
+ *   protocol: transport,security,marshalling
+ *   options:  name1=value1[;name2=value2]*
  * </pre>
  * 
  * <p>
@@ -46,7 +52,7 @@ public class ElvinURI
    * Basic matcher for URI's. Detail parsing is done as a separate pass.
    */
   private static final Pattern URL_PATTERN =
-    Pattern.compile ("(\\w+):(?:([^/]+))?/([^/]+)?/([^/].*)");
+    Pattern.compile ("(\\w+):(?:([^/]+))?/([^/]+)?/([^/].*?)(;.*)?");
 
   /**
    * The URI string as passed into the constructor.
@@ -81,6 +87,11 @@ public class ElvinURI
   public int port;
 
   /**
+   * URI options: e.g. elvin://host:port;option1=value1;option2=value2
+   */
+  public Map<String, String> options;
+
+  /**
    * Create a new instance.
    * 
    * @param uriString The URI.
@@ -96,6 +107,7 @@ public class ElvinURI
     this.protocol = DEFAULT_PROTOCOL;
     this.host = null;
     this.port = DEFAULT_PORT;
+    this.options = emptyMap ();
     
     parseUrl ();
   }
@@ -124,6 +136,32 @@ public class ElvinURI
     
     // endpoint (host/port)
     parseEndpoint (matcher.group (4));
+    
+    if (matcher.group (5) != null)
+      parseOptions (matcher.group (5));
+  }
+
+  private void parseOptions (String optionsExpr)
+    throws URISyntaxException
+  {
+    Matcher optionMatch =
+      Pattern.compile (";([^=;]+)=([^=;]*)").matcher (optionsExpr);
+    
+    options = new HashMap<String, String> ();
+    
+    int index = 0;
+    
+    while (optionMatch.lookingAt ())
+    {
+      options.put (optionMatch.group (1), optionMatch.group (2));
+      
+      index = optionMatch.end ();
+      optionMatch.region (index, optionsExpr.length ());
+    }
+    
+    if (index != optionsExpr.length ())
+      throw new URISyntaxException
+        (uriString, "Invalid options: \"" + optionsExpr + "\"");
   }
 
   private void parseEndpoint (String endpoint)
