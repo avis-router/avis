@@ -1,9 +1,10 @@
 package org.avis.net.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ import static java.util.Collections.emptyMap;
 import static org.avis.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.Common.CLIENT_VERSION_MINOR;
 import static org.avis.Common.DEFAULT_PORT;
+import static org.avis.util.Collections.join;
 import static org.avis.util.Collections.list;
 
 /**
@@ -120,6 +122,30 @@ public final class ElvinURI
   public String toString ()
   {
     return uriString;
+  }
+  
+  public String toCanonicalString ()
+  {
+    StringBuilder str = new StringBuilder ();
+    
+    str.append ("elvin:");
+    
+    str.append (versionMajor).append ('.').append (versionMinor);
+    
+    str.append ('/');
+    
+    join (str, protocol, ',');
+    
+    str.append ('/').append (host).append (':').append (port);
+
+    // NB: options is a sorted map, canonical order is automatic
+    for (Entry<String, String> option : options.entrySet ())
+    {
+      str.append (';');
+      str.append (option.getKey ()).append ('=').append (option.getValue ());
+    }
+    
+    return str.toString ();
   }
   
   @Override
@@ -252,7 +278,7 @@ public final class ElvinURI
     Matcher optionMatch =
       Pattern.compile (";([^=;]+)=([^=;]*)").matcher (optionsExpr);
     
-    options = new HashMap<String, String> ();
+    options = new TreeMap<String, String> ();
     
     int index = 0;
     

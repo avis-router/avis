@@ -114,6 +114,28 @@ public class JUTestElvinURI
     assertNotSameUri ("elvin://elvin_host", "elvin://elvin_host;name=value");
   }
   
+  @Test
+  public void canonicalize ()
+    throws URISyntaxException
+  {
+    ElvinURI uri = new ElvinURI ("elvin://elvin_host");
+    
+    assertEquals ("elvin:4.0/tcp,none,xdr/elvin_host:2917",
+                  uri.toCanonicalString ());
+
+    uri = new ElvinURI ("elvin://elvin_host;name1=value1");
+    assertEquals ("elvin:4.0/tcp,none,xdr/elvin_host:2917;name1=value1",
+                  uri.toCanonicalString ());
+    
+    uri = new ElvinURI ("elvin:/secure/elvin_host:29170;b=2;a=1");
+    assertEquals ("elvin:4.0/tcp,ssl,xdr/elvin_host:29170;a=1;b=2",
+                  uri.toCanonicalString ());
+    
+    uri = new ElvinURI ("elvin:5.1/secure/elvin_host:29170;b=2;a=1");
+    assertEquals ("elvin:5.1/tcp,ssl,xdr/elvin_host:29170;a=1;b=2",
+                  uri.toCanonicalString ());
+  }
+  
   private static void assertSameUri (String uri1, String uri2)
     throws URISyntaxException
   {
