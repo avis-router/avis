@@ -31,9 +31,9 @@ transcription for meetings][AuTM]. It has also been used extensively
 by Mantara for high-volume financial transaction routing.
 
 Elvin has been picked up in so many applications because of its
-lightweight approach and flexibilit: please see [this page][why_avis]
-for more discussion on why you might want to use it. The [examples][]
-page also demonstrates in more detail a scenario in which it can be
+lightweight approach and flexibility: see [this page][why_avis] for
+more discussion on why you might want to use it. The [examples][] page
+also demonstrates in more detail a scenario in which it can be
 employed.
 
 
@@ -80,10 +80,10 @@ standalone supported product, Matthew Phillips began to implement the
 Elvin open specifications published at [elvin.org][] as part of the
 Open Source Avis project.
 
-Avis' goal is to allow DSTO and other parties to continue developing
-systems using the proven Elvin message bus technology. It is intended
-that the Avis project will track developments in Elvin to remain a
-compatible long-term option.
+The Avis project's goal is to enable stakeholders to continue
+developing systems using the proven Elvin message bus technology. It
+is intended that the Avis project will track developments in Elvin to
+remain a compatible long-term option.
 
 
 Contacts
