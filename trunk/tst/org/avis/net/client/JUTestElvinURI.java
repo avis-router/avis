@@ -1,0 +1,93 @@
+package org.avis.net.client;
+
+import java.net.URISyntaxException;
+
+import org.junit.Test;
+
+import static org.avis.Common.CLIENT_VERSION_MAJOR;
+import static org.avis.Common.CLIENT_VERSION_MINOR;
+import static org.avis.Common.DEFAULT_PORT;
+import static org.avis.util.Collections.set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+public class JUTestElvinURI
+{
+  @Test
+  public void version ()
+    throws URISyntaxException
+  {
+    ElvinURI uri = new ElvinURI ("elvin://elvin_host");
+    
+    assertEquals (CLIENT_VERSION_MAJOR, uri.versionMajor);
+    assertEquals (CLIENT_VERSION_MINOR, uri.versionMinor);
+    assertEquals ("elvin_host", uri.host);
+    
+    uri = new ElvinURI ("elvin:5.1//elvin_host");
+    
+    assertEquals (5, uri.versionMajor);
+    assertEquals (1, uri.versionMinor);  
+    assertEquals ("elvin_host", uri.host);
+    
+    uri = new ElvinURI ("elvin:5//elvin_host");
+    
+    assertEquals (5, uri.versionMajor);
+    assertEquals (CLIENT_VERSION_MINOR, uri.versionMinor);
+    assertEquals ("elvin_host", uri.host);
+    
+    assertInvalid ("elvin:hello//elvin_host");
+    assertInvalid ("elvin:4.0.0//elvin_host");
+    assertInvalid ("elvin:4.//elvin_host");
+    assertInvalid ("elvin: //elvin_host");
+  }
+
+  @Test
+  public void protocol ()
+    throws URISyntaxException
+  {
+    ElvinURI uri = new ElvinURI ("elvin://elvin_host");
+    
+    assertEquals (ElvinURI.defaultProtocol (), uri.protocol);
+    
+    uri = new ElvinURI ("elvin:/tcp,xdr,ssl/elvin_host");
+    
+    assertEquals (set ("tcp", "xdr", "ssl"), uri.protocol);
+    assertEquals ("elvin_host", uri.host);
+    
+    assertInvalid ("elvin:/abc,/elvin_host");
+    assertInvalid ("elvin:/,abc/elvin_host");
+    assertInvalid ("elvin:/abc,,xyz/elvin_host");
+    assertInvalid ("elvin:///elvin_host");
+  }
+  
+  @Test
+  public void endpoint ()
+    throws URISyntaxException
+  {
+    ElvinURI uri = new ElvinURI ("elvin://elvin_host");
+    assertEquals ("elvin_host", uri.host);
+    assertEquals (DEFAULT_PORT, uri.port);
+    
+    uri = new ElvinURI ("elvin://elvin_host:12345");
+    assertEquals ("elvin_host", uri.host);
+    assertEquals (12345, uri.port);
+    
+    assertInvalid ("elvin://");
+    assertInvalid ("elvin://hello:there");
+  }
+  
+  private static void assertInvalid (String uriString)
+  {
+    try
+    {
+      new ElvinURI (uriString);
+      
+      fail ("Invalid URI \"" + uriString + "\" not detected");
+    } catch (URISyntaxException ex)
+    {
+      // ok
+      // System.out.println ("error = " + ex.getMessage ());
+    }
+  }
+}
