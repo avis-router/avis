@@ -3,8 +3,8 @@ package org.avis.net.server;
 import org.avis.util.OptionSet;
 import org.avis.util.Options;
 
+import static org.avis.Common.DEFAULT_PORT;
 import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
-import static org.avis.net.server.Server.DEFAULT_PORT;
 
 /**
  * Options used to configure the Avis server.

@@ -18,6 +18,9 @@ import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.setEnabled;
 import static dsto.dfc.logging.Log.warn;
 
+import static org.avis.util.CommandLine.intArg;
+import static org.avis.util.CommandLine.stringArg;
+
 /**
  * Invokes the Avis router from the command line.
  * 
@@ -169,29 +172,5 @@ public class Main
     } 
    
     return properties;
-  }
-
-  private static int intArg (String [] args, int i)
-  {
-    try
-    {
-      return Integer.parseInt (stringArg (args, i));
-    } catch (NumberFormatException ex)
-    {
-      throw new IllegalArgumentException
-        (args [i - 1] + ": not a number: " + args [i]);
-    }
-  }
-  
-  private static String stringArg (String [] args, int i)
-  {
-    try
-    {
-      return args [i];
-    } catch (ArrayIndexOutOfBoundsException ex)
-    {
-      throw new IllegalArgumentException
-        ("Missing parameter for \"" + args [i - 1] + "\" option");
-    }
   }
 }
