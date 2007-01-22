@@ -2,6 +2,7 @@ package org.avis.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,5 +47,26 @@ public class Collections
       map.put (strings [i], strings [i + 1]);
 
     return map;
+  }
+
+  /**
+   * Join a collection of strings with a separator and append to a
+   * string builder.
+   */
+  public static void join (StringBuilder str,
+                           Collection<String> strings,
+                           char separator)
+  {
+    boolean first = true;
+
+    for (String string : strings)
+    {
+      if (!first)
+        str.append (separator);
+      
+      first = false;
+      
+      str.append (string);
+    }
   }
 }
