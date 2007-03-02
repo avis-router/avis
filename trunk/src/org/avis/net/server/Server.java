@@ -136,7 +136,8 @@ public class Server implements IoHandler
       acceptor = null;
     }
     
-    Disconn disconnMessage = new Disconn (REASON_SHUTDOWN, "");
+    Disconn disconnMessage =
+      new Disconn (REASON_SHUTDOWN, "Router is shutting down");
     
     for (IoSession session : sessions)
     {
@@ -552,7 +553,6 @@ public class Server implements IoHandler
    * Send a NACK response for a parse error with error info.
    * 
    * todo should provide better error info (see sec 7.4.2 and 6.3)
-   * @param expr 
    */
   private static void nackParseError (IoSession session,
                                       XidMessage inReplyTo,
