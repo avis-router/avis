@@ -316,7 +316,8 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
   }
 
   /**
-   * Set the connection options for a given session.
+   * Set the per-session connection options that will be used by this
+   * codec.
    */
   public static void setOptions (IoSession session,
                                  ConnectionOptions options)
