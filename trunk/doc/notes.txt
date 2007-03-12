@@ -7,6 +7,7 @@ TODO
 * what happens when sending ntfn to client that's too big?
 * check client version numbers
 * ec/ep
+* remove DSTO DFC log - use slf4j
 
 After R1.0
 
