@@ -174,10 +174,16 @@ class SimpleClient implements IoHandler
       ("Failed to receive a " + type.getName ());
   }
 
-  public void sendNotify (Notification ntfn, boolean deliverInsecure)
+  public void sendNotify (Notification ntfn)
     throws Exception
   {
-    send (new NotifyEmit (ntfn, deliverInsecure, ntfn.keys));
+    send (new NotifyEmit (ntfn, true, EMPTY_KEYS));
+  }
+  
+  public void sendNotify (Notification ntfn, Keys keys)
+    throws Exception
+  {
+    send (new NotifyEmit (ntfn, false, keys));
   }
 
   public SubRply subscribe (String subExpr)

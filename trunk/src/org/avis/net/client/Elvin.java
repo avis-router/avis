@@ -18,6 +18,7 @@ import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
+import org.avis.Notification;
 import org.avis.net.FrameCodec;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -278,8 +279,7 @@ public class Elvin
   
   private void handleNotifyDeliver (NotifyDeliver message)
   {
-    Notification ntfn = new Notification ();
-    ntfn.attributes = message.attributes;
+    Notification ntfn = new Notification (message.attributes);
     
     fireNotify (message.secureMatches, true, ntfn);
     fireNotify (message.insecureMatches, false, ntfn);

@@ -377,9 +377,8 @@ public class JUTestServer
     
     Notification ntfn = new Notification ();
     ntfn.put ("From-Alice", 1);
-    ntfn.keys = aliceNtfnKeys;
     
-    alice.sendNotify (ntfn, false);
+    alice.sendNotify (ntfn, aliceNtfnKeys);
     
     NotifyDeliver bobNtfn = (NotifyDeliver)bob.receive ();
     assertEquals (1, bobNtfn.attributes.get ("From-Alice"));

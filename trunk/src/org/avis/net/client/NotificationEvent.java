@@ -2,6 +2,8 @@ package org.avis.net.client;
 
 import java.util.EventObject;
 
+import org.avis.Notification;
+
 public class NotificationEvent extends EventObject
 {
   public final Subscription subscription;

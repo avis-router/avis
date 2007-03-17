@@ -40,7 +40,7 @@ public class GoodClient extends AgentClient
         ntfn.put ("Time", new Date ().toString ());
         ntfn.put ("Channel", "goodclient");
         
-        sendNotify (ntfn, true);
+        sendNotify (ntfn);
         
         sentMessageCount++;
       } catch (Exception ex)
