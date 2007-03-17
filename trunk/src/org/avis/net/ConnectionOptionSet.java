@@ -7,9 +7,9 @@ import org.avis.util.IllegalOptionException;
 import org.avis.util.OptionSet;
 import org.avis.util.Options;
 
-import static org.avis.Common.K;
-import static org.avis.Common.MAX;
-import static org.avis.Common.MB;
+import static org.avis.common.Common.K;
+import static org.avis.common.Common.MAX;
+import static org.avis.common.Common.MB;
 
 /**
  * Defines the Avis connection option set: definition, validation and legacy

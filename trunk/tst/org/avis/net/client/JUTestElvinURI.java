@@ -4,9 +4,9 @@ import java.net.URISyntaxException;
 
 import org.junit.Test;
 
-import static org.avis.Common.CLIENT_VERSION_MAJOR;
-import static org.avis.Common.CLIENT_VERSION_MINOR;
-import static org.avis.Common.DEFAULT_PORT;
+import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
+import static org.avis.common.Common.CLIENT_VERSION_MINOR;
+import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.util.Collections.list;
 import static org.avis.util.Collections.map;
 

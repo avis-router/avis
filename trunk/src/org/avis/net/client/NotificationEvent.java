@@ -2,7 +2,7 @@ package org.avis.net.client;
 
 import java.util.EventObject;
 
-import org.avis.Notification;
+import org.avis.common.Notification;
 
 public class NotificationEvent extends EventObject
 {

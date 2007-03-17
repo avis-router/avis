@@ -1,4 +1,4 @@
-package org.avis;
+package org.avis.common;
 
 /**
  * Common Avis definitions.

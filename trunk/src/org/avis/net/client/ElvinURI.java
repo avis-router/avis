@@ -9,15 +9,15 @@ import java.util.regex.Pattern;
 
 import java.net.URISyntaxException;
 
-import org.avis.Common;
+import org.avis.common.Common;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 
-import static org.avis.Common.CLIENT_VERSION_MAJOR;
-import static org.avis.Common.CLIENT_VERSION_MINOR;
-import static org.avis.Common.DEFAULT_PORT;
+import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
+import static org.avis.common.Common.CLIENT_VERSION_MINOR;
+import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.util.Collections.join;
 import static org.avis.util.Collections.list;
 

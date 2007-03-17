@@ -6,8 +6,8 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import static org.avis.Common.K;
-import static org.avis.Common.MB;
+import static org.avis.common.Common.K;
+import static org.avis.common.Common.MB;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

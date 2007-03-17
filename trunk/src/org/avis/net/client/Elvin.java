@@ -18,7 +18,7 @@ import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
-import org.avis.Notification;
+import org.avis.common.Notification;
 import org.avis.net.FrameCodec;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -36,8 +36,8 @@ import dsto.dfc.logging.Log;
 
 import static dsto.dfc.logging.Log.alarm;
 
-import static org.avis.Common.CLIENT_VERSION_MAJOR;
-import static org.avis.Common.CLIENT_VERSION_MINOR;
+import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
+import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.net.client.ElvinURI.defaultProtocol;
 
 public class Elvin

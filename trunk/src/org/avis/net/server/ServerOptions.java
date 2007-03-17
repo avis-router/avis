@@ -3,7 +3,7 @@ package org.avis.net.server;
 import org.avis.util.OptionSet;
 import org.avis.util.Options;
 
-import static org.avis.Common.DEFAULT_PORT;
+import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 /**

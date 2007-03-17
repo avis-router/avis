@@ -3,7 +3,7 @@ package org.avis.net.server;
 import java.util.Date;
 import java.util.TimerTask;
 
-import org.avis.Notification;
+import org.avis.common.Notification;
 
 import static dsto.dfc.logging.Log.alarm;
 

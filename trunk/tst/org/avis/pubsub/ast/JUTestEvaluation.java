@@ -9,7 +9,7 @@ import java.lang.reflect.Constructor;
 
 import org.junit.Test;
 
-import org.avis.Notification;
+import org.avis.common.Notification;
 import org.avis.pubsub.ast.nodes.And;
 import org.avis.pubsub.ast.nodes.Compare;
 import org.avis.pubsub.ast.nodes.Const;

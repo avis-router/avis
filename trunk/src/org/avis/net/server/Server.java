@@ -59,7 +59,7 @@ import static java.lang.Runtime.getRuntime;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
-import static org.avis.Common.DEFAULT_PORT;
+import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
