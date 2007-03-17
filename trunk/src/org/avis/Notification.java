@@ -5,105 +5,120 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.avis.net.security.Keys;
-
-import static org.avis.net.security.Keys.EMPTY_KEYS;
-
 public class Notification implements Map<String, Object>, Cloneable
 {
-  public Keys keys;
-  
-  private HashMap<String, Object> fields;
+  private Map<String, Object> attributes;
   
   public Notification ()
   {
-    this.fields = new HashMap<String, Object> ();
-    this.keys = EMPTY_KEYS;
+    this.attributes = new HashMap<String, Object> ();
+  }
+
+  public Notification (Map<String, Object> attributes)
+  {
+    // todo check attribute values
+    this.attributes = attributes;
   }
 
   public void clear ()
   {
-    fields.clear ();
+    attributes.clear ();
   }
 
-  @SuppressWarnings("unchecked")
+  @Override
   public Object clone ()
     throws CloneNotSupportedException
   {
     Notification copy = (Notification)super.clone ();
     
-    copy.fields = (HashMap<String, Object>)fields.clone ();
+    copy.attributes = new HashMap<String, Object> (attributes);
     
     return copy;
+  }
+  
+  @Override
+  public String toString ()
+  {
+    StringBuilder str = new StringBuilder ();
+    boolean first = true;
+    
+    for (Entry<String, Object> entry : attributes.entrySet ())
+    {
+      if (!first)
+        str.append ('\n');
+      
+      first = false;
+      
+      str.append (entry.getKey ());
+      str.append (": ");
+      str.append (entry.getValue ());
+    }
+    
+    return str.toString ();
   }
 
   public boolean containsKey (Object key)
   {
-    return fields.containsKey (key);
+    return attributes.containsKey (key);
   }
 
   public boolean containsValue (Object value)
   {
-    return fields.containsValue (value);
+    return attributes.containsValue (value);
   }
 
   public Set<Entry<String, Object>> entrySet ()
   {
-    return fields.entrySet ();
+    return attributes.entrySet ();
   }
 
   public boolean equals (Object arg0)
   {
-    return fields.equals (arg0);
+    return attributes.equals (arg0);
   }
 
   public Object get (Object key)
   {
-    return fields.get (key);
+    return attributes.get (key);
   }
 
   public int hashCode ()
   {
-    return fields.hashCode ();
+    return attributes.hashCode ();
   }
 
   public boolean isEmpty ()
   {
-    return fields.isEmpty ();
+    return attributes.isEmpty ();
   }
 
   public Set<String> keySet ()
   {
-    return fields.keySet ();
+    return attributes.keySet ();
   }
 
   public Object put (String key, Object value)
   {
-    return fields.put (key, value);
+    return attributes.put (key, value);
   }
 
   public void putAll (Map<? extends String, ? extends Object> m)
   {
-    fields.putAll (m);
+    attributes.putAll (m);
   }
 
   public Object remove (Object key)
   {
-    return fields.remove (key);
+    return attributes.remove (key);
   }
 
   public int size ()
   {
-    return fields.size ();
-  }
-
-  public String toString ()
-  {
-    return fields.toString ();
+    return attributes.size ();
   }
 
   public Collection<Object> values ()
   {
-    return fields.values ();
+    return attributes.values ();
   }
 }
