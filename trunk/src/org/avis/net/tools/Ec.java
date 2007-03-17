@@ -1,12 +1,12 @@
 package org.avis.net.tools;
 
+import java.io.IOException;
+
 import java.net.ConnectException;
 import java.net.URISyntaxException;
 
-import org.apache.mina.common.RuntimeIOException;
-
-import org.avis.net.client.ElvinURI;
 import org.avis.net.client.Elvin;
+import org.avis.net.client.ElvinURI;
 import org.avis.net.server.Main;
 
 import dsto.dfc.logging.Log;
@@ -51,7 +51,7 @@ public class Ec
     
     try
     {
-      final Elvin router = new Elvin (elvinUri);
+      final Elvin elvin = new Elvin (elvinUri);
       
       info ("Connected to " + elvinUri.toCanonicalString (), Ec.class);
       
@@ -61,12 +61,12 @@ public class Ec
         {
           info ("Shutting down...", Main.class);
           
-          router.close ();
+          elvin.close ();
         }
       });
-    } catch (RuntimeIOException ex)
+    } catch (IOException ex)
     {
-      if (ex.getCause () instanceof ConnectException)
+      if (ex instanceof ConnectException)
         Log.alarm ("Failed to connect to Elvin: connection refused", Ec.class);
       else
         Log.alarm ("Error connecting to Elvin", Ec.class, ex);

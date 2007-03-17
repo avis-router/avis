@@ -1,11 +1,15 @@
 package org.avis.net.client;
 
+import java.io.IOException;
+
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketConnector;
@@ -23,48 +27,58 @@ public class Elvin
   private IoSession clientSession;
 
   public Elvin (String elvinUri)
-    throws URISyntaxException
+    throws URISyntaxException, IllegalArgumentException,
+           ConnectException, IOException
   {
     this (new ElvinURI (elvinUri));
   }
   
   public Elvin (ElvinURI elvinUri)
+    throws IllegalArgumentException, ConnectException, IOException
   {
     this.elvinUri = elvinUri;
     
     if (!elvinUri.protocol.equals (defaultProtocol ()))
       throw new IllegalArgumentException
-        ("Only default protocol stack (" + defaultProtocol () +
-         ") currently supported");
+        ("Only the default protocol stack (" +
+         defaultProtocol () + ") is currently supported");
     
     connect ();
   }
 
   private void connect ()
+    throws IOException
   {
-    SocketConnector connector = new SocketConnector ();
+    try
+    {
+      SocketConnector connector = new SocketConnector ();
 
-    /* Change the worker timeout to 1 second to make the I/O thread
-     * quit soon when there's no connection to manage. */
-    connector.setWorkerTimeout (1);
-    
-    SocketConnectorConfig cfg = new SocketConnectorConfig ();
-    cfg.setConnectTimeout (10);
-    
-    DemuxingProtocolCodecFactory codecFactory =
-      new DemuxingProtocolCodecFactory ();
-    codecFactory.register (FrameCodec.class);
-    
-    cfg.getFilterChain ().addLast
-      ("codec", new ProtocolCodecFilter (codecFactory));
-    
-    ConnectFuture future =
-      connector.connect
-        (new InetSocketAddress (elvinUri.host, elvinUri.port),
-         new MessageHandler (), cfg);
-                                     
-    future.join ();
-    clientSession = future.getSession ();
+      /* Change the worker timeout to 1 second to make the I/O thread
+       * quit soon when there's no connection to manage. */
+      connector.setWorkerTimeout (1);
+      
+      SocketConnectorConfig cfg = new SocketConnectorConfig ();
+      cfg.setConnectTimeout (10);
+      
+      DemuxingProtocolCodecFactory codecFactory =
+        new DemuxingProtocolCodecFactory ();
+      codecFactory.register (FrameCodec.class);
+      
+      cfg.getFilterChain ().addLast
+        ("codec", new ProtocolCodecFilter (codecFactory));
+      
+      ConnectFuture future =
+        connector.connect
+          (new InetSocketAddress (elvinUri.host, elvinUri.port),
+           new MessageHandler (), cfg);
+                                       
+      future.join ();
+      clientSession = future.getSession ();
+    } catch (RuntimeIOException ex)
+    {
+      // unwrap MINA's RuntimeIOException
+      throw (IOException)ex.getCause ();
+    }
   }
   
   public void close ()
