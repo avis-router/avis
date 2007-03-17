@@ -1,20 +1,22 @@
 package org.avis.net.server;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.ExecutorThreadModel;
+import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoService;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.common.ThreadModel;
 import org.apache.mina.filter.ReadThrottleFilterBuilder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
+import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
@@ -52,7 +54,11 @@ import static dsto.dfc.logging.Log.diagnostic;
 import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.trace;
 import static dsto.dfc.logging.Log.warn;
+
+import static java.lang.Runtime.getRuntime;
+import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
+
 import static org.avis.Common.DEFAULT_PORT;
 import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
@@ -69,6 +75,7 @@ public class Server implements IoHandler
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
   
+  private ExecutorService executor;
   private SocketAcceptor acceptor;
   
   /**
@@ -98,25 +105,35 @@ public class Server implements IoHandler
     throws IOException
   {
     sessions = new ConcurrentHashSet<IoSession> ();
-    acceptor = new SocketAcceptor ();
-    
-    SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
-    
-    acceptorConfig.setReuseAddress (true);
+    executor = newCachedThreadPool ();
+    acceptor =
+      new SocketAcceptor (getRuntime ().availableProcessors () + 1,
+                          executor);
     
     DemuxingProtocolCodecFactory codecFactory =
       new DemuxingProtocolCodecFactory ();
     codecFactory.register (FrameCodec.class);
     
-    // todo allow thread pool to be configured
-    ExecutorThreadModel threadModel = ExecutorThreadModel.getInstance ("avis");
-    ThreadPoolExecutor executor = (ThreadPoolExecutor)threadModel.getExecutor ();
-    executor.setCorePoolSize (16);
+    SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
     
-    acceptorConfig.setThreadModel (threadModel);
+    acceptorConfig.setReuseAddress (true);
+    acceptorConfig.setThreadModel (ThreadModel.MANUAL);
     
-    acceptorConfig.getFilterChain ().addLast
+    /*
+     * Setup IO filter chain with codec and then thread pool. NOTE:
+     * The read throttling system needs an ExecutorFilter to glom
+     * onto: it's not clear that we gain any other benefit from it
+     * since notification processing is non-blocking. See
+     * http://mina.apache.org/configuring-thread-model.html.
+     */
+    DefaultIoFilterChainBuilder filterChainBuilder =
+      acceptorConfig.getFilterChain ();
+
+    filterChainBuilder.addLast
       ("codec", new ProtocolCodecFilter (codecFactory));
+    
+    filterChainBuilder.addLast
+      ("threadPool", new ExecutorFilter (executor));
     
     acceptor.bind (new InetSocketAddress (options.getInt ("Port")),
                    this, acceptorConfig);
@@ -134,6 +151,8 @@ public class Server implements IoHandler
       
       acceptor.unbindAll ();
       acceptor = null;
+      executor.shutdown ();
+      executor = null;
     }
     
     Disconn disconnMessage =
