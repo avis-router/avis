@@ -3,10 +3,11 @@ package org.avis.pubsub.ast;
 import java.util.Collection;
 import java.util.Map;
 
-import org.avis.Notification;
 import org.avis.pubsub.ast.nodes.Const;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
+
 import static org.avis.util.Format.className;
 
 /**
@@ -24,7 +25,7 @@ public abstract class Node<E>
   public static final Boolean FALSE = Boolean.FALSE;
   public static final Boolean BOTTOM = null;
 
-  protected static final Notification EMPTY_NOTIFICATION = new Notification ();
+  protected static final Map<String, Object> EMPTY_NOTIFICATION = emptyMap ();
   
   /**
    * Evaluate the expression tree rooted at this node and return the
