@@ -14,8 +14,13 @@ import static java.util.Arrays.asList;
  * 
  * @author Matthew Phillips
  */
-public class Collections
+public final class Collections
 {
+  private Collections ()
+  {
+    // cannot instantiate
+  }
+  
   /**
    * Create a set from a number of items.
    */

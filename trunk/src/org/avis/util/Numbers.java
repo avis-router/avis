@@ -1,7 +1,12 @@
 package org.avis.util;
 
-public class Numbers
+public final class Numbers
 {
+  private Numbers ()
+  {
+    // cannot instantiate
+  }
+  
   /**
    * Convert a numeric value upwards to a given type.
    * 

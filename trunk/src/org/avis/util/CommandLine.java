@@ -5,8 +5,13 @@ package org.avis.util;
  * 
  * @author Matthew Phillips
  */
-public class CommandLine
+public final class CommandLine
 {
+  private CommandLine ()
+  {
+    // cannot instantiate
+  }
+  
   /**
    * Get a string argument from a given index, throwing a descriptive
    * exception if the argument is missing.
