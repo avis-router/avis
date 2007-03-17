@@ -232,7 +232,8 @@ public class Elvin
   
   @SuppressWarnings("unchecked")
   private synchronized <E extends Message> E receive (XidMessage request,
-                                                      Class<E> type, long timeout)
+                                                      Class<E> type,
+                                                      long timeout)
     throws IOException
   {
     Message message = receive (timeout);
@@ -291,7 +292,8 @@ public class Elvin
     for (long subscriptionId : subscriptionIds)
     {
       Subscription subscription = subscriptions.get (subscriptionId);
-      NotificationEvent event = new NotificationEvent (this, subscription, ntfn, secure);
+      NotificationEvent event =
+        new NotificationEvent (this, subscription, ntfn, secure);
       
       subscription.notifyListeners (event);
     }
