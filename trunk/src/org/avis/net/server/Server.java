@@ -151,8 +151,6 @@ public class Server implements IoHandler
       
       acceptor.unbindAll ();
       acceptor = null;
-      executor.shutdown ();
-      executor = null;
     }
     
     Disconn disconnMessage =
@@ -184,6 +182,9 @@ public class Server implements IoHandler
     
     sessions.clear ();
     acceptor = null;
+    
+    executor.shutdown ();
+    executor = null;
   }
 
   // IoHandler interface
