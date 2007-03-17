@@ -1,13 +1,13 @@
 package org.avis.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static java.util.Arrays.asList;
 
 /**
  * General collection utilities.
@@ -17,56 +17,56 @@ import java.util.Set;
 public class Collections
 {
   /**
-   * Create a set from a number of strings.
+   * Create a set from a number of items.
    */
-  public static Set<String> set (String... strings)
+  public static <E> Set<E> set (E... items)
   {
-    return new HashSet<String> (Arrays.asList (strings));
+    return new HashSet<E> (asList (items));
   }
   
   /**
-   * Create a list from a number of strings.
+   * Create a list from a number of items.
    */
-  public static List<String> list (String... strings)
+  public static <E> List<E> list (E... items)
   {
-    return new ArrayList<String> (Arrays.asList (strings));
+    return new ArrayList<E> (asList (items));
   }
   
   /**
-   * Create a map from a number of strings, even items are keys,
+   * Create a map from a number of item pairs, even items are keys,
    * adjacent items are values.
    */
-  public static Map<String, String> map (String... strings)
+  public static <E> Map<E, E> map (E... pairs)
   {
-    if (strings.length % 2 != 0)
-      throw new IllegalArgumentException ("Strings must be a set of pairs");
+    if (pairs.length % 2 != 0)
+      throw new IllegalArgumentException ("Items must be a set of pairs");
     
-    HashMap<String, String> map = new HashMap<String, String> ();
+    HashMap<E, E> map = new HashMap<E, E> ();
     
-    for (int i = 0; i < strings.length; i += 2)
-      map.put (strings [i], strings [i + 1]);
+    for (int i = 0; i < pairs.length; i += 2)
+      map.put (pairs [i], pairs [i + 1]);
 
     return map;
   }
 
   /**
-   * Join a collection of strings with a separator and append to a
+   * Join a collection of items with a separator and append to a
    * string builder.
    */
   public static void join (StringBuilder str,
-                           Collection<String> strings,
+                           Iterable<?> items,
                            char separator)
   {
     boolean first = true;
 
-    for (String string : strings)
+    for (Object item : items)
     {
       if (!first)
         str.append (separator);
       
       first = false;
       
-      str.append (string);
+      str.append (item);
     }
   }
 }
