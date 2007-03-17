@@ -24,6 +24,11 @@ public class ListenerList<E>
   {
     listeners.add (listener);
   }
+  
+  public void remove (E listener)
+  {
+    listeners.remove (listener);
+  }
 
   /**
    * Fire an event.

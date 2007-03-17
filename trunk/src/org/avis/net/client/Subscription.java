@@ -41,6 +41,11 @@ public class Subscription
   {
     notificationListeners.add (listener);
   }
+  
+  public void removeNotificationListener (NotificationListener listener)
+  {
+    notificationListeners.remove (listener);
+  }
 
   void notifyListeners (NotificationEvent event)
   {
