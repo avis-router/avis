@@ -7,7 +7,11 @@ import java.net.URISyntaxException;
 
 import org.avis.net.client.Elvin;
 import org.avis.net.client.ElvinURI;
+import org.avis.net.client.NotificationListener;
+import org.avis.net.client.NotificationEvent;
+import org.avis.net.client.Subscription;
 import org.avis.net.server.Main;
+import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
 
@@ -23,6 +27,7 @@ public class Ec
   public static void main (String [] args)
   {
     ElvinURI elvinUri = null;
+    String subscriptionExpr = null;
     
     try
     {
@@ -33,6 +38,15 @@ public class Ec
         if (arg.equals ("-e"))
         {
           elvinUri = new ElvinURI (stringArg (args, ++i));
+        } else if (arg.startsWith ("-"))
+        {
+          throw new IllegalOptionException (arg, "Not a known option");
+        } else
+        {
+          if (subscriptionExpr == null)
+            subscriptionExpr = arg;
+          else
+            throw new IllegalOptionException ("Can only have one subscription");
         }
       }
     } catch (URISyntaxException ex)
@@ -43,15 +57,24 @@ public class Ec
     }
     
     if (elvinUri == null)
-    {
-      System.err.println ("Missing Elvin URI (-e option)");
-      System.err.println (USAGE);
-      System.exit (1);
-    }
+      usageError ("Missing Elvin URI (-e option)");
+    else if (subscriptionExpr == null)
+      usageError ("Missing subscription");
     
     try
     {
       final Elvin elvin = new Elvin (elvinUri);
+      
+      Subscription subscription = elvin.subscribe (subscriptionExpr);
+      
+      subscription.addNotificationListener (new NotificationListener ()
+      {
+        public void notificationReceived (NotificationEvent e)
+        {
+          System.out.println ("got a notification!");
+          System.out.println (e.notification);
+        }
+      });
       
       info ("Connected to " + elvinUri.toCanonicalString (), Ec.class);
       
@@ -71,5 +94,12 @@ public class Ec
       else
         Log.alarm ("Error connecting to Elvin", Ec.class, ex);
     }
+  }
+
+  private static void usageError (String message)
+  {
+    System.err.println (message);
+    System.err.println (USAGE);
+    System.exit (1);
   }
 }
