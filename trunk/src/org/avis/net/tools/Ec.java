@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import org.apache.mina.common.RuntimeIOException;
 
 import org.avis.net.client.ElvinURI;
-import org.avis.net.client.Router;
+import org.avis.net.client.Elvin;
 import org.avis.net.server.Main;
 
 import dsto.dfc.logging.Log;
@@ -51,7 +51,7 @@ public class Ec
     
     try
     {
-      final Router router = new Router (elvinUri);
+      final Elvin router = new Elvin (elvinUri);
       
       info ("Connected to " + elvinUri.toCanonicalString (), Ec.class);
       

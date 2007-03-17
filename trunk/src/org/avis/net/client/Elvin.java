@@ -17,18 +17,18 @@ import static dsto.dfc.logging.Log.alarm;
 
 import static org.avis.net.client.ElvinURI.defaultProtocol;
 
-public class Router
+public class Elvin
 {
   private ElvinURI elvinUri;
   private IoSession clientSession;
 
-  public Router (String elvinUri)
+  public Elvin (String elvinUri)
     throws URISyntaxException
   {
     this (new ElvinURI (elvinUri));
   }
   
-  public Router (ElvinURI elvinUri)
+  public Elvin (ElvinURI elvinUri)
   {
     this.elvinUri = elvinUri;
     
