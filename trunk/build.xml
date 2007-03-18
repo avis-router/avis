@@ -13,6 +13,8 @@
   <property file="avis.properties" />
 
   <property name="release" value="${avis.release}" />
+  <property name="version"
+            value="${avis.version.major}.${avis.version.minor}" />
   <property name="dfc.home" value="../dfc.core" />
   
   <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
@@ -110,7 +112,7 @@
   <target name="dist_src" depends="jar_avisd"
           description="Build the source distro">
     
-    <property name="ziproot" value="avis-${release}" />
+    <property name="ziproot" value="avis-${version}" />
     
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
@@ -316,8 +318,41 @@
 
   </target>
   
-  <target name="dist_fedora" depends="jar_avisd"
-            description="Build the Red Hat Fedora Core binary distro">
+  <target name="dist_fedora_rpm" depends="dist_src"
+          description="Build the Red Hat Fedora Core RPM distro">
+
+    <property name="root" value="${basedir}/build/tmp/rpm_root" />
+    <delete dir="${root}" />
+    
+    <mkdir dir="${root}/SOURCES" />
+    <mkdir dir="${root}/BUILD" />
+    <mkdir dir="${root}/RPMS" />
+    <mkdir dir="${root}/SRPMS" />
+    <mkdir dir="${root}/SPECS" />
+ 
+    <!-- NOTE: src dist must expand to avis-$version directory for RPM -->
+    <copy file="build/avis-src-${release}.zip"
+          tofile="${root}/SOURCES/avis-src-${version}.zip" />
+
+    <exec executable="rpmbuild">
+      <arg value="-bb" />
+      <arg value="--define" />
+      <arg value="_topdir ${root}" />
+      <arg value="--define" />
+      <arg value="_avis_release ${release}" />
+      <arg value="--define" />
+      <arg value="_avis_version ${version}" />
+      <arg value="${basedir}/packaging/fedora/avis.spec" />
+    </exec>
+
+    <copy file="${root}/RPMS/noarch/avis-${version}-1.noarch.rpm"
+          todir="build" />
+    <delete dir="${root}" />
+
+  </target>
+
+  <target name="dist_fedora_zip" depends="jar_avisd"
+          description="Build the Red Hat Fedora Core binary distro">
     <property name="temp" value="${basedir}/build/tmp/fedora" />
     <property name="root" value="${temp}/root" />
 
