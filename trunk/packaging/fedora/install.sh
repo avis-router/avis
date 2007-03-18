@@ -46,7 +46,9 @@ if [ $install_service == 0 ] || [ ! -e $prefix/sbin/avisd ]; then
 fi
 
 if [ $install_service == 1 ]; then
-  sed -e "s|__PREFIX__|$prefix|g" < init_script.in > avisd.tmp && \
+  sed -e "s|__CONFDIR__|$prefix/etc|g" \
+      -e "s|__BINDIR__|$prefix/sbin|g" \
+    < init_script.in > avisd.tmp && \
   install -DCp -m 0755 -o root -g root avisd.tmp /etc/init.d/avisd && \
   rm avisd.tmp && \
   chkconfig --add avisd && \

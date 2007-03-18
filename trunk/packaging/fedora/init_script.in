@@ -4,7 +4,7 @@
 # description: Starts and stops the Avis event router daemon.
 #
 # pidfile: /var/run/avisd.pid
-# config:  __PREFIX__/etc/avis/avisd.config
+# config:  __CONFDIR__/avis/avisd.config
 
 # Source function library.
 if [ -f /etc/init.d/functions ] ; then
@@ -18,8 +18,8 @@ fi
 # Avoid using root's TMPDIR
 unset TMPDIR
 
-AVISD=__PREFIX__/sbin/avisd
-AVISD_CONFIG=__PREFIX__/etc/avis/avisd.config
+AVISD=__BINDIR__/avisd
+AVISD_CONFIG=__CONFDIR__/avis/avisd.config
 AVISD_LOGFILE=/var/log/avisd.log
 AVISD_PIDFILE=/var/run/avisd.pid
 AVISD_OPTIONS="-daemon -c $AVISD_CONFIG -logfile $AVISD_LOGFILE -pidfile $AVISD_PIDFILE"
