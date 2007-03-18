@@ -339,8 +339,6 @@
       <arg value="--define" />
       <arg value="_topdir ${root}" />
       <arg value="--define" />
-      <arg value="_avis_release ${release}" />
-      <arg value="--define" />
       <arg value="_avis_version ${version}" />
       <arg value="${basedir}/packaging/fedora/avis.spec" />
     </exec>
