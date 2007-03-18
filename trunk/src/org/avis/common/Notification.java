@@ -5,12 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.avis.util.Format.appendEscaped;
+import static org.avis.util.Format.appendBytes;
+
 public class Notification implements Map<String, Object>, Cloneable
 {
-  private static final char [] HEX_TABLE = 
-    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-     'a', 'b', 'c', 'd', 'e', 'f'};
-  
   private Map<String, Object> attributes;
   
   public Notification ()
@@ -53,20 +52,22 @@ public class Notification implements Map<String, Object>, Cloneable
       
       first = false;
       
-      escape (str, entry.getKey (), ' ');
+      appendEscaped (str, entry.getKey (), ' ');
+      
       str.append (": ");
+      
       formatValue (str, entry.getValue ());
     }
     
     return str.toString ();
   }
-
+  
   private static void formatValue (StringBuilder str, Object value)
   {
     if (value instanceof String)
     {
       str.append ('"');
-      escape (str, value.toString (), '"');
+      appendEscaped (str, value.toString (), '"');
       str.append ('"');
     } else if (value instanceof Number)
     {
@@ -77,44 +78,9 @@ public class Notification implements Map<String, Object>, Cloneable
     } else
     {
       str.append ('[');
-      formatBytes (str, (byte[])value);
+      appendBytes (str, (byte [])value);
       str.append (']');
     }
-  }
-
-  private static void escape (StringBuilder builder,
-                              String string, char quoteChar)
-  {
-    for (int i = 0; i < string.length (); i++)
-    {
-      char c = string.charAt (i);
-      
-      if (c == quoteChar)
-        builder.append ('\\');
-      
-      builder.append (c);
-    }
-  }
-  
-  private static void formatBytes (StringBuilder str, byte [] bytes)
-  {
-    boolean first = true;
-    
-    for (byte b : bytes)
-    {
-      if (!first)
-        str.append (' ');
-      
-      first = false;
-      
-      formatHex (str, b);
-    }
-  }
-  
-  private static void formatHex (StringBuilder str, byte b)
-  {
-    str.append (HEX_TABLE [(b >>> 4) & 0x0F]);
-    str.append (HEX_TABLE [(b >>> 0) & 0x0F]);
   }
 
   public boolean containsKey (Object key)
