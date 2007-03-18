@@ -35,6 +35,7 @@ import org.avis.net.messages.XidMessage;
 import dsto.dfc.logging.Log;
 
 import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.warn;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
@@ -76,7 +77,7 @@ public class Elvin
     
     send (connRqst);
     
-    receive (connRqst, ConnRply.class);
+    receive (ConnRply.class, connRqst);
     
     connected = true;
     
@@ -126,7 +127,7 @@ public class Elvin
       {
         DisconnRqst disconnRqst = new DisconnRqst ();
         send (disconnRqst);
-        receive (disconnRqst, DisconnRply.class);
+        receive (DisconnRply.class, disconnRqst);
       } catch (IOException ex)
       {
         Log.diagnostic ("Failed to cleanly disconnect", this, ex);
@@ -157,7 +158,7 @@ public class Elvin
     
     send (subAddRqst);
     
-    SubRply reply = receive (subAddRqst, SubRply.class);
+    SubRply reply = receive (SubRply.class, subAddRqst);
     
     subscription.id = reply.subscriptionId;
     
@@ -212,36 +213,30 @@ public class Elvin
       throw new IllegalStateException ("Not connected");
   }
   
-//  private <E extends Message> E receive (Class<E> type)
+//  private <E extends Message> E receive (Class<E> expectedMessageType)
 //    throws IOException
 //  {
-//    return receive (null, type, RECEIVE_TIMEOUT);
+//    return receive (null, expectedMessageType, RECEIVE_TIMEOUT);
 //  }
   
-  private <E extends Message> E receive (XidMessage request,
-                                         Class<E> type)
+  private <E extends Message> E receive (Class<E> expectedMessageType,
+                                         XidMessage inResponseTo)
     throws IOException
   {
-    return receive (request, type, RECEIVE_TIMEOUT);
+    return receive (expectedMessageType, inResponseTo, RECEIVE_TIMEOUT);
   }
   
-//  private synchronized <E extends Message> E receive (Class<E> type, long timeout)
-//    throws IOException
-//  {
-//    return receive (null, type, timeout);
-//  }
-  
   @SuppressWarnings("unchecked")
-  private synchronized <E extends Message> E receive (XidMessage request,
-                                                      Class<E> type,
-                                                      long timeout)
+  private synchronized <E extends Message>
+    E receive (Class<E> expectedMessageType,
+               XidMessage inResponseTo, long timeout)
     throws IOException
   {
     Message message = receive (timeout);
       
-    if (type.isAssignableFrom (message.getClass ()))
+    if (expectedMessageType.isAssignableFrom (message.getClass ()))
     {
-      if (request != null && request.xid != ((XidMessage)message).xid)
+      if (inResponseTo != null && inResponseTo.xid != ((XidMessage)message).xid)
         throw new IllegalStateException ("XID mismatch");
       
       return (E)message;
@@ -253,7 +248,7 @@ public class Elvin
     {
       throw new IllegalStateException
         ("Received a " + message.getClass ().getName () +
-         ": was expecting " + type.getName ());
+         ": was expecting " + expectedMessageType.getName ());
     }
   }
   
@@ -292,10 +287,18 @@ public class Elvin
     for (long subscriptionId : subscriptionIds)
     {
       Subscription subscription = subscriptions.get (subscriptionId);
-      NotificationEvent event =
-        new NotificationEvent (this, subscription, ntfn, secure);
       
-      subscription.notifyListeners (event);
+      if (subscription != null)
+      {
+        NotificationEvent event =
+          new NotificationEvent (this, subscription, ntfn, secure);
+        
+        subscription.notifyListeners (event);
+      } else
+      {
+        warn ("Received notification for unknown subscription " +
+              "(" + subscriptionId + ")", this);
+      }
     }
   }
 
