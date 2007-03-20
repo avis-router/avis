@@ -249,8 +249,9 @@
           tofile="${resources}/Welcome.txt" preservelastmodified="true" />
     <copy file="packaging/common/license.rtf"
           tofile="${resources}/License.rtf" preservelastmodified="true" />
-    <copy file="packaging/osx/Info.plist"
-          todir="${temp}" preservelastmodified="true" filtering="yes" />
+    <copy file="packaging/osx/Info.plist.in"
+          tofile="${temp}/Info.plist" preservelastmodified="true"
+          filtering="yes" />
    
     <!-- add standard Unix distro -->
     <antcall target="fn:build_unix_dist_layout">
