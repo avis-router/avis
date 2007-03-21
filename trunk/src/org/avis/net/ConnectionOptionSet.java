@@ -27,12 +27,8 @@ import static org.avis.common.Common.MB;
  *      Attribute.String.Max-Length |  int32   |    1K      1M     2**31
  *      Packet.Max-Length           |  int32   |
  *      Receive-Queue.Drop-Policy   |  string  |
- *      Receive-Queue.High-Water    |  int32   |
- *      Receive-Queue.Low-Water     |  int32   |
  *      Receive-Queue.Max-Length    |  int32   |
  *      Send-Queue.Drop-Policy      |  string  |
- *      Send-Queue.High-Water       |  int32   |
- *      Send-Queue.Low-Water        |  int32   |
  *      Send-Queue.Max-Length       |  int32   |
  *      Subscription.Max-Count      |  int32   |
  *      Subscription.Max-Length     |  int32   |
@@ -51,12 +47,8 @@ import static org.avis.common.Common.MB;
  *      Attribute.String.Max-Length | router.attribute.string.max-length
  *      Packet.Max-Length           | router.packet.max-length
  *      Receive-Queue.Drop-Policy   | router.recv-queue.drop-policy
- *      Receive-Queue.High-Water    | router.recv-queue.high-water
- *      Receive-Queue.Low-Water     | router.recv-queue.low-water
  *      Receive-Queue.Max-Length    | router.recv-queue.max-length
  *      Send-Queue.Drop-Policy      | router.send-queue.drop-policy
- *      Send-Queue.High-Water       | router.send-queue.high-water
- *      Send-Queue.Low-Water        | router.send-queue.low-water
  *      Send-Queue.Max-Length       | router.send-queue.max-length
  *      Subscription.Max-Count      | router.subscription.max-count
  *      Subscription.Max-Length     | router.subscription.max-length
@@ -108,14 +100,10 @@ public class ConnectionOptionSet extends OptionSet
 
     // todo: enforce following queue-related options
     add ("Receive-Queue.Drop-Policy",
-                  "oldest", "newest", "largest", "fail");
-    add ("Receive-Queue.High-Water", MAX, MAX, MAX);
-    add ("Receive-Queue.Low-Water", MAX, MAX, MAX);
+         "oldest", "newest", "largest", "fail");
     
     add ("Send-Queue.Drop-Policy",
-                  "oldest", "newest", "largest", "fail");
-    add ("Send-Queue.High-Water", MAX, MAX, MAX);
-    add ("Send-Queue.Low-Water", MAX, MAX, MAX);
+         "oldest", "newest", "largest", "fail");
     add ("Send-Queue.Max-Length", MAX, MAX, MAX);
 
     add ("Supported-Key-Schemes", "SHA-1");
@@ -141,17 +129,10 @@ public class ConnectionOptionSet extends OptionSet
     addLegacy ("router.packet.max-length", "Packet.Max-Length");
     addLegacy ("router.recv-queue.drop-policy",
                "Receive-Queue.Drop-Policy");
-    addLegacy ("router.recv-queue.high-water",
-               "Receive-Queue.High-Water");
-    addLegacy ("router.recv-queue.low-water",
-               "Receive-Queue.Low-Water");
     addLegacy ("router.recv-queue.max-length",
                "Receive-Queue.Max-Length");
     addLegacy ("router.send-queue.drop-policy",
                "Send-Queue.Drop-Policy");
-    addLegacy ("router.send-queue.high-water",
-               "Send-Queue.High-Water");
-    addLegacy ("router.send-queue.low-water", "Send-Queue.Low-Water");
     addLegacy ("router.send-queue.max-length",
                "Send-Queue.Max-Length");
     addLegacy ("router.subscription.max-count",
