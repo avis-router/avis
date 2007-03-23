@@ -62,7 +62,7 @@ tree from SVN and need to update the web site:
 To build the router with Ant, change to the directory where you
 extracted Avis and simply run Ant with the default build target:
 
-  > cd avis-0.7
+  > cd avis-1.0
   > ant
 
 This will build the file "lib/avisd.jar", which is the Avis event
@@ -78,7 +78,7 @@ Usage
 
 To run the Avis event router service using the bash helper script:
 
-  > cd avis-0.7
+  > cd avis-1.0
   > ./bin/avisd.sh
 
 To see command line options:
