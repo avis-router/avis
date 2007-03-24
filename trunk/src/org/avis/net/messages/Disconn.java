@@ -3,8 +3,8 @@ package org.avis.net.messages;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import static org.avis.net.IO.getString;
-import static org.avis.net.IO.putString;
+import static org.avis.net.common.IO.getString;
+import static org.avis.net.common.IO.putString;
 
 public class Disconn extends Message
 {

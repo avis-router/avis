@@ -6,10 +6,10 @@ import java.util.Map;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import static org.avis.net.IO.getLongArray;
-import static org.avis.net.IO.getNameValues;
-import static org.avis.net.IO.putLongArray;
-import static org.avis.net.IO.putNameValues;
+import static org.avis.net.common.IO.getLongArray;
+import static org.avis.net.common.IO.getNameValues;
+import static org.avis.net.common.IO.putLongArray;
+import static org.avis.net.common.IO.putNameValues;
 
 public class NotifyDeliver extends Message
 {

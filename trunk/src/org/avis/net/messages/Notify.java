@@ -9,10 +9,10 @@ import org.avis.net.security.Keys;
 
 import static java.util.Collections.emptyMap;
 
-import static org.avis.net.IO.getBool;
-import static org.avis.net.IO.getNameValues;
-import static org.avis.net.IO.putBool;
-import static org.avis.net.IO.putNameValues;
+import static org.avis.net.common.IO.getBool;
+import static org.avis.net.common.IO.getNameValues;
+import static org.avis.net.common.IO.putBool;
+import static org.avis.net.common.IO.putNameValues;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 /**

@@ -7,6 +7,8 @@ import java.lang.reflect.Array;
 
 import org.apache.mina.common.ByteBuffer;
 
+import org.avis.net.common.IO;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

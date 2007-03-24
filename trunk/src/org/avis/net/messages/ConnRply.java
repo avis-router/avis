@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import org.avis.net.IO;
+import org.avis.net.common.IO;
 
 public class ConnRply extends XidMessage
 {

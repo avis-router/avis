@@ -1,9 +1,9 @@
 package org.avis.net.messages;
 
-import static org.avis.net.IO.getObjects;
-import static org.avis.net.IO.getString;
-import static org.avis.net.IO.putObjects;
-import static org.avis.net.IO.putString;
+import static org.avis.net.common.IO.getObjects;
+import static org.avis.net.common.IO.getString;
+import static org.avis.net.common.IO.putObjects;
+import static org.avis.net.common.IO.putString;
 
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;

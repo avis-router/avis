@@ -13,8 +13,8 @@ import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.trace;
 
-import static org.avis.net.IO.getNameValues;
-import static org.avis.net.IO.putNameValues;
+import static org.avis.net.common.IO.getNameValues;
+import static org.avis.net.common.IO.putNameValues;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 /**

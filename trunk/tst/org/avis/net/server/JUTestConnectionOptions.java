@@ -3,11 +3,11 @@ package org.avis.net.server;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.avis.net.ConnectionOptions;
+import org.avis.net.common.ConnectionOptions;
 
 import org.junit.Test;
 
-import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

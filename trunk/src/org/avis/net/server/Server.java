@@ -21,7 +21,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
-import org.avis.net.FrameCodec;
+import org.avis.net.common.FrameCodec;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -60,7 +60,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
 import static org.avis.common.Common.DEFAULT_PORT;
-import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
 import static org.avis.net.messages.Nack.NOT_IMPL;

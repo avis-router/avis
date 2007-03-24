@@ -4,7 +4,7 @@ import org.avis.util.OptionSet;
 import org.avis.util.Options;
 
 import static org.avis.common.Common.DEFAULT_PORT;
-import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 /**
  * Options used to configure the Avis server.

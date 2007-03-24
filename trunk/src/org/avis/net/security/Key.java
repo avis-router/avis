@@ -1,6 +1,6 @@
 package org.avis.net.security;
 
-import static org.avis.net.IO.toUTF8;
+import static org.avis.net.common.IO.toUTF8;
 
 import java.util.Arrays;
 

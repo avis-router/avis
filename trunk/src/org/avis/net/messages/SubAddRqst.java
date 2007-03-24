@@ -5,10 +5,10 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.net.security.Keys;
 
-import static org.avis.net.IO.getBool;
-import static org.avis.net.IO.getString;
-import static org.avis.net.IO.putBool;
-import static org.avis.net.IO.putString;
+import static org.avis.net.common.IO.getBool;
+import static org.avis.net.common.IO.getString;
+import static org.avis.net.common.IO.putBool;
+import static org.avis.net.common.IO.putString;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 public class SubAddRqst extends XidMessage

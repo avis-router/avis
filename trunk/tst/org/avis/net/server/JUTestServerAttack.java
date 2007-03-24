@@ -20,7 +20,7 @@ import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.info;
 import static dsto.dfc.logging.Log.setEnabled;
 
-import static org.avis.net.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.net.server.JUTestServer.PORT;
 

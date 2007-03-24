@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import static org.avis.net.IO.getBytes;
-import static org.avis.net.IO.putBytes;
+import static org.avis.net.common.IO.getBytes;
+import static org.avis.net.common.IO.putBytes;
 import static org.avis.net.security.DualKeyScheme.checkProdOrCon;
 import static org.avis.net.security.KeyScheme.schemeFor;
 
