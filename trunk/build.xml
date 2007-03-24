@@ -196,6 +196,11 @@
       <param name="src" value="why_avis.txt" />
       <param name="dest" value="why_avis.html" />
     </antcall>
+
+    <antcall target="fn:make_html">
+      <param name="src" value="installation.txt" />
+      <param name="dest" value="installation.html" />
+    </antcall>
   </target>
   
   <target name="fn:make_html">
@@ -220,7 +225,7 @@
   </target>
   
   <target name="dist_osx" depends="jar_avisd"
-            description="Build the Mac OS X binary distro (OS X command line only)">
+          description="Build the Mac OS X binary distro (OS X command line only)">
 
     <property name="temp" value="${basedir}/build/tmp/osx_package" />
     <property name="root" value="${temp}/root" />
@@ -306,7 +311,7 @@
     <!-- OS X package files use symlinks, use system tar to preserve -->
     <exec executable="tar">
       <arg value="jcvf" />
-      <arg value="build/Avis-OSX-${release}.tbz" />
+      <arg value="build/Avis-${release}.tbz" />
       <arg value="-C" />
       <arg value="build" />
       <arg value="${package}" />
@@ -345,7 +350,7 @@
     </exec>
 
     <copy file="${root}/RPMS/noarch/avis-${version}-1.noarch.rpm"
-          todir="build" />
+          tofile="build/avis-${release}.rpm" />
     <delete dir="${root}" />
 
   </target>
@@ -446,6 +451,7 @@
       <arg line="--include *.html" />
       <arg line="--include *.png" />
       <arg line="--include *.gif" />
+      <arg line="--include *.css" />
       <arg line="--exclude *" />
       <arg line="--exclude */.svn" />
       <arg line="--exclude *.htmli" />
