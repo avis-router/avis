@@ -1,4 +1,4 @@
-package org.avis.net;
+package org.avis.net.common;
 
 import java.util.HashMap;
 import java.util.Map;
