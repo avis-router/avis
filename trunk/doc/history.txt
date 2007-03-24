@@ -1,4 +1,28 @@
-Release 0.7 (December 27, 2006)
+Release 1.0 (March 24, 2007)
+----------------------------------------------------------------------
+
+Release focus: provide a baseline stable release with full Elvin 4.0
+compatibility for subsets A & B of the protocol (i.e. minus quench).
+
+Change summary:
+
+* Added RPM distribution.
+
+* Updated to Apache MINA 1.0.2.
+
+* The number of socket IO threads is now set to the number of
+  available CPU's + 1.
+
+* Expanded website, including an installation guide.
+
+* Source code cleanups and re-organisation.
+
+* Quench requests are now vetoed with the NOT_IMPL error code.
+
+* Updated connection options to match Elvin 4.0 spec changes.
+
+
+ Release 0.7 (December 27, 2006)
 ----------------------------------------------------------------------
 
 Release focus: improve ease of router installation and
@@ -7,7 +31,7 @@ Windows. Router now supports configuration options via -c switch.
 
 Change summary:
 
- * Upgraded to Apache Mina 1.0.1.
+ * Upgraded to Apache MINA 1.0.1.
 
  * Quench requests now generate (non-standard) 2299 NACK code to avoid
    making clients think they've triggered a protocol violation. This
