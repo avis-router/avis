@@ -482,7 +482,7 @@
   <target name="changelog"
           description="Generate a change log (needs previous rev #)">
     <!-- Use command below to get previous release rev #
-           svn log -stop-on-copy https://svn.sourceforge.net/svnroot/avis/tags/release_0.5 -->
+         svn log -stop-on-copy https://avis.svn.sourceforge.net/svnroot/avis/tags/release_0.7 -->
     <input addproperty="release_rev" message="Enter rev # of last release" />
     
     <exec executable="/usr/local/bin/svn2cl" searchpath="true">
