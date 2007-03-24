@@ -62,14 +62,16 @@ To run from the command line as a test:
 To install as a startup service:
 
 <pre>
-  > chkconfig --add avisd
-  > chkconfig avisd on
+  > sudo /sbin/chkconfig --add avisd
+  > sudo /sbin/chkconfig avisd on
+  > sudo /sbin/service avisd start
 </pre>
 
 To uninstall as a system service:
 
 <pre>
-  > sudo chkconfig avisd --del
+  > sudo /sbin/service avisd stop
+  > sudo /sbin/chkconfig avisd --del
 </pre>
 
 To uninstall:
