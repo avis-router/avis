@@ -1,0 +1,104 @@
+About Avis
+======================================================================
+
+Avis is an event router service compatible with the commercial Elvin
+implementation developed by [Mantara Software][mantara]. Avis provides
+a general-purpose, fast and scalable publish/subscribe message bus
+using content-based subscriptions.
+
+Elvin event routers enable arbitrary messages, known as
+*notifications*, to be exchanged via a publish/subscribe model. Elvin
+clients subscribe to messages using expressions that match messages by
+their content, an approach that differs from many other message bus
+systems that operate by selecting messages published on pre-defined
+channels. This promotes an even higher level of decoupling between
+producers and consumers of events.
+
+Elvin routers can also be federated to construct high-efficiency,
+wide-area event networks.
+
+The name "Avis" derives from the French word *avis*, meaning advice or
+notification.
+
+
+Applications
+----------------------------------------------------------------------
+
+Current uses for Elvin event routers include providing the message bus
+for [instant messaging and virtual presence][tickertape.org], device
+coordination for smart meeting rooms and [distributed speech
+transcription for meetings][AuTM]. It has also been used extensively
+by Mantara for high-volume financial transaction routing.
+
+Elvin has been picked up in so many applications because of its
+lightweight approach and flexibility: see [this page][why_avis] for
+more discussion on why you might want to use it. The [examples][] page
+also demonstrates in more detail a scenario in which it can be
+employed.
+
+
+Current Status
+----------------------------------------------------------------------
+
+Avis is currently stable enough to be usable as a drop-in replacement
+for Mantara's commercial `elvind` if quench and federation are not
+required.
+
+Future development items include:
+
+ * A Java client library providing a similar capability to Mantara's
+   `je4` library. At this stage, Avis is only useful as a router for
+   existing Elvin clients using Mantara's client programming
+   libraries. This library will be released under the LGPL.
+
+ * An `ewafd`-style federator to fill in until real federation is
+   implemented. This style of federation essentially federates using a
+   special client to exchange notifications between servers.
+
+ * Implementing the *quench* API for allowing producers to discover
+   what clients are listening for.
+
+See the [roadmap page][roadmap] for more information on what's planned
+for Avis.
+
+
+History
+----------------------------------------------------------------------
+
+Elvin orginated as a project at the [Distributed Systems Technology
+Centre][DSTC_wikipedia] (DSTC), a part government, part commercial
+Cooperative Research Centre, which operated from 1992 until mid
+2006. Elvin was rapidly picked up by internal DSTC projects and by
+several of DSTC's partners, such as the [Australian Defence Science
+and Technology Organisation][DSTO] (DSTO), due to its ability to
+provide a highly reliable, fast, wide-area communication bus.
+
+Mantara Software was created as a DSTC spin-off commercial entity in
+2003 in order to further develop and market Elvin as a supported
+product. When Mantara announced it would stop offering Elvin as a
+standalone supported product, Matthew Phillips began to implement the
+Elvin open specifications published at [elvin.org][] as part of the
+Open Source Avis project.
+
+The Avis project's goal is to enable stakeholders to continue
+developing systems using the proven Elvin message bus technology. It
+is intended that the Avis project will track developments in Elvin to
+remain a compatible long-term option.
+
+
+Contacts
+----------------------------------------------------------------------
+
+The author can be contacted at `avis at mattp.name` or `phillipsm at
+users.sourceforge.net` (replace "at" with "@").
+
+
+[DSTC_wikipedia]: http://en.wikipedia.org/wiki/Distributed_Systems_Technology_Centre
+[DSTO]: http://www.dsto.defence.gov.au
+[elvin.org]: http://elvin.org
+[AuTM]: http://www.dsto.defence.gov.au/publications/2595/
+[tickertape.org]: http://tickertape.org
+[examples]: examples.html
+[roadmap]: roadmap.html
+[why_avis]: why_avis.html
+[mantara]: http://mantara.com

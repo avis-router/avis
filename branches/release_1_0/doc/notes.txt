@@ -1,0 +1,76 @@
+TODO
+
+R1.1
+
+* remove DSTO DFC log - use slf4j
+* check client version numbers
+* ec/ep
+* DEB
+* windows JRE does not have -server, need to add installer option
+* thread pool size option?
+
+Not allocated
+
+* what happens when sending ntfn to client that's too big?
+* sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
+* test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
+* constant pool for Const?
+* profile performance
+* switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
+  (10.4 only, but Java 5 only works there anyway)
+* partly done: router-wide options that allow client to grow connection
+  footprint such like as keys, subscriptions. client can still easily kill
+  server using long subs atm. keys attack window reduced but still may be
+  possible using sub/ntfn keys plus long keys. need to check max size of key
+  data.
+* add message logging via MINA filter, remove current crusty approach
+* notification dropping incl DropWarn
+* write a multi-threaded test thrasher to test consistency
+* write a multi-threaded test thrasher to try to crash server
+* write multithreaded "fuzz" test: fire random messages
+
+* DONE: Ian's suggestions + diagrams
+* DONE: web site PR: why use Avis? examples see why.txt
+* DONE: pkg permissions
+* DONE: case-independent options
+* DONE: full test with Sticker
+* DONE: need separate VM's for MaliciousClient test
+* DONE: roadmap. ewafd-equivalent. built in?
+* DONE: no. do we need SSL/TLS in 1.0?
+* how do we handle other langs in SVN? do we need to? e.g. should
+  Python binding be a separate project?
+* DONE: add Unix and windows service wrappers and installers
+* DONE: add basic settings to become net ready: limit connection counts,
+  subs, bandwidth etc to avoid DOS attacks possible to OOM the server by
+  flooding it with fairly large packets.
+* DONE: basic enforcment of connection options
+* DONE: test performance after MINA 1.0 port. seems to be slower on
+  test_threaded_clients (old 6s, new 12s)
+* DONE: consistency: use multi-reader setup for changes to ensure
+  e.g. a notification not delivered for an old sub already ack'ed.
+* DONE: port to MINA 1.0.0. total API change, no porting guide?!
+  IoSession seems to replace ProtocolSession. see
+  http://svn.apache.org/viewvc/directory/trunks/mina/example/src/main/java/org/apache/mina/example/sumup/
+
+Notes
+----
+* JUTestServerAttack: Client can exhaust default server heap with
+  2K max-sub-count x 3K max-sub-length
+
+Issues for David
+
+* DONE: What is new router.coalesce-delay?
+* DONE: Can I put je4 in distro? don't need it
+* DONE:elvind does not do byte_size_max
+* DONE:what is QosRqst? mentioned in 7.5 for changing options
+
+Changelog
+----------------------------------------------------------------------
+
+to find revision of tag:
+
+svn log --stop-on-copy https://svn.sourceforge.net/svnroot/avis/tags/release_0.4
+
+to create change log since tag
+
+svn2cl -r XXXX:HEAD https://svn.sourceforge.net/svnroot/avis/trunk
