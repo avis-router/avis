@@ -350,7 +350,7 @@
 
   </target>
 
-  <target name="dist_fedora_zip" depends="jar_avisd"
+  <target name="dist_fedora_tarball" depends="jar_avisd"
           description="Build the Red Hat Fedora Core binary distro">
     <property name="temp" value="${basedir}/build/tmp/fedora" />
     <property name="root" value="${temp}/root" />
