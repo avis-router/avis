@@ -29,10 +29,11 @@
   <ul class="sections" id="navSections">
     <li><a href="index.html">About Avis</a></li>
     <li><a href="roadmap.html">Roadmap</a></li>
-    <li><a href="why_avis.html">Why Choose Avis</a></li>
+    <li><a href="why_avis.html">Why Avis</a></li>
     <li><a href="examples.html">Example</a></li>
     <li><a href="http://sourceforge.net/projects/avis/">Project Site</a></li>
     <li><a href="http://sourceforge.net/project/showfiles.php?group_id=181381&amp;package_id=210191">Downloads</a></li>
+    <li><a href="installation.html">Installation</a></li>
   </ul>
 </div>
 
