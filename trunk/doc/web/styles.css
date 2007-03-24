@@ -447,7 +447,7 @@ a.footnoteBackLink:hover {
 
 #article pre
 {
-  overflow: scroll;
+  overflow: auto;
 }
 
 /* source code */
