@@ -10,11 +10,14 @@ import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 
 import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
+import org.apache.mina.common.ThreadModel;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
+import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -35,12 +38,14 @@ import org.avis.net.messages.XidMessage;
 
 import dsto.dfc.logging.Log;
 
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.warn;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.net.client.ElvinURI.defaultProtocol;
+
+import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.warn;
 
 public class Elvin
 {
@@ -96,20 +101,27 @@ public class Elvin
        * quit soon when there's no connection to manage. */
       connector.setWorkerTimeout (1);
       
-      SocketConnectorConfig cfg = new SocketConnectorConfig ();
-      cfg.setConnectTimeout (10);
+      SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+      connectorConfig.setThreadModel (ThreadModel.MANUAL);
+      connectorConfig.setConnectTimeout (10);
       
       DemuxingProtocolCodecFactory codecFactory =
         new DemuxingProtocolCodecFactory ();
       codecFactory.register (FrameCodec.class);
       
-      cfg.getFilterChain ().addLast
+      DefaultIoFilterChainBuilder filterChainBuilder =
+        connectorConfig.getFilterChain ();
+      
+      filterChainBuilder.addLast
         ("codec", new ProtocolCodecFilter (codecFactory));
+      
+      filterChainBuilder.addLast
+        ("threadPool", new ExecutorFilter (newSingleThreadExecutor ()));
       
       ConnectFuture future =
         connector.connect
           (new InetSocketAddress (elvinUri.host, elvinUri.port),
-           new MessageHandler (), cfg);
+           new MessageHandler (), connectorConfig);
                                        
       future.join ();
       clientSession = future.getSession ();
