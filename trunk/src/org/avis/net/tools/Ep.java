@@ -29,7 +29,7 @@ import static org.avis.util.CommandLine.stringArg;
 public class Ep
 {
   private static final Object USAGE =
-    "\nUsage: ep -e elvin\n\n";
+    "\nUsage: ep -e elvin\n";
 
   public static void main (String [] args)
   {
@@ -53,6 +53,9 @@ public class Ep
       System.err.println ("\nError in Elvin URI: " + ex.getMessage ());
       
       System.exit (1);
+    } catch (IllegalOptionException ex)
+    {
+      usageError (ex.getMessage ());
     }
     
     if (elvinUri == null)
@@ -88,7 +91,7 @@ public class Ep
       if (ex instanceof ConnectException)
         alarm ("Failed to connect to Elvin: connection refused", Ep.class);
       else
-        alarm ("Error connecting to Elvin", Ep.class, ex);
+        alarm ("Error connecting to Elvin: " + ex.getMessage (), Ep.class);
       
       System.exit (1);
     } catch (InvalidFormatException ex)
@@ -101,7 +104,7 @@ public class Ep
 
   private static void usageError (String message)
   {
-    System.err.println (message);
+    System.err.println ("ep: " + message);
     System.err.println (USAGE);
     System.exit (1);
   }

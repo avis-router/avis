@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URISyntaxException;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.avis.net.client.Elvin;
 import org.avis.net.client.ElvinURI;
 import org.avis.net.client.NotificationEvent;
 import org.avis.net.client.NotificationListener;
-import org.avis.net.client.Subscription;
 import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
@@ -31,14 +31,14 @@ import static org.avis.util.CommandLine.stringArg;
 public class Ec
 {
   private static final Object USAGE =
-    "\nUsage: ec -e elvin subscription\n\n";
+    "\nUsage: ec -e elvin subscription\n";
 
   public static void main (String [] args)
   {
     Log.setApplicationName ("ec");
     
     ElvinURI elvinUri = null;
-    String subscriptionExpr = null;
+    String subscription = null;
     
     try
     {
@@ -54,8 +54,8 @@ public class Ec
           throw new IllegalOptionException (arg, "Not a known option");
         } else
         {
-          if (subscriptionExpr == null)
-            subscriptionExpr = arg;
+          if (subscription == null)
+            subscription = arg;
           else
             throw new IllegalOptionException ("Can only have one subscription");
         }
@@ -65,17 +65,19 @@ public class Ec
       System.err.println ("\nError in Elvin URI: " + ex.getMessage ());
       
       System.exit (1);
+    } catch (IllegalOptionException ex)
+    {
+      usageError (ex.getMessage ());
     }
     
     if (elvinUri == null)
       usageError ("Missing Elvin URI (-e option)");
-    else if (subscriptionExpr == null)
+    else if (subscription == null)
       usageError ("Missing subscription");
     
     try
     {
       final Elvin elvin = new Elvin (elvinUri);
-      
       
       System.err.println ("ec: Connected to server " +
                           elvinUri.toCanonicalString ());
@@ -90,15 +92,13 @@ public class Ec
         }
       });
 
-      Subscription subscription = elvin.subscribe (subscriptionExpr);
-      
-      subscription.addNotificationListener (new Listener ());
+      elvin.subscribe (subscription).addNotificationListener (new Listener ());
     } catch (IOException ex)
     {
       if (ex instanceof ConnectException)
         alarm ("Failed to connect to Elvin: connection refused", Ec.class);
       else
-        alarm ("Error connecting to Elvin", Ec.class, ex);
+        alarm ("Error connecting to Elvin: " + ex.getMessage (), Ec.class);
       
       System.exit (1);
     }
@@ -106,23 +106,19 @@ public class Ec
 
   private static void usageError (String message)
   {
-    System.err.println (message);
+    System.err.println ("ec: " + message);
     System.err.println (USAGE);
     System.exit (1);
   }
   
   static class Listener implements NotificationListener
   {
-    private SimpleDateFormat dateFormat;
+    private DateFormat iso8601Date = 
+      new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    public Listener ()
-    {
-      dateFormat = new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss'.'SZ");
-    }
-    
     public void notificationReceived (NotificationEvent e)
     {
-      System.out.println ("$time " + dateFormat.format (new Date ()));
+      System.out.println ("$time " + iso8601Date.format (new Date ()));
       System.out.println (e.notification);
       System.out.println ("---");
     }
