@@ -5,8 +5,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.avis.util.Format.appendEscaped;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
+import org.avis.util.InvalidFormatException;
+
+import static java.lang.Character.isDigit;
+
 import static org.avis.util.Format.appendBytes;
+import static org.avis.util.Format.appendEscaped;
+import static org.avis.util.Format.findFirstNonEscaped;
+import static org.avis.util.Format.parseNumberValue;
+import static org.avis.util.Format.parseOpaqueValue;
+import static org.avis.util.Format.parseStringValue;
+import static org.avis.util.Format.stripBackslashes;
 
 public class Notification implements Map<String, Object>, Cloneable
 {
@@ -21,6 +35,105 @@ public class Notification implements Map<String, Object>, Cloneable
   {
     // todo check attribute values
     this.attributes = attributes;
+  }
+  
+  /**
+   * Create a notification from an input expression.
+   * See {{@link #parse(Notification, Reader)}.
+   */
+  public Notification (String ntfnExpr)
+    throws InvalidFormatException
+  {
+    this ();
+    
+    try
+    {
+      parse (this, new StringReader (ntfnExpr));
+    } catch (IOException ex)
+    {
+      // a StringReader should never throw this
+      throw new RuntimeException (ex);
+    }
+  }
+  
+  /**
+   * Create a notification from an input expression.
+   * See {{@link #parse(Notification, Reader)}.
+   */
+  public Notification (Reader in)
+    throws IOException, InvalidFormatException
+  {
+    this ();
+    
+    parse (this, in);
+  }
+  
+  /**
+   * Parse an expression representing a notification and populate the
+   * given notification with the values. The format of this expression
+   * is compatible with that used by the ec/ep utilities. For example:
+   * 
+   * <pre>
+   *   An int32: 42
+   *   An int64: 24L
+   *   Real64: 3.14
+   *   String: &quot;String with a \&quot; in it&quot;
+   *   Opaque: [01 02 0f ff]
+   *   A field with a \: in it: 1
+   * </pre>
+   * 
+   * @param ntfn The notification to add values to.
+   * @param reader The source to read the expression from.
+   * @throws IOException If reader throws an IO exception.
+   * @throws InvalidFormatException If there is an error in the format
+   *           of the expression. The notification may contain a
+   *           partial set of values already successfully read.
+   */
+  public static void parse (Notification ntfn, Reader reader)
+    throws IOException, InvalidFormatException
+  {
+    BufferedReader in = new BufferedReader (reader);
+    
+    String line = null;
+    
+    try
+    {
+      while ((line = in.readLine ()) != null)
+        parseLine (ntfn, line.trim ());
+    } catch (InvalidFormatException ex)
+    {
+      throw new InvalidFormatException
+        ("Notification line \"" + line + "\": " + ex.getMessage ());
+    }
+  }
+
+  private static void parseLine (Notification ntfn, String line)
+    throws InvalidFormatException
+  {
+    int colon = findFirstNonEscaped (line, 0, ':');
+    
+    if (colon == -1)
+      throw new InvalidFormatException ("No \":\" separating name and value");
+    else if (colon == line.length () - 1)
+      throw new InvalidFormatException ("Missing value");
+    
+    String name = stripBackslashes (line.substring (0, colon).trim ());
+    String valueExpr = line.substring (colon + 1).trim ();
+    Object value;
+    
+    char firstChar = valueExpr.charAt (0);
+    
+    if (firstChar == '"')
+      value = parseStringValue (valueExpr);
+    else if (isDigit (firstChar))
+      value = parseNumberValue (valueExpr);
+    else if (firstChar == '[')
+      value = parseOpaqueValue (valueExpr);
+    else
+      throw new InvalidFormatException
+        ("Unrecognised value expression: \"" + valueExpr + "\"");
+    
+    ntfn.put (name, value);
   }
 
   public void clear ()
@@ -39,6 +152,11 @@ public class Notification implements Map<String, Object>, Cloneable
     return copy;
   }
   
+  /**
+   * Generate a string value of the notification. The format is
+   * compatible with that used by the ec/ep commands. See
+   * {@link #parse(Notification, Reader)} for an example.
+   */
   @Override
   public String toString ()
   {
@@ -146,5 +264,16 @@ public class Notification implements Map<String, Object>, Cloneable
   public Collection<Object> values ()
   {
     return attributes.values ();
+  }
+
+  public byte [] getOpaque (String field)
+  {
+    Object value = get (field);
+    
+    if (value == null || value instanceof byte [])
+      return (byte [])value;
+    else
+      throw new IllegalArgumentException
+        ("\"" + field + "\" does not contain an opaque value");
   }
 }
