@@ -1,9 +1,11 @@
 package org.avis.common;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.io.StringReader;
 import org.avis.util.InvalidFormatException;
 
 import static java.lang.Character.isDigit;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 import static org.avis.util.Format.appendBytes;
 import static org.avis.util.Format.appendEscaped;
@@ -163,18 +166,21 @@ public class Notification implements Map<String, Object>, Cloneable
     StringBuilder str = new StringBuilder ();
     boolean first = true;
     
-    for (Entry<String, Object> entry : attributes.entrySet ())
+    Set<String> names = new TreeSet<String> (CASE_INSENSITIVE_ORDER);
+    names.addAll (attributes.keySet ());
+    
+    for (String name : names)
     {
       if (!first)
         str.append ('\n');
       
       first = false;
       
-      appendEscaped (str, entry.getKey (), ' ');
+      appendEscaped (str, name, " :");
       
       str.append (": ");
       
-      formatValue (str, entry.getValue ());
+      formatValue (str, attributes.get (name));
     }
     
     return str.toString ();
@@ -216,19 +222,63 @@ public class Notification implements Map<String, Object>, Cloneable
     return attributes.entrySet ();
   }
 
-  public boolean equals (Object arg0)
+  public boolean equals (Object o)
   {
-    return attributes.equals (arg0);
+    if (o instanceof Notification)
+      return equals ((Notification)o);
+    else
+      return false;
+  }
+
+  /**
+   * Compare two notifications. Cannot use HashMap.equals () as it
+   * does not compare byte arrays by value.
+   */
+  public boolean equals (Notification ntfn)
+  {
+    if (this == ntfn)
+    {
+      return true;
+    } else if (attributes.size () != ntfn.attributes.size ())
+    {
+      return false;
+    } else
+    {
+      for (Entry<String, Object> entry : attributes.entrySet ())
+      {
+        if (!valuesEqual (entry.getValue (),
+                          ntfn.attributes.get (entry.getKey ())))
+          return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  private static boolean valuesEqual (Object value1, Object value2)
+  {
+    if (value1 == value2)
+      return true;
+    else if (value1 == null || value2 == null)
+      return false;
+    else if (value1.getClass () != value2.getClass ())
+      return false;
+    else if (value1 instanceof byte [])
+      return Arrays.equals ((byte [])value1, (byte [])value2);
+    else
+      return value1.equals (value2);
+  }
+
+  public int hashCode ()
+  {
+    // todo opt: get a better hashcode?
+    // can't use HashMap.hashCode () for same reason as can't use equals ().
+    return attributes.size ();
   }
 
   public Object get (Object key)
   {
     return attributes.get (key);
-  }
-
-  public int hashCode ()
-  {
-    return attributes.hashCode ();
   }
 
   public boolean isEmpty ()
