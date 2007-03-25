@@ -13,11 +13,12 @@ public class Nack extends XidMessage
   public static final int ID = 48;
 
   // selected NACK codes: see sec 7.4.2 of client spec
-  public static final int PROT_ERROR  = 1001;
-  public static final int NO_SUCH_SUB = 1002;
-  public static final int IMPL_LIMIT  = 2006;
-  public static final int NOT_IMPL    = 2007;
-  public static final int PARSE_ERROR = 2101;
+  public static final int PROT_ERROR     = 1001;
+  public static final int NO_SUCH_SUB    = 1002;
+  public static final int IMPL_LIMIT     = 2006;
+  public static final int NOT_IMPL       = 2007;
+  public static final int PARSE_ERROR    = 2101;
+  public static final int EXP_IS_TRIVIAL = 2110;
   
   private static final Object [] EMPTY_ARGS = new Object [0];
   
@@ -77,6 +78,8 @@ public class Nack extends XidMessage
         return "Feature not implemented";
       case PARSE_ERROR:
         return "Subscription parse error";
+      case EXP_IS_TRIVIAL:
+        return "Expression is trivial (constant)";
       default:
         throw new IllegalArgumentException ("Unknown error code: " + error);
     }
