@@ -22,6 +22,12 @@ import static dsto.dfc.logging.Log.alarm;
 
 import static org.avis.util.CommandLine.stringArg;
 
+/**
+ * The ec command line utility. Subscribes to notifications and echoes
+ * them to standard output.
+ * 
+ * @author Matthew Phillips
+ */
 public class Ec
 {
   private static final Object USAGE =
@@ -70,9 +76,6 @@ public class Ec
     {
       final Elvin elvin = new Elvin (elvinUri);
       
-      Subscription subscription = elvin.subscribe (subscriptionExpr);
-      
-      subscription.addNotificationListener (new Listener ());
       
       System.err.println ("ec: Connected to server " +
                           elvinUri.toCanonicalString ());
@@ -86,12 +89,18 @@ public class Ec
           elvin.close ();
         }
       });
+
+      Subscription subscription = elvin.subscribe (subscriptionExpr);
+      
+      subscription.addNotificationListener (new Listener ());
     } catch (IOException ex)
     {
       if (ex instanceof ConnectException)
         alarm ("Failed to connect to Elvin: connection refused", Ec.class);
       else
         alarm ("Error connecting to Elvin", Ec.class, ex);
+      
+      System.exit (1);
     }
   }
 
