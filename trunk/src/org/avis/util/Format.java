@@ -82,4 +82,152 @@ public final class Format
     str.append (HEX_TABLE [(b >>> 4) & 0x0F]);
     str.append (HEX_TABLE [(b >>> 0) & 0x0F]);
   }
+
+  /**
+   * Parse a string expression as a hex-coded unsigned byte.
+   * 
+   * @return A byte in the range 0 - 255 if sign is ignored.
+   */
+  public static byte parseUnsignedByte (String byteExpr)
+    throws InvalidFormatException
+  {
+    if (byteExpr.length () > 2)
+      throw new InvalidFormatException
+        ("Byte value too long: \"" + byteExpr + "\"");
+    
+    int value = 0;
+    
+    for (int i = 0; i < byteExpr.length (); i++)
+    {
+      char c = byteExpr.charAt (i);
+      
+      int digit;
+      
+      if (c >= '0' && c <= '9')
+        digit = c - '0';
+      else if (c >= 'a' && c <= 'f')
+        digit = c - 'a' + 10;
+      else if (c >= 'A' && c <= 'F')
+        digit = c - 'A' + 10;
+      else
+        throw new InvalidFormatException ("Not a valid hex character: " + c);
+      
+      value = (value << 4) | digit;
+    }
+  
+    return (byte)value;
+  }
+
+  /**
+   * Parse a numeric int, long or double value. e.g. 32L, 3.14, 42.
+   */
+  public static Number parseNumberValue (String valueExpr)
+    throws InvalidFormatException
+  {
+    try
+    {
+      if (valueExpr.indexOf ('.') != -1)
+        return Double.valueOf (valueExpr);
+      else if (valueExpr.endsWith ("L") || valueExpr.endsWith ("l"))
+        return Long.decode (valueExpr.substring (0, valueExpr.length () - 1));
+      else
+        return Integer.decode (valueExpr);
+    } catch (NumberFormatException ex)
+    {
+      throw new InvalidFormatException ("Invalid number: " + valueExpr);
+    }
+  }
+
+  /**
+   * Parse a string value in the format "string", allowing escaped "'s
+   * inside the string.
+   */
+  public static String parseStringValue (String valueExpr)
+    throws InvalidFormatException
+  {
+    int last = findFirstNonEscaped (valueExpr, 1, '"');
+    
+    if (last == -1)
+      throw new InvalidFormatException ("Missing terminating \" in string");
+    else if (last != valueExpr.length () - 1)
+      throw new InvalidFormatException ("Extra characters following string");
+    
+    return stripBackslashes (valueExpr.substring (1, last));
+  }
+
+  /**
+   * Parse an opaque value expression e.g. [00 0f 01]. 
+   */
+  public static byte [] parseOpaqueValue (String valueExpr)
+    throws InvalidFormatException
+  {
+    if (valueExpr.length () < 2)
+      throw new InvalidFormatException ("Opaque value too short");
+    else if (valueExpr.charAt (0) != '[')
+      throw new InvalidFormatException ("Missing '[' at start of opaque");
+    
+    int closingBrace = valueExpr.indexOf (']');
+    
+    if (closingBrace == -1)
+      throw new InvalidFormatException ("Missing closing \"]\"");
+    else if (closingBrace != valueExpr.length () - 1)
+      throw new InvalidFormatException ("Junk at end of oqaque value");
+  
+    String [] byteExprs = valueExpr.substring (1, closingBrace).split (" +");
+    byte [] bytes = new byte [byteExprs.length];
+    
+    try
+    {
+      for (int i = 0; i < byteExprs.length; i++)
+        bytes [i] = parseUnsignedByte (byteExprs [i]);
+    } catch (NumberFormatException ex)
+    {
+      throw new InvalidFormatException ("Invalid byte value: " + ex.getMessage ());
+    }
+    
+    return bytes;
+  }
+  
+  public static int findFirstNonEscaped (String str, int start, char toFind)
+  {
+    boolean escaped = false;
+    
+    for (int i = start; i < str.length (); i++)
+    {
+      char c = str.charAt (i);
+      
+      if (c == '\\')
+      {
+        escaped = true;
+      } else
+      {
+        if (!escaped && c == toFind)
+          return i;
+        
+        escaped = false;
+      }
+    }
+    
+    return -1;
+  }
+  
+  public static String stripBackslashes (String text)
+  {
+    if (text.indexOf ('\\') != -1)
+    {
+      StringBuilder buff = new StringBuilder (text.length ());
+      
+      for (int i = 0; i < text.length (); i++)
+      {
+        char c = text.charAt (i);
+        
+        if (c != '\\')
+          buff.append (c);
+      }
+      
+      text = buff.toString ();
+    }
+    
+    return text;
+  }
 }
