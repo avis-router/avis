@@ -50,6 +50,38 @@ public class Nack extends XidMessage
     this.args = args;
   }
   
+  /**
+   * Return the error text for the NACK error code.
+   * 
+   * @see #errorTextFor(int)
+   */
+  public String errorText ()
+  {
+    return errorTextFor (error);
+  }
+  
+  /**
+   * Return the error text for a given NACK error code.
+   */
+  public static String errorTextFor (int error)
+  {
+    switch (error)
+    {
+      case PROT_ERROR:
+        return "Communication protocol error";
+      case NO_SUCH_SUB:
+        return "Unknown subscription ID";
+      case IMPL_LIMIT:
+        return "Exceeded client connection resource limit";
+      case NOT_IMPL:
+        return "Feature not implemented";
+      case PARSE_ERROR:
+        return "Subscription parse error";
+      default:
+        throw new IllegalArgumentException ("Unknown error code: " + error);
+    }
+  }
+
   @Override
   public void encode (ByteBuffer out)
     throws ProtocolCodecException
