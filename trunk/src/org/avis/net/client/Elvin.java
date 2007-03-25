@@ -120,9 +120,12 @@ public class Elvin
     }
   }
   
-  public void close ()
+  public synchronized void close ()
   {
-    if (connected)
+    if (clientSession == null)
+      return;
+    
+    if (connected && clientSession.isConnected ())
     {
       try
       {
@@ -132,12 +135,17 @@ public class Elvin
       } catch (IOException ex)
       {
         Log.diagnostic ("Failed to cleanly disconnect", this, ex);
+      } finally
+      {
+        connected = false;
       }
     }
     
-    clientSession.close ().join ();
-    clientSession = null;
-    connected = false;
+    if (clientSession.isConnected ())
+    {
+      clientSession.close ().join ();
+      clientSession = null;
+    }
   }
   
   public Subscription subscribe (String subscriptionExpr)
@@ -331,6 +339,13 @@ public class Elvin
         handleReply ((Message)message);
       else
         handleRouterMessage ((Message)message);
+    }
+    
+    @Override
+    public void sessionClosed (IoSession session)
+      throws Exception
+    {
+      close ();
     }
   }
 }
