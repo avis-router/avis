@@ -29,7 +29,7 @@ ant
 %install
 rm -rf $RPM_BUILD_ROOT
 install -DCp -m 0755 -o root -g root \
-  bin/avisd.sh $RPM_BUILD_ROOT/%{_sbindir}/avisd
+  bin/avisd $RPM_BUILD_ROOT/%{_sbindir}/avisd
 install -DCp -m 0644 -o root -g root \
   lib/avisd.jar $RPM_BUILD_ROOT/%{_libdir}/avisd.jar
 install -DCp -m 0644 -o root -g root \

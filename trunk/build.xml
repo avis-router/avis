@@ -181,7 +181,7 @@
       </zipfileset>
       
       <zipfileset dir="." prefix="${ziproot}" filemode="755">
-        <include name="bin/avisd.sh" />
+        <include name="bin/avisd" />
       </zipfileset>
     </zip>
     
@@ -429,7 +429,7 @@
   <!-- build standard Unix distro layout in ${root} -->
   <target name="fn:build_unix_dist_layout">
 
-    <copy file="bin/avisd.sh"
+    <copy file="bin/avisd"
           tofile="${root}/sbin/avisd"
           preservelastmodified="true" />
     <copy file="lib/avisd.jar"

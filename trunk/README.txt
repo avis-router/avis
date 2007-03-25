@@ -79,11 +79,11 @@ Usage
 To run the Avis event router service using the bash helper script:
 
   > cd avis-1.0
-  > ./bin/avisd.sh
+  > ./bin/avisd
 
 To see command line options:
 
-  > ./bin/avis.sh -h
+  > ./bin/avisd -h
 
 If you don't have a client for testing the server, you can try one of
 the tickertape messaging clients at tickertape.org:

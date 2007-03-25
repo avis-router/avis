@@ -117,7 +117,7 @@ run on any platform. Simply unzip the source distribution and run Avis
 from a bash command shell:
 
 <pre>
-  > ./bin/avisd.sh
+  > ./bin/avisd
 </pre>
 
 See `etc/avisd.config` for configuration options.
