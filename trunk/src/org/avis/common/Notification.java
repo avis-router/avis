@@ -14,7 +14,6 @@ import java.io.StringReader;
 
 import org.avis.util.InvalidFormatException;
 
-import static java.lang.Character.isDigit;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 import static org.avis.util.Format.appendBytes;
@@ -128,7 +127,7 @@ public class Notification implements Map<String, Object>, Cloneable
     
     if (firstChar == '"')
       value = parseStringValue (valueExpr);
-    else if (isDigit (firstChar))
+    else if (firstChar >= '0' && firstChar <= '9')
       value = parseNumberValue (valueExpr);
     else if (firstChar == '[')
       value = parseOpaqueValue (valueExpr);
