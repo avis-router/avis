@@ -9,7 +9,7 @@ AppVersion=@version@
 DefaultDirName={pf}\Avis
 DefaultGroupName=Avis
 SourceDir=..
-LicenseFile=..\common\license.rtf
+LicenseFile=..\license.rtf
 
 [Files]
 ; Make a backup of wrapper config

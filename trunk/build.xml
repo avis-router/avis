@@ -267,7 +267,7 @@
     <!-- copy package items -->
     <copy file="packaging/osx/welcome.txt"
           tofile="${resources}/Welcome.txt" preservelastmodified="true" />
-    <copy file="packaging/common/license.rtf"
+    <copy file="packaging/osx/license.rtf"
           tofile="${resources}/License.rtf" preservelastmodified="true" />
     <copy file="packaging/osx/Info.plist.in"
           tofile="${temp}/Info.plist" preservelastmodified="true"
