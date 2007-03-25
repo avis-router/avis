@@ -82,6 +82,7 @@ public class Ec
         public void run ()
         {
           System.err.println ("ec: Closing connection");
+          
           elvin.close ();
         }
       });
