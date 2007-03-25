@@ -6,7 +6,7 @@
   Matthew Phillips  
   ======================================================================
 -->
-<project name="avis" default="jar_avisd">
+<project name="avis" default="jars">
   
   <description>Avis event notification service</description>
 
@@ -94,6 +94,8 @@
     </junit>
   </target>
   
+  <target name="jars" depends="jar_avisd,jar_tools" />
+    
   <target name="jar_avisd" depends="compile,properties"
           description="Build the avisd.jar executable">
     
@@ -105,6 +107,19 @@
           classpathref="classpath">
       
       <include name="avis.properties" />
+    </jarx>
+
+  </target>
+  
+  <target name="jar_tools" depends="compile"
+          description="Build the ec/ep tools">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="lib/dfc.jar" />
+
+    <jarx archive="lib/tools.jar" classpathref="classpath">
+
+      <include name="org/avis/net/tools/Ec.class" />
     </jarx>
 
   </target>
