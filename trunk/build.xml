@@ -120,6 +120,7 @@
     <jarx archive="lib/tools.jar" classpathref="classpath">
 
       <include name="org/avis/net/tools/Ec.class" />
+      <include name="org/avis/net/tools/Ep.class" />
     </jarx>
 
   </target>
