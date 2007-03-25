@@ -10,6 +10,8 @@ import java.io.InputStream;
 
 import org.apache.mina.common.ByteBuffer;
 
+import dsto.dfc.logging.Log;
+
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.diagnostic;
@@ -38,6 +40,8 @@ public class Main
   public static void main (String [] args)
     throws Exception
   {
+    Log.setApplicationName ("Avis");
+    
     setEnabled (TRACE, false);
     setEnabled (DIAGNOSTIC, false);
     
