@@ -1,21 +1,24 @@
 package org.avis.net.tools;
 
+import java.util.Date;
+
 import java.io.IOException;
 
 import java.net.ConnectException;
 import java.net.URISyntaxException;
 
+import java.text.SimpleDateFormat;
+
 import org.avis.net.client.Elvin;
 import org.avis.net.client.ElvinURI;
-import org.avis.net.client.NotificationListener;
 import org.avis.net.client.NotificationEvent;
+import org.avis.net.client.NotificationListener;
 import org.avis.net.client.Subscription;
-import org.avis.net.server.Main;
 import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
 
-import static dsto.dfc.logging.Log.info;
+import static dsto.dfc.logging.Log.alarm;
 
 import static org.avis.util.CommandLine.stringArg;
 
@@ -26,6 +29,8 @@ public class Ec
 
   public static void main (String [] args)
   {
+    Log.setApplicationName ("ec");
+    
     ElvinURI elvinUri = null;
     String subscriptionExpr = null;
     
@@ -67,32 +72,25 @@ public class Ec
       
       Subscription subscription = elvin.subscribe (subscriptionExpr);
       
-      subscription.addNotificationListener (new NotificationListener ()
-      {
-        public void notificationReceived (NotificationEvent e)
-        {
-          System.out.println ("got a notification!");
-          System.out.println (e.notification);
-        }
-      });
+      subscription.addNotificationListener (new Listener ());
       
-      info ("Connected to " + elvinUri.toCanonicalString (), Ec.class);
+      System.err.println ("ec: Connected to server " +
+                          elvinUri.toCanonicalString ());
       
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
         public void run ()
         {
-          info ("Shutting down...", Main.class);
-          
+          System.err.println ("ec: Closing connection");
           elvin.close ();
         }
       });
     } catch (IOException ex)
     {
       if (ex instanceof ConnectException)
-        Log.alarm ("Failed to connect to Elvin: connection refused", Ec.class);
+        alarm ("Failed to connect to Elvin: connection refused", Ec.class);
       else
-        Log.alarm ("Error connecting to Elvin", Ec.class, ex);
+        alarm ("Error connecting to Elvin", Ec.class, ex);
     }
   }
 
@@ -101,5 +99,22 @@ public class Ec
     System.err.println (message);
     System.err.println (USAGE);
     System.exit (1);
+  }
+  
+  static class Listener implements NotificationListener
+  {
+    private SimpleDateFormat dateFormat;
+
+    public Listener ()
+    {
+      dateFormat = new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss'.'SZ");
+    }
+    
+    public void notificationReceived (NotificationEvent e)
+    {
+      System.out.println ("$time " + dateFormat.format (new Date ()));
+      System.out.println (e.notification);
+      System.out.println ("---");
+    }
   }
 }
