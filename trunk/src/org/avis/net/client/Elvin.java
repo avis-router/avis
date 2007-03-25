@@ -122,27 +122,25 @@ public class Elvin
   
   public synchronized void close ()
   {
-    if (clientSession == null)
-      return;
-    
-    if (connected && clientSession.isConnected ())
+    if (clientSession != null && clientSession.isConnected ())
     {
-      try
+      if (connected)
       {
-        DisconnRqst disconnRqst = new DisconnRqst ();
-        send (disconnRqst);
-        receive (DisconnRply.class, disconnRqst);
-      } catch (IOException ex)
-      {
-        Log.diagnostic ("Failed to cleanly disconnect", this, ex);
-      } finally
-      {
-        connected = false;
+        try
+        {
+          DisconnRqst disconnRqst = new DisconnRqst ();
+          
+          send (disconnRqst);
+          receive (DisconnRply.class, disconnRqst);
+        } catch (IOException ex)
+        {
+          Log.diagnostic ("Failed to cleanly disconnect", this, ex);
+        } finally
+        {
+          connected = false;
+        }
       }
-    }
-    
-    if (clientSession.isConnected ())
-    {
+      
       clientSession.close ().join ();
       clientSession = null;
     }
@@ -257,8 +255,11 @@ public class Elvin
       return (E)message;
     } else if (message instanceof Nack)
     {
+      Nack nack = (Nack)message;
+      
       throw new IOException
-        ("Router rejected request: " + ((Nack)message).message);
+        ("Router rejected request: " + nack.errorText () +
+         ": " + nack.message);
     } else
     {
       throw new IllegalStateException
