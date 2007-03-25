@@ -257,6 +257,8 @@ public class Elvin
     {
       Nack nack = (Nack)message;
       
+      // todo need to expand arg refs in nack error message from Mantara Elvin 
+      // e.g. %1: Expression '%2' does not refer to a name
       throw new IOException
         ("Router rejected request: " + nack.errorText () +
          ": " + nack.message);
