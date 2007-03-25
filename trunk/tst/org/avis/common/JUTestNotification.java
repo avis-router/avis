@@ -7,11 +7,58 @@ import org.avis.util.InvalidFormatException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class JUTestNotification
 {
+  @Test
+  public void equality ()
+  {
+    Notification ntfn1 = new Notification ();
+    
+    ntfn1.put ("string", "hello \"world\"");
+    ntfn1.put ("int32", 42);
+    ntfn1.put ("int64", 4242L);
+    ntfn1.put ("real64", 3.14D);
+    ntfn1.put ("real64 #2", 3D);
+    ntfn1.put ("field with tricky:characters", "bad");
+    ntfn1.put ("opaque",
+              new byte [] {1, 2, 3,
+                           (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF});
+    
+    Notification ntfn2 = new Notification ();
+    
+    ntfn2.put ("real64 #2", 3D);
+    ntfn2.put ("string", "hello \"world\"");
+    ntfn2.put ("int32", 42);
+    ntfn2.put ("real64", 3.14D);
+    ntfn2.put ("int64", 4242L);
+    ntfn2.put ("field with tricky:characters", "bad");
+    ntfn2.put ("opaque",
+              new byte [] {1, 2, 3,
+                           (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF});
+    
+    // ntfn3 is slightly different
+    Notification ntfn3 = new Notification ();
+    
+    ntfn3.put ("real64 #2", 3D);
+    ntfn3.put ("string", "hello \"world\"");
+    ntfn3.put ("int32", 42);
+    ntfn3.put ("real64", 3.14D);
+    ntfn3.put ("int64", 4242L);
+    ntfn3.put ("field with tricky:characters", "bad");
+    ntfn3.put ("opaque",
+              new byte [] {1, 2, 3,
+                           (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEE});
+    
+    assertEquals (ntfn1, ntfn2);
+    assertEquals (ntfn1.hashCode (), ntfn2.hashCode ());
+    
+    assertFalse (ntfn1.equals (ntfn3));
+  }
+  
   @Test
   public void stringFormat ()
   {
@@ -32,13 +79,13 @@ public class JUTestNotification
     // System.out.println ("toString () = \n" + toString);
     
     assertEquals
-      ("real64: 3.14\n" + 
+      ("field\\ with\\ tricky\\:characters: \"bad\"\n" + 
        "int32: 42\n" + 
-       "string: \"hello \\\"world\\\"\"\n" + 
-       "real64\\ #2: 3.0\n" + 
-       "opaque: [01 02 03 de ad be ef]\n" + 
        "int64: 4242L\n" + 
-       "field\\ with\\ tricky:characters: \"bad\"", toString);
+       "opaque: [01 02 03 de ad be ef]\n" + 
+       "real64: 3.14\n" + 
+       "real64\\ #2: 3.0\n" + 
+       "string: \"hello \\\"world\\\"\"", toString);
   }
   
   @Test
@@ -107,6 +154,27 @@ public class JUTestNotification
     assertInvalid ("hello: [01 1h]");
     assertInvalid ("hello: [01 1h]");
     assertInvalid ("hello: 1234567890123");
+  }
+  
+  @Test
+  public void roundtrip ()
+    throws Exception
+  {
+    Notification ntfn = new Notification ();
+    
+    ntfn.put ("string", "hello \"world\"");
+    ntfn.put ("int32", 42);
+    ntfn.put ("int64", 4242L);
+    ntfn.put ("real64", 3.14D);
+    ntfn.put ("real64 #2", 3D);
+    ntfn.put ("field with tricky:characters", "bad");
+    ntfn.put ("opaque",
+              new byte [] {1, 2, 3,
+                           (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF});
+    
+    Notification rountrippedNtfn = new Notification (ntfn.toString ());
+    
+    assertEquals (ntfn, rountrippedNtfn);
   }
 
   private static void assertInvalid (String ntfnExpr)
