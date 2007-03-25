@@ -2,4 +2,4 @@
 
 tools_jar=$(dirname $0)/../lib/tools.jar
 
-exec java -cp "$tools_jar" org.avis.net.tools.Ep $@
+exec java -cp "$tools_jar" org.avis.net.tools.Ep "$@"
