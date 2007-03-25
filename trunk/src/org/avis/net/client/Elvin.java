@@ -28,6 +28,7 @@ import org.avis.net.messages.DisconnRqst;
 import org.avis.net.messages.Message;
 import org.avis.net.messages.Nack;
 import org.avis.net.messages.NotifyDeliver;
+import org.avis.net.messages.NotifyEmit;
 import org.avis.net.messages.SubAddRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.messages.XidMessage;
@@ -163,6 +164,12 @@ public class Elvin
     subscription.id = reply.subscriptionId;
     
     subscriptions.put (subscription.id, subscription);
+  }
+  
+  public void send (Notification notification)
+    throws IOException
+  {
+    send (new NotifyEmit (notification));
   }
 
   private synchronized void send (Message message)
