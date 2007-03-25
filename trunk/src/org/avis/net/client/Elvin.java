@@ -2,6 +2,7 @@ package org.avis.net.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import java.io.IOException;
 
@@ -53,10 +54,12 @@ public class Elvin
   
   private ElvinURI elvinUri;
   private IoSession clientSession;
+  private ExecutorService executor;
   private boolean connected;
   private Map<Long, Subscription> subscriptions;
   
   protected volatile Message lastReceived;
+
 
   public Elvin (String elvinUri)
     throws URISyntaxException, IllegalArgumentException,
@@ -115,8 +118,10 @@ public class Elvin
       filterChainBuilder.addLast
         ("codec", new ProtocolCodecFilter (codecFactory));
       
+      executor = newSingleThreadExecutor ();
+      
       filterChainBuilder.addLast
-        ("threadPool", new ExecutorFilter (newSingleThreadExecutor ()));
+        ("threadPool", new ExecutorFilter (executor));
       
       ConnectFuture future =
         connector.connect
@@ -155,6 +160,12 @@ public class Elvin
       
       clientSession.close ().join ();
       clientSession = null;
+    }
+    
+    if (executor != null)
+    {
+      executor.shutdown ();
+      executor = null;
     }
   }
   
