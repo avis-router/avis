@@ -55,6 +55,24 @@ public final class Format
       builder.append (c);
     }
   }
+  
+  /**
+   * Append a string to a builder, escaping (with '\') any instances
+   * of a set of special characters.
+   */
+  public static void appendEscaped (StringBuilder builder,
+                                    String string, String charsToEscape)
+  {
+    for (int i = 0; i < string.length (); i++)
+    {
+      char c = string.charAt (i);
+      
+      if (charsToEscape.indexOf (c) != -1)
+        builder.append ('\\');
+      
+      builder.append (c);
+    }
+  }
 
   /**
    * Append a byte array to a builder in form: [01 e2 fe ff ...].
