@@ -1,5 +1,7 @@
 package org.avis.pubsub.parser;
 
+import org.avis.util.Format;
+
 public abstract class SubscriptionParserBase
 {
   /**
@@ -7,22 +9,7 @@ public abstract class SubscriptionParserBase
    */
   protected static String stripBackslashes (String text)
   {
-    if (text.indexOf ('\\') != -1)
-    {
-      StringBuilder buff = new StringBuilder (text.length ());
-      
-      for (int i = 0; i < text.length (); i++)
-      {
-        char c = text.charAt (i);
-        
-        if (c != '\\')
-          buff.append (c);
-      }
-      
-      text = buff.toString ();
-    }
-    
-    return text;
+    return Format.stripBackslashes (text);
   }
   
   /**
