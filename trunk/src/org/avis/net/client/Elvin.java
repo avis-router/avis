@@ -81,12 +81,8 @@ public class Elvin
     
     openConnection ();
     
-    ConnRqst connRqst =
-      new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR);
-    
-    send (connRqst);
-    
-    receive (ConnRply.class, connRqst);
+    sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR),
+                    ConnRply.class);
     
     connected = true;
     
@@ -145,10 +141,7 @@ public class Elvin
       {
         try
         {
-          DisconnRqst disconnRqst = new DisconnRqst ();
-          
-          send (disconnRqst);
-          receive (DisconnRply.class, disconnRqst);
+          sendAndReceive (new DisconnRqst (), DisconnRply.class);
         } catch (IOException ex)
         {
           Log.diagnostic ("Failed to cleanly disconnect", this, ex);
@@ -186,11 +179,8 @@ public class Elvin
     subAddRqst.acceptInsecure = subscription.acceptInsecure;
     subAddRqst.keys = subscription.keys;
     
-    send (subAddRqst);
-    
-    SubRply reply = receive (SubRply.class, subAddRqst);
-    
-    subscription.id = reply.subscriptionId;
+    subscription.id =
+      sendAndReceive (subAddRqst, SubRply.class).subscriptionId;
     
     subscriptions.put (subscription.id, subscription);
   }
@@ -201,6 +191,15 @@ public class Elvin
     send (new NotifyEmit (notification));
   }
 
+  private <E extends Message> E sendAndReceive (XidMessage request,
+                                                Class<E> expectedReplyType)
+    throws IOException
+  {
+    send (request);
+   
+    return receive (expectedReplyType, request);
+  }
+  
   private synchronized void send (Message message)
     throws IOException
   {
