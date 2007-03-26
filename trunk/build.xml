@@ -506,7 +506,14 @@
       <arg line="-r ${release_rev}:HEAD https://svn.sourceforge.net/svnroot/avis/trunk" />
     </exec>
   </target>
-    
+
+  <target name="backup_from_sf"
+          description="Backup data from Sourceforge">
+    <exec executable="rsync">
+      <arg line="-av avis.svn.sourceforge.net::svn/avis/* ../avis_backup/svn/" />
+    </exec>
+  </target>
+
   <target name="clean"
           description="Delete all compiled classes and build directory">
     <delete dir="classes" />
