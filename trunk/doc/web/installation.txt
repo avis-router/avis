@@ -77,7 +77,7 @@ To uninstall as a system service:
 To uninstall:
 
 <pre>
-  sudo rpm -e avis
+  > sudo rpm -e avis
 </pre>
 
 
