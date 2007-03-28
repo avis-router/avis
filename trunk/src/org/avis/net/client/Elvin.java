@@ -58,8 +58,10 @@ public class Elvin
   private boolean connected;
   private Map<Long, Subscription> subscriptions;
   
+  /** This is effectively a single-item queue for handling responses
+      to XID-based requests. It's volatile since it's used for inter-
+      thread communication. */
   protected volatile Message lastReceived;
-
 
   public Elvin (String elvinUri)
     throws URISyntaxException, IllegalArgumentException,
