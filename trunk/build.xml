@@ -94,10 +94,34 @@
     </junit>
   </target>
   
-  <target name="jars" depends="jar_avisd,jar_tools" />
+  <target name="check_jars_uptodate">
+    <dependset>
+      <srcfileset dir="classes" includes="**/*.class" />
+      <srcfileset dir="lib">
+        <include name="*.jar" />
+        <exclude name="avisd.jar" />
+        <exclude name="tools.jar" />
+      </srcfileset>
+      <targetfileset dir="lib">
+        <include name="avisd.jar" />
+        <include name="tools.jar" />
+      </targetfileset>
+    </dependset>
+  
+    <condition property="jars_uptodate">
+      <and>
+        <available file="lib/tools.jar" />
+        <available file="lib/avisd.jar" />
+      </and>
+    </condition>
+  </target>
+
+  <target name="jars"
+          depends="compile,check_jars_uptodate,jar_avisd,jar_tools" />
     
   <target name="jar_avisd" depends="compile,properties"
-          description="Build the avisd.jar executable">
+          description="Build the avisd.jar executable"
+          unless="jars_uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
              classpath="lib/dfc.jar" />
@@ -112,7 +136,8 @@
   </target>
   
   <target name="jar_tools" depends="compile"
-          description="Build the ec/ep tools">
+          description="Build the ec/ep tools"
+          unless="jars_uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
              classpath="lib/dfc.jar" />
