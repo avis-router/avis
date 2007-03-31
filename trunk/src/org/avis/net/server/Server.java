@@ -68,7 +68,7 @@ import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
-import static org.avis.util.Format.shortException;
+import static org.avis.util.Text.shortException;
 
 public class Server implements IoHandler
 {
@@ -135,8 +135,8 @@ public class Server implements IoHandler
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));
     
-    acceptor.bind (new InetSocketAddress (options.getInt ("Port")),
-                   this, acceptorConfig);
+    for (InetSocketAddress address : options.bindAddresses ())
+      acceptor.bind (address, this, acceptorConfig);
   }
 
   /**
