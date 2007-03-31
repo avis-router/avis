@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.avis.common.Notification;
+import org.avis.net.common.JUTestConnectionOptions;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
