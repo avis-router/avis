@@ -53,7 +53,8 @@ public class JUTestServerOptions
       InetAddress address = i.nextElement ();
 
       // System.out.println ("Interface address = " + address);
-      interfaceAddresses.add (address);        
+      if (!address.isLinkLocalAddress ())
+        interfaceAddresses.add (address);        
     }
     
     testInterfaces (interfaceAddresses, netInterface.getName (), DEFAULT_PORT);
@@ -74,7 +75,8 @@ public class JUTestServerOptions
     for (InetAddress address : InetAddress.getAllByName (localhost.getHostName ()))
     {
       // System.out.println ("Host address = " + address);
-      localhostAddresses.add (address);
+      if (!address.isLinkLocalAddress ())
+        localhostAddresses.add (address);
     }
 
     testHost (localhostAddresses, localhost.getHostName (), DEFAULT_PORT);
