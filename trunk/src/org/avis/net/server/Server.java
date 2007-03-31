@@ -47,6 +47,7 @@ import org.avis.net.messages.XidMessage;
 import org.avis.net.security.Keys;
 import org.avis.pubsub.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
+import org.avis.util.IllegalOptionException;
 
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
@@ -102,7 +103,7 @@ public class Server implements IoHandler
   }
   
   public Server (ServerOptions options)
-    throws IOException
+    throws IOException, IllegalOptionException
   {
     sessions = new ConcurrentHashSet<IoSession> ();
     executor = newCachedThreadPool ();

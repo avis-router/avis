@@ -10,10 +10,13 @@ import java.io.InputStream;
 
 import org.apache.mina.common.ByteBuffer;
 
+import org.avis.util.IllegalOptionException;
+
 import dsto.dfc.logging.Log;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.diagnostic;
 import static dsto.dfc.logging.Log.info;
 import static dsto.dfc.logging.Log.isEnabled;
@@ -94,27 +97,47 @@ public class Main
       }
     } catch (Exception ex)
     {
-      System.err.println ("\nError starting server: " + ex.getMessage ());
+      alarm ("Error configuring server: " + ex.getMessage (), Main.class);
       
       if (isEnabled (DIAGNOSTIC))
         ex.printStackTrace ();
       
-      System.exit (2);
+      exit (2);
     }
     
-    final Server server = new Server (config);
-    
-    Runtime.getRuntime ().addShutdownHook (new Thread ()
+    try
     {
-      public void run ()
+      final Server server = new Server (config);
+      
+      Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
-        info ("Shutting down...", Main.class);
+        public void run ()
+        {
+          info ("Shutting down...", Main.class);
+          
+          server.close ();
+        }
+      });
+      
+      info ("Server listening on port " + config.get ("Port"), Main.class);
+    } catch (Throwable ex)
+    {
+      if (ex instanceof IllegalOptionException)
+        alarm ("Error in server configuration: " + ex.getMessage (), Main.class);
+      else
+        alarm ("\nError starting server: " + ex.getMessage (), Main.class);
         
-        server.close ();
-      }
-    });
-    
-    info ("Server listening on port " + config.get ("Port"), Main.class);
+      if (isEnabled (DIAGNOSTIC))
+        ex.printStackTrace ();
+      
+      exit (2);
+    }
+  }
+
+  private static void exit (int errorCode)
+  {
+    info ("Exiting on error", Main.class);
+    System.exit (errorCode);
   }
 
   private static Properties readAvisProperties ()

@@ -79,7 +79,7 @@ public class ServerOptions extends Options
       
       if (netInterface == null)
         throw new IllegalOptionException
-          ("Unknown interface name: " + interfaceName);
+          ("Unknown interface name \"" + interfaceName + "\"");
       
       for (Enumeration<InetAddress> i = netInterface.getInetAddresses ();
            i.hasMoreElements (); )
@@ -99,7 +99,7 @@ public class ServerOptions extends Options
       } catch (UnknownHostException ex)
       {
         throw new IllegalOptionException
-          ("Unknown host name in \"" + hostName + "\"");
+          ("Unknown host name \"" + hostPort.item1 + "\"");
       }
     }
     
