@@ -5,13 +5,15 @@ package org.avis.util;
  * 
  * @author Matthew Phillips
  */
-public final class Format
+public final class Text
 {
   private static final char [] HEX_TABLE = 
-  {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-   'a', 'b', 'c', 'd', 'e', 'f'};
+    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+     'a', 'b', 'c', 'd', 'e', 'f'};
+  
+  private static final String [] EMPTY_STRING_ARRAY = new String [0];
 
-  private Format ()
+  private Text ()
   {
     // cannot be instantiated
   }
@@ -247,5 +249,17 @@ public final class Format
     }
     
     return text;
+  }
+  
+  /**
+   * String.split ("") returns {""} rather than {} like you might
+   * expect: this returns empty array on "".
+   */
+  public static String [] split (String text, String regex)
+  {
+    if (text.length () == 0)
+      return EMPTY_STRING_ARRAY;
+    else
+      return text.split (regex);
   }
 }

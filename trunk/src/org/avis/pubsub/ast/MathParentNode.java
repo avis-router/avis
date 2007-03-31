@@ -2,7 +2,7 @@ package org.avis.pubsub.ast;
 
 import java.util.Map;
 
-import static org.avis.util.Format.className;
+import static org.avis.util.Text.className;
 import static org.avis.util.Numbers.highestPrecision;
 import static org.avis.util.Numbers.upconvert;
 

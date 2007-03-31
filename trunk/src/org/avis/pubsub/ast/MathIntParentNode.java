@@ -1,6 +1,6 @@
 package org.avis.pubsub.ast;
 
-import static org.avis.util.Format.className;
+import static org.avis.util.Text.className;
 
 /**
  * Base class for math nodes that require integer arguments.

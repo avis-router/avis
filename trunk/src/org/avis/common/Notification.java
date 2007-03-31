@@ -16,13 +16,13 @@ import org.avis.util.InvalidFormatException;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
-import static org.avis.util.Format.appendBytes;
-import static org.avis.util.Format.appendEscaped;
-import static org.avis.util.Format.findFirstNonEscaped;
-import static org.avis.util.Format.parseNumberValue;
-import static org.avis.util.Format.parseOpaqueValue;
-import static org.avis.util.Format.parseStringValue;
-import static org.avis.util.Format.stripBackslashes;
+import static org.avis.util.Text.appendBytes;
+import static org.avis.util.Text.appendEscaped;
+import static org.avis.util.Text.findFirstNonEscaped;
+import static org.avis.util.Text.parseNumberValue;
+import static org.avis.util.Text.parseOpaqueValue;
+import static org.avis.util.Text.parseStringValue;
+import static org.avis.util.Text.stripBackslashes;
 
 public class Notification implements Map<String, Object>, Cloneable
 {

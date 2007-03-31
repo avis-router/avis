@@ -1,6 +1,6 @@
 package org.avis.pubsub.parser;
 
-import org.avis.util.Format;
+import org.avis.util.Text;
 
 public abstract class SubscriptionParserBase
 {
@@ -9,7 +9,7 @@ public abstract class SubscriptionParserBase
    */
   protected static String stripBackslashes (String text)
   {
-    return Format.stripBackslashes (text);
+    return Text.stripBackslashes (text);
   }
   
   /**

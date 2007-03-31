@@ -8,7 +8,7 @@ import org.avis.pubsub.ast.nodes.Const;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
-import static org.avis.util.Format.className;
+import static org.avis.util.Text.className;
 
 /**
  * The base class for all nodes in a subscription expression abstract
