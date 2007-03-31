@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static org.avis.util.Format.className;
+import static java.util.Collections.emptySet;
+
+import static org.avis.util.Text.className;
 
 /**
  * Defines the set of valid options for an {@link Options} instance.
@@ -65,6 +67,18 @@ public class OptionSet
   public void add (String option, int min, int defaultValue, int max)
   {
     validation.put (option, new int [] {min, max});
+    defaults.set (option, defaultValue);
+  }
+  
+  /**
+   * Define a string-valued option that can take any value.
+   * 
+   * @param option The option name.
+   * @param defaultValue The default value.
+   */
+  public void add (String option, String defaultValue)
+  {
+    validation.put (option, emptySet ());
     defaults.set (option, defaultValue);
   }
   
@@ -232,7 +246,7 @@ public class OptionSet
       {
         Set<?> values = (Set<?>)validationInfo;
         
-        if (!values.contains (value))
+        if (!values.isEmpty () && !values.contains (value))
           message = "Value must be one of: " + values.toString ();
       } else
       {
