@@ -62,15 +62,6 @@
     </jar>
   </target>
   
-  <target name="properties">
-    <mkdir dir="classes" />
-  
-    <filter token="build_date" value="${build_date}" />
-    
-    <copy file="avis.properties" todir="classes"
-          overwrite="yes" filtering="yes" />
-  </target>
-  
   <target name="compile"
           description="Compile source and tests">
     <mkdir dir="classes" />
@@ -116,6 +107,15 @@
     </condition>
   </target>
 
+  <target name="properties" unless="jars_uptodate">
+    <mkdir dir="classes" />
+  
+    <filter token="build_date" value="${build_date}" />
+    
+    <copy file="avis.properties" todir="classes"
+          overwrite="yes" filtering="yes" />
+  </target>
+  
   <target name="jars"
           depends="compile,check_jars_uptodate,jar_avisd,jar_tools" />
     
@@ -136,7 +136,7 @@
   </target>
   
   <target name="jar_tools" depends="compile"
-          description="Build the ec/ep tools"
+          description="Build tools.jar used by ec/ep"
           unless="jars_uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
