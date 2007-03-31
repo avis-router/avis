@@ -137,7 +137,12 @@ public class Server implements IoHandler
       ("threadPool", new ExecutorFilter (executor));
     
     for (InetSocketAddress address : options.bindAddresses ())
+    {
+      if (isEnabled (TRACE))
+        trace ("Router binding to address: " + address, this);
+
       acceptor.bind (address, this, acceptorConfig);
+    }
   }
 
   /**
