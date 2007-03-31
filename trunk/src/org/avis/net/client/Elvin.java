@@ -193,8 +193,9 @@ public class Elvin
     send (new NotifyEmit (notification));
   }
 
-  private <E extends Message> E sendAndReceive (XidMessage request,
-                                                Class<E> expectedReplyType)
+  private synchronized <E extends Message>
+    E sendAndReceive (XidMessage request,
+                      Class<E> expectedReplyType)
     throws IOException
   {
     send (request);
@@ -264,9 +265,9 @@ public class Elvin
   }
   
   @SuppressWarnings("unchecked")
-  private synchronized <E extends Message>
-    E receive (Class<E> expectedMessageType,
-               XidMessage inResponseTo, long timeout)
+  private <E extends Message> E receive (Class<E> expectedMessageType,
+                                         XidMessage inResponseTo,
+                                         long timeout)
     throws IOException
   {
     Message message = receive (timeout);
@@ -346,6 +347,9 @@ public class Elvin
 
   protected synchronized void handleReply (Message message)
   {
+    if (lastReceived != null)
+      throw new IllegalStateException ("Receive buffer overflow");
+
     lastReceived = message;
     
     notifyAll ();
