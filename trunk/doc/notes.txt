@@ -11,6 +11,18 @@ R1.1
 
 Not allocated
 
+* Klaus: add interface selection:
+"""
+However, looking through the API docs, it doesn't look hard to add.
+Do you just want the ability to specify the interface(s) (e.g. "en1")
+as part of the config?
+
+It would help a lot to be able to choose a network interface.  It
+could also be useful to be able to choose a hostname (understood as
+"bind to every IP address associated with this hostname").  I'd
+probably prefer the latter if I had to choose.
+"""
+
 * what happens when sending ntfn to client that's too big?
 * sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
 * test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
