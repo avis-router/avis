@@ -1,10 +1,26 @@
 package org.avis.net.server;
 
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import org.avis.util.IllegalOptionException;
 import org.avis.util.OptionSet;
 import org.avis.util.Options;
+import org.avis.util.Pair;
+
+import static java.lang.Integer.parseInt;
+import static java.util.Collections.singleton;
 
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.util.Text.split;
 
 /**
  * Options used to configure the Avis server.
@@ -20,6 +36,8 @@ public class ServerOptions extends Options
     public ServerOptionSet ()
     {
       add ("Port", 1, DEFAULT_PORT, 65535);
+      add ("Bind.Interfaces", "*");
+      add ("Bind.Hosts", "");
     }
   }
   
@@ -36,5 +54,87 @@ public class ServerOptions extends Options
     this ();
     
     set ("Port", port);
+  }
+  
+  /**
+   * Generate the set of network addresses the server should bind to
+   * as specified by the Bind.Hosts and Bind.Interfaces settings.
+   */
+  public Set<InetSocketAddress> bindAddresses ()
+    throws SocketException
+  {
+    String interfaceNames = getString ("Bind.Interfaces");
+    String hostNames = getString ("Bind.Hosts");
+    int defaultPort = getInt ("Port");
+  
+    if (interfaceNames.equals ("*") || hostNames.equals ("*"))
+      return singleton (new InetSocketAddress (defaultPort));
+    
+    Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
+    
+    for (String interfaceName : split (interfaceNames, " *, *"))
+    {
+      Pair<String,Integer> hostPort = hostPortFor (interfaceName, defaultPort);
+      NetworkInterface netInterface = NetworkInterface.getByName (hostPort.item1);
+      
+      if (netInterface == null)
+        throw new IllegalOptionException
+          ("Unknown interface name: " + interfaceName);
+      
+      for (Enumeration<InetAddress> i = netInterface.getInetAddresses ();
+           i.hasMoreElements (); )
+      {
+        addresses.add (new InetSocketAddress (i.nextElement (), hostPort.item2));        
+      }
+    }
+    
+    for (String hostName : split (hostNames, " *, *"))
+    {
+      Pair<String,Integer> hostPort = hostPortFor (hostName, defaultPort);
+      
+      try
+      {
+        for (InetAddress addr : InetAddress.getAllByName (hostPort.item1))
+          addresses.add (new InetSocketAddress (addr, hostPort.item2));
+      } catch (UnknownHostException ex)
+      {
+        throw new IllegalOptionException
+          ("Unknown host name in \"" + hostName + "\"");
+      }
+    }
+    
+    return addresses;
+  }
+
+  private static Pair<String, Integer> hostPortFor (String hostPortStr,
+                                                    int defaultPort)
+  {
+    Pair<String, Integer> hostPort = new Pair<String, Integer> ();
+    
+    hostPortStr = hostPortStr.trim ();
+    
+    hostPort.item1 = hostPortStr;
+    hostPort.item2 = defaultPort;
+    
+    int colon = hostPortStr.indexOf (':');
+    
+    if (colon != -1)
+    {
+      if (colon == 0 || colon == hostPortStr.length () - 1)
+        throw new IllegalOptionException
+          ("Invalid name:port item: \"" + hostPortStr + "\"");
+  
+      try
+      {
+        hostPort.item1 = hostPortStr.substring (0, colon);
+        hostPort.item2 = parseInt (hostPortStr.substring (colon + 1));
+      } catch (NumberFormatException ex)
+      {
+        throw new IllegalOptionException
+          ("Invalid port number in \"" + hostPortStr + "\"");
+      }
+    }
+    
+    return hostPort;
   }
 }
