@@ -21,6 +21,7 @@ public class JUTestOptions
     OptionSet routerOptionSet = new OptionSet (connectionOptionSet);
     
     routerOptionSet.add ("Port", 1, 2917, 65535);
+    routerOptionSet.add ("Interfaces", "*");
     routerOptionSet.add ("Vendor-Identification", "Foobar");
     
     Options routerOptions = new Options (routerOptionSet);
@@ -28,6 +29,7 @@ public class JUTestOptions
     Properties loadedProperties = new Properties ();
     loadedProperties.setProperty ("Port", "29170");
     loadedProperties.setProperty ("Keys.Max-Count", "42");
+    loadedProperties.setProperty ("Interfaces", "en1");
     
     routerOptions.setAll (loadedProperties);
     
@@ -43,6 +45,7 @@ public class JUTestOptions
       connectionOptionSet.accepted (connectionOptions, requestedOptions);
     
     assertEquals (29170, routerOptions.getInt ("Port"));
+    assertEquals ("en1", routerOptions.getString ("Interfaces"));
     assertEquals (20*K, connectionOptions.getInt ("Packet.Max-Length"));
     assertEquals (42, connectionOptions.getInt ("Keys.Max-Count"));
     assertEquals (1234, connectionOptions.getInt ("Subscription.Max-Count"));
