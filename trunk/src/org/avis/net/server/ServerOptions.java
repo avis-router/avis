@@ -83,9 +83,7 @@ public class ServerOptions extends Options
       
       for (Enumeration<InetAddress> i = netInterface.getInetAddresses ();
            i.hasMoreElements (); )
-      {
-        addresses.add (new InetSocketAddress (i.nextElement (), hostPort.item2));        
-      }
+        addAddress (addresses, i.nextElement (), hostPort.item2);
     }
     
     for (String hostName : split (hostNames, " *, *"))
@@ -94,8 +92,8 @@ public class ServerOptions extends Options
       
       try
       {
-        for (InetAddress addr : InetAddress.getAllByName (hostPort.item1))
-          addresses.add (new InetSocketAddress (addr, hostPort.item2));
+        for (InetAddress address : InetAddress.getAllByName (hostPort.item1))
+          addAddress (addresses, address, hostPort.item2);
       } catch (UnknownHostException ex)
       {
         throw new IllegalOptionException
@@ -104,6 +102,13 @@ public class ServerOptions extends Options
     }
     
     return addresses;
+  }
+
+  private static void addAddress (Set<InetSocketAddress> addresses,
+                                  InetAddress address, int port)
+  {
+    if (!address.isLinkLocalAddress ())
+      addresses.add (new InetSocketAddress (address, port));
   }
 
   private static Pair<String, Integer> hostPortFor (String hostPortStr,
