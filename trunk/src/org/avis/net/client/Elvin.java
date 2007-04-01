@@ -34,6 +34,7 @@ import org.avis.net.messages.Nack;
 import org.avis.net.messages.NotifyDeliver;
 import org.avis.net.messages.NotifyEmit;
 import org.avis.net.messages.SubAddRqst;
+import org.avis.net.messages.SubDelRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.messages.XidMessage;
 
@@ -174,7 +175,7 @@ public class Elvin
     return sub;
   }
 
-  public void subscribe (Subscription subscription)
+  public synchronized void subscribe (Subscription subscription)
     throws IOException
   {
     SubAddRqst subAddRqst = new SubAddRqst (subscription.subscriptionExpr);
@@ -187,6 +188,20 @@ public class Elvin
     subscriptions.put (subscription.id, subscription);
   }
   
+  public synchronized void unsubscribe (Subscription subscription)
+    throws IOException
+  {
+    if (subscriptions.remove (subscription.id) != subscription)
+      throw new IllegalArgumentException ("Not a valid subcription");
+
+    sendAndReceive (new SubDelRqst (subscription.id), SubRply.class);
+  }
+  
+  public boolean hasSubscription (Subscription subscription)
+  {
+    return subscriptions.containsValue (subscription);
+  }
+
   public void send (Notification notification)
     throws IOException
   {
