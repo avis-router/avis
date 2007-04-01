@@ -49,6 +49,7 @@ import org.avis.pubsub.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 import org.avis.util.IllegalOptionException;
 
+import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.diagnostic;
@@ -138,8 +139,8 @@ public class Server implements IoHandler
     
     for (InetSocketAddress address : options.bindAddresses ())
     {
-      if (isEnabled (TRACE))
-        trace ("Router binding to address: " + address, this);
+      if (isEnabled (DIAGNOSTIC))
+        diagnostic ("Router binding to address: " + address, this);
 
       acceptor.bind (address, this, acceptorConfig);
     }
