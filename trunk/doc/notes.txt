@@ -22,6 +22,26 @@ could also be useful to be able to choose a hostname (understood as
 "bind to every IP address associated with this hostname").  I'd
 probably prefer the latter if I had to choose.
 """
+################################################################
+# protocol
+#
+# Each protocol entry is an URL that describes a protocol that elvind
+# will use to accept client connections. Add more URLs for each protocol
+# you want to make available (some example/default values are supplied).
+#
+# IP based protocols (TCP, UDP, and SSL) allow the use of 0.0.0.0 to listen
+# on all IPv4 interfaces, or [::] to listen on all IPv6 interfaces.
+# 
+# Default: tcp,none,xdr on all IPv4 interfaces at port 2917
+
+protocol elvin:/tcp,none,xdr/0.0.0.0:2917
+# protocol elvin:/udp,none,xdr/0.0.0.0:12301
+# protocol elvin:/tcp,none,xml/0.0.0.0:12301
+# protocol elvin:/ssl,none,xdr/0.0.0.0:12302
+# protocol elvin:/gssapi,none,xdr/0.0.0.0:12305
+# protocol elvin:/unix,none,xdr/0.0.0.0/tmp/elvin
+
+
 
 * what happens when sending ntfn to client that's too big?
 * sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
