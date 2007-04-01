@@ -175,7 +175,7 @@ public class Server implements IoHandler
         {
           if (connection.isOpen ())
           {
-            session.write (disconnMessage);
+            send (session, disconnMessage);
             connection.close ();
           }
         } finally
@@ -192,6 +192,14 @@ public class Server implements IoHandler
     
     executor.shutdown ();
     executor = null;
+  }
+
+  private static void send (IoSession session, Message message)
+  {    
+    if (isEnabled (TRACE))
+      trace ("Server sent message: " + message, Server.class);
+   
+    session.write (message);
   }
 
   // IoHandler interface
@@ -256,8 +264,8 @@ public class Server implements IoHandler
       
       if (message instanceof XidMessage)
       {
-        session.write
-          (new Nack ((XidMessage)message, PROT_ERROR, ex.getMessage ()));
+        send (session,
+              new Nack ((XidMessage)message, PROT_ERROR, ex.getMessage ()));
       }
       
       session.close ().join ();
@@ -294,7 +302,7 @@ public class Server implements IoHandler
       {
         setConnection (session, connection);
         
-        session.write (new ConnRply (message, connection.options.accepted ()));
+        send (session, new ConnRply (message, connection.options.accepted ()));
       } finally
       {
         connection.unlockWrite ();
@@ -330,7 +338,7 @@ public class Server implements IoHandler
         connection.notificationKeys = newNtfnKeys;
         connection.subscriptionKeys = newSubKeys;
       
-        session.write (new SecRply (message));
+        send (session, new SecRply (message));
       }
     } finally
     {
@@ -347,7 +355,7 @@ public class Server implements IoHandler
     {
       connection.close ();
       
-      session.write (new DisconnRply (message));
+      send (session, new DisconnRply (message));
     } finally
     {
       connection.unlockWrite ();
@@ -380,7 +388,7 @@ public class Server implements IoHandler
        
         connection.addSubscription (subscription);
   
-        session.write (new SubRply (message, subscription.id));
+        send (session, new SubRply (message, subscription.id));
       }
     } catch (ParseException ex)
     {
@@ -416,7 +424,7 @@ public class Server implements IoHandler
   
         subscription.keys = newKeys;
         
-        session.write (new SubRply (message, subscription.id));
+        send (session, new SubRply (message, subscription.id));
       }
     } catch (ParseException ex)
     {
@@ -438,7 +446,7 @@ public class Server implements IoHandler
     try
     {
       if (connection.removeSubscription (message.subscriptionId) != null)
-        session.write (new SubRply (message, message.subscriptionId));
+        send (session, new SubRply (message, message.subscriptionId));
       else
         nackNoSub (session, message, message.subscriptionId,
                    "Invalid subscription ID");
@@ -491,7 +499,7 @@ public class Server implements IoHandler
 
         if (matches.matched ())
         {
-          session.write (new NotifyDeliver (message.attributes,
+          send (session, new NotifyDeliver (message.attributes,
                                             matches.secure (),
                                             matches.insecure ()));
         }
@@ -513,7 +521,7 @@ public class Server implements IoHandler
   {
     // if no other outgoing messages are waiting, send a confirm message
     if (session.getScheduledWriteRequests () == 0)
-      session.write (new ConfConn ());
+      send (session, new ConfConn ());
   }
   
   private static void handleQuench (IoSession session,
@@ -523,7 +531,7 @@ public class Server implements IoHandler
       ("Rejecting quench request from client: quench is not supported",
        Server.class);
     
-    session.write (new Nack (message, NOT_IMPL, "Quench not supported"));
+    send (session, new Nack (message, NOT_IMPL, "Quench not supported"));
   }
 
   private static void handleError (IoSession session, ErrorMessage message)
@@ -533,9 +541,9 @@ public class Server implements IoHandler
     
     if (message.cause instanceof XidMessage)
     {
-      session.write
-        (new Nack ((XidMessage)message.cause, PROT_ERROR,
-                   message.error.getMessage ()));
+      send (session,
+            new Nack ((XidMessage)message.cause, PROT_ERROR,
+                      message.error.getMessage ()));
     }
     
     // close and wait to avoid reading any further bogus data left in stream
@@ -591,7 +599,7 @@ public class Server implements IoHandler
                 ex.getMessage (), Server.class);
     diagnostic ("Subscription was: " + expr, Server.class);
     
-    session.write (new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, ""));
+    send (session, new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, ""));
   }
   
   /**
@@ -600,7 +608,7 @@ public class Server implements IoHandler
   private static void nackLimit (IoSession session, XidMessage inReplyTo,
                                  String message)
   {
-    session.write (new Nack (inReplyTo, IMPL_LIMIT, message));
+    send (session, new Nack (inReplyTo, IMPL_LIMIT, message));
   }
   
   /**
@@ -609,7 +617,7 @@ public class Server implements IoHandler
   private static void nackNoSub (IoSession session, XidMessage inReplyTo,
                                  long subscriptionId, String message)
   {
-    session.write (new Nack (inReplyTo, NO_SUCH_SUB, message,
+    send (session, new Nack (inReplyTo, NO_SUCH_SUB, message,
                              subscriptionId));
   }
   
@@ -622,8 +630,7 @@ public class Server implements IoHandler
   public void messageSent (IoSession session, Object message)
     throws Exception
   {
-    if (isEnabled (TRACE))
-      trace ("Server sent message: " + message, this);
+    // zip
   }
 
   /**
