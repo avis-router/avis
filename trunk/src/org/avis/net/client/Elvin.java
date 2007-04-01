@@ -40,14 +40,17 @@ import org.avis.net.messages.XidMessage;
 
 import dsto.dfc.logging.Log;
 
+import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.isEnabled;
+import static dsto.dfc.logging.Log.trace;
+import static dsto.dfc.logging.Log.warn;
+
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.net.client.ElvinURI.defaultProtocol;
-
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.warn;
 
 public class Elvin
 {
@@ -76,6 +79,7 @@ public class Elvin
   {
     this.elvinUri = elvinUri;
     this.subscriptions = new HashMap<Long, Subscription> ();
+    this.executor = newSingleThreadExecutor ();
     
     if (!elvinUri.protocol.equals (defaultProtocol ()))
       throw new IllegalArgumentException
@@ -116,8 +120,6 @@ public class Elvin
       
       filterChainBuilder.addLast
         ("codec", new ProtocolCodecFilter (codecFactory));
-      
-      executor = newSingleThreadExecutor ();
       
       filterChainBuilder.addLast
         ("threadPool", new ExecutorFilter (executor));
@@ -222,14 +224,12 @@ public class Elvin
     throws IOException
   {
     checkConnected ();
+
+    if (isEnabled (TRACE))
+      trace ("Client sent message: " + message, this);
+    
     clientSession.write (message);
   }
-  
-//  private Message receive ()
-//    throws InterruptedException, NoConnectionException, IOException
-//  {
-//    return receive (RECEIVE_TIMEOUT);
-//  }
   
   private synchronized Message receive (long timeout)
     throws IOException
@@ -265,12 +265,6 @@ public class Elvin
     if (!clientSession.isConnected ())
       throw new IllegalStateException ("Not connected");
   }
-  
-//  private <E extends Message> E receive (Class<E> expectedMessageType)
-//    throws IOException
-//  {
-//    return receive (null, expectedMessageType, RECEIVE_TIMEOUT);
-//  }
   
   private <E extends Message> E receive (Class<E> expectedMessageType,
                                          XidMessage inResponseTo)
@@ -330,17 +324,17 @@ public class Elvin
     // todo
   }
   
-  private void handleNotifyDeliver (NotifyDeliver message)
+  private void handleNotifyDeliver (final NotifyDeliver message)
   {
     Notification ntfn = new Notification (message.attributes);
-    
+
     fireNotify (message.secureMatches, true, ntfn);
     fireNotify (message.insecureMatches, false, ntfn);
   }
 
-  private void fireNotify (long [] subscriptionIds,
-                           boolean secure,
-                           Notification ntfn)
+  protected void fireNotify (long [] subscriptionIds,
+                             boolean secure,
+                             Notification ntfn)
   {
     for (long subscriptionId : subscriptionIds)
     {
@@ -381,6 +375,9 @@ public class Elvin
     public void messageReceived (IoSession session, Object message)
       throws Exception
     {
+      if (isEnabled (TRACE))
+        trace ("Client got message: " + message, this);
+      
       if (message instanceof XidMessage)
         handleReply ((Message)message);
       else
