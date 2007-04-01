@@ -37,7 +37,7 @@ public class ServerOptions extends Options
     {
       add ("Port", 1, DEFAULT_PORT, 65535);
       add ("Bind.Interfaces", "*");
-      add ("Bind.Hosts", "");
+      add ("Bind.Hosts", "*");
     }
   }
   
