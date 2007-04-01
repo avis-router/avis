@@ -1,5 +1,6 @@
 package org.avis.util;
 
+
 /**
  * General text formatting utilities.
  * 
@@ -16,6 +17,14 @@ public final class Text
   private Text ()
   {
     // cannot be instantiated
+  }
+  
+  /**
+   * Return just the name (minus the package) of an object's class.
+   */
+  public static String className (Object object)
+  { 
+    return className (object.getClass ());
   }
   
   /**
