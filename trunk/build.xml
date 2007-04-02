@@ -30,7 +30,11 @@
   <property name="innosetup.home" value="C:\Program Files\Inno Setup 5" />
   
   <path id="classpath">
-    <fileset dir="lib" includes="*.jar" excludes="avisd.jar"/>
+    <fileset dir="lib">
+      <include name="*.jar" />
+      <exclude name="avisd.jar" />
+      <exclude name="tools.jar" />
+    </fileset>
     <pathelement path="classes" />
     <pathelement path="tst_classes" />
   </path>
@@ -72,8 +76,10 @@
   </target>
   
   <!-- TODO: currently does not work. Does Ant 1.6 support JUnit 4? -->
+  <!-- Ant 1.6 needs "-lib lib" on command line to find JUnit -->
   <target name="tests" description="Run test cases (currently broken)">
-    <junit fork="yes" haltonfailure="no" printsummary="true">
+    <junit fork="yes" haltonfailure="yes" printsummary="true">
+   
       <formatter type="plain" usefile="false" />
       <classpath refid="classpath" />
       
