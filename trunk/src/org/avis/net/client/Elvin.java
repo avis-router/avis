@@ -40,17 +40,18 @@ import org.avis.net.messages.XidMessage;
 
 import dsto.dfc.logging.Log;
 
+import static java.util.concurrent.Executors.newCachedThreadPool;
+
+import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
+import static org.avis.common.Common.CLIENT_VERSION_MINOR;
+import static org.avis.net.client.ElvinURI.defaultProtocol;
+import static org.avis.util.Text.className;
+
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.trace;
 import static dsto.dfc.logging.Log.warn;
-
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
-
-import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
-import static org.avis.common.Common.CLIENT_VERSION_MINOR;
-import static org.avis.net.client.ElvinURI.defaultProtocol;
 
 public class Elvin
 {
@@ -79,7 +80,7 @@ public class Elvin
   {
     this.elvinUri = elvinUri;
     this.subscriptions = new HashMap<Long, Subscription> ();
-    this.executor = newSingleThreadExecutor ();
+    this.executor = newCachedThreadPool ();
     
     if (!elvinUri.protocol.equals (defaultProtocol ()))
       throw new IllegalArgumentException
@@ -101,7 +102,7 @@ public class Elvin
   {
     try
     {
-      SocketConnector connector = new SocketConnector ();
+      SocketConnector connector = new SocketConnector (1, executor);
 
       /* Change the worker timeout to 1 second to make the I/O thread
        * quit soon when there's no connection to manage. */
@@ -227,7 +228,7 @@ public class Elvin
 
     if (isEnabled (TRACE))
       trace ("Client sent message: " + message, this);
-    
+
     clientSession.write (message);
   }
   
@@ -299,8 +300,8 @@ public class Elvin
     } else
     {
       throw new IllegalStateException
-        ("Received a " + message.getClass ().getName () +
-         ": was expecting " + expectedMessageType.getName ());
+        ("Received a " + className (message) +
+         ": was expecting " + className (expectedMessageType));
     }
   }
   
@@ -326,10 +327,22 @@ public class Elvin
   
   private void handleNotifyDeliver (final NotifyDeliver message)
   {
-    Notification ntfn = new Notification (message.attributes);
-
-    fireNotify (message.secureMatches, true, ntfn);
-    fireNotify (message.insecureMatches, false, ntfn);
+    /*
+     * Do not fire event this thread since a listener may trigger a
+     * sendAndReceive () which will block the IO processor thread by
+     * waiting for a reply that cannot be processed since the IO
+     * processor is busy calling this method.
+     */
+    executor.execute (new Runnable ()
+    {
+      public void run ()
+      {
+        Notification ntfn = new Notification (message.attributes);
+        
+        fireNotify (message.secureMatches, true, ntfn);
+        fireNotify (message.insecureMatches, false, ntfn);
+      }
+    });
   }
 
   protected void fireNotify (long [] subscriptionIds,
