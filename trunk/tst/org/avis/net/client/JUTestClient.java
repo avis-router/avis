@@ -67,4 +67,23 @@ public class JUTestClient
     client.close ();
     server.close ();
   }
+  
+  @Test
+  public void serverShutdown ()
+    throws Exception
+  {
+    Server server = new Server (29170);
+    Elvin client = new Elvin ("elvin://localhost:29170");
+    
+    client.subscribe ("require (test)");
+    
+    server.close ();
+    
+    // todo should listen for event here when supported
+    Thread.sleep (2000);
+    
+    assertFalse (client.isConnected ());
+    
+    client.close ();
+  }
 }
