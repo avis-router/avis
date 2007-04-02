@@ -31,7 +31,6 @@ public class JUTestClient
     {
       public void notificationReceived (NotificationEvent e)
       {
-        System.out.println ("notification!");
         try
         {
           client.unsubscribe (sub);
