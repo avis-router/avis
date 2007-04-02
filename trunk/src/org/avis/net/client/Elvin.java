@@ -168,7 +168,7 @@ public class Elvin
     }
   }
   
-  public boolean isConnected ()
+  public synchronized boolean isConnected ()
   {
     return clientSession != null && clientSession.isConnected ();
   }
