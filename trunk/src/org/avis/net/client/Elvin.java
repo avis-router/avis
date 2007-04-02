@@ -60,13 +60,13 @@ public class Elvin
   private ElvinURI elvinUri;
   private IoSession clientSession;
   private ExecutorService executor;
-  private boolean connected;
+  private boolean elvinConnectionOpen;
   private Map<Long, Subscription> subscriptions;
   
   /** This is effectively a single-item queue for handling responses
       to XID-based requests. It's volatile since it's used for inter-
       thread communication. */
-  protected volatile Message lastReceived;
+  protected volatile XidMessage lastReply;
 
   public Elvin (String elvinUri)
     throws URISyntaxException, IllegalArgumentException,
@@ -92,7 +92,7 @@ public class Elvin
     sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR),
                     ConnRply.class);
     
-    connected = true;
+    elvinConnectionOpen = true;
     
     // todo check connection options
   }
@@ -141,9 +141,9 @@ public class Elvin
   
   public synchronized void close ()
   {
-    if (clientSession != null && clientSession.isConnected ())
+    if (isConnected ())
     {
-      if (connected)
+      if (elvinConnectionOpen)
       {
         try
         {
@@ -153,7 +153,7 @@ public class Elvin
           Log.diagnostic ("Failed to cleanly disconnect", this, ex);
         } finally
         {
-          connected = false;
+          elvinConnectionOpen = false;
         }
       }
       
@@ -166,6 +166,11 @@ public class Elvin
       executor.shutdown ();
       executor = null;
     }
+  }
+  
+  public boolean isConnected ()
+  {
+    return clientSession != null && clientSession.isConnected ();
   }
   
   public Subscription subscribe (String subscriptionExpr)
@@ -200,7 +205,7 @@ public class Elvin
     sendAndReceive (new SubDelRqst (subscription.id), SubRply.class);
   }
   
-  public boolean hasSubscription (Subscription subscription)
+  public synchronized boolean hasSubscription (Subscription subscription)
   {
     return subscriptions.containsValue (subscription);
   }
@@ -237,18 +242,18 @@ public class Elvin
   {
     try
     {
-      if (lastReceived == null)
+      if (lastReply == null)
         wait (timeout);
     } catch (InterruptedException ex)
     {
       throw new RuntimeException (ex);
     }
   
-    if (lastReceived != null)
+    if (lastReply != null)
     {
-      Message message = lastReceived;
+      Message message = lastReply;
       
-      lastReceived = null;
+      lastReply = null;
       
       return message;
     } else
@@ -305,7 +310,24 @@ public class Elvin
     }
   }
   
-  protected void handleRouterMessage (Message message)
+  /**
+   * Handle replies to client-initiated messages by delivering them
+   * back to the waiting thread.
+   */
+  protected synchronized void handleReply (XidMessage reply)
+  {
+    if (lastReply != null)
+      throw new IllegalStateException ("Reply buffer overflow");
+
+    lastReply = reply;
+    
+    notifyAll ();
+  }
+  
+  /**
+   * Handle router-initiated messages (e.g. NotifyDeliver, Disconn, etc).
+   */
+  protected void handleMessage (Message message)
   {
     switch (message.typeId ())
     {
@@ -320,9 +342,11 @@ public class Elvin
     }
   }
 
-  private void handleDisconnect (Disconn disconn)
+  private synchronized void handleDisconnect (Disconn disconn)
   {
-    // todo
+    elvinConnectionOpen = false;
+    
+    close ();
   }
   
   private void handleNotifyDeliver (final NotifyDeliver message)
@@ -345,9 +369,9 @@ public class Elvin
     });
   }
 
-  protected void fireNotify (long [] subscriptionIds,
-                             boolean secure,
-                             Notification ntfn)
+  protected synchronized void fireNotify (long [] subscriptionIds,
+                                          boolean secure,
+                                          Notification ntfn)
   {
     for (long subscriptionId : subscriptionIds)
     {
@@ -366,23 +390,13 @@ public class Elvin
       }
     }
   }
-
-  protected synchronized void handleReply (Message message)
-  {
-    if (lastReceived != null)
-      throw new IllegalStateException ("Receive buffer overflow");
-
-    lastReceived = message;
-    
-    notifyAll ();
-  }
   
   class MessageHandler extends IoHandlerAdapter
   {
     public void exceptionCaught (IoSession session, Throwable cause)
       throws Exception
     {
-      alarm ("Unexpected exception", this, cause);
+      alarm ("Unexpected exception in Elvin client", this, cause);
     }
 
     public void messageReceived (IoSession session, Object message)
@@ -392,9 +406,9 @@ public class Elvin
         trace ("Client got message: " + message, this);
       
       if (message instanceof XidMessage)
-        handleReply ((Message)message);
+        handleReply ((XidMessage)message);
       else
-        handleRouterMessage ((Message)message);
+        handleMessage ((Message)message);
     }
     
     @Override
