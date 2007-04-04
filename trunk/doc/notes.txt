@@ -49,7 +49,7 @@ protocol elvin:/tcp,none,xdr/0.0.0.0:2917
 * constant pool for Const?
 * profile performance
 * switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
-  (10.4 only, but Java 5 only works there anyway)
+  (10.4 only, but Java 5 only works there anyway). /Library/LaunchDaemons/ 
 * partly done: router-wide options that allow client to grow connection
   footprint such like as keys, subscriptions. client can still easily kill
   server using long subs atm. keys attack window reduced but still may be
