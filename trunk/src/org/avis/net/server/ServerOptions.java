@@ -2,6 +2,7 @@ package org.avis.net.server;
 
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import java.net.InetAddress;
@@ -49,11 +50,29 @@ public class ServerOptions extends Options
     optionSet.inheritFrom (CONNECTION_OPTION_SET);
   }
 
+  /**
+   * Shortcut to create an option set with a given "Port" setting.
+   */
   public ServerOptions (int port)
   {
     this ();
     
     set ("Port", port);
+  }
+  
+  /**
+   * Shortcut to create an option set from an initial set of
+   * properties.
+   * 
+   * @param properties The initial settings.
+   * 
+   * @see #setAll(Properties)
+   */
+  public ServerOptions (Properties properties)
+  {
+    this ();
+    
+    setAll (properties);
   }
   
   /**
