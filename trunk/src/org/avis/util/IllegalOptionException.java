@@ -15,6 +15,6 @@ public class IllegalOptionException extends IllegalArgumentException
 
   public IllegalOptionException (String option, String message)
   {
-    this ("Option error: " + message + ": " + option);
+    this ("Error in option \"" + option + "\": " + message);
   }
 }
