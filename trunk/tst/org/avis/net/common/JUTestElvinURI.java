@@ -138,6 +138,29 @@ public class JUTestElvinURI
                   uri.toCanonicalString ());
   }
   
+  @Test
+  public void constructors ()
+    throws Exception
+  {
+    ElvinURI defaultUri = new ElvinURI ("elvin:5.6/a,b,c/default_host:1234");
+    
+    ElvinURI uri = new ElvinURI ("elvin://host", defaultUri);
+    
+    assertEquals (defaultUri.versionMajor, uri.versionMajor);
+    assertEquals (defaultUri.versionMinor, uri.versionMinor);
+    assertEquals (defaultUri.protocol, uri.protocol);
+    assertEquals ("host", uri.host);
+    assertEquals (defaultUri.port, uri.port);
+    
+    uri = new ElvinURI ("elvin:7.0/x,y,z/host:5678", defaultUri);
+    
+    assertEquals (7, uri.versionMajor);
+    assertEquals (0, uri.versionMinor);
+    assertEquals (list ("x", "y", "z"), uri.protocol);
+    assertEquals ("host", uri.host);
+    assertEquals (5678, uri.port);
+  }
+  
   private static void assertSameUri (String uri1, String uri2)
     throws URISyntaxException
   {
