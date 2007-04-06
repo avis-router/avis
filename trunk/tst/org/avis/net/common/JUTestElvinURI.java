@@ -1,6 +1,8 @@
-package org.avis.net.client;
+package org.avis.net.common;
 
 import java.net.URISyntaxException;
+
+import org.avis.net.common.ElvinURI;
 
 import org.junit.Test;
 

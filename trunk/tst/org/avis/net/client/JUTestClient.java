@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.avis.common.Notification;
 import org.avis.net.server.Server;
 
+import org.junit.After;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
@@ -15,11 +16,20 @@ import static org.junit.Assert.fail;
 
 public class JUTestClient
 {
+  private Server server;
+
+  @After
+  public void cleanup ()
+  {
+    if (server != null)
+      server.close ();
+  }
+  
   @Test
   public void modifySubInNotifyEvent ()
     throws Exception
   {
-    Server server = new Server (29170);
+    server = new Server (29170);
     
     final Elvin client = new Elvin ("elvin://localhost:29170");
     
@@ -56,9 +66,9 @@ public class JUTestClient
     {
       long waitStart = currentTimeMillis ();
       
-      sub.wait (5000);
+      sub.wait (10000);
       
-      if (currentTimeMillis () - waitStart >= 5000)
+      if (currentTimeMillis () - waitStart >= 10000)
         fail ("Timed out waiting for unsubscribe");
     }
     
@@ -72,7 +82,7 @@ public class JUTestClient
   public void serverShutdown ()
     throws Exception
   {
-    Server server = new Server (29170);
+    server = new Server (29170);
     Elvin client = new Elvin ("elvin://localhost:29170");
     
     client.subscribe ("require (test)");

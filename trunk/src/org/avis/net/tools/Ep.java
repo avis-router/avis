@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 
 import org.avis.common.Notification;
 import org.avis.net.client.Elvin;
-import org.avis.net.client.ElvinURI;
+import org.avis.net.common.ElvinURI;
 import org.avis.util.IllegalOptionException;
 import org.avis.util.InvalidFormatException;
 

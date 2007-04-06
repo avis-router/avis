@@ -1,4 +1,4 @@
-package org.avis.net.client;
+package org.avis.net.common;
 
 import java.util.List;
 import java.util.Map;

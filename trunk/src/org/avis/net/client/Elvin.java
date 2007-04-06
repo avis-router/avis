@@ -23,6 +23,7 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.Notification;
+import org.avis.net.common.ElvinURI;
 import org.avis.net.common.FrameCodec;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -44,7 +45,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
-import static org.avis.net.client.ElvinURI.defaultProtocol;
+import static org.avis.net.common.ElvinURI.defaultProtocol;
 import static org.avis.util.Text.className;
 
 import static dsto.dfc.logging.Log.TRACE;

@@ -11,9 +11,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.avis.net.client.Elvin;
-import org.avis.net.client.ElvinURI;
 import org.avis.net.client.NotificationEvent;
 import org.avis.net.client.NotificationListener;
+import org.avis.net.common.ElvinURI;
 import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
