@@ -40,6 +40,8 @@ import static org.avis.util.Collections.list;
  * <p>
  * Example URI 2: <code>elvin:4.0/tcp,ssl,xdr/localhost:29170</code>.
  * 
+ * todo need to support []'s in IPv6 addresses
+ * 
  * @author Matthew Phillips
  */
 public final class ElvinURI
@@ -106,17 +108,81 @@ public final class ElvinURI
   public ElvinURI (String uriString)
     throws URISyntaxException
   {
+    init ();
+
     this.uriString = uriString;
+    
+    parseUri ();
+    
+    this.hash = computeHash ();
+  }
+
+  /**
+   * Create a new instance from a host and port using defaults for others.
+   * 
+   * @param host Host name or IP address
+   * @param port Port number.
+   */
+  public ElvinURI (String host, int port)
+  {
+    init ();
+    
+    this.uriString = "elvin://" + host + ':' + port;
+    this.host = host;
+    this.port = port;
+    this.hash = computeHash ();
+  }
+
+  /**
+   * Create a new instance using an existing URI for defaults.
+   * 
+   * @param uriString The URI string.
+   * @param defaultUri The URI to use for any values that are not
+   *          specified by uriString.
+   * @throws URISyntaxException if the URI is not valid.
+   */
+  public ElvinURI (String uriString, ElvinURI defaultUri)
+    throws URISyntaxException
+  {
+    init (defaultUri);
+    
+    this.uriString = uriString;
+    
+    parseUri ();
+    
+    this.hash = computeHash ();
+  }
+  
+  /**
+   * Create a copy of a URI.
+   * 
+   * @param defaultUri The URI to copy.
+   */
+  public ElvinURI (ElvinURI defaultUri)
+  {
+    init (defaultUri);
+  }
+
+  private void init (ElvinURI defaultUri)
+  {
+    this.uriString = defaultUri.uriString;
+    this.versionMajor = defaultUri.versionMajor;
+    this.versionMinor = defaultUri.versionMinor;
+    this.protocol = defaultUri.protocol;
+    this.host = defaultUri.host;
+    this.port = defaultUri.port;
+    this.options = defaultUri.options;
+    this.hash = defaultUri.hash;
+  }
+
+  private void init ()
+  {
     this.versionMajor = CLIENT_VERSION_MAJOR;
     this.versionMinor = CLIENT_VERSION_MINOR;
     this.protocol = DEFAULT_PROTOCOL;
     this.host = null;
     this.port = DEFAULT_PORT;
     this.options = emptyMap ();
-    
-    parseUrl ();
-    
-    this.hash = computeHash ();
   }
 
   @Override
@@ -177,7 +243,7 @@ public final class ElvinURI
     return host.hashCode () ^ port ^ protocol.hashCode ();
   }
   
-  private void parseUrl ()
+  private void parseUri ()
     throws URISyntaxException
   { 
     Matcher matcher = URL_PATTERN.matcher (uriString);
