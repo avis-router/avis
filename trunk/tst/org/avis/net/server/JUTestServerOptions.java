@@ -25,8 +25,7 @@ public class JUTestServerOptions
     throws Exception
   {
     ServerOptions options = new ServerOptions ();
-    options.set ("Bind.Interfaces", "");
-    options.set ("Bind.Hosts", "*");
+    options.set ("Listen", "elvin://0.0.0.0");
     
     Set<InetSocketAddress> addresses = options.bindAddresses ();
     
@@ -87,8 +86,7 @@ public class JUTestServerOptions
     throws SocketException
   {
     ServerOptions options = new ServerOptions ();
-    options.set ("Bind.Interfaces", "");
-    options.set ("Bind.Hosts", hostOption);
+    options.set ("Listen", "elvin://" + hostOption);
     
     Set<InetSocketAddress> addresses = options.bindAddresses ();
     
@@ -104,8 +102,7 @@ public class JUTestServerOptions
     throws SocketException
   {
     ServerOptions options = new ServerOptions ();
-    options.set ("Bind.Interfaces", interfaceOption);
-    options.set ("Bind.Hosts", "");
+    options.set ("Listen", "elvin://!" + interfaceOption);
     
     Set<InetSocketAddress> addresses = options.bindAddresses ();
     
