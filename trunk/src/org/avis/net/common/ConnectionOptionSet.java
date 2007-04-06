@@ -106,13 +106,12 @@ public class ConnectionOptionSet extends OptionSet
          "oldest", "newest", "largest", "fail");
     add ("Send-Queue.Max-Length", MAX, MAX, MAX);
 
-    add ("Supported-Key-Schemes", "SHA-1");
-    
-    // ------------ Avis-specific options
+    add ("Supported-Key-Schemes", "SHA-1");    
     
     add ("TCP.Send-Immediately", 0, 0, 1);
+
+    // ------------ Avis-specific options
     
-    // Avis-specific
     // Max connection keys for ntfn/sub
     add ("Connection.Max-Keys", 0, 1*K, 1*K);
     add ("Subscription.Max-Keys", 0, 256, 1*K);
