@@ -117,7 +117,7 @@ public class ServerOptions extends Options
       {
         throw new IllegalOptionException
           ("Listen",
-           "Invalid URI in \"" + listenItem + "\": " + ex.getMessage ());
+           "Invalid URI \"" + listenItem + "\": " + ex.getMessage ());
       }
     }
     
