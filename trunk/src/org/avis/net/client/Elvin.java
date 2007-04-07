@@ -68,7 +68,8 @@ public class Elvin
       to XID-based requests. It's volatile since it's used for inter-
       thread communication. */
   protected volatile XidMessage lastReply;
-
+  private Object replySemaphore;
+  
   public Elvin (String elvinUri)
     throws URISyntaxException, IllegalArgumentException,
            ConnectException, IOException
@@ -82,6 +83,7 @@ public class Elvin
     this.elvinUri = elvinUri;
     this.subscriptions = new HashMap<Long, Subscription> ();
     this.executor = newCachedThreadPool ();
+    this.replySemaphore = new Object ();
     
     if (!elvinUri.protocol.equals (defaultProtocol ()))
       throw new IllegalArgumentException
@@ -238,31 +240,36 @@ public class Elvin
     clientSession.write (message);
   }
   
-  private synchronized Message receive (long timeout)
+  private Message receive (long timeout)
     throws IOException
   {
-    try
+    synchronized (replySemaphore)
     {
       if (lastReply == null)
-        wait (timeout);
-    } catch (InterruptedException ex)
-    {
-      throw new RuntimeException (ex);
-    }
-  
-    if (lastReply != null)
-    {
-      Message message = lastReply;
-      
-      lastReply = null;
-      
-      return message;
-    } else
-    {
-      // may have failed because we are simply not connected any more
-      checkConnected ();
-      
-      throw new IOException ("Timeout error: did not receive a reply");
+      {
+        try
+        {
+          replySemaphore.wait (timeout);
+        } catch (InterruptedException ex)
+        {
+          throw new RuntimeException (ex);
+        }
+      }
+    
+      if (lastReply != null)
+      {
+        Message message = lastReply;
+        
+        lastReply = null;
+        
+        return message;
+      } else
+      {
+        // may have failed because we are simply not connected any more
+        checkConnected ();
+        
+        throw new IOException ("Timeout error: did not receive a reply");
+      }
     }
   }
   
@@ -315,14 +322,16 @@ public class Elvin
    * Handle replies to client-initiated messages by delivering them
    * back to the waiting thread.
    */
-  protected synchronized void handleReply (XidMessage reply)
+  protected void handleReply (XidMessage reply)
   {
-    if (lastReply != null)
-      throw new IllegalStateException ("Reply buffer overflow");
+    synchronized (replySemaphore)
+    {
+      if (lastReply != null)
+        throw new IllegalStateException ("Reply buffer overflow");
 
-    lastReply = reply;
-    
-    notifyAll ();
+      lastReply = reply;
+      replySemaphore.notifyAll ();
+    }
   }
   
   /**
