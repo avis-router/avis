@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import org.avis.util.Pair;
+
 import static org.avis.net.common.IO.getBytes;
 import static org.avis.net.common.IO.putBytes;
 import static org.avis.net.security.DualKeyScheme.checkProdOrCon;
@@ -229,6 +231,17 @@ public class Keys
       
       return keys;
     }
+  }
+  
+  public Pair<Keys> computeDelta (Keys keys)
+  {
+//    Keys addedKeys = new Keys ();
+//    Keys removedKeys = new Keys ();
+    
+    throw new UnsupportedOperationException ();
+    
+    // tddo
+//    return new Pair<Keys> (addedKeys, removedKeys);
   }
   
   /**
