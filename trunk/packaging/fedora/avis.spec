@@ -9,6 +9,7 @@ Vendor: (none)
 # Requires: java >= 0:1.4
 Group: System/Servers
 # BuildRequires: java-devel >= 0:1.4, ant, jpackage-utils
+Provides: avis-elvin-router
 BuildArchitectures: noarch
 BuildRoot: %{_builddir}/%{name}-root
 Source0: avis-src-%{_avis_version}.zip
