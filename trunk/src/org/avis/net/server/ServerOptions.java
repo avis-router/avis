@@ -86,7 +86,7 @@ public class ServerOptions extends Options
     Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
     ElvinURI defaultUri = new ElvinURI ("0.0.0.0", getInt ("Port"));
     
-    for (String listenItem : split (getString ("Listen"), " *, *"))
+    for (String listenItem : split (getString ("Listen"), "\\s+"))
     {
       try
       {

@@ -82,6 +82,21 @@ public class JUTestServerOptions
     testHost (localhostAddresses, localhost.getHostName () + ":29170", 29170);
   }
 
+  @Test
+  public void multipleURIs ()
+    throws Exception
+  {
+    ServerOptions options = new ServerOptions ();
+    options.set ("Listen", "elvin:/tcp,none,xdr/localhost:1234 \t elvin://localhost");
+    
+    Set<InetSocketAddress> addresses = options.bindAddresses ();
+    
+    InetAddress [] localhostAddresses =
+      InetAddress.getAllByName (InetAddress.getLocalHost ().getHostName ());
+    
+    assertEquals (localhostAddresses.length * 2, addresses.size ());
+  }
+  
   private void testHost (Set<InetAddress> hostAddresses, String hostOption, int port)
     throws SocketException
   {
