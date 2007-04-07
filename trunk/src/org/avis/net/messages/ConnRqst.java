@@ -36,18 +36,19 @@ public class ConnRqst extends XidMessage
   
   public ConnRqst (int major, int minor)
   {
-    this (major, minor, EMPTY_OPTIONS);
+    this (major, minor, EMPTY_OPTIONS, EMPTY_KEYS, EMPTY_KEYS);
   }
 
-  public ConnRqst (int major, int minor, Map<String, Object> options)
+  public ConnRqst (int major, int minor, Map<String, Object> options,
+                   Keys notificationKeys, Keys subscriptionKeys)
   {
     super (nextXid ());
     
     this.versionMajor = major;
     this.versionMinor = minor;
     this.options = options;
-    this.notificationKeys = EMPTY_KEYS;
-    this.subscriptionKeys = EMPTY_KEYS;
+    this.notificationKeys = notificationKeys;
+    this.subscriptionKeys = subscriptionKeys;
   }
   
   @Override
