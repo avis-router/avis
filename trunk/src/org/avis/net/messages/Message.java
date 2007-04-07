@@ -3,6 +3,8 @@ package org.avis.net.messages;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import static org.avis.util.Text.className;
+
 /**
  * Base class for all message types.
  * 
@@ -45,11 +47,6 @@ public abstract class Message
   @Override
   public String toString ()
   {
-    String name = getClass ().getName ();
-    
-    return name.substring (name.lastIndexOf ('.') + 1);
-    
-//    return name.substring (name.lastIndexOf ('.') + 1) +
-//             " (" + Integer.toHexString (System.identityHashCode (this)) + ')';
+    return className (this);
   }
 }
