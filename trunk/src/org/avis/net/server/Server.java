@@ -79,6 +79,7 @@ public class Server implements IoHandler
   
   private ExecutorService executor;
   private SocketAcceptor acceptor;
+  private volatile boolean closing;
   
   /**
    * Server maintains its own concurrently-accessible session set
@@ -153,11 +154,10 @@ public class Server implements IoHandler
   {
     synchronized (this)
     {
-      if (acceptor == null)
+      if (closing)
         return;
       
-      acceptor.unbindAll ();
-      acceptor = null;
+      closing = true; 
     }
     
     Disconn disconnMessage =
@@ -188,10 +188,8 @@ public class Server implements IoHandler
     }
     
     sessions.clear ();
-    acceptor = null;
-    
+    acceptor.unbindAll ();
     executor.shutdown ();
-    executor = null;
   }
 
   private static void send (IoSession session, Message message)
@@ -207,6 +205,9 @@ public class Server implements IoHandler
   public void messageReceived (IoSession session, Object messageObject)
     throws Exception
   {
+    if (closing)
+      return;
+    
     if (isEnabled (TRACE))
       trace ("Server got message: " + messageObject, this);
     
@@ -634,12 +635,7 @@ public class Server implements IoHandler
   }
 
   /**
-   * TODO this seems to be getting called *after* close () is called
-   * sometimes: investigate why join () on close isn't doing what we
-   * expect.
-   * <p>
-   * TODO should we handle close directly rather than session.close?
-   * this leaves a window open where a closed session is in the set.
+   * NB this can be called *after* close () is completed sometimes.
    */
   public void sessionClosed (IoSession session)
     throws Exception
