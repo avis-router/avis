@@ -1,17 +1,13 @@
 package org.avis.net.messages;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.net.security.Keys;
 
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.trace;
+import static java.util.Collections.emptyMap;
 
 import static org.avis.net.common.IO.getNameValues;
 import static org.avis.net.common.IO.putNameValues;
@@ -23,7 +19,7 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
  */
 public class ConnRqst extends XidMessage
 {
-  public static final Map<String, Object> EMPTY_OPTIONS = Collections.emptyMap ();
+  public static final Map<String, Object> EMPTY_OPTIONS = emptyMap ();
 
   public static final int ID = 49;
   
@@ -88,14 +84,5 @@ public class ConnRqst extends XidMessage
     
     notificationKeys = Keys.decode (in);
     subscriptionKeys = Keys.decode (in);
-    
-    if (isEnabled (TRACE))
-    {
-      for (Entry<String, Object> entry : options.entrySet ())
-      {
-        trace ("Client option name = \"" + entry.getKey () +
-                "\" value = " + entry.getValue (), this);
-      }
-    }
   }
 }
