@@ -4,12 +4,14 @@ import java.io.IOException;
 
 import org.avis.common.Notification;
 import org.avis.net.server.Server;
+import org.avis.util.LogFailTester;
 
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -17,12 +19,21 @@ import static org.junit.Assert.fail;
 public class JUTestClient
 {
   private Server server;
+  private LogFailTester logTester;
 
+  @Before
+  public void setup ()
+  {
+    logTester = new LogFailTester ();
+  }
+  
   @After
   public void cleanup ()
   {
     if (server != null)
       server.close ();
+    
+    logTester.dispose ();
   }
   
   @Test
@@ -60,10 +71,10 @@ public class JUTestClient
     ntfn.put ("test", 1);
     ntfn.put ("payload", "test 1");
     
-    client.send (ntfn);
     
     synchronized (sub)
     {
+      client.send (ntfn);
       long waitStart = currentTimeMillis ();
       
       sub.wait (10000);
@@ -76,6 +87,19 @@ public class JUTestClient
     
     client.close ();
     server.close ();
+  }
+  
+  @Ignore
+  @Test
+  public void thrashTest ()
+    throws Exception
+  {
+    for (int  i = 0; i < 1000; i++)
+    {
+      System.out.println ("***** " + i);
+      
+      modifySubInNotifyEvent ();
+    }
   }
   
   @Test

@@ -24,6 +24,7 @@ import org.avis.net.messages.UNotify;
 import org.avis.net.security.Key;
 import org.avis.net.security.KeyScheme;
 import org.avis.net.security.Keys;
+import org.avis.util.LogFailTester;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,11 +50,13 @@ public class JUTestServer
 
   private Server server;
   private Random random;
+  private LogFailTester logTester;
 
   @Before
   public void setup ()
   {
     random = new Random ();
+    logTester = new LogFailTester ();
   }
   
   @After
@@ -61,6 +64,8 @@ public class JUTestServer
   {
     if (server != null)
       server.close ();
+    
+    logTester.dispose ();
   }
   
   @Test
