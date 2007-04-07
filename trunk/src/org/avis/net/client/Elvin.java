@@ -213,13 +213,13 @@ public class Elvin
     return subscriptions.containsValue (subscription);
   }
 
-  public void send (Notification notification)
+  public synchronized void send (Notification notification)
     throws IOException
   {
     send (new NotifyEmit (notification));
   }
 
-  private synchronized <E extends Message>
+  private <E extends Message>
     E sendAndReceive (XidMessage request,
                       Class<E> expectedReplyType)
     throws IOException
@@ -229,7 +229,7 @@ public class Elvin
     return receive (expectedReplyType, request);
   }
   
-  private synchronized void send (Message message)
+  private void send (Message message)
     throws IOException
   {
     checkConnected ();
