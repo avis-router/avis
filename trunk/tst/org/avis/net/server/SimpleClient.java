@@ -230,7 +230,7 @@ class SimpleClient implements IoHandler
   {
     checkConnected ();
     
-    send (new ConnRqst (4, 0, options));
+    send (new ConnRqst (4, 0, options, EMPTY_KEYS, EMPTY_KEYS));
     
     Message reply = receive ();
     
