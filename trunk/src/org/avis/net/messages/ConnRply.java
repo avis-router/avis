@@ -5,7 +5,8 @@ import java.util.Map;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import org.avis.net.common.IO;
+import static org.avis.net.common.IO.getNameValues;
+import static org.avis.net.common.IO.putNameValues;
 
 public class ConnRply extends XidMessage
 {
@@ -38,7 +39,7 @@ public class ConnRply extends XidMessage
   {
     super.encode (out);
     
-    IO.putNameValues (out, options);
+    putNameValues (out, options);
   }
   
   @Override
@@ -47,6 +48,6 @@ public class ConnRply extends XidMessage
   {
     super.decode (in);
     
-    options = IO.getNameValues (in);
+    options = getNameValues (in);
   }
 }
