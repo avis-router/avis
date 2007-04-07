@@ -17,6 +17,9 @@ import org.avis.util.InvalidFormatException;
 import dsto.dfc.logging.Log;
 
 import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.setEnabled;
+import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.DIAGNOSTIC;
 
 import static org.avis.util.CommandLine.stringArg;
 
@@ -34,6 +37,9 @@ public class Ep
   public static void main (String [] args)
   {
     Log.setApplicationName ("ep");
+
+    setEnabled (TRACE, false);
+    setEnabled (DIAGNOSTIC, false);
     
     ElvinURI elvinUri = null;
     

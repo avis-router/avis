@@ -18,6 +18,9 @@ import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
 
+import static dsto.dfc.logging.Log.setEnabled;
+import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.alarm;
 
 import static org.avis.util.CommandLine.stringArg;
@@ -36,6 +39,9 @@ public class Ec
   public static void main (String [] args)
   {
     Log.setApplicationName ("ec");
+
+    setEnabled (TRACE, false);
+    setEnabled (DIAGNOSTIC, false);
     
     ElvinURI elvinUri = null;
     String subscription = null;
