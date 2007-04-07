@@ -17,7 +17,8 @@ import static org.junit.Assert.assertTrue;
 
 public class JUTestKeys
 {
-  @Test public void IO ()
+  @Test
+  public void IO ()
     throws Exception
   {
     ByteBuffer buff = ByteBuffer.allocate (1024);
@@ -40,7 +41,8 @@ public class JUTestKeys
     assertEquals (keys, newKeys);
   }
   
-  @Test public void equality ()
+  @Test
+  public void equality ()
   {
     assertTrue
       (new Key ("a test key number 1").equals (new Key ("a test key number 1")));
@@ -76,7 +78,8 @@ public class JUTestKeys
   /**
    * Test add/remove of single keys.
    */
-  @Test public void addRemove ()
+  @Test
+  public void addRemove ()
     throws Exception
   {
     Keys keys = new Keys ();
