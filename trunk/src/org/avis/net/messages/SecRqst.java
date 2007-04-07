@@ -5,6 +5,8 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.net.security.Keys;
 
+import static org.avis.net.security.Keys.EMPTY_KEYS;
+
 public class SecRqst extends XidMessage
 {
   public static final int ID = 54;
@@ -17,7 +19,7 @@ public class SecRqst extends XidMessage
   public SecRqst ()
   {
     // make it easier for client to create and assign keys later
-    this (Keys.EMPTY_KEYS, Keys.EMPTY_KEYS, Keys.EMPTY_KEYS, Keys.EMPTY_KEYS);
+    this (EMPTY_KEYS, EMPTY_KEYS, EMPTY_KEYS, EMPTY_KEYS);
   }
   
   public SecRqst (Keys addNtfnKeys, Keys delNtfnKeys,
