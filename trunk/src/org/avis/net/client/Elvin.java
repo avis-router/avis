@@ -18,7 +18,6 @@ import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
-import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -41,18 +40,18 @@ import org.avis.net.messages.XidMessage;
 
 import dsto.dfc.logging.Log;
 
+import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.isEnabled;
+import static dsto.dfc.logging.Log.trace;
+import static dsto.dfc.logging.Log.warn;
+
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.net.common.ElvinURI.defaultProtocol;
 import static org.avis.util.Text.className;
-
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.trace;
-import static dsto.dfc.logging.Log.warn;
 
 public class Elvin
 {
@@ -125,9 +124,10 @@ public class Elvin
       filterChainBuilder.addLast
         ("codec", new ProtocolCodecFilter (codecFactory));
       
-      filterChainBuilder.addLast
-        ("threadPool", new ExecutorFilter (executor));
-      
+      // below adds a thread pool to IO processor: probably don't need this
+      // filterChainBuilder.addLast
+      //   ("threadPool", new ExecutorFilter (executor));
+
       ConnectFuture future =
         connector.connect
           (new InetSocketAddress (elvinUri.host, elvinUri.port),
@@ -160,7 +160,7 @@ public class Elvin
         }
       }
       
-      clientSession.close ().join ();
+      clientSession.close ();
       clientSession = null;
     }
     
