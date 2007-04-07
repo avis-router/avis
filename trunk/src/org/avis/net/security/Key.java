@@ -32,7 +32,7 @@ public final class Key
   }
 
   /**
-   * Shorcut to geneate the public (prime) key for a given scheme.
+   * Shorcut to generate the public (prime) key for a given scheme.
    * 
    * @see KeyScheme#publicKeyFor(Key)
    */
