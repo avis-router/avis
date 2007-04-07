@@ -22,6 +22,7 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.Notification;
+import org.avis.net.common.ConnectionOptions;
 import org.avis.net.common.ElvinURI;
 import org.avis.net.common.FrameCodec;
 import org.avis.net.messages.ConnRply;
@@ -33,10 +34,14 @@ import org.avis.net.messages.Message;
 import org.avis.net.messages.Nack;
 import org.avis.net.messages.NotifyDeliver;
 import org.avis.net.messages.NotifyEmit;
+import org.avis.net.messages.SecRply;
+import org.avis.net.messages.SecRqst;
 import org.avis.net.messages.SubAddRqst;
 import org.avis.net.messages.SubDelRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.messages.XidMessage;
+import org.avis.net.security.Keys;
+import org.avis.util.Pair;
 
 import dsto.dfc.logging.Log;
 
@@ -51,6 +56,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.net.common.ElvinURI.defaultProtocol;
+import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
 
 public class Elvin
@@ -62,12 +68,15 @@ public class Elvin
   private ExecutorService executor;
   private boolean elvinConnectionOpen;
   private Map<Long, Subscription> subscriptions;
+  private Keys notificationKeys;
+  private Keys subscriptionKeys;
   
   /** This is effectively a single-item queue for handling responses
       to XID-based requests. It's volatile since it's used for inter-
       thread communication. */
   protected volatile XidMessage lastReply;
   private Object replySemaphore;
+
   
   public Elvin (String elvinUri)
     throws URISyntaxException, IllegalArgumentException,
@@ -79,7 +88,17 @@ public class Elvin
   public Elvin (ElvinURI elvinUri)
     throws IllegalArgumentException, ConnectException, IOException
   {
+    this (elvinUri, new ConnectionOptions (),
+          EMPTY_KEYS, EMPTY_KEYS);
+  }
+  
+  public Elvin (ElvinURI elvinUri, ConnectionOptions options,
+                Keys notificationKeys, Keys subscriptionKeys)
+    throws IllegalArgumentException, ConnectException, IOException
+  {
     this.elvinUri = elvinUri;
+    this.notificationKeys = notificationKeys;
+    this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
     this.executor = newCachedThreadPool ();
     this.replySemaphore = new Object ();
@@ -91,7 +110,9 @@ public class Elvin
     
     openConnection ();
     
-    sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR),
+    sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR,
+                                  options.asMap (),
+                                  notificationKeys, subscriptionKeys),
                     ConnRply.class);
     
     elvinConnectionOpen = true;
@@ -218,10 +239,35 @@ public class Elvin
   {
     send (new NotifyEmit (notification));
   }
-
-  private <E extends Message>
-    E sendAndReceive (XidMessage request,
-                      Class<E> expectedReplyType)
+  
+  public synchronized void sendSecure (Notification notification)
+    throws IOException
+  {
+    sendSecure (notification, EMPTY_KEYS);
+  }
+  
+  public synchronized void sendSecure (Notification notification, Keys keys)
+    throws IOException
+  {
+    send (new NotifyEmit (notification, false, keys));
+  }
+  
+  public void setKeys (Keys newNotificationKeys, Keys newSubscriptionKeys)
+    throws IOException
+  {
+    Pair<Keys> deltaNotificationKeys =
+      notificationKeys.computeDelta (newNotificationKeys);
+    Pair<Keys> deltaSubscriptionKeys =
+      subscriptionKeys.computeDelta (newSubscriptionKeys);
+    
+    sendAndReceive
+      (new SecRqst (deltaNotificationKeys.item1, deltaNotificationKeys.item2,
+                    deltaSubscriptionKeys.item1, deltaSubscriptionKeys.item2),
+       SecRply.class);
+  }
+  
+  private <E extends Message> E sendAndReceive (XidMessage request,
+                                                Class<E> expectedReplyType)
     throws IOException
   {
     send (request);
@@ -362,10 +408,10 @@ public class Elvin
   private void handleNotifyDeliver (final NotifyDeliver message)
   {
     /*
-     * Do not fire event this thread since a listener may trigger a
-     * sendAndReceive () which will block the IO processor thread by
-     * waiting for a reply that cannot be processed since the IO
-     * processor is busy calling this method.
+     * Do not fire event in this thread since a listener may trigger a
+     * receive () which will block the IO processor thread by waiting
+     * for a reply that cannot be processed since the IO processor is
+     * busy calling this method.
      */
     executor.execute (new Runnable ()
     {
@@ -376,7 +422,7 @@ public class Elvin
         fireNotify (message.secureMatches, true, ntfn);
         fireNotify (message.insecureMatches, false, ntfn);
       }
-    });
+   });
   }
 
   protected synchronized void fireNotify (long [] subscriptionIds,
