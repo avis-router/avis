@@ -1,7 +1,6 @@
 package org.avis.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -10,6 +9,8 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 import static org.avis.util.OptionSet.EMPTY_OPTION_SET;
 
@@ -216,6 +217,15 @@ public class Options
    */
   public Set<String> options ()
   {
-    return Collections.unmodifiableSet (values.keySet ());
+    return unmodifiableSet (values.keySet ());
+  }
+  
+  /**
+   * Return an unmodifiable, live map containing all the options and
+   * values in this instance (not including defaults).
+   */
+  public Map<String, Object> asMap ()
+  {
+    return unmodifiableMap (values);
   }
 }
