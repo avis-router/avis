@@ -2,47 +2,24 @@ TODO
 
 R1.1
 
-* remove DSTO DFC log - use slf4j
 * check client version numbers
-* ec/ep
-* DEB
+* DEB, Solaris: look at je4 packages dir
 * windows JRE does not have -server, need to add installer option
 * thread pool size option?
+* remove DSTO DFC log - use slf4j
+
+Client
+
+* connection options
+* security -> ec/ep
+* unotify
+* auto connect/reconnect
+* events: connected etc
 
 Not allocated
 
-* Klaus: add interface selection:
-"""
-However, looking through the API docs, it doesn't look hard to add.
-Do you just want the ability to specify the interface(s) (e.g. "en1")
-as part of the config?
-
-It would help a lot to be able to choose a network interface.  It
-could also be useful to be able to choose a hostname (understood as
-"bind to every IP address associated with this hostname").  I'd
-probably prefer the latter if I had to choose.
-"""
-################################################################
-# protocol
-#
-# Each protocol entry is an URL that describes a protocol that elvind
-# will use to accept client connections. Add more URLs for each protocol
-# you want to make available (some example/default values are supplied).
-#
-# IP based protocols (TCP, UDP, and SSL) allow the use of 0.0.0.0 to listen
-# on all IPv4 interfaces, or [::] to listen on all IPv6 interfaces.
-# 
-# Default: tcp,none,xdr on all IPv4 interfaces at port 2917
-
-protocol elvin:/tcp,none,xdr/0.0.0.0:2917
-# protocol elvin:/udp,none,xdr/0.0.0.0:12301
-# protocol elvin:/tcp,none,xml/0.0.0.0:12301
-# protocol elvin:/ssl,none,xdr/0.0.0.0:12302
-# protocol elvin:/gssapi,none,xdr/0.0.0.0:12305
-# protocol elvin:/unix,none,xdr/0.0.0.0/tmp/elvin
-
-
-
+* discovery
+* async/future-based messaging. use futures to track responses.
 * what happens when sending ntfn to client that's too big?
 * sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
 * test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
@@ -60,7 +37,11 @@ protocol elvin:/tcp,none,xdr/0.0.0.0:2917
 * write a multi-threaded test thrasher to test consistency
 * write a multi-threaded test thrasher to try to crash server
 * write multithreaded "fuzz" test: fire random messages
+* how do we handle other langs in SVN? do we need to? e.g. should
+  Python binding be a separate project?
 
+* DONE: ec/ep
+* DONE: Klaus: add interface selection
 * DONE: Ian's suggestions + diagrams
 * DONE: web site PR: why use Avis? examples see why.txt
 * DONE: pkg permissions
@@ -69,8 +50,6 @@ protocol elvin:/tcp,none,xdr/0.0.0.0:2917
 * DONE: need separate VM's for MaliciousClient test
 * DONE: roadmap. ewafd-equivalent. built in?
 * DONE: no. do we need SSL/TLS in 1.0?
-* how do we handle other langs in SVN? do we need to? e.g. should
-  Python binding be a separate project?
 * DONE: add Unix and windows service wrappers and installers
 * DONE: add basic settings to become net ready: limit connection counts,
   subs, bandwidth etc to avoid DOS attacks possible to OOM the server by
