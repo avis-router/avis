@@ -294,6 +294,27 @@ public class JUTestClient
     }
   }
 
+  @Test
+  public void protocolVersion ()
+    throws Exception
+  {
+    createServer ();
+    
+    ElvinURI uri = new ElvinURI (ELVIN_URI);
+    uri.versionMinor++;
+    
+    try
+    {
+      new Elvin (new ElvinURI (uri));
+      
+      fail ("Failed to reject bogus version");
+    } catch (IOException ex)
+    {
+      // ok
+
+      System.out.println ("error = " + ex.getMessage ());
+    }
+  }
   private static void checkSecureSendReceive (Elvin client,
                                               final Subscription sub)
     throws IOException, InterruptedException

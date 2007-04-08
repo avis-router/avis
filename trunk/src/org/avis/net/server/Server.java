@@ -61,6 +61,8 @@ import static java.lang.Runtime.getRuntime;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
+import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
+import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
@@ -68,6 +70,7 @@ import static org.avis.net.messages.Nack.NOT_IMPL;
 import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
+import static org.avis.net.messages.Nack.PROT_INCOMPAT;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.net.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.util.Text.shortException;
@@ -285,8 +288,15 @@ public class Server implements IoHandler
     
     int maxKeys = connection.options.getInt ("Connection.Max-Keys");
     
-    if (message.notificationKeys.size () > maxKeys ||
-        message.subscriptionKeys.size () > maxKeys)
+    if (message.versionMajor > CLIENT_VERSION_MAJOR ||
+        message.versionMinor > CLIENT_VERSION_MINOR)
+    {
+      send (session,
+            new Nack (message, PROT_INCOMPAT,
+                      "Max supported protocol version is " +
+                       + CLIENT_VERSION_MAJOR + '.' + CLIENT_VERSION_MINOR));
+    } else if (message.notificationKeys.size () > maxKeys ||
+               message.subscriptionKeys.size () > maxKeys)
     {
       nackLimit (session, message, "Too many keys");
     } else
