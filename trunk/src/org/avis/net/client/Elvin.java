@@ -246,6 +246,13 @@ public class Elvin
       (new SubModRqst (subscription.id, delta.added, delta.removed), 
        SubRply.class);
   }
+
+  void setSubscription (Subscription subscription, String subscriptionExpr)
+    throws IOException
+  {
+    sendAndReceive
+      (new SubModRqst (subscription.id, subscriptionExpr), SubRply.class);
+  }
   
   public synchronized boolean hasSubscription (Subscription subscription)
   {

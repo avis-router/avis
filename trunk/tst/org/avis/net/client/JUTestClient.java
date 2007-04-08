@@ -217,6 +217,40 @@ public class JUTestClient
     aliceClient.close ();
     bobClient.close ();
   }
+  
+  @Test
+  public void subscribe ()
+    throws Exception
+  {
+    createServer ();
+    
+    final Elvin client = new Elvin (ELVIN_URI);
+    final Subscription sub = client.subscribe ("require (test)");
+    
+    // change subscription
+    sub.setSubscription ("require (test2)");
+    
+    sub.addNotificationListener (new NotificationListener ()
+    {
+      public void notificationReceived (NotificationEvent e)
+      {
+        synchronized (sub)
+        {
+          sub.notifyAll ();
+        }
+      }
+    });
+    
+    Notification ntfn = new Notification ();
+    ntfn.put ("test2", 1);
+    
+    synchronized (sub)
+    {
+      client.send (ntfn);
+      
+      wait (sub);
+    }
+  }
 
   private static void checkSecureSendReceive (Elvin client,
                                               final Subscription sub)

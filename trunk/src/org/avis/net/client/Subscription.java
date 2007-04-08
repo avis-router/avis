@@ -66,6 +66,23 @@ public class Subscription
       this.keys = newKeys;
     }    
   }
+  
+  public void setSubscription (String newSubscriptionExpr)
+    throws IOException
+  {
+    newSubscriptionExpr = newSubscriptionExpr.trim ();
+    
+    if (newSubscriptionExpr.length () == 0)
+      throw new IllegalArgumentException
+        ("Subscription expression cannot be empty");
+    
+    synchronized (elvin ())
+    {
+      elvin.setSubscription (this, newSubscriptionExpr);
+      
+      this.subscriptionExpr = newSubscriptionExpr;
+    }    
+  }
 
   public void addNotificationListener (NotificationListener listener)
   {
