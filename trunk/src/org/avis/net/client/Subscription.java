@@ -15,8 +15,10 @@ public class Subscription
   
   private ListenerList<NotificationListener> notificationListeners;
 
-  Subscription (String subscriptionExpr, boolean acceptInsecure, Keys keys)
+  Subscription (Elvin elvin,
+                String subscriptionExpr, boolean acceptInsecure, Keys keys)
   {
+    this.elvin = elvin;
     this.subscriptionExpr = subscriptionExpr;
     this.acceptInsecure = acceptInsecure;
     this.keys = keys;
@@ -31,7 +33,8 @@ public class Subscription
       checkLive ();
       
       elvin.unsubscribe (this);
-      subscriptionExpr = null;
+      
+      id = 0;
     }    
   }
   

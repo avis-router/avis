@@ -260,7 +260,7 @@ public class Elvin
     throws IOException
   {
     Subscription subscription =
-      new Subscription (subscriptionExpr, true, keys);
+      new Subscription (this, subscriptionExpr, true, keys);
     
     subscribe (subscription);
     
@@ -272,7 +272,7 @@ public class Elvin
     throws IOException
   {
     Subscription subscription =
-      new Subscription (subscriptionExpr, false, keys);
+      new Subscription (this, subscriptionExpr, false, keys);
     
     subscribe (subscription);
     
@@ -291,8 +291,6 @@ public class Elvin
       sendAndReceive (subAddRqst, SubRply.class).subscriptionId;
     
     subscriptions.put (subscription.id, subscription);
-    
-    subscription.elvin = this;
   }
 
   void unsubscribe (Subscription subscription)
