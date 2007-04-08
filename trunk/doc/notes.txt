@@ -18,6 +18,7 @@ Client
 
 Not allocated
 
+* replace IOException witn RuntimeIOException? relates/affected by async idea
 * discovery
 * async/future-based messaging. use futures to track responses.
 * what happens when sending ntfn to client that's too big?
