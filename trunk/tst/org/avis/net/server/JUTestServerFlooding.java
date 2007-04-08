@@ -5,6 +5,8 @@ import java.util.List;
 
 import java.io.IOException;
 
+import org.avis.util.LogFailTester;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,23 +33,28 @@ public class JUTestServerFlooding
   private static final boolean USE_EXTERNAL_SERVER = false;
 
   /** Time in millis to run flood tests. */
-  private static final long FLOODING_TIME = 10 * 1000;
+  private static final long FLOODING_TIME = 5 * 1000;
   
   private Server server;
+  private LogFailTester logTester;
 
   @Before
-  public void startServer ()
+  public void setup ()
     throws IOException
   {
     if (!USE_EXTERNAL_SERVER)
       server = new Server (PORT);
+    
+    logTester = new LogFailTester ();
   }
   
   @After
-  public void tearDown ()
+  public void shutdown ()
   {
     if (server != null)
       server.close ();
+    
+    logTester.dispose ();
   }
   
   /**
