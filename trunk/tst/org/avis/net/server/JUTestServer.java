@@ -30,9 +30,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
+import static org.avis.net.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
