@@ -15,10 +15,10 @@ public class Subscription
   
   private ListenerList<NotificationListener> notificationListeners;
 
-  Subscription (String subscriptionExpr, Keys keys)
+  Subscription (String subscriptionExpr, boolean acceptInsecure, Keys keys)
   {
     this.subscriptionExpr = subscriptionExpr;
-    this.acceptInsecure = true;
+    this.acceptInsecure = acceptInsecure;
     this.keys = keys;
     this.notificationListeners = new ListenerList<NotificationListener> ();
   }
