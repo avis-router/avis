@@ -35,10 +35,12 @@ public class Subscription
   
   public Elvin elvin ()
   {
-    if (elvin == null || !elvin.isConnected ())
+    Elvin e = elvin;
+    
+    if (e == null)
       throw new IllegalStateException ("Subscription is not active");
     
-    return elvin;
+    return e;
   }
 
   public String subscriptionExpr ()
