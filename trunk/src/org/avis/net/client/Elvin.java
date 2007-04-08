@@ -417,7 +417,7 @@ public class Elvin
     clientSession.write (message);
   }
   
-  private Message receive (long timeout)
+  private Message receive ()
     throws IOException
   {
     synchronized (replySemaphore)
@@ -426,7 +426,7 @@ public class Elvin
       {
         try
         {
-          replySemaphore.wait (timeout);
+          replySemaphore.wait (receiveTimeout);
         } catch (InterruptedException ex)
         {
           throw new RuntimeException (ex);
@@ -450,33 +450,19 @@ public class Elvin
     }
   }
   
-  private void checkConnected ()
-    throws IllegalStateException
-  {
-    if (!clientSession.isConnected ())
-      throw new IllegalStateException ("Not connected");
-  }
-  
+  @SuppressWarnings("unchecked")
   private <E extends Message> E receive (Class<E> expectedMessageType,
                                          XidMessage inResponseTo)
     throws IOException
   {
-    return receive (expectedMessageType, inResponseTo, receiveTimeout);
-  }
-  
-  @SuppressWarnings("unchecked")
-  private <E extends Message> E receive (Class<E> expectedMessageType,
-                                         XidMessage inResponseTo,
-                                         long timeout)
-    throws IOException
-  {
-    Message message = receive (timeout);
-      
-    if (expectedMessageType.isAssignableFrom (message.getClass ()))
+    Message message = receive ();
+    
+    if (message instanceof XidMessage &&
+        inResponseTo.xid != ((XidMessage)message).xid)
     {
-      if (inResponseTo != null && inResponseTo.xid != ((XidMessage)message).xid)
-        throw new IllegalStateException ("XID mismatch");
-      
+      throw new IllegalStateException ("XID mismatch");
+    } else if (expectedMessageType.isAssignableFrom (message.getClass ()))
+    {
       return (E)message;
     } else if (message instanceof Nack)
     {
@@ -582,6 +568,13 @@ public class Elvin
               "(" + subscriptionId + ")", this);
       }
     }
+  }
+  
+  private void checkConnected ()
+    throws IllegalStateException
+  {
+    if (!clientSession.isConnected ())
+      throw new IllegalStateException ("Not connected");
   }
   
   class MessageHandler extends IoHandlerAdapter
