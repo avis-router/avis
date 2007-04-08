@@ -65,6 +65,16 @@ public class ConnectionOptions
 {
   private HashMap<String, Object> values;
 
+  public static final ConnectionOptions EMPTY_OPTIONS =
+    new ConnectionOptions ()
+  {
+    @Override
+    public void set (String name, Object value)
+    {
+      throw new UnsupportedOperationException ();
+    }
+  };
+  
   public ConnectionOptions ()
   {
     this.values = new HashMap<String, Object> ();
