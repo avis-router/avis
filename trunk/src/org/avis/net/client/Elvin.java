@@ -76,7 +76,6 @@ public class Elvin
       thread communication. */
   protected volatile XidMessage lastReply;
   private Object replySemaphore;
-
   
   public Elvin (String elvinUri)
     throws URISyntaxException, IllegalArgumentException,
@@ -252,7 +251,8 @@ public class Elvin
     send (new NotifyEmit (notification, false, keys));
   }
   
-  public void setKeys (Keys newNotificationKeys, Keys newSubscriptionKeys)
+  public synchronized void setKeys (Keys newNotificationKeys,
+                                    Keys newSubscriptionKeys)
     throws IOException
   {
     Delta<Keys> deltaNotificationKeys =
@@ -264,6 +264,9 @@ public class Elvin
       (new SecRqst (deltaNotificationKeys.added, deltaNotificationKeys.removed,
                     deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed),
        SecRply.class);
+    
+    this.notificationKeys = newNotificationKeys;
+    this.subscriptionKeys = newSubscriptionKeys;
   }
   
   private <E extends Message> E sendAndReceive (XidMessage request,
