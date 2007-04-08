@@ -114,14 +114,14 @@ public class Elvin
       sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR,
                                     options.asMap (),
                                     notificationKeys, subscriptionKeys),
-                    ConnRply.class);
+                      ConnRply.class);
     
     elvinConnectionOpen = true;
     
     Map<String, Object> rejectedOptions =
       options.differenceFrom (connRply.options);
     
-    if (rejectedOptions.size () != 0)
+    if (!rejectedOptions.isEmpty ())
     {
       close ();
       
