@@ -62,7 +62,7 @@ import static org.avis.util.Text.className;
 
 public class Elvin
 {
-  private static final int RECEIVE_TIMEOUT = 5000;
+//  private static final int RECEIVE_TIMEOUT = 5000;
   
   private ElvinURI elvinUri;
   private IoSession clientSession;
@@ -71,6 +71,7 @@ public class Elvin
   private Map<Long, Subscription> subscriptions;
   private Keys notificationKeys;
   private Keys subscriptionKeys;
+  private int receiveTimeout;
   
   /** This is effectively a single-item queue for handling responses
       to XID-based requests. It's volatile since it's used for inter-
@@ -123,6 +124,7 @@ public class Elvin
     this.subscriptions = new HashMap<Long, Subscription> ();
     this.executor = newCachedThreadPool ();
     this.replySemaphore = new Object ();
+    this.receiveTimeout = 10000;
     
     if (!elvinUri.protocol.equals (defaultProtocol ()))
       throw new IllegalArgumentException
@@ -230,6 +232,21 @@ public class Elvin
   public synchronized boolean isConnected ()
   {
     return clientSession != null && clientSession.isConnected ();
+  }
+  
+  public int receiveTimeout ()
+  {
+    return receiveTimeout;
+  }
+
+  /**
+   * Set the amount of time (in milliseconds) that must pass before
+   * the router is assumed not to be responding. Default is 10000 (10
+   * seconds).
+   */
+  public void setReceiveTimeout (int receiveTimeout)
+  {
+    this.receiveTimeout = receiveTimeout;
   }
   
   public Subscription subscribe (String subscriptionExpr)
@@ -395,7 +412,7 @@ public class Elvin
                                          XidMessage inResponseTo)
     throws IOException
   {
-    return receive (expectedMessageType, inResponseTo, RECEIVE_TIMEOUT);
+    return receive (expectedMessageType, inResponseTo, receiveTimeout);
   }
   
   @SuppressWarnings("unchecked")
