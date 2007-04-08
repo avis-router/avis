@@ -259,20 +259,40 @@ public class Elvin
                                               Keys keys)
     throws IOException
   {
-    Subscription sub = new Subscription (subscriptionExpr, keys);
+    Subscription subscription =
+      new Subscription (subscriptionExpr, true, keys);
     
-    SubAddRqst subAddRqst = new SubAddRqst (sub.subscriptionExpr);
-    subAddRqst.acceptInsecure = sub.acceptInsecure;
-    subAddRqst.keys = sub.keys;
+    subscribe (subscription);
     
-    sub.id =
+    return subscription;
+  }
+  
+  public synchronized Subscription subscribeSecure (String subscriptionExpr,
+                                                    Keys keys)
+    throws IOException
+  {
+    Subscription subscription =
+      new Subscription (subscriptionExpr, false, keys);
+    
+    subscribe (subscription);
+    
+    return subscription;
+  }
+  
+  void subscribe (Subscription subscription)
+    throws IOException
+  {
+    SubAddRqst subAddRqst = new SubAddRqst (subscription.subscriptionExpr);
+    
+    subAddRqst.acceptInsecure = subscription.acceptInsecure;
+    subAddRqst.keys = subscription.keys;
+    
+    subscription.id =
       sendAndReceive (subAddRqst, SubRply.class).subscriptionId;
     
-    subscriptions.put (sub.id, sub);
+    subscriptions.put (subscription.id, subscription);
     
-    sub.elvin = this;
-    
-    return sub;
+    subscription.elvin = this;
   }
 
   void unsubscribe (Subscription subscription)

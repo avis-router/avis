@@ -163,7 +163,7 @@ public class JUTestClient
   }
 
   @Test
-  public void securityProducer ()
+  public void security ()
     throws Exception
   {
     createServer ();
@@ -212,6 +212,18 @@ public class JUTestClient
     sub = bobClient.subscribe ("require (From-Alice)");
     
     sub.setKeys (bobSubKeys);
+    
+    checkSecureSendReceive (aliceClient, sub);
+    
+    aliceClient.close ();
+    bobClient.close ();
+    
+    // check we can add subscribe securely in one step
+    
+    aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
+    bobClient = new Elvin (uri);
+    
+    sub = bobClient.subscribeSecure ("require (From-Alice)", bobSubKeys);
     
     checkSecureSendReceive (aliceClient, sub);
     
