@@ -62,7 +62,6 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
 import static org.avis.common.Common.DEFAULT_PORT;
-import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
 import static org.avis.net.messages.Nack.NOT_IMPL;
@@ -70,6 +69,7 @@ import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
+import static org.avis.net.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.util.Text.shortException;
 
 public class Server implements IoHandler
@@ -708,7 +708,8 @@ public class Server implements IoHandler
   {
     session.setAttachment (connection);
     
-    FrameCodec.setOptions (session, connection.options);
+    FrameCodec.setMaxFrameLengthFor
+      (session, connection.options.getInt ("Packet.Max-Length"));
   }
   
   /**

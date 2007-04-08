@@ -21,8 +21,8 @@ import org.avis.util.Options;
 import static java.util.Arrays.asList;
 
 import static org.avis.common.Common.DEFAULT_PORT;
-import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.net.common.ElvinURI.defaultProtocol;
+import static org.avis.net.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.util.Text.split;
 
 /**
