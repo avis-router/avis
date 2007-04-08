@@ -1,13 +1,14 @@
 package org.avis.net.security;
 
 /**
- * A key set stored as part of a {@link Keys} key collection. Clients
- * should not modify key sets directly: use the {@link Keys} methods
- * instead.
+ * A polymorphic key set stored as part of a {@link Keys} key
+ * collection: may be either a single set of Key items or a dual set
+ * for the dual key schemes. Clients should not generally need to
+ * access key sets directly: use the {@link Keys} class instead.
  * 
  * @author Matthew Phillips
  */
-public interface KeySet
+interface KeySet
 {
   public int size ();
   
@@ -24,4 +25,9 @@ public interface KeySet
   
   public boolean remove (Key key)
     throws IllegalArgumentException, UnsupportedOperationException;
+
+  /**
+   * Return this key with the given set removed.
+   */
+  public KeySet subtract (KeySet keys);
 }
