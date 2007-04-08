@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import org.avis.util.Pair;
+import org.avis.util.Delta;
 
 import static org.avis.net.common.IO.getBytes;
 import static org.avis.net.common.IO.putBytes;
@@ -177,7 +177,15 @@ public class Keys
         ("Cannot add key collection to itself");
     
     for (KeyScheme scheme: keys.keySets.keySet ())
-      newKeysetFor (scheme).add (keys.keySets.get (scheme));
+      add (scheme, keys.keySets.get (scheme));
+  }
+  
+  private void add (KeyScheme scheme, KeySet keys)
+  {
+    if (keys.isEmpty ())
+      return;
+    
+    newKeysetFor (scheme).add (keys);
   }
 
   /**
@@ -216,6 +224,8 @@ public class Keys
    * 
    * @return A new key set with keys added remove. If both add/remove
    *         key sets are empty, this returns the current instance.
+   *         
+   * @see #computeDelta(Keys)
    */
   public Keys delta (Keys addKeys, Keys removeKeys)
   {
@@ -233,15 +243,30 @@ public class Keys
     }
   }
   
-  public Pair<Keys> computeDelta (Keys keys)
+  /**
+   * Compute the changes between one Key collection and another.
+   * 
+   * @param keys The target key collection.
+   * @return The delta (i.e. key sets to be added and removed)
+   *         required to change this collection into the target.
+   * 
+   * @see #delta(Keys, Keys)
+   */
+  public Delta<Keys> computeDelta (Keys keys)
   {
-//    Keys addedKeys = new Keys ();
-//    Keys removedKeys = new Keys ();
+    Keys addedKeys = new Keys ();
+    Keys removedKeys = new Keys ();
     
-    throw new UnsupportedOperationException ();
+    for (KeyScheme scheme : KeyScheme.schemes ())
+    {
+      KeySet existingKeyset = keysetFor (scheme);
+      KeySet otherKeyset = keys.keysetFor (scheme);
+      
+      addedKeys.add (scheme, otherKeyset.subtract (existingKeyset));
+      removedKeys.add (scheme, existingKeyset.subtract (otherKeyset));
+    }
     
-    // tddo
-//    return new Pair<Keys> (addedKeys, removedKeys);
+    return new Delta<Keys> (addedKeys, removedKeys);
   }
   
   /**
@@ -255,12 +280,12 @@ public class Keys
    * @see #keysetFor(DualKeyScheme)
    * @see #keysetFor(SingleKeyScheme)
    */
-  public KeySet keysetFor (KeyScheme scheme)
+  private KeySet keysetFor (KeyScheme scheme)
   {
     KeySet keys = keySets.get (scheme);
     
     if (keys == null)
-      return EMPTY_SINGLE_KEYSET;
+      return scheme.isDual () ? EMPTY_DUAL_KEYSET : EMPTY_SINGLE_KEYSET;
     else
       return keys;
   }
