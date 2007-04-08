@@ -18,13 +18,16 @@ import static org.avis.net.security.KeyScheme.schemeFor;
 /**
  * A key collection used to secure notifications. A key collection
  * contains zero or more mappings from a key scheme ({@link KeyScheme})
- * to the keys registered for that scheme ({@link KeySet}).<p>
- *
- * Clients will generally only need to use the add/remove methods to
- * modify key sets. The {@link #match(Keys)} method implements the
- * logic to determine whether one key set matches another for the
- * purpose of notification delivery.<p>
- *
+ * to the keys registered for that scheme.
+ * <p>
+ * NB: Once in use, key collections should be treated as immutable
+ * i.e. never be modified directly after construction.
+ * <p>
+ * The {@link #match(Keys)} method implements the logic to determine
+ * whether one key set matches another for the purpose of notification
+ * delivery.
+ * <p>
+ * 
  * See also section 7.4 of the client protocol spec.
  * 
  * @author Matthew Phillips
