@@ -55,6 +55,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
+import static org.avis.net.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.net.common.ElvinURI.defaultProtocol;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
@@ -87,10 +88,30 @@ public class Elvin
   public Elvin (ElvinURI elvinUri)
     throws IllegalArgumentException, ConnectException, IOException
   {
-    this (elvinUri, new ConnectionOptions (),
-          EMPTY_KEYS, EMPTY_KEYS);
+    this (elvinUri, EMPTY_OPTIONS, EMPTY_KEYS, EMPTY_KEYS);
   }
   
+  /**
+   * Create a new connection to an Elvin router.
+   * 
+   * @param elvinUri The URI of the router to connect to.
+   * @param options The connection options.
+   * @param notificationKeys The global key collection used for all
+   *          notifications. All notifications sent automatically get
+   *          these keys.
+   * @param subscriptionKeys The global key collection used for all
+   *          subscriptions. All subscriptions made through this
+   *          connection automatically get these keys.
+   * 
+   * @throws IllegalArgumentException if one of the arguments is not
+   *           valid.
+   * @throws ConnectException if the socket to the router could not be
+   *           opened, e.g. connection refused.
+   * @throws ConnectionOptionsException if the router rejected the
+   *           connection options. The client may elect to change the
+   *           options and try to create a new connection.
+   * @throws IOException if some other IO error occurs.
+   */
   public Elvin (ElvinURI elvinUri, ConnectionOptions options,
                 Keys notificationKeys, Keys subscriptionKeys)
     throws IllegalArgumentException, ConnectException,
