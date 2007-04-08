@@ -2,6 +2,8 @@ package org.avis.net.security;
 
 import org.apache.mina.common.ByteBuffer;
 
+import org.avis.util.Delta;
+
 import org.junit.Test;
 
 import static org.avis.net.security.DualKeyScheme.CONSUMER;
@@ -207,6 +209,132 @@ public class JUTestKeys
     correctKeys.add (SHA1_PRODUCER, new Key ("added key 2"));
     
     assertEquals (correctKeys, keys4);
+  }
+  
+  /**
+   * Basic test of computeDelta ()
+   */
+  @Test
+  public void computeDeltaSingleScheme ()
+  {
+    Keys keys1 = new Keys ();
+    Keys keys2 = new Keys ();
+    
+    Key key1 = new Key ("key 1");
+    Key key2 = new Key ("key 2");
+    
+    Delta<Keys> delta = keys1.computeDelta (keys2);
+    
+    assertEquals (0, delta.added.keysetFor (SHA1_PRODUCER).size ());
+    assertEquals (0, delta.added.keysetFor (SHA1_CONSUMER).size ());
+    assertEquals (0, delta.added.keysetFor (SHA1_DUAL).size ());
+    
+    assertEquals (0, delta.removed.keysetFor (SHA1_PRODUCER).size ());
+    assertEquals (0, delta.removed.keysetFor (SHA1_CONSUMER).size ());
+    assertEquals (0, delta.removed.keysetFor (SHA1_DUAL).size ());
+    
+    // add a single producer key
+    keys2.add (SHA1_PRODUCER, key1);
+    
+    delta = keys1.computeDelta (keys2);
+    assertEquals (1, delta.added.keysetFor (SHA1_PRODUCER).size ());
+    assertEquals (0, delta.removed.keysetFor (SHA1_PRODUCER).size ());
+    
+    checkApplyDelta (delta, keys1, keys2);
+    
+    // remove a single producer key
+    keys1.add (SHA1_PRODUCER, key2);
+    
+    delta = keys1.computeDelta (keys2);
+    assertEquals (1, delta.added.keysetFor (SHA1_PRODUCER).size ());
+    assertEquals (1, delta.removed.keysetFor (SHA1_PRODUCER).size ());
+    
+    checkApplyDelta (delta, keys1, keys2);
+    
+    // key1 is now in both sets
+    keys1.add (SHA1_PRODUCER, key1);
+    
+    delta = keys1.computeDelta (keys2);
+    assertEquals (0, delta.added.keysetFor (SHA1_PRODUCER).size ());
+    assertEquals (1, delta.removed.keysetFor (SHA1_PRODUCER).size ());
+    
+    // key2 is not in both
+    keys2.add (SHA1_PRODUCER, key2);
+    
+    delta = keys1.computeDelta (keys2);
+    assertEquals (0, delta.added.keysetFor (SHA1_PRODUCER).size ());
+    assertEquals (0, delta.removed.keysetFor (SHA1_PRODUCER).size ());
+    
+    checkApplyDelta (delta, keys1, keys2);
+  }
+  
+  /**
+   * Test computeDelta () with a multiple key schemes in use.
+   */
+  @Test
+  public void computeDeltaMultiScheme ()
+  {
+    Keys keys1 = new Keys ();
+    Keys keys2 = new Keys ();
+    
+    Key key1 = new Key ("key 1");
+    Key key2 = new Key ("key 2");
+    Key key3 = new Key ("key 3");
+    
+    keys1.add (SHA1_PRODUCER, key1);
+    keys1.add (SHA1_CONSUMER, key2);
+    keys1.add (SHA1_CONSUMER, key3);
+    
+    keys2.add (SHA1_PRODUCER, key3);
+    keys2.add (SHA1_CONSUMER, key3);
+    
+    Delta<Keys> delta = keys1.computeDelta (keys2);
+    assertEquals (1, delta.added.keysetFor (SHA1_PRODUCER).size ());
+    assertEquals (1, delta.removed.keysetFor (SHA1_PRODUCER).size ());
+    
+    assertEquals (0, delta.added.keysetFor (SHA1_CONSUMER).size ());
+    assertEquals (1, delta.removed.keysetFor (SHA1_CONSUMER).size ());
+    
+    checkApplyDelta (delta, keys1, keys2);
+  }
+  
+  /**
+   * Test computeDelta () with a dual key set.
+   */
+  @Test
+  public void computeDeltaDual ()
+  {
+    Keys keys1 = new Keys ();
+    Keys keys2 = new Keys ();
+    
+    Key key1 = new Key ("key 1");
+    Key key2 = new Key ("key 2");
+    Key key3 = new Key ("key 3");
+    
+    keys1.add (SHA1_DUAL, PRODUCER, key1);
+    keys1.add (SHA1_DUAL, CONSUMER, key2);
+    keys1.add (SHA1_DUAL, CONSUMER, key3);
+    
+    keys2.add (SHA1_DUAL, PRODUCER, key3);
+    keys2.add (SHA1_DUAL, CONSUMER, key3);
+    
+    Delta<Keys> delta = keys1.computeDelta (keys2);
+    assertEquals (1, delta.added.keysetFor (SHA1_DUAL).producerKeys.size ());
+    assertEquals (1, delta.removed.keysetFor (SHA1_DUAL).producerKeys.size ());
+    
+    assertEquals (0, delta.added.keysetFor (SHA1_DUAL).consumerKeys.size ());
+    assertEquals (1, delta.removed.keysetFor (SHA1_DUAL).consumerKeys.size ());
+    
+    checkApplyDelta (delta, keys1, keys2);
+  }
+  
+  /**
+   * Check applying delta to keys1 gives keys2
+   */
+  private static void checkApplyDelta (Delta<Keys> delta,
+                                       Keys keys1, Keys keys2)
+  {
+    assertEquals (keys1.delta (delta.added, delta.removed), keys2);
   }
   
   @Test
