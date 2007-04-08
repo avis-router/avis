@@ -2,6 +2,7 @@ package org.avis.net.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static java.util.Collections.unmodifiableMap;
 
@@ -36,11 +37,15 @@ public class ConnectionOptions
       return value;
   }
   
-  public Map<String, Object> differenceFrom (Map<String, Object> options)
+  /**
+   * Generate the difference between this option set and an actual set
+   * returned by the server.
+   */
+  protected Map<String, Object> differenceFrom (Map<String, Object> options)
   {
     HashMap<String, Object> diff = new HashMap<String, Object> ();
     
-    for (Map.Entry<String, Object> entry : values.entrySet ())
+    for (Entry<String, Object> entry : values.entrySet ())
     {
       Object actualValue = options.get (entry.getKey ());
       
