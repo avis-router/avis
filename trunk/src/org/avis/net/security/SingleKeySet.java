@@ -10,7 +10,7 @@ import static org.avis.util.Collections.difference;
  *  
  * @author Matthew Phillips
  */
-public class SingleKeySet extends HashSet<Key> implements KeySet, Set<Key>
+class SingleKeySet extends HashSet<Key> implements KeySet, Set<Key>
 {
   SingleKeySet ()
   {

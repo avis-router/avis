@@ -17,7 +17,7 @@ import static org.avis.util.Collections.difference;
  * 
  * @author Matthew Phillips
  */
-public final class DualKeySet implements KeySet
+class DualKeySet implements KeySet
 {
   public final Set<Key> producerKeys;
   public final Set<Key> consumerKeys;
