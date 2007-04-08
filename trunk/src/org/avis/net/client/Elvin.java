@@ -38,6 +38,7 @@ import org.avis.net.messages.SecRply;
 import org.avis.net.messages.SecRqst;
 import org.avis.net.messages.SubAddRqst;
 import org.avis.net.messages.SubDelRqst;
+import org.avis.net.messages.SubModRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.messages.XidMessage;
 import org.avis.net.security.Keys;
@@ -182,6 +183,11 @@ public class Elvin
       
       clientSession.close ();
       clientSession = null;
+      
+      for (Subscription subscription : subscriptions.values ())
+        subscription.elvin = null;
+      
+      subscriptions = null;
     }
     
     if (executor != null)
@@ -199,33 +205,46 @@ public class Elvin
   public Subscription subscribe (String subscriptionExpr)
     throws IOException
   {
-    Subscription sub = new Subscription (subscriptionExpr);
+    return subscribe (subscriptionExpr, EMPTY_KEYS);
+  }
+  
+  public synchronized Subscription subscribe (String subscriptionExpr,
+                                              Keys keys)
+    throws IOException
+  {
+    Subscription sub = new Subscription (subscriptionExpr, keys);
     
-    subscribe (sub);
+    SubAddRqst subAddRqst = new SubAddRqst (sub.subscriptionExpr);
+    subAddRqst.acceptInsecure = sub.acceptInsecure;
+    subAddRqst.keys = sub.keys;
+    
+    sub.id =
+      sendAndReceive (subAddRqst, SubRply.class).subscriptionId;
+    
+    subscriptions.put (sub.id, sub);
+    
+    sub.elvin = this;
     
     return sub;
   }
 
-  public synchronized void subscribe (Subscription subscription)
-    throws IOException
-  {
-    SubAddRqst subAddRqst = new SubAddRqst (subscription.subscriptionExpr);
-    subAddRqst.acceptInsecure = subscription.acceptInsecure;
-    subAddRqst.keys = subscription.keys;
-    
-    subscription.id =
-      sendAndReceive (subAddRqst, SubRply.class).subscriptionId;
-    
-    subscriptions.put (subscription.id, subscription);
-  }
-  
-  public synchronized void unsubscribe (Subscription subscription)
+  void unsubscribe (Subscription subscription)
     throws IOException
   {
     if (subscriptions.remove (subscription.id) != subscription)
       throw new IllegalArgumentException ("Not a valid subcription");
 
     sendAndReceive (new SubDelRqst (subscription.id), SubRply.class);
+  }
+  
+  void setKeys (Subscription subscription, Keys newKeys)
+    throws IOException
+  {
+    Delta<Keys> delta = subscription.keys.computeDelta (newKeys);
+    
+    sendAndReceive
+      (new SubModRqst (subscription.id, delta.added, delta.removed), 
+       SubRply.class);
   }
   
   public synchronized boolean hasSubscription (Subscription subscription)
