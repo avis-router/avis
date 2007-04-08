@@ -28,13 +28,25 @@ public class SubModRqst extends XidMessage
   
   public SubModRqst (long subscriptionId, String subscriptionExpr)
   {
+    this (subscriptionId, subscriptionExpr, EMPTY_KEYS, EMPTY_KEYS);
+  }
+  
+  public SubModRqst (long subscriptionId,
+                     Keys addKeys, Keys delKeys)
+  {
+    this (subscriptionId, "", addKeys, delKeys);
+  }
+  
+  public SubModRqst (long subscriptionId, String subscriptionExpr,
+                     Keys addKeys, Keys delKeys)
+  {
     super (nextXid ());
     
     this.subscriptionExpr = subscriptionExpr;
     this.subscriptionId = subscriptionId;
     this.acceptInsecure = true;
-    this.addKeys = EMPTY_KEYS;
-    this.delKeys = EMPTY_KEYS;
+    this.addKeys = addKeys;
+    this.delKeys = delKeys;
   }
 
   @Override
