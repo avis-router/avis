@@ -3,7 +3,6 @@ package org.avis.net.client;
 import java.io.IOException;
 
 import org.avis.common.Notification;
-import org.avis.net.common.ConnectionOptions;
 import org.avis.net.common.ElvinURI;
 import org.avis.net.security.Key;
 import org.avis.net.security.Keys;
@@ -15,10 +14,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static java.lang.System.currentTimeMillis;
+
 import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
+import static org.avis.util.Collections.set;
 
-import static java.lang.System.currentTimeMillis;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -249,6 +250,30 @@ public class JUTestClient
       client.send (ntfn);
       
       wait (sub);
+    }
+  }
+  
+  @Test
+  public void connectionOptionsCheck ()
+    throws Exception
+  {
+    createServer ();
+    
+    ConnectionOptions options = new ConnectionOptions ();
+    
+    options.set ("Subscription.Max-Length", Integer.MAX_VALUE);
+    options.set ("Subscription.Max-Count", Integer.MAX_VALUE);
+    
+    try
+    {
+      new Elvin (new ElvinURI (ELVIN_URI), options, EMPTY_KEYS, EMPTY_KEYS);
+      
+      fail ("Failed to reject bogus options");
+    } catch (ConnectionOptionsException ex)
+    {
+      // ok
+      assertTrue (ex.rejectedOptions.keySet ().equals
+                   (set ("Subscription.Max-Length", "Subscription.Max-Count")));
     }
   }
 
