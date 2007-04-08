@@ -1,5 +1,7 @@
 package org.avis.util;
 
+import java.util.Map;
+
 
 /**
  * General text formatting utilities.
@@ -270,5 +272,28 @@ public final class Text
       return EMPTY_STRING_ARRAY;
     else
       return text.split (regex);
+  }
+
+  /**
+   * Generate human friendly string dump of a Map.
+   */
+  public static String mapToString (Map<?, ?> map)
+  {
+    StringBuffer str = new StringBuffer ();
+    boolean first = true;
+    
+    for (Map.Entry<?, ?> entry : map.entrySet ())
+    {
+      if (!first)
+        str.append (", ");
+      
+      first = false;
+      
+      str.append ('{');
+      str.append (entry.getKey ()).append (" = ").append (entry.getValue ());
+      str.append ('}');
+    }
+    
+    return str.toString ();
   }
 }
