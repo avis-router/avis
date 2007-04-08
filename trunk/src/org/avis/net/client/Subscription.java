@@ -26,21 +26,24 @@ public class Subscription
   public void remove ()
     throws IOException
   {
-    synchronized (elvin ())
+    synchronized (elvin)
     {
+      checkLive ();
+      
       elvin.unsubscribe (this);
-      elvin = null;
+      subscriptionExpr = null;
     }    
   }
   
   public Elvin elvin ()
   {
-    Elvin e = elvin;
-    
-    if (e == null)
+    return elvin;
+  }
+
+  private void checkLive ()
+  {
+    if (id == 0)
       throw new IllegalStateException ("Subscription is not active");
-    
-    return e;
   }
 
   public String subscriptionExpr ()
@@ -61,8 +64,10 @@ public class Subscription
   public void setKeys (Keys newKeys)
     throws IOException
   {
-    synchronized (elvin ())
+    synchronized (elvin)
     {
+      checkLive ();
+      
       elvin.setKeys (this, newKeys);
       
       this.keys = newKeys;
@@ -78,12 +83,14 @@ public class Subscription
       throw new IllegalArgumentException
         ("Subscription expression cannot be empty");
     
-    synchronized (elvin ())
+    synchronized (elvin)
     {
+      checkLive ();
+      
       elvin.setSubscription (this, newSubscriptionExpr);
       
       this.subscriptionExpr = newSubscriptionExpr;
-    }    
+    }
   }
 
   public void addNotificationListener (NotificationListener listener)

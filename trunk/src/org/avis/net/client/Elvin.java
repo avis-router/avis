@@ -185,7 +185,7 @@ public class Elvin
       clientSession = null;
       
       for (Subscription subscription : subscriptions.values ())
-        subscription.elvin = null;
+        subscription.id = 0;
       
       subscriptions = null;
     }
