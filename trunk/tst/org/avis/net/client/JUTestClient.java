@@ -254,7 +254,7 @@ public class JUTestClient
   }
   
   @Test
-  public void connectionOptionsCheck ()
+  public void connectionOptions ()
     throws Exception
   {
     createServer ();
@@ -263,6 +263,7 @@ public class JUTestClient
     
     options.set ("Subscription.Max-Length", Integer.MAX_VALUE);
     options.set ("Subscription.Max-Count", Integer.MAX_VALUE);
+    options.set ("Totally.Bogus", "Hello!");
     
     try
     {
@@ -272,8 +273,12 @@ public class JUTestClient
     } catch (ConnectionOptionsException ex)
     {
       // ok
+
+      // System.out.println ("options = " + ex.getMessage ());
       assertTrue (ex.rejectedOptions.keySet ().equals
-                   (set ("Subscription.Max-Length", "Subscription.Max-Count")));
+                   (set ("Subscription.Max-Length",
+                         "Subscription.Max-Count",
+                         "Totally.Bogus")));
     }
   }
 
