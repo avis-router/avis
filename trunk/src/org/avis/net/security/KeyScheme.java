@@ -1,8 +1,9 @@
 package org.avis.net.security;
 
-import static org.avis.net.security.SecureHash.SHA1;
-
 import java.util.Set;
+
+import static org.avis.net.security.SecureHash.SHA1;
+import static org.avis.util.Collections.set;
 
 /**
  * An enumeration of supported security key schemes e.g. SHA-1 Dual,
@@ -20,6 +21,9 @@ public abstract class KeyScheme
   
   public static final SingleKeyScheme SHA1_CONSUMER =
     new SingleKeyScheme (3, SHA1, false, true);
+
+  private static final Set<KeyScheme> SCHEMES =
+    set (SHA1_CONSUMER, SHA1_PRODUCER, SHA1_DUAL);
   
   /**
    * The ID of the scheme. Same as the on-the-wire value.
@@ -116,6 +120,28 @@ public abstract class KeyScheme
     return id;
   }
   
+  @Override
+  public String toString ()
+  {
+    return name ();
+  }
+  
+  public String name ()
+  {
+    StringBuilder str = new StringBuilder ();
+    
+    str.append (keyHash.name ()).append (' ');
+    
+    if (isDual ())
+      str.append ("Dual");
+    else if (producer)
+      str.append ("Producer");
+    else
+      str.append ("Consumer");
+    
+    return str.toString ();
+  }
+
   /**
    * Look up the scheme for a given ID.
    *
@@ -135,5 +161,10 @@ public abstract class KeyScheme
       default:
         throw new IllegalArgumentException ("Invalid key scheme ID: " + id);    
     }
+  }
+
+  public static Set<KeyScheme> schemes ()
+  {
+    return SCHEMES;
   }
 }
