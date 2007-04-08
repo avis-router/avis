@@ -60,10 +60,42 @@ import static org.avis.net.common.ElvinURI.defaultProtocol;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
 
+/**
+ * Manages a client's connection to an Elvin router. Typically a
+ * client creates a connection and then
+ * {@linkplain #subscribe(String) subscribes} to notifications and/or
+ * {@linkplain #send(Notification) sends} them.
+ * <p>
+ * 
+ * <h3>Threading and synchrony notes</h3>
+ * <p>
+  *
+ * <ul>
+ * 
+ * <li>This class is thread safe and may be accessed from any number
+ * of client threads.
+ * 
+ * <li>All changes requiring a response from the router, such as
+ * subscribing, are synchronous.
+ * 
+ * <li>Callbacks to the client initiated by a message from the
+ * router, such as notifications, are done from a separate thread
+ * managed by this connection. No guarantees on the callback thread
+ * are given, in particular the same thread may not be used each time.
+ * 
+ * <li>Clients have full access to the connection during a callback:
+ * changing subscriptions and sending notifications from a callback is
+ * fully supported.
+ * 
+ * <li>While clients should try not to take a lot of time in a
+ * callback, this connection will create extra callback threads if
+ * needed if one callback takes too long.
+ * </ul>
+ * 
+ * @author Matthew Phillips
+ */
 public class Elvin
 {
-//  private static final int RECEIVE_TIMEOUT = 5000;
-  
   private ElvinURI elvinUri;
   private IoSession clientSession;
   private ExecutorService executor;
