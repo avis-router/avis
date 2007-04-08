@@ -74,4 +74,23 @@ public final class Collections
       str.append (item);
     }
   }
+
+  /**
+   * Compute the difference between set1 and set2.
+   */
+  public static <E> Set<E> difference (Set<E> set1, Set<E> set2)
+  {
+    if (set1.isEmpty () || set2.isEmpty ())
+      return set1;
+
+    Set<E> diff = new HashSet<E> ();
+    
+    for (E item : set1)
+    {
+      if (!set2.contains (item))
+        diff.add (item);
+    }
+    
+    return diff;
+  }
 }
