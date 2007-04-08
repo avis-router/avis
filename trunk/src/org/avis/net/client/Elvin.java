@@ -41,7 +41,7 @@ import org.avis.net.messages.SubDelRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.messages.XidMessage;
 import org.avis.net.security.Keys;
-import org.avis.util.Pair;
+import org.avis.util.Delta;
 
 import dsto.dfc.logging.Log;
 
@@ -255,14 +255,14 @@ public class Elvin
   public void setKeys (Keys newNotificationKeys, Keys newSubscriptionKeys)
     throws IOException
   {
-    Pair<Keys> deltaNotificationKeys =
+    Delta<Keys> deltaNotificationKeys =
       notificationKeys.computeDelta (newNotificationKeys);
-    Pair<Keys> deltaSubscriptionKeys =
+    Delta<Keys> deltaSubscriptionKeys =
       subscriptionKeys.computeDelta (newSubscriptionKeys);
     
     sendAndReceive
-      (new SecRqst (deltaNotificationKeys.item1, deltaNotificationKeys.item2,
-                    deltaSubscriptionKeys.item1, deltaSubscriptionKeys.item2),
+      (new SecRqst (deltaNotificationKeys.added, deltaNotificationKeys.removed,
+                    deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed),
        SecRply.class);
   }
   
