@@ -181,18 +181,18 @@ public class JUTestClient
     
     // check we can add global keys later for same result
     
-//    aliceClient = new Elvin (uri);
-//    bobClient = new Elvin (uri);
-//    
-//    aliceClient.setKeys (aliceNtfnKeys, EMPTY_KEYS);
-//    bobClient.setKeys (EMPTY_KEYS, bobSubKeys);
-//    
-//    sub = bobClient.subscribe ("require (From-Alice)");
-//    
-//    checkSecureSendReceive (aliceClient, sub);
-//    
-//    aliceClient.close ();
-//    bobClient.close ();
+    aliceClient = new Elvin (uri);
+    bobClient = new Elvin (uri);
+    
+    aliceClient.setKeys (aliceNtfnKeys, EMPTY_KEYS);
+    
+    sub = bobClient.subscribe ("require (From-Alice)");
+    bobClient.setKeys (EMPTY_KEYS, bobSubKeys);
+    
+    checkSecureSendReceive (aliceClient, sub);
+    
+    aliceClient.close ();
+    bobClient.close ();
   }
 
   private static void checkSecureSendReceive (Elvin client,
