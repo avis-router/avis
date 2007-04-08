@@ -53,8 +53,6 @@ import static dsto.dfc.logging.Log.warn;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
-import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
-import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.net.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.net.common.ElvinURI.defaultProtocol;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
@@ -166,7 +164,8 @@ public class Elvin
     openConnection ();
     
     ConnRply connRply =
-      sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR,
+      sendAndReceive (new ConnRqst (elvinUri.versionMajor,
+                                    elvinUri.versionMinor,
                                     options.asMap (),
                                     notificationKeys, subscriptionKeys),
                       ConnRply.class);
@@ -197,7 +196,7 @@ public class Elvin
       
       SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
       connectorConfig.setThreadModel (ThreadModel.MANUAL);
-      connectorConfig.setConnectTimeout (10);
+      connectorConfig.setConnectTimeout (receiveTimeout);
       
       DemuxingProtocolCodecFactory codecFactory =
         new DemuxingProtocolCodecFactory ();
@@ -213,13 +212,13 @@ public class Elvin
       // filterChainBuilder.addLast
       //   ("threadPool", new ExecutorFilter (executor));
 
-      ConnectFuture future =
+      ConnectFuture connectFuture =
         connector.connect
           (new InetSocketAddress (elvinUri.host, elvinUri.port),
            new MessageHandler (), connectorConfig);
                                        
-      future.join ();
-      clientSession = future.getSession ();
+      connectFuture.join ();
+      clientSession = connectFuture.getSession ();
     } catch (RuntimeIOException ex)
     {
       // unwrap MINA's RuntimeIOException
