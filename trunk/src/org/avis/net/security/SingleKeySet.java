@@ -3,6 +3,8 @@ package org.avis.net.security;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.avis.util.Collections.difference;
+
 /**
  * A single set of keys. Can be used directly as a java.util.Set.
  *  
@@ -10,6 +12,16 @@ import java.util.Set;
  */
 public class SingleKeySet extends HashSet<Key> implements KeySet, Set<Key>
 {
+  SingleKeySet ()
+  {
+    super ();
+  }
+  
+  SingleKeySet (Set<Key> keys)
+  {
+    super (keys);
+  }
+
   public void add (KeySet theKeys)
     throws IllegalArgumentException
   {
@@ -24,5 +36,10 @@ public class SingleKeySet extends HashSet<Key> implements KeySet, Set<Key>
   public boolean remove (Key key)
   {
     return remove ((Object)key);
+  }
+  
+  public KeySet subtract (KeySet keys)
+  {
+    return new SingleKeySet (difference ((Set<Key>)this, (Set<Key>)keys));
   }
 }

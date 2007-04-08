@@ -1,11 +1,13 @@
 package org.avis.net.security;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
+
 import static org.avis.net.security.DualKeyScheme.PRODUCER;
 import static org.avis.net.security.DualKeyScheme.checkProdOrCon;
+import static org.avis.util.Collections.difference;
 
 /**
  * A pair of key sets (producer/consumer) used for dual key schemes.
@@ -31,8 +33,14 @@ public final class DualKeySet implements KeySet
    */
   DualKeySet (boolean immutable)
   {
-    this.producerKeys = Collections.emptySet ();
-    this.consumerKeys = Collections.emptySet ();
+    this.producerKeys = emptySet ();
+    this.consumerKeys = emptySet ();
+  }
+
+  DualKeySet (Set<Key> producerKeys, Set<Key> consumerKeys)
+  {
+    this.producerKeys = producerKeys;
+    this.consumerKeys = consumerKeys;
   }
 
   /**
@@ -89,6 +97,14 @@ public final class DualKeySet implements KeySet
     throws IllegalArgumentException, UnsupportedOperationException
   {
     throw new UnsupportedOperationException ("Cannot remove from a dual key set");
+  }
+  
+  public KeySet subtract (KeySet theKeys)
+  {
+    DualKeySet keys = (DualKeySet)theKeys;
+    
+    return new DualKeySet (difference (producerKeys, keys.producerKeys),
+                           difference (consumerKeys, keys.consumerKeys));
   }
   
   @Override
