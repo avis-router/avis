@@ -202,6 +202,20 @@ public class JUTestClient
     
     aliceClient.close ();
     bobClient.close ();
+    
+    // check we can add subscription keys for same result
+    
+    aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
+    bobClient = new Elvin (uri);
+    
+    sub = bobClient.subscribe ("require (From-Alice)");
+    
+    sub.setKeys (bobSubKeys);
+    
+    checkSecureSendReceive (aliceClient, sub);
+    
+    aliceClient.close ();
+    bobClient.close ();
   }
 
   private static void checkSecureSendReceive (Elvin client,
