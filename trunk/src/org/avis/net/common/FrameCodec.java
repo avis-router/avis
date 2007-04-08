@@ -49,9 +49,6 @@ import static dsto.dfc.logging.Log.internalError;
 public class FrameCodec implements MessageDecoder, MessageEncoder
 {
   private static final Set<Class> MESSAGE_TYPES;
-  private static final ConnectionOptions DEFAULT_OPTIONS =
-    new ConnectionOptions ();
-  // private static final int MAX_BUFFER_DUMP = 512;
   
   static
   {
@@ -112,9 +109,9 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
       throw new ProtocolCodecException
         ("Frame length not 4 byte aligned for " + message.getClass ());
     
-    ConnectionOptions options = optionsFor (session);
+    int maxLength = maxFrameLengthFor (session);
     
-    if (frameSize <= options.getInt ("Packet.Max-Length"))
+    if (frameSize <= maxLength)
     {
       // write out whole frame
       buffer.flip ();
@@ -123,7 +120,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     {
       throw new ProtocolCodecException
         ("Frame size of " + frameSize + " bytes is larger than maximum " + 
-            options.getInt ("Packet.Max-Length"));
+         maxLength);
     }
   }
 
@@ -135,9 +132,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     
     int frameSize = in.getInt ();
     
-    ConnectionOptions options = optionsFor (session);
-    
-    if (frameSize > options.getInt ("Packet.Max-Length"))
+    if (frameSize > maxFrameLengthFor (session))
     {
       // when frame too big, OK it and let decode () generate error
       return OK;
@@ -161,7 +156,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     // if (isEnabled (TRACE) && in.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec input: " + in.getHexDump (), this);
     
-    ConnectionOptions options = optionsFor (session);
+    int maxLength = maxFrameLengthFor (session);
     
     int frameSize = in.getInt ();
     int dataStart = in.position ();
@@ -178,10 +173,10 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
         throw new ProtocolCodecException
           ("Frame length not 4 byte aligned");
       
-      if (frameSize > options.getInt ("Packet.Max-Length"))
+      if (frameSize > maxLength)
         throw new ProtocolCodecException
           ("Frame size of " + frameSize + " bytes is larger than maximum " + 
-           options.getInt ("Packet.Max-Length"));
+           maxLength);
       
       message.decode (in);
       
@@ -220,6 +215,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     return OK;
   }
   
+
   public void finishDecode (IoSession session, ProtocolDecoderOutput out)
     throws Exception
   {
@@ -300,28 +296,18 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     return message;
   }
   
-  /**
-   * Get the connection options set for the given session. Returns
-   * defaults if none set.
-   */
-  private static ConnectionOptions optionsFor (IoSession session)
+  private static int maxFrameLengthFor (IoSession session)
   {
-    ConnectionOptions options =
-      (ConnectionOptions)session.getAttribute ("connectionOptions");
+    Integer length = (Integer)session.getAttribute ("maxFrameLength");
     
-    if (options == null)
-      options = DEFAULT_OPTIONS;
-    
-    return options;
+    if (length == null)
+      return Integer.MAX_VALUE;
+    else
+      return length;
   }
-
-  /**
-   * Set the per-session connection options that will be used by this
-   * codec.
-   */
-  public static void setOptions (IoSession session,
-                                 ConnectionOptions options)
+  
+  public static void setMaxFrameLengthFor (IoSession session, int length)
   {
-    session.setAttribute ("connectionOptions", options);
+    session.setAttribute ("maxFrameLength", length);
   }
 }
