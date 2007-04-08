@@ -22,7 +22,6 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.Notification;
-import org.avis.net.common.ConnectionOptions;
 import org.avis.net.common.ElvinURI;
 import org.avis.net.common.FrameCodec;
 import org.avis.net.messages.ConnRply;
@@ -94,7 +93,8 @@ public class Elvin
   
   public Elvin (ElvinURI elvinUri, ConnectionOptions options,
                 Keys notificationKeys, Keys subscriptionKeys)
-    throws IllegalArgumentException, ConnectException, IOException
+    throws IllegalArgumentException, ConnectException,
+           IOException, ConnectionOptionsException
   {
     this.elvinUri = elvinUri;
     this.notificationKeys = notificationKeys;
@@ -110,14 +110,23 @@ public class Elvin
     
     openConnection ();
     
-    sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR,
-                                  options.asMap (),
-                                  notificationKeys, subscriptionKeys),
+    ConnRply connRply =
+      sendAndReceive (new ConnRqst (CLIENT_VERSION_MAJOR, CLIENT_VERSION_MINOR,
+                                    options.asMap (),
+                                    notificationKeys, subscriptionKeys),
                     ConnRply.class);
     
     elvinConnectionOpen = true;
     
-    // todo check connection options
+    Map<String, Object> rejectedOptions =
+      options.differenceFrom (connRply.options);
+    
+    if (rejectedOptions.size () != 0)
+    {
+      close ();
+      
+      throw new ConnectionOptionsException (options, rejectedOptions);
+    }
   }
 
   private void openConnection ()
