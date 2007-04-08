@@ -1,12 +1,13 @@
 package org.avis.net.client;
 
+import java.io.IOException;
+
 import org.avis.net.security.Keys;
 import org.avis.util.ListenerList;
 
-import static org.avis.net.security.Keys.EMPTY_KEYS;
-
 public class Subscription
 {
+  Elvin elvin;
   String subscriptionExpr;
   boolean acceptInsecure;
   Keys keys;
@@ -14,12 +15,30 @@ public class Subscription
   
   private ListenerList<NotificationListener> notificationListeners;
 
-  public Subscription (String subscriptionExpr)
+  Subscription (String subscriptionExpr, Keys keys)
   {
     this.subscriptionExpr = subscriptionExpr;
     this.acceptInsecure = true;
-    this.keys = EMPTY_KEYS;
+    this.keys = keys;
     this.notificationListeners = new ListenerList<NotificationListener> ();
+  }
+  
+  public void remove ()
+    throws IOException
+  {
+    synchronized (elvin ())
+    {
+      elvin.unsubscribe (this);
+      elvin = null;
+    }    
+  }
+  
+  public Elvin elvin ()
+  {
+    if (elvin == null || !elvin.isConnected ())
+      throw new IllegalStateException ("Subscription is not active");
+    
+    return elvin;
   }
 
   public String subscriptionExpr ()
@@ -35,6 +54,17 @@ public class Subscription
   public Keys keys ()
   {
     return keys;
+  }
+  
+  public void setKeys (Keys newKeys)
+    throws IOException
+  {
+    synchronized (elvin ())
+    {
+      elvin.setKeys (this, newKeys);
+      
+      this.keys = newKeys;
+    }    
   }
 
   public void addNotificationListener (NotificationListener listener)
