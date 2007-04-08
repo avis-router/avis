@@ -25,6 +25,8 @@ import static org.junit.Assert.fail;
 
 public class JUTestClient
 {
+  private static final String ELVIN_URI = "elvin://localhost:29170";
+  
   private Server server;
   private LogFailTester logTester;
 
@@ -43,6 +45,12 @@ public class JUTestClient
     logTester.dispose ();
   }
   
+  private void createServer ()
+    throws IOException
+  {
+    server = new Server (29170);
+  }
+  
   /**
    * Test that client handles changing subs in a notification callback.
    */
@@ -50,9 +58,9 @@ public class JUTestClient
   public void modifySubInNotifyEvent ()
     throws Exception
   {
-    server = new Server (29170);
+    createServer ();
     
-    final Elvin client = new Elvin ("elvin://localhost:29170");
+    final Elvin client = new Elvin (ELVIN_URI);
     
     final Subscription sub = client.subscribe ("require (test)");
     
@@ -104,9 +112,9 @@ public class JUTestClient
   public void notifyInNotifyEvent ()
     throws Exception
   {
-    server = new Server (29170);
+    createServer ();
     
-    final Elvin client = new Elvin ("elvin://localhost:29170");
+    final Elvin client = new Elvin (ELVIN_URI);
     final Subscription sub = client.subscribe ("require (test)");
     
     sub.addNotificationListener (new NotificationListener ()
@@ -157,8 +165,9 @@ public class JUTestClient
   public void securityProducer ()
     throws Exception
   {
-    server = new Server (29170);
-    ElvinURI uri = new ElvinURI ("localhost", 29170);
+    createServer ();
+    
+    ElvinURI uri = new ElvinURI (ELVIN_URI);
     ConnectionOptions options = new ConnectionOptions ();
     
     Key alicePrivate = new Key ("alice private");
@@ -240,8 +249,8 @@ public class JUTestClient
   public void serverShutdown ()
     throws Exception
   {
-    server = new Server (29170);
-    Elvin client = new Elvin ("elvin://localhost:29170");
+    createServer ();
+    Elvin client = new Elvin (ELVIN_URI);
     
     client.subscribe ("require (test)");
     
