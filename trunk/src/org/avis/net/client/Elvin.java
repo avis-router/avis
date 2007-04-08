@@ -252,13 +252,19 @@ public class Elvin
     return subscriptions.containsValue (subscription);
   }
 
-  public synchronized void send (Notification notification)
+  public void send (Notification notification)
     throws IOException
   {
-    send (new NotifyEmit (notification));
+    send (notification, EMPTY_KEYS);
   }
   
-  public synchronized void sendSecure (Notification notification)
+  public synchronized void send (Notification notification, Keys keys)
+    throws IOException
+  {
+    send (new NotifyEmit (notification, true, keys));
+  }
+  
+  public void sendSecure (Notification notification)
     throws IOException
   {
     sendSecure (notification, EMPTY_KEYS);
