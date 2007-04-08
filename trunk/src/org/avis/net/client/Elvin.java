@@ -549,16 +549,22 @@ public class Elvin
       public void run ()
       {
         Notification ntfn = new Notification (message.attributes);
-        
-        fireNotify (message.secureMatches, true, ntfn);
-        fireNotify (message.insecureMatches, false, ntfn);
+       
+        synchronized (Elvin.this)
+        {
+          if (isConnected ())
+          {
+            fireNotify (message.secureMatches, true, ntfn);
+            fireNotify (message.insecureMatches, false, ntfn);
+          }
+        }
       }
    });
   }
 
-  protected synchronized void fireNotify (long [] subscriptionIds,
-                                          boolean secure,
-                                          Notification ntfn)
+  protected void fireNotify (long [] subscriptionIds,
+                             boolean secure,
+                             Notification ntfn)
   {
     for (long subscriptionId : subscriptionIds)
     {
