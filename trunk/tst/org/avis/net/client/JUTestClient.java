@@ -162,13 +162,12 @@ public class JUTestClient
     ConnectionOptions options = new ConnectionOptions ();
     
     Key alicePrivate = new Key ("alice private");
-    Key alicePublic = alicePrivate.publicKeyFor (SHA1_PRODUCER);
-    
+
     Keys aliceNtfnKeys = new Keys ();
     aliceNtfnKeys.add (SHA1_PRODUCER, alicePrivate);
     
     Keys bobSubKeys = new Keys ();
-    bobSubKeys.add (SHA1_PRODUCER, alicePublic);
+    bobSubKeys.add (SHA1_PRODUCER, alicePrivate.publicKeyFor (SHA1_PRODUCER));
     
     Elvin aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     Elvin bobClient = new Elvin (uri, options, EMPTY_KEYS, bobSubKeys);
