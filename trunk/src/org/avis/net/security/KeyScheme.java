@@ -32,6 +32,7 @@ public abstract class KeyScheme
   public final boolean producer;
   public final boolean consumer;
   public final SecureHash keyHash;
+  public final String name;
 
   KeyScheme (int id, SecureHash keyHash, boolean producer, boolean consumer)
   {
@@ -39,6 +40,7 @@ public abstract class KeyScheme
     this.producer = producer;
     this.consumer = consumer;
     this.keyHash = keyHash;
+    this.name = createName ();
   }
   
   /**
@@ -123,21 +125,21 @@ public abstract class KeyScheme
   @Override
   public String toString ()
   {
-    return name ();
+    return name;
   }
   
-  public String name ()
+  private String createName ()
   {
     StringBuilder str = new StringBuilder ();
     
-    str.append (keyHash.name ()).append (' ');
+    str.append (keyHash.name ()).append ('-');
     
     if (isDual ())
-      str.append ("Dual");
+      str.append ("dual");
     else if (producer)
-      str.append ("Producer");
+      str.append ("producer");
     else
-      str.append ("Consumer");
+      str.append ("consumer");
     
     return str.toString ();
   }
