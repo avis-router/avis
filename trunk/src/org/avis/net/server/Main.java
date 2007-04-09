@@ -2,11 +2,7 @@ package org.avis.net.server;
 
 import java.util.Properties;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.mina.common.ByteBuffer;
 
@@ -25,6 +21,9 @@ import static dsto.dfc.logging.Log.warn;
 
 import static org.avis.util.CommandLine.intArg;
 import static org.avis.util.CommandLine.stringArg;
+import static org.avis.util.Util.fileStream;
+import static org.avis.util.Util.propertiesFrom;
+import static org.avis.util.Util.resourceStream;
 
 /**
  * Invokes the Avis router from the command line.
@@ -159,45 +158,6 @@ public class Main
     if (!properties.containsKey ("avis.router.version"))
       properties.put ("avis.router.version", "<unknown>");
     
-    return properties;
-  }
-
-  private static InputStream fileStream (String filename)
-    throws FileNotFoundException
-  {
-    return new BufferedInputStream (new FileInputStream (filename));
-  }
-
-  private static InputStream resourceStream (String resource)
-    throws FileNotFoundException
-  {
-    InputStream in = Main.class.getResourceAsStream (resource);
-    
-    if (in == null)
-      throw new FileNotFoundException ("Missing resource: " + resource);
-    else
-      return in;
-  }
-  
-  private static Properties propertiesFrom (InputStream in)
-    throws IOException
-  {
-    Properties properties = new Properties ();
-    
-    try
-    {
-      properties.load (in);
-    } finally
-    {
-      try
-      {
-        in.close ();
-      } catch (IOException ex)
-      {
-        // zip
-      }
-    } 
-   
     return properties;
   }
 }
