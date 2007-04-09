@@ -14,6 +14,6 @@ public class JUTestText
   {
     assertEquals (bytesToHex (new byte [] {00, (byte)0xA1, (byte)0xDE,
                                (byte)0xAD, (byte)0xBE, (byte)0xEF}), 
-                  bytesToHex (Text.parseHexBytes ("00A1DEADBEEF")));
+                  bytesToHex (Text.hexToBytes ("00A1DEADBEEF")));
   }
 }

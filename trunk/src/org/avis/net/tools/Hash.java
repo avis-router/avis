@@ -6,7 +6,7 @@ import java.io.Reader;
 import org.avis.net.security.SecureHash;
 
 import static org.avis.util.Text.bytesToHex;
-import static org.avis.util.Text.parseHexBytes;
+import static org.avis.util.Text.hexToBytes;
 import static org.avis.util.Util.stringFrom;
 
 /**
@@ -32,7 +32,7 @@ public class Hash
       Reader reader = new InputStreamReader (System.in);
       
       byte [] hashedData =
-        hashFunction.hash (parseHexBytes (stringFrom (reader)));
+        hashFunction.hash (hexToBytes (stringFrom (reader)));
       
       System.out.println (bytesToHex (hashedData));
     } catch (Exception ex)

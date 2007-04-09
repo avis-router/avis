@@ -15,7 +15,7 @@ import static org.avis.net.security.DualKeyScheme.PRODUCER;
 import static org.avis.net.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.net.security.KeyScheme.SHA1_DUAL;
 import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
-import static org.avis.util.Text.parseHexBytes;
+import static org.avis.util.Text.hexToBytes;
 import static org.avis.util.Util.fileStream;
 import static org.avis.util.Util.stringFrom;
 
@@ -81,7 +81,7 @@ public class ToolOptions extends CommandLineOptions
   {
     try
     {
-      return new Key (parseHexBytes (stringFrom (fileStream (filename))));
+      return new Key (hexToBytes (stringFrom (fileStream (filename))));
     } catch (Exception ex)
     {
       throw new IllegalOptionException

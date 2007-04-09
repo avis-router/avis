@@ -19,9 +19,9 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.appendEscaped;
 import static org.avis.util.Text.findFirstNonEscaped;
-import static org.avis.util.Text.parseNumberValue;
-import static org.avis.util.Text.parseOpaqueValue;
-import static org.avis.util.Text.parseStringValue;
+import static org.avis.util.Text.stringToNumber;
+import static org.avis.util.Text.stringToOpaque;
+import static org.avis.util.Text.stringExprToString;
 import static org.avis.util.Text.stripBackslashes;
 
 public class Notification implements Map<String, Object>, Cloneable
@@ -130,11 +130,11 @@ public class Notification implements Map<String, Object>, Cloneable
     char firstChar = valueExpr.charAt (0);
     
     if (firstChar == '"')
-      value = parseStringValue (valueExpr);
+      value = stringExprToString (valueExpr);
     else if (firstChar >= '0' && firstChar <= '9')
-      value = parseNumberValue (valueExpr);
+      value = stringToNumber (valueExpr);
     else if (firstChar == '[')
-      value = parseOpaqueValue (valueExpr);
+      value = stringToOpaque (valueExpr);
     else
       throw new InvalidFormatException
         ("Unrecognised value expression: \"" + valueExpr + "\"");

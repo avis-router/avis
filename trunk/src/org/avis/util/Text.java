@@ -52,18 +52,6 @@ public final class Text
   }
   
   /**
-   * Turn an array of bytes into a hex-encoeded string e.g. "00 01 aa de".
-   */
-  public static String bytesToHex (byte [] bytes)
-  {
-    StringBuilder str = new StringBuilder (bytes.length * 3);
-    
-    appendHexBytes (str, bytes);
-    
-    return str.toString ();
-  }
-
-  /**
    * Append a string to a builder, escaping (with '\') any instances
    * of a special character.
    */
@@ -131,7 +119,7 @@ public final class Text
    * 
    * @return A byte in the range 0 - 255 if sign is ignored.
    */
-  public static byte parseUnsignedByte (String byteExpr)
+  public static byte hexToByte (String byteExpr)
     throws InvalidFormatException
   {
     if (byteExpr.length () > 2)
@@ -164,7 +152,7 @@ public final class Text
   /**
    * Parse a numeric int, long or double value. e.g. 32L, 3.14, 42.
    */
-  public static Number parseNumberValue (String valueExpr)
+  public static Number stringToNumber (String valueExpr)
     throws InvalidFormatException
   {
     try
@@ -185,7 +173,7 @@ public final class Text
    * Parse a string value in the format "string", allowing escaped "'s
    * inside the string.
    */
-  public static String parseStringValue (String valueExpr)
+  public static String stringExprToString (String valueExpr)
     throws InvalidFormatException
   {
     int last = findFirstNonEscaped (valueExpr, 1, '"');
@@ -201,7 +189,7 @@ public final class Text
   /**
    * Parse an opaque value expression e.g. [00 0f 01]. 
    */
-  public static byte [] parseOpaqueValue (String valueExpr)
+  public static byte [] stringToOpaque (String valueExpr)
     throws InvalidFormatException
   {
     if (valueExpr.length () < 2)
@@ -216,7 +204,7 @@ public final class Text
     else if (closingBrace != valueExpr.length () - 1)
       throw new InvalidFormatException ("Junk at end of oqaque value");
   
-    return parseHexBytes (valueExpr.substring (1, closingBrace));
+    return hexToBytes (valueExpr.substring (1, closingBrace));
   }
   
   /**
@@ -224,7 +212,7 @@ public final class Text
    * Pairs may be separated by optional whitespace. e.g. "0A FF 00 01"
    * or "deadbeef".
    */
-  public static byte [] parseHexBytes (String string)
+  public static byte [] hexToBytes (String string)
     throws InvalidFormatException
   {
     string = string.replaceAll ("\\s+", "");
@@ -235,9 +223,21 @@ public final class Text
     byte [] bytes = new byte [string.length () / 2];
     
     for (int i = 0; i < string.length (); i += 2)
-      bytes [i / 2] = parseUnsignedByte (string.substring (i, i + 2));
+      bytes [i / 2] = hexToByte (string.substring (i, i + 2));
     
     return bytes;
+  }
+  
+  /**
+   * Turn an array of bytes into a hex-encoded string e.g. "00 01 aa de".
+   */
+  public static String bytesToHex (byte [] bytes)
+  {
+    StringBuilder str = new StringBuilder (bytes.length * 3);
+    
+    appendHexBytes (str, bytes);
+    
+    return str.toString ();
   }
   
   /**
