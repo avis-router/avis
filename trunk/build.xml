@@ -152,6 +152,7 @@
 
       <include name="org/avis/net/tools/Ec.class" />
       <include name="org/avis/net/tools/Ep.class" />
+      <include name="org/avis/net/tools/Hash.class" />
     </jarx>
 
   </target>
