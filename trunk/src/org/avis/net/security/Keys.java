@@ -37,14 +37,17 @@ public class Keys
   public static final int PRODUCER = DualKeyScheme.PRODUCER;
   public static final int CONSUMER = DualKeyScheme.CONSUMER;
   
-  /**
-   * An empty, immutable collection of keys.
-   */
+  /** An empty, immutable key collection. */
   public static final Keys EMPTY_KEYS = new EmptyKeys ();
 
   private static final DualKeySet EMPTY_DUAL_KEYSET =  new DualKeySet (true);
   private static final SingleKeySet EMPTY_SINGLE_KEYSET = new EmptySingleKeys ();
   
+  /**
+   * NB: this set must be kept normalised i.e. if there is a key
+   * scheme in the map, then there must be a non-empty key set
+   * associated with it.
+   */
   private Map<KeyScheme, KeySet> keySets;
 
   public Keys ()
@@ -222,32 +225,32 @@ public class Keys
    * Create a new key collection with some keys added/removed. This
    * does not modify the current collection.
    * 
-   * @param addKeys Keys to add.
-   * @param removeKeys Keys to remove
+   * @param toAdd Keys to add.
+   * @param toRemove Keys to remove
    * 
    * @return A new key set with keys added remove. If both add/remove
    *         key sets are empty, this returns the current instance.
    *         
    * @see #computeDelta(Keys)
    */
-  public Keys delta (Keys addKeys, Keys removeKeys)
+  public Keys delta (Keys toAdd, Keys toRemove)
   {
-    if (addKeys.isEmpty () && removeKeys.isEmpty ())
+    if (toAdd.isEmpty () && toRemove.isEmpty ())
     {
       return this;
     } else
     {
       Keys keys = new Keys (this);
       
-      keys.add (addKeys);
-      keys.remove (removeKeys);
+      keys.add (toAdd);
+      keys.remove (toRemove);
       
       return keys;
     }
   }
   
   /**
-   * Compute the changes between one Key collection and another.
+   * Compute the changes between one key collection and another.
    * 
    * @param keys The target key collection.
    * @return The delta (i.e. key sets to be added and removed)
@@ -505,23 +508,27 @@ public class Keys
   
   static class EmptySingleKeys extends SingleKeySet
   {
+    @Override
     public boolean add (Key key) throws IllegalArgumentException
     {
       throw new UnsupportedOperationException ();
     }
 
+    @Override
     public void add (KeySet keys)
       throws IllegalArgumentException, UnsupportedOperationException
     {
       throw new UnsupportedOperationException ();
     }
 
+    @Override
     public boolean remove (Key key)
       throws IllegalArgumentException, UnsupportedOperationException
     {
       return false;
     }
 
+    @Override
     public void remove (KeySet keys)
       throws IllegalArgumentException
     {
