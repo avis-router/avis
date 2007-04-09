@@ -15,7 +15,6 @@ import static org.avis.net.security.DualKeyScheme.PRODUCER;
 import static org.avis.net.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.net.security.KeyScheme.SHA1_DUAL;
 import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
-import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.parseHexBytes;
 import static org.avis.util.Util.fileStream;
 import static org.avis.util.Util.stringFrom;
@@ -34,7 +33,7 @@ public class ToolOptions extends CommandLineOptions
   public ToolOptions ()
   {
     this.insecure = true;
-    this.keys = EMPTY_KEYS;
+    this.keys = new Keys ();
   }
   
   @Override
@@ -59,10 +58,10 @@ public class ToolOptions extends CommandLineOptions
     } else if (takeArg (args, "-X"))
     {
       insecure = true;
-    } else if (takeArg (args, "-C"))
+    } else if (arg.equals ("-C"))
     {
       addKeys (CONSUMER, readHexKeyFrom (stringArg (args)));
-    } else if (takeArg (args, "-P"))                
+    } else if (arg.equals ("-P"))                
     {
       addKeys (PRODUCER, readHexKeyFrom (stringArg (args)));
     }
