@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import org.avis.net.client.Elvin;
 import org.avis.net.client.NotificationEvent;
 import org.avis.net.client.NotificationListener;
+import org.avis.net.client.Subscription;
 import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
@@ -20,6 +21,9 @@ import static dsto.dfc.logging.Log.DIAGNOSTIC;
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.setEnabled;
+
+import static org.avis.net.client.ConnectionOptions.EMPTY_OPTIONS;
+import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 /**
  * The ec command line utility. Subscribes to notifications and echoes
@@ -51,7 +55,8 @@ public class Ec
     
     try
     {
-      final Elvin elvin = new Elvin (options.elvinUri);
+      final Elvin elvin =
+        new Elvin (options.elvinUri, EMPTY_OPTIONS, EMPTY_KEYS, options.keys);
       
       System.err.println ("ec: Connected to server " +
                           options.elvinUri.toCanonicalString ());
@@ -66,8 +71,14 @@ public class Ec
         }
       });
 
-      elvin.subscribe
-        (options.subscription).addNotificationListener (new Listener ());
+      Subscription sub;
+      
+      if (options.insecure)
+        sub = elvin.subscribe (options.subscription);
+      else
+        sub = elvin.subscribeSecure (options.subscription);
+      
+      sub.addNotificationListener (new Listener ());
     } catch (IOException ex)
     {
       if (ex instanceof ConnectException)

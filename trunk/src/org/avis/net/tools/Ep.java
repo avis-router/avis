@@ -19,6 +19,9 @@ import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.setEnabled;
 
+import static org.avis.net.client.ConnectionOptions.EMPTY_OPTIONS;
+import static org.avis.net.security.Keys.EMPTY_KEYS;
+
 /**
  * The ep command line utility. Reads a notification from standard
  * input and sends to en Elvin router.
@@ -37,7 +40,7 @@ public class Ep
     setEnabled (TRACE, false);
     setEnabled (DIAGNOSTIC, false);
     
-    EpOptions options = new EpOptions ();
+    ToolOptions options = new EpOptions ();
     
     try
     {
@@ -49,7 +52,8 @@ public class Ep
     
     try
     {
-      final Elvin elvin = new Elvin (options.elvinUri);
+      final Elvin elvin =
+        new Elvin (options.elvinUri, EMPTY_OPTIONS, options.keys, EMPTY_KEYS);
       
       System.err.println ("ep: Connected to server " +
                           options.elvinUri.toCanonicalString ());
@@ -69,7 +73,10 @@ public class Ep
           (new InputStreamReader (System.in,
                                   Charset.forName ("UTF-8").newDecoder ()));
       
-      elvin.send (notification);
+      if (options.insecure)
+        elvin.send (notification);
+      else
+        elvin.sendSecure (notification);
       
       System.exit (0);
     } catch (IOException ex)
