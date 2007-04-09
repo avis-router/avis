@@ -112,6 +112,10 @@ public class Notification implements Map<String, Object>, Cloneable
   private static void parseLine (Notification ntfn, String line)
     throws InvalidFormatException
   {
+    // skip ep "$field" and "---" lines
+    if (line.charAt (0) == '$' || line.charAt (0) == '-')
+      return;
+    
     int colon = findFirstNonEscaped (line, 0, ':');
     
     if (colon == -1)
