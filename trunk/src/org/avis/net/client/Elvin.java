@@ -298,6 +298,12 @@ public class Elvin
     return subscription;
   }
   
+  public Subscription subscribeSecure (String subscriptionExpr)
+    throws IOException
+  {
+    return subscribeSecure (subscriptionExpr, EMPTY_KEYS);
+  }
+  
   public synchronized Subscription subscribeSecure (String subscriptionExpr,
                                                     Keys keys)
     throws IOException
