@@ -5,7 +5,6 @@ import java.util.Date;
 import java.io.IOException;
 
 import java.net.ConnectException;
-import java.net.URISyntaxException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,17 +12,14 @@ import java.text.SimpleDateFormat;
 import org.avis.net.client.Elvin;
 import org.avis.net.client.NotificationEvent;
 import org.avis.net.client.NotificationListener;
-import org.avis.net.common.ElvinURI;
 import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
 
-import static dsto.dfc.logging.Log.setEnabled;
-import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
+import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
-
-import static org.avis.util.CommandLine.stringArg;
+import static dsto.dfc.logging.Log.setEnabled;
 
 /**
  * The ec command line utility. Subscribes to notifications and echoes
@@ -43,50 +39,22 @@ public class Ec
     setEnabled (TRACE, false);
     setEnabled (DIAGNOSTIC, false);
     
-    ElvinURI elvinUri = null;
-    String subscription = null;
+    EcOptions options = new EcOptions ();
     
     try
     {
-      for (int i = 0; i < args.length; i++)
-      {
-        String arg = args [i];
-        
-        if (arg.equals ("-e"))
-        {
-          elvinUri = new ElvinURI (stringArg (args, ++i));
-        } else if (arg.startsWith ("-"))
-        {
-          throw new IllegalOptionException (arg, "Not a known option");
-        } else
-        {
-          if (subscription == null)
-            subscription = arg;
-          else
-            throw new IllegalOptionException ("Can only have one subscription");
-        }
-      }
-    } catch (URISyntaxException ex)
-    {
-      System.err.println ("\nError in Elvin URI: " + ex.getMessage ());
-      
-      System.exit (1);
+      options.parse (args);
     } catch (IllegalOptionException ex)
     {
       usageError (ex.getMessage ());
     }
     
-    if (elvinUri == null)
-      usageError ("Missing Elvin URI (-e option)");
-    else if (subscription == null)
-      usageError ("Missing subscription");
-    
     try
     {
-      final Elvin elvin = new Elvin (elvinUri);
+      final Elvin elvin = new Elvin (options.elvinUri);
       
       System.err.println ("ec: Connected to server " +
-                          elvinUri.toCanonicalString ());
+                          options.elvinUri.toCanonicalString ());
       
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
@@ -98,7 +66,8 @@ public class Ec
         }
       });
 
-      elvin.subscribe (subscription).addNotificationListener (new Listener ());
+      elvin.subscribe
+        (options.subscription).addNotificationListener (new Listener ());
     } catch (IOException ex)
     {
       if (ex instanceof ConnectException)
