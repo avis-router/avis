@@ -24,7 +24,7 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
 
 /**
  * The ep command line utility. Reads a notification from standard
- * input and sends to en Elvin router.
+ * input and sends to an Elvin router.
  * 
  * @author Matthew Phillips
  */
@@ -40,7 +40,7 @@ public class Ep
     setEnabled (TRACE, false);
     setEnabled (DIAGNOSTIC, false);
     
-    ToolOptions options = new EpOptions ();
+    EpOptions options = new EpOptions ();
     
     try
     {
@@ -68,10 +68,11 @@ public class Ep
         }
       });
       
-      Notification notification =
-        new Notification
-          (new InputStreamReader (System.in,
-                                  Charset.forName ("UTF-8").newDecoder ()));
+      InputStreamReader input =
+        new InputStreamReader (System.in,
+                               Charset.forName ("UTF-8").newDecoder ());
+      
+      Notification notification = new Notification (input);
       
       if (options.insecure)
         elvin.send (notification);
