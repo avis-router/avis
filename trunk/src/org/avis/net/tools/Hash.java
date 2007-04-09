@@ -18,7 +18,7 @@ import static org.avis.util.Util.stringFrom;
 public class Hash
 {
   private static final Object USAGE =
-    "\nUsage: hash hash\n";
+    "\nUsage: hash hash_type\n";
   
   public static void main (String [] args)
   {
