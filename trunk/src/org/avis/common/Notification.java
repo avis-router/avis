@@ -16,7 +16,7 @@ import org.avis.util.InvalidFormatException;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
-import static org.avis.util.Text.appendBytes;
+import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.appendEscaped;
 import static org.avis.util.Text.findFirstNonEscaped;
 import static org.avis.util.Text.parseNumberValue;
@@ -205,7 +205,7 @@ public class Notification implements Map<String, Object>, Cloneable
     } else
     {
       str.append ('[');
-      appendBytes (str, (byte [])value);
+      appendHexBytes (str, (byte [])value);
       str.append (']');
     }
   }
