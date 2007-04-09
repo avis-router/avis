@@ -18,6 +18,8 @@ Client
 
 Not allocated
 
+* keepalives? connection test
+* lots of ec/ep options
 * replace IOException witn RuntimeIOException? relates/affected by async idea
 * discovery
 * async/future-based messaging. use futures to track responses.
