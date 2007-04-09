@@ -50,6 +50,18 @@ public final class Text
     else
       return className (ex.getClass ()) + ": " + ex.getMessage ();
   }
+  
+  /**
+   * Turn an array of bytes into a hex-encoeded string e.g. "00 01 aa de".
+   */
+  public static String bytesToHex (byte [] bytes)
+  {
+    StringBuilder str = new StringBuilder (bytes.length * 3);
+    
+    appendHexBytes (str, bytes);
+    
+    return str.toString ();
+  }
 
   /**
    * Append a string to a builder, escaping (with '\') any instances
@@ -88,9 +100,9 @@ public final class Text
   }
 
   /**
-   * Append a byte array to a builder in form: [01 e2 fe ff ...].
+   * Append a byte array to a builder in form: 01 e2 fe ff ...
    */
-  public static void appendBytes (StringBuilder str, byte [] bytes)
+  public static void appendHexBytes (StringBuilder str, byte [] bytes)
   {
     boolean first = true;
     
@@ -204,21 +216,34 @@ public final class Text
     else if (closingBrace != valueExpr.length () - 1)
       throw new InvalidFormatException ("Junk at end of oqaque value");
   
-    String [] byteExprs = valueExpr.substring (1, closingBrace).split (" +");
-    byte [] bytes = new byte [byteExprs.length];
+    return parseHexBytes (valueExpr.substring (1, closingBrace));
+  }
+  
+  /**
+   * Parse a series of hex pairs as a sequence of unsigned bytes.
+   * Pairs may be separated by optional whitespace. e.g. "0A FF 00 01"
+   * or "deadbeef".
+   */
+  public static byte [] parseHexBytes (String string)
+    throws InvalidFormatException
+  {
+    string = string.replaceAll ("\\s+", "");
     
-    try
-    {
-      for (int i = 0; i < byteExprs.length; i++)
-        bytes [i] = parseUnsignedByte (byteExprs [i]);
-    } catch (NumberFormatException ex)
-    {
-      throw new InvalidFormatException ("Invalid byte value: " + ex.getMessage ());
-    }
+    if (string.length () % 2 != 0)
+      throw new InvalidFormatException ("Hex bytes must be a set of hex pairs");
+    
+    byte [] bytes = new byte [string.length () / 2];
+    
+    for (int i = 0; i < string.length (); i += 2)
+      bytes [i / 2] = parseUnsignedByte (string.substring (i, i + 2));
     
     return bytes;
   }
   
+  /**
+   * Find the first index of the given character, skipping instances
+   * that are escaped by '\'.
+   */
   public static int findFirstNonEscaped (String str, int start, char toFind)
   {
     boolean escaped = false;
@@ -242,6 +267,9 @@ public final class Text
     return -1;
   }
   
+  /**
+   * Remove any \'s from a string.
+   */
   public static String stripBackslashes (String text)
   {
     if (text.indexOf ('\\') != -1)
