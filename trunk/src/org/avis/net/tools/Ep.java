@@ -9,7 +9,6 @@ import java.nio.charset.Charset;
 
 import org.avis.common.Notification;
 import org.avis.net.client.Elvin;
-import org.avis.util.IllegalOptionException;
 import org.avis.util.InvalidFormatException;
 
 import dsto.dfc.logging.Log;
@@ -30,9 +29,6 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
  */
 public class Ep
 {
-  private static final Object USAGE =
-    "\nUsage: ep -e elvin\n";
-
   public static void main (String [] args)
   {
     Log.setApplicationName ("ep");
@@ -42,13 +38,7 @@ public class Ep
     
     EpOptions options = new EpOptions ();
     
-    try
-    {
-      options.parse (args);
-    } catch (IllegalOptionException ex)
-    {
-      usageError (ex.getMessage ());
-    }
+    options.parseOrExit (args);
     
     try
     {
@@ -94,12 +84,5 @@ public class Ep
       
       System.exit (1);
     }
-  }
-
-  private static void usageError (String message)
-  {
-    System.err.println ("ep: " + message);
-    System.err.println (USAGE);
-    System.exit (1);
   }
 }

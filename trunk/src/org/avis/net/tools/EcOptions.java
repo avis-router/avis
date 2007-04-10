@@ -6,8 +6,18 @@ import org.avis.util.IllegalOptionException;
 
 public class EcOptions extends ToolOptions
 {
-  public String subscription;
+  private static final String USAGE =
+    "Usage: ec " + COMMON_USAGE_SUMMARY + " subscription\n\n" +
+    COMMON_USAGE_DETAIL;
 
+  public String subscription;
+ 
+  @Override
+  protected String usage ()
+  {
+    return USAGE;
+  }
+  
   @Override
   protected void handleArg (Queue<String> args)
     throws IllegalOptionException

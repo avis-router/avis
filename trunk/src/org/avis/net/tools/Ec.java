@@ -13,7 +13,6 @@ import org.avis.net.client.Elvin;
 import org.avis.net.client.NotificationEvent;
 import org.avis.net.client.NotificationListener;
 import org.avis.net.client.Subscription;
-import org.avis.util.IllegalOptionException;
 
 import dsto.dfc.logging.Log;
 
@@ -33,9 +32,6 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
  */
 public class Ec
 {
-  private static final Object USAGE =
-    "\nUsage: ec -e elvin subscription\n";
-
   public static void main (String [] args)
   {
     Log.setApplicationName ("ec");
@@ -44,14 +40,8 @@ public class Ec
     setEnabled (DIAGNOSTIC, false);
     
     EcOptions options = new EcOptions ();
-    
-    try
-    {
-      options.parse (args);
-    } catch (IllegalOptionException ex)
-    {
-      usageError (ex.getMessage ());
-    }
+
+    options.parseOrExit (args);
     
     try
     {
@@ -90,13 +80,6 @@ public class Ec
     }
   }
 
-  private static void usageError (String message)
-  {
-    System.err.println ("ec: " + message);
-    System.err.println (USAGE);
-    System.exit (1);
-  }
-  
   static class Listener implements NotificationListener
   {
     private DateFormat iso8601Date = 

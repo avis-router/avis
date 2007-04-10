@@ -24,8 +24,16 @@ import static org.avis.util.Util.stringFrom;
  * 
  * @author Matthew Phillips
  */
-public class ToolOptions extends CommandLineOptions
-{   
+public abstract class ToolOptions extends CommandLineOptions
+{
+  protected static final String COMMON_USAGE_SUMMARY =
+    "-e elvin -x -C file -P file";
+
+  protected static final String COMMON_USAGE_DETAIL =
+    "  -x       Allow only secure notifications\n" +
+    "  -C file  Read hex-coded consumer key from file\n" +
+    "  -P file  Read hex-coded producer key from file";
+  
   public ElvinURI elvinUri;
   public Keys keys;
   public boolean insecure;
@@ -94,7 +102,7 @@ public class ToolOptions extends CommandLineOptions
     throws IllegalOptionException
   {
     if (elvinUri == null)
-      throw new IllegalOptionException ("-e", "Missing Elvin URI");
+      throw new IllegalOptionException ("Missing Elvin URI");
     
     if (!insecure && keys.isEmpty ())
       throw new IllegalOptionException
