@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
 import static org.avis.util.Util.valuesEqual;
@@ -63,23 +64,23 @@ import static org.avis.util.Util.valuesEqual;
  */
 public class ConnectionOptions
 {
-  private HashMap<String, Object> values;
+  private static final Map<String, Object> EMPTY_MAP = emptyMap ();
+
+  private Map<String, Object> values;
 
   public static final ConnectionOptions EMPTY_OPTIONS =
-    new ConnectionOptions ()
-  {
-    @Override
-    public void set (String name, Object value)
-    {
-      throw new UnsupportedOperationException ();
-    }
-  };
-  
+    new ConnectionOptions (EMPTY_MAP);
+    
   public ConnectionOptions ()
   {
-    this.values = new HashMap<String, Object> ();
+    this (new HashMap<String, Object> ());
   }
   
+  private ConnectionOptions (Map<String, Object> values)
+  {
+    this.values = values;
+  }
+
   public void set (String name, Object value)
   {
     values.put (name, value);
