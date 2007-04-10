@@ -3,6 +3,8 @@ package org.avis.util;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import dsto.dfc.logging.Log;
+
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
@@ -42,6 +44,38 @@ public abstract class CommandLineOptions
     
     checkOptions ();
   }
+  
+  /**
+   * Parse the command line options successfully or exit() with a usage
+   * error.
+   * 
+   * @see #usageError(String)
+   * @see #usage()
+   */
+  public void parseOrExit (String [] args)
+  {
+    try
+    {
+      parse (args);
+    } catch (IllegalOptionException ex)
+    {
+      usageError (ex.getMessage ());
+    }
+  }
+  
+  protected void usageError (String message)
+  {
+    String applicationName = Log.applicationName ();
+    
+    if (applicationName != null)
+      System.err.print (applicationName + ": ");
+    
+    System.err.println (message);
+    System.err.println ();
+    System.err.println (usage ());
+    System.err.println ();
+    System.exit (1);
+  }
 
   private boolean argHandled (Queue<String> args)
   {
@@ -72,6 +106,11 @@ public abstract class CommandLineOptions
   protected abstract void checkOptions ()
     throws IllegalOptionException;
 
+  /**
+   * Generate a usage string suitable for printing to the console.
+   */
+  protected abstract String usage ();
+  
   /**
    * Take an option switch plus its string parameter (in the form of
    * {-s string}) off the queue.
