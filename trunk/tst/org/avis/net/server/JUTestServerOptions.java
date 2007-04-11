@@ -82,19 +82,29 @@ public class JUTestServerOptions
     testHost (localhostAddresses, localhost.getHostName () + ":29170", 29170);
   }
 
+  /**
+   * Test multiple URI's in Listen field with whitespace.
+   * @throws Exception
+   */
   @Test
   public void multipleURIs ()
     throws Exception
   {
     ServerOptions options = new ServerOptions ();
-    options.set ("Listen", "elvin:/tcp,none,xdr/localhost:1234 \t elvin://localhost");
+    options.set ("Listen",
+                 "elvin:/tcp,none,xdr/localhost:1234 \t elvin://localhost");
     
     Set<InetSocketAddress> addresses = options.bindAddresses ();
     
-    InetAddress [] localhostAddresses =
-      InetAddress.getAllByName (InetAddress.getLocalHost ().getHostName ());
+    boolean found1234 = false;
     
-    assertEquals (localhostAddresses.length * 2, addresses.size ());
+    for (InetSocketAddress address : addresses)
+    {
+      if (address.getPort () == 1234)
+        found1234 = true;
+    }
+    
+    assertTrue (found1234);
   }
   
   private void testHost (Set<InetAddress> hostAddresses, String hostOption, int port)
