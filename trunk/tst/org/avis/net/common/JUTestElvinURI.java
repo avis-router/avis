@@ -40,6 +40,7 @@ public class JUTestElvinURI
     assertEquals (CLIENT_VERSION_MINOR, uri.versionMinor);
     assertEquals ("elvin_host", uri.host);
     
+    assertInvalid ("http:hello//elvin_host");
     assertInvalid ("elvin:hello//elvin_host");
     assertInvalid ("elvin:4.0.0//elvin_host");
     assertInvalid ("elvin:4.//elvin_host");
@@ -121,6 +122,7 @@ public class JUTestElvinURI
     throws URISyntaxException
   {
     ElvinURI uri = new ElvinURI ("elvin://elvin_host");
+    assertEquals ("elvin://elvin_host", uri.toString ());
     
     assertEquals ("elvin:4.0/tcp,none,xdr/elvin_host:2917",
                   uri.toCanonicalString ());
@@ -165,6 +167,8 @@ public class JUTestElvinURI
     throws URISyntaxException
   {
     assertEquals (new ElvinURI (uri1), new ElvinURI (uri2));
+    assertEquals (new ElvinURI (uri1).hashCode (),
+                  new ElvinURI (uri2).hashCode ());
   }
   
   private static void assertNotSameUri (String uri1, String uri2)
