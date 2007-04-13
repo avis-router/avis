@@ -85,7 +85,27 @@ To see command line options:
 
   > ./bin/avisd -h
 
-If you don't have a client for testing the server, you can try one of
-the tickertape messaging clients at tickertape.org:
+You can use the ec (Elvin Consumer) and ep (Elvin Producer) utilities
+to subscribe to and generate notifications from the command line.
+
+  [from shell #1]
+  > cd bin
+  > ./ec -e elvin://localhost "require (Hello-World)"
+  ec: Connected to server elvin:4.0/tcp,none,xdr/localhost:2917
+
+  [from shell #2]
+  > cd bin
+  > ./ep -e elvin://localhost
+  Hello-World: 1
+  ^D
+  ep: Closing connection
+
+  [output on shell #1]
+  $time 2007-04-13T20:37:28.156+0930
+  Hello-World: 1
+  ---
+
+You can also try one of the tickertape messaging clients at
+tickertape.org:
 
   http://tickertape.org/get_tickertape.html
