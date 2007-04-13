@@ -1,6 +1,5 @@
 package org.avis.net.tools;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 import java.net.ConnectException;
@@ -70,17 +69,17 @@ public class Ep
         elvin.sendSecure (notification);
       
       System.exit (0);
-    } catch (IOException ex)
+    } catch (InvalidFormatException ex)
+    {
+      System.err.println ("ep: Invalid notification: " + ex.getMessage ());
+      
+      System.exit (1);
+    } catch (Exception ex)
     {
       if (ex instanceof ConnectException)
         alarm ("Failed to connect to Elvin: connection refused", Ep.class);
       else
         alarm ("Error connecting to Elvin: " + ex.getMessage (), Ep.class);
-      
-      System.exit (1);
-    } catch (InvalidFormatException ex)
-    {
-      System.err.println ("ep: Invalid notification: " + ex.getMessage ());
       
       System.exit (1);
     }

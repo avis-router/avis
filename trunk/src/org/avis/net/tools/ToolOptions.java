@@ -58,7 +58,7 @@ public abstract class ToolOptions extends CommandLineOptions
       } catch (URISyntaxException ex)
       {
         throw new IllegalOptionException
-          (arg, "Error in Elvin URI: " + ex.getMessage ());
+          (arg, "Invalid Elvin URI: " + ex.getMessage ());
       }
     } else if (takeArg (args, "-x"))
     {

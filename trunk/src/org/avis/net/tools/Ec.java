@@ -2,8 +2,6 @@ package org.avis.net.tools;
 
 import java.util.Date;
 
-import java.io.IOException;
-
 import java.net.ConnectException;
 
 import java.text.DateFormat;
@@ -69,7 +67,7 @@ public class Ec
         sub = elvin.subscribeSecure (options.subscription);
       
       sub.addNotificationListener (new Listener ());
-    } catch (IOException ex)
+    } catch (Exception ex)
     {
       if (ex instanceof ConnectException)
         alarm ("Failed to connect to Elvin: connection refused", Ec.class);

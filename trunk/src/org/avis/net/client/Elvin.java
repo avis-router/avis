@@ -158,8 +158,8 @@ public class Elvin
     
     if (!elvinUri.protocol.equals (defaultProtocol ()))
       throw new IllegalArgumentException
-        ("Only the default protocol stack (" +
-         defaultProtocol () + ") is currently supported");
+        ("Only the default protocol stack " +
+         defaultProtocol () + " is currently supported");
     
     openConnection ();
     
