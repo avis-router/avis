@@ -45,6 +45,7 @@ public class JUTestElvinURI
     assertInvalid ("elvin:4.0.0//elvin_host");
     assertInvalid ("elvin:4.//elvin_host");
     assertInvalid ("elvin: //elvin_host");
+    assertInvalid ("elvin:111111111111111.2222222222222222222//elvin_host");
   }
 
   @Test

@@ -281,10 +281,18 @@ public final class ElvinURI
     
     if (versionMatch.matches ())
     {
-      versionMajor = parseInt (versionMatch.group (1));
-      
-      if (versionMatch.group (2) != null)
-        versionMinor = parseInt (versionMatch.group (2));
+      try
+      {
+        versionMajor = parseInt (versionMatch.group (1));
+        
+        if (versionMatch.group (2) != null)
+          versionMinor = parseInt (versionMatch.group (2));
+      } catch (NumberFormatException ex)
+      {
+        throw new URISyntaxException (uriString,
+                                      "Number too large in version string: \"" +
+                                      versionExpr + "\"");
+      }
     } else
     {
       throw new URISyntaxException (uriString,
