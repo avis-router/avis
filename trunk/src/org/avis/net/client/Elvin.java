@@ -43,10 +43,9 @@ import org.avis.net.messages.XidMessage;
 import org.avis.net.security.Keys;
 import org.avis.util.Delta;
 
-import dsto.dfc.logging.Log;
-
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.diagnostic;
 import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.trace;
 import static dsto.dfc.logging.Log.warn;
@@ -104,19 +103,47 @@ public final class Elvin
   private Keys subscriptionKeys;
   private int receiveTimeout;
   
-  /** This is effectively a single-item queue for handling responses
-      to XID-based requests. It's volatile since it's used for inter-
-      thread communication. */
-  protected volatile XidMessage lastReply;
+  /** lastReply is effectively a single-item queue for handling responses
+      to XID-based requests, using replySemaphore to synchronize access. */
+  private XidMessage lastReply;
   private Object replySemaphore;
   
+  /**
+   * Create a new connection to an Elvin router.
+   * 
+   * @param elvinUri A URI for the Elvin router.
+   * 
+   * @throws URISyntaxException if elvinUri is invalid.
+   * @throws IllegalArgumentException if one of the arguments is not
+   *           valid.
+   * @throws ConnectException if the socket to the router could not be
+   *           opened, e.g. connection refused.
+   * @throws IOException if a general network error occurs.
+   * 
+   * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
+   */
   public Elvin (String elvinUri)
-    throws URISyntaxException, IllegalArgumentException,
-           ConnectException, IOException
+    throws URISyntaxException,
+           IllegalArgumentException,
+           ConnectException,
+           IOException
   {
     this (new ElvinURI (elvinUri));
   }
   
+  /**
+   * Create a new connection to an Elvin router.
+   * 
+   * @param elvinUri A URI for the Elvin router.
+   * 
+   * @throws IllegalArgumentException if one of the arguments is not
+   *           valid.
+   * @throws ConnectException if the socket to the router could not be
+   *           opened, e.g. connection refused.
+   * @throws IOException if a general network error occurs.
+   * 
+   * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
+   */
   public Elvin (ElvinURI elvinUri)
     throws IllegalArgumentException, ConnectException, IOException
   {
@@ -128,16 +155,16 @@ public final class Elvin
    * 
    * @param elvinUri The URI of the router to connect to.
    * @param options The connection options.
-   * @param notificationKeys The new notification keys. These
-   *          automatically apply to all notifications, exactly as if
-   *          they were added to the keys in the
+   * @param notificationKeys These keys automatically apply to all
+   *          notifications, exactly as if they were added to the keys
+   *          in the
    *          {@linkplain #send(Notification, SecureMode, Keys) send}
    *          call.
-   * @param subscriptionKeys The new subscription keys. These
-   *          automatically apply to all subscriptions, exactly as if
-   *          they were added to the keys in the
+   * @param subscriptionKeys These keys automatically apply to all
+   *          subscriptions, exactly as if they were added to the keys
+   *          in the
    *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
-   *          call. This includes currently existing subscriptions.
+   *          call.
    * 
    * @throws IllegalArgumentException if one of the arguments is not
    *           valid.
@@ -155,8 +182,10 @@ public final class Elvin
    */
   public Elvin (ElvinURI elvinUri, ConnectionOptions options,
                 Keys notificationKeys, Keys subscriptionKeys)
-    throws IllegalArgumentException, ConnectException,
-           IOException, ConnectionOptionsException
+    throws IllegalArgumentException,
+           ConnectException,
+           IOException,
+           ConnectionOptionsException
   {
     this.elvinUri = elvinUri;
     this.notificationKeys = notificationKeys;
@@ -250,9 +279,9 @@ public final class Elvin
         try
         {
           sendAndReceive (new DisconnRqst (), DisconnRply.class);
-        } catch (IOException ex)
+        } catch (Exception ex)
         {
-          Log.diagnostic ("Failed to cleanly disconnect", this, ex);
+          diagnostic ("Failed to cleanly disconnect", this, ex);
         } finally
         {
           elvinConnectionOpen = false;
@@ -305,11 +334,11 @@ public final class Elvin
   }
   
   /**
-   * Return the mutex used to ensure this connection is thread safe.
+   * Return the mutex used to synchronize access to this connection.
    * All public methods on this connection that modify state or
-   * otherwise need to be thread safe acquire this. Clients may choose
-   * to pre-acquire this mutex to execute several operations
-   * atomically -- see example in
+   * otherwise need to be thread safe acquire this before operation.
+   * Clients may choose to pre-acquire this mutex to execute several
+   * operations atomically -- see example in
    * {@link #subscribe(String, SecureMode, Keys)}.
    * <p>
    * 
@@ -322,7 +351,7 @@ public final class Elvin
   }
   
   /**
-   * Create a new subscription with no security requirements. See
+   * Create a new subscription with no security. See
    * {@link #subscribe(String, SecureMode, Keys)} for details.
    * 
    * @param subscriptionExpr The subscription expression.
@@ -333,11 +362,11 @@ public final class Elvin
   public Subscription subscribe (String subscriptionExpr)
     throws IOException
   {
-    return subscribe (subscriptionExpr, EMPTY_KEYS);
+    return subscribe (subscriptionExpr, ALLOW_INSECURE_DELIVERY, EMPTY_KEYS);
   }
   
   /**
-   * Create a new subscription with a given set of keys but allowing
+   * Create a new subscription with a given set of keys, allowing
    * insecure notifications. See
    * {@link #subscribe(String, SecureMode, Keys)} for details.
    * 
@@ -346,8 +375,7 @@ public final class Elvin
    * 
    * @throws IOException if an IO error occurs.
    */
-  public Subscription subscribe (String subscriptionExpr,
-                                 Keys keys)
+  public Subscription subscribe (String subscriptionExpr, Keys keys)
     throws IOException
   {
     return subscribe (subscriptionExpr, ALLOW_INSECURE_DELIVERY, keys);
@@ -359,11 +387,11 @@ public final class Elvin
    * and unsubscribe.
    * <p>
    * 
-   * NB: there exists the possibility that between creating a
+   * NB: there exists the possibility that, between creating a
    * subscription and adding a listener to it, the client could miss a
-   * notification. If this is a problem, the client may ensure this
-   * will not happen by acquiring the connection's
-   * {@linkplain #mutex() mutex} before subscribing. e.g.
+   * notification. If necessary, the client may ensure this will not
+   * happen by acquiring the connection's {@linkplain #mutex() mutex}
+   * before subscribing. e.g.
    * 
    * <pre>
    *   Elvin elvin = ...;
@@ -459,13 +487,13 @@ public final class Elvin
   }
 
   /**
-   * Send a notification with no security requirements. See
+   * Send a notification with no security restrictions. See
    * {@link #send(Notification, SecureMode, Keys)} for details.
    */
   public void send (Notification notification)
     throws IOException
   {
-    send (notification, EMPTY_KEYS);
+    send (notification, ALLOW_INSECURE_DELIVERY, EMPTY_KEYS);
   }
   
   /**
@@ -640,10 +668,10 @@ public final class Elvin
   {
     XidMessage reply = receiveReply ();
     
-    if (request.xid != reply.xid)
+    if (reply.xid != request.xid)
     {
       throw new IOException
-        ("Protocol error: XID mismatch in reply from router");
+        ("Protocol error: Transaction ID mismatch in reply from router");
     } else if (expectedReplyType.isAssignableFrom (reply.getClass ()))
     {
       return (E)reply;
@@ -654,10 +682,10 @@ public final class Elvin
       // todo need to expand arg refs in nack error message from Mantara Elvin 
       // e.g. %1: Expression '%2' does not refer to a name
       throw new IOException
-        ("Router rejected request: " + nack.errorText () +
-         ": " + nack.message);
+        ("Router rejected request: " + nack.errorText () + ": " + nack.message);
     } else
     {
+      // todo this indicates a pretty serious fuckup. should try to reconnect?
       throw new IOException
         ("Protocol error: received a " + className (reply) +
          ": was expecting " + className (expectedReplyType));
