@@ -27,12 +27,14 @@ import static org.avis.util.Util.stringFrom;
 public abstract class ToolOptions extends CommandLineOptions
 {
   protected static final String COMMON_USAGE_SUMMARY =
-    "-e elvin -x -C file -P file";
+    "-e elvin [-x] [-X] [-C file] [-P file]";
 
   protected static final String COMMON_USAGE_DETAIL =
-    "  -x       Allow only secure notifications\n" +
-    "  -C file  Read hex-coded consumer key from file\n" +
-    "  -P file  Read hex-coded producer key from file";
+    "  -e elvin  Set the Elvin URI e.g. elvin://host:port\n" +
+    "  -x        Allow only secure notifications\n" +
+    "  -X        Allow insecure notifications (default)\n" +
+    "  -C file   Read hex-coded consumer key from file\n" +
+    "  -P file   Read hex-coded producer key from file";
   
   public ElvinURI elvinUri;
   public Keys keys;
@@ -77,11 +79,7 @@ public abstract class ToolOptions extends CommandLineOptions
   
   private void addKeys (int type, Key key)
   {
-    if (type == CONSUMER)
-      keys.add (SHA1_CONSUMER, key);
-    else
-      keys.add (SHA1_PRODUCER, key);
-    
+    keys.add (type == CONSUMER ? SHA1_CONSUMER : SHA1_PRODUCER, key);
     keys.add (SHA1_DUAL, type, key);
   }
 
