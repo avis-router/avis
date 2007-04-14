@@ -4,6 +4,13 @@ import java.util.EventObject;
 
 import org.avis.common.Notification;
 
+/**
+ * A notification delivery event.
+ * 
+ * @see Subscription#addNotificationListener(NotificationListener)
+ * 
+ * @author Matthew Phillips
+ */
 public class NotificationEvent extends EventObject
 {
   public final Subscription subscription;
