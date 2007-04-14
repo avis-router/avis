@@ -399,8 +399,7 @@ public final class Elvin
     throws IOException
   {
     Subscription subscription =
-      new Subscription (this, subscriptionExpr,
-                        secureMode == ALLOW_INSECURE_DELIVERY, keys);
+      new Subscription (this, subscriptionExpr, secureMode, keys);
     
     subscribe (subscription);
     
@@ -412,7 +411,8 @@ public final class Elvin
   {
     SubAddRqst subAddRqst = new SubAddRqst (subscription.subscriptionExpr);
     
-    subAddRqst.acceptInsecure = subscription.acceptInsecure;
+    subAddRqst.acceptInsecure =
+      subscription.secureMode == ALLOW_INSECURE_DELIVERY;
     subAddRqst.keys = subscription.keys;
     
     subscription.id =
