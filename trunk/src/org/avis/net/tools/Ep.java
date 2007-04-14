@@ -63,10 +63,7 @@ public class Ep
       
       Notification notification = new Notification (input);
       
-      if (options.insecure)
-        elvin.send (notification);
-      else
-        elvin.sendSecure (notification);
+      elvin.send (notification, options.secureMode, options.keys);
       
       System.exit (0);
     } catch (InvalidFormatException ex)

@@ -59,12 +59,9 @@ public class Ec
         }
       });
 
-      Subscription sub;
-      
-      if (options.insecure)
-        sub = elvin.subscribe (options.subscription);
-      else
-        sub = elvin.subscribeSecure (options.subscription);
+      Subscription sub =
+        elvin.subscribe (options.subscription, options.secureMode,
+                         options.keys);
       
       sub.addNotificationListener (new Listener ());
     } catch (Exception ex)

@@ -4,12 +4,15 @@ import java.util.Queue;
 
 import java.net.URISyntaxException;
 
+import org.avis.net.client.SecureMode;
 import org.avis.net.common.ElvinURI;
 import org.avis.net.security.Key;
 import org.avis.net.security.Keys;
 import org.avis.util.CommandLineOptions;
 import org.avis.util.IllegalOptionException;
 
+import static org.avis.net.client.SecureMode.ALLOW_INSECURE_DELIVERY;
+import static org.avis.net.client.SecureMode.REQUIRE_SECURE_DELIVERY;
 import static org.avis.net.security.DualKeyScheme.CONSUMER;
 import static org.avis.net.security.DualKeyScheme.PRODUCER;
 import static org.avis.net.security.KeyScheme.SHA1_CONSUMER;
@@ -38,11 +41,11 @@ public abstract class ToolOptions extends CommandLineOptions
   
   public ElvinURI elvinUri;
   public Keys keys;
-  public boolean insecure;
+  public SecureMode secureMode;
   
   public ToolOptions ()
   {
-    this.insecure = true;
+    this.secureMode = ALLOW_INSECURE_DELIVERY;
     this.keys = new Keys ();
   }
   
@@ -64,10 +67,10 @@ public abstract class ToolOptions extends CommandLineOptions
       }
     } else if (takeArg (args, "-x"))
     {
-      insecure = false;
+      secureMode = REQUIRE_SECURE_DELIVERY;
     } else if (takeArg (args, "-X"))
     {
-      insecure = true;
+      secureMode = ALLOW_INSECURE_DELIVERY;
     } else if (arg.equals ("-C"))
     {
       addKeys (CONSUMER, readHexKeyFrom (stringArg (args)));
@@ -102,7 +105,7 @@ public abstract class ToolOptions extends CommandLineOptions
     if (elvinUri == null)
       throw new IllegalOptionException ("Missing Elvin URI");
     
-    if (!insecure && keys.isEmpty ())
+    if (secureMode == REQUIRE_SECURE_DELIVERY && keys.isEmpty ())
       throw new IllegalOptionException
         ("-x", "Cannot activate secure mode if no keys specified");
   }

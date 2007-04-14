@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
 
+import static org.avis.net.client.SecureMode.REQUIRE_SECURE_DELIVERY;
 import static org.avis.net.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
@@ -223,7 +224,7 @@ public class JUTestClient
     aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     
-    sub = bobClient.subscribeSecure ("require (From-Alice)", bobSubKeys);
+    sub = bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY, bobSubKeys);
     
     checkSecureSendReceive (aliceClient, sub);
     
@@ -337,7 +338,7 @@ public class JUTestClient
     
     synchronized (sub)
     {
-      client.sendSecure (ntfn);
+      client.send (ntfn, REQUIRE_SECURE_DELIVERY);
       
       wait (sub);
     }
@@ -370,7 +371,7 @@ public class JUTestClient
     // todo should listen for event here when supported
     Thread.sleep (2000);
     
-    assertFalse (client.isConnected ());
+    assertFalse (client.isOpen ());
     
     client.close ();
   }
