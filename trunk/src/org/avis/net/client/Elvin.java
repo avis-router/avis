@@ -54,6 +54,7 @@ import static dsto.dfc.logging.Log.warn;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import static org.avis.net.client.ConnectionOptions.EMPTY_OPTIONS;
+import static org.avis.net.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.net.common.ElvinURI.defaultProtocol;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
@@ -92,7 +93,7 @@ import static org.avis.util.Text.className;
  * 
  * @author Matthew Phillips
  */
-public class Elvin
+public final class Elvin
 {
   private ElvinURI elvinUri;
   private IoSession clientSession;
@@ -127,12 +128,16 @@ public class Elvin
    * 
    * @param elvinUri The URI of the router to connect to.
    * @param options The connection options.
-   * @param notificationKeys The global key collection used for all
-   *          notifications. All notifications sent automatically get
-   *          these keys.
-   * @param subscriptionKeys The global key collection used for all
-   *          subscriptions. All subscriptions made through this
-   *          connection automatically get these keys.
+   * @param notificationKeys The new notification keys. These
+   *          automatically apply to all notifications, exactly as if
+   *          they were added to the keys in the
+   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          call.
+   * @param subscriptionKeys The new subscription keys. These
+   *          automatically apply to all subscriptions, exactly as if
+   *          they were added to the keys in the
+   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          call. This includes currently existing subscriptions.
    * 
    * @throws IllegalArgumentException if one of the arguments is not
    *           valid.
@@ -141,7 +146,12 @@ public class Elvin
    * @throws ConnectionOptionsException if the router rejected the
    *           connection options. The client may elect to change the
    *           options and try to create a new connection.
+   * 
    * @throws IOException if some other IO error occurs.
+   * 
+   * @see #subscribe(String, SecureMode, Keys)
+   * @see #send(Notification, SecureMode, Keys)
+   * @see #setKeys(Keys, Keys)
    */
   public Elvin (ElvinURI elvinUri, ConnectionOptions options,
                 Keys notificationKeys, Keys subscriptionKeys)
@@ -226,9 +236,14 @@ public class Elvin
     }
   }
   
+  /** 
+   * Close this connection. May be executed more than once.
+   * 
+   * @see #isOpen()
+   */
   public synchronized void close ()
   {
-    if (isConnected ())
+    if (isOpen ())
     {
       if (elvinConnectionOpen)
       {
@@ -259,12 +274,21 @@ public class Elvin
       executor = null;
     }
   }
-  
-  public synchronized boolean isConnected ()
+
+  /**
+   * Test if this connection is open i.e. has not been
+   * {@linkplain #close() closed}.
+   * 
+   * @see #close()
+   */
+  public synchronized boolean isOpen ()
   {
     return clientSession != null && clientSession.isConnected ();
   }
   
+  /**
+   * @see #setReceiveTimeout(int)
+   */
   public int receiveTimeout ()
   {
     return receiveTimeout;
@@ -272,51 +296,118 @@ public class Elvin
 
   /**
    * Set the amount of time (in milliseconds) that must pass before
-   * the router is assumed not to be responding. Default is 10000 (10
-   * seconds).
+   * the router is assumed not to be responding. Default is 10
+   * seconds (10,000 millis).
    */
   public void setReceiveTimeout (int receiveTimeout)
   {
     this.receiveTimeout = receiveTimeout;
   }
   
+  /**
+   * Return the mutex used to ensure this connection is thread safe.
+   * All public methods on this connection that modify state or
+   * otherwise need to be thread safe acquire this. Clients may choose
+   * to pre-acquire this mutex to execute several operations
+   * atomically -- see example in
+   * {@link #subscribe(String, SecureMode, Keys)}.
+   * <p>
+   * 
+   * NB: while this mutex is held, all callbacks (e.g. notification
+   * delivery) will be blocked.
+   */
+  public Object mutex ()
+  {
+    return this;
+  }
+  
+  /**
+   * Create a new subscription with no security requirements. See
+   * {@link #subscribe(String, SecureMode, Keys)} for details.
+   * 
+   * @param subscriptionExpr The subscription expression.
+   * @return The subscription instance.
+   * 
+   * @throws IOException if an IO error occurs.
+   */
   public Subscription subscribe (String subscriptionExpr)
     throws IOException
   {
     return subscribe (subscriptionExpr, EMPTY_KEYS);
   }
   
+  /**
+   * Create a new subscription with a given set of keys but allowing
+   * insecure notifications. See
+   * {@link #subscribe(String, SecureMode, Keys)} for details.
+   * 
+   * @param subscriptionExpr The subscription expression.
+   * @return The subscription instance.
+   * 
+   * @throws IOException if an IO error occurs.
+   */
+  public Subscription subscribe (String subscriptionExpr,
+                                 Keys keys)
+    throws IOException
+  {
+    return subscribe (subscriptionExpr, ALLOW_INSECURE_DELIVERY, keys);
+  }
+  
+  /**
+   * Create a new subscription. The returned subscription instance can
+   * be used to listen for notifications, modify subscription settings
+   * and unsubscribe.
+   * <p>
+   * 
+   * NB: there exists the possibility that between creating a
+   * subscription and adding a listener to it, the client could miss a
+   * notification. If this is a problem, the client may ensure this
+   * will not happen by acquiring the connection's
+   * {@linkplain #mutex() mutex} before subscribing. e.g.
+   * 
+   * <pre>
+   *   Elvin elvin = ...;
+   *   
+   *   synchronized (elvin.mutex ())
+   *   {
+   *     Subscription sub = elvin.subscribe (...);
+   *     
+   *     sub.addNotificationListener (...);
+   *   }
+   * </pre>
+   * 
+   * @param subscriptionExpr The subscription expression to match
+   *          notifications.
+   * @param secureMode The security mode: specifying
+   *          REQUIRE_SECURE_DELIVERY means the subscription will only
+   *          receive notifications that are sent by clients with keys
+   *          matching the set supplied here.
+   * @param keys The keys that must match notificiation keys for
+   *          secure delivery.
+   * @return The subscription instance.
+   * 
+   * @throws IOException if an IO error occurs.
+   * 
+   * @see #send(Notification, SecureMode, Keys)
+   * @see Subscription
+   * @see SecureMode
+   * @see Keys
+   */
   public synchronized Subscription subscribe (String subscriptionExpr,
+                                              SecureMode secureMode,
                                               Keys keys)
     throws IOException
   {
     Subscription subscription =
-      new Subscription (this, subscriptionExpr, true, keys);
+      new Subscription (this, subscriptionExpr,
+                        secureMode == ALLOW_INSECURE_DELIVERY, keys);
     
     subscribe (subscription);
     
     return subscription;
   }
   
-  public Subscription subscribeSecure (String subscriptionExpr)
-    throws IOException
-  {
-    return subscribeSecure (subscriptionExpr, EMPTY_KEYS);
-  }
-  
-  public synchronized Subscription subscribeSecure (String subscriptionExpr,
-                                                    Keys keys)
-    throws IOException
-  {
-    Subscription subscription =
-      new Subscription (this, subscriptionExpr, false, keys);
-    
-    subscribe (subscription);
-    
-    return subscription;
-  }
-  
-  void subscribe (Subscription subscription)
+  private void subscribe (Subscription subscription)
     throws IOException
   {
     SubAddRqst subAddRqst = new SubAddRqst (subscription.subscriptionExpr);
@@ -338,8 +429,8 @@ public class Elvin
 
     sendAndReceive (new SubDelRqst (subscription.id), SubRply.class);
   }
-  
-  void setKeys (Subscription subscription, Keys newKeys)
+
+  void modifyKeys (Subscription subscription, Keys newKeys)
     throws IOException
   {
     Delta<Keys> delta = subscription.keys.computeDelta (newKeys);
@@ -349,42 +440,98 @@ public class Elvin
        SubRply.class);
   }
 
-  void setSubscription (Subscription subscription, String subscriptionExpr)
+  void modifySubscriptionExpr (Subscription subscription,
+                               String subscriptionExpr)
     throws IOException
   {
     sendAndReceive
       (new SubModRqst (subscription.id, subscriptionExpr), SubRply.class);
   }
   
+  /**
+   * Test if a given subscription is part of this connection.
+   * 
+   * @see Subscription#isActive()
+   */
   public synchronized boolean hasSubscription (Subscription subscription)
   {
     return subscriptions.containsValue (subscription);
   }
 
+  /**
+   * Send a notification with no security requirements. See
+   * {@link #send(Notification, SecureMode, Keys)} for details.
+   */
   public void send (Notification notification)
     throws IOException
   {
     send (notification, EMPTY_KEYS);
   }
   
-  public synchronized void send (Notification notification, Keys keys)
+  /**
+   * Send a notification with a set of keys but no requirement for
+   * secure delivery. See
+   * {@link #send(Notification, SecureMode, Keys)} for details.
+   */
+  public void send (Notification notification, Keys keys)
     throws IOException
   {
-    send (new NotifyEmit (notification, true, keys));
+    send (notification, ALLOW_INSECURE_DELIVERY, keys);
   }
   
-  public void sendSecure (Notification notification)
+  /**
+   * Send a notification with a specified secure mode. See
+   * {@link #send(Notification, SecureMode, Keys)} for details.
+   */
+  public void send (Notification notification, SecureMode secureMode)
     throws IOException
   {
-    sendSecure (notification, EMPTY_KEYS);
+    send (notification, secureMode, EMPTY_KEYS);
   }
-  
-  public synchronized void sendSecure (Notification notification, Keys keys)
+
+  /**
+   * Send a notification.
+   * 
+   * @param notification The notification to send.
+   * @param secureMode The security requirement.
+   *          REQUIRE_SECURE_DELIVERY means the notification will only
+   *          be received by subscriptions with keys matching the set
+   *          supplied here.
+   * @param keys The keys that must match for secure delivery.
+   * 
+   * @throws IOException if an IO error occurs.
+   * 
+   * @see #subscribe(String, SecureMode, Keys)
+   * @see Notification
+   * @see SecureMode
+   * @see Keys
+   */
+  public synchronized void send (Notification notification,
+                                 SecureMode secureMode,
+                                 Keys keys)
     throws IOException
   {
-    send (new NotifyEmit (notification, false, keys));
+    send (new NotifyEmit (notification,
+                          secureMode == ALLOW_INSECURE_DELIVERY, keys));
   }
   
+  /**
+   * Change the connection-wide keys used to secure receipt and
+   * delivery of notifications.
+   * 
+   * @param newNotificationKeys The new notification keys. These
+   *          automatically apply to all notifications, exactly as if
+   *          they were added to the keys in the
+   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          call.
+   * @param newSubscriptionKeys The new subscription keys. These
+   *          automatically apply to all subscriptions, exactly as if
+   *          they were added to the keys in the
+   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          call. This includes currently existing subscriptions.
+   * 
+   * @throws IOException if an IO error occurs.
+   */
   public synchronized void setKeys (Keys newNotificationKeys,
                                     Keys newSubscriptionKeys)
     throws IOException
@@ -403,27 +550,44 @@ public class Elvin
     this.subscriptionKeys = newSubscriptionKeys;
   }
   
-  private <E extends Message> E sendAndReceive (XidMessage request,
-                                                Class<E> expectedReplyType)
-    throws IOException
-  {
-    send (request);
-   
-    return receive (expectedReplyType, request);
-  }
-  
   private void send (Message message)
     throws IOException
   {
     checkConnected ();
-
+  
     if (isEnabled (TRACE))
       trace ("Client sent message: " + message, this);
-
+  
     clientSession.write (message);
   }
+
+  /**
+   * Send a message and receive a reply with a matching transaction ID
+   * and a given type.
+   * 
+   * @param <E> The reply message type.
+   * @param request The request message.
+   * @param expectedReplyType The expected reply type (same as E).
+   * 
+   * @return The reply message.
+   * 
+   * @throws IOException if no suitable reply is seen or an network
+   *           error occurs.
+   */
+  private <E extends XidMessage> E sendAndReceive (XidMessage request,
+                                                   Class<E> expectedReplyType)
+    throws IOException
+  {
+    send (request);
+   
+    return receiveReply (request, expectedReplyType);
+  }
   
-  private Message receive ()
+  /**
+   * Block the calling thread for up to receiveTimeout millis waiting
+   * for a reply message to arrive from the router.
+   */
+  private XidMessage receiveReply ()
     throws IOException
   {
     synchronized (replySemaphore)
@@ -441,7 +605,7 @@ public class Elvin
     
       if (lastReply != null)
       {
-        Message message = lastReply;
+        XidMessage message = lastReply;
         
         lastReply = null;
         
@@ -455,24 +619,37 @@ public class Elvin
       }
     }
   }
-  
+
+  /**
+   * Block the calling thread for up to receiveTimeout millis waiting
+   * for a reply message to arrive from the router.
+   * 
+   * @param <E> The reply message type.
+   * @param request The request message.
+   * @param expectedReplyType The expected reply type (same as E).
+   * 
+   * @return The reply message.
+   * 
+   * @throws IOException if no suitable reply is seen or an network
+   *           error occurs.
+   */
   @SuppressWarnings("unchecked")
-  private <E extends Message> E receive (Class<E> expectedMessageType,
-                                         XidMessage inResponseTo)
+  private <E extends XidMessage> E receiveReply (XidMessage request,
+                                                 Class<E> expectedReplyType)
     throws IOException
   {
-    Message message = receive ();
+    XidMessage reply = receiveReply ();
     
-    if (message instanceof XidMessage &&
-        inResponseTo.xid != ((XidMessage)message).xid)
+    if (request.xid != reply.xid)
     {
-      throw new IllegalStateException ("XID mismatch");
-    } else if (expectedMessageType.isAssignableFrom (message.getClass ()))
+      throw new IOException
+        ("Protocol error: XID mismatch in reply from router");
+    } else if (expectedReplyType.isAssignableFrom (reply.getClass ()))
     {
-      return (E)message;
-    } else if (message instanceof Nack)
+      return (E)reply;
+    } else if (reply instanceof Nack)
     {
-      Nack nack = (Nack)message;
+      Nack nack = (Nack)reply;
       
       // todo need to expand arg refs in nack error message from Mantara Elvin 
       // e.g. %1: Expression '%2' does not refer to a name
@@ -481,9 +658,9 @@ public class Elvin
          ": " + nack.message);
     } else
     {
-      throw new IllegalStateException
-        ("Received a " + className (message) +
-         ": was expecting " + className (expectedMessageType));
+      throw new IOException
+        ("Protocol error: received a " + className (reply) +
+         ": was expecting " + className (expectedReplyType));
     }
   }
   
@@ -491,7 +668,7 @@ public class Elvin
    * Handle replies to client-initiated messages by delivering them
    * back to the waiting thread.
    */
-  protected void handleReply (XidMessage reply)
+  void handleReply (XidMessage reply)
   {
     synchronized (replySemaphore)
     {
@@ -506,7 +683,7 @@ public class Elvin
   /**
    * Handle router-initiated messages (e.g. NotifyDeliver, Disconn, etc).
    */
-  protected void handleMessage (Message message)
+  void handleMessage (Message message)
   {
     switch (message.typeId ())
     {
@@ -544,7 +721,7 @@ public class Elvin
        
         synchronized (Elvin.this)
         {
-          if (isConnected ())
+          if (isOpen ())
           {
             fireNotify (message.secureMatches, true, ntfn);
             fireNotify (message.insecureMatches, false, ntfn);
@@ -570,8 +747,8 @@ public class Elvin
         subscription.notifyListeners (event);
       } else
       {
-        warn ("Received notification for unknown subscription " +
-              "(" + subscriptionId + ")", this);
+        warn ("Received notification for unknown subscription ID " +
+              subscriptionId, this);
       }
     }
   }
@@ -579,7 +756,7 @@ public class Elvin
   private void checkConnected ()
     throws IllegalStateException
   {
-    if (!clientSession.isConnected ())
+    if (clientSession == null || !clientSession.isConnected ())
       throw new IllegalStateException ("Not connected");
   }
   
