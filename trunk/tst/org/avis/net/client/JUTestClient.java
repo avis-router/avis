@@ -75,7 +75,7 @@ public class JUTestClient
         
         try
         {
-          client.unsubscribe (sub);
+          sub.remove ();
           
           synchronized (sub)
           {
@@ -312,7 +312,7 @@ public class JUTestClient
     {
       // ok
 
-      System.out.println ("error = " + ex.getMessage ());
+      // System.out.println ("error = " + ex.getMessage ());
     }
   }
   private static void checkSecureSendReceive (Elvin client,
