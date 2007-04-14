@@ -42,6 +42,14 @@ public class Subscription
   {
     return elvin;
   }
+  
+  public boolean isActive ()
+  {
+    synchronized (elvin)
+    {
+      return id != 0;
+    }
+  }
 
   private void checkLive ()
   {
@@ -71,7 +79,7 @@ public class Subscription
     {
       checkLive ();
       
-      elvin.setKeys (this, newKeys);
+      elvin.modifyKeys (this, newKeys);
       
       this.keys = newKeys;
     }    
@@ -90,7 +98,7 @@ public class Subscription
     {
       checkLive ();
       
-      elvin.setSubscription (this, newSubscriptionExpr);
+      elvin.modifySubscriptionExpr (this, newSubscriptionExpr);
       
       this.subscriptionExpr = newSubscriptionExpr;
     }
