@@ -24,8 +24,9 @@ public class JUTestNotification
     ntfn1.set ("real64", 3.14D);
     ntfn1.set ("real64 #2", 3D);
     ntfn1.set ("field with tricky:characters", "bad");
-    ntfn1.set ("opaque", (new byte [] {1, 2, 3,
-     (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF}));
+    ntfn1.set ("opaque",
+               new byte [] {1, 2, 3, (byte)0xDE, (byte)0xAD,
+                            (byte)0xBE, (byte)0xEF});
     
     Notification ntfn2 = new Notification ();
     
@@ -35,8 +36,9 @@ public class JUTestNotification
     ntfn2.set ("real64", 3.14D);
     ntfn2.set ("int64", 4242L);
     ntfn2.set ("field with tricky:characters", "bad");
-    ntfn2.set ("opaque", (new byte [] {1, 2, 3,
-     (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF}));
+    ntfn2.set ("opaque",
+               new byte [] {1, 2, 3,
+                            (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF});
     
     // ntfn3 is slightly different
     Notification ntfn3 = new Notification ();
@@ -47,8 +49,9 @@ public class JUTestNotification
     ntfn3.set ("real64", 3.14D);
     ntfn3.set ("int64", 4242L);
     ntfn3.set ("field with tricky:characters", "bad");
-    ntfn3.set ("opaque", (new byte [] {1, 2, 3,
-     (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEE}));
+    ntfn3.set ("opaque",
+               new byte [] {1, 2, 3,
+                            (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEE});
     
     assertEquals (ntfn1, ntfn2);
     assertEquals (ntfn1.hashCode (), ntfn2.hashCode ());
@@ -67,8 +70,9 @@ public class JUTestNotification
     ntfn.set ("real64", 3.14D);
     ntfn.set ("real64 #2", 3D);
     ntfn.set ("field with tricky:characters", "bad");
-    ntfn.set ("opaque", (new byte [] {1, 2, 3,
-     (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF}));
+    ntfn.set ("opaque",
+              new byte [] {1, 2, 3,
+                           (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF});
     
     String toString = ntfn.toString ();
     
@@ -164,8 +168,9 @@ public class JUTestNotification
     ntfn.set ("real64", 3.14D);
     ntfn.set ("real64 #2", 3D);
     ntfn.set ("field with tricky:characters", "bad");
-    ntfn.set ("opaque", (new byte [] {1, 2, 3,
-     (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF}));
+    ntfn.set ("opaque",
+              new byte [] {1, 2, 3,
+                           (byte)0xDE, (byte)0xAD, (byte)0xBE, (byte)0xEF});
     
     Notification rountrippedNtfn = new Notification (ntfn.toString ());
     
