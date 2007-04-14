@@ -122,9 +122,14 @@ public final class Text
   public static byte hexToByte (String byteExpr)
     throws InvalidFormatException
   {
-    if (byteExpr.length () > 2)
+    if (byteExpr.length () == 0)
+    {
+      throw new InvalidFormatException ("Byte value cannot be empty");
+    } else if (byteExpr.length () > 2)
+    {
       throw new InvalidFormatException
         ("Byte value too long: \"" + byteExpr + "\"");
+    }
     
     int value = 0;
     
