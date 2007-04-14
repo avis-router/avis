@@ -81,11 +81,33 @@ public class ConnectionOptions
     this.values = values;
   }
 
+  /**
+   * Set a connection option.  
+   * 
+   * @param name The option name.
+   * @param value The value. Must be a string or a number. Use null to clear.
+   * 
+   * @throws IllegalArgumentException if value is not a string or an integer.
+   */
   public void set (String name, Object value)
+    throws IllegalArgumentException
   {
-    values.put (name, value);
+    if (value == null)
+    {
+      values.remove (name);
+    } else if (value instanceof String || value instanceof Integer)
+    {
+      values.put (name, value);
+    } else
+    {
+      throw new IllegalArgumentException
+        ("Value must be a string or integer: " + value);
+    }
   }
   
+  /**
+   * Get the value for a connection option, or null if not defined.
+   */
   public Object get (String name)
   {
     Object value = values.get (name);
@@ -94,6 +116,14 @@ public class ConnectionOptions
       throw new IllegalArgumentException ("No value for \"" + name + "\"");
     else
       return value;
+  }
+  
+  /**
+   * Generate an immutable, live map of the current options.
+   */
+  public Map<String, Object> asMap ()
+  {
+    return unmodifiableMap (values);
   }
   
   /**
@@ -113,10 +143,5 @@ public class ConnectionOptions
     }
     
     return diff;
-  }
-
-  public Map<String, Object> asMap ()
-  {
-    return unmodifiableMap (values);
   }
 }
