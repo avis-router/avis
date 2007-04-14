@@ -1,15 +1,14 @@
 package org.avis.pubsub.ast;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import java.io.StringReader;
 
 import java.lang.reflect.Constructor;
 
-import org.junit.Test;
-
-import org.avis.common.Notification;
 import org.avis.pubsub.ast.nodes.And;
 import org.avis.pubsub.ast.nodes.Compare;
 import org.avis.pubsub.ast.nodes.Const;
@@ -43,13 +42,17 @@ import org.avis.pubsub.ast.nodes.Xor;
 import org.avis.pubsub.parser.ParseException;
 import org.avis.pubsub.parser.SubscriptionParser;
 
+import org.junit.Test;
+
 import static java.lang.Double.NaN;
+
 import static org.avis.pubsub.ast.Node.BOTTOM;
 import static org.avis.pubsub.ast.Node.EMPTY_NOTIFICATION;
 import static org.avis.pubsub.ast.Node.FALSE;
 import static org.avis.pubsub.ast.Node.TRUE;
 import static org.avis.pubsub.ast.nodes.StrUnicodeDecompose.DECOMPOSE;
 import static org.avis.pubsub.ast.nodes.StrUnicodeDecompose.DECOMPOSE_COMPAT;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -150,27 +153,27 @@ public class JUTestEvaluation
   {
     Node<Boolean> expr1 = logicOpExpr1 ();
     
-    Notification n1 = new Notification ();
+    Map<String, Object> n1 = new HashMap<String, Object> ();
     n1.put ("name", "Matt");
     n1.put ("age", 19);
     n1.put ("blah", "blah");
     
     assertTrue (expr1.evaluate (n1));
     
-    Notification n2 = new Notification ();
+    Map<String, Object> n2 = new HashMap<String, Object> ();
     n2.put ("name", "Matt");
     n2.put ("age", 30);
     n2.put ("blah", "blah");
     
     assertFalse (expr1.evaluate (n2));
     
-    Notification n3 = new Notification ();
+    Map<String, Object> n3 = new HashMap<String, Object> ();
     n3.put ("name", "Matt");
     n3.put ("blah", "blah");
     
     assertEquals (BOTTOM, expr1.evaluate (n3));
     
-    Notification n4 = new Notification ();
+    Map<String, Object> n4 = new HashMap<String, Object> ();
     n4.put ("name", "Matt");
     n4.put ("age", 19);
     n4.put ("blah", "frob");
@@ -181,25 +184,25 @@ public class JUTestEvaluation
     
     Node<Boolean> expr2 = logicOpExpr2 ();
     
-    Notification n5 = new Notification ();
+    Map<String, Object> n5 = new HashMap<String, Object> ();
     n5.put ("name", "Matt");
     n5.put ("age", 5);
     
     assertTrue (expr2.evaluate (n5));
     
-    Notification n6 = new Notification ();
+    Map<String, Object> n6 = new HashMap<String, Object> ();
     n6.put ("name", "Matt");
     n6.put ("age", 30);
     
     assertFalse (expr2.evaluate (n6));
     
-    Notification n7 = new Notification ();
+    Map<String, Object> n7 = new HashMap<String, Object> ();
     n7.put ("hello", "there");
     
     assertEquals (BOTTOM, expr2.evaluate (n7));
     
     // opaque data
-    Notification n8 = new Notification ();
+    Map<String, Object> n8 = new HashMap<String, Object> ();
     n8.put ("name", new byte [] {1, 2, 3});
     n8.put ("age", 30);
     
@@ -210,7 +213,7 @@ public class JUTestEvaluation
   public void functions ()
     throws Exception
   {
-    Notification ntfn;
+    Map<String, Object> ntfn;
     
     // basic string comparison predicates
     testPred (StrBeginsWith.class, "foobar", "foo", TRUE);
@@ -234,13 +237,13 @@ public class JUTestEvaluation
     testPred (StrWildcard.class, null, "fo*a?", BOTTOM);
     
     // require
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("exists", "true");
     assertEquals (TRUE, new Require ("exists").evaluate (ntfn));
     assertEquals (BOTTOM, new Require ("not_exists").evaluate (ntfn));
     
     // size
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("opaque", new byte [10]);
     ntfn.put ("not_opaque", "hello");
     assertEquals (10, new Size ("opaque").evaluate (ntfn));
@@ -269,7 +272,7 @@ public class JUTestEvaluation
                      DECOMPOSE_COMPAT).evaluate (EMPTY_NOTIFICATION));
     
     // nan
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("nan", NaN);
     ntfn.put ("notnan", 42.0);
     ntfn.put ("notnan_int", 42);
@@ -284,7 +287,7 @@ public class JUTestEvaluation
                   new Nan (new Field<Double> ("nonexistent")).evaluate (ntfn));
     
     // type checks
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("int32", 1);
     ntfn.put ("int64", 2L);
     ntfn.put ("real64", 42.0);
@@ -315,7 +318,7 @@ public class JUTestEvaluation
   @Test
   public void compareMultitype ()
   {
-    Notification ntfn = new Notification ();
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("name", "foobar");
     
     Node<Boolean> node = Compare.create (argsList (new Field<String> ("name"),
@@ -396,7 +399,7 @@ public class JUTestEvaluation
     testMathOp (MathBitLogShiftRight.class, 20L >>> 30, Const.int64 (20), Const.int32 (30));
     
     // bitwise complement ~
-    Notification ntfn = new Notification ();
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("string", "string");
     
     MathBitInvert invert;
@@ -427,27 +430,27 @@ public class JUTestEvaluation
     // 32L < 10
     compare = new Compare (thirtyTwoLong, tenInt, -1, false);
     
-    assertEquals (FALSE, compare.evaluate (new Notification ()));
+    assertEquals (FALSE, compare.evaluate (new HashMap<String, Object> ()));
     
     // 10 > 32L
     compare = new Compare (tenInt, thirtyTwoLong, -1, false);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
     
     // 10 > pi
     compare = new Compare (tenInt, piDouble, 1, false);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
     
     // 32 > pi
     compare = new Compare (thirtyTwoLong, piDouble, 1, false);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
     
     //  32 == 32L
     compare = new Compare (thirtyTwoInt, thirtyTwoLong, 0, true);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
   }
   
   /**
@@ -507,7 +510,7 @@ public class JUTestEvaluation
     Node<?> op =
       opType.getConstructor (Node.class, Node.class).newInstance (number1, number2);
     
-    Notification ntfn = new Notification ();
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("string", "string");
     
     assertEquals (correct, op.evaluate (ntfn));

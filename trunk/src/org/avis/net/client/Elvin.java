@@ -511,7 +511,7 @@ public final class Elvin
                                  Keys keys)
     throws IOException
   {
-    send (new NotifyEmit (notification,
+    send (new NotifyEmit (notification.asMap (),
                           secureMode == ALLOW_INSECURE_DELIVERY, keys));
   }
   

@@ -36,9 +36,9 @@ public class GoodClient extends AgentClient
       {
         Notification ntfn = new Notification ();
         
-        ntfn.put ("From", getClass ().getName ());
-        ntfn.put ("Time", new Date ().toString ());
-        ntfn.put ("Channel", "goodclient");
+        ntfn.set ("From", getClass ().getName ());
+        ntfn.set ("Time", new Date ().toString ());
+        ntfn.set ("Channel", "goodclient");
         
         sendNotify (ntfn);
         

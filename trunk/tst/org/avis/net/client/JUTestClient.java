@@ -90,8 +90,8 @@ public class JUTestClient
     });
     
     Notification ntfn = new Notification ();
-    ntfn.put ("test", 1);
-    ntfn.put ("payload", "test 1");
+    ntfn.set ("test", 1);
+    ntfn.set ("payload", "test 1");
     
     synchronized (sub)
     {
@@ -130,8 +130,8 @@ public class JUTestClient
           if (e.notification.get ("payload").equals ("test 1"))
           {
             Notification ntfn = new Notification ();
-            ntfn.put ("test", 1);
-            ntfn.put ("payload", "test 2");
+            ntfn.set ("test", 1);
+            ntfn.set ("payload", "test 2");
             
             client.send (ntfn);
           } else
@@ -149,8 +149,8 @@ public class JUTestClient
     });
     
     Notification ntfn = new Notification ();
-    ntfn.put ("test", 1);
-    ntfn.put ("payload", "test 1");
+    ntfn.set ("test", 1);
+    ntfn.set ("payload", "test 1");
     
     synchronized (sub)
     {
@@ -256,7 +256,7 @@ public class JUTestClient
     });
     
     Notification ntfn = new Notification ();
-    ntfn.put ("test2", 1);
+    ntfn.set ("test2", 1);
     
     synchronized (sub)
     {
@@ -334,7 +334,7 @@ public class JUTestClient
     });
     
     Notification ntfn = new Notification ();
-    ntfn.put ("From-Alice", 1);
+    ntfn.set ("From-Alice", 1);
     
     synchronized (sub)
     {

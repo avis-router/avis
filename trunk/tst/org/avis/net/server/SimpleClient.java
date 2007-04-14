@@ -177,13 +177,13 @@ class SimpleClient implements IoHandler
   public void sendNotify (Notification ntfn)
     throws Exception
   {
-    send (new NotifyEmit (ntfn, true, EMPTY_KEYS));
+    send (new NotifyEmit (ntfn.asMap (), true, EMPTY_KEYS));
   }
   
   public void sendNotify (Notification ntfn, Keys keys)
     throws Exception
   {
-    send (new NotifyEmit (ntfn, false, keys));
+    send (new NotifyEmit (ntfn.asMap (), false, keys));
   }
 
   public SubRply subscribe (String subExpr)
