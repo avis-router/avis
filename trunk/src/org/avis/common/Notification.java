@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,16 +16,23 @@ import java.io.StringReader;
 import org.avis.util.InvalidFormatException;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.util.Collections.unmodifiableMap;
 
-import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.appendEscaped;
+import static org.avis.util.Text.appendHexBytes;
+import static org.avis.util.Text.className;
 import static org.avis.util.Text.findFirstNonEscaped;
+import static org.avis.util.Text.stringExprToString;
 import static org.avis.util.Text.stringToNumber;
 import static org.avis.util.Text.stringToOpaque;
-import static org.avis.util.Text.stringExprToString;
 import static org.avis.util.Text.stripBackslashes;
 
-public class Notification implements Map<String, Object>, Cloneable
+/**
+ * A notification sent via an Elvin router.
+ * 
+ * @author Matthew Phillips
+ */
+public class Notification implements Cloneable
 {
   private Map<String, Object> attributes;
   
@@ -35,9 +43,11 @@ public class Notification implements Map<String, Object>, Cloneable
 
   public Notification (Map<String, Object> attributes)
   {
-    // todo check attribute values
+    for (Object value : attributes.values ())
+      checkValue (value);
+    
     this.attributes = attributes;
-  }
+  } 
   
   /**
    * Create a notification from an input expression.
@@ -139,7 +149,7 @@ public class Notification implements Map<String, Object>, Cloneable
       throw new InvalidFormatException
         ("Unrecognised value expression: \"" + valueExpr + "\"");
     
-    ntfn.put (name, value);
+    ntfn.attributes.put (name, value);
   }
 
   public void clear ()
@@ -279,54 +289,148 @@ public class Notification implements Map<String, Object>, Cloneable
     return attributes.size ();
   }
 
-  public Object get (Object key)
-  {
-    return attributes.get (key);
-  }
-
   public boolean isEmpty ()
   {
     return attributes.isEmpty ();
   }
 
-  public Set<String> keySet ()
+  public Set<String> names ()
   {
     return attributes.keySet ();
   }
-
-  public Object put (String key, Object value)
+  
+  public Collection<Object> values ()
   {
-    return attributes.put (key, value);
+    return attributes.values ();
   }
-
-  public void putAll (Map<? extends String, ? extends Object> m)
+  
+  public Map<String, Object> asMap ()
   {
-    attributes.putAll (m);
+    return unmodifiableMap (attributes);
   }
-
-  public Object remove (Object key)
-  {
-    return attributes.remove (key);
-  }
-
+  
   public int size ()
   {
     return attributes.size ();
   }
 
-  public Collection<Object> values ()
+  public void set (String name, Object value)
   {
-    return attributes.values ();
+    if (value == null)
+    {
+      attributes.remove (name);
+    } else
+    {
+      checkValue (value);
+      
+      attributes.put (name, value);
+    }
+  }
+  
+  private void checkValue (Object value)
+  {
+    if (!(value instanceof String ||
+          value instanceof Integer ||
+          value instanceof Long ||
+          value instanceof Double ||
+          value instanceof byte []))
+    {
+      throw new IllegalArgumentException
+        ("Value must be a string, integer, long, double or byte array");
+    }
   }
 
-  public byte [] getOpaque (String field)
+  public void set (String name, int value)
   {
-    Object value = get (field);
+    attributes.put (name, value);
+  }
+  
+  public void set (String name, long value)
+  {
+    attributes.put (name, value);
+  }
+  
+  public void set (String name, double value)
+  {
+    attributes.put (name, value);
+  }
+  
+  public void set (String name, String value)
+  {
+    attributes.put (name, value);
+  }
+  
+  public void set (String name, byte [] value)
+  {
+    attributes.put (name, value);
+  }
+
+  public void remove (String name)
+  {
+    attributes.remove (name);
+  }
+
+  public Object get (String name)
+  {
+    return attributes.get (name);
+  }
+
+  public String getString (String name)
+  {
+    return get (name, String.class);
+  }
+  
+  public int getInt (String name)
+  {
+    return getPrimitive (name, Integer.class);
+  }
+
+  public long getLong (String name)
+  {
+    return getPrimitive (name, Long.class);
+  }
+  
+  public double getDouble (String name)
+  {
+    return getPrimitive (name, Double.class);
+  }
+  
+  public byte [] getOpaque (String name)
+  {
+    return get (name, byte [].class);
+  }
+  
+  @SuppressWarnings("unchecked")
+  private <T> T getPrimitive (String name, Class<T> type)
+  {
+    Object value = get (name, type);
     
-    if (value == null || value instanceof byte [])
-      return (byte [])value;
+    if (value == null)
+      throw new IllegalArgumentException ("No value for \"" + name + "\"");
     else
+      return (T)value;
+  }
+  
+  @SuppressWarnings("unchecked")
+  private <T> T get (String name, Class<T> type)
+  {
+    T value = (T)attributes.get (name);
+    
+    if (value == null || type.isAssignableFrom (value.getClass ()))
+    {
+      return value;
+    } else
+    {
       throw new IllegalArgumentException
-        ("\"" + field + "\" does not contain an opaque value");
+        ("\"" + name + "\" does not contain a " + typeName (type) + "  value");
+    }
+  }
+
+  private static String typeName (Class<?> type)
+  {
+    if (type == byte [].class)
+      return "opqaue";
+    else
+      return className (type).toLowerCase ();
   }
 }
