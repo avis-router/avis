@@ -5,32 +5,46 @@ import java.io.IOException;
 import org.avis.net.security.Keys;
 import org.avis.util.ListenerList;
 
+/**
+ * A subscription to notifications created by an Elvin connection.
+ *
+ * @see Elvin#subscribe(String, SecureMode, Keys)
+ * @see #addNotificationListener(NotificationListener)
+ * 
+ * @author Matthew Phillips
+ */
 public class Subscription
 {
   Elvin elvin;
   String subscriptionExpr;
-  boolean acceptInsecure;
+  SecureMode secureMode;
   Keys keys;
   long id;
   
   private ListenerList<NotificationListener> notificationListeners;
 
   Subscription (Elvin elvin,
-                String subscriptionExpr, boolean acceptInsecure, Keys keys)
+                String subscriptionExpr, SecureMode secureMode, Keys keys)
   {
     this.elvin = elvin;
     this.subscriptionExpr = subscriptionExpr;
-    this.acceptInsecure = acceptInsecure;
+    this.secureMode = secureMode;
     this.keys = keys;
     this.notificationListeners = new ListenerList<NotificationListener> ();
   }
   
+  /**
+   * Remove this subscription (unsubscribe). May be called more than once.
+   * 
+   * @throws IOException if a network error occurs.
+   */
   public void remove ()
     throws IOException
   {
     synchronized (elvin)
     {
-      checkLive ();
+      if (id == 0)
+        return;
       
       elvin.unsubscribe (this);
       
@@ -38,11 +52,17 @@ public class Subscription
     }    
   }
   
+  /**
+   * The elvin connection that created this subscription.
+   */
   public Elvin elvin ()
   {
     return elvin;
   }
   
+  /**
+   * Test if this subscription is still able to receive notifications.
+   */
   public boolean isActive ()
   {
     synchronized (elvin)
@@ -62,9 +82,9 @@ public class Subscription
     return subscriptionExpr;
   }
 
-  public boolean acceptInsecure ()
+  public SecureMode secureMode ()
   {
-    return acceptInsecure;
+    return secureMode;
   }
 
   public Keys keys ()
@@ -72,6 +92,9 @@ public class Subscription
     return keys;
   }
   
+  /**
+   * Change the keys used for receiving secure notifications.
+   */
   public void setKeys (Keys newKeys)
     throws IOException
   {
@@ -85,6 +108,9 @@ public class Subscription
     }    
   }
   
+  /**
+   * Change the subscription expression.
+   */
   public void setSubscription (String newSubscriptionExpr)
     throws IOException
   {
@@ -104,11 +130,19 @@ public class Subscription
     }
   }
 
+  /**
+   * Add a listener for notifications matched by this subscription.
+   */
   public void addNotificationListener (NotificationListener listener)
   {
     notificationListeners.add (listener);
   }
   
+  /**
+   * Remove a previously
+   * {@linkplain #addNotificationListener(NotificationListener) added}
+   * listener.
+   */
   public void removeNotificationListener (NotificationListener listener)
   {
     notificationListeners.remove (listener);
