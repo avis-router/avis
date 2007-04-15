@@ -93,7 +93,8 @@ import static org.avis.util.Text.className;
  */
 public final class Elvin
 {
-  private ElvinURI elvinUri;
+  private ElvinURI routerUri;
+  private ConnectionOptions connectionOptions;
   private IoSession clientSession;
   private ExecutorService executor;
   private boolean elvinConnectionOpen;
@@ -133,7 +134,7 @@ public final class Elvin
   /**
    * Create a new connection to an Elvin router.
    * 
-   * @param elvinUri A URI for the Elvin router.
+   * @param routerUri A URI for the Elvin router.
    * 
    * @throws IllegalArgumentException if one of the arguments is not
    *           valid.
@@ -143,16 +144,16 @@ public final class Elvin
    * 
    * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
    */
-  public Elvin (ElvinURI elvinUri)
+  public Elvin (ElvinURI routerUri)
     throws IllegalArgumentException, ConnectException, IOException
   {
-    this (elvinUri, EMPTY_OPTIONS, EMPTY_KEYS, EMPTY_KEYS);
+    this (routerUri, EMPTY_OPTIONS, EMPTY_KEYS, EMPTY_KEYS);
   }
   
   /**
    * Create a new connection to an Elvin router.
    * 
-   * @param elvinUri The URI of the router to connect to.
+   * @param routerUri The URI of the router to connect to.
    * @param options The connection options.
    * @param notificationKeys These keys automatically apply to all
    *          notifications, exactly as if they were added to the keys
@@ -179,14 +180,15 @@ public final class Elvin
    * @see #send(Notification, SecureMode, Keys)
    * @see #setKeys(Keys, Keys)
    */
-  public Elvin (ElvinURI elvinUri, ConnectionOptions options,
+  public Elvin (ElvinURI routerUri, ConnectionOptions options,
                 Keys notificationKeys, Keys subscriptionKeys)
     throws IllegalArgumentException,
            ConnectException,
            IOException,
            ConnectionOptionsException
   {
-    this.elvinUri = elvinUri;
+    this.routerUri = routerUri;
+    this.connectionOptions = options;
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
@@ -194,7 +196,7 @@ public final class Elvin
     this.replySemaphore = new Object ();
     this.receiveTimeout = 10000;
     
-    if (!elvinUri.protocol.equals (defaultProtocol ()))
+    if (!routerUri.protocol.equals (defaultProtocol ()))
       throw new IllegalArgumentException
         ("Only the default protocol stack " +
          defaultProtocol () + " is currently supported");
@@ -202,8 +204,8 @@ public final class Elvin
     openConnection ();
     
     ConnRply connRply =
-      sendAndReceive (new ConnRqst (elvinUri.versionMajor,
-                                    elvinUri.versionMinor,
+      sendAndReceive (new ConnRqst (routerUri.versionMajor,
+                                    routerUri.versionMinor,
                                     options.asMap (),
                                     notificationKeys, subscriptionKeys),
                       ConnRply.class);
@@ -252,7 +254,7 @@ public final class Elvin
 
       ConnectFuture connectFuture =
         connector.connect
-          (new InetSocketAddress (elvinUri.host, elvinUri.port),
+          (new InetSocketAddress (routerUri.host, routerUri.port),
            new MessageHandler (), connectorConfig);
                                        
       connectFuture.join ();
@@ -315,6 +317,25 @@ public final class Elvin
   }
   
   /**
+   * The router's URI.
+   */
+  public ElvinURI routerUri ()
+  {
+    return routerUri;
+  }
+  
+  /**
+   * The connection options established with the router. These cannot
+   * be changed after connection.
+   * 
+   * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
+   */
+  public ConnectionOptions connectionOptions ()
+  {
+    return connectionOptions;
+  }
+  
+  /**
    * @see #setReceiveTimeout(int)
    */
   public int receiveTimeout ()
@@ -327,7 +348,7 @@ public final class Elvin
    * the router is assumed not to be responding. Default is 10
    * seconds (10,000 millis).
    */
-  public void setReceiveTimeout (int receiveTimeout)
+  public synchronized void setReceiveTimeout (int receiveTimeout)
   {
     this.receiveTimeout = receiveTimeout;
   }
@@ -545,6 +566,64 @@ public final class Elvin
   {
     send (new NotifyEmit (notification.asMap (),
                           secureMode == ALLOW_INSECURE_DELIVERY, keys));
+  }
+  
+  /**
+   * @see #setNotificationKeys(Keys)
+   */
+  public Keys notificationKeys ()
+  {
+    return notificationKeys;
+  }
+  
+  /**
+   * Set the connection-wide notification keys used to secure delivery
+   * of notifications.
+   * 
+   * @param newNotificationKeys The new notification keys. These
+   *          automatically apply to all notifications, exactly as if
+   *          they were added to the keys in the
+   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          call.
+   * 
+   * @throws IOException if an IO error occurs.
+   * 
+   * @see #setSubscriptionKeys(Keys)
+   * @see #setKeys(Keys, Keys)
+   */
+  public synchronized void setNotificationKeys (Keys newNotificationKeys)
+    throws IOException
+  {
+    setKeys (newNotificationKeys, subscriptionKeys);
+  }
+  
+  /**
+   * @see #setSubscriptionKeys(Keys)
+   */
+  public Keys subscriptionKeys ()
+  {
+    return notificationKeys;
+  }
+  
+  /**
+   * Set the connection-wide subscription keys used to secure receipt
+   * of notifications.
+   * 
+   * @param newSubscriptionKeys The new subscription keys. These
+   *          automatically apply to all subscriptions, exactly as if
+   *          they were added to the keys in the
+   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          call. This includes currently existing subscriptions.
+   * 
+   * @throws IOException if an IO error occurs.
+   * 
+   * @see #setNotificationKeys(Keys)
+   * @see #setKeys(Keys, Keys)
+   */
+  public synchronized void setSubscriptionKeys (Keys newSubscriptionKeys)
+    throws IOException
+  {
+    setKeys (notificationKeys, newSubscriptionKeys);
   }
   
   /**
