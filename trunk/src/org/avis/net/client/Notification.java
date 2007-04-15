@@ -33,19 +33,21 @@ import static org.avis.util.Util.bufferedReaderFor;
 
 /**
  * A notification sent via an Elvin router. A notification is a set of
- * field name/value pairs. Field values may be:
+ * field name/value pairs. Field values may be one of the following
+ * types:
  * 
  * <ul>
- *   <li>int (Elvin type: Int32)
- *   <li>long (Elvin type: Int64)
- *   <li>double (Elvin type: Real64)
- *   <li>String (Elvin type: String)
- *   <li>byte [] (Elvin type: Opaque)
+ * <li><tt>int     => Elvin Int32</tt>
+ * <li><tt>long    => Elvin Int64</tt>
+ * <li><tt>double  => Elvin Real64</tt>
+ * <li><tt>String  => Elvin String</tt>
+ * <li><tt>byte [] => Elvin Opaque</tt>
  * </ul>
  * 
  * @author Matthew Phillips
  */
-public class Notification implements Cloneable, Iterable<Entry<String, Object>>
+public class Notification
+  implements Cloneable, Iterable<Entry<String, Object>>
 {
   private Map<String, Object> attributes;
   
@@ -113,9 +115,9 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
    * <pre>
    *   An int32: 42
    *   An int64: 24L
-   *   Real64: 3.14
-   *   String: &quot;String with a \&quot; in it&quot;
-   *   Opaque: [01 02 0f ff]
+   *   Real64:   3.14
+   *   String:   &quot;String with a \&quot; in it&quot;
+   *   Opaque:   [01 02 0f ff]
    *   A field with a \: in it: 1
    * </pre>
    * 
@@ -148,7 +150,7 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
   }
 
   /**
-   * Read the next line of a notfication.
+   * Read the next line of a notification.
    * 
    * @return The next line, or null if at eof or the notification
    *         "---" terminator.
@@ -209,7 +211,7 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
   }
 
   @Override
-  public Object clone ()
+  public Notification clone ()
     throws CloneNotSupportedException
   {
     Notification copy = (Notification)super.clone ();
@@ -228,10 +230,11 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
   public String toString ()
   {
     StringBuilder str = new StringBuilder ();
-    boolean first = true;
-    
+
     Set<String> names = new TreeSet<String> (CASE_INSENSITIVE_ORDER);
     names.addAll (attributes.keySet ());
+    
+    boolean first = true;
     
     for (String name : names)
     {
@@ -279,6 +282,21 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
     return attributes.containsKey (name);
   }
 
+  public Set<String> names ()
+  {
+    return unmodifiableSet (attributes.keySet ());
+  }
+  
+  public Collection<Object> values ()
+  {
+    return unmodifiableCollection (attributes.values ());
+  }
+  
+  public Map<String, Object> asMap ()
+  {
+    return unmodifiableMap (attributes);
+  }
+  
   /**
    * Get the fields/values of this notification as a unmodifiable,
    * live set of java.util.Map.Entry's that can be iterated over.
@@ -308,11 +326,15 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
   }
 
   /**
-   * Compare two notifications. Cannot use HashMap.equals () as it
-   * does not compare byte arrays by value.
+   * Compare two notifications.
    */
   public boolean equals (Notification ntfn)
   {
+    /*
+     * NB: Cannot use HashMap.equals () as it does not compare byte
+     * arrays by value.
+     */
+    
     if (this == ntfn)
     {
       return true;
@@ -359,31 +381,16 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
     return attributes.isEmpty ();
   }
 
-  public Set<String> names ()
-  {
-    return unmodifiableSet (attributes.keySet ());
-  }
-  
-  public Collection<Object> values ()
-  {
-    return unmodifiableCollection (attributes.values ());
-  }
-  
-  public Map<String, Object> asMap ()
-  {
-    return unmodifiableMap (attributes);
-  }
-  
   public int size ()
   {
     return attributes.size ();
   }
 
   /**
-   * Set an field value.
+   * Set a field value.
    * 
    * @param name The field name.
-   * @param value The value. Use null to clear field.
+   * @param value The value, or null to clear field.
    * 
    * @throws IllegalArgumentException if value is not a string,
    *           integer, long, double or byte array.
@@ -581,15 +588,14 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
     return getNonNull (name, type);
   }
   
-  @SuppressWarnings("unchecked")
   private <T> T getNonNull (String name, Class<T> type)
   {
-    Object value = get (name, type);
+    T value = get (name, type);
     
     if (value == null)
       throw new IllegalArgumentException ("No value for \"" + name + "\"");
     else
-      return (T)value;
+      return value;
   }
   
   @SuppressWarnings("unchecked")
@@ -603,7 +609,7 @@ public class Notification implements Cloneable, Iterable<Entry<String, Object>>
     } else
     {
       throw new IllegalArgumentException
-        ("\"" + name + "\" does not contain a " + typeName (type) + "  value");
+        ("\"" + name + "\" does not contain a " + typeName (type) + " value");
     }
   }
 
