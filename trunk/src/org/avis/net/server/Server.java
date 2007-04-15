@@ -650,7 +650,7 @@ public class Server implements IoHandler
   public void sessionClosed (IoSession session)
     throws Exception
   {
-    diagnostic ("Server session closed", this);
+    trace ("Server session closed", this);
     
     sessions.remove (session);
 
@@ -710,7 +710,7 @@ public class Server implements IoHandler
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    diagnostic ("Server session opened", this);
+    trace ("Server session opened", this);
   }
   
   private static void setConnection (IoSession session,
