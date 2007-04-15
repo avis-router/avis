@@ -6,7 +6,7 @@ import org.avis.net.security.Keys;
 import org.avis.util.ListenerList;
 
 /**
- * A subscription to notifications created by an Elvin connection.
+ * A subscription to notifications from an Elvin connection.
  *
  * @see Elvin#subscribe(String, SecureMode, Keys)
  * @see #addNotificationListener(NotificationListener)
@@ -20,8 +20,7 @@ public final class Subscription
   SecureMode secureMode;
   Keys keys;
   long id;
-  
-  private ListenerList<NotificationListener> notificationListeners;
+  ListenerList<NotificationListener> notificationListeners;
 
   Subscription (Elvin elvin,
                 String subscriptionExpr, SecureMode secureMode, Keys keys)
