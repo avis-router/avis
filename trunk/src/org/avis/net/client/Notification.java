@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.avis.net.messages.NotifyDeliver;
 import org.avis.util.InvalidFormatException;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
@@ -49,7 +50,7 @@ import static org.avis.util.Util.bufferedReaderFor;
 public final class Notification
   implements Cloneable, Iterable<Entry<String, Object>>
 {
-  private Map<String, Object> attributes;
+  Map<String, Object> attributes;
   
   /**
    * Create an empty notification.
@@ -59,6 +60,11 @@ public final class Notification
     this.attributes = new HashMap<String, Object> ();
   }
 
+  Notification (NotifyDeliver message)
+  {
+    this.attributes = message.attributes;
+  }
+  
   /**
    * Create a notification from the values in a map.
    * 
@@ -106,7 +112,7 @@ public final class Notification
     
     parse (this, in);
   }
-  
+
   /**
    * Parse an expression representing a notification and populate the
    * given notification with the values. The format of this expression
