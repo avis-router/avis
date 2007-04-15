@@ -98,6 +98,8 @@ public class Ec
         println ("$time " + iso8601Date.format (new Date ()));
         println (e.notification.toString ());
         println ("---");
+        
+        output.flush ();
       } catch (IOException ex)
       {
         ex.printStackTrace ();
@@ -109,7 +111,6 @@ public class Ec
     {
       output.write (string);
       output.write ('\n');
-      output.flush ();
     }
   }
 }
