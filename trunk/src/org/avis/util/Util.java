@@ -3,6 +3,7 @@ package org.avis.util;
 import java.util.Properties;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -111,5 +112,37 @@ public final class Util
     reader.close ();
     
     return str.toString ();
+  }
+
+  /**
+   * Reader's and InputStream's (almost unbelievably) do not have a
+   * way to tell when the stream is at eof without modifying it. This
+   * uses mark () and read () to non-destructively test for eof. The
+   * stream must support mark ().
+   */
+  public static boolean eof (Reader in)
+    throws IOException
+  {
+    in.mark (10);
+    
+    if (in.read () == -1)
+    {
+      return true;
+    } else
+    {
+      in.reset ();
+      
+      return false;
+    }
+  }
+
+  /**
+   * Generate a buffered reader wrapper for a reader, if it is not
+   * already one.
+   */
+  public static BufferedReader bufferedReaderFor (Reader reader)
+  {
+    return reader instanceof BufferedReader ? (BufferedReader)reader :
+                                              new BufferedReader (reader);
   }
 }
