@@ -60,6 +60,7 @@ import static dsto.dfc.logging.Log.warn;
 
 import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
+import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
@@ -780,6 +781,6 @@ public class Server implements IoHandler, Closeable
   
   private static String idFor (IoSession session)
   {
-    return toHexString (System.identityHashCode (session));
+    return toHexString (identityHashCode (session));
   }
 }
