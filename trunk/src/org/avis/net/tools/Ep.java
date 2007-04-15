@@ -1,6 +1,8 @@
 package org.avis.net.tools;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.Reader;
 
 import java.net.ConnectException;
 
@@ -19,6 +21,7 @@ import static dsto.dfc.logging.Log.setEnabled;
 
 import static org.avis.net.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
+import static org.avis.util.Util.eof;
 
 /**
  * The ep command line utility. Reads a notification from standard
@@ -57,13 +60,15 @@ public class Ep
         }
       });
       
-      InputStreamReader input =
-        new InputStreamReader (System.in,
-                               Charset.forName ("UTF-8").newDecoder ());
+      Reader input =
+        new BufferedReader
+          (new InputStreamReader (System.in,
+                                  Charset.forName ("UTF-8").newDecoder ()));
       
-      Notification notification = new Notification (input);
-      
-      elvin.send (notification, options.secureMode, options.keys);
+      while (!eof (input))
+      {
+        elvin.send (new Notification (input), options.secureMode, options.keys);
+      }
       
       System.exit (0);
     } catch (InvalidFormatException ex)
