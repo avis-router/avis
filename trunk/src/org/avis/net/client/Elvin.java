@@ -788,7 +788,7 @@ public final class Elvin implements Closeable
         throw new IllegalStateException ("Reply buffer overflow");
 
       lastReply = reply;
-      replySemaphore.notifyAll ();
+      replySemaphore.notify ();
     }
   }
   
