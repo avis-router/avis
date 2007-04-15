@@ -135,7 +135,10 @@ public class Subscription
    */
   public void addNotificationListener (NotificationListener listener)
   {
-    notificationListeners.add (listener);
+    synchronized (elvin)
+    {
+      notificationListeners.add (listener);
+    }
   }
   
   /**
@@ -145,7 +148,10 @@ public class Subscription
    */
   public void removeNotificationListener (NotificationListener listener)
   {
-    notificationListeners.remove (listener);
+    synchronized (elvin)
+    {
+      notificationListeners.remove (listener);
+    }
   }
 
   void notifyListeners (NotificationEvent event)
