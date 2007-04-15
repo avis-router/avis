@@ -200,9 +200,11 @@ public class Server implements IoHandler, Closeable
   private static void send (IoSession session, Message message)
   {    
     if (isEnabled (TRACE))
+    {
       trace ("Server sent message to " + idFor (session) + ": " + message,
              Server.class);
-   
+    }
+    
     session.write (message);
   }
   
