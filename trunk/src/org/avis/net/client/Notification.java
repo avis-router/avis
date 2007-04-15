@@ -46,7 +46,7 @@ import static org.avis.util.Util.bufferedReaderFor;
  * 
  * @author Matthew Phillips
  */
-public class Notification
+public final class Notification
   implements Cloneable, Iterable<Entry<String, Object>>
 {
   private Map<String, Object> attributes;

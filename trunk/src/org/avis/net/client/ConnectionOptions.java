@@ -62,7 +62,7 @@ import static org.avis.util.Util.valuesEqual;
  * 
  * @author Matthew Phillips
  */
-public class ConnectionOptions
+public final class ConnectionOptions
 {
   private static final Map<String, Object> EMPTY_MAP = emptyMap ();
 
