@@ -2,6 +2,8 @@ TODO
 
 R1.1
 
+* BUG: ec hangs on Presence-Protocol from public.elvin.org. Takes a long time
+  to close connection. possibly related to use of "tee" on command line
 * look at retiring ".net" and maybe "org." in package names.
   maybe "org.elvin.avis"?
 * DEB, Solaris: look at je4 packages dir
