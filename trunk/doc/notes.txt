@@ -2,7 +2,8 @@ TODO
 
 R1.1
 
-* check client version numbers
+* look at retiring ".net" and maybe "org." in package names.
+  maybe "org.elvin.avis"?
 * DEB, Solaris: look at je4 packages dir
 * windows JRE does not have -server, need to add installer option
 * thread pool size option?
@@ -10,7 +11,6 @@ R1.1
 
 Client
 
-* connection options
 * security -> ec/ep
 * unotify
 * auto connect/reconnect
@@ -43,6 +43,8 @@ Not allocated
 * how do we handle other langs in SVN? do we need to? e.g. should
   Python binding be a separate project?
 
+* DONE: connection options
+* DONE: check client version numbers
 * DONE: ec/ep
 * DONE: Klaus: add interface selection
 * DONE: Ian's suggestions + diagrams
