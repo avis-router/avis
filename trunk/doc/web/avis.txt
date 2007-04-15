@@ -3,19 +3,16 @@ About Avis
 
 Avis is an event router service compatible with the commercial Elvin
 implementation developed by [Mantara Software][mantara]. Avis provides
-a general-purpose, fast and scalable publish/subscribe message bus
-using content-based subscriptions.
+a fast, general-purpose publish/subscribe message bus.
 
-Elvin event routers enable arbitrary messages, known as
+Elvin event routers alllow arbitrary messages, known as
 *notifications*, to be exchanged via a publish/subscribe model. Elvin
-clients subscribe to messages using expressions that match messages by
-their content, an approach that differs from many other message bus
-systems that operate by selecting messages published on pre-defined
-channels. This promotes an even higher level of decoupling between
-producers and consumers of events.
-
-Elvin routers can also be federated to construct high-efficiency,
-wide-area event networks.
+clients subscribe to messages published by other clients using
+expressions that match messages by their content. The content-based
+routing approch differs from many other message bus systems that
+operate by selecting messages published on pre-defined channels, and
+has the advantage of promoting a much higher level of decoupling
+between producers and consumers of events.
 
 The name "Avis" derives from the French word *avis*, meaning advice or
 notification.
@@ -27,10 +24,11 @@ Applications
 Current uses for Elvin event routers include providing the message bus
 for [instant messaging and virtual presence][tickertape.org], device
 coordination for smart meeting rooms and [distributed speech
-transcription for meetings][AuTM]. It has also been used extensively
-by Mantara for high-volume financial transaction routing.
+transcription for meetings][AuTM]. The commercial implementation
+developed by Mantara has been used extensively for high-volume
+financial transaction routing.
 
-Elvin has been picked up in so many applications because of its
+Elvin has been picked up in many applications because of its
 lightweight approach and flexibility: see [this page][why_avis] for
 more discussion on why you might want to use it. The [examples][] page
 also demonstrates in more detail a scenario in which it can be
@@ -40,9 +38,9 @@ employed.
 Current Status
 ----------------------------------------------------------------------
 
-Avis is currently stable enough to be usable as a drop-in replacement
-for Mantara's commercial `elvind` if quench and federation are not
-required.
+Avis is currently usable as a drop-in replacement for Mantara's
+commercial `elvind` if quenching (for discovery of subscriptions) and
+federation (for wide-area routing) are not required.
 
 Future development items include:
 
@@ -68,22 +66,22 @@ History
 Elvin orginated as a project at the [Distributed Systems Technology
 Centre][DSTC_wikipedia] (DSTC), a part government, part commercial
 Cooperative Research Centre, which operated from 1992 until mid
-2006. Elvin was rapidly picked up by internal DSTC projects and by
-several of DSTC's partners, such as the [Australian Defence Science
-and Technology Organisation][DSTO] (DSTO), due to its ability to
-provide a highly reliable, fast, wide-area communication bus.
+2006. Elvin was incorporated into a number of DSTC projects and
+adopted by several of DSTC's partners, such as the [Australian Defence
+Science and Technology Organisation][DSTO] (DSTO), due to its ability
+to provide a reliable, generic, and fast wide-area communication bus.
 
-Mantara Software was created as a DSTC spin-off commercial entity in
-2003 in order to further develop and market Elvin as a supported
+Mantara Software Inc was created as a DSTC spin-off commercial entity
+in 2003 in order to further develop and market Elvin as a supported
 product. When Mantara announced it would stop offering Elvin as a
 standalone supported product, Matthew Phillips began to implement the
 Elvin open specifications published at [elvin.org][] as part of the
 Open Source Avis project.
 
-The Avis project's goal is to enable stakeholders to continue
-developing systems using the proven Elvin message bus technology. It
-is intended that the Avis project will track developments in Elvin to
-remain a compatible long-term option.
+The Avis project's goal is to enable users to continue developing
+systems using the proven Elvin message bus technology. It is intended
+that the Avis project will track developments in the Elvin
+specifications to remain a compatible long-term option.
 
 
 Contacts
