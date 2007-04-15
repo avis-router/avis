@@ -1,9 +1,9 @@
 package org.avis.net.server;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimerTask;
-
-import org.avis.common.Notification;
 
 import static dsto.dfc.logging.Log.alarm;
 
@@ -40,11 +40,11 @@ public class MaliciousClient extends AgentClient
     {
       try
       {
-        Notification ntfn = new Notification ();
+        Map<String, Object> ntfn = new HashMap<String, Object> ();
         
-        ntfn.set ("From", getClass ().getName ());
-        ntfn.set ("Time", new Date ().toString ());
-        ntfn.set ("Payload", BIG_BLOB);
+        ntfn.put ("From", getClass ().getName ());
+        ntfn.put ("Time", new Date ().toString ());
+        ntfn.put ("Payload", BIG_BLOB);
         
         sendNotify (ntfn);
         

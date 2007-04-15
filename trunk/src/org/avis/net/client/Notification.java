@@ -1,4 +1,4 @@
-package org.avis.common;
+package org.avis.net.client;
 
 import java.util.Arrays;
 import java.util.Collection;

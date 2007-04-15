@@ -2,7 +2,6 @@ package org.avis.net.client;
 
 import java.util.EventObject;
 
-import org.avis.common.Notification;
 
 /**
  * A notification delivery event.

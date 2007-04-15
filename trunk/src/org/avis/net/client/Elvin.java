@@ -21,7 +21,6 @@ import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
-import org.avis.common.Notification;
 import org.avis.net.common.ElvinURI;
 import org.avis.net.common.FrameCodec;
 import org.avis.net.messages.ConnRply;

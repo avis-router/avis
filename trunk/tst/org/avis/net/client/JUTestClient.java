@@ -2,7 +2,6 @@ package org.avis.net.client;
 
 import java.io.IOException;
 
-import org.avis.common.Notification;
 import org.avis.net.common.ElvinURI;
 import org.avis.net.security.Key;
 import org.avis.net.security.Keys;

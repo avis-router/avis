@@ -6,8 +6,8 @@ import java.net.ConnectException;
 
 import java.nio.charset.Charset;
 
-import org.avis.common.Notification;
 import org.avis.net.client.Elvin;
+import org.avis.net.client.Notification;
 import org.avis.util.InvalidFormatException;
 
 import dsto.dfc.logging.Log;

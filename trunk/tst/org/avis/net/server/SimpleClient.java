@@ -17,7 +17,6 @@ import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
-import org.avis.common.Notification;
 import org.avis.net.common.FrameCodec;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -174,16 +173,16 @@ class SimpleClient implements IoHandler
       ("Failed to receive a " + type.getName ());
   }
 
-  public void sendNotify (Notification ntfn)
+  public void sendNotify (Map<String, Object> attributes)
     throws Exception
   {
-    send (new NotifyEmit (ntfn.asMap (), true, EMPTY_KEYS));
+    send (new NotifyEmit (attributes, true, EMPTY_KEYS));
   }
   
-  public void sendNotify (Notification ntfn, Keys keys)
+  public void sendNotify (Map<String, Object> ntfn, Keys attributes)
     throws Exception
   {
-    send (new NotifyEmit (ntfn.asMap (), false, keys));
+    send (new NotifyEmit (ntfn, false, attributes));
   }
 
   public SubRply subscribe (String subExpr)

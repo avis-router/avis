@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.avis.common.Notification;
 import org.avis.net.common.JUTestConnectionOptions;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
@@ -381,8 +380,8 @@ public class JUTestServer
     
     eve.subscribe ("require (From-Alice)", eveSubKeys);
     
-    Notification ntfn = new Notification ();
-    ntfn.set ("From-Alice", 1);
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
+    ntfn.put ("From-Alice", 1);
     
     alice.sendNotify (ntfn, aliceNtfnKeys);
     
@@ -417,11 +416,11 @@ public class JUTestServer
     client2.connect ();
     client2.subscribe ("number == 1");
     
-    Notification ntfn = new Notification ();
-    ntfn.set ("number", 1);
-    ntfn.set ("client", "client 1");
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
+    ntfn.put ("number", 1);
+    ntfn.put ("client", "client 1");
     
-    client1.send (new UNotify (4, 0, ntfn.asMap ()));
+    client1.send (new UNotify (4, 0, ntfn));
     client1.close ();
     
     NotifyDeliver reply = (NotifyDeliver)client2.receive ();

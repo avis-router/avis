@@ -1,7 +1,8 @@
-package org.avis.common;
+package org.avis.net.client;
 
 import java.util.Arrays;
 
+import org.avis.net.client.Notification;
 import org.avis.util.InvalidFormatException;
 
 import org.junit.Test;

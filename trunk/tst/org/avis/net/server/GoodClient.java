@@ -1,9 +1,9 @@
 package org.avis.net.server;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimerTask;
-
-import org.avis.common.Notification;
 
 import static dsto.dfc.logging.Log.alarm;
 
@@ -34,11 +34,11 @@ public class GoodClient extends AgentClient
     {
       try
       {
-        Notification ntfn = new Notification ();
+        Map<String, Object> ntfn = new HashMap<String, Object> ();
         
-        ntfn.set ("From", getClass ().getName ());
-        ntfn.set ("Time", new Date ().toString ());
-        ntfn.set ("Channel", "goodclient");
+        ntfn.put ("From", getClass ().getName ());
+        ntfn.put ("Time", new Date ().toString ());
+        ntfn.put ("Channel", "goodclient");
         
         sendNotify (ntfn);
         
