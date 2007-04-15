@@ -2,6 +2,7 @@ package org.avis.net.server;
 
 import java.util.concurrent.ExecutorService;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -75,7 +76,7 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
 import static org.avis.net.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.util.Text.shortException;
 
-public class Server implements IoHandler
+public class Server implements IoHandler, Closeable
 {
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");

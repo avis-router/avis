@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.ConnectException;
@@ -91,7 +92,7 @@ import static org.avis.util.Text.className;
  * 
  * @author Matthew Phillips
  */
-public final class Elvin
+public final class Elvin implements Closeable
 {
   private ElvinURI routerUri;
   private ConnectionOptions connectionOptions;
