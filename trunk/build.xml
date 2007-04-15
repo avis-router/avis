@@ -539,7 +539,7 @@
     </exec>
   </target>
 
-  <target name="backup_from_sf"
+  <target name="backup_sourceforge"
           description="Backup data from Sourceforge">
     <exec executable="rsync">
       <arg line="-av avis.svn.sourceforge.net::svn/avis/* ../avis_backup/svn/" />
