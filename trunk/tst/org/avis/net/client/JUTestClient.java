@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import dsto.dfc.logging.Log;
+
 import static java.lang.System.currentTimeMillis;
 
 import static org.avis.net.client.SecureMode.REQUIRE_SECURE_DELIVERY;
@@ -36,6 +38,7 @@ public class JUTestClient
   public void setup ()
   {
     logTester = new LogFailTester ();
+    Log.setEnabled (Log.TRACE, false);
   }
   
   @After
@@ -372,6 +375,16 @@ public class JUTestClient
     Thread.sleep (2000);
     
     assertFalse (client.isOpen ());
+    
+    try
+    {
+      client.subscribe ("require (hello)");
+      
+      fail ("Client did not reject attempt to use closed connection");
+    } catch (IOException ex)
+    {
+      // ok
+    }
     
     client.close ();
   }
