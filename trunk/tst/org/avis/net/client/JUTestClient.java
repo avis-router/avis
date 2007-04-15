@@ -197,10 +197,10 @@ public class JUTestClient
     aliceClient = new Elvin (uri);
     bobClient = new Elvin (uri);
     
-    aliceClient.setKeys (aliceNtfnKeys, EMPTY_KEYS);
+    aliceClient.setNotificationKeys (aliceNtfnKeys);
     
     sub = bobClient.subscribe ("require (From-Alice)");
-    bobClient.setKeys (EMPTY_KEYS, bobSubKeys);
+    bobClient.setSubscriptionKeys (bobSubKeys);
     
     checkSecureSendReceive (aliceClient, sub);
     
