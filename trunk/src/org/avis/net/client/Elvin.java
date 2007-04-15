@@ -829,7 +829,7 @@ public final class Elvin implements Closeable
     {
       public void run ()
       {
-        Notification ntfn = new Notification (message.attributes);
+        Notification ntfn = new Notification (message);
        
         synchronized (Elvin.this)
         {
