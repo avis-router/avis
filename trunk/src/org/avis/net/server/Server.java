@@ -58,6 +58,7 @@ import static dsto.dfc.logging.Log.isEnabled;
 import static dsto.dfc.logging.Log.trace;
 import static dsto.dfc.logging.Log.warn;
 
+import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
@@ -199,11 +200,12 @@ public class Server implements IoHandler, Closeable
   private static void send (IoSession session, Message message)
   {    
     if (isEnabled (TRACE))
-      trace ("Server sent message: " + message, Server.class);
+      trace ("Server sent message to " + idFor (session) + ": " + message,
+             Server.class);
    
     session.write (message);
   }
-
+  
   // IoHandler interface
 
   public void messageReceived (IoSession session, Object messageObject)
@@ -213,7 +215,8 @@ public class Server implements IoHandler, Closeable
       return;
     
     if (isEnabled (TRACE))
-      trace ("Server got message: " + messageObject, this);
+      trace ("Server got message from " + idFor (session) +
+             ": " + messageObject, this);
     
     Message message = (Message)messageObject;
 
@@ -651,7 +654,8 @@ public class Server implements IoHandler, Closeable
   public void sessionClosed (IoSession session)
     throws Exception
   {
-    trace ("Server session closed", this);
+    if (isEnabled (TRACE))
+      trace ("Server session " + idFor (session) + " closed", this);
     
     sessions.remove (session);
 
@@ -702,7 +706,8 @@ public class Server implements IoHandler, Closeable
     if (status == READER_IDLE && peekConnectionFor (session) == null)
     {
       diagnostic
-        ("Client waited too long to connect: closing session", this);
+        ("Client " + idFor (session) +
+         " waited too long to connect: closing session", this);
       
       session.close ();
     }
@@ -711,7 +716,7 @@ public class Server implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    trace ("Server session opened", this);
+    trace ("Server session opened for " + idFor (session), this);
   }
   
   private static void setConnection (IoSession session,
@@ -769,5 +774,10 @@ public class Server implements IoHandler, Closeable
   private static Connection peekConnectionFor (IoSession session)
   {
     return (Connection)session.getAttachment ();
+  }
+  
+  private static String idFor (IoSession session)
+  {
+    return toHexString (System.identityHashCode (session));
   }
 }
