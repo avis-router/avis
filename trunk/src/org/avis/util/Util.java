@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.avis.net.server.Main;
-
 /**
  * General Avis utility functions.
  * 
@@ -54,7 +52,7 @@ public final class Util
   public static InputStream resourceStream (String resource)
     throws FileNotFoundException
   {
-    InputStream in = Main.class.getResourceAsStream (resource);
+    InputStream in = Util.class.getResourceAsStream (resource);
     
     if (in == null)
       throw new FileNotFoundException ("Missing resource: " + resource);
