@@ -6,8 +6,6 @@ import java.io.Reader;
 
 import java.net.ConnectException;
 
-import java.nio.charset.Charset;
-
 import org.avis.net.client.Elvin;
 import org.avis.net.client.Notification;
 import org.avis.util.InvalidFormatException;
@@ -61,9 +59,7 @@ public class Ep
       });
       
       Reader input =
-        new BufferedReader
-          (new InputStreamReader (System.in,
-                                  Charset.forName ("UTF-8").newDecoder ()));
+        new BufferedReader (new InputStreamReader (System.in, "UTF-8"));
       
       while (!eof (input))
       {
