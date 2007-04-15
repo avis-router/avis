@@ -13,7 +13,7 @@ import org.avis.util.ListenerList;
  * 
  * @author Matthew Phillips
  */
-public class Subscription
+public final class Subscription
 {
   Elvin elvin;
   String subscriptionExpr;
