@@ -8,11 +8,13 @@ a fast, general-purpose publish/subscribe message bus.
 Elvin event routers alllow arbitrary messages, known as
 *notifications*, to be exchanged via a publish/subscribe model. Elvin
 clients subscribe to messages published by other clients using
-expressions that match messages by their content. The content-based
-routing approch differs from many other message bus systems that
-operate by selecting messages published on pre-defined channels, and
-has the advantage of promoting a much higher level of decoupling
-between producers and consumers of events.
+expressions that match messages by their content.
+
+The content-based routing approach used in Elvin routers differs from
+many other message bus systems that operate by selecting messages
+published on pre-defined channels, and has the advantage of promoting
+a much higher level of decoupling between producers and consumers of
+events.
 
 The name "Avis" derives from the French word *avis*, meaning advice or
 notification.
