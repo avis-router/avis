@@ -105,6 +105,19 @@ public final class ConnectionOptions
     }
   }
   
+  public void set (String name, int value)
+  {
+    values.put (name, value);
+  }
+  
+  public void set (String name, String value)
+  {
+    if (value == null)
+      values.remove (name);
+    else
+      values.put (name, value);
+  }
+  
   /**
    * Get the value for a connection option, or null if not defined.
    */
