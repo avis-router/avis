@@ -3,6 +3,7 @@ package org.avis.net.client;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -16,7 +17,9 @@ import java.io.StringReader;
 import org.avis.util.InvalidFormatException;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 import static org.avis.util.Text.appendEscaped;
 import static org.avis.util.Text.appendHexBytes;
@@ -26,31 +29,53 @@ import static org.avis.util.Text.stringExprToString;
 import static org.avis.util.Text.stringToNumber;
 import static org.avis.util.Text.stringToOpaque;
 import static org.avis.util.Text.stripBackslashes;
+import static org.avis.util.Util.bufferedReaderFor;
 
 /**
- * A notification sent via an Elvin router.
+ * A notification sent via an Elvin router. A notification is a set of
+ * field name/value pairs. Field values may be:
+ * 
+ * <ul>
+ *   <li>int (Elvin type: Int32)
+ *   <li>long (Elvin type: Int64)
+ *   <li>double (Elvin type: Real64)
+ *   <li>String (Elvin type: String)
+ *   <li>byte [] (Elvin type: Opaque)
+ * </ul>
  * 
  * @author Matthew Phillips
  */
-public class Notification implements Cloneable
+public class Notification implements Cloneable, Iterable<Entry<String, Object>>
 {
   private Map<String, Object> attributes;
   
+  /**
+   * Create an empty notification.
+   */
   public Notification ()
   {
     this.attributes = new HashMap<String, Object> ();
   }
 
-  public Notification (Map<String, Object> attributes)
+  /**
+   * Create a notification from the values in a map.
+   * 
+   * @param map The map to copy.
+   * 
+   * @throws IllegalArgumentException if one of the map values is not
+   *           a valid type.
+   */
+  public Notification (Map<String, Object> map)
+    throws IllegalArgumentException
   {
-    for (Object value : attributes.values ())
+    for (Object value : map.values ())
       checkValue (value);
     
-    this.attributes = attributes;
+    this.attributes = map;
   } 
   
   /**
-   * Create a notification from an input expression.
+   * Create an instance from an string encoded notification.
    * See {{@link #parse(Notification, Reader)}.
    */
   public Notification (String ntfnExpr)
@@ -69,7 +94,7 @@ public class Notification implements Cloneable
   }
   
   /**
-   * Create a notification from an input expression.
+   * Create an instance from an encoded notification read from a stream.
    * See {{@link #parse(Notification, Reader)}.
    */
   public Notification (Reader in)
@@ -94,6 +119,9 @@ public class Notification implements Cloneable
    *   A field with a \: in it: 1
    * </pre>
    * 
+   * The parser ignores lines starting with "$" and stops on end of
+   * stream or "---".
+   * 
    * @param ntfn The notification to add values to.
    * @param reader The source to read the expression from.
    * @throws IOException If reader throws an IO exception.
@@ -104,14 +132,14 @@ public class Notification implements Cloneable
   public static void parse (Notification ntfn, Reader reader)
     throws IOException, InvalidFormatException
   {
-    BufferedReader in = new BufferedReader (reader);
+    BufferedReader in = bufferedReaderFor (reader);
     
     String line = null;
     
     try
     {
-      while ((line = in.readLine ()) != null)
-        parseLine (ntfn, line.trim ());
+      while ((line = nextLine (in)) != null)
+        parseLine (ntfn, line);
     } catch (InvalidFormatException ex)
     {
       throw new InvalidFormatException
@@ -119,13 +147,36 @@ public class Notification implements Cloneable
     }
   }
 
+  /**
+   * Read the next line of a notfication.
+   * 
+   * @return The next line, or null if at eof or the notification
+   *         "---" terminator.
+   */
+  private static String nextLine (BufferedReader in)
+    throws IOException
+  {
+    String line;
+    
+    do
+    {
+      line = in.readLine ();
+    } while (line != null && line.startsWith ("$"));
+    
+    if (line != null)
+    {
+      line = line.trim ();
+      
+      if (line.startsWith ("---"))
+        line = null;
+    }
+    
+    return line;
+  }
+
   private static void parseLine (Notification ntfn, String line)
     throws InvalidFormatException
   {
-    // skip ep "$field" and "---" lines
-    if (line.charAt (0) == '$' || line.charAt (0) == '-')
-      return;
-    
     int colon = findFirstNonEscaped (line, 0, ':');
     
     if (colon == -1)
@@ -220,21 +271,34 @@ public class Notification implements Cloneable
     }
   }
 
-  public boolean containsKey (Object key)
+  /**
+   * Test if this notification has a field with a given name.
+   */
+  public boolean hasField (String name)
   {
-    return attributes.containsKey (key);
+    return attributes.containsKey (name);
   }
 
-  public boolean containsValue (Object value)
-  {
-    return attributes.containsValue (value);
-  }
-
+  /**
+   * Get the fields/values of this notification as a unmodifiable,
+   * live set of java.util.Map.Entry's that can be iterated over.
+   * 
+   * @see #iterator()
+   */
   public Set<Entry<String, Object>> entrySet ()
   {
-    return attributes.entrySet ();
+    return unmodifiableSet (attributes.entrySet ());
+  }
+  
+  /**
+   * Create an iterator over this notification.
+   */
+  public Iterator<Entry<String, Object>> iterator ()
+  {
+    return entrySet ().iterator ();
   }
 
+  @Override
   public boolean equals (Object o)
   {
     if (o instanceof Notification)
@@ -282,6 +346,7 @@ public class Notification implements Cloneable
       return value1.equals (value2);
   }
 
+  @Override
   public int hashCode ()
   {
     // todo opt: get a better hashcode?
@@ -296,12 +361,12 @@ public class Notification implements Cloneable
 
   public Set<String> names ()
   {
-    return attributes.keySet ();
+    return unmodifiableSet (attributes.keySet ());
   }
   
   public Collection<Object> values ()
   {
-    return attributes.values ();
+    return unmodifiableCollection (attributes.values ());
   }
   
   public Map<String, Object> asMap ()
@@ -314,7 +379,17 @@ public class Notification implements Cloneable
     return attributes.size ();
   }
 
+  /**
+   * Set an field value.
+   * 
+   * @param name The field name.
+   * @param value The value. Use null to clear field.
+   * 
+   * @throws IllegalArgumentException if value is not a string,
+   *           integer, long, double or byte array.
+   */
   public void set (String name, Object value)
+    throws IllegalArgumentException
   {
     if (value == null)
     {
@@ -326,82 +401,188 @@ public class Notification implements Cloneable
       attributes.put (name, value);
     }
   }
-  
-  private void checkValue (Object value)
-  {
-    if (!(value instanceof String ||
-          value instanceof Integer ||
-          value instanceof Long ||
-          value instanceof Double ||
-          value instanceof byte []))
-    {
-      throw new IllegalArgumentException
-        ("Value must be a string, integer, long, double or byte array");
-    }
-  }
 
+  /**
+   * Set an integer value.
+   * 
+   * @param name The field name.
+   * @param value The value.
+   * 
+   * @see #set(String, Object)
+   */
   public void set (String name, int value)
   {
     attributes.put (name, value);
   }
   
+  /**
+   * Set a long value.
+   * 
+   * @param name The field name.
+   * @param value The value.
+   * 
+   * @see #set(String, Object)
+   */
   public void set (String name, long value)
   {
     attributes.put (name, value);
   }
   
+  /**
+   * Set a double value.
+   * 
+   * @param name The field name.
+   * @param value The value.
+   * 
+   * @see #set(String, Object)
+   */
   public void set (String name, double value)
   {
     attributes.put (name, value);
   }
   
+  /**
+   * Set a string value.
+   * 
+   * @param name The field name.
+   * @param value The value.
+   * 
+   * @see #set(String, Object)
+   */
   public void set (String name, String value)
   {
     attributes.put (name, value);
   }
   
+  /**
+   * Set an opaque byte array value.
+   * 
+   * @param name The field name.
+   * @param value The value.
+   * 
+   * @see #set(String, Object)
+   */
   public void set (String name, byte [] value)
   {
     attributes.put (name, value);
   }
 
+  /**
+   * Remove (unset) a value.
+   * 
+   * @param the field name.
+   */
   public void remove (String name)
   {
     attributes.remove (name);
   }
 
+  /**
+   * Get a field value.
+   * 
+   * @param name The field name.
+   * 
+   * @return The value, or null if no value.
+   */
   public Object get (String name)
   {
     return attributes.get (name);
   }
 
+  /**
+   * Get a string value.
+   * 
+   * @param name The field name.
+   * 
+   * @return The value, or null if no value.
+   * 
+   * @throws IllegalArgumentException if value is not a string.
+   */
   public String getString (String name)
+    throws IllegalArgumentException
   {
     return get (name, String.class);
   }
   
+  /**
+   * Get an integer value.
+   * 
+   * @param name The field name.
+   * 
+   * @return The value.
+   * 
+   * @throws IllegalArgumentException if value is not an integer or is null.
+   */
   public int getInt (String name)
+    throws IllegalArgumentException
   {
-    return getPrimitive (name, Integer.class);
+    return getNonNull (name, Integer.class);
   }
 
+  /**
+   * Get a long value.
+   * 
+   * @param name The field name.
+   * 
+   * @return The value.
+   * 
+   * @throws IllegalArgumentException if value is not a long or is null.
+   */
   public long getLong (String name)
+    throws IllegalArgumentException
   {
-    return getPrimitive (name, Long.class);
+    return getNonNull (name, Long.class);
   }
   
+  /**
+   * Get a double value.
+   * 
+   * @param name The field name.
+   * 
+   * @return The value.
+   * 
+   * @throws IllegalArgumentException if value is not a double or is null.
+   */
   public double getDouble (String name)
+    throws IllegalArgumentException
   {
-    return getPrimitive (name, Double.class);
+    return getNonNull (name, Double.class);
   }
   
+  /**
+   * Get an opaque byte array value.
+   * 
+   * @param name The field name.
+   * 
+   * @return The value, or null for no value.
+   * 
+   * @throws IllegalArgumentException if value is not a byte array.
+   */
   public byte [] getOpaque (String name)
+    throws IllegalArgumentException
   {
     return get (name, byte [].class);
   }
   
+  /**
+   * Shortcut to get a non-null value of specified type, or generate
+   * an exception.
+   * 
+   * @param name The field name.
+   * @param type The required type.
+   * @return The value.
+   * 
+   * @throws IllegalArgumentException if there is no value for the
+   *           field or the value is not the required type.
+   */
+  public <E> E require (String name, Class<E> type)
+    throws IllegalArgumentException
+  {
+    return getNonNull (name, type);
+  }
+  
   @SuppressWarnings("unchecked")
-  private <T> T getPrimitive (String name, Class<T> type)
+  private <T> T getNonNull (String name, Class<T> type)
   {
     Object value = get (name, type);
     
@@ -429,8 +610,22 @@ public class Notification implements Cloneable
   private static String typeName (Class<?> type)
   {
     if (type == byte [].class)
-      return "opqaue";
+      return "opaque";
     else
       return className (type).toLowerCase ();
+  }
+  
+  private void checkValue (Object value)
+    throws IllegalArgumentException
+  {
+    if (!(value instanceof String ||
+          value instanceof Integer ||
+          value instanceof Long ||
+          value instanceof Double ||
+          value instanceof byte []))
+    {
+      throw new IllegalArgumentException
+        ("Value must be a string, integer, long, double or byte array");
+    }
   }
 }
