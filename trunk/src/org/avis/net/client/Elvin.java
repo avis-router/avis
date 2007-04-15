@@ -409,12 +409,13 @@ public final class Elvin
    * @param secureMode The security mode: specifying
    *          REQUIRE_SECURE_DELIVERY means the subscription will only
    *          receive notifications that are sent by clients with keys
-   *          matching the set supplied here.
+   *          matching the set supplied here or the global subscription
+   *          key set.
    * @param keys The keys that must match notificiation keys for
    *          secure delivery.
    * @return The subscription instance.
    * 
-   * @throws IOException if an IO error occurs.
+   * @throws IOException if an network error occurs.
    * 
    * @see #send(Notification, SecureMode, Keys)
    * @see Subscription
@@ -446,14 +447,18 @@ public final class Elvin
     subscription.id =
       sendAndReceive (subAddRqst, SubRply.class).subscriptionId;
     
-    subscriptions.put (subscription.id, subscription);
+    if (subscriptions.put (subscription.id, subscription) != null)
+      throw new IOException
+        ("Protocol error: server issued duplicate subscription ID " +
+         subscription.id);
   }
 
   void unsubscribe (Subscription subscription)
     throws IOException
   {
     if (subscriptions.remove (subscription.id) != subscription)
-      throw new IllegalArgumentException ("Not a valid subcription");
+      throw new IllegalStateException
+        ("Internal error: invalid subscription ID " + subscription.id);
 
     sendAndReceive (new SubDelRqst (subscription.id), SubRply.class);
   }
@@ -782,10 +787,14 @@ public final class Elvin
   }
   
   private void checkConnected ()
-    throws IllegalStateException
+    throws IOException
   {
-    if (clientSession == null || !clientSession.isConnected ())
-      throw new IllegalStateException ("Not connected");
+    IoSession session = clientSession;
+    
+    if (session == null)
+      throw new IOException ("Connection is closed");
+    else if (!session.isConnected ())
+      throw new IOException ("Cannot operate while not connected to router");
   }
   
   class MessageHandler extends IoHandlerAdapter
