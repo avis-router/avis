@@ -227,7 +227,8 @@ public class JUTestClient
     aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     
-    sub = bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY, bobSubKeys);
+    sub = bobClient.subscribe ("require (From-Alice)",
+                               REQUIRE_SECURE_DELIVERY, bobSubKeys);
     
     checkSecureSendReceive (aliceClient, sub);
     
