@@ -2,6 +2,10 @@ package org.avis.net.tools;
 
 import java.util.Date;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 import java.net.ConnectException;
 
 import java.text.DateFormat;
@@ -77,14 +81,35 @@ public class Ec
 
   static class Listener implements NotificationListener
   {
-    private DateFormat iso8601Date = 
-      new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private DateFormat iso8601Date;
+    private BufferedWriter output;
 
+    public Listener () 
+      throws IOException
+    {
+      iso8601Date = new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+      output = new BufferedWriter (new OutputStreamWriter (System.out, "UTF-8"));
+    }
+    
     public void notificationReceived (NotificationEvent e)
     {
-      System.out.println ("$time " + iso8601Date.format (new Date ()));
-      System.out.println (e.notification);
-      System.out.println ("---");
+      try
+      {
+        println ("$time " + iso8601Date.format (new Date ()));
+        println (e.notification.toString ());
+        println ("---");
+      } catch (IOException ex)
+      {
+        ex.printStackTrace ();
+      }
+    }
+
+    private void println (String string)
+      throws IOException
+    {
+      output.write (string);
+      output.write ('\n');
+      output.flush ();
     }
   }
 }
