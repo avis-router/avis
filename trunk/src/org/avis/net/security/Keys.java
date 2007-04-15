@@ -260,6 +260,9 @@ public class Keys
    */
   public Delta<Keys> computeDelta (Keys keys)
   {
+    if (keys == this)
+      return new Delta<Keys> (EMPTY_KEYS, EMPTY_KEYS);
+    
     Keys addedKeys = new Keys ();
     Keys removedKeys = new Keys ();
     
