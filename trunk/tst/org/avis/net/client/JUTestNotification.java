@@ -178,6 +178,42 @@ public class JUTestNotification
     assertEquals (ntfn, rountrippedNtfn);
   }
 
+  @Test
+  public void typeSafety ()
+  {
+    Notification ntfn = new Notification ();
+    
+    assertCannotSet (ntfn, "field", new int [] {});
+    assertCannotSet (ntfn, "field", 3.14f);
+    
+    ntfn.set ("field", 42);
+    
+    try
+    {
+      ntfn.getString ("field");
+      
+      fail ();
+    } catch (IllegalArgumentException ex)
+    {
+      // ok
+    }
+  }
+  
+  private static void assertCannotSet (Notification ntfn,
+                                       String field, Object value)
+  {
+    try
+    {
+      ntfn.set (field, value);
+      
+      fail ("Failed to detect illegal value: " + value);
+    } catch (IllegalArgumentException ex)
+    {
+      System.out.println ("message = " + ex.getMessage ());
+      // ok
+    }
+  }
+
   private static void assertInvalid (String ntfnExpr)
   {
     try
