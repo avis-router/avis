@@ -169,12 +169,11 @@ public final class Elvin implements Closeable
    * 
    * @throws IllegalArgumentException if one of the arguments is not
    *           valid.
-   * @throws ConnectException if the socket to the router could not be
+   * @throws ConnectException if a socket to the router could not be
    *           opened, e.g. connection refused.
    * @throws ConnectionOptionsException if the router rejected the
    *           connection options. The client may elect to change the
    *           options and try to create a new connection.
-   * 
    * @throws IOException if some other IO error occurs.
    * 
    * @see #subscribe(String, SecureMode, Keys)
@@ -548,7 +547,7 @@ public final class Elvin implements Closeable
    * 
    * @param notification The notification to send.
    * @param secureMode The security requirement.
-   *          REQUIRE_SECURE_DELIVERY means the notification will only
+   *          REQUIRE_SECURE_DELIVERY means the notification can only
    *          be received by subscriptions with keys matching the set
    *          supplied here.
    * @param keys The keys that must match for secure delivery.
@@ -683,7 +682,7 @@ public final class Elvin implements Closeable
    * 
    * @return The reply message.
    * 
-   * @throws IOException if no suitable reply is seen or an network
+   * @throws IOException if no suitable reply is seen or a network
    *           error occurs.
    */
   private <E extends XidMessage> E sendAndReceive (XidMessage request,
