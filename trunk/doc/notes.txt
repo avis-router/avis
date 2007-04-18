@@ -2,6 +2,8 @@ TODO
 
 R1.1
 
+* think about putting expected reply type in XID messages: would
+  remove need for param in sendAndReceive ().
 * Key I/O
 * BUG: ec hangs on Presence-Protocol from public.elvin.org. Takes a long time
   to close connection. possibly related to use of "tee" on command line
