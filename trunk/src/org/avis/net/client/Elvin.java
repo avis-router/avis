@@ -27,18 +27,16 @@ import org.avis.net.common.FrameCodec;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
 import org.avis.net.messages.Disconn;
-import org.avis.net.messages.DisconnRply;
 import org.avis.net.messages.DisconnRqst;
 import org.avis.net.messages.Message;
 import org.avis.net.messages.Nack;
 import org.avis.net.messages.NotifyDeliver;
 import org.avis.net.messages.NotifyEmit;
-import org.avis.net.messages.SecRply;
+import org.avis.net.messages.RequestMessage;
 import org.avis.net.messages.SecRqst;
 import org.avis.net.messages.SubAddRqst;
 import org.avis.net.messages.SubDelRqst;
 import org.avis.net.messages.SubModRqst;
-import org.avis.net.messages.SubRply;
 import org.avis.net.messages.XidMessage;
 import org.avis.net.security.Keys;
 import org.avis.util.Delta;
@@ -207,8 +205,7 @@ public final class Elvin implements Closeable
       sendAndReceive (new ConnRqst (routerUri.versionMajor,
                                     routerUri.versionMinor,
                                     options.asMap (),
-                                    notificationKeys, subscriptionKeys),
-                      ConnRply.class);
+                                    notificationKeys, subscriptionKeys));
     
     elvinConnectionOpen = true;
     
@@ -279,7 +276,7 @@ public final class Elvin implements Closeable
       {
         try
         {
-          sendAndReceive (new DisconnRqst (), DisconnRply.class);
+          sendAndReceive (new DisconnRqst ());
         } catch (Exception ex)
         {
           diagnostic ("Failed to cleanly disconnect", this, ex);
@@ -464,8 +461,7 @@ public final class Elvin implements Closeable
       subscription.secureMode == ALLOW_INSECURE_DELIVERY;
     subAddRqst.keys = subscription.keys;
     
-    subscription.id =
-      sendAndReceive (subAddRqst, SubRply.class).subscriptionId;
+    subscription.id = sendAndReceive (subAddRqst).subscriptionId;
     
     if (subscriptions.put (subscription.id, subscription) != null)
       throw new IOException
@@ -480,7 +476,7 @@ public final class Elvin implements Closeable
       throw new IllegalStateException
         ("Internal error: invalid subscription ID " + subscription.id);
 
-    sendAndReceive (new SubDelRqst (subscription.id), SubRply.class);
+    sendAndReceive (new SubDelRqst (subscription.id));
   }
 
   void modifyKeys (Subscription subscription, Keys newKeys)
@@ -489,8 +485,7 @@ public final class Elvin implements Closeable
     Delta<Keys> delta = subscription.keys.computeDelta (newKeys);
     
     sendAndReceive
-      (new SubModRqst (subscription.id, delta.added, delta.removed), 
-       SubRply.class);
+      (new SubModRqst (subscription.id, delta.added, delta.removed));
   }
 
   void modifySubscriptionExpr (Subscription subscription,
@@ -498,7 +493,7 @@ public final class Elvin implements Closeable
     throws IOException
   {
     sendAndReceive
-      (new SubModRqst (subscription.id, subscriptionExpr), SubRply.class);
+      (new SubModRqst (subscription.id, subscriptionExpr));
   }
   
   /**
@@ -653,9 +648,9 @@ public final class Elvin implements Closeable
       subscriptionKeys.computeDelta (newSubscriptionKeys);
     
     sendAndReceive
-      (new SecRqst (deltaNotificationKeys.added, deltaNotificationKeys.removed,
-                    deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed),
-       SecRply.class);
+      (new SecRqst
+         (deltaNotificationKeys.added, deltaNotificationKeys.removed,
+          deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
     
     this.notificationKeys = newNotificationKeys;
     this.subscriptionKeys = newSubscriptionKeys;
@@ -676,22 +671,19 @@ public final class Elvin implements Closeable
    * Send a message and receive a reply with a matching transaction ID
    * and a given type.
    * 
-   * @param <E> The reply message type.
    * @param request The request message.
-   * @param expectedReplyType The expected reply type (same as E).
    * 
    * @return The reply message.
    * 
    * @throws IOException if no suitable reply is seen or a network
    *           error occurs.
    */
-  private <E extends XidMessage> E sendAndReceive (XidMessage request,
-                                                   Class<E> expectedReplyType)
+  private <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
     throws IOException
   {
     send (request);
    
-    return receiveReply (request, expectedReplyType);
+    return receiveReply (request);
   }
   
   /**
@@ -735,9 +727,7 @@ public final class Elvin implements Closeable
    * Block the calling thread for up to receiveTimeout millis waiting
    * for a reply message to arrive from the router.
    * 
-   * @param <E> The reply message type.
    * @param request The request message.
-   * @param expectedReplyType The expected reply type (same as E).
    * 
    * @return The reply message.
    * 
@@ -745,8 +735,7 @@ public final class Elvin implements Closeable
    *           error occurs.
    */
   @SuppressWarnings("unchecked")
-  private <E extends XidMessage> E receiveReply (XidMessage request,
-                                                 Class<E> expectedReplyType)
+  private <R extends XidMessage> R receiveReply (RequestMessage<R> request)
     throws IOException
   {
     XidMessage reply = receiveReply ();
@@ -755,9 +744,9 @@ public final class Elvin implements Closeable
     {
       throw new IOException
         ("Protocol error: Transaction ID mismatch in reply from router");
-    } else if (expectedReplyType.isAssignableFrom (reply.getClass ()))
+    } else if (request.replyType ().isAssignableFrom (reply.getClass ()))
     {
-      return (E)reply;
+      return (R)reply;
     } else if (reply instanceof Nack)
     {
       Nack nack = (Nack)reply;
@@ -771,7 +760,7 @@ public final class Elvin implements Closeable
       // todo this indicates a pretty serious fuckup. should try to reconnect?
       throw new IOException
         ("Protocol error: received a " + className (reply) +
-         ": was expecting " + className (expectedReplyType));
+         ": was expecting " + className (request.replyType ()));
     }
   }
   

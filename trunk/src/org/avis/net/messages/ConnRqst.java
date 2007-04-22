@@ -17,7 +17,7 @@ import static org.avis.net.security.Keys.EMPTY_KEYS;
  * 
  * @author Matthew Phillips
  */
-public class ConnRqst extends XidMessage
+public class ConnRqst extends RequestMessage<ConnRply>
 {
   public static final Map<String, Object> EMPTY_OPTIONS = emptyMap ();
 
@@ -55,6 +55,12 @@ public class ConnRqst extends XidMessage
   public int typeId ()
   {
     return ID;
+  }
+  
+  @Override
+  public Class<ConnRply> replyType ()
+  {
+    return ConnRply.class;
   }
   
   @Override

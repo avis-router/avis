@@ -1,6 +1,6 @@
 package org.avis.net.messages;
 
-public class DisconnRqst extends XidMessage
+public class DisconnRqst extends RequestMessage<DisconnRply>
 {
   public static final int ID = 51;
   
@@ -13,5 +13,11 @@ public class DisconnRqst extends XidMessage
   public int typeId ()
   {
     return ID;
+  }
+  
+  @Override
+  public Class<DisconnRply> replyType ()
+  {
+    return DisconnRply.class;
   }
 }

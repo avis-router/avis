@@ -7,7 +7,7 @@ import org.avis.net.security.Keys;
 
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
-public class SecRqst extends XidMessage
+public class SecRqst extends RequestMessage<SecRply>
 {
   public static final int ID = 54;
   
@@ -37,6 +37,12 @@ public class SecRqst extends XidMessage
   public int typeId ()
   {
     return ID;
+  }
+  
+  @Override
+  public Class<SecRply> replyType ()
+  {
+    return SecRply.class;
   }
   
   @Override

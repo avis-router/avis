@@ -11,7 +11,7 @@ import static org.avis.net.common.IO.putBool;
 import static org.avis.net.common.IO.putString;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
 
-public class SubAddRqst extends XidMessage
+public class SubAddRqst extends RequestMessage<SubRply>
 {
   public static final int ID = 58;
   
@@ -42,6 +42,12 @@ public class SubAddRqst extends XidMessage
   public int typeId ()
   {
     return ID;
+  }
+
+  @Override
+  public Class<SubRply> replyType ()
+  {
+    return SubRply.class;
   }
   
   @Override

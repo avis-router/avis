@@ -8,7 +8,7 @@ import static org.avis.net.common.IO.putString;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-public class Nack extends XidMessage
+public class Nack extends RequestMessage<XidMessage>
 {
   public static final int ID = 48;
 
@@ -27,12 +27,6 @@ public class Nack extends XidMessage
   public String message;
   public Object [] args;
   
-  @Override
-  public int typeId ()
-  {
-    return ID;
-  }
-
   public Nack ()
   {
     // zip
@@ -50,6 +44,18 @@ public class Nack extends XidMessage
     this.error = error;
     this.message = message;
     this.args = args;
+  }
+
+  @Override
+  public int typeId ()
+  {
+    return ID;
+  }
+
+  @Override
+  public Class<XidMessage> replyType ()
+  {
+    return XidMessage.class;
   }
   
   /**

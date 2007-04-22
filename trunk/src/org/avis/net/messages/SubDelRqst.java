@@ -3,17 +3,11 @@ package org.avis.net.messages;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-public class SubDelRqst extends XidMessage
+public class SubDelRqst extends RequestMessage<SubRply>
 {
   public static final int ID = 60;
   
   public long subscriptionId;
-
-  @Override
-  public int typeId ()
-  {
-    return ID;
-  }
   
   public SubDelRqst ()
   {
@@ -25,6 +19,18 @@ public class SubDelRqst extends XidMessage
     super (nextXid ());
     
     this.subscriptionId = subscriptionId;
+  }
+  
+  @Override
+  public int typeId ()
+  {
+    return ID;
+  }
+  
+  @Override
+  public Class<SubRply> replyType ()
+  {
+    return SubRply.class;
   }
   
   @Override
