@@ -124,7 +124,7 @@ public class Main
       if (ex instanceof IllegalOptionException)
         alarm ("Error in server configuration: " + ex.getMessage (), Main.class);
       else
-        alarm ("\nError starting server: " + ex.getMessage (), Main.class);
+        alarm ("Error starting server: " + ex.getMessage (), Main.class);
         
       if (isEnabled (DIAGNOSTIC))
         ex.printStackTrace ();
