@@ -228,7 +228,7 @@ public class Keys
    * @param toAdd Keys to add.
    * @param toRemove Keys to remove
    * 
-   * @return A new key set with keys added remove. If both add/remove
+   * @return A new key set with keys added/removed. If both add/remove
    *         key sets are empty, this returns the current instance.
    *         
    * @see #computeDelta(Keys)
