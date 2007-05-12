@@ -75,9 +75,9 @@
     <javac classpathref="classpath" srcdir="tst" destdir="tst_classes"/>
   </target>
   
-  <!-- TODO: currently does not work. Does Ant 1.6 support JUnit 4? -->
   <!-- Ant 1.6 needs "-lib lib" on command line to find JUnit -->
-  <target name="tests" description="Run test cases (currently broken)">
+  <target name="tests" depends="compile"
+          description="Run test cases (needs Ant 1.7)">
     <junit fork="yes" haltonfailure="yes" printsummary="true">
    
       <formatter type="plain" usefile="false" />
