@@ -242,9 +242,11 @@ public class JUTestEvaluation
     // size
     ntfn = new Notification ();
     ntfn.put ("opaque", new byte [10]);
-    ntfn.put ("not_opaque", "hello");
+    ntfn.put ("string", "1234");
+    ntfn.put ("int32", 1234);
     assertEquals (10, new Size ("opaque").evaluate (ntfn));
-    assertEquals (BOTTOM, new Size ("not_opaque").evaluate (ntfn));
+    assertEquals (4, new Size ("string").evaluate (ntfn));
+    assertEquals (BOTTOM, new Size ("int32").evaluate (ntfn));
     assertEquals (BOTTOM, new Size ("not_exists").evaluate (ntfn));
     
     // fold-case
