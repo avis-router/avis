@@ -43,6 +43,8 @@ public class Size extends Node<Integer>
     
     if (value instanceof byte [])
       return ((byte [])value).length;
+    else if (value instanceof String)
+      return ((String)value).length ();
     else
       return null;
   }
