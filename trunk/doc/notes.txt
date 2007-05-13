@@ -2,6 +2,8 @@ TODO
 
 R1.1
 
+* OS X: installation in /usr/local means getting blown away on system
+  reinstall. should we go in /opt?
 * think about putting expected reply type in XID messages: would
   remove need for param in sendAndReceive ().
 * Key I/O
