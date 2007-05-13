@@ -668,8 +668,8 @@ public final class Elvin implements Closeable
   }
 
   /**
-   * Send a message and receive a reply with a matching transaction ID
-   * and a given type.
+   * Send a request message and receive a reply with the correct type
+   * and transaction ID.
    * 
    * @param request The request message.
    * 
