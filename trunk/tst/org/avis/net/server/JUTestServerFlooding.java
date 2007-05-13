@@ -54,7 +54,7 @@ public class JUTestServerFlooding
     if (server != null)
       server.close ();
     
-    logTester.dispose ();
+    logTester.assertOkAndDispose ();
   }
   
   /**
@@ -140,7 +140,7 @@ public class JUTestServerFlooding
     
     // close () can take a long time when queues backed up...
     for (MaliciousClient client : badClients)
-      client.close (30000);
+      client.close (60000);
     
     info ("Done", this);
   }

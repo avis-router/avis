@@ -64,7 +64,7 @@ public class JUTestServer
     if (server != null)
       server.close ();
     
-    logTester.dispose ();
+    logTester.assertOkAndDispose ();
   }
   
   @Test

@@ -209,7 +209,7 @@ public class JUTestNotification
       fail ("Failed to detect illegal value: " + value);
     } catch (IllegalArgumentException ex)
     {
-      System.out.println ("message = " + ex.getMessage ());
+      // System.out.println ("message = " + ex.getMessage ());
       // ok
     }
   }

@@ -46,7 +46,7 @@ public class JUTestClient
     if (server != null)
       server.close ();
     
-    logTester.dispose ();
+    logTester.assertOkAndDispose ();
   }
   
   private void createServer ()

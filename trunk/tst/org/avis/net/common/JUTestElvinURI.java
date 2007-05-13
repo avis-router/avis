@@ -133,11 +133,11 @@ public class JUTestElvinURI
                   uri.toCanonicalString ());
     
     uri = new ElvinURI ("elvin:/secure/elvin_host:29170;b=2;a=1");
-    assertEquals ("elvin:4.0/tcp,ssl,xdr/elvin_host:29170;a=1;b=2",
+    assertEquals ("elvin:4.0/ssl,none,xdr/elvin_host:29170;a=1;b=2",
                   uri.toCanonicalString ());
     
     uri = new ElvinURI ("elvin:5.1/secure/elvin_host:29170;b=2;a=1");
-    assertEquals ("elvin:5.1/tcp,ssl,xdr/elvin_host:29170;a=1;b=2",
+    assertEquals ("elvin:5.1/ssl,none,xdr/elvin_host:29170;a=1;b=2",
                   uri.toCanonicalString ());
   }
   

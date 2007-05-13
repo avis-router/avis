@@ -1,5 +1,8 @@
 package org.avis.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dsto.dfc.logging.LogEvent;
 import dsto.dfc.logging.LogListener;
 
@@ -19,14 +22,31 @@ import static org.junit.Assert.fail;
  */
 public class LogFailTester implements LogListener
 {
+  private List<LogEvent> errors;
+  
   public LogFailTester ()
   {
+    this.errors = new ArrayList<LogEvent> ();
+    
     addLogListener (this);
   }
   
-  public void dispose ()
+  /**
+   * Assert there were no errors/warnings logged and dispose.
+   */
+  public void assertOkAndDispose ()
   {
     removeLogListener (this);
+
+    if (!errors.isEmpty ())
+    {
+      StringBuilder errorMessages = new StringBuilder ();
+
+      for (LogEvent e : errors)
+        errorMessages.append (toLogString (e)).append ('\n');
+      
+      fail ("Errors/warnings in log: " + errorMessages);
+    }
   }
   
   public void messageReceived (LogEvent e)
@@ -37,7 +57,7 @@ public class LogFailTester implements LogListener
         type == INTERNAL_ERROR ||
         type == WARNING)
     {
-      fail ("Logged error: " + toLogString (e));
+      errors.add (e);
     }
   }
 }
