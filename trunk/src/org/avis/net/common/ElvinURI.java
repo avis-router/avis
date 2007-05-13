@@ -49,9 +49,13 @@ public final class ElvinURI
   private static final List<String> DEFAULT_PROTOCOL =
     list ("tcp", "none", "xdr");
   
-  // todo: Mantara Elvin uses "ssl,none,xdr" for secure stack - resolve
+  /*
+   * Note: you might expect "tcp,ssl,xdr" as the logical secure stack,
+   * but Mantara Elvin uses "ssl,none,xdr" and spec also indicates
+   * this is correct, so we comply.
+   */
   private static final List<String> SECURE_PROTOCOL =
-    list ("tcp", "ssl", "xdr");
+    list ("ssl", "none", "xdr");
   
   /**
    * Basic matcher for URI's. Detail parsing is done as a separate pass.
