@@ -67,6 +67,7 @@ import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
+import static org.avis.net.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
 import static org.avis.net.messages.Nack.NOT_IMPL;
@@ -270,16 +271,7 @@ public class Server implements IoHandler, Closeable
        * A message processing method detected a protocol violation
        * e.g. attempt to remove non existent subscription.
        */
-      diagnostic ("Client protocol violation for " + message + ": " + 
-                  ex.getMessage (), this);
-      
-      if (message instanceof XidMessage)
-      {
-        send (session,
-              new Nack ((XidMessage)message, PROT_ERROR, ex.getMessage ()));
-      }
-      
-      session.close ().join ();
+      handleProtocolViolation (session, message, ex.getMessage ());
     }
   }
 
@@ -554,15 +546,32 @@ public class Server implements IoHandler, Closeable
 
   private static void handleError (IoSession session, ErrorMessage message)
   {
+    handleProtocolViolation (session, message.cause,
+                             shortException (message.error));
+  }
+
+  /**
+   * Handle a protocol violation by a client by sending a NACK (if
+   * appropriate) and disconnecting with the REASON_PROTOCOL_VIOLATION code.
+   * 
+   * @param session The client session.
+   * @param cause The message that caused the violation.
+   * @param diagnosticMessage The diagnostic sent back to the client.
+   */
+  private static void handleProtocolViolation (IoSession session,
+                                               Message cause,
+                                               String diagnosticMessage)
+  {
     diagnostic ("Disconnecting client due to protocol violation: " +
-                shortException (message.error), Server.class);
+                diagnosticMessage, Server.class);
     
-    if (message.cause instanceof XidMessage)
+    if (cause instanceof XidMessage)
     {
       send (session,
-            new Nack ((XidMessage)message.cause, PROT_ERROR,
-                      message.error.getMessage ()));
+            new Nack ((XidMessage)cause, PROT_ERROR, diagnosticMessage));
     }
+    
+    send (session, new Disconn (REASON_PROTOCOL_VIOLATION, diagnosticMessage));
     
     // close and wait to avoid reading any further bogus data left in stream
     session.close ().join ();
