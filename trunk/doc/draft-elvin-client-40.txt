@@ -7,14 +7,14 @@
 Elvin.Org                                              D. Arnold, Editor
 Preliminary INTERNET-DRAFT                                  Mantara, Inc
 
-Expires: 11 Jul 2007                                         11 Jan 2007
+Expires: 20 Oct 2007                                         20 Apr 2007
 
 
                        Elvin Client Protocol 4.0
-                      draft-elvin-client-40-05.txt
+                      draft-elvin-client-40-06.txt
 
 
-1.  Status of this Memo
+   1.  Status of this Memo
 
    This document is an Internet-Draft and is NOT offered in accordance
    with Section 10 of RFC2026, and the author does not provide the IETF
@@ -36,7 +36,7 @@ Expires: 11 Jul 2007                                         11 Jan 2007
    The list of Internet-Draft Shadow Directories can be accessed at
    http://www.ietf.org/shadow.html
 
-2.  ABSTRACT
+   2.  ABSTRACT
 
    This document describes a client access protocol for the Elvin noti-
    fication service.  It includes a general overview of the system
@@ -44,7 +44,7 @@ Expires: 11 Jul 2007                                         11 Jan 2007
    semantics, an abstract protocol, and a default concrete implementa-
    tion of the abstract protocol.
 
-3.  INTRODUCTION
+   3.  INTRODUCTION
 
    Elvin is a content-based publish/subscribe notification service.  An
    Elvin implementation is comprised of Elvin routers that forward and
@@ -63,7 +63,7 @@ Expires: 11 Jul 2007                                         11 Jan 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 1]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
    delivery of notifications from the service.  Consumers normally sub-
@@ -93,7 +93,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    that such journeys are subject to filtering and greater latency than
    notifications between clients of a single router process.
 
-4.  TERMINOLOGY
+   4.  TERMINOLOGY
 
    This document discusses clients, client libraries, routers, produc-
    ers, consumers, quenchers, notifications and subscriptions.
@@ -125,16 +125,16 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 2]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-4.1.  Notation Conventions
+   4.1.  Notation Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119.
 
-5.  ARCHITECTURE
+   5.  ARCHITECTURE
 
    This document describes a protocol used by lightweight clients to
    access the Elvin service provided by an Elvin router.  Typically,
@@ -155,7 +155,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    its intended application programs and the resources available from
    its host platform.
 
-5.1.  Abstract Communications Channel
+   5.1.  Abstract Communications Channel
 
    Elvin clients communicate with an Elvin router using a communications
    channel.  A client process MAY open multiple simultaneous channels to
@@ -169,7 +169,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    Once created, a channel remains available for exchange of messages
    until it is closed by either the Elvin client or router.
 
-5.1.1.  Offers
+   5.1.1.  Offers
 
    Elvin router offers are stable, advertised entities to which clients
    can connect, creating a channel.
@@ -187,10 +187,10 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 3]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-5.1.2.  Messages
+   5.1.2.  Messages
 
    An abstract Elvin message consists of an ordered sequence of values.
    Each value has a known type, being one of a set of basic data types
@@ -202,7 +202,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    they were sent.
 
 
-5.2.  Concrete Communications Channels
+   5.2.  Concrete Communications Channels
 
    An implementation of the abstract channel provides a mechanism for
    transporting messages between Elvin clients and routers.  This mecha-
@@ -224,7 +224,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    A concrete endpoint is advertised using a URI.  An example of such a
    URL might be,
-      elvin:/tcp,krb5,xdr/router.example.com:2917
+     elvin:/tcp,krb5,xdr/router.example.com:2917
 
    specifying an endpoint using concrete protocol modules "tcp", "krb5"
    and "xdr", and offered at an address of "router.example.com:2917".
@@ -236,7 +236,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    A concrete channel MAY limit the size of messages, but MUST otherwise
    support the full functionality of the abstract channel.
 
-5.3.  Protocol Overview
+   5.3.  Protocol Overview
 
    Interactions between client applications and the Elvin router can be
    characterised as either session-oriented or session-less.
@@ -249,7 +249,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 4]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
    and maintain that session as long as required.
@@ -259,7 +259,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    tics is convered later, in the Protocol Details section.
 
 
-5.3.1.  Notification
+   5.3.1.  Notification
 
    Elvin notifications are structured messages comprised of a set of
    attributes.  Each attribute consists of a name and a typed value.
@@ -281,7 +281,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    Elvin router for dissemination.
 
 
-5.3.2.  Subscription
+   5.3.2.  Subscription
 
    An Elvin subscription is a UTF-8 string forming an expression in the
    Elvin Subscription Language.
@@ -293,7 +293,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    tion is queued for delivery.
 
 
-5.3.3.  Quenching
+   5.3.3.  Quenching
 
    An Elvin client can also register a set of attribute names with the
    Elvin router, and is subsequently kept informed of active subscrip-
@@ -311,16 +311,16 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 5]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
    subscription exists, thus quenching the flow of published informa-
    tion.
 
 
-5.4.  Protocol Interactions
+   5.4.  Protocol Interactions
 
-5.4.1.  Session-less Notification
+   5.4.1.  Session-less Notification
 
    Client libraries MAY implement session-less transfer of messages from
    the client to the router.  It is not possible for clients to receive
@@ -332,11 +332,11 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    No other packets are allowed during session-less operation.
 
-5.4.2.  Establishing a Session
+   5.4.2.  Establishing a Session
 
    A Elvin client-router session is a bi-directional communciations
-   link.  It is used by the client to set delivery criteria at the
-   router. The router uses the same link to acknowledge client changes
+   link.  It is used by the client to request deliveries from the
+   router.  The router uses the same link to acknowledge client changes
    and to asynchronously deliver the messages selected by the client.
 
    When a client requests a connection, the router will respond with
@@ -350,7 +350,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
      |   Client    |                |  Router |   SUCCESSFUL CONNECTION
      +-------------+ <---ConnRply-- +---------+
 
-5.4.3.  Sending Notifications
+   5.4.3.  Sending Notifications
 
    After a successful connection exchange, the session is active and a
    client may start emitting notifications by sending them to the router
@@ -373,7 +373,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 6]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
       +----------+                   +--------+
@@ -384,7 +384,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
       | Consumer | <--NotifyDeliver- |        |
       +----------+                   +--------+
 
-5.4.4.  Setting Subscriptions
+   5.4.4.  Setting Subscriptions
 
    When a session is first established, the router MUST NOT send any
    Notify Deliver packets until at least one subscription has been added
@@ -435,7 +435,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 7]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
    for the registered request.
@@ -464,7 +464,21 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
       +----------+                    +--------+
                                           SUBSCRIPTION ADD NOTIFICATION
 
-5.4.5.  Lost Packets
+   5.4.5.  Renegotiating Connection Options
+
+   A client can request alterations to the session's properties at any
+   time during the life of the session.
+
+   When a client requests the the connection options be renegotiated,
+   the router will respond with either a QoS Reply or Negative Acknowl-
+   edgement.
+
+     +-------------+ ---QosRqst---> +---------+
+     |   Client    |                |  Router |   OPTION RENEGOTIATION
+     +-------------+ <---QosRply--- +---------+
+
+
+   5.4.6.  Lost Packets
 
    The router may choose to drop notification packets (NotifyEmit, Sub-
    AddNotify, SubModNotify, SubDelNotify) packets if a client is not
@@ -476,7 +490,17 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
       | Consumer | <---DropWarn--- | Router |   DROPPED PACKET WARNING
       +----------+                 +--------+
 
-5.4.6.  Ending a Session
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                 [Page 8]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   5.4.7.  Ending a Session
 
    At any time after a receiving a Connection Reply, the router can
    inform the client that it is to be disconnected.  The Disconn packet
@@ -492,21 +516,13 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    ensures that both directions of the communication channel have been
    flushed.
 
-
-
-
-Arnold, ed.                Expires in 6 months                 [Page 8]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    The router MUST NOT refuse to disconnect a client (ie. using a Nack).
 
      +-------------+ ---DisconnRqst--> +---------+
      |   Client    |                   |  Router |       DISCONNECTION
      +-------------+ <--DisconnRply--- +---------+
 
-6.  SUBSCRIPTION LANGUAGE
+   6.  SUBSCRIPTION LANGUAGE
 
    Consumer clients register subscription expressions with a router to
    request delivery of messages.  The language used for these expres-
@@ -520,13 +536,31 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    the expression evaluates to true then the notification is delivered,
    otherwise, it it not delivered.
 
-6.1.  Subscription Expressions
+   6.1.  Subscription Expressions
 
-6.1.1.  Logic
+   6.1.1.  Logic
 
    The evaluation of a subscription uses Lukasiewicz's tri-state logic
    that adds the value bottom (which represents "undecideable" or
    "indefinite") to the familiar true and false.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                 [Page 9]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
 
           ---------------------------------------------------------
                     Lukasiewicz tri-state logic table
@@ -553,16 +587,8 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    expected but the type of the actual parameter is a 32 bit integer,
    the result of the function begins-with() is bottom.
 
-   Notifications are delivered only if the result of subscription
-
-
-
-Arnold, ed.                Expires in 6 months                 [Page 9]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-   evaluation is true.
+   Notifications are delivered only if the result of subscription evalu-
+   ation is true.
 
    It should be emphasized that:
 
@@ -578,7 +604,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
         (Example != 0)
 
 
-6.1.2.  Grouping
+   6.1.2.  Grouping
 
    Clauses in an expression may be grouped using parentheses to override
    precedence of evaluation.  Unlike the logical or arithmetic opera-
@@ -590,7 +616,15 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    MUST generate a NESTING_TOO_DEEP error in response to registration
    with the router.
 
-6.1.3.  Logical Operators
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 10]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   6.1.3.  Logical Operators
 
    A subscription expression may be a single predicate, or it may con-
    sist of multiple predicates composed by logical operators. The logi-
@@ -603,26 +637,10 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    Logical NOT has highest precedence, followed by AND, XOR and then OR.
 
-6.1.4.  Literal Syntax
+   6.1.4.  Literal Syntax
 
    A subscription expression may include literal values for most of the
    message data types.  These types are
-
-
-
-
-
-
-
-
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 10]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
 
    Integer Numbers
 
@@ -652,6 +670,22 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    precision format MUST cause an OVERFLOW error.  Superfluous precision
    in the mantissa SHOULD be discarded.
 
+
+
+
+
+
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 11]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    Character Strings
 
       string    A UTF-8 encoded Unicode string of known length, with no
@@ -678,19 +712,11 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    there a boolean data type.  All of these can be implemented simply
    using the existing types and structured naming.
 
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 11]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    String and opaque data values have known sizes (ie. they don't use a
    termination character).  An implementation MAY enforce limits on
    these sizes; see section X on Router Features.
 
-6.1.5.  Reference Syntax
+   6.1.5.  Reference Syntax
 
    Predicates and function may also use values obtained from the message
    under evaluation.  Values are referred to using the name of the mes-
@@ -701,7 +727,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    other rules here?
    </FIXME>
 
-6.1.6.  General predicates
+   6.1.6.  General predicates
 
    The subscription language defines a number of predicates that return
    boolean values.
@@ -714,6 +740,14 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    require(attribute)
        Returns true if the notification contains an attribute whose name
        exactly matches that specified (even if the attribute's value is,
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 12]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
        say, an empty string or a zero-length opaque value).
 
    int32(attribute)
@@ -738,17 +772,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    opaque(attribute)
        Returns true if the type of the attribute is opaque.
 
-
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 12]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-6.1.7.  Equality and Set Membership
+   6.1.7.  Equality and Set Membership
 
    The most common operation in typical subscription expressions is a
    test for equality.
@@ -778,13 +802,21 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    This operator is defined to be implemented as
 
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 13]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
         !(A == B)
 
    Note that this can lead to unexpected results when the attributes are
    not defined.
 
 
-6.1.8.  String predicates
+   6.1.8.  String predicates
 
    Some of the most used features of the subscription language are its
    string predicates.  The most general provides regular-expression
@@ -800,19 +832,11 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
        Returns true if any stringconst is a substring of the value of
        attr.
 
-   begins_with(attr, stringconst+)
+   begins-with(attr, stringconst+)
        Returns true if any stringconst is an initial substring (prefix)
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 13]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
        of the value of attr.
 
-   ends_with(attr, stringconst+)
+   ends-with(attr, stringconst+)
        Returns true if any stringconst is a final substring (suffix) of
        the value of attr.
 
@@ -827,19 +851,37 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    In the definitions above, the empty (zero-length) substring is
    defined to be a substring of every string, and any string is a sub-
-   string of itself. Thus begins_with and ends_with imply contains, and
+   string of itself. Thus begins-with and ends-with imply contains, and
    equals (the general predicate) implies all three of them.
 
    There are no predicates for string comparison, i.e. testing whether
    one string "is less than" another string.
 
-6.1.9.  Implications of International Characters
+   6.1.9.  Size Function
+
+   size(attribute)
+       Where attribute is the name of a string or opaque value, this
+       function returns its size in bytes.  For all other value types,
+       the enclosing expression is set to bottom.
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 14]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+       Note that the size in bytes of a UTF-8 string value does not nec-
+       essarily reflect the number of characters.
+
+   6.1.10.  Implications of International Characters
 
    Unicode characters introduce some complexity to the string predi-
    cates.  Comparison of Unicode characters must consider two aspects:
    character decomposition, and strength of the comparison.
 
-6.1.9.1.  Decomposition
+   6.1.10.1.  Decomposition
 
    A single Unicode "character" might consist of a base character
    together with a number of combining characters (such as accents),
@@ -864,14 +906,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
         LATIN SMALL LETTER A + COMBINING GRAVE ACCENT (U+0061 +
         U+0300)
 
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 14]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    As an additional complication, there exist Unicode characters that
    have multiple pre-composed representations, and in performing decom-
    position, the information about which original character was used is
@@ -886,11 +920,21 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
        Perform canonical decomposition of the supplied string and return
        the resulting string value.
 
-   decompose_compat(string)
+   decompose-compat(string)
        Perform compatible (and canonical) decomposition of the supplied
        string and return the resulting string value.
 
-6.1.9.2.  Comparison Strength
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 15]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   6.1.10.2.  Comparison Strength
 
    Unicode defines four levels of comparison, in which equivalence of
    any two strings depends on the comparison level and the locale, as
@@ -907,7 +951,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    The string function "fold-case(string)" is provided to transform
    strings to folded case and allow case-insensitive string comparison.
 
-6.1.10.  Numeric predicates
+   6.1.11.  Numeric predicates
 
    The numeric predicates are the usual arithmetic comparison operators:
 
@@ -926,14 +970,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    an attribute, it is important to understand the effect of using an
    undefined attribute name.
 
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 15]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
         A reference to an undefined attribute sets the closest
         enclosing boolean expression to false.
 
@@ -943,6 +979,22 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    This will normally mean that the numeric predicate will return false,
    leading to apparently anomalous cases:
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 16]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
 
       Consider an expression referring to two int32 attributes
 
@@ -960,7 +1012,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    using the less-than and greater-than predicates.
 
 
-6.1.11.  Numeric functions
+   6.1.12.  Numeric functions
 
    The following functions are defined on all three numeric types:
 
@@ -988,14 +1040,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    >>  Right shift, signed/arithmetic (shift in the value of the sign
        bit)
 
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 16]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    >>> Right shift, unsigned/logical (shift in 0)
 
    &   Bitwise AND
@@ -1006,7 +1050,15 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    ~   Bitwise inversion (unary)
 
-6.2.  Numeric type promotion
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 17]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   6.2.  Numeric type promotion
 
    The three numeric types (int32, int64 and real64) may be mixed freely
    in numeric expressions, and Elvin performs automatic type promotions
@@ -1029,7 +1081,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    3. Otherwise, both operands must be int32, and no promotion is
       required.
 
-6.3.  Subscription Errors
+   6.3.  Subscription Errors
 
    Elvin subscriptions are compiled by the router during registration.
    Various errors are possible; this section documents the basic error
@@ -1049,15 +1101,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    required client action.
 
 
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 17]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    PARSE_ERROR
        A non-specific problem occured when parsing the expression.
 
@@ -1067,6 +1110,15 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    UNTERM_STRING
        A string literal in the expression is missing a terminating quote
        character.
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 18]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
 
    OVERFLOW
        A numeric literal value in the expression is too large for its
@@ -1099,7 +1151,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    attribute identifiers and strings.  Such errors SHOULD be reported
    using the QOS_LIMIT error code.
 
-6.3.1.  Runtime evaluation errors in numeric expressions
+   6.3.1.  Runtime evaluation errors in numeric expressions
 
    During the evaluation of a numeric predicate (including the evalua-
    tion of any expressions that are the arguments to the predicate), the
@@ -1112,14 +1164,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
       o Use of an attribute, constant or expression that has an
         inappropriate type (for example, real64, string or opaque in a
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 18]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
         function that expects int32 or int64)
 
       o Integer division by zero.
@@ -1129,6 +1173,13 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    3. Floating-point errors, including underflow, overflow and division
       by zero, are silently mapped to the appropriate IEEE 754 values.
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 19]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
         <FIXME>
@@ -1141,7 +1192,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
         </FIXME>
 
 
-7.  ABSTRACT PROTOCOL
+   7.  ABSTRACT PROTOCOL
 
    The Elvin4 protocol is specified at two levels: an abstract descrip-
    tion, able to be implemented using different marshalling and trans-
@@ -1177,12 +1228,23 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 19]
+
+
+
+
+
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 20]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-7.1.  Packet Types
+   7.1.  Packet Types
 
    The Elvin abstract protocol specifies a number of packets used in
    interactions between clients and the router.
@@ -1221,7 +1283,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    method for distinguishing packet types.  If a packet type number or
    enumeration is used, it SHOULD reflect the above ordering.
 
-7.2.  Protocol Subsets
+   7.2.  Protocol Subsets
 
    The subsets in the above table reflect capabilities of an implementa-
    tion.  An implementation MUST implement all or none of the packet
@@ -1239,21 +1301,21 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 20]
+Arnold, ed.                Expires in 6 months                [Page 21]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
    to do that,we'd have to separate the ConnRqst/Rply,SecRqst/Rply,Disconn*,DropWarn and Test/ConfConn packets from Notif/Sub packets.
    it's possible,and maybe nice? da
    </FIXME>
 
-7.3.  Errors
+   7.3.  Errors
 
    Several types of errors are recognised in the protocol specification.
    This section describes each type of error, and its required handling.
 
-7.3.1.  Communications Errors
+   7.3.1.  Communications Errors
 
    A communications error occurs when an abstract communcications chan-
    nel closes at an unexpected point in the protocol sequence.
@@ -1272,7 +1334,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    therefore client applications MUST be notified if such an attempt is
    made.
 
-7.3.2.  Protocol Violations
+   7.3.2.  Protocol Violations
 
    A protocol violation is defined to occur when a message is received
    that
@@ -1292,7 +1354,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    sages and maintain the connection, relying on timeouts to initiate a
    suitable recovery process in its peer implementation.
 
-7.3.3.  Protocol Errors
+   7.3.3.  Protocol Errors
 
    A protocol error occurs when a message is received whose values are
    inconsistent with the state of the receiving entity or otherwise
@@ -1301,9 +1363,9 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 21]
+Arnold, ed.                Expires in 6 months                [Page 22]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
    a notification whose attributes exceed the negotiated connection lim-
@@ -1324,7 +1386,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    service attack as a reason (see the Disconnect packet).
 
 
-7.4.  Packet Details
+   7.4.  Packet Details
 
    This section provides detailed descriptions of each packet and their
    use in the Elvin protocol. Packets are comprised from a set of simple
@@ -1333,8 +1395,8 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    The following definitions are used in several packets:
 
-      typedef uint32 id32;
-      typedef uint64 id64;
+     typedef uint32 id32;
+     typedef uint64 id64;
 
    These types are opaque n-bit identifiers.  No semantics are required
    other than bitwise comparison.  In all cases, an all zeros value is
@@ -1363,25 +1425,25 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 22]
+Arnold, ed.                Expires in 6 months                [Page 23]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-      typedef byte[] opaque;
+     typedef byte[] opaque;
 
-      union Value {
-          int32 i32;     // 4 byte signed integer
-          int64 i64;     // 8 byte signed integer
-          real64 r64;    // 8 byte double precision float
-          string str;    // length encoded UTF-8 Unicode string; no NUL bytes
-          opaque bytes;  // binary data sequence
-      };
+     union Value {
+         int32 i32;     // 4 byte signed integer
+         int64 i64;     // 8 byte signed integer
+         real64 r64;    // 8 byte double precision float
+         string str;    // length encoded UTF-8 Unicode string; no NUL bytes
+         opaque bytes;  // binary data sequence
+     };
 
-      struct NameValue {
-          string  name;
-          Value   value;
-      };
+     struct NameValue {
+         string  name;
+         Value   value;
+     };
 
    Arrays of NameValue elements are used for notification data and
    description of router options.  The value type defines the range of
@@ -1389,14 +1451,14 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    no unsigned integer types, nor an explicit boolean type.
 
 
-      struct Keys {
-          struct KeySetList {
-           id32 scheme;
-           struct KeySet {
-               opaque keys[];
-           } key_sets[];
-          } key_set_lists[];
-      };
+     struct Keys {
+         struct KeySetList {
+          id32 scheme;
+          struct KeySet {
+              opaque keys[];
+          } key_sets[];
+         } key_set_lists[];
+     };
 
    Keys and keysets are explained more fully in a later section.
 
@@ -1425,84 +1487,84 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 23]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-      struct SubASTNode {
-          SubAST[] children;
-      };
-
-      union SubAST {
-          string name;
-          int32 i32;
-          int64 i64;
-          real64 r64;
-          string str;
-          string regular_expression;
-
-          SubASTNode equals;
-          SubASTNode not_equals;
-          SubASTNode less_than;
-          SubASTNode less_than_equals;
-          SubASTNode greater_than;
-          SubASTNode greater_than_equals;
-
-          SubASTNode or;
-          SubASTNode xor;
-          SubASTNode and;
-          SubASTNode not;
-
-          SubASTNode unary_plus;
-          SubASTNode unary_minus;
-          SubASTNode multiply;
-          SubASTNode divide;
-          SubASTNode modulo;
-          SubASTNode add;
-          SubASTNode subtract;
-
-          SubASTNode shift_left;
-          SubASTNode shift_right;
-          SubASTNode logical_shift_right;
-          SubASTNode bit_and;
-          SubASTNode bit_xor;
-          SubASTNode bit_or;
-          SubASTNode bit_negate;
-
-          SubASTNode is_int32;
-          SubASTNode is_int64;
-          SubASTNode is_real64;
-          SubASTNode is_string;
-          SubASTNode is_opaque;
-          SubASTNode is_nan;
-
-          SubASTNode begins_with;
-          SubASTNode contains;
-          SubASTNode ends_with;
-          SubASTNode wildcard;
-          SubASTNode regex;
-
-          SubASTNode fold_case;
-
-
-
 Arnold, ed.                Expires in 6 months                [Page 24]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-          SubASTNode decompose;
-          SubASTNode decompose_compat;
+     struct SubASTNode {
+         SubAST[] children;
+     };
 
-          SubASTNode require;
-          SubASTNode equals;
-          SubASTNode size;
-      };
+     union SubAST {
+         string name;
+         int32 i32;
+         int64 i64;
+         real64 r64;
+         string str;
+         string regular_expression;
+
+         SubASTNode equals;
+         SubASTNode not_equals;
+         SubASTNode less_than;
+         SubASTNode less_than_equals;
+         SubASTNode greater_than;
+         SubASTNode greater_than_equals;
+
+         SubASTNode or;
+         SubASTNode xor;
+         SubASTNode and;
+         SubASTNode not;
+
+         SubASTNode unary_plus;
+         SubASTNode unary_minus;
+         SubASTNode multiply;
+         SubASTNode divide;
+         SubASTNode modulo;
+         SubASTNode add;
+         SubASTNode subtract;
+
+         SubASTNode shift_left;
+         SubASTNode shift_right;
+         SubASTNode logical_shift_right;
+         SubASTNode bit_and;
+         SubASTNode bit_xor;
+         SubASTNode bit_or;
+         SubASTNode bit_negate;
+
+         SubASTNode is_int32;
+         SubASTNode is_int64;
+         SubASTNode is_real64;
+         SubASTNode is_string;
+         SubASTNode is_opaque;
+         SubASTNode is_nan;
+
+         SubASTNode begins_with;
+         SubASTNode contains;
+         SubASTNode ends_with;
+         SubASTNode wildcard;
+         SubASTNode regex;
+
+         SubASTNode fold_case;
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 25]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+         SubASTNode decompose;
+         SubASTNode decompose_compat;
+
+         SubASTNode require;
+         SubASTNode equals;
+         SubASTNode size;
+     };
    The subscription AST types are used to describe the compiled form of
    subscription expressions in the quench notification packets.
 
-      id32 xid
+     id32 xid
 
    Where a request packet is sent by the client (other than NotifyEmit
    or UNotify), it MUST include transaction identifier (xid), used to
@@ -1511,7 +1573,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    same identifier as an outstanding request.  Also, the value zero is
    reserved, and MUST NOT be used.
 
-7.4.1.  Unreliable Notification
+   7.4.1.  Unreliable Notification
 
    Unreliable notifications are sent by a client to a router outside the
    context of a session (see ConnRqst below).  Using the protocol and
@@ -1524,35 +1586,42 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    packet.  UNotify packets with an incompatible version number MUST be
    silently discarded by the router.
 
-      struct UNotify {
-          uint8 client_major_version;
-          uint8 client_minor_version;
-          NameValue attributes[];
-          boolean deliver_insecure;
-          Keys keys;
-      };
+     struct UNotify {
+         uint8 client_major_version;
+         uint8 client_minor_version;
+         NameValue attributes[];
+         boolean deliver_insecure;
+         Keys keys;
+     };
 
 
-7.4.2.  Negative Acknowledgement
+   7.4.2.  Negative Acknowledgement
 
    Within the context of a session, many requests can return a Negative
    Acknowledgement to indicate that although the router understood the
    request, there was an error encountered performing the requested
    operation.
 
-      struct Nack {
-          id32 xid;
-          uint16 error;
-          string message;
-          Value args[]
-      };
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 25]
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 26]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
+
+     struct Nack {
+         id32 xid;
+         uint16 error;
+         string message;
+         Value args[]
+     };
 
    The error field is a decimal value structured into ranges with a gen-
    eral category that indicates what action should be taken by the
@@ -1601,6 +1670,14 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
     1003  | NO_SUCH_QUENCH     | quench_id, id64  | No such quench
     1004  | BAD_KEY_SCHEME     | scheme_id, id32  | Bad keys scheme
     1005  | BAD_KEY_INDEX      | scheme_id, id32  | Bad keyset index
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 27]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
           |                    | index, int32     |
     1006  | BAD_UTF8           | offset, int32    | Invalid UTF-8 string
           |                    |                  | FIXME (libelvin 2301)
@@ -1608,14 +1685,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
     1007  |                    |                  | Reserved
     -1499 |                    |                  |
     1500  |                    |                  | Implementation-specific
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 26]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
     -1999 |                    |                  | connection error
           |                    |                  |
     2001  | NO_SUCH_KEY        | None             | No such key
@@ -1663,6 +1732,14 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
           |                    |                  |
     2110  |                    |                  | Reserved
     -2499 |                    |                  |
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 28]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
     2500  |                    |                  | Implementation-specific
     -2999 |                    |                  | request failure
 
@@ -1670,14 +1747,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    ded tokens of the form %n, where n is an index into the args array.
    When preparing the error message for presentation to the user, each
    %n should be replaced by the appropriately formatted value from the
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 27]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    args array.
 
    The language in which the Nack message is sent by a router MAY be
@@ -1686,7 +1755,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    text for presentation to the application.
 
 
-7.4.3.  Connect Request
+   7.4.3.  Connect Request
 
    Using the protocol and endpoint information obtained either directly
    or via router discovery, a client can establish a channel to a
@@ -1708,38 +1777,39 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    A router receiving a ConnRqst MUST send a ConnRply, a Nack or a dis-
    connect in reply.
 
-      struct ConnRqst {
-          id32 xid;
-          uint8 client_major_version;
-          uint8 client_minor_version;
-          NameValue options[];
-          Keys nfn_keys;
-          Keys sub_keys;
-      };
+     struct ConnRqst {
+         id32 xid;
+         uint8 client_major_version;
+         uint8 client_minor_version;
+         NameValue options[];
+         Keys nfn_keys;
+         Keys sub_keys;
+     };
 
 
-7.4.4.  Connect Reply
+   7.4.4.  Connect Reply
 
    Sent by the Elvin router to a client, a ConnRply accepts the client's
    connection request. and specifies the connection option values to be
    provided by the router.
 
-      struct ConnRply {
-          id32 xid;
-          NameValue options[];
-      };
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 29]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+     struct ConnRply {
+         id32 xid;
+         NameValue options[];
+     };
 
    For each legal, understood option included in the ConnRqst, a match-
    ing response MUST be present in the ConnRply.  Where the value
    returned differs from that requested, the client MUST either use the
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 28]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    returned value, or request closure of the session (using a Discon-
    nRqst).  Unrecognised options MUST NOT be returned by the router.
 
@@ -1749,14 +1819,14 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    uses a non-default value, it MUST be sent to the client.
 
 
-7.4.5.  Disconnect Request
+   7.4.5.  Disconnect Request
 
    Sent by clients to the Elvin router to request closure of the ses-
    sion.
 
-      struct DisconnRqst {
-          id32 xid;
-      };
+     struct DisconnRqst {
+         id32 xid;
+     };
 
    A client MUST send this packet and wait for confirmation via Discon-
    nRply before closing the channel to the router.  The client library
@@ -1773,38 +1843,37 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    sending a DisconnRqst (see protocol violations below).
 
 
-7.4.6.  Disconnect Reply
+   7.4.6.  Disconnect Reply
 
    Sent by the Elvin router to a client.  This packet is sent in
    response to a Disconnect Request, prior to breaking the connection.
 
-      struct DisconnRply {
-          id32 xid;
-      };
+     struct DisconnRply {
+         id32 xid;
+     };
 
    This MUST be the last packet sent by a router in a session.  The
    underlying channel MUST be closed immediately after this packet has
    been successfully delivered to the client.
 
 
-7.4.7.  Disconnect
+
+
+Arnold, ed.                Expires in 6 months                [Page 30]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   7.4.7.  Disconnect
 
    Sent by the Elvin router to a client.  This packet is sent in two
    different circumstances: to direct the client to reconnect to another
    router, or to inform that client that the router is shutting down.
 
-      struct Disconn {
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 29]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-          id32  reason;
-          string args;
-      };
+     struct Disconn {
+         id32  reason;
+         string args;
+     };
 
    where the defined values for "reason" are
 
@@ -1839,7 +1908,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    formed.
 
 
-7.4.8.  Security Request
+   7.4.8.  Security Request
 
    Sets the keys associated with the session.  Two sets of keys are
    maintained by the router: those used when sending notifications, and
@@ -1848,21 +1917,22 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    This packet allows keys to be added or removed from either or both
    sets as an atomic operation.
 
-      struct SecRqst {
-          id32 xid;
-          Keys add_nfn_keys;
-          Keys del_nfn_keys;
-          Keys add_sub_keys;
-          Keys del_sub_keys;
-      };
 
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 30]
+Arnold, ed.                Expires in 6 months                [Page 31]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
+
+     struct SecRqst {
+         id32 xid;
+         Keys add_nfn_keys;
+         Keys del_nfn_keys;
+         Keys add_sub_keys;
+         Keys del_sub_keys;
+     };
 
    A client MUST NOT request the addition of a key already registered,
    or the removal of a key not registered.  Such an action is treated as
@@ -1874,13 +1944,13 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    requiring the updated keys.
 
 
-7.4.9.  Security Reply
+   7.4.9.  Security Reply
 
    Sent by the router to clients to confirm a successful change of keys.
 
-      struct SecRply {
-          id32 xid;
-      };
+     struct SecRply {
+         id32 xid;
+     };
 
    A router MUST respond to a client's SecRqst by sending a SecRply, if
    the request was successful, or a Nack if the request was unable to be
@@ -1891,15 +1961,55 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    SecRply.
 
 
-7.4.10.  Drop Warning
+   7.4.10.  QoS Request
+
+   Sent by clients to the router to request renegotiation of the options
+   for the current session.  Legal option names, their semantics, and
+   allowed range of values are defined later in the Connection Options
+   section.
+
+   The router MAY respond with a Nack if renegotiation is not supported.
+   Otherwise, it MUST respond with a QosRply specifying the active
+   option values following its processing of the request.
+
+     struct QosRqst {
+         id32 xid;
+         NameValue options[];
+     };
+
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 32]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   7.4.11.  QoS Reply
+
+   Sent by the router to inform a client of the active connection
+   options after processing a QosRqst.  For a description of the con-
+   tents of the returned options table, see the Connection Options sec-
+   tion below.
+
+     struct QosRply {
+         id32 xid;
+         NameValue options[];
+     };
+
+
+   7.4.12.  Drop Warning
 
    Sent by routers to clients to indicate that notification packets have
    been dropped from this place in the data stream due to congestion in
    the router.  Dropped packets MAY include NotifyDeliver, SubAddNotify,
    SubModNotify and SubDelNotify.
 
-      struct DropWarn {
-      };
+     struct DropWarn {
+     };
 
    The router may also drop ConnConf packets, but this MUST NOT result
    in in a DropWarn being sent to the client.  As a ConnConf is only
@@ -1909,7 +2019,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    fact that other packets have arrived that the connection still works.
 
 
-7.4.11.  Test Connection
+   7.4.13.  Test Connection
 
    A client's connection to the Elvin router can be inactive for long
    periods.  This is especially the case for subscribers for whom match-
@@ -1918,20 +2028,12 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    cation of connectivity.
 
    This application-level functionality is an alternative to a channel
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 31]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    level carrier-loss reporting mechanism.  If an Elvin channel does not
    provide support for carrier loss detection, this mechanism can be
    used.
 
-      struct TestConn {
-      };
+     struct TestConn {
+     };
 
    A Test Connection packet MAY be sent by either client or router to
    verify that the channel remains active after a period during which no
@@ -1941,6 +2043,13 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    the channel within a timeout period, the channel is assumed to have
    failed and the session MUST be closed as for a protocol violation.
 
+
+
+Arnold, ed.                Expires in 6 months                [Page 33]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    A TestConn MAY be sent if no packets have been received within a con-
    figured timeout period.  This period MUST be configurable, sending
    MUST be able to be disabled, and SHOULD be disabled by default.
@@ -1948,10 +2057,10 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    Conn requests.
 
 
-7.4.12.  Confirm Connection
+   7.4.14.  Confirm Connection
 
-      struct ConfConn {
-      };
+     struct ConfConn {
+     };
 
    Clients and routers MUST implement support for ConfConn.
 
@@ -1970,7 +2079,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    router.
 
 
-7.4.13.  Notification Emit
+   7.4.15.  Notification Emit
 
    Sent by client to the Elvin router.  There are two possible delivery
    modes, determining how the router should match supplied security
@@ -1980,44 +2089,47 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    more are supplied, then at least one MUST match (deliver_insecure is
    set).
 
+     struct NotifyEmit {
+         NameValue attributes[];
+         boolean deliver_insecure;
+         Keys keys;
+     };
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 32]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-      struct NotifyEmit {
-          NameValue attributes[];
-          boolean deliver_insecure;
-          Keys keys;
-      };
-
-
-
-7.4.14.  Notification Deliver
+   7.4.16.  Notification Deliver
 
    Sent by the Elvin router to a client.
 
-      struct NotifyDeliver {
-          NameValue attributes[];
-          id64 secure_matches[];
-          id64 insecure_matches[];
-      };
 
 
-7.4.15.  Subscription Add Request
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 34]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+     struct NotifyDeliver {
+         NameValue attributes[];
+         id64 secure_matches[];
+         id64 insecure_matches[];
+     };
+
+
+   7.4.17.  Subscription Add Request
 
    Sent by client to the Elvin router.  Requests delivery of notifica-
    tions which match the supplied subscription expression.
 
-      struct SubAddRqst {
-          id32 xid;
-          string expression;
-          boolean accept_insecure;
-          Keys keys;
-      };
+     struct SubAddRqst {
+         id32 xid;
+         string expression;
+         boolean accept_insecure;
+         Keys keys;
+     };
 
    If successful, the router MUST respond with a SubRply.
 
@@ -2034,34 +2146,34 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    be used.
 
 
-7.4.16.  Subscription Modify Request
+   7.4.18.  Subscription Modify Request
 
    Sent by client to the Elvin router.  Update the specified subscrip-
    tion to request notifications matching a different subscription
    expression, or to alter the security keys associated with the sub-
    scription.
 
-      struct SubModRqst {
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 33]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-          id32 xid;
-          id64 subscription_id;
-          string  expression;
-          boolean accept_insecure;
-          Keys add_keys;
-          Keys del_keys;
-      };
+     struct SubModRqst {
+         id32 xid;
+         id64 subscription_id;
+         string  expression;
+         boolean accept_insecure;
+         Keys add_keys;
+         Keys del_keys;
+     };
 
    Any (and all) of the expression, add_keys and del_keys field MAY be
    empty.  The accept_insecure field cannot be empty: it must always be
    set to the required value. If the accept_insecure field value is
    unchanged from that registered at the router, and all other fields
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 35]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    are empty, the modification SHALL be considered successful.
 
    A successful modification of the subscription MUST return a SubRply
@@ -2081,100 +2193,90 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    was ignored is returned to the client.
 
 
-7.4.17.  Subscription Delete Request
+   7.4.19.  Subscription Delete Request
 
    Sent by client to the Elvin router.  A Nack will be returned if the
    subscription identifier is not valid.
 
-      struct SubDelRqst {
-          id32 xid;
-          id64 subscription_id;
-      };
+     struct SubDelRqst {
+         id32 xid;
+         id64 subscription_id;
+     };
 
 
-7.4.18.  Subscription Reply
+   7.4.20.  Subscription Reply
 
    Sent from the Elvin router to the client as acknowledgement of a suc-
    cessful subscription change.
 
-      struct SubRply {
-          id32 xid;
-          id64 subscription_id;
-      };
+     struct SubRply {
+         id32 xid;
+         id64 subscription_id;
+     };
 
 
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 34]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-7.4.19.  Quench Add Request
+   7.4.21.  Quench Add Request
 
    Sent by clients to the Elvin router.  Requests notification of sub-
    scriptions referring to the specified attributes.
 
-      struct QnchAddRqst {
-          id32 xid;
-          string names[];
-          boolean deliver_insecure;
-          Keys keys;
-      };
+     struct QnchAddRqst {
+         id32 xid;
+         string names[];
+         boolean deliver_insecure;
+         Keys keys;
+     };
 
 
-7.4.20.  Quench Modify Request
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 36]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   7.4.22.  Quench Modify Request
 
    Sent by client to the Elvin router.  Requests changes to the list of
    attribute names associated with a quench identifier.
 
-      struct QnchModRqst {
-          id32 xid;
-          id64 quench_id;
-          string names_add[];
-          string names_del[];
-          boolean deliver_insecure;
-          Keys add_keys;
-          Keys del_keys;
-      };
+     struct QnchModRqst {
+         id32 xid;
+         id64 quench_id;
+         string names_add[];
+         string names_del[];
+         boolean deliver_insecure;
+         Keys add_keys;
+         Keys del_keys;
+     };
 
 
-7.4.21.  Quench Delete Request
+   7.4.23.  Quench Delete Request
 
    Sent by client to the Elvin router.  Requests that the router no
    longer notify the client of changes to subscriptions with the associ-
    ated attribute names.
 
-      struct QnchDelRqst {
-          id32 xid;
-          id64 quench_id;
-      };
+     struct QnchDelRqst {
+         id32 xid;
+         id64 quench_id;
+     };
 
 
-7.4.22.  Quench Reply
+   7.4.24.  Quench Reply
 
    Sent from the Elvin router to the client as acknowledgement of a suc-
    cessful quench requirements change (QnchAddRqst, QnchModRqst,
    QnchDelRqst):
 
-      struct QnchRply {
-          id32 xid;
-          id64 quench_id;
-      };
+     struct QnchRply {
+         id32 xid;
+         id64 quench_id;
+     };
 
 
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 35]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-7.4.23.  Subscription Add Notification
+   7.4.25.  Subscription Add Notification
 
    Sent from router to clients to inform them of a new subscription
    predicate component matching the registered quench attribute name
@@ -2185,15 +2287,26 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    not have matching keys but both the subscription's accept_insecure
    and the quench's deliver_insecure flags were set.
 
-      struct SubAddNotify {
-          id64 secure_quench_ids[];
-          id64 insecure_quench_ids[];
-          id64 term_id;
-          SubAST sub_expr;
-      };
 
 
-7.4.24.  Subscription Modify Notification
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 37]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+     struct SubAddNotify {
+         id64 secure_quench_ids[];
+         id64 insecure_quench_ids[];
+         id64 term_id;
+         SubAST sub_expr;
+     };
+
+
+   7.4.26.  Subscription Modify Notification
 
    This packet indicates that a subscription predicate component match-
    ing their registered quench attribute name list changed for each of
@@ -2205,38 +2318,27 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    if its key list now intersects with that of a registered quench
    request.
 
-      struct SubModNotify {
-          id64 secure_quench_ids[];
-          id64 insecure_quench_ids[];
-          id64 term_id;
-          SubAST sub_expr;
-      };
+     struct SubModNotify {
+         id64 secure_quench_ids[];
+         id64 insecure_quench_ids[];
+         id64 term_id;
+         SubAST sub_expr;
+     };
 
 
-7.4.25.  Subscription Delete Notification
+   7.4.27.  Subscription Delete Notification
 
    Sent from router to clients to inform them of the removal of a sub-
    scription predicate component that had matched their registered
    attribute name list for each of the identified quench registrations.
 
-      struct SubDelNotify {
-        id64 quench_ids[];
-        id64 term_id;
-      };
+     struct SubDelNotify {
+       id64 quench_ids[];
+       id64 term_id;
+     };
 
 
-
-
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 36]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-7.5.  Connection Options
+   7.5.  Connection Options
 
    Connection options control the behaviour of the router for the speci-
    fied connection.  They may be set during connection establishment and
@@ -2250,6 +2352,14 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    packet.  The router's response is delivered in a QosReply packet.
 
    The router evaluates received connection options requests, and for
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 38]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    each option requested, the router MUST either
 
    a) Understand and accept the requested value.  The ConnRply/QosRply
@@ -2278,26 +2388,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    A router implementation MUST support the following options.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 37]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
      Name                        |  Type
      ----------------------------+--------
      Attribute.Max-Count         |  int32
@@ -2322,130 +2412,106 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
      ----------------------------+--------
 
 
-7.5.1.  Option Semantics
 
-
-   Attribute.Max-Count
-
-      Maximum number of attributes in a notification.  The minumum value
-      supported by an implementation SHOULD be at least 16.
-
-
-   Attribute.Name.Max-Length
-
-      Maximum length, in bytes, of an attribute name.  The minimum value
-      supported by an implementation SHOULD be at least 64.
-
-      Attribute.Opaque.Max-Length Maximum length, in bytes, for opaque
-      values. The minimum value supported by an implementation SHOULD be at
-      least 1024.
-
-
-   Attribute.String.Max-Length
-
-      Maximum length, in bytes, for opaque values.  Note that this value
-      is not the number of characters: some characters may take up to 5
-      bytes to respresent using the require UTF-8 encoding. The minimum
-      value supported by an implementation SHOULD be at least 1024.
-
-
-   Packet.Max-Length
-
-      Maximum length, in bytes, of a marshalled packet.  The minimum value
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 38]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-      SHOULD be at least 1024.
-
-
-   Receive-Queue.Drop-Policy
-
-      It is expected that most router implementations will maintain a queue
-      of packets received from a client prior to processing them.  This
-      property describes the desired behaviour of this packet queue if it
-      exceeds the negotitated maximum size.
-
-      A packet queue implementation SHOULD distinguish between packets that,
-      if discarded, would cause a protocol error, and those that can be
-      discarded without losing state synchronisation between the client and
-      the router: NotifyDeliver, SubAddNotify, SubModNotify, and
-      SubDelNotify.
-
-      A router implementation SHOULD support the following drop policy
-      values:
-      oldest
-      newest
-      largest
-      none
-
-      If a router implementation does not use a queue for received packets,
-      it MUST accept any legal value for this property.
-
-
-   Receive-Queue.Max-Length
-
-      This property sets a maximum size of the router's per-client incoming
-      packet queue, in bytes.  If the queue exceeds this size, the router
-      SHOULD drop one or more packets, according to the queue's drop policy.
-
-      If a router implementation does not use a queue for received packets,
-      it MUST accept any legal value for this property.
-
-
-   Send-Queue.Drop-Policy
-
-      It is expected that most router implementations will maintain, for
-      each connected client, a queue of packets for delivery.  This property
-      describes the desired behaviour of this packet queue if it exceeds the
-      negotitated maximum size.
-
-      See the description of the receive queue drop policy.
-
-
-   Send-Queue.Max-Length
-
-      See the description of the receive queue maximum length.
-
-
-   Subscription.Max-Count
 
 
 
 
 Arnold, ed.                Expires in 6 months                [Page 39]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-      This numeric option specifies the maximum number of subscriptions that
-      may be registered by a client.
+   7.5.1.  Option Semantics
 
+   Attribute.Max-Count
+   Maximum number of attributes in a notification.  The minumum value
+   supported by an implementation SHOULD be at least 16.
+
+   Attribute.Name.Max-Length
+   Maximum length, in bytes, of an attribute name.  The minimum value
+   supported by an implementation SHOULD be at least 64.
+
+   Attribute.Opaque.Max-Length Maximum length, in bytes, for opaque val-
+   ues. The minimum value supported by an implementation SHOULD be at
+   least 1024.
+
+   Attribute.String.Max-Length
+   Maximum length, in bytes, for opaque values.  Note that this value is
+   not the number of characters: some characters may take up to 5 bytes
+   to respresent using the require UTF-8 encoding. The minimum value
+   supported by an implementation SHOULD be at least 1024.
+
+   Packet.Max-Length
+   Maximum length, in bytes, of a marshalled packet.  The minimum value
+   SHOULD be at least 1024.
+
+   Receive-Queue.Drop-Policy
+   It is expected that most router implementations will maintain a queue
+   of packets received from a client prior to processing them.  This
+   property describes the desired behaviour of this packet queue if it
+   exceeds the negotitated maximum size.
+
+   A packet queue implementation SHOULD distinguish between packets
+   that, if discarded, would cause a protocol error, and those that can
+   be discarded without losing state synchronisation between the client
+   and the router: NotifyDeliver, SubAddNotify, SubModNotify, and Sub-
+   DelNotify.
+
+   A router implementation SHOULD support the following drop policy val-
+   ues: oldest newest largest none
+
+   If a router implementation does not use a queue for received packets,
+   it MUST accept any legal value for this property.
+
+   Receive-Queue.Max-Length
+   This property sets a maximum size of the router's per-client incoming
+   packet queue, in bytes.  If the queue exceeds this size, the router
+   SHOULD drop one or more packets, according to the queue's drop pol-
+   icy.
+
+   If a router implementation does not use a queue for received packets,
+   it MUST accept any legal value for this property.
+
+   Send-Queue.Drop-Policy
+   It is expected that most router implementations will maintain, for
+   each connected client, a queue of packets for delivery.  This
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 40]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   property describes the desired behaviour of this packet queue if it
+   exceeds the negotitated maximum size.
+
+   See the description of the receive queue drop policy.
+
+   Send-Queue.Max-Length
+   See the description of the receive queue maximum length.
+
+   Subscription.Max-Count
+   This numeric option specifies the maximum number of subscriptions
+   that may be registered by a client.
 
    Subscription.Max-Length
-
-      This numeric option specifies the maximum allowed length, in bytes, of
-      a subscription expression registered with the router.
-
+   This numeric option specifies the maximum allowed length, in bytes,
+   of a subscription expression registered with the router.
 
    Supported-Key-Schemes
+   A router implementation may support various key schemes for the con-
+   trol of Elvin message delivery.  This string property contains the
+   list of key schemes names, separated by the ASCII space character,
+   supported by the router.
 
-      A router implementation may support various key schemes for the
-      control of Elvin message delivery.  This string property contains the
-      list of key schemes names, separated by the ASCII space character,
-      supported by the router.
-
-      Clients MAY request their required schemes, but regardless, a router
-      implementation SHOULD always include the set of supported schemes in
-      its ConnRply options table.
-
+   Clients MAY request their required schemes, but regardless, a router
+   implementation SHOULD always include the set of supported schemes in
+   its ConnRply options table.
 
 
-7.5.2.  Additional Options
+   7.5.2.  Additional Options
 
    A router implementation MAY support additional, implementation-spe-
    cific options.  The name and semantics of a non-standard option
@@ -2453,11 +2519,32 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    to adopt or avoid it.
 
 
-7.5.3.  Compatibility
+   7.5.3.  Compatibility
 
    One popular Elvin implementation uses non-standard names for its con-
    nection options.  In the interests of compatibility, implementations
    MAY provide special handling for these options.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 41]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
 
      Standard Name               | Compatibility Name
      ----------------------------+------------------------------------
@@ -2477,14 +2564,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
      ----------------------------+------------------------------------
 
 
-
-
-Arnold, ed.                Expires in 6 months                [Page 40]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
-8.  PROTOCOL IMPLEMENTATION
+   8.  PROTOCOL IMPLEMENTATION
 
    The abstract protocol described in the previous section may be imple-
    mented by multiple concrete protocols.  The concrete protocols used
@@ -2493,7 +2573,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    implementations.
 
 
-8.1.  Layering and Modules
+   8.1.  Layering and Modules
 
    A channel supporting the Elvin protocol can be comprised of multiple,
    layered components, referred to as protocol modules.  These modules
@@ -2504,7 +2584,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    ities, and MAY provide other features.
 
 
-8.2.  Standard Protocol
+   8.2.  Standard Protocol
 
    overview: TCP/SSL, XDR
 
@@ -2520,12 +2600,20 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    TCP/IP transport.  This combination is known as the Elvin4 standard
    protocol.
 
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 42]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    Additional protocol layers must be proposed and registered via the
    IETF RFC series, either as a revision to this document, or as a sepa-
    rate specification.
 
 
-8.2.1.  TCP Protocol
+   8.2.1.  TCP Protocol
 
    The default Elvin transport module uses a TCP connection to link
    clients with an Elvin router.
@@ -2537,14 +2625,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    The abstract protocol requires that packet boundaries are preserved.
    Since TCP provides a stream-oriented protocol, an additional layer of
    framing must be implemented to support this requirement.
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 41]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
 
    Each packet, passed to the TCP module from higher layer(s) in the
    stack, is sent preceded by a 4-octet framing header.  The header
@@ -2572,7 +2652,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    as a communications error.
 
 
-8.2.1.1.  Protocol Options
+   8.2.1.1.  Protocol Options
 
    An implementation of the TCP protocol SHOULD support a connection
    option to control the use of Nagle's algorithm (normally implemented
@@ -2582,11 +2662,19 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
      ----------------------------+--------
      TCP.Send-Immediately        |  int32
 
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 43]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    The value should be set to zero to enable Nagle's algorithm, and non-
    zero to request that it be disabled.
 
 
-8.2.1.2.  Use of Proxies
+   8.2.1.2.  Use of Proxies
 
    In some environments, it is necessary to use proxy services to cir-
    cumvent firewall policies that would otherwise block Elvin protocol
@@ -2600,14 +2688,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    A proxy connection is established by connecting first to an endpoint
    offered by the proxy router, and requesting that it tunnel further
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 42]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    data on the connection to the specified Elvin router endpoint.
 
    This request takes the form of
@@ -2631,12 +2711,12 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    is a successful response.
 
 
-8.2.2.  Security
+   8.2.2.  Security
 
    null
 
 
-8.2.3.  Marshalling
+   8.2.3.  Marshalling
 
    The standard Elvin 4 marshalling uses XDR [RFC1832] to encode data.
    Messages sent between the a client and and Elvin router are encoded
@@ -2644,6 +2724,14 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    This section uses diagrams to illustrate clearly certain segment and
    packet layouts.  In most illustrations, each box (delimited by a plus
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 44]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    sign at the 4 corners and vertical bars and dashes) depicts a 4 byte
    block as XDR is 4 byte aligned.  Ellipses (...) between boxes show
    zero or more additional bytes where required. Some packet diagrams
@@ -2658,38 +2746,30 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
            +---------+---------+---------+...+---------+
 
 
-8.2.3.1.  Packet Identification
+   8.2.3.1.  Packet Identification
 
    The abstract packet descriptions deliberately leave the method for
    identifying packets to the concrete encoding.  For XDR, each packet
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 43]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
    is identified by the pkt_id enumeration below:
 
-      enum {
-          UNotify        = 32,
+     enum {
+         UNotify        = 32,
 
-          Nack           = 48,   ConnRqst       = 49,
-          ConnRply       = 50,   DisconnRqst    = 51,
-          DisconnRply    = 52,   Disconn        = 53,
-          SecRqst        = 54,   SecRply        = 55,
-          NotifyEmit     = 56,   NotifyDeliver  = 57,
-          SubAddRqst     = 58,   SubModRqst     = 59,
-          SubDelRqst     = 60,   SubRply        = 61,
-          DropWarn       = 62,   TestConn       = 63,
-          ConfConn       = 64,
+         Nack           = 48,   ConnRqst       = 49,
+         ConnRply       = 50,   DisconnRqst    = 51,
+         DisconnRply    = 52,   Disconn        = 53,
+         SecRqst        = 54,   SecRply        = 55,
+         NotifyEmit     = 56,   NotifyDeliver  = 57,
+         SubAddRqst     = 58,   SubModRqst     = 59,
+         SubDelRqst     = 60,   SubRply        = 61,
+         DropWarn       = 62,   TestConn       = 63,
+         ConfConn       = 64,
 
-          QnchAddRqst    = 80,   QnchModRqst    = 81,
-          QnchDelRqst    = 82,   QnchRply       = 83,
-          SubAddNotify   = 84,   SubModNotify   = 85,
-          SubDelNotify   = 86
-      } pkt_id;
+         QnchAddRqst    = 80,   QnchModRqst    = 81,
+         QnchDelRqst    = 82,   QnchRply       = 83,
+         SubAddNotify   = 84,   SubModNotify   = 85,
+         SubDelNotify   = 86
+     } pkt_id;
 
 
    In XDR, enumerations are marshalled as 32 bit integral values.  For
@@ -2706,10 +2786,18 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    Note that the XDR marshalling layer does NOT indicate the length of
    the packet.  This is left to the underlying transport layer being
    used. For example, a UDP transport could use the fact that a datagram
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 45]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    contains the length of data in the packet.
 
 
-8.2.3.2.  Base Types
+   8.2.3.2.  Base Types
 
    The Elvin protocol relies on seven basic types used to construct each
    packet: boolean, uint8, int32, int64, real64, string, byte[].
@@ -2718,19 +2806,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    encoding.  Each datatype used in the abstract descriptions of the
    packets has a mapping to a corresponsing XDR data type as defined in
    [RFC1832].
-
-
-
-
-
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 44]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
 
      -------------------------------------------------------------------
      Elvin Type  XDR Type       Encoding Summary
@@ -2759,13 +2834,13 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    types.  In these cases, the encoded value is preceded a type code
    from the following enumeration:
 
-      enum {
-          int32_tc  = 1,
-          int64_tc  = 2,
-          real64_tc = 3,
-          string_tc = 4,
-          opaque_tc = 5
-      } value_typecode;
+     enum {
+         int32_tc  = 1,
+         int64_tc  = 2,
+         real64_tc = 3,
+         string_tc = 4,
+         opaque_tc = 5
+     } value_typecode;
 
 
    Note that the above enumeration does not include all of the datatypes
@@ -2773,6 +2848,13 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    in the abstract Value segment of a packet.  A Value in an encoded
    packet is thus typed by prepending four bytes which encode the type
    code:
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 46]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
 
           0  1  2  3
         +--+--+--+--+--+--+--+--+...+--+--+--+--+
@@ -2784,16 +2866,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    for marshalling, it would be sent as four bytes for the type id of 1
    and eight bytes for the value.
 
-
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 45]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
-
           0  1  2  3  4  5  6  7  8  9 10 11
         +--+--+--+--+--+--+--+--+--+--+--+--+
         |    0x02   |        0x0400         |           INT64 EXAMPLE
@@ -2801,7 +2873,7 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
         |<--enum--->|<--------hyper-------->|
 
 
-8.2.3.3.  Encoding Arrays
+   8.2.3.3.  Encoding Arrays
 
    All arrays in the abstract protocol are of variable length.  Arrays
    of objects are encoded by prepending the length of the array as an
@@ -2831,73 +2903,84 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
         |<--enum--->|<--------hyper-------->|
 
 
-8.2.3.4.  Subscription Abstract Syntax Trees
-
-      enum {
-          name_tc   = 0,
-          int32_tc  = 1,
-          int64_tc  = 2,
-          real64_tc = 3,
-          string_tc = 4,
-          regular_expression_tc = 5,
-
-          equals_tc = 8,
-          not_equals_tc = 9,
-          less_than_tc = 10,
-          less_than_equals_tc = 11,
-          greater_than_tc = 12,
-          greater_than_equals = 13,
+   8.2.3.4.  Subscription Abstract Syntax Trees
 
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 46]
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 47]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-          or_tc = 16,
-          xor_tc = 17,
-          and_tc = 18,
-          not_tc = 19,
+     enum {
+         name_tc   = 0,
+         int32_tc  = 1,
+         int64_tc  = 2,
+         real64_tc = 3,
+         string_tc = 4,
+         regular_expression_tc = 5,
 
-          unary_plus_tc = 24,
-          unary_minus_tc = 25,
-          multiply_tc = 26,
-          divide_tc = 27,
-          modulo_tc = 28,
-          add_tc = 29,
-          subtract_tc = 30,
+         equals_tc = 8,
+         not_equals_tc = 9,
+         less_than_tc = 10,
+         less_than_equals_tc = 11,
+         greater_than_tc = 12,
+         greater_than_equals = 13,
 
-          shift_left_tc = 32,
-          shift_right_tc = 33,
-          logical_shift_right_tc = 34,
-          bit_and_tc = 35,
-          bit_xor_tc = 36,
-          bit_or_tc = 37,
-          bit_negate_tc = 38,
+         or_tc = 16,
+         xor_tc = 17,
+         and_tc = 18,
+         not_tc = 19,
 
-          is_int32_tc = 40,
-          is_int64_tc = 41,
-          is_real64_tc = 42,
-          is_string_tc = 43,
-          is_opaque_tc = 44,
-          is_nan_tc = 45,
+         unary_plus_tc = 24,
+         unary_minus_tc = 25,
+         multiply_tc = 26,
+         divide_tc = 27,
+         modulo_tc = 28,
+         add_tc = 29,
+         subtract_tc = 30,
 
-          begins_with_tc = 48,
-          contains_tc = 49,
-          ends_with_tc = 50,
-          wildcard_tc = 51,
-          regex_tc = 52,
+         shift_left_tc = 32,
+         shift_right_tc = 33,
+         logical_shift_right_tc = 34,
+         bit_and_tc = 35,
+         bit_xor_tc = 36,
+         bit_or_tc = 37,
+         bit_negate_tc = 38,
 
-          exists_tc = 56,
-          equals_tc = 57,
-          size_tc = 58
-      } subast_typecode;
+         is_int32_tc = 40,
+         is_int64_tc = 41,
+         is_real64_tc = 42,
+         is_string_tc = 43,
+         is_opaque_tc = 44,
+         is_nan_tc = 45,
+
+         begins_with_tc = 48,
+         contains_tc = 49,
+         ends_with_tc = 50,
+         wildcard_tc = 51,
+         regex_tc = 52,
+
+         exists_tc = 56,
+         equals_tc = 57,
+         size_tc = 58
+     } subast_typecode;
 
 
 
-8.2.3.5.  Packet Encoding Example
+
+Arnold, ed.                Expires in 6 months                [Page 48]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
+   8.2.3.5.  Packet Encoding Example
 
    An Elvin notification is a list of name-value pairs, where the value
    is one of the five base types of int32, int64, real64, string and
@@ -2910,13 +2993,6 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    is an enumeration of five different values indicating one of int32,
    int64, real64, string or opaque (byte array).  The value, encoded as
    a standard XDR type, is determined by the preceding type.
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 47]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
 
    On the wire, a name-value is laid out as follows:
 
@@ -2953,11 +3029,19 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
                              MUST be m keys where m >= 0.
 
 
-8.3.  Environment
+   8.3.  Environment
 
    ports
    location
    service names
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 49]
+
+Internet Draft          Elvin Client Protocol 4.0             April 2007
+
+
    environment variables
    file usage
    - /etc/elvind.conf
@@ -2965,20 +3049,12 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
    registry
 
 
-9.  SECURITY CONSIDERATIONS
+   9.  SECURITY CONSIDERATIONS
 
 
-10.  IANA CONSIDERATIONS
+   10.  IANA CONSIDERATIONS
 
    protocol module names
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 48]
-
-Internet Draft          Elvin Client Protocol 4.0           January 2007
-
 
    key mechanism identifiers
 
@@ -3023,26 +3099,12 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 49]
+Arnold, ed.                Expires in 6 months                [Page 50]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-11.  APPENDIX A - ELVIN SUBSCRIPTION LANGUAGE
+   11.  APPENDIX A - ELVIN SUBSCRIPTION LANGUAGE
    The Elvin subscription language is used by clients to select notifi-
    cations for delivery.  This section documents the formal syntax for
    the language.
@@ -3099,9 +3161,9 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 50]
+Arnold, ed.                Expires in 6 months                [Page 51]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
      bool-function-exp   = bool-pred "(" name ")"
@@ -3161,9 +3223,9 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 51]
+Arnold, ed.                Expires in 6 months                [Page 52]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
      num-literal         = int32-literal / int64-literal / real64-literal
@@ -3223,12 +3285,12 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 52]
+Arnold, ed.                Expires in 6 months                [Page 53]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-12.  REFERENCES
+   12.  REFERENCES
 
 
    [ERDP]      Arnold, D., Boot, J., Phelps, T., Segall, B., "Elvin
@@ -3265,9 +3327,9 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
    [POSIX.1]   IEEE, "POSIX.1-1990", 1990.
 
-13.  CONTACT
+   13.  CONTACT
 
-   Author's Address
+   Author's Addresses
 
    David Arnold
    Julian Boot
@@ -3285,12 +3347,12 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 53]
+Arnold, ed.                Expires in 6 months                [Page 54]
 
-Internet Draft          Elvin Client Protocol 4.0           January 2007
+Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
-14.  FULL COPYRIGHT STATEMENT
+   14.  FULL COPYRIGHT STATEMENT
 
    Copyright (C) 1999-2007 Elvin.Org All Rights Reserved.
 
@@ -3347,5 +3409,5 @@ Internet Draft          Elvin Client Protocol 4.0           January 2007
 
 
 
-Arnold, ed.                Expires in 6 months                [Page 54]
+Arnold, ed.                Expires in 6 months                [Page 55]
 
