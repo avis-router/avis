@@ -8,7 +8,7 @@ import static org.avis.net.common.IO.putString;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-public class Nack extends RequestMessage<XidMessage>
+public class Nack extends XidMessage
 {
   public static final int ID = 48;
 
@@ -52,12 +52,6 @@ public class Nack extends RequestMessage<XidMessage>
     return ID;
   }
 
-  @Override
-  public Class<XidMessage> replyType ()
-  {
-    return XidMessage.class;
-  }
-  
   /**
    * Return the error text for the NACK error code.
    * 
