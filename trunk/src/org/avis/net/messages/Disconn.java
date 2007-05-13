@@ -22,6 +22,11 @@ public class Disconn extends Message
     this (-1, "");
   }
   
+  public Disconn (int reason)
+  {
+    this (reason, "");
+  }
+  
   public Disconn (int reason, String args)
   {
     this.reason = reason;
