@@ -12,11 +12,6 @@ public abstract class RequestMessage<R extends XidMessage> extends XidMessage
     super ();
   }
 
-  public RequestMessage (XidMessage inReplyTo)
-  {
-    super (inReplyTo);
-  }
-
   public RequestMessage (int xid)
   {
     super (xid);
