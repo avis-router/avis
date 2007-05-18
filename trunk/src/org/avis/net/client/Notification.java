@@ -626,7 +626,7 @@ public final class Notification
       return className (type).toLowerCase ();
   }
   
-  private void checkValue (Object value)
+  private static void checkValue (Object value)
     throws IllegalArgumentException
   {
     if (!(value instanceof String ||
