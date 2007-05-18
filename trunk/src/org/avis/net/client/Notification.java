@@ -26,7 +26,7 @@ import static org.avis.util.Text.appendEscaped;
 import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.className;
 import static org.avis.util.Text.findFirstNonEscaped;
-import static org.avis.util.Text.stringExprToString;
+import static org.avis.util.Text.quotedStringToString;
 import static org.avis.util.Text.stringToNumber;
 import static org.avis.util.Text.stringToOpaque;
 import static org.avis.util.Text.stripBackslashes;
@@ -84,7 +84,7 @@ public final class Notification
   
   /**
    * Create an instance from an string encoded notification.
-   * See {{@link #parse(Notification, Reader)}.
+   * See {@link #parse(Notification, Reader)}.
    */
   public Notification (String ntfnExpr)
     throws InvalidFormatException
@@ -103,7 +103,7 @@ public final class Notification
   
   /**
    * Create an instance from an encoded notification read from a stream.
-   * See {{@link #parse(Notification, Reader)}.
+   * See {@link #parse(Notification, Reader)}.
    */
   public Notification (Reader in)
     throws IOException, InvalidFormatException
@@ -141,7 +141,6 @@ public final class Notification
     throws IOException, InvalidFormatException
   {
     BufferedReader in = bufferedReaderFor (reader);
-    
     String line = null;
     
     try
@@ -185,7 +184,7 @@ public final class Notification
   private static void parseLine (Notification ntfn, String line)
     throws InvalidFormatException
   {
-    int colon = findFirstNonEscaped (line, 0, ':');
+    int colon = findFirstNonEscaped (line, ':');
     
     if (colon == -1)
       throw new InvalidFormatException ("No \":\" separating name and value");
@@ -199,7 +198,7 @@ public final class Notification
     char firstChar = valueExpr.charAt (0);
     
     if (firstChar == '"')
-      value = stringExprToString (valueExpr);
+      value = quotedStringToString (valueExpr);
     else if (firstChar >= '0' && firstChar <= '9')
       value = stringToNumber (valueExpr);
     else if (firstChar == '[')
@@ -253,18 +252,18 @@ public final class Notification
       
       str.append (": ");
       
-      formatValue (str, attributes.get (name));
+      appendValue (str, attributes.get (name));
     }
     
     return str.toString ();
   }
   
-  private static void formatValue (StringBuilder str, Object value)
+  private static void appendValue (StringBuilder str, Object value)
   {
     if (value instanceof String)
     {
       str.append ('"');
-      appendEscaped (str, value.toString (), '"');
+      appendEscaped (str, (String)value, '"');
       str.append ('"');
     } else if (value instanceof Number)
     {
@@ -622,7 +621,7 @@ public final class Notification
   private static String typeName (Class<?> type)
   {
     if (type == byte [].class)
-      return "opaque";
+      return "byte array";
     else
       return className (type).toLowerCase ();
   }
