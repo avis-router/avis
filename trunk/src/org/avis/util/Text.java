@@ -178,7 +178,7 @@ public final class Text
    * Parse a string value in the format "string", allowing escaped "'s
    * inside the string.
    */
-  public static String stringExprToString (String valueExpr)
+  public static String quotedStringToString (String valueExpr)
     throws InvalidFormatException
   {
     int last = findFirstNonEscaped (valueExpr, 1, '"');
@@ -243,6 +243,15 @@ public final class Text
     appendHexBytes (str, bytes);
     
     return str.toString ();
+  }
+  
+  /**
+   * Find the first index of the given character, skipping instances
+   * that are escaped by '\'.
+   */
+  public static int findFirstNonEscaped (String str, char toFind)
+  {
+    return findFirstNonEscaped (str, 0, toFind);
   }
   
   /**
