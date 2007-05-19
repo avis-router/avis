@@ -5,11 +5,14 @@ import java.util.List;
 
 import java.io.IOException;
 
+import org.apache.mina.common.ByteBuffer;
+
 import org.avis.server.Server;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
@@ -47,6 +50,8 @@ public class JUTestServerFlooding
       server = new Server (PORT);
     
     logTester = new LogFailTester ();
+    
+    ByteBuffer.setUseDirectBuffers (false);
   }
   
   @After
@@ -65,6 +70,7 @@ public class JUTestServerFlooding
    * while being flooded.
    */
   @Test
+  @Ignore
   public void floodingFairness ()
     throws Exception
   {
@@ -113,6 +119,7 @@ public class JUTestServerFlooding
    * all spamming large messages at server.
    */
   @Test
+  @Ignore
   public void floodingHeap ()
     throws Exception
   {
