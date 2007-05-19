@@ -152,6 +152,29 @@ public final class Elvin implements Closeable
   /**
    * Create a new connection to an Elvin router.
    * 
+   * @param routerUri A URI for the Elvin router.
+   * @param options The connection options.
+   * 
+   * @throws IllegalArgumentException if one of the arguments is not
+   *           valid.
+   * @throws ConnectException if the socket to the router could not be
+   *           opened, e.g. connection refused.
+   * @throws IOException if a general network error occurs.
+   * 
+   * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
+   */
+  public Elvin (ElvinURI routerUri, ConnectionOptions options)
+    throws IllegalArgumentException,
+           ConnectException,
+           IOException,
+           ConnectionOptionsException
+  {
+    this (routerUri, options, EMPTY_KEYS, EMPTY_KEYS);
+  }
+  
+  /**
+   * Create a new connection to an Elvin router.
+   * 
    * @param routerUri The URI of the router to connect to.
    * @param options The connection options.
    * @param notificationKeys These keys automatically apply to all
@@ -396,6 +419,33 @@ public final class Elvin implements Closeable
     throws IOException
   {
     return subscribe (subscriptionExpr, ALLOW_INSECURE_DELIVERY, keys);
+  }
+  
+  /**
+   * Create a new subscription with a given security mode but with an
+   * empty key set. Be careful when using REQUIRE_SECURE_DELIVERY with
+   * this subscription option: if you don't specify keys for the
+   * subscription elsewhere, either via {@link #setKeys(Keys, Keys)}
+   * or {@link Subscription#setKeys(Keys)}, the subscription will
+   * never be able to receive notifications.
+   * <p>
+   * 
+   * See {@link #subscribe(String, SecureMode, Keys)} for more details.
+   * 
+   * @param subscriptionExpr The subscription expression.
+   * @param secureMode The security mode: specifying
+   *          REQUIRE_SECURE_DELIVERY means the subscription will only
+   *          receive notifications that are sent by clients with keys
+   *          matching the set supplied here or the global
+   *          subscription key set.
+   * @return The subscription instance.
+   * 
+   * @throws IOException if an IO error occurs.
+   */
+  public Subscription subscribe (String subscriptionExpr, SecureMode secureMode)
+    throws IOException
+  {
+    return subscribe (subscriptionExpr, secureMode, EMPTY_KEYS);
   }
   
   /**
