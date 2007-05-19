@@ -2,7 +2,7 @@ Name: avis
 Summary: Avis event router
 URL: http://avis.sourceforge.net/
 Version: %{_avis_version}
-Release: 1
+Release: %{_avis_release}
 License: GPL
 Packager: Matthew Phillips <avis@mattp.name>
 Vendor: (none)
