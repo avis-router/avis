@@ -20,7 +20,7 @@ Avis will run on platforms with a Java 5 Standard Edition runtime. It
 has been tested on Mac OS X Tiger (10.4), Windows XP and Windows
 Server 2003, Fedora Core (3 & 6) and Debian Sarge (3.1).
 
-NOTE: although Avis is platform-independent, the "avis.sh" script and
+NOTE: although Avis is platform-independent, the "avisd" script and
 example command lines appearing later are for Unix environments.
 Windows users can either translate as needed or run under cygwin
 (http://www.cygwin.com).
