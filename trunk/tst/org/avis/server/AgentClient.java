@@ -32,12 +32,10 @@ public abstract class AgentClient extends SimpleClient
   }
   
   @Override
-  public synchronized void messageReceived (IoSession session, Object message)
+  public void messageReceived (IoSession session, Object message)
     throws Exception
   {
     receivedMessageCount++;
-
-    lastReceived = null;
 
     super.messageReceived (session, message);
   }
