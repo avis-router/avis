@@ -30,6 +30,8 @@ import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -191,10 +193,14 @@ public class JUTestClient
     
     Elvin aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     Elvin bobClient = new Elvin (uri, options, EMPTY_KEYS, bobSubKeys);
+    Elvin eveClient = new Elvin (uri, options);
     
-    Subscription sub = bobClient.subscribe ("require (From-Alice)");
+    Subscription bobSub =
+      bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
     
-    checkSecureSendReceive (aliceClient, sub);
+    Subscription eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
     
     aliceClient.close ();
     bobClient.close ();
@@ -206,10 +212,12 @@ public class JUTestClient
     
     aliceClient.setNotificationKeys (aliceNtfnKeys);
     
-    sub = bobClient.subscribe ("require (From-Alice)");
+    bobSub = bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
     bobClient.setSubscriptionKeys (bobSubKeys);
     
-    checkSecureSendReceive (aliceClient, sub);
+    eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
     
     aliceClient.close ();
     bobClient.close ();
@@ -219,11 +227,13 @@ public class JUTestClient
     aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     
-    sub = bobClient.subscribe ("require (From-Alice)");
+    bobSub = bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
     
-    sub.setKeys (bobSubKeys);
+    bobSub.setKeys (bobSubKeys);
     
-    checkSecureSendReceive (aliceClient, sub);
+    eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
     
     aliceClient.close ();
     bobClient.close ();
@@ -233,10 +243,12 @@ public class JUTestClient
     aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     
-    sub = bobClient.subscribe ("require (From-Alice)",
+    bobSub = bobClient.subscribe ("require (From-Alice)",
                                REQUIRE_SECURE_DELIVERY, bobSubKeys);
     
-    checkSecureSendReceive (aliceClient, sub);
+    eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
     
     aliceClient.close ();
     bobClient.close ();
@@ -326,32 +338,24 @@ public class JUTestClient
       // System.out.println ("error = " + ex.getMessage ());
     }
   }
-  private static void checkSecureSendReceive (Elvin client,
-                                              final Subscription sub)
+  
+  static void checkSecureSendReceive (Elvin client,
+                                      Subscription secureSub,
+                                      Subscription insecureSub)
     throws IOException, InterruptedException
   {
-    sub.addNotificationListener (new NotificationListener ()
-    {
-      public void notificationReceived (NotificationEvent e)
-      {
-        assertTrue (e.secure);
-        
-        synchronized (sub)
-        {
-          sub.notifyAll ();
-        }
-      }
-    });
+    TestNtfnListener secureListener = new TestNtfnListener (secureSub);
     
     Notification ntfn = new Notification ();
     ntfn.set ("From-Alice", 1);
     
-    synchronized (sub)
-    {
-      client.send (ntfn, REQUIRE_SECURE_DELIVERY);
-      
-      wait (sub);
-    }
+    secureListener.waitForNotification (client, ntfn);
+    assertNotNull (secureListener.event);
+    assertTrue (secureListener.event.secure);
+
+    TestNtfnListener insecureListener = new TestNtfnListener (insecureSub);
+    insecureListener.waitForNotification (client, ntfn);
+    assertNull (insecureListener.event);
   }
   
   @Ignore
@@ -405,5 +409,31 @@ public class JUTestClient
     
     if (currentTimeMillis () - waitStart >= 10000)
       fail ("Timed out waiting for response");
+  }
+  
+  static class TestNtfnListener implements NotificationListener
+  {
+    public NotificationEvent event;
+
+    public TestNtfnListener (Subscription sub)
+    {
+      sub.addNotificationListener (this);
+    }
+
+    public synchronized void notificationReceived (NotificationEvent e)
+    {
+      event = e;
+      
+      notifyAll ();
+    }
+
+    public synchronized void waitForNotification (Elvin client,
+                                                  Notification ntfn)
+      throws InterruptedException, IOException
+    {
+      client.send (ntfn, REQUIRE_SECURE_DELIVERY);
+      
+      wait (2000);
+    }
   }
 }
