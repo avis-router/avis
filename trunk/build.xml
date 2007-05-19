@@ -12,9 +12,16 @@
 
   <property file="avis.properties" />
 
-  <property name="release" value="${avis.release}" />
+  <!-- The formal version number in major.minor form -->
   <property name="version"
             value="${avis.version.major}.${avis.version.minor}" />
+
+  <property name="release" value="${avis.release}" />
+
+  <!-- The release name: typically the version number followed by a
+       release tag e.g. 1.0.2dev or 1.1.dev. -->
+  <property name="release_name" value="${version}.${release}" />
+
   <property name="dfc.home" value="../dfc.core" />
   
   <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
@@ -27,7 +34,7 @@
   
   <!-- InnoSetup installation (5.1.9 or later): Only needed if building the
        Windows self-installer. -->
-  <property name="innosetup.home" value="C:\Program Files\Inno Setup 5" />
+  <property name="innosetup" value="C:\Program Files\Inno Setup 5\iscc.exe" />
   
   <path id="classpath">
     <fileset dir="lib">
@@ -162,7 +169,8 @@
   <target name="dist_src" depends="jar_avisd"
           description="Build the source distro">
     
-    <property name="ziproot" value="avis-${version}" />
+    <property name="ziproot" value="avis-${release_name}" />
+    <property name="src_zip" value="build/avis-src-${release_name}.zip" />
     
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
@@ -193,7 +201,7 @@
       </filterchain>
     </copy>
        
-    <zip destfile="build/avis-src-${release}.zip">
+    <zip destfile="${src_zip}">
       
       <!-- source -->
       <zipfileset dir="${src_tmp}" prefix="${ziproot}">
@@ -281,10 +289,9 @@
     <property name="root" value="${temp}/root" />
     <property name="resources" value="${temp}/resources" />
     <property name="startup" value="${root}/Library/StartupItems/Avis" />
-    <property name="package" value="Avis-${release}.pkg" />
+    <property name="package" value="Avis-${release_name}.pkg" />
 
-    <filter token="version"
-            value="${avis.version.major}.${avis.version.minor}" />
+    <filter token="release" value="${release_name}" />
     <filter token="major_version" value="${avis.version.major}" />
     <filter token="minor_version" value="${avis.version.minor}" />
     
@@ -361,7 +368,7 @@
     <!-- OS X package files use symlinks, use system tar to preserve -->
     <exec executable="tar">
       <arg value="jcvf" />
-      <arg value="build/Avis-${release}.tbz" />
+      <arg value="build/Avis-${release_name}.tbz" />
       <arg value="-C" />
       <arg value="build" />
       <arg value="${package}" />
@@ -374,7 +381,7 @@
 
   </target>
   
-  <target name="dist_fedora_rpm" depends="dist_src"
+  <target name="dist_fedora_rpm" depends="jar_avisd"
           description="Build the Red Hat Fedora Core RPM distro">
 
     <property name="root" value="${basedir}/build/tmp/rpm_root" />
@@ -385,22 +392,26 @@
     <mkdir dir="${root}/RPMS" />
     <mkdir dir="${root}/SRPMS" />
     <mkdir dir="${root}/SPECS" />
- 
-    <!-- NOTE: src dist must expand to avis-$version directory for RPM -->
-    <copy file="build/avis-src-${release}.zip"
-          tofile="${root}/SOURCES/avis-src-${version}.zip" />
 
+    <!-- NOTE: src dist must expand to avis-$release_name directory for RPM -->
+    <antcall target="dist_src">
+      <param name="ziproot" value="avis-${version}" />
+      <param name="src_zip" value="${root}/SOURCES/avis-src-${version}.zip" />
+    </antcall>
+ 
     <exec executable="rpmbuild">
       <arg value="-bb" />
       <arg value="--define" />
       <arg value="_topdir ${root}" />
       <arg value="--define" />
       <arg value="_avis_version ${version}" />
+      <arg value="--define" />
+      <arg value="_avis_release ${release}" />
       <arg value="${basedir}/packaging/fedora/avis.spec" />
     </exec>
 
-    <copy file="${root}/RPMS/noarch/avis-${version}-1.noarch.rpm"
-          tofile="build/avis-${release}.rpm" />
+    <copy file="${root}/RPMS/noarch/avis-${version}-${release}.noarch.rpm"
+          tofile="build/avis-${release_name}.rpm" />
     <delete dir="${root}" />
 
   </target>
@@ -424,13 +435,13 @@
     <copy file="packaging/fedora/install.sh" todir="${temp}" />
 
     <!-- tar it up -->
-    <tar destfile="build/avis-fedora-${release}.tar.bz2"
+    <tar destfile="build/avis-fedora-${release_name}.tar.bz2"
          compression="bzip2">
-      <tarfileset prefix="avis-${release}" dir="${temp}"
+      <tarfileset prefix="avis-${release_name}" dir="${temp}"
                   mode="0755">
         <include name="install.sh" />
       </tarfileset>
-      <tarfileset prefix="avis-${release}" dir="${temp}">
+      <tarfileset prefix="avis-${release_name}" dir="${temp}">
         <exclude name="install.sh" />
       </tarfileset>
     </tar>
@@ -443,7 +454,7 @@
           description="Build the Windows self-installer distro">
     <mkdir dir="build" />
     
-    <filter token="release" value="${release}" />
+    <filter token="release" value="${release_name}" />
     <filter token="version" value="${avis.version.major}.${avis.version.minor}" />
     <!-- <filter token="jre_installer" value="${jre.installer}" /> -->
     
@@ -451,14 +462,14 @@
           tofile="packaging/windows/installer/avis.iss" overwrite="true"
           filtering="true" />
         
-    <exec executable="${innosetup.home}/iscc.exe">
+    <exec executable="${innosetup}">
       <arg value="/O${basedir}\build" />
-      <arg value="/Favis-${release}" />
+      <arg value="/Favis-${release_name}" />
       <arg value="/Q" />
       <arg value="${basedir}\packaging\windows\installer\avis.iss" />
     </exec>
 
-    <delete file="packaging/windows/installer/avis.iss" />
+    <!-- <delete file="packaging/windows/installer/avis.iss" /> -->
   </target>
 
   <!-- build standard Unix distro layout in ${root} -->
