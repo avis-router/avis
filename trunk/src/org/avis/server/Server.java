@@ -433,6 +433,7 @@ public class Server implements IoHandler, Closeable
           subscription.updateExpression (message.subscriptionExpr);
   
         subscription.keys = newKeys;
+        subscription.acceptInsecure = message.acceptInsecure;
         
         send (session, new SubRply (message, subscription.id));
       }

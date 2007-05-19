@@ -23,7 +23,6 @@ import org.avis.io.messages.UNotify;
 import org.avis.security.Key;
 import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
-import org.avis.server.Server;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
@@ -347,7 +346,8 @@ public class JUTestServer
    * all the schemes supported in the server is done by the security
    * tests, so not bothering for now.
    */
-  @Test public void security ()
+  @Test
+  public void security ()
     throws Exception
   {
     server = new Server (PORT);
@@ -404,6 +404,100 @@ public class JUTestServer
     alice.close ();
     bob.close ();
     eve.close ();
+  }
+  
+  /**
+   * Test changing subscription security settings on the fly.
+   */
+  @Test
+  public void securitySubModify ()
+    throws Exception
+  {
+    server = new Server (PORT);
+    
+    SimpleClient alice = new SimpleClient ("alice");
+    SimpleClient bob = new SimpleClient ("bob");
+    
+    alice.connect ();
+    bob.connect ();
+
+    Key alicePrivate = new Key ("alice private");
+    Key alicePublic = alicePrivate.publicKeyFor (SHA1_PRODUCER);
+    
+    Keys aliceNtfnKeys = new Keys ();
+    aliceNtfnKeys.add (SHA1_PRODUCER, alicePrivate);
+    
+    Keys bobSubKeys = new Keys ();
+    bobSubKeys.add (SHA1_PRODUCER, alicePublic);
+
+    SubAddRqst subAddRqst = new SubAddRqst ("require (From-Alice)", bobSubKeys);
+    subAddRqst.acceptInsecure = true;
+    
+    bob.send (subAddRqst);
+    SubRply subRply = (SubRply)bob.receive (SubRply.class);
+    
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
+    ntfn.put ("From-Alice", 1);
+    
+    // send secure
+    alice.sendNotify (ntfn, aliceNtfnKeys);
+    
+    NotifyDeliver bobNtfn = (NotifyDeliver)bob.receive ();
+    assertEquals (1, bobNtfn.secureMatches.length);
+    assertEquals (0, bobNtfn.insecureMatches.length);
+    assertEquals (subRply.subscriptionId, bobNtfn.secureMatches [0]);
+    
+    // send insecure
+    alice.sendNotify (ntfn);
+    
+    bobNtfn = (NotifyDeliver)bob.receive ();
+    assertEquals (0, bobNtfn.secureMatches.length);
+    assertEquals (1, bobNtfn.insecureMatches.length);
+    assertEquals (subRply.subscriptionId, bobNtfn.insecureMatches [0]);
+    
+    // change bob to require secure
+    SubModRqst subModRqst = new SubModRqst (subRply.subscriptionId, "");
+    subModRqst.acceptInsecure = false;
+
+    bob.send (subModRqst);
+    bob.receive (SubRply.class);
+    
+    // send insecure again, bob should not get it
+    alice.sendNotify (ntfn);
+    
+    try
+    {
+      bobNtfn = (NotifyDeliver)bob.receive (2000);
+      
+      fail ("Server delivered message insecurely");
+    } catch (MessageTimeoutException ex)
+    {
+      // ok
+    }
+    
+    // change bob's keys so they do not match
+    subModRqst = new SubModRqst (subRply.subscriptionId, "");
+    subModRqst.delKeys = new Keys ();
+    subModRqst.delKeys.add (SHA1_PRODUCER, alicePublic);
+    
+    bob.send (subModRqst);
+    bob.receive (SubRply.class);
+    
+    // send secure again, bob should not get it
+    alice.sendNotify (ntfn, aliceNtfnKeys);
+    
+    try
+    {
+      bobNtfn = (NotifyDeliver)bob.receive (2000);
+      
+      fail ("Server delivered message insecurely");
+    } catch (MessageTimeoutException ex)
+    {
+      // ok
+    }
+    
+    alice.close ();
+    bob.close ();
   }
   
   @Test
