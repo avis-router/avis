@@ -408,6 +408,7 @@ public class Server implements IoHandler
           subscription.updateExpression (message.subscriptionExpr);
   
         subscription.keys = newKeys;
+        subscription.acceptInsecure = message.acceptInsecure;
         
         session.write (new SubRply (message, subscription.id));
       }
