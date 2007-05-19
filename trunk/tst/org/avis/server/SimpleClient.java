@@ -1,6 +1,8 @@
 package org.avis.server;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 import java.io.IOException;
 
@@ -28,12 +30,12 @@ import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubRply;
 import org.avis.security.Keys;
-import org.avis.server.NoConnectionException;
 
 import static dsto.dfc.logging.Log.alarm;
 import static dsto.dfc.logging.Log.trace;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -51,7 +53,8 @@ class SimpleClient implements IoHandler
   
   protected IoSession clientSession;
   protected boolean connected;
-  protected volatile Message lastReceived;
+  protected BlockingQueue<Message> incomingMessages =
+    new SynchronousQueue<Message> ();
 
   public String clientName;
   
@@ -115,28 +118,18 @@ class SimpleClient implements IoHandler
     return receive (RECEIVE_TIMEOUT);
   }
 
-  public synchronized Message receive (long timeout)
-    throws InterruptedException, MessageTimeoutException,
-           NoConnectionException
+  public Message receive (long timeout)
+    throws MessageTimeoutException, NoConnectionException, InterruptedException
   {
-    if (lastReceived == null)
-      wait (timeout);
-
-    if (lastReceived != null)
+    Message message = incomingMessages.poll (timeout, MILLISECONDS);
+    
+    if (message == null)
     {
-      Message message = lastReceived;
-      
-      lastReceived = null;
-      
-      return message;
-    } else
-    {
-      // may have failed because we are simply not connected any more
-      checkConnected ();
-      
       throw new MessageTimeoutException
         (clientName + " did not receive a reply");
     }
+    
+    return message;
   }
 
   private void checkConnected ()
@@ -277,20 +270,13 @@ class SimpleClient implements IoHandler
     alarm (clientName + ": client internal exception", this, ex);
   }
 
-  public synchronized void messageReceived (IoSession session,
+  public void messageReceived (IoSession session,
                                             Object message)
     throws Exception
   {
-    if (lastReceived != null)
-      throw new AssertionFailedError
-        (clientName + ": uncollected reply: " + lastReceived +
-         " (replacement is " + message + ")");
-    
     trace (clientName + ": message received: " + message, this);
     
-    lastReceived = (Message)message;
-    
-    notifyAll ();
+    incomingMessages.put ((Message)message);
   }
 
   public void messageSent (IoSession session, Object message) throws Exception
