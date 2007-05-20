@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
+import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
+
 /**
  * A subscription to notifications from an Elvin connection.
  *
@@ -84,6 +86,14 @@ public final class Subscription
   public SecureMode secureMode ()
   {
     return secureMode;
+  }
+  
+  /**
+   * True if ALLOW_INSECURE_DELIVERY is enabled.
+   */
+  public boolean acceptInsecure ()
+  {
+    return secureMode == ALLOW_INSECURE_DELIVERY;
   }
 
   public Keys keys ()
