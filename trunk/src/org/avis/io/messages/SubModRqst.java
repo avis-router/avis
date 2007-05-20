@@ -48,7 +48,7 @@ public class SubModRqst extends RequestMessage<SubRply>
     
     this.subscriptionExpr = subscriptionExpr;
     this.subscriptionId = subscriptionId;
-    this.acceptInsecure = true;
+    this.acceptInsecure = acceptInsecure;
     this.addKeys = addKeys;
     this.delKeys = delKeys;
   }
