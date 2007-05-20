@@ -1,5 +1,34 @@
 TODO
 
+Client/server component split
+
+common
+  avis.properties
+  src
+    org.avis.common
+    org.avis.io
+    org.avis.security
+    org.avis.util
+  lib
+    mina ...
+client
+  src
+    org.avis.client
+    org.avis.tools
+  bin
+    ec
+    ep
+server
+  src
+    org.avis.server
+    org.avis.subscription
+  bin
+    avisd
+  packaging
+
+Release client by copying common + client to branches/client/release_0.1
+Release server by copying common + server to branches/server/release_1.1
+
 R1.1
 
 * OS X: installation in /usr/local means getting blown away on system
