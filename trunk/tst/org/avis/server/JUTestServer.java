@@ -505,8 +505,8 @@ public class JUTestServer
     throws Exception
   {
     server = new Server (PORT);
-    SimpleClient client1 = new SimpleClient ();
-    SimpleClient client2 = new SimpleClient ();
+    SimpleClient client1 = new SimpleClient ("client1");
+    SimpleClient client2 = new SimpleClient ("client2");
     
     client2.connect ();
     client2.subscribe ("number == 1");
