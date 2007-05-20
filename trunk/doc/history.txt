@@ -1,6 +1,9 @@
 Release 1.0.1 (May 20, 2007)
 ----------------------------------------------------------------------
 
+This release corrects two bugs in the router. All users of 1.0 are
+advised to upgrade.
+
 Bug fix: the router was ignoring "acceptInsecure" in subscription
 modification (SubModRqst) messages. This meant that a client may
 receive insecure notifications when it had requested only secure
