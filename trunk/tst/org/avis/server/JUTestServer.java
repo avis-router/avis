@@ -244,7 +244,8 @@ public class JUTestServer
     client.send (new NotifyEmit (ntfn));
     
     // modify subscription
-    SubModRqst subModRqst = new SubModRqst (subReply.subscriptionId, "number == 2");
+    SubModRqst subModRqst =
+      new SubModRqst (subReply.subscriptionId, "number == 2", true);
     client.send (subModRqst);
     
     subReply = (SubRply)client.receive ();
@@ -430,8 +431,8 @@ public class JUTestServer
     Keys bobSubKeys = new Keys ();
     bobSubKeys.add (SHA1_PRODUCER, alicePublic);
 
-    SubAddRqst subAddRqst = new SubAddRqst ("require (From-Alice)", bobSubKeys);
-    subAddRqst.acceptInsecure = true;
+    SubAddRqst subAddRqst =
+      new SubAddRqst ("require (From-Alice)", bobSubKeys, true);
     
     bob.send (subAddRqst);
     SubRply subRply = (SubRply)bob.receive (SubRply.class);
@@ -456,8 +457,7 @@ public class JUTestServer
     assertEquals (subRply.subscriptionId, bobNtfn.insecureMatches [0]);
     
     // change bob to require secure
-    SubModRqst subModRqst = new SubModRqst (subRply.subscriptionId, "");
-    subModRqst.acceptInsecure = false;
+    SubModRqst subModRqst = new SubModRqst (subRply.subscriptionId, "", false);
 
     bob.send (subModRqst);
     bob.receive (SubRply.class);
@@ -476,7 +476,7 @@ public class JUTestServer
     }
     
     // change bob's keys so they do not match
-    subModRqst = new SubModRqst (subRply.subscriptionId, "");
+    subModRqst = new SubModRqst (subRply.subscriptionId, "", false);
     subModRqst.delKeys = new Keys ();
     subModRqst.delKeys.add (SHA1_PRODUCER, alicePublic);
     
@@ -567,7 +567,8 @@ public class JUTestServer
     // try subscription with no connection
     badClient = new SimpleClient ();
     
-    SubAddRqst subAddRqst = new SubAddRqst ("require (hello)", EMPTY_KEYS);
+    SubAddRqst subAddRqst =
+      new SubAddRqst ("require (hello)", EMPTY_KEYS, true);
     badClient.send (subAddRqst);
     nack = (Nack)badClient.receive ();
     assertEquals (subAddRqst.xid, nack.xid);
@@ -589,7 +590,7 @@ public class JUTestServer
     badClient = new SimpleClient ();
     badClient.connect ();
     
-    SubModRqst subModRqst = new SubModRqst (123456, "");
+    SubModRqst subModRqst = new SubModRqst (123456, "", true);
     badClient.send (subModRqst);
     nack = (Nack)badClient.receive ();
     assertEquals (subModRqst.xid, nack.xid);

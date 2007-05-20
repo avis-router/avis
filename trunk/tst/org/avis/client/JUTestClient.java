@@ -191,6 +191,7 @@ public class JUTestClient
     Keys bobSubKeys = new Keys ();
     bobSubKeys.add (SHA1_PRODUCER, alicePrivate.publicKeyFor (SHA1_PRODUCER));
     
+    // subscribe with global keys
     Elvin aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     Elvin bobClient = new Elvin (uri, options, EMPTY_KEYS, bobSubKeys);
     Elvin eveClient = new Elvin (uri, options);
@@ -204,15 +205,17 @@ public class JUTestClient
     
     aliceClient.close ();
     bobClient.close ();
+    eveClient.close ();
     
     // check we can add global keys later for same result
-    
     aliceClient = new Elvin (uri);
     bobClient = new Elvin (uri);
+    eveClient = new Elvin (uri);
     
     aliceClient.setNotificationKeys (aliceNtfnKeys);
     
-    bobSub = bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
+    bobSub = bobClient.subscribe ("require (From-Alice)",
+                                  REQUIRE_SECURE_DELIVERY);
     bobClient.setSubscriptionKeys (bobSubKeys);
     
     eveSub = eveClient.subscribe ("require (From-Alice)");
@@ -221,13 +224,15 @@ public class JUTestClient
     
     aliceClient.close ();
     bobClient.close ();
+    eveClient.close ();
     
     // check we can add subscription keys for same result
-    
     aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
+    eveClient = new Elvin (uri);
     
-    bobSub = bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
+    bobSub = bobClient.subscribe ("require (From-Alice)",
+                                  REQUIRE_SECURE_DELIVERY);
     
     bobSub.setKeys (bobSubKeys);
     
@@ -237,14 +242,15 @@ public class JUTestClient
     
     aliceClient.close ();
     bobClient.close ();
+    eveClient.close ();
     
-    // check we can add subscribe securely in one step
-    
+    // check we can subscribe securely in one step
     aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
+    eveClient = new Elvin (uri);
     
     bobSub = bobClient.subscribe ("require (From-Alice)",
-                               REQUIRE_SECURE_DELIVERY, bobSubKeys);
+                                  REQUIRE_SECURE_DELIVERY, bobSubKeys);
     
     eveSub = eveClient.subscribe ("require (From-Alice)");
     
@@ -252,6 +258,7 @@ public class JUTestClient
     
     aliceClient.close ();
     bobClient.close ();
+    eveClient.close ();
   }
   
   @Test

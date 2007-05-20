@@ -188,7 +188,7 @@ class SimpleClient implements IoHandler
   public synchronized SubRply subscribe (String subExpr, Keys keys)
     throws Exception
   {
-    SubAddRqst subAddRqst = new SubAddRqst (subExpr, keys);
+    SubAddRqst subAddRqst = new SubAddRqst (subExpr, keys, true);
     
     send (subAddRqst);
     

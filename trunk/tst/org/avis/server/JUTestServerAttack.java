@@ -78,7 +78,7 @@ public class JUTestServerAttack
       for (int j = 0; j < numKeys; j++)
         keys.add (SHA1_CONSUMER, new Key (randomBytes (128)));
       
-      SubAddRqst subAddRqst = new SubAddRqst ("number == " + i, keys);
+      SubAddRqst subAddRqst = new SubAddRqst ("number == " + i, keys, true);
       
       client.send (subAddRqst);
       client.receive (60 * 1000);
