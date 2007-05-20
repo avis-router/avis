@@ -109,7 +109,7 @@ class SimpleClient implements IoHandler
     throws NoConnectionException
   {
     checkConnected ();
-    clientSession.write (message);
+    clientSession.write (message).join (15000);
   }
   
   public Message receive ()
