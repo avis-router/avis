@@ -13,6 +13,7 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoService;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
+import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.ReadThrottleFilterBuilder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -63,6 +64,7 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
+import static org.apache.mina.common.IoFutureListener.CLOSE;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
@@ -173,6 +175,8 @@ public class Server implements IoHandler, Closeable
     for (IoSession session : sessions)
     {
       Connection connection = peekConnectionFor (session);
+     
+      session.suspendRead ();
       
       if (connection != null)
       {
@@ -182,7 +186,8 @@ public class Server implements IoHandler, Closeable
         {
           if (connection.isOpen ())
           {
-            send (session, disconnMessage);
+            send (session, disconnMessage).join (10000);
+
             connection.close ();
           }
         } finally
@@ -191,7 +196,7 @@ public class Server implements IoHandler, Closeable
         }
       }
       
-      session.close ().join ();
+      session.close ();
     }
     
     sessions.clear ();
@@ -199,7 +204,7 @@ public class Server implements IoHandler, Closeable
     executor.shutdown ();
   }
 
-  private static void send (IoSession session, Message message)
+  private static WriteFuture send (IoSession session, Message message)
   {    
     if (isEnabled (TRACE))
     {
@@ -207,7 +212,7 @@ public class Server implements IoHandler, Closeable
              Server.class);
     }
     
-    session.write (message);
+    return session.write (message);
   }
   
   // IoHandler interface
@@ -365,13 +370,11 @@ public class Server implements IoHandler, Closeable
     {
       connection.close ();
       
-      send (session, new DisconnRply (message));
+      send (session, new DisconnRply (message)).addListener (CLOSE);
     } finally
     {
       connection.unlockWrite ();
     }
-
-    session.close ();
   }
   
   private void handleSubAddRqst (IoSession session, SubAddRqst message)
@@ -566,16 +569,18 @@ public class Server implements IoHandler, Closeable
     diagnostic ("Disconnecting client due to protocol violation: " +
                 diagnosticMessage, Server.class);
     
+    session.suspendRead ();
+
     if (cause instanceof XidMessage)
     {
       send (session,
             new Nack ((XidMessage)cause, PROT_ERROR, diagnosticMessage));
     }
     
-    send (session, new Disconn (REASON_PROTOCOL_VIOLATION, diagnosticMessage));
-    
-    // close and wait to avoid reading any further bogus data left in stream
-    session.close ().join ();
+    // send Disconn and close
+    send (session,
+          new Disconn (REASON_PROTOCOL_VIOLATION,
+                       diagnosticMessage)).addListener (CLOSE);
   }
 
   /**
