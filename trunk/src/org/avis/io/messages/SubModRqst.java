@@ -26,19 +26,23 @@ public class SubModRqst extends RequestMessage<SubRply>
     // zip
   }
   
-  public SubModRqst (long subscriptionId, String subscriptionExpr)
+  public SubModRqst (long subscriptionId, String subscriptionExpr,
+                     boolean acceptInsecure)
   {
-    this (subscriptionId, subscriptionExpr, EMPTY_KEYS, EMPTY_KEYS);
+    this (subscriptionId, subscriptionExpr,
+          EMPTY_KEYS, EMPTY_KEYS, acceptInsecure);
   }
   
   public SubModRqst (long subscriptionId,
-                     Keys addKeys, Keys delKeys)
+                     Keys addKeys, Keys delKeys,
+                     boolean acceptInsecure)
   {
-    this (subscriptionId, "", addKeys, delKeys);
+    this (subscriptionId, "", addKeys, delKeys, acceptInsecure);
   }
   
   public SubModRqst (long subscriptionId, String subscriptionExpr,
-                     Keys addKeys, Keys delKeys)
+                     Keys addKeys, Keys delKeys,
+                     boolean acceptInsecure)
   {
     super (nextXid ());
     

@@ -26,15 +26,15 @@ public class SubAddRqst extends RequestMessage<SubRply>
   
   public SubAddRqst (String subExpr)
   {
-    this (subExpr, EMPTY_KEYS);
+    this (subExpr, EMPTY_KEYS, true);
   }
   
-  public SubAddRqst (String subExpr, Keys keys)
+  public SubAddRqst (String subExpr, Keys keys, boolean acceptInsecure)
   {
     super (nextXid ());
     
     this.subscriptionExpr = subExpr;
-    this.acceptInsecure = true;
+    this.acceptInsecure = acceptInsecure;
     this.keys = keys;
   }
 
