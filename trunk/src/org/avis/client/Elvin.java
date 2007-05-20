@@ -505,13 +505,11 @@ public final class Elvin implements Closeable
   private void subscribe (Subscription subscription)
     throws IOException
   {
-    SubAddRqst subAddRqst = new SubAddRqst (subscription.subscriptionExpr);
-    
-    subAddRqst.acceptInsecure =
-      subscription.secureMode == ALLOW_INSECURE_DELIVERY;
-    subAddRqst.keys = subscription.keys;
-    
-    subscription.id = sendAndReceive (subAddRqst).subscriptionId;
+    subscription.id =
+      sendAndReceive
+        (new SubAddRqst (subscription.subscriptionExpr,
+                         subscription.keys,
+                         subscription.acceptInsecure ())).subscriptionId;
     
     if (subscriptions.put (subscription.id, subscription) != null)
       throw new IOException
@@ -535,7 +533,8 @@ public final class Elvin implements Closeable
     Delta<Keys> delta = subscription.keys.computeDelta (newKeys);
     
     sendAndReceive
-      (new SubModRqst (subscription.id, delta.added, delta.removed));
+      (new SubModRqst (subscription.id, delta.added, delta.removed,
+                       subscription.acceptInsecure ()));
   }
 
   void modifySubscriptionExpr (Subscription subscription,
@@ -543,7 +542,8 @@ public final class Elvin implements Closeable
     throws IOException
   {
     sendAndReceive
-      (new SubModRqst (subscription.id, subscriptionExpr));
+      (new SubModRqst (subscription.id, subscriptionExpr,
+                       subscription.acceptInsecure ()));
   }
   
   /**
