@@ -6,6 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/dfc.core"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple.jar"/>
-	<classpathentry kind="lib" path="lib/mina-core-1.0.2.jar" sourcepath="/Users/matt/Development/mina-1.0.2/core/src/main/java"/>
+	<classpathentry kind="lib" path="lib/mina-core-1.1.0.jar" sourcepath="/Users/matt/Development/mina-1.1.0/core/src/main/java"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
