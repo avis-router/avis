@@ -134,6 +134,9 @@ public class JUTestServer
     
     client.closeImmediately ();
     
+    // remove packet length restriction for following tests
+    options.remove ("Packet.Max-Length");
+    
     // test Subscription.Max-Count enforcement
     
     client = new SimpleClient ("localhost", PORT);
