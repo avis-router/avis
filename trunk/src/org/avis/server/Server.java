@@ -561,6 +561,7 @@ public class Server implements IoHandler, Closeable
    * @param session The client session.
    * @param cause The message that caused the violation.
    * @param diagnosticMessage The diagnostic sent back to the client.
+   * @throws NoConnectionException 
    */
   private static void handleProtocolViolation (IoSession session,
                                                Message cause,
@@ -571,6 +572,11 @@ public class Server implements IoHandler, Closeable
     
     session.suspendRead ();
 
+    Connection connection = peekConnectionFor (session);
+    
+    if (connection != null)
+      connection.close ();
+    
     if (cause instanceof XidMessage)
     {
       send (session,
