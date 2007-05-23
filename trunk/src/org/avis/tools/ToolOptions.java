@@ -73,20 +73,20 @@ public abstract class ToolOptions extends CommandLineOptions
       secureMode = ALLOW_INSECURE_DELIVERY;
     } else if (arg.equals ("-C"))
     {
-      addKeys (CONSUMER, readHexKeyFrom (stringArg (args)));
+      addKey (CONSUMER, hexKeyFromFile (stringArg (args)));
     } else if (arg.equals ("-P"))                
     {
-      addKeys (PRODUCER, readHexKeyFrom (stringArg (args)));
+      addKey (PRODUCER, hexKeyFromFile (stringArg (args)));
     }
   }
   
-  private void addKeys (int type, Key key)
+  private void addKey (int type, Key key)
   {
     keys.add (type == CONSUMER ? SHA1_CONSUMER : SHA1_PRODUCER, key);
     keys.add (SHA1_DUAL, type, key);
   }
 
-  private static Key readHexKeyFrom (String filename)
+  private static Key hexKeyFromFile (String filename)
   {
     try
     {
