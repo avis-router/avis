@@ -227,7 +227,7 @@ public class JUTestKeys
     Key key1 = new Key ("key 1");
     Key key2 = new Key ("key 2");
     
-    Delta<Keys> delta = keys1.computeDelta (keys2);
+    Delta<Keys> delta = keys1.deltaFrom (keys2);
     
     assertEquals (0, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (0, delta.added.keysetFor (SHA1_CONSUMER).size ());
@@ -240,7 +240,7 @@ public class JUTestKeys
     // add a single producer key
     keys2.add (SHA1_PRODUCER, key1);
     
-    delta = keys1.computeDelta (keys2);
+    delta = keys1.deltaFrom (keys2);
     assertEquals (1, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (0, delta.removed.keysetFor (SHA1_PRODUCER).size ());
     
@@ -249,7 +249,7 @@ public class JUTestKeys
     // remove a single producer key
     keys1.add (SHA1_PRODUCER, key2);
     
-    delta = keys1.computeDelta (keys2);
+    delta = keys1.deltaFrom (keys2);
     assertEquals (1, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (1, delta.removed.keysetFor (SHA1_PRODUCER).size ());
     
@@ -258,14 +258,14 @@ public class JUTestKeys
     // key1 is now in both sets
     keys1.add (SHA1_PRODUCER, key1);
     
-    delta = keys1.computeDelta (keys2);
+    delta = keys1.deltaFrom (keys2);
     assertEquals (0, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (1, delta.removed.keysetFor (SHA1_PRODUCER).size ());
     
     // key2 is not in both
     keys2.add (SHA1_PRODUCER, key2);
     
-    delta = keys1.computeDelta (keys2);
+    delta = keys1.deltaFrom (keys2);
     assertEquals (0, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (0, delta.removed.keysetFor (SHA1_PRODUCER).size ());
     
@@ -292,7 +292,7 @@ public class JUTestKeys
     keys2.add (SHA1_PRODUCER, key3);
     keys2.add (SHA1_CONSUMER, key3);
     
-    Delta<Keys> delta = keys1.computeDelta (keys2);
+    Delta<Keys> delta = keys1.deltaFrom (keys2);
     assertEquals (1, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (1, delta.removed.keysetFor (SHA1_PRODUCER).size ());
     
@@ -322,7 +322,7 @@ public class JUTestKeys
     keys2.add (SHA1_DUAL, PRODUCER, key3);
     keys2.add (SHA1_DUAL, CONSUMER, key3);
     
-    Delta<Keys> delta = keys1.computeDelta (keys2);
+    Delta<Keys> delta = keys1.deltaFrom (keys2);
     assertEquals (1, delta.added.keysetFor (SHA1_DUAL).producerKeys.size ());
     assertEquals (1, delta.removed.keysetFor (SHA1_DUAL).producerKeys.size ());
     
