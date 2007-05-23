@@ -76,10 +76,10 @@ public final class Notification
   public Notification (Map<String, Object> map)
     throws IllegalArgumentException
   {
-    for (Object value : map.values ())
-      checkValue (value);
+    this.attributes = new HashMap<String, Object> (map);
     
-    this.attributes = map;
+    for (Object value : attributes.values ())
+      checkValue (value);
   } 
   
   /**
@@ -147,6 +147,7 @@ public final class Notification
     {
       while ((line = nextLine (in)) != null)
         parseLine (ntfn, line);
+      
     } catch (InvalidFormatException ex)
     {
       throw new InvalidFormatException
