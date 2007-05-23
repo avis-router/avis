@@ -231,7 +231,7 @@ public class Keys
    * @return A new key set with keys added/removed. If both add/remove
    *         key sets are empty, this returns the current instance.
    *         
-   * @see #computeDelta(Keys)
+   * @see #deltaFrom(Keys)
    */
   public Keys delta (Keys toAdd, Keys toRemove)
   {
@@ -258,7 +258,7 @@ public class Keys
    * 
    * @see #delta(Keys, Keys)
    */
-  public Delta<Keys> computeDelta (Keys keys)
+  public Delta<Keys> deltaFrom (Keys keys)
   {
     if (keys == this)
       return new Delta<Keys> (EMPTY_KEYS, EMPTY_KEYS);
