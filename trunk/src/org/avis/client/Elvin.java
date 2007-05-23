@@ -276,8 +276,11 @@ public final class Elvin implements Closeable
         connector.connect
           (new InetSocketAddress (routerUri.host, routerUri.port),
            new MessageHandler (), connectorConfig);
-                                       
-      connectFuture.join ();
+                        
+      // todo how to handle auto reconnect?
+      if (!connectFuture.join (receiveTimeout))
+        throw new IOException ("Timed out connecting to router " + routerUri);
+      
       clientSession = connectFuture.getSession ();
     } catch (RuntimeIOException ex)
     {
@@ -530,7 +533,7 @@ public final class Elvin implements Closeable
   void modifyKeys (Subscription subscription, Keys newKeys)
     throws IOException
   {
-    Delta<Keys> delta = subscription.keys.computeDelta (newKeys);
+    Delta<Keys> delta = subscription.keys.deltaFrom (newKeys);
     
     sendAndReceive
       (new SubModRqst (subscription.id, delta.added, delta.removed,
@@ -693,9 +696,9 @@ public final class Elvin implements Closeable
     throws IOException
   {
     Delta<Keys> deltaNotificationKeys =
-      notificationKeys.computeDelta (newNotificationKeys);
+      notificationKeys.deltaFrom (newNotificationKeys);
     Delta<Keys> deltaSubscriptionKeys =
-      subscriptionKeys.computeDelta (newSubscriptionKeys);
+      subscriptionKeys.deltaFrom (newSubscriptionKeys);
     
     sendAndReceive
       (new SecRqst
@@ -891,10 +894,8 @@ public final class Elvin implements Closeable
       
       if (subscription != null)
       {
-        NotificationEvent event =
-          new NotificationEvent (this, subscription, ntfn, secure);
-        
-        subscription.notifyListeners (event);
+        subscription.notifyListeners
+          (new NotificationEvent (this, subscription, ntfn, secure));
       } else
       {
         warn ("Received notification for unknown subscription ID " +
