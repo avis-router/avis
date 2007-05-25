@@ -8,12 +8,11 @@ import java.util.Map.Entry;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import org.avis.util.Delta;
-
 import static org.avis.io.IO.getBytes;
 import static org.avis.io.IO.putBytes;
 import static org.avis.security.DualKeyScheme.checkProdOrCon;
 import static org.avis.security.KeyScheme.schemeFor;
+import static org.avis.security.Keys.Delta.EMPTY_DELTA;
 
 /**
  * A key collection used to secure notifications. A key collection
@@ -258,10 +257,10 @@ public class Keys
    * 
    * @see #delta(Keys, Keys)
    */
-  public Delta<Keys> deltaFrom (Keys keys)
+  public Delta deltaFrom (Keys keys)
   {
     if (keys == this)
-      return new Delta<Keys> (EMPTY_KEYS, EMPTY_KEYS);
+      return EMPTY_DELTA;
     
     Keys addedKeys = new Keys ();
     Keys removedKeys = new Keys ();
@@ -275,7 +274,7 @@ public class Keys
       removedKeys.add (scheme, existingKeyset.subtract (otherKeyset));
     }
     
-    return new Delta<Keys> (addedKeys, removedKeys);
+    return new Delta (addedKeys, removedKeys);
   }
   
   /**
@@ -507,6 +506,28 @@ public class Keys
       hash ^= 1 << scheme.id;
     
     return hash;
+  }
+  
+  /**
+   * Represents a delta (diff) between two key sets.
+   */
+  public static class Delta
+  {
+    public static final Delta EMPTY_DELTA = new Delta (EMPTY_KEYS, EMPTY_KEYS);
+
+    public final Keys added;
+    public final Keys removed;
+
+    Delta (Keys added, Keys removed)
+    {
+      this.added = added;
+      this.removed = removed;
+    }
+
+    public boolean isEmpty ()
+    {
+      return added.isEmpty () && removed.isEmpty ();
+    }
   }
   
   static class EmptySingleKeys extends SingleKeySet
