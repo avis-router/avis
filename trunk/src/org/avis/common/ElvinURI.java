@@ -374,7 +374,7 @@ public final class ElvinURI
   }
 
   /**
-   * The secure URI protocol stack: "tcp", "ssl", "xdr"
+   * The secure URI protocol stack: "ssl", "none", "xdr"
    */
   public static List<String> secureProtocol ()
   {
