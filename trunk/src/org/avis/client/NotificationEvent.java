@@ -9,10 +9,22 @@ import java.util.EventObject;
  * 
  * @author Matthew Phillips
  */
-public class NotificationEvent extends EventObject
+public final class NotificationEvent extends EventObject
 {
+  /**
+   * The subscription that matched the notification.
+   */
   public final Subscription subscription;
+  
+  /**
+   * The notification received from the router.
+   */
   public final Notification notification;
+  
+  /**
+   * True if the notification was received securely from a client with
+   * compatible security keys.
+   */
   public final boolean secure;
 
   NotificationEvent (Elvin source,
