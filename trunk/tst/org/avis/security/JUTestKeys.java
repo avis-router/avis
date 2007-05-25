@@ -1,13 +1,6 @@
 package org.avis.security;
 
 import org.apache.mina.common.ByteBuffer;
-
-import org.avis.security.DualKeySet;
-import org.avis.security.Key;
-import org.avis.security.Keys;
-import org.avis.security.SingleKeySet;
-import org.avis.util.Delta;
-
 import org.junit.Test;
 
 import static org.avis.security.DualKeyScheme.CONSUMER;
@@ -16,7 +9,6 @@ import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.security.KeyScheme.SHA1_DUAL;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -227,7 +219,7 @@ public class JUTestKeys
     Key key1 = new Key ("key 1");
     Key key2 = new Key ("key 2");
     
-    Delta<Keys> delta = keys1.deltaFrom (keys2);
+    Keys.Delta delta = keys1.deltaFrom (keys2);
     
     assertEquals (0, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (0, delta.added.keysetFor (SHA1_CONSUMER).size ());
@@ -292,7 +284,7 @@ public class JUTestKeys
     keys2.add (SHA1_PRODUCER, key3);
     keys2.add (SHA1_CONSUMER, key3);
     
-    Delta<Keys> delta = keys1.deltaFrom (keys2);
+    Keys.Delta delta = keys1.deltaFrom (keys2);
     assertEquals (1, delta.added.keysetFor (SHA1_PRODUCER).size ());
     assertEquals (1, delta.removed.keysetFor (SHA1_PRODUCER).size ());
     
@@ -322,7 +314,7 @@ public class JUTestKeys
     keys2.add (SHA1_DUAL, PRODUCER, key3);
     keys2.add (SHA1_DUAL, CONSUMER, key3);
     
-    Delta<Keys> delta = keys1.deltaFrom (keys2);
+    Keys.Delta delta = keys1.deltaFrom (keys2);
     assertEquals (1, delta.added.keysetFor (SHA1_DUAL).producerKeys.size ());
     assertEquals (1, delta.removed.keysetFor (SHA1_DUAL).producerKeys.size ());
     
@@ -335,7 +327,7 @@ public class JUTestKeys
   /**
    * Check applying delta to keys1 gives keys2
    */
-  private static void checkApplyDelta (Delta<Keys> delta,
+  private static void checkApplyDelta (Keys.Delta delta,
                                        Keys keys1, Keys keys2)
   {
     assertEquals (keys1.delta (delta.added, delta.removed), keys2);
