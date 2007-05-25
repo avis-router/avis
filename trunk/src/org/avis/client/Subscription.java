@@ -107,6 +107,9 @@ public final class Subscription
   public void setKeys (Keys newKeys)
     throws IOException
   {
+    if (newKeys == null)
+      throw new IllegalArgumentException ("Keys cannot be null");
+    
     synchronized (elvin)
     {
       checkLive ();
@@ -123,19 +126,25 @@ public final class Subscription
   public void setSubscription (String newSubscriptionExpr)
     throws IOException
   {
+    if (newSubscriptionExpr == null)
+      throw new IllegalArgumentException ("Subscription cannot be null");
+    
     newSubscriptionExpr = newSubscriptionExpr.trim ();
     
     if (newSubscriptionExpr.length () == 0)
       throw new IllegalArgumentException
         ("Subscription expression cannot be empty");
     
-    synchronized (elvin)
+    if (!newSubscriptionExpr.equals (subscriptionExpr))
     {
-      checkLive ();
-      
-      elvin.modifySubscriptionExpr (this, newSubscriptionExpr);
-      
-      this.subscriptionExpr = newSubscriptionExpr;
+      synchronized (elvin)
+      {
+        checkLive ();
+        
+        elvin.modifySubscriptionExpr (this, newSubscriptionExpr);
+        
+        this.subscriptionExpr = newSubscriptionExpr;
+      }
     }
   }
 
