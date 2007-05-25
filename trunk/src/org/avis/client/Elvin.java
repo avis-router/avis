@@ -39,7 +39,6 @@ import org.avis.io.messages.SubDelRqst;
 import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
-import org.avis.util.Delta;
 
 import static dsto.dfc.logging.Log.TRACE;
 import static dsto.dfc.logging.Log.alarm;
@@ -87,6 +86,8 @@ import static org.avis.util.Text.className;
  * callback, this connection will create extra callback threads if
  * needed if one callback takes too long.
  * </ul>
+ * 
+ * @todo add liveness test
  * 
  * @author Matthew Phillips
  */
@@ -394,10 +395,11 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * Create a new subscription with no security. See
+   * Create a new subscription. See
    * {@link #subscribe(String, SecureMode, Keys)} for details.
    * 
    * @param subscriptionExpr The subscription expression.
+   * 
    * @return The subscription instance.
    * 
    * @throws IOException if an IO error occurs.
@@ -409,9 +411,9 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * Create a new subscription with a given set of keys, allowing
-   * insecure notifications. See
-   * {@link #subscribe(String, SecureMode, Keys)} for details.
+   * Create a new subscription with a given set of security keys to
+   * enable secure delivery, but also allowing insecure notifications.
+   * See {@link #subscribe(String, SecureMode, Keys)} for details.
    * 
    * @param subscriptionExpr The subscription expression.
    * @return The subscription instance.
@@ -505,7 +507,7 @@ public final class Elvin implements Closeable
     return subscription;
   }
   
-  private void subscribe (Subscription subscription)
+  void subscribe (Subscription subscription)
     throws IOException
   {
     subscription.id =
@@ -533,7 +535,7 @@ public final class Elvin implements Closeable
   void modifyKeys (Subscription subscription, Keys newKeys)
     throws IOException
   {
-    Delta<Keys> delta = subscription.keys.deltaFrom (newKeys);
+    Keys.Delta delta = subscription.keys.deltaFrom (newKeys);
     
     sendAndReceive
       (new SubModRqst (subscription.id, delta.added, delta.removed,
@@ -560,7 +562,7 @@ public final class Elvin implements Closeable
   }
 
   /**
-   * Send a notification with no security restrictions. See
+   * Send a notification. See
    * {@link #send(Notification, SecureMode, Keys)} for details.
    */
   public void send (Notification notification)
@@ -581,8 +583,14 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * Send a notification with a specified secure mode. See
-   * {@link #send(Notification, SecureMode, Keys)} for details.
+   * Send a notification with a specified security mode. Be careful
+   * when using REQUIRE_SECURE_DELIVERY with this method: if you
+   * haven't specified any global notification keys via
+   * {@link #setKeys(Keys, Keys)} or
+   * {@link #setNotificationKeys(Keys)}, the notification will never
+   * be able to to be delivered.
+   * <p>
+   * See {@link #send(Notification, SecureMode, Keys)} for details.
    */
   public void send (Notification notification, SecureMode secureMode)
     throws IOException
@@ -675,7 +683,7 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * Change the connection-wide keys used to secure receipt and
+   * Change the connection-wide keys used to secure the receipt and
    * delivery of notifications.
    * 
    * @param newNotificationKeys The new notification keys. These
@@ -687,7 +695,8 @@ public final class Elvin implements Closeable
    *          automatically apply to all subscriptions, exactly as if
    *          they were added to the keys in the
    *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
-   *          call. This includes currently existing subscriptions.
+   *          call. This applies to all existing and future
+   *          subscriptions.
    * 
    * @throws IOException if an IO error occurs.
    */
@@ -695,18 +704,21 @@ public final class Elvin implements Closeable
                                     Keys newSubscriptionKeys)
     throws IOException
   {
-    Delta<Keys> deltaNotificationKeys =
+    Keys.Delta deltaNotificationKeys =
       notificationKeys.deltaFrom (newNotificationKeys);
-    Delta<Keys> deltaSubscriptionKeys =
+    Keys.Delta deltaSubscriptionKeys =
       subscriptionKeys.deltaFrom (newSubscriptionKeys);
-    
-    sendAndReceive
-      (new SecRqst
-         (deltaNotificationKeys.added, deltaNotificationKeys.removed,
-          deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
-    
-    this.notificationKeys = newNotificationKeys;
-    this.subscriptionKeys = newSubscriptionKeys;
+
+    if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
+    {
+      sendAndReceive
+        (new SecRqst
+           (deltaNotificationKeys.added, deltaNotificationKeys.removed,
+            deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
+      
+      this.notificationKeys = newNotificationKeys;
+      this.subscriptionKeys = newSubscriptionKeys;
+    }
   }
   
   private void send (Message message)
