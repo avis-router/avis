@@ -22,6 +22,9 @@ public class ListenerList<E>
   
   public void add (E listener)
   {
+    if (listener == null)
+      throw new IllegalArgumentException ("Listener cannot be null");
+    
     listeners.add (listener);
   }
   
