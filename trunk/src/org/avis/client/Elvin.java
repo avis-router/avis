@@ -537,9 +537,12 @@ public final class Elvin implements Closeable
   {
     Keys.Delta delta = subscription.keys.deltaFrom (newKeys);
     
-    sendAndReceive
-      (new SubModRqst (subscription.id, delta.added, delta.removed,
-                       subscription.acceptInsecure ()));
+    if (!delta.isEmpty ())
+    {
+      sendAndReceive
+        (new SubModRqst (subscription.id, delta.added, delta.removed,
+                         subscription.acceptInsecure ()));
+    }
   }
 
   void modifySubscriptionExpr (Subscription subscription,
