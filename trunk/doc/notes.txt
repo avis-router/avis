@@ -3,31 +3,55 @@ TODO
 Client/server component split
 
 common
-  avis.properties
   src
-    org.avis.common
-    org.avis.io
-    org.avis.security
-    org.avis.util
+    main
+      org.avis.common
+      org.avis.io
+      org.avis.security
+      org.avis.util
+    test
+      org.avis.security
+    misc
+      gpl_java_header.txt
   lib
     mina ...
+  build
+    avis-common.jar
 client
+  avis-client.properties
   src
-    org.avis.client
-    org.avis.tools
+    main
+      org.avis.client
+      org.avis.tools
+    test
+      org.avis.client
   bin
     ec
     ep
+  build
+    avis-client.jar (contains common classes)
+    avis-tools.jar
+  classes
+    main
+    test
+
 server
+  avis-server.properties
   src
     org.avis.server
     org.avis.subscription
   bin
     avisd
   packaging
+  build
+    avis-router.jar
 
 Release client by copying common + client to branches/client/release_0.1
 Release server by copying common + server to branches/server/release_1.1
+
+Server -> avis-server distro
+Client -> avis-client distro (src, javadoc, jar, examples)
+       -> avis-tools distro (ec, ep)
 
 R1.1
 
