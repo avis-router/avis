@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+  ====================================================================== 
+  Avis event notification service
+  
+  Matthew Phillips  
+  ======================================================================
+-->
+<project name="avis.server" default="jar-server">
+  
+  <description>Avis event router server</description>
+  
+  <property file="avis-server.properties" />
+  
+  <property name="common" value="${basedir}/../avis.common" />
+
+  <path id="classpath">
+    <fileset dir="${common}/lib">
+      <include name="*.jar" />
+    </fileset>    
+    
+    <pathelement path="classes/main" />
+    <pathelement path="classes/test" />
+    <pathelement path="${common}/classes/main" />
+    <pathelement path="${common}/classes/test" />
+  </path>
+  
+  <target name="properties" unless="avisd-jar-uptodate">
+    <mkdir dir="classes/main" />
+  
+    <tstamp>
+      <format property="build-date" pattern="dd-MMM-yyyy HH:mm:ss" locale="en" />
+    </tstamp>
+        
+    <filter token="build-date" value="${build-date}" />
+    
+    <copy file="avis-server.properties" todir="classes/main"
+          overwrite="yes" filtering="yes" />
+  </target>
+
+  <target name="compile" description="Compile source and tests">
+    <ant antfile="${common}/build.xml" target="compile" inheritall="false"/>
+    <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" />
+  </target>
+
+  <target name="clean" description="Clean built artifacts">
+    <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
+    
+    <delete dir="lib" file="avisd.jar" includeemptydirs="true" />
+  </target>
+
+  <target name="avisd-jar-uptodate">
+    <dependset>
+      <srcfileset dir="classes" includes="**/*.class" />
+      <targetfileset dir="build">
+        <include name="avisd.jar" />
+      </targetfileset>
+    </dependset>
+      
+    <condition property="avisd-jar-uptodate">
+      <and>
+        <available file="build/avisd.jar" />
+      </and>
+    </condition>
+  </target>
+    
+  <target name="jar-server" depends="compile,avisd-jar-uptodate,properties"
+          description="Build avisd.jar" unless="avisd-jar-uptodate">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/dfc.jar" />
+
+    <mkdir dir="build" />
+      
+    <jarx archive="build/avisd.jar"
+          mainClass="org.avis.server.Main"
+          classpathref="classpath">
+      
+      <include name="avis-server.properties" />
+    </jarx>
+    
+    <mkdir dir="lib" />
+    <copy file="build/avisd.jar" todir="lib" />
+  </target>
+
+</project>
