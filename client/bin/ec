@@ -1,0 +1,6 @@
+#!/bin/sh
+
+tools_jar=$(dirname $0)/../lib/tools.jar
+java_opts="-Xverify:none"
+
+exec java -cp "$tools_jar" $java_opts org.avis.tools.Ec "$@"
