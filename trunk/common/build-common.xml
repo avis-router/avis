@@ -1,0 +1,39 @@
+<project name="avis.build-common">
+
+  <target name="compile"
+          description="Compile source and tests">
+    <mkdir dir="classes/main" />
+    <mkdir dir="classes/test" />
+
+    <javac debug="true" classpathref="classpath"
+           srcdir="src/main" destdir="classes/main"/>
+    <javac debug="true" classpathref="classpath"
+           srcdir="src/test" destdir="classes/test"/>
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="build" />
+      <fileset dir="classes" />
+    </delete>
+  </target>
+
+  <target name="set-jar-uptodate">
+    <dependset>
+      <srcfileset dir="classes" includes="**/*.class" />
+      <srcfileset dir="lib">
+        <include name="*.jar" />
+      </srcfileset>
+      <targetfileset dir="build">
+        <include name="${jar}.jar" />
+      </targetfileset>
+    </dependset>
+  
+    <condition property="${jar}-uptodate">
+      <and>
+        <available file="lib/${jar}.jar" />
+      </and>
+    </condition>
+  </target>
+
+</project>

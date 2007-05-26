@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+  ====================================================================== 
+  Avis event notification service
+  
+  Matthew Phillips  
+  ======================================================================
+-->
+<project name="avis.common" default="jar-common">
+  
+  <description>Avis event notification service: common</description>
+  
+  <property file="avis.properties" />
+  
+  <path id="classpath">
+    <fileset dir="lib">
+      <include name="*.jar" />
+    </fileset>
+    <pathelement path="classes/main" />
+    <pathelement path="classes/test" />
+  </path>
+  
+  <target name="compile" description="Compile source and tests">
+    <ant antfile="build-common.xml" target="compile" inheritrefs="true" />
+  </target>
+
+  <target name="clean" description="Clean built artifacts">
+    <ant antfile="build-common.xml" target="clean" inheritrefs="true" />
+  </target>
+
+  <target name="jar-common" depends="compile"
+          description="Build avis-common.jar" unless="avis-common-uptodate">
+    
+    <mkdir dir="build" />
+    
+    <jar destfile="build/avis-common.jar">
+      <fileset dir="classes/main" includes="**/*.class" />
+    </jar>
+
+  </target>
+
+</project>
