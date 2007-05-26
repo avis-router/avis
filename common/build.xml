@@ -12,6 +12,8 @@
   
   <property file="avis.properties" />
   
+  <property name="common" value="${basedir}/../avis.common" />
+    
   <path id="classpath">
     <fileset dir="lib">
       <include name="*.jar" />
@@ -21,11 +23,11 @@
   </path>
   
   <target name="compile" description="Compile source and tests">
-    <ant antfile="build-common.xml" target="compile" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" />
   </target>
 
   <target name="clean" description="Clean built artifacts">
-    <ant antfile="build-common.xml" target="clean" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="clean" />
   </target>
 
   <target name="jar-common" depends="compile"

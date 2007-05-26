@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+  ====================================================================== 
+  Avis event notification service
+  
+  Matthew Phillips  
+  ======================================================================
+-->
+<project name="avis.client" default="jar-client">
+  
+  <description>Avis client library</description>
+  
+  <property file="avis-client.properties" />
+  
+  <property name="common" value="${basedir}/../avis.common" />
+  <property name="server" value="${basedir}/../avis.server" />
+
+  <path id="classpath">
+    <fileset dir="${common}/lib">
+      <include name="*.jar" />
+    </fileset>    
+    
+    <pathelement path="classes/main" />
+    <pathelement path="classes/test" />
+    <pathelement path="${common}/classes/main" />
+    <pathelement path="${common}/classes/test" />
+    <pathelement path="${server}/classes/main" />
+  </path>
+  
+  <target name="properties" unless="avis-client-uptodate">
+    <mkdir dir="classes/main" />
+  
+    <tstamp>
+      <format property="build-date" pattern="dd-MMM-yyyy HH:mm:ss" locale="en" />
+    </tstamp>
+        
+    <filter token="build-date" value="${build-date}" />
+    
+    <copy file="avis-client.properties" todir="classes/main"
+          overwrite="yes" filtering="yes" />
+  </target>
+
+  <target name="compile" description="Compile source and tests">
+    <ant antfile="${server}/build.xml" target="compile" inheritall="false"/>
+    <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" />
+  </target>
+
+  <target name="clean" description="Clean built artifacts">
+    <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
+  </target>
+
+  <target name="client-jar-uptodate">
+    <dependset>
+      <srcfileset dir="classes" includes="**/*.class" />
+      <targetfileset dir="build">
+        <include name="avis-client.jar" />
+      </targetfileset>
+    </dependset>
+      
+    <condition property="avis-client-uptodate">
+      <and>
+        <available file="build/avis-client.jar" />
+      </and>
+    </condition>
+  </target>
+    
+  <target name="jar-client" depends="compile,client-jar-uptodate,properties"
+          description="Build avis-client.jar" unless="avis-client-uptodate">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/dfc.jar" />
+
+    <mkdir dir="build" />
+      
+    <jarx archive="build/avis-client.jar" classpathref="classpath">
+   
+      <include name="org/avis/client/Elvin.class" />
+      <include name="avis-client.properties" />
+    </jarx>
+  </target>
+  
+</project>
