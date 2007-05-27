@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <!--
   ====================================================================== 
-  Avis event notification service
+  Avis Common Core
   
   Matthew Phillips  
   ======================================================================
 -->
 <project name="avis.common" default="jar-common">
   
-  <description>Avis event notification service: common</description>
+  <description>Avis common core</description>
   
   <property file="avis.properties" />
   
