@@ -26,6 +26,10 @@
     <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" />
   </target>
 
+  <target name="tests" depends="compile" description="Run unit tests">
+    <ant antfile="${common}/build-common.xml" target="tests" inheritrefs="true" />
+  </target>
+
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" />
   </target>
@@ -39,6 +43,74 @@
       <fileset dir="classes/main" includes="**/*.class" />
     </jar>
 
+  </target>
+
+  <target name="jar-dfc">
+    
+    <property name="dfc.home" value="../dfc.core" />
+    
+    <ant dir="${dfc.home}" target="compile" inheritall="false" />
+    
+    <jar destfile="lib/dfc.jar">
+      <fileset dir="${dfc.home}/classes">
+        <include name="dsto/dfc/tools/**/*.class" />
+        <include name="dsto/dfc/util/IndentPrintWriter*.class" />
+        <include name="dsto/dfc/logging/Log*.class" />
+        <include name="dsto/dfc/logging/LogFilter*.class" />
+        <include name="dsto/dfc/logging/LogEvent*.class" />
+        <include name="dsto/dfc/logging/LogListener*.class" />
+      </fileset>
+    </jar>
+  </target>
+  
+  <!-- Use arcane Ant-isms to build web page from text using Markdown -->
+  <target name="website"
+          description="Build HTML files in doc/web from sources">  
+    <antcall target="fn:make_html">
+      <param name="src" value="avis.txt" />
+      <param name="dest" value="index.html" />
+    </antcall>
+  
+    <antcall target="fn:make_html">
+      <param name="src" value="examples.txt" />
+      <param name="dest" value="examples.html" />
+    </antcall>
+
+    <antcall target="fn:make_html">
+      <param name="src" value="roadmap.txt" />
+      <param name="dest" value="roadmap.html" />
+    </antcall>
+
+    <antcall target="fn:make_html">
+      <param name="src" value="why_avis.txt" />
+      <param name="dest" value="why_avis.html" />
+    </antcall>
+
+    <antcall target="fn:make_html">
+      <param name="src" value="installation.txt" />
+      <param name="dest" value="installation.html" />
+    </antcall>
+  </target>
+  
+  <target name="fn:make_html">
+    <property name="root" value="doc/web" />
+    
+    <concat destfile="${root}/${dest}" append="false">
+      <filelist dir="${root}" files="header.htmli" />
+    </concat>
+    
+    <exec executable="perl">
+      <arg value="${markdown}" />
+      <arg value="${root}/${src}" />
+      
+      <redirector append="true">
+        <outputmapper type="merge" to="${root}/${dest}" />
+      </redirector>
+    </exec>
+    
+    <concat destfile="${root}/${dest}" append="true">
+      <filelist dir="${root}" files="footer.htmli" />
+    </concat>
   </target>
 
 </project>
