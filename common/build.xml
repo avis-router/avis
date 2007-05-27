@@ -4,7 +4,7 @@
   Avis Common Core
   ======================================================================
 -->
-<project name="avis.common" default="jar-common">
+<project name="avis.common" default="compile">
   
   <description>Avis common core</description>
   
@@ -61,7 +61,7 @@
 
   <target name="jar-dfc">
     
-    <property name="dfc.home" value="../dfc.core" />
+    <property name="dfc.home" value="../../dfc.core" />
     
     <ant dir="${dfc.home}" target="compile" inheritall="false" />
     
