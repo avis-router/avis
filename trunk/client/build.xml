@@ -46,6 +46,10 @@
     <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" />
   </target>
 
+  <target name="tests" depends="compile" description="Run unit tests">
+    <ant antfile="${common}/build-common.xml" target="tests" inheritrefs="true" />
+  </target>
+
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
   </target>
