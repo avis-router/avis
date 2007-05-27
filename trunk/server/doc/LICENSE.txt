@@ -3,6 +3,23 @@ License for Avis Event Router
 
 Avis is Copyright (C) 2006 Matthew Phillips <avis@mattp.name>.
 
+The avis.common component of this software is dual-licensed under both
+the LGPL (when distributed as part of the Avis client library) and the
+GPL (when distributed as part of the Avis event router).
+
+The Avis router (avis.server) portion of this software can be used
+both as a system service, i.e. running as a standalone program, or
+embedded in another Java program, i.e. used as a library. Under the
+GPL, this latter use would require the source of the Java program
+using the embedded Avis component to also be made available under the
+terms of the GPL.
+
+The project lead is prepared to grant the use of the Avis server with
+some LGPL-style exemptions on a case-by-case basis: please contact the
+project lead at avis@mattp.name if you wish to discuss licensing.
+
+---
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as
 published by the Free Software Foundation.
