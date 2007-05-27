@@ -12,7 +12,7 @@
   
   <property file="avis.properties" />
   
-  <property name="common" value="${basedir}/../avis.common" />
+  <property name="common" value="${basedir}/../common" />
     
   <path id="classpath">
     <fileset dir="lib">
