@@ -1,7 +1,7 @@
+<!-- Avis common build macros -->
 <project name="avis.build-common">
 
-  <target name="compile"
-          description="Compile source and tests">
+  <target name="compile">
     <mkdir dir="classes/main" />
     <mkdir dir="classes/test" />
 
