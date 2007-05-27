@@ -25,6 +25,10 @@
   <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
   <property name="javacc" value="../../javacc-4.0" />
 
+  <!-- InnoSetup installation (5.1.9 or later): Only needed if building the
+       Windows self-installer. -->
+  <property name="innosetup" value="C:\Program Files\Inno Setup 5\iscc.exe" />
+  
   <path id="classpath">
     <fileset dir="${common}/lib">
       <include name="*.jar" />
