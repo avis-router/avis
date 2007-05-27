@@ -153,6 +153,9 @@
         <include name="build.xml" />
         <include name="lib/*.jar" />
         <include name="etc/avisd.config" />
+        <include name="doc/README.txt" />
+        <include name="doc/LICENSE.txt" />
+        <include name="src/avis_java_header.txt" />
         <include name="packaging/**" />
         <include name="avis-server.properties" />
       </zipfileset>
@@ -165,8 +168,6 @@
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
-        <include name="doc/README.txt" />
-        <include name="doc/LICENSE.txt" />
         <include name="build.xml" />
         <include name="build-common.xml" />
         <include name="lib/*.jar" />
