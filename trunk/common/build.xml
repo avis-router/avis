@@ -14,7 +14,10 @@
 	
 	<!-- svn2cl: only needed to generate changelog -->
   <property name="svn2cl" value="/usr/local/bin/svn2cl" />
-    
+ 
+  <!-- Markdown 1.0.1: only needed to build web page -->
+  <property name="markdown" value="/Users/matt/bin/Markdown.pl" />
+  
   <path id="classpath">
     <fileset dir="lib">
       <include name="*.jar" />
@@ -80,29 +83,34 @@
   <!-- Use arcane Ant-isms to build web page from text using Markdown -->
   <target name="website"
           description="Build HTML files in doc/web from sources">  
-    <antcall target="fn:make_html">
+    <antcall target="fn:make-html">
       <param name="src" value="avis.txt" />
       <param name="dest" value="index.html" />
+      <param name="web.title" value="Home" />
     </antcall>
   
-    <antcall target="fn:make_html">
+    <antcall target="fn:make-html">
       <param name="src" value="examples.txt" />
       <param name="dest" value="examples.html" />
+      <param name="web.title" value="Example" />
     </antcall>
 
-    <antcall target="fn:make_html">
+    <antcall target="fn:make-html">
       <param name="src" value="roadmap.txt" />
       <param name="dest" value="roadmap.html" />
+      <param name="web.title" value="Roadmap" />
     </antcall>
 
-    <antcall target="fn:make_html">
+    <antcall target="fn:make-html">
       <param name="src" value="why_avis.txt" />
       <param name="dest" value="why_avis.html" />
+      <param name="web.title" value="Why Choose Avis" />
     </antcall>
 
-    <antcall target="fn:make_html">
+    <antcall target="fn:make-html">
       <param name="src" value="installation.txt" />
       <param name="dest" value="installation.html" />
+      <param name="web.title" value="Installation	" />
     </antcall>
   </target>
   
@@ -144,11 +152,16 @@
     </exec>
   </target>
 
-  <target name="fn:make_html">
+  <!-- Build a web page from text template using Markdown -->
+  <target name="fn:make-html">
     <property name="root" value="doc/web" />
     
     <concat destfile="${root}/${dest}" append="false">
       <filelist dir="${root}" files="header.htmli" />
+    	
+      <filterchain>
+        <expandproperties />
+      </filterchain>
     </concat>
     
     <exec executable="perl">
