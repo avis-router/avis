@@ -113,7 +113,7 @@
       
     <!-- create copy of source with license headers -->
     
-    <property name="header" value="${common}/src/avis_java_header.txt" />
+    <property name="header" value="src/avis_java_header.txt" />
 
     <copy todir="${src_tmp}/avis.server">
       <fileset dir=".">
