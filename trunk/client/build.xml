@@ -25,7 +25,7 @@
     <pathelement path="${server}/classes/main" />
   </path>
   
-  <target name="properties" unless="avis-client-uptodate">
+  <target name="properties" unless="jars-uptodate">
     <mkdir dir="classes/main" />
   
     <tstamp>
@@ -71,10 +71,11 @@
     </condition>
   </target>
     
-	<target name="jars" depends="jar-client,jar-tools" />
+	<target name="jars" depends="jar-client,jar-tools"
+		      description="Build all JAR files" />
 	
   <target name="jar-client" depends="compile,check-jars-uptodate,properties"
-          description="Build the Avis client JAR" unless="jars-uptodate">
+          description="Build avis-client.jar" unless="jars-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
              classpath="${common}/lib/dfc.jar" />
@@ -89,7 +90,7 @@
   </target>
 	
   <target name="jar-tools" depends="compile,check-jars-uptodate"
-          description="Build tools.jar used by ec/ep"
+          description="Build avis-tools.jar used by ec/ep"
           unless="jars-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
