@@ -2,11 +2,9 @@
 <!--
   ====================================================================== 
   Avis Elvin Client Library For Java
-  
-  Matthew Phillips  
   ======================================================================
 -->
-<project name="avis.client" default="jar-client">
+<project name="avis.client" default="jars">
   
   <description>Avis client library</description>
   
@@ -52,25 +50,31 @@
 
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
+  	
+  	<delete dir="lib" file="avis-tools.jar" includeemptydirs="true" />
   </target>
 
-  <target name="client-jar-uptodate">
+  <target name="check-jars-uptodate">
     <dependset>
       <srcfileset dir="classes/main" includes="**/*.class" />
       <targetfileset dir="build">
         <include name="avis-client.jar" />
+        <include name="avis-tools.jar" />
       </targetfileset>
     </dependset>
       
-    <condition property="avis-client-uptodate">
+    <condition property="jars-uptodate">
       <and>
         <available file="build/avis-client.jar" />
+        <available file="build/avis-tools.jar" />
       </and>
     </condition>
   </target>
     
-  <target name="jar-client" depends="compile,client-jar-uptodate,properties"
-          description="Build the Avis client JAR" unless="avis-client-uptodate">
+	<target name="jars" depends="jar-client,jar-tools" />
+	
+  <target name="jar-client" depends="compile,check-jars-uptodate,properties"
+          description="Build the Avis client JAR" unless="jars-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
              classpath="${common}/lib/dfc.jar" />
@@ -82,6 +86,25 @@
       <include name="org/avis/client/Elvin.class" />
       <include name="avis-client.properties" />
     </jarx>
+  </target>
+	
+  <target name="jar-tools" depends="compile,check-jars-uptodate"
+          description="Build tools.jar used by ec/ep"
+          unless="jars-uptodate">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/dfc.jar" />
+
+    <jarx archive="build/avis-tools.jar" classpathref="classpath">
+
+      <include name="org/avis/tools/Ec.class" />
+      <include name="org/avis/tools/Ep.class" />
+      <include name="org/avis/tools/Hash.class" />
+    </jarx>
+
+  	<mkdir dir="lib" />
+  	<copy file="build/avis-tools.jar" todir="lib" />
+  	
   </target>
   
 </project>

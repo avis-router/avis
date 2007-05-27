@@ -2,8 +2,6 @@
 <!--
   ====================================================================== 
   Avis Common Core
-  
-  Matthew Phillips  
   ======================================================================
 -->
 <project name="avis.common" default="jar-common">
@@ -13,6 +11,9 @@
   <property file="avis.properties" />
   
   <property name="common" value="${basedir}/../common" />
+	
+	<!-- svn2cl: only needed to generate changelog -->
+  <property name="svn2cl" value="/usr/local/bin/svn2cl" />
     
   <path id="classpath">
     <fileset dir="lib">
@@ -32,6 +33,19 @@
 
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" />
+  </target>
+
+  <target name="clean-web" depends="clean"
+  	      description="Clean generated website files">
+    <delete>
+      <fileset dir="doc/web">
+        <include name="index.html" />
+        <include name="examples.html" />
+        <include name="installation.html" />
+        <include name="roadmap.html" />
+        <include name="why_avis.html" />
+      </fileset>
+    </delete>
   </target>
 
   <target name="jar-common" depends="compile"
@@ -92,6 +106,44 @@
     </antcall>
   </target>
   
+  <target name="deploy-website" depends="website"
+          description="Rsync web site to sourceforge">
+    <exec executable="rsync" dir="doc/web">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg line="--include *.html" />
+      <arg line="--include *.png" />
+      <arg line="--include *.gif" />
+      <arg line="--include *.css" />
+      <arg line="--exclude *" />
+      <arg line="--exclude */.svn" />
+      <arg line="--exclude *.htmli" />
+      <arg line="--exclude *.txt" />
+      <arg line="--exclude .*" />
+      <arg value="." />
+      <arg value="sourceforge:/home/groups/a/av/avis/htdocs/" />
+    </exec>
+  </target>
+
+  <target name="changelog"
+          description="Generate a change log (needs previous rev #)">
+    <!-- Use command below to get previous release rev #
+         svn log -stop-on-copy https://avis.svn.sourceforge.net/svnroot/avis/tags/release_0.7 -->
+    <input addproperty="release_rev" message="Enter rev # of last release" />
+    
+    <exec executable="${svn2cl}" searchpath="true">
+      <env key="PATH" path="/bin:/usr/bin:/usr/local/bin:/opt/local/bin" />
+      <arg line="-r ${release_rev}:HEAD https://svn.sourceforge.net/svnroot/avis/trunk" />
+    </exec>
+  </target>
+
+  <target name="backup-sourceforge"
+          description="Backup SVN repository from Sourceforge">
+    <exec executable="rsync">
+      <arg line="-av avis.svn.sourceforge.net::svn/avis/* ../../avis_backup/svn/" />
+    </exec>
+  </target>
+
   <target name="fn:make_html">
     <property name="root" value="doc/web" />
     

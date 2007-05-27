@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <!--
   ====================================================================== 
-  Avis event notification service
-  
-  Matthew Phillips  
+  Avis event notification server
   ======================================================================
 -->
 <project name="avis.server" default="jar-server">
@@ -23,6 +21,9 @@
   <property name="release-name" value="${version}.${release}" />
 
   <property name="common" value="${basedir}/../common" />
+
+  <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
+  <property name="javacc" value="../../javacc-4.0" />
 
   <path id="classpath">
     <fileset dir="${common}/lib">
@@ -62,6 +63,26 @@
     <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
     
     <delete dir="lib" file="avisd.jar" includeemptydirs="true" />
+  </target>
+
+  <target name="clean-javacc" description="Clean JavaCC-generated files">
+    <delete>
+      <fileset dir="src/main/org/avis/subscription/parser">
+        <include name="SubscriptionParser.java" />
+        <include name="SubscriptionParserConstants.java" />
+        <include name="SubscriptionParserTokenManager.java" />
+        <include name="TokenMgrError.java" />
+        <include name="Token.java" />
+        <include name="SimpleCharStream.java" />
+        <include name="ParseExceptionjava" />
+      </fileset>
+    </delete>
+  </target>
+	
+  <target name="javacc-subscription-parser"
+          description="Generate the subscription parser with JavaCC">
+    <javacc javacchome="${javacc}"
+            target="src/main/org/avis/subscription/parser/SubscriptionParser.jj" />
   </target>
 
   <target name="avisd-jar-uptodate">
