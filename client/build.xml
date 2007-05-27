@@ -56,7 +56,7 @@
 
   <target name="client-jar-uptodate">
     <dependset>
-      <srcfileset dir="classes" includes="**/*.class" />
+      <srcfileset dir="classes/main" includes="**/*.class" />
       <targetfileset dir="build">
         <include name="avis-client.jar" />
       </targetfileset>
@@ -70,7 +70,7 @@
   </target>
     
   <target name="jar-client" depends="compile,client-jar-uptodate,properties"
-          description="Build avis-client.jar" unless="avis-client-uptodate">
+          description="Build the Avis client JAR" unless="avis-client-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
              classpath="${common}/lib/dfc.jar" />
