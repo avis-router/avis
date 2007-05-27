@@ -12,8 +12,8 @@
   
   <property file="avis-client.properties" />
   
-  <property name="common" value="${basedir}/../avis.common" />
-  <property name="server" value="${basedir}/../avis.server" />
+  <property name="common" value="${basedir}/../common" />
+  <property name="server" value="${basedir}/../server" />
 
   <path id="classpath">
     <fileset dir="${common}/lib">

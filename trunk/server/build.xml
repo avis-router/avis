@@ -22,7 +22,7 @@
        release tag e.g. 1.0.2dev or 1.1.dev. -->
   <property name="release-name" value="${version}.${release}" />
 
-  <property name="common" value="${basedir}/../avis.common" />
+  <property name="common" value="${basedir}/../common" />
 
   <path id="classpath">
     <fileset dir="${common}/lib">
@@ -106,16 +106,16 @@
     
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
-    <mkdir dir="${src_tmp}/avis.common/src/main" />
-    <mkdir dir="${src_tmp}/avis.common/src/test" />
-    <mkdir dir="${src_tmp}/avis.server/src/main" />
-    <mkdir dir="${src_tmp}/avis.server/src/test" />
+    <mkdir dir="${src_tmp}/common/src/main" />
+    <mkdir dir="${src_tmp}/common/src/test" />
+    <mkdir dir="${src_tmp}/server/src/main" />
+    <mkdir dir="${src_tmp}/server/src/test" />
       
     <!-- create copy of source with license headers -->
     
     <property name="header" value="src/avis_java_header.txt" />
 
-    <copy todir="${src_tmp}/avis.server">
+    <copy todir="${src_tmp}/server">
       <fileset dir=".">
         <include name="src/main/**/*.java"/>
         <include name="src/main/**/*.jj"/>
@@ -127,7 +127,7 @@
       </filterchain>
     </copy>
 
-    <copy todir="${src_tmp}/avis.common">
+    <copy todir="${src_tmp}/common">
       <fileset dir="${common}">
         <include name="src/main/**/*.java"/>
         <include name="src/test/**/*.java"/>
@@ -146,7 +146,7 @@
       </zipfileset>
       
       <!-- others -->
-      <zipfileset dir="." prefix="${ziproot}/avis.server">
+      <zipfileset dir="." prefix="${ziproot}/server">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -160,11 +160,11 @@
         <include name="avis-server.properties" />
       </zipfileset>
       
-      <zipfileset dir="." prefix="${ziproot}/avis.server" filemode="755">
+      <zipfileset dir="." prefix="${ziproot}/server" filemode="755">
         <include name="bin/avisd" />
       </zipfileset>
       
-      <zipfileset dir="${common}" prefix="${ziproot}/avis.common">
+      <zipfileset dir="${common}" prefix="${ziproot}/common">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
