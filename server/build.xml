@@ -25,9 +25,14 @@
   <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
   <property name="javacc" value="../../javacc-4.0" />
 
-  <!-- InnoSetup installation (5.1.9 or later): Only needed if building the
+  <!-- InnoSetup installation (5.1.9 or later): only needed if building the
        Windows self-installer. -->
   <property name="innosetup" value="C:\Program Files\Inno Setup 5\iscc.exe" />
+
+  <!-- Mac OS X packagemaker app (part of Apple XCode): only needed if
+       you need to build the Mac OS X .pkg distro. -->
+  <property name="packagemaker"
+            value="/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker" />
   
   <path id="classpath">
     <fileset dir="${common}/lib">
@@ -272,7 +277,7 @@
 
     <mkdir dir="build" />
 
-    <exec executable="/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker">
+    <exec executable="${packagemaker}">
       <arg value="-build" />
       <arg value="-p" />
       <arg value="${basedir}/build/${package}" />
@@ -287,9 +292,9 @@
       <arg value="-v" />
     </exec>
 
-    <!-- OS X package files use symlinks, use system tar to preserve -->
+    <!-- OS X package files use symlinks, use tar to preserve -->
     <exec executable="tar">
-      <arg value="jcvf" />
+      <arg value="jcf" />
       <arg value="build/Avis-${release-name}.tbz" />
       <arg value="-C" />
       <arg value="build" />
@@ -315,7 +320,7 @@
     <mkdir dir="${root}/SRPMS" />
     <mkdir dir="${root}/SPECS" />
 
-    <!-- NOTE: src dist must expand to avis-$release-name directory for RPM -->
+    <!-- NOTE: src dist must expand to avis-$version directory for RPM -->
     <antcall target="dist-source">
       <param name="ziproot" value="avis-${version}" />
       <param name="src_zip" value="${root}/SOURCES/avis-src-${version}.zip" />
@@ -334,6 +339,7 @@
 
     <copy file="${root}/RPMS/noarch/avis-${version}-${release}.noarch.rpm"
           tofile="build/avis-${release-name}.rpm" />
+
     <delete dir="${root}" />
 
   </target>
@@ -379,7 +385,6 @@
     
     <filter token="release" value="${release-name}" />
     <filter token="version" value="${version}" />
-    <!-- <filter token="jre_installer" value="${jre.installer}" /> -->
     
     <copy file="packaging/windows/installer/avis.iss.in"
           tofile="packaging/windows/installer/avis.iss" overwrite="true"
