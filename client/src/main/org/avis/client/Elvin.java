@@ -3,6 +3,7 @@ package org.avis.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -40,13 +41,6 @@ import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.diagnostic;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.trace;
-import static dsto.dfc.logging.Log.warn;
-
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
@@ -54,6 +48,13 @@ import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
+
+import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.diagnostic;
+import static dsto.dfc.logging.Log.isEnabled;
+import static dsto.dfc.logging.Log.trace;
+import static dsto.dfc.logging.Log.warn;
 
 /**
  * Manages a client's connection to an Elvin router. Typically a
@@ -97,13 +98,20 @@ public final class Elvin implements Closeable
   private ElvinURI routerUri;
   private ConnectionOptions connectionOptions;
   private IoSession clientSession;
-  private ExecutorService executor;
   private boolean elvinConnectionOpen;
   private Map<Long, Subscription> subscriptions;
   private Keys notificationKeys;
   private Keys subscriptionKeys;
   private int receiveTimeout;
-  
+
+  /**
+   * We use a multiple-thread IO pool and a single-thread callback
+   * pool. Using the IO pool for callbacks results in a lot of threads
+   * being spawned when a sudden influx of notifications come in.
+   */
+  private ExecutorService ioExecutor;
+  private ExecutorService callbackExecutor;
+
   /** lastReply is effectively a single-item queue for handling responses
       to XID-based requests, using replySemaphore to synchronize access. */
   private XidMessage lastReply;
@@ -215,7 +223,8 @@ public final class Elvin implements Closeable
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
-    this.executor = newCachedThreadPool ();
+    this.ioExecutor = newCachedThreadPool ();
+    this.callbackExecutor = Executors.newSingleThreadExecutor ();
     this.replySemaphore = new Object ();
     this.receiveTimeout = 10000;
     
@@ -250,7 +259,7 @@ public final class Elvin implements Closeable
   {
     try
     {
-      SocketConnector connector = new SocketConnector (1, executor);
+      SocketConnector connector = new SocketConnector (1, ioExecutor);
 
       /* Change the worker timeout to 1 second to make the I/O thread
        * quit soon when there's no connection to manage. */
@@ -323,11 +332,8 @@ public final class Elvin implements Closeable
       subscriptions = null;
     }
     
-    if (executor != null)
-    {
-      executor.shutdown ();
-      executor = null;
-    }
+    ioExecutor.shutdown ();
+    callbackExecutor.shutdown ();
   }
 
   /**
@@ -882,7 +888,7 @@ public final class Elvin implements Closeable
      * for a reply that cannot be processed since the IO processor is
      * busy calling this method.
      */
-    executor.execute (new Runnable ()
+    callbackExecutor.execute (new Runnable ()
     {
       public void run ()
       {
