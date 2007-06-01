@@ -51,7 +51,7 @@
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
   	
-  	<delete dir="lib" file="avis-tools.jar" includeemptydirs="true" />
+    <delete dir="lib" file="avis-tools.jar" includeemptydirs="true" />
   </target>
 
   <target name="check-jars-uptodate">
@@ -71,7 +71,7 @@
     </condition>
   </target>
     
-	<target name="jars" depends="jar-client,jar-tools"
+  <target name="jars" depends="jar-client,jar-tools"
 		      description="Build all JAR files" />
 	
   <target name="jar-client" depends="compile,check-jars-uptodate,properties"
