@@ -3,7 +3,6 @@ package org.avis.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -42,6 +41,7 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
@@ -224,7 +224,7 @@ public final class Elvin implements Closeable
     this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
     this.ioExecutor = newCachedThreadPool ();
-    this.callbackExecutor = Executors.newSingleThreadExecutor ();
+    this.callbackExecutor = newSingleThreadExecutor ();
     this.replySemaphore = new Object ();
     this.receiveTimeout = 10000;
     
