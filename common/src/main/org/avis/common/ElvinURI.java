@@ -37,7 +37,7 @@ import static org.avis.util.Collections.list;
  * 
  * Example URI 1: <code>elvin://localhost:2917</code>.
  * <p>
- * Example URI 2: <code>elvin:4.0/tcp,ssl,xdr/localhost:29170</code>.
+ * Example URI 2: <code>elvin:4.0/ssl,none,xdr/localhost:443</code>.
  * 
  * todo need to support []'s in IPv6 addresses
  * 
