@@ -39,6 +39,14 @@ import org.avis.io.messages.SubDelRqst;
 import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
+import org.avis.util.ListenerList;
+
+import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.diagnostic;
+import static dsto.dfc.logging.Log.isEnabled;
+import static dsto.dfc.logging.Log.trace;
+import static dsto.dfc.logging.Log.warn;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
@@ -48,13 +56,6 @@ import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
-
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.diagnostic;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.trace;
-import static dsto.dfc.logging.Log.warn;
 
 /**
  * Manages a client's connection to an Elvin router. Typically a
@@ -103,6 +104,8 @@ public final class Elvin implements Closeable
   private Keys notificationKeys;
   private Keys subscriptionKeys;
   private int receiveTimeout;
+
+  protected ListenerList<GeneralNotificationListener> notificationListeners;
 
   /**
    * We use a multiple-thread IO pool and a single-thread callback
@@ -223,6 +226,8 @@ public final class Elvin implements Closeable
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
+    this.notificationListeners =
+      new ListenerList<GeneralNotificationListener> ();
     this.ioExecutor = newCachedThreadPool ();
     this.callbackExecutor = newSingleThreadExecutor ();
     this.replySemaphore = new Object ();
@@ -570,6 +575,48 @@ public final class Elvin implements Closeable
   {
     return subscriptions.containsValue (subscription);
   }
+  
+  /**
+   * Lookup the subscription for an ID or throw an exception.
+   */
+  Subscription subscriptionFor (long id)
+  {
+    Subscription subscription = subscriptions.get (id);
+    
+    if (subscription != null)
+      return subscription;
+    else
+      throw new IllegalArgumentException ("No subscription for ID " + id);
+  }
+  
+  /**
+   * Add a listener to all notifications received by all subscriptions
+   * of this connection.
+   * 
+   * @see #removeNotificationListener(GeneralNotificationListener)
+   * @see Subscription#addNotificationListener(NotificationListener)
+   */
+  public void addNotificationListener (GeneralNotificationListener listener)
+  {
+    synchronized (this)
+    {
+      notificationListeners.add (listener);
+    }
+  }
+  
+  /**
+   * Remove a listener to all notifications received by all subscriptions
+   * of this connection.
+   * 
+   * @see #addNotificationListener(GeneralNotificationListener)
+   */
+  public void removeNotificationListener (GeneralNotificationListener listener)
+  {
+    synchronized (this)
+    {
+      notificationListeners.remove (listener);
+    }
+  }
 
   /**
    * Send a notification. See
@@ -898,26 +945,46 @@ public final class Elvin implements Closeable
         {
           if (isOpen ())
           {
-            fireNotify (message.secureMatches, true, ntfn);
-            fireNotify (message.insecureMatches, false, ntfn);
+            if (notificationListeners.hasListeners ())
+            {
+              notificationListeners.fire
+                ("notificationReceived",
+                 new GeneralNotificationEvent (Elvin.this, ntfn,
+                                               message.insecureMatches,
+                                               message.secureMatches));
+            }
+            
+            Map<String, Object> data = new HashMap<String, Object> ();
+            
+            fireSubscriptionNotify (message.secureMatches, true, ntfn, data);
+            fireSubscriptionNotify (message.insecureMatches, false, ntfn, data);
           }
         }
       }
    });
   }
 
-  protected void fireNotify (long [] subscriptionIds,
-                             boolean secure,
-                             Notification ntfn)
+  /**
+   * Fire notification events for subscription listeners.
+   * 
+   * @param subscriptionIds The subscription ID's
+   * @param secure Whether the notification was secure.
+   * @param ntfn The notification.
+   * @param data General data attached to the event for the client's use.
+   */
+  protected void fireSubscriptionNotify (long [] subscriptionIds,
+                                         boolean secure,
+                                         Notification ntfn,
+                                         Map<String, Object> data)
   {
     for (long subscriptionId : subscriptionIds)
     {
       Subscription subscription = subscriptions.get (subscriptionId);
       
-      if (subscription != null)
+      if (subscription != null && subscription.hasListeners ())
       {
         subscription.notifyListeners
-          (new NotificationEvent (this, subscription, ntfn, secure));
+          (new NotificationEvent (subscription, ntfn, secure, data));
       } else
       {
         warn ("Received notification for unknown subscription ID " +
