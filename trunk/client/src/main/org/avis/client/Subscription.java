@@ -150,6 +150,8 @@ public final class Subscription
 
   /**
    * Add a listener for notifications matched by this subscription.
+   * 
+   * @see {@link Elvin#addNotificationListener(GeneralNotificationListener)}
    */
   public void addNotificationListener (NotificationListener listener)
   {
@@ -170,6 +172,11 @@ public final class Subscription
     {
       notificationListeners.remove (listener);
     }
+  }
+  
+  public boolean hasListeners ()
+  {
+    return notificationListeners.hasListeners ();
   }
 
   void notifyListeners (NotificationEvent event)
