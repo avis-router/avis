@@ -1,15 +1,15 @@
 package org.avis.client;
 
-import java.util.EventObject;
+import java.util.Map;
 
 /**
- * A notification delivery event.
+ * A notification event sent to subscription listeners.
  * 
  * @see Subscription#addNotificationListener(NotificationListener)
  * 
  * @author Matthew Phillips
  */
-public final class NotificationEvent extends EventObject
+public final class NotificationEvent extends AvisEventObject
 {
   /**
    * The subscription that matched the notification.
@@ -27,12 +27,12 @@ public final class NotificationEvent extends EventObject
    */
   public final boolean secure;
 
-  NotificationEvent (Elvin source,
-                     Subscription subscription,
+  NotificationEvent (Subscription subscription,
                      Notification notification,
-                     boolean secure)
+                     boolean secure,
+                     Map<String, Object> data)
   {
-    super (source);
+    super (subscription, data);
     
     this.subscription = subscription;
     this.notification = notification;
