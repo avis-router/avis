@@ -87,4 +87,12 @@ public class ListenerList<E>
       throw new IllegalArgumentException ("No method named " + methodName);
     }
   }
+
+  /**
+   * Test if any listeners are in this list.
+   */
+  public boolean hasListeners ()
+  {
+    return !listeners.isEmpty ();
+  }
 }
