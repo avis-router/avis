@@ -4,11 +4,14 @@
   Avis Elvin Client Library For Java
   ======================================================================
 -->
-<project name="avis.client" default="jars">
+<project name="avis.client" default="dist-client">
   
   <description>Avis client library</description>
   
   <property file="avis-client.properties" />
+  
+  <property name="release-name"
+            value="${avis.version.major}.${avis.version.minor}.${avis.release}" />
   
   <property name="common" value="${basedir}/../common" />
   <property name="server" value="${basedir}/../server" />
@@ -39,16 +42,41 @@
           overwrite="yes" filtering="yes" />
   </target>
 
-  <target name="compile" description="Compile source and tests">
-    <ant antfile="${server}/build.xml" target="compile" inheritall="false"/>
-    <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" />
+  <target name="compile" description="Compile source">
+    <ant antfile="${common}/build.xml" target="compile"
+         inheritall="false" />
+    <ant antfile="${common}/build-common.xml" target="compile-main" inheritrefs="true" />
   </target>
 
-  <target name="tests" depends="compile" description="Run unit tests">
+  <target name="compile-tests" depends="compile" description="Compile tests">
+    <ant antfile="${common}/build-common.xml" target="compile-tests" inheritrefs="true" />
+  </target>
+ 
+  <target name="tests" depends="compile,compile-tests"
+          description="Run unit tests">
+    <ant antfile="${server}/build.xml" target="compile" inheritall="false"/> 
     <ant antfile="${common}/build-common.xml" target="tests" inheritrefs="true" />
   </target>
 
-  <target name="javadoc" depends="compile" description="Build Javadocs">
+  <target name="check-javadoc-uptodate">
+    <dependset>
+      <srcfileset dir="src/main" includes="**/*.java" />
+      <srcfileset dir="${common}/src/main" includes="**/*.java" />
+      <targetfileset dir="build">
+        <include name="javadoc/**" />
+      </targetfileset>
+    </dependset>
+      
+    <condition property="javadoc-uptodate">
+      <and>
+        <available file="build/javadoc/index.html" />
+      </and>
+    </condition>
+  </target>
+ 
+  <target name="javadoc"
+          depends="check-javadoc-uptodate" unless="javadoc-uptodate"
+          description="Build Javadocs">
     <javadoc
       destdir="build/javadoc"
       author="true"
@@ -78,7 +106,85 @@
       	    packagelistLoc="${basedir}/doc/java5-package-list" />
     </javadoc>
   </target>
-  
+ 
+  <target name="dist-client" depends="jar-client,javadoc"
+          description="Build the client library distro">
+    
+    <property name="ziproot" value="avis-client-${release-name}" />
+    <property name="src_zip" value="build/avis-client-${release-name}.zip" />
+    
+    <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
+ 
+    <mkdir dir="${src_tmp}/common/src/main" />
+    <mkdir dir="${src_tmp}/common/src/test" />
+    <mkdir dir="${src_tmp}/client/src/main" />
+    <mkdir dir="${src_tmp}/client/src/test" />
+      
+    <!-- create copy of source with license headers -->
+    
+    <property name="header" value="src/avis_java_header.txt" />
+
+    <copy todir="${src_tmp}/client">
+      <fileset dir=".">
+        <include name="src/main/**/*.java"/>
+        <include name="src/main/**/*.jj"/>
+        <include name="src/test/**/*.java"/>
+      </fileset>
+      
+      <filterchain>
+        <concatfilter prepend="${header}" />
+      </filterchain>
+    </copy>
+
+    <copy todir="${src_tmp}/common">
+      <fileset dir="${common}">
+        <include name="src/main/**/*.java"/>
+        <include name="src/test/**/*.java"/>
+      </fileset>
+      
+      <filterchain>
+        <concatfilter prepend="${header}" />
+      </filterchain>
+    </copy>
+
+    <zip destfile="${src_zip}">
+      
+      <!-- source -->
+      <zipfileset dir="${src_tmp}" prefix="${ziproot}">
+        <include name="**/*" />
+      </zipfileset>
+      
+      <!-- others -->
+      <zipfileset dir="." prefix="${ziproot}/client">
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name=".settings/*" />
+        <include name="build.xml" />
+        <include name="lib/avis-client.jar" />
+        <include name="doc/**" />
+        <include name="src/avis_java_header.txt" />
+        <include name="avis-client.properties" />
+      </zipfileset>
+     
+      <zipfileset dir="build" prefix="${ziproot}/client">
+         <include name="javadoc/**" />
+      </zipfileset> 
+      
+      <zipfileset dir="${common}" prefix="${ziproot}/common">
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name=".settings/*" />
+        <include name="build.xml" />
+        <include name="build-common.xml" />
+        <include name="lib/*.jar" />
+      </zipfileset>
+
+    </zip>
+    
+    <!-- blow away temporary files -->
+    <delete dir="${src_tmp}" /> 
+  </target>
+
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
     
@@ -118,6 +224,9 @@
       <include name="org/avis/client/Elvin.class" />
       <include name="avis-client.properties" />
     </jarx>
+   
+    <mkdir dir="lib" />
+    <copy file="build/avis-client.jar" todir="lib" /> 
   </target>
   
   <target name="jar-tools" depends="compile,check-jars-uptodate"
