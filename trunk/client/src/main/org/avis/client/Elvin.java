@@ -91,7 +91,6 @@ import static org.avis.util.Text.className;
  * </ul>
  * 
  * @todo add liveness test
- * @todo think about global notification listener support
  * 
  * @author Matthew Phillips
  */
