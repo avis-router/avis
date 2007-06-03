@@ -48,9 +48,36 @@
     <ant antfile="${common}/build-common.xml" target="tests" inheritrefs="true" />
   </target>
 
+  <target name="javadoc" depends="compile" description="Build Javadocs">
+    <javadoc
+      destdir="build/javadoc"
+      author="true"
+      version="true"
+      use="true"
+      windowtitle="Avis Client Library For Elvin"
+      classpathref="classpath"
+      excludepackagenames="org.apache.*,org.slf4j.*,dsto.*,">
+      
+      <packageset dir="src/main" defaultexcludes="yes">
+        <include name="org/avis/client/**"/>
+      </packageset>
+      <packageset dir="${common}/src/main" defaultexcludes="yes">
+        <include name="org/avis/common/**"/>
+      </packageset>
+      
+      <doctitle><![CDATA[<h1>Avis Client Library</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2007 Matthew Phillips. All Rights Reserved.</i>]]></bottom>
+      <tag name="todo" scope="all" description="To do:"/>
+      <group title="Avis Client Library" packages="org.avis.client"/>
+      <group title="Avis Common Support" packages="org.avis.common"/>
+      <link offline="true" href="http://java.sun.com/j2se/1.5.0/docs/api/" packagelistLoc="${basedir}/doc/java-5-package-list.txt" />
+      <!-- <link href="http://developer.java.sun.com/developer/products/xml/docs/api/"/> -->
+    </javadoc>
+  </target>
+  
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
-  	
+    
     <delete dir="lib" file="avis-tools.jar" includeemptydirs="true" />
   </target>
 
@@ -72,8 +99,8 @@
   </target>
     
   <target name="jars" depends="jar-client,jar-tools"
-		      description="Build all JAR files" />
-	
+          description="Build all JAR files" />
+  
   <target name="jar-client" depends="compile,check-jars-uptodate,properties"
           description="Build avis-client.jar" unless="jars-uptodate">
     
@@ -88,7 +115,7 @@
       <include name="avis-client.properties" />
     </jarx>
   </target>
-	
+  
   <target name="jar-tools" depends="compile,check-jars-uptodate"
           description="Build avis-tools.jar used by ec/ep"
           unless="jars-uptodate">
@@ -103,9 +130,9 @@
       <include name="org/avis/tools/Hash.class" />
     </jarx>
 
-  	<mkdir dir="lib" />
-  	<copy file="build/avis-tools.jar" todir="lib" />
-  	
+    <mkdir dir="lib" />
+    <copy file="build/avis-tools.jar" todir="lib" />
+    
   </target>
   
 </project>
