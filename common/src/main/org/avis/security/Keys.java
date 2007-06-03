@@ -10,7 +10,6 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.io.IO.getBytes;
 import static org.avis.io.IO.putBytes;
-import static org.avis.security.DualKeyScheme.checkProdOrCon;
 import static org.avis.security.KeyScheme.schemeFor;
 import static org.avis.security.Keys.Delta.EMPTY_DELTA;
 
@@ -33,8 +32,8 @@ import static org.avis.security.Keys.Delta.EMPTY_DELTA;
  */
 public class Keys
 {
-  public static final int PRODUCER = DualKeyScheme.PRODUCER;
-  public static final int CONSUMER = DualKeyScheme.CONSUMER;
+  public static final int PRODUCER = 0;
+  public static final int CONSUMER = 1;
   
   /** An empty, immutable key collection. */
   public static final Keys EMPTY_KEYS = new EmptyKeys ();
@@ -125,43 +124,44 @@ public class Keys
    * Add a key for dual key scheme.
    *  
    * @param scheme The key scheme.
-   * @param prodOrCon One of {@link #PRODUCER} or {@link #CONSUMER}.
+   * @param subset The key subset (PRODUCER or CONSUMER) to add the key to. 
    * @param key The key to add.
    * 
    * @throws IllegalArgumentException if prodOrCon is not valid.
    * 
-   * @see #remove(DualKeyScheme, int, Key)
+   * @see #remove(DualKeyScheme, org.avis.security.DualKeyScheme.Subset, Key)
    */
-  public void add (DualKeyScheme scheme, int prodOrCon, Key key)
+  public void add (DualKeyScheme scheme,
+                   DualKeyScheme.Subset subset, Key key)
     throws IllegalArgumentException
   {
-    checkProdOrCon (prodOrCon);
-    
     DualKeySet keySet = (DualKeySet)newKeysetFor (scheme);
     
-    keySet.keysFor (prodOrCon).add (key);
+    keySet.keysFor (subset).add (key);
   }
   
   /**
    * Remove a key for dual key scheme.
-   *  
+   * 
    * @param scheme The key scheme.
-   * @param prodOrCon One of {@link #PRODUCER} or {@link #CONSUMER}.
+   * @param subset The key subset (PRODUCER or CONSUMER) to remove the
+   *          key from.
    * @param key The key to remove.
    * 
    * @throws IllegalArgumentException if prodOrCon is not valid.
    * 
-   * @see #add(DualKeyScheme, int, Key)
+   * @see #add(DualKeyScheme, org.avis.security.DualKeyScheme.Subset,
+   *      Key)
    */
-  public void remove (DualKeyScheme scheme, int prodOrCon, Key key)
+  public void remove (DualKeyScheme scheme,
+                      DualKeyScheme.Subset subset,
+                      Key key)
   {
-    checkProdOrCon (prodOrCon);
-
     DualKeySet keySet = (DualKeySet)keySets.get (scheme);
     
     if (keySet != null)
     {
-      keySet.keysFor (prodOrCon).remove (key);
+      keySet.keysFor (subset).remove (key);
       
       if (keySet.isEmpty ())
         keySets.remove (scheme);
@@ -509,6 +509,15 @@ public class Keys
   }
   
   /**
+   * Check whether the parameter is a valid PRODUCER/CONSUMER value.
+   */
+  static void checkProdOrCon (int prodOrCon)
+  {
+    if (prodOrCon != PRODUCER && prodOrCon != CONSUMER)
+      throw new IllegalArgumentException ("Not a valid producer/consumer code");
+  }
+
+  /**
    * Represents a delta (diff) between two key sets.
    */
   public static class Delta
@@ -587,13 +596,13 @@ public class Keys
     }
 
     @Override
-    public void add (DualKeyScheme scheme, int prodOrCon, Key key)
+    public void add (DualKeyScheme scheme, DualKeyScheme.Subset subset, Key key)
     {
       throw new UnsupportedOperationException ();
     }
 
     @Override
-    public void remove (DualKeyScheme scheme, int prodOrCon, Key key)
+    public void remove (DualKeyScheme scheme, DualKeyScheme.Subset subset, Key key)
     {
       throw new UnsupportedOperationException ();
     }

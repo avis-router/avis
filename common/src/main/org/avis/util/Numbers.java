@@ -1,5 +1,10 @@
 package org.avis.util;
 
+/**
+ * General utility functions for messing with numbers.
+ * 
+ * @author Matthew Phillips
+ */
 public final class Numbers
 {
   private Numbers ()

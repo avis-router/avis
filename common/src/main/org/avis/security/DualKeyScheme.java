@@ -7,20 +7,15 @@ package org.avis.security;
  */
 public final class DualKeyScheme extends KeyScheme
 {
-  public static final int PRODUCER = 0;
-  public static final int CONSUMER = 1;
+  /**
+   * Specifies which of the two subsets of a dual scheme a key is part
+   * of: the producer subset (for sending notifications) or consumer
+   * subset (for receiving notifications).
+   */
+  public enum Subset {PRODUCER, CONSUMER}
   
   DualKeyScheme (int id, SecureHash keyHash)
   {
     super (id, keyHash, true, true);
-  }
-  
-  /**
-   * Check whether the parameter is a valid PRODUCER/CONSUMER value.
-   */
-  protected static void checkProdOrCon (int prodOrCon)
-  {
-    if (prodOrCon != PRODUCER && prodOrCon != CONSUMER)
-      throw new IllegalArgumentException ("Not a valid producer/consumer code");
   }
 }

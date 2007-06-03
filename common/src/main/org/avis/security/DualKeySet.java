@@ -5,9 +5,8 @@ import java.util.Set;
 
 import static java.util.Collections.emptySet;
 
-import static org.avis.security.DualKeyScheme.PRODUCER;
-import static org.avis.security.DualKeyScheme.checkProdOrCon;
 import static org.avis.util.Collections.difference;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 
 /**
  * A pair of key sets (producer/consumer) used for dual key schemes.
@@ -46,14 +45,11 @@ class DualKeySet implements KeySet
   /**
    * Get the keys for a producer or consumer.
    * 
-   * @param prodOrCon One of {@link DualKeyScheme#PRODUCER} or
-   *          {@link DualKeyScheme#CONSUMER}.
+   * @param component One of PRODUCER or CONSUMER.
    */           
-  public Set<Key> keysFor (int prodOrCon)
+  public Set<Key> keysFor (DualKeyScheme.Subset component)
   {
-    checkProdOrCon (prodOrCon);
-    
-    if (prodOrCon == PRODUCER)
+    if (component == PRODUCER)
       return producerKeys;
     else
       return consumerKeys;
