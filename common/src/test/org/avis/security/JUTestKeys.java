@@ -3,8 +3,8 @@ package org.avis.security;
 import org.apache.mina.common.ByteBuffer;
 import org.junit.Test;
 
-import static org.avis.security.DualKeyScheme.CONSUMER;
-import static org.avis.security.DualKeyScheme.PRODUCER;
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.security.KeyScheme.SHA1_DUAL;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
