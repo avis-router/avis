@@ -629,9 +629,12 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * Send a notification with a set of keys but no requirement for
-   * secure delivery. See
-   * {@link #send(Notification, SecureMode, Keys)} for details.
+   * Send a notification with a set of keys but <b>with no requirement
+   * for secure delivery</b>: use
+   * <code>send (notification, REQUIRE_SECURE_DELIVERY, keys)</code>
+   * if you want only subscriptions with matching keys to receive this
+   * notification. See {@link #send(Notification, SecureMode, Keys)}
+   * for more details.
    */
   public void send (Notification notification, Keys keys)
     throws IOException
@@ -662,7 +665,8 @@ public final class Elvin implements Closeable
    * @param secureMode The security requirement.
    *          REQUIRE_SECURE_DELIVERY means the notification can only
    *          be received by subscriptions with keys matching the set
-   *          supplied here.
+   *          supplied here (or the connections'
+   *          {@linkplain #setNotificationKeys(Keys) global notification keys}).
    * @param keys The keys that must match for secure delivery.
    * 
    * @throws IOException if an IO error occurs.
