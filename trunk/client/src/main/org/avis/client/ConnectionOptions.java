@@ -12,60 +12,65 @@ import static org.avis.util.Util.valuesEqual;
 /**
  * Connection options sent by the client to the server.
  * 
- * <h2>Standard Elvin connection options</h2>
+ * <h2>Standard Elvin Connection Options</h2>
  * 
  * <p>
  * See http://elvin.org/specs for details on client connection
  * options.
  * </p>
  * 
- * Packet.Max-Length. Max packet length acceptable from a client.
- * <p>
- * Subscription.Max-Count. Maximum number of subscriptions allowed by
- * a single client.
- * <p>
- * Subscription.Max-Length. Maximum length, in bytes, of any
- * subscription expression.
- * <p>
- * Receive-Queue.Max-Length. The maximum size of the router's
- * per-client incoming packet queue, in bytes. If the queue exceeds
- * this size, the router will throttle the data stream from the client
- * until the queue drops below this value.
- * <p>
- * TCP.Send-Immediately. Set whether the TCP NO_DELAY flag is enabled
- * for sockets on the server side. 1 = send immediately (TCP NO_DELAY =
- * true), 0 = do not necessarily send immediately, buffer data for
- * optimal throughput (TCP NO_DELAY = false). Set this to 1 if you
- * experience lag with "real time" applications that require minimal
- * delivery latency, but note that this may result in an overall
- * reduction in throughput.
- * <p>
- * Attribute.Name.Max-Length. The maximum length, in bytes, of an
- * attribute name.
- * <p>
- * Attribute.Max-Count. The maximum number of attributes on a
- * notification.
- * <p>
- * Attribute.Opaque.Max-Length. Maximum length, in bytes, for opaque
- * values.
- * <p>
- * Attribute.String.Max-Length. Maximum length, in bytes, for opaque
- * values. Note that this value is not the number of characters: some
- * characters may take up to 5 bytes to respresent using the required
- * UTF-8 encoding.
- * <p>
- * Receive-Queue.Drop-Policy. This property describes the desired
- * behaviour of the router's packet receive queue if it exceeds the
- * negotitated maximum size. Values: "oldest", "newest", "largest",
- * "fail"
- * <p>
- * Send-Queue.Drop-Policy. This property describes the desired
- * behaviour of the router's packet send queue if it exceeds the
- * negotitated maximum size. Values: "oldest", "newest", "largest",
- * "fail"
- * <p>
- * Send-Queue.Max-Length. The maximum length (in bytes) of the routers
- * send queue.
+ * <dl>
+ * <dt>Packet.Max-Length</dt>
+ * <dd>Max packet length acceptable from a client.</dd>
+ * 
+ * <dt>Subscription.Max-Count</dt>
+ * <dd>Maximum number of subscriptions allowed by a single client.</dd>
+ * 
+ * <dt>Subscription.Max-Length</dt>
+ * <dd>Maximum length, in bytes, of any subscription expression.</dd>
+ * 
+ * <dt>Receive-Queue.Max-Length</dt>
+ * <dd>The maximum size of the router's per-client incoming packet
+ * queue, in bytes. If the queue exceeds this size, the router will
+ * throttle the data stream from the client until the queue drops
+ * below this value.</dd>
+ * 
+ * <dt>TCP.Send-Immediately</dt>
+ * <dd>Set whether the TCP NO_DELAY flag is enabled for sockets on
+ * the server side. 1 = send immediately (TCP NO_DELAY = true), 0 = do
+ * not necessarily send immediately, buffer data for optimal
+ * throughput (TCP NO_DELAY = false). Set this to 1 if you experience
+ * lag with "real time" applications that require minimal delivery
+ * latency, but note that this may result in an overall reduction in
+ * throughput.</dd>
+ * 
+ * <dt>Attribute.Name.Max-Length</dt>
+ * <dd>The maximum length, in bytes, of an attribute name.</dd>
+ * 
+ * <dt>Attribute.Max-Count</dt>
+ * <dd>The maximum number of attributes on a notification.</dd>
+ * 
+ * <dt>Attribute.Opaque.Max-Length</dt>
+ * <dd>Maximum length, in bytes, for opaque values.</dd>
+ * 
+ * <dt>Attribute.String.Max-Length</dt>
+ * <dd>Maximum length, in bytes, for opaque values. Note that this value
+ * is not the number of characters: some characters may take up to 5
+ * bytes to respresent using the required UTF-8 encoding.</dd>
+ * 
+ * <dt>Receive-Queue.Drop-Policy</dt>
+ * <dd>This property describes the desired behaviour of the router's
+ * packet receive queue if it exceeds the negotitated maximum size.
+ * Values: "oldest", "newest", "largest", "fail"</dd>
+ * 
+ * <dt>Send-Queue.Drop-Policy</dt>
+ * <dd>This property describes the desired behaviour of the router's
+ * packet send queue if it exceeds the negotitated maximum size.
+ * Values: "oldest", "newest", "largest", "fail"</dd>
+ * 
+ * <dt>Send-Queue.Max-Length</dt>
+ * <dd>The maximum length (in bytes) of the routers send queue.</dd>
+ * </dl>
  * 
  * @author Matthew Phillips
  */
@@ -150,7 +155,7 @@ public final class ConnectionOptions
    * Generate the difference between this option set and an actual set
    * returned by the server.
    */
-  protected Map<String, Object> differenceFrom (Map<String, Object> options)
+  Map<String, Object> differenceFrom (Map<String, Object> options)
   {
     HashMap<String, Object> diff = new HashMap<String, Object> ();
     

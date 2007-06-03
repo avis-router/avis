@@ -12,5 +12,8 @@ import java.util.EventListener;
  */
 public interface NotificationListener extends EventListener
 {
+  /**
+   * Called when a notification is received on a subscription.
+   */
   public void notificationReceived (NotificationEvent e);
 }

@@ -66,7 +66,7 @@ import static org.avis.util.Text.className;
  * 
  * <h3>Threading and synchrony notes</h3>
  * <p>
-  *
+ * 
  * <ul>
  * 
  * <li>This class is thread safe and may be accessed from any number
@@ -84,9 +84,10 @@ import static org.avis.util.Text.className;
  * changing subscriptions and sending notifications from a callback is
  * fully supported.
  * 
- * <li>While clients should try not to take a lot of time in a
- * callback, this connection will create extra callback threads if
- * needed if one callback takes too long.
+ * <li>Clients should not take a lot of time in a callback, since all
+ * other operations are blocked during this time. Use another thread,
+ * e.g. via an {@link ExecutorService}, if you need to performs a
+ * long-running operation.
  * </ul>
  * 
  * @todo add liveness test
@@ -173,7 +174,9 @@ public final class Elvin implements Closeable
    * @throws ConnectException if the socket to the router could not be
    *           opened, e.g. connection refused.
    * @throws IOException if a general network error occurs.
-   * 
+   * @throws ConnectionOptionsException if the router rejects a
+   *           connection option.
+   *           
    * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
    */
   public Elvin (ElvinURI routerUri, ConnectionOptions options)
@@ -209,7 +212,9 @@ public final class Elvin implements Closeable
    *           connection options. The client may elect to change the
    *           options and try to create a new connection.
    * @throws IOException if some other IO error occurs.
-   * 
+   * @throws ConnectionOptionsException if the router rejects a
+   *           connection option.
+   *           
    * @see #subscribe(String, SecureMode, Keys)
    * @see #send(Notification, SecureMode, Keys)
    * @see #setKeys(Keys, Keys)
@@ -976,10 +981,10 @@ public final class Elvin implements Closeable
    * @param ntfn The notification.
    * @param data General data attached to the event for the client's use.
    */
-  protected void fireSubscriptionNotify (long [] subscriptionIds,
-                                         boolean secure,
-                                         Notification ntfn,
-                                         Map<String, Object> data)
+  void fireSubscriptionNotify (long [] subscriptionIds,
+                               boolean secure,
+                               Notification ntfn,
+                               Map<String, Object> data)
   {
     for (long subscriptionId : subscriptionIds)
     {

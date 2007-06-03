@@ -63,6 +63,8 @@ public final class Subscription
   
   /**
    * Test if this subscription is still able to receive notifications.
+   * A subscription is inactive after a {@link #remove()} or when its
+   * underlying connection is closed.
    */
   public boolean isActive ()
   {
@@ -78,52 +80,23 @@ public final class Subscription
       throw new IllegalStateException ("Subscription is not active");
   }
 
+  /**
+   * The subscription expression.
+   */
   public String subscriptionExpr ()
   {
     return subscriptionExpr;
   }
-
-  public SecureMode secureMode ()
-  {
-    return secureMode;
-  }
-  
-  /**
-   * True if ALLOW_INSECURE_DELIVERY is enabled.
-   */
-  public boolean acceptInsecure ()
-  {
-    return secureMode == ALLOW_INSECURE_DELIVERY;
-  }
-
-  public Keys keys ()
-  {
-    return keys;
-  }
-  
-  /**
-   * Change the keys used for receiving secure notifications.
-   */
-  public void setKeys (Keys newKeys)
-    throws IOException
-  {
-    if (newKeys == null)
-      throw new IllegalArgumentException ("Keys cannot be null");
-    
-    synchronized (elvin)
-    {
-      checkLive ();
-      
-      elvin.modifyKeys (this, newKeys);
-      
-      this.keys = newKeys;
-    }    
-  }
   
   /**
    * Change the subscription expression.
+   * 
+   * @todo Use custom exception for invalid subscriptions.
+   * 
+   * @throws IOException if the subscription is invalid or if a
+   *           network error occurs.
    */
-  public void setSubscription (String newSubscriptionExpr)
+  public void setSubscriptionExpr (String newSubscriptionExpr)
     throws IOException
   {
     if (newSubscriptionExpr == null)
@@ -149,9 +122,54 @@ public final class Subscription
   }
 
   /**
+   * The secure mode specified for receipt of notifications.
+   */
+  public SecureMode secureMode ()
+  {
+    return secureMode;
+  }
+  
+  /**
+   * True if ALLOW_INSECURE_DELIVERY is enabled.
+   * 
+   * @see #secureMode()
+   */
+  public boolean acceptInsecure ()
+  {
+    return secureMode == ALLOW_INSECURE_DELIVERY;
+  }
+
+  /**
+   * The keys used to receive secure notifications.
+   */
+  public Keys keys ()
+  {
+    return keys;
+  }
+  
+  /**
+   * Change the keys used for receiving secure notifications.
+   */
+  public void setKeys (Keys newKeys)
+    throws IOException
+  {
+    if (newKeys == null)
+      throw new IllegalArgumentException ("Keys cannot be null");
+    
+    synchronized (elvin)
+    {
+      checkLive ();
+      
+      elvin.modifyKeys (this, newKeys);
+      
+      this.keys = newKeys;
+    }    
+  }
+
+  /**
    * Add a listener for notifications matched by this subscription.
    * 
-   * @see {@link Elvin#addNotificationListener(GeneralNotificationListener)}
+   * @see Elvin#addNotificationListener(GeneralNotificationListener)
    */
   public void addNotificationListener (NotificationListener listener)
   {
@@ -174,6 +192,11 @@ public final class Subscription
     }
   }
   
+  /**
+   * True if any listeners are in the listener list.
+   * 
+   * @see #addNotificationListener(NotificationListener)
+   */
   public boolean hasListeners ()
   {
     return notificationListeners.hasListeners ();

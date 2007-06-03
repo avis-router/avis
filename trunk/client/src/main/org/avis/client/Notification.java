@@ -53,9 +53,11 @@ public final class Notification
   Map<String, Object> attributes;
   
   /**
-   * Shortcut to generate a notification from an array of name/value pairs.
+   * Shortcut to generate a notification from an array of name/value
+   * pairs.
    * 
-   * @throw IllegalArgumentException if attributes is not a valid notification.
+   * @throws IllegalArgumentException if attributes do not represent a
+   *           valid notification.
    */
   public static Notification notification (Object... attributes)
     throws IllegalArgumentException
@@ -144,7 +146,8 @@ public final class Notification
   /**
    * Parse an expression representing a notification and populate the
    * given notification with the values. The format of this expression
-   * is compatible with that used by the ec/ep utilities. For example:
+   * is compatible with that used by the <code>ec</code> and
+   * <code>ep</code> utilities. For example:
    * 
    * <pre>
    *   An int32: 42
@@ -239,11 +242,19 @@ public final class Notification
     ntfn.attributes.put (name, value);
   }
 
+  /**
+   * Remove all attributes from the notification.
+   */
   public void clear ()
   {
     attributes.clear ();
   }
 
+  /**
+   * Create a copy of the notification.
+   * 
+   * @todo copy opaque arrays.
+   */
   @Override
   public Notification clone ()
     throws CloneNotSupportedException
@@ -316,16 +327,25 @@ public final class Notification
     return attributes.containsKey (name);
   }
 
+  /**
+   * The set of names in the notification. This is a live, unmodifiable set.
+   */
   public Set<String> names ()
   {
     return unmodifiableSet (attributes.keySet ());
   }
   
+  /**
+   * The set of values in the notification. This is a live, unmodifiable set.
+   */
   public Collection<Object> values ()
   {
     return unmodifiableCollection (attributes.values ());
   }
   
+  /**
+   * A live, unmodifiable Map view of this notification.
+   */
   public Map<String, Object> asMap ()
   {
     return unmodifiableMap (attributes);
@@ -410,11 +430,17 @@ public final class Notification
     return attributes.size ();
   }
 
+  /**
+   * True if size () == 0.
+   */
   public boolean isEmpty ()
   {
     return attributes.isEmpty ();
   }
 
+  /**
+   * The number of name/value pairs in the notification.
+   */
   public int size ()
   {
     return attributes.size ();
@@ -511,7 +537,7 @@ public final class Notification
   /**
    * Remove (unset) a value.
    * 
-   * @param the field name.
+   * @param name the field name.
    */
   public void remove (String name)
   {
