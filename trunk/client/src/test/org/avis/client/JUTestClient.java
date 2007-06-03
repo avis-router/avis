@@ -2,13 +2,6 @@ package org.avis.client;
 
 import java.io.IOException;
 
-import org.avis.client.ConnectionOptions;
-import org.avis.client.ConnectionOptionsException;
-import org.avis.client.Elvin;
-import org.avis.client.Notification;
-import org.avis.client.NotificationEvent;
-import org.avis.client.NotificationListener;
-import org.avis.client.Subscription;
 import org.avis.common.ElvinURI;
 import org.avis.security.Key;
 import org.avis.security.Keys;
@@ -24,7 +17,6 @@ import dsto.dfc.logging.Log;
 
 import static java.lang.System.currentTimeMillis;
 
-import static org.avis.client.Notification.notification;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
@@ -330,7 +322,7 @@ public class JUTestClient
     TestNtfnListener multiSubListener = new TestNtfnListener (multiSub);
     TestGeneralNtfnListener generalListener = new TestGeneralNtfnListener (elvin);
     
-    Notification ntfn = notification ("test", 1);
+    Notification ntfn = new Notification ("test", 1);
     
     // send insecure
     elvin.send (ntfn);
