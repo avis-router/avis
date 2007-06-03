@@ -15,7 +15,7 @@ public enum SecureMode
   
   /**
    * Allow clients without matching keys to receive the message. Those
-   * with matching keys will receive with the secure flag set.
+   * with matching keys will still receive securely.
    */
   ALLOW_INSECURE_DELIVERY;
 }

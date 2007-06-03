@@ -12,7 +12,8 @@ import java.util.Map;
 public final class NotificationEvent extends AvisEventObject
 {
   /**
-   * The subscription that matched the notification.
+   * The subscription that matched the notification. This is the same
+   * as {@link #getSource()}.
    */
   public final Subscription subscription;
   

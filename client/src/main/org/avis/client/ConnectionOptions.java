@@ -54,9 +54,9 @@ import static org.avis.util.Util.valuesEqual;
  * <dd>Maximum length, in bytes, for opaque values.</dd>
  * 
  * <dt>Attribute.String.Max-Length</dt>
- * <dd>Maximum length, in bytes, for opaque values. Note that this value
- * is not the number of characters: some characters may take up to 5
- * bytes to respresent using the required UTF-8 encoding.</dd>
+ * <dd>Maximum length, in bytes, for opaque values. Note that this
+ * value is not the number of characters: some characters may take up
+ * to 5 bytes to represent using the required UTF-8 encoding.</dd>
  * 
  * <dt>Receive-Queue.Drop-Policy</dt>
  * <dd>This property describes the desired behaviour of the router's

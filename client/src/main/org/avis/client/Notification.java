@@ -53,36 +53,6 @@ public final class Notification
   Map<String, Object> attributes;
   
   /**
-   * Shortcut to generate a notification from an array of name/value
-   * pairs.
-   * 
-   * @throws IllegalArgumentException if attributes do not represent a
-   *           valid notification.
-   */
-  public static Notification notification (Object... attributes)
-    throws IllegalArgumentException
-  {
-    if (attributes.length % 2 != 0)
-      throw new IllegalArgumentException
-        ("Attributes must be a list of name/value pairs");
-    
-    Notification ntfn = new Notification ();
-    
-    for (int i = 0; i < attributes.length; i += 2)
-    {
-      Object name = attributes [i];
-      
-      if (name instanceof String)
-        ntfn.set ((String)name, attributes [i + 1]);
-      else
-        throw new IllegalArgumentException
-          ("Item " + i + " is not a string name \"" + name + "\"");
-    }
-    
-    return ntfn;
-  }
-  
-  /**
    * Create an empty notification.
    */
   public Notification ()
@@ -93,6 +63,33 @@ public final class Notification
   Notification (NotifyDeliver message)
   {
     this.attributes = message.attributes;
+  }
+  
+  /**
+   * Create a notification from an array of name/value pairs.
+   * 
+   * @throws IllegalArgumentException if attributes do not represent a
+   *           valid notification.
+   */
+  public Notification (Object... attributes)
+    throws IllegalArgumentException
+  {
+    this ();
+    
+    if (attributes.length % 2 != 0)
+      throw new IllegalArgumentException
+        ("Attributes must be a list of name/value pairs");
+    
+    for (int i = 0; i < attributes.length; i += 2)
+    {
+      Object name = attributes [i];
+      
+      if (name instanceof String)
+        set ((String)name, attributes [i + 1]);
+      else
+        throw new IllegalArgumentException
+          ("Item " + i + " is not a string name \"" + name + "\"");
+    }
   }
   
   /**

@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 
 import org.avis.client.SecureMode;
 import org.avis.common.ElvinURI;
+import org.avis.security.DualKeyScheme;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.util.CommandLineOptions;
@@ -13,8 +14,8 @@ import org.avis.util.IllegalOptionException;
 
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
-import static org.avis.security.DualKeyScheme.CONSUMER;
-import static org.avis.security.DualKeyScheme.PRODUCER;
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.security.KeyScheme.SHA1_DUAL;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
@@ -80,10 +81,10 @@ public abstract class ToolOptions extends CommandLineOptions
     }
   }
   
-  private void addKey (int type, Key key)
+  private void addKey (DualKeyScheme.Subset subset, Key key)
   {
-    keys.add (type == CONSUMER ? SHA1_CONSUMER : SHA1_PRODUCER, key);
-    keys.add (SHA1_DUAL, type, key);
+    keys.add (subset == CONSUMER ? SHA1_CONSUMER : SHA1_PRODUCER, key);
+    keys.add (SHA1_DUAL, subset, key);
   }
 
   private static Key hexKeyFromFile (String filename)
