@@ -24,6 +24,8 @@ import dsto.dfc.logging.Log;
 
 import static java.lang.System.currentTimeMillis;
 
+import static org.avis.client.Notification.notification;
+import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -294,7 +296,105 @@ public class JUTestClient
       wait (sub);
     }
   }
+
+  /**
+   * Test subscription-specific and general (connection-wide)
+   * subscription listeners.
+   */
+  @Test
+  public void subscriptionListeners ()
+    throws Exception
+  {
+    createServer ();
+    
+    Key privateKey = new Key ("private");
+
+    Keys secureNtfnKeys = new Keys ();
+    secureNtfnKeys.add (SHA1_PRODUCER, privateKey);
+    
+    Keys secureSubKeys = new Keys ();
+    secureSubKeys.add (SHA1_PRODUCER, privateKey.publicKeyFor (SHA1_PRODUCER));
+    
+    Elvin elvin = new Elvin (ELVIN_URI);
+    Subscription secureSub =
+      elvin.subscribe ("require (test)", REQUIRE_SECURE_DELIVERY, secureSubKeys);
+    Subscription semiSecureSub =
+      elvin.subscribe ("require (test)", ALLOW_INSECURE_DELIVERY, secureSubKeys);
+    Subscription insecureSub = elvin.subscribe ("require (test)");
+    Subscription multiSub =
+      elvin.subscribe ("require (test) || require (frob)");
+    
+    TestNtfnListener secureSubListener = new TestNtfnListener (secureSub);
+    TestNtfnListener semiSecureSubListener = new TestNtfnListener (semiSecureSub);
+    TestNtfnListener insecureSubListener = new TestNtfnListener (insecureSub);
+    TestNtfnListener multiSubListener = new TestNtfnListener (multiSub);
+    TestGeneralNtfnListener generalListener = new TestGeneralNtfnListener (elvin);
+    
+    Notification ntfn = notification ("test", 1);
+    
+    // send insecure
+    elvin.send (ntfn);
+    
+    insecureSubListener.waitForNotification ();
+    semiSecureSubListener.waitForNotification ();
+    multiSubListener.waitForNotification ();
+    generalListener.waitForNotification ();
+    
+    assertInsecureMatch (generalListener, insecureSub);
+    assertInsecureMatch (generalListener, semiSecureSub);
+    assertInsecureMatch (generalListener, multiSub);
+    
+    secureSubListener.reset ();
+    insecureSubListener.reset ();
+    semiSecureSubListener.reset ();
+    multiSubListener.reset ();
+    generalListener.reset ();
+    
+    // send insecure with keys
+    elvin.send (ntfn, secureNtfnKeys);
+    
+    secureSubListener.waitForNotification ();
+    insecureSubListener.waitForNotification ();
+    semiSecureSubListener.waitForNotification ();
+    multiSubListener.waitForNotification ();
+    generalListener.waitForNotification ();
+    
+    assertSecureMatch (generalListener, secureSub);
+    assertInsecureMatch (generalListener, insecureSub);
+    assertSecureMatch (generalListener, semiSecureSub);
+    assertInsecureMatch (generalListener, multiSub);
+    
+    secureSubListener.reset ();
+    insecureSubListener.reset ();
+    semiSecureSubListener.reset ();
+    multiSubListener.reset ();
+    generalListener.reset ();
+    
+    // send secure
+    elvin.send (ntfn, secureNtfnKeys);
+    
+    secureSubListener.waitForNotification ();
+    semiSecureSubListener.waitForNotification ();
+    generalListener.waitForNotification ();
+    
+    assertSecureMatch (generalListener, secureSub);
+    assertSecureMatch (generalListener, semiSecureSub);
+    
+    elvin.close ();
+  }
+
+  private static void assertInsecureMatch (TestGeneralNtfnListener listener,
+                                           Subscription subscription)
+  {
+    assertTrue (listener.event.insecureMatches ().contains (subscription));
+  }
   
+  private static void assertSecureMatch (TestGeneralNtfnListener listener,
+                                         Subscription subscription)
+  {
+    assertTrue (listener.event.secureMatches ().contains (subscription));
+  }
+
   @Test
   public void connectionOptions ()
     throws Exception
@@ -441,6 +541,61 @@ public class JUTestClient
       client.send (ntfn, REQUIRE_SECURE_DELIVERY);
       
       wait (2000);
+    }
+    
+    public void reset ()
+    {
+      event = null;
+    }
+    
+    public synchronized void waitForNotification ()
+      throws InterruptedException
+    {
+      if (event == null)
+      {
+        long now = currentTimeMillis ();
+        
+        wait (2000);
+        
+        if (currentTimeMillis () - now >= 2000)
+          fail ("No notification received");
+      }
+    }
+  }
+  
+  static class TestGeneralNtfnListener implements GeneralNotificationListener
+  {
+    public GeneralNotificationEvent event;
+
+    public TestGeneralNtfnListener (Elvin elvin)
+    {
+      elvin.addNotificationListener (this);
+    }
+
+    public synchronized void notificationReceived (GeneralNotificationEvent e)
+    {
+      event = e;  
+      
+      notifyAll ();
+    }
+    
+    public void reset ()
+    {
+      event = null;
+    }
+    
+    public synchronized void waitForNotification ()
+      throws InterruptedException
+    {
+      if (event == null)
+      {
+        long now = currentTimeMillis ();
+        
+        wait (2000);
+        
+        if (currentTimeMillis () - now >= 2000)
+          fail ("No notification received");
+      }
     }
   }
 }
