@@ -108,7 +108,7 @@
   </target>
  
   <target name="dist-client" depends="jar-client,javadoc"
-          description="Build the client library distro">
+          description="Build the client library distribution package">
     
     <property name="ziproot" value="avis-client-${release-name}" />
     <property name="src_zip" value="build/avis-client-${release-name}.zip" />
@@ -121,14 +121,11 @@
     <mkdir dir="${src_tmp}/client/src/test" />
       
     <!-- create copy of source with license headers -->
-    
     <property name="header" value="src/avis_java_header.txt" />
 
     <copy todir="${src_tmp}/client">
       <fileset dir=".">
-        <include name="src/main/**/*.java"/>
-        <include name="src/main/**/*.jj"/>
-        <include name="src/test/**/*.java"/>
+        <include name="src/**/*.java"/>
       </fileset>
       
       <filterchain>
@@ -138,8 +135,7 @@
 
     <copy todir="${src_tmp}/common">
       <fileset dir="${common}">
-        <include name="src/main/**/*.java"/>
-        <include name="src/test/**/*.java"/>
+        <include name="src/**/*.java"/>
       </fileset>
       
       <filterchain>
