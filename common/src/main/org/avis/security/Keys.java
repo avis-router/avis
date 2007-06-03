@@ -15,26 +15,18 @@ import static org.avis.security.Keys.Delta.EMPTY_DELTA;
 
 /**
  * A key collection used to secure notifications. A key collection
- * contains zero or more mappings from a key scheme ({@link KeyScheme})
- * to the keys registered for that scheme.
+ * contains zero or more mappings from a {@linkplain KeyScheme key
+ * scheme} to the {@linkplain Key keys} registered for that scheme.
  * <p>
  * NB: Once in use, key collections should be treated as immutable
  * i.e. never be modified directly after construction.
  * <p>
- * The {@link #match(Keys)} method implements the logic to determine
- * whether one key set matches another for the purpose of notification
- * delivery.
- * <p>
- * 
  * See also section 7.4 of the client protocol spec.
  * 
  * @author Matthew Phillips
  */
 public class Keys
 {
-  public static final int PRODUCER = 0;
-  public static final int CONSUMER = 1;
-  
   /** An empty, immutable key collection. */
   public static final Keys EMPTY_KEYS = new EmptyKeys ();
 
@@ -506,15 +498,6 @@ public class Keys
       hash ^= 1 << scheme.id;
     
     return hash;
-  }
-  
-  /**
-   * Check whether the parameter is a valid PRODUCER/CONSUMER value.
-   */
-  static void checkProdOrCon (int prodOrCon)
-  {
-    if (prodOrCon != PRODUCER && prodOrCon != CONSUMER)
-      throw new IllegalArgumentException ("Not a valid producer/consumer code");
   }
 
   /**

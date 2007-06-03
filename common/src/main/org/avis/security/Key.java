@@ -56,7 +56,7 @@ public final class Key
   }
 
   /**
-   * Shorcut to generate the public (prime) key for a given scheme.
+   * Shortcut to generate the public (prime) key for a given scheme.
    * 
    * @see KeyScheme#publicKeyFor(Key)
    */
