@@ -273,7 +273,7 @@ public class JUTestClient
     final Subscription sub = client.subscribe ("require (test)");
     
     // change subscription
-    sub.setSubscription ("require (test2)");
+    sub.setSubscriptionExpr ("require (test2)");
     
     sub.addNotificationListener (new NotificationListener ()
     {
