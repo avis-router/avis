@@ -35,11 +35,13 @@ import static org.avis.util.Collections.list;
  * 
  * <p>
  * 
- * Example URI 1: <code>elvin://localhost:2917</code>.
+ * Example URI 1: <code>elvin://localhost:2917</code>
  * <p>
- * Example URI 2: <code>elvin:4.0/ssl,none,xdr/localhost:443</code>.
+ * Example URI 2: <code>elvin://localhost:2917;foo=true</code>
+ * <p>
+ * Example URI 3: <code>elvin:4.0/ssl,none,xdr/localhost:443</code>
  * 
- * todo need to support []'s in IPv6 addresses
+ * @todo need to support []'s in IPv6 addresses
  * 
  * @author Matthew Phillips
  */
@@ -63,17 +65,17 @@ public final class ElvinURI
     Pattern.compile ("(\\w+):(?:([^/]+))?/([^/]+)?/([^/].*?)(;.*)?");
 
   /**
-   * The URI string as passed into the constructor.
+   * The original URI string as passed into the constructor.
    */
   public String uriString;
   
   /**
-   * Major protocol version. Default {@link Common#CLIENT_VERSION_MAJOR}.
+   * Major protocol version. Default is {@link Common#CLIENT_VERSION_MAJOR}.
    */
   public int versionMajor;
   
   /**
-   * Minor protocol version. Default {@link Common#CLIENT_VERSION_MINOR}.
+   * Minor protocol version. Default is {@link Common#CLIENT_VERSION_MINOR}.
    */
   public int versionMinor;
   
@@ -85,17 +87,17 @@ public final class ElvinURI
   public List<String> protocol;
   
   /**
-   * Host name.
+   * The host name.
    */
   public String host;
   
   /**
-   * Port. Default {@link Common#DEFAULT_PORT}.
+   * The port. Default is {@link Common#DEFAULT_PORT}.
    */
   public int port;
 
   /**
-   * URI options: e.g. elvin://host:port;option1=value1;option2=value2
+   * The URI options. e.g. elvin://host:port;option1=value1;option2=value2
    */
   public Map<String, String> options;
 
@@ -194,6 +196,9 @@ public final class ElvinURI
     return uriString;
   }
   
+  /**
+   * Generate a canonical text version of this URI.
+   */
   public String toCanonicalString ()
   {
     StringBuilder str = new StringBuilder ();

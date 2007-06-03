@@ -180,7 +180,7 @@ public class Options
    *           
    * @see #get(String)
    * @see #remove(String)
-   * @see OptionSet#validateAndPut(Map, String, Object)
+   * @see OptionSet#validateAndPut(Options, String, Object)
    */
   public void set (String option, Object value)
     throws IllegalOptionException

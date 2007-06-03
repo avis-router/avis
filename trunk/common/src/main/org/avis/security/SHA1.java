@@ -215,7 +215,7 @@ public final class SHA1 implements Cloneable
    *          the array of bytes to use for the update.
    * @param offset
    *          the offset to start from in the array of bytes.
-   * @param length
+   * @param len
    *          the number of bytes to use, starting at offset.
    */
   public void engineUpdate (byte [] input, int offset, int len)
