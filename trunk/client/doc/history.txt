@@ -1,0 +1,6 @@
+Release 0.1 (June 5, 2007)
+----------------------------------------------------------------------
+
+This release is to gain feedback on the API. There are still some
+features missing, including auto reconnect, keepalive and router
+notifications on connect/disconnect.
