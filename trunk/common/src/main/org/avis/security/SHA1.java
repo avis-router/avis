@@ -19,6 +19,7 @@ package org.avis.security;
  */
 
 /**
+ * Implements the SHA-1 secure hash algorithm.
  * <p>
  * The FIPS PUB 180-2 standard specifies four secure hash algorithms (SHA-1,
  * SHA-256, SHA-384 and SHA-512) for computing a condensed representation of

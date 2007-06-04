@@ -6,12 +6,13 @@ import static org.avis.security.SecureHash.SHA1;
 import static org.avis.util.Collections.set;
 
 /**
- * This class defines an enumeration of supported Elvin security key
- * schemes.
+ * An enumeration of supported Elvin security key schemes.
  * <p>
  * A key scheme is either <em>single</em> sheme containing a single
  * set of keys, or a <em>dual</em> scheme, containing two key sets,
- * one for consuming notifications and one for producing them.
+ * one for consuming notifications and one for producing them. These
+ * two schemes are represented by the two subclasses of this abstract
+ * base class: {@link SingleKeyScheme} and {@link DualKeyScheme}.
  * <p>
  * A key scheme also defines a secure hash for generating public keys:
  * see the documentation on {@linkplain Key security keys} for more
@@ -48,7 +49,9 @@ import static org.avis.util.Collections.set;
  * 
  * Avis currently supports only schemes using the SHA-1 secure hash as
  * defined in version 4.0 of the Elvin protocol. As such, three
- * schemes are available: SHA1-Consumer, SHA1-Producer and SHA1-Dual.
+ * schemes are available: {@link #SHA1_CONSUMER SHA1-Consumer},
+ * {@link #SHA1_PRODUCER SHA1-Producer} and
+ * {@link #SHA1_DUAL SHA1-Dual}.
  * 
  * @author Matthew Phillips
  */
