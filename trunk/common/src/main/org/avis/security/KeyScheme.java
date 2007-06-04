@@ -61,12 +61,21 @@ import static org.avis.util.Collections.set;
  */
 public abstract class KeyScheme
 {  
+  /**
+   * The SHA-1 Dual key scheme.
+   */
   public static final DualKeyScheme SHA1_DUAL =
     new DualKeyScheme (1, SHA1);
   
+  /**
+   * The SHA-1 Producer key scheme.
+   */
   public static final SingleKeyScheme SHA1_PRODUCER =
     new SingleKeyScheme (2, SHA1, true, false);
   
+  /**
+   * The SHA-1 Consumer key scheme.
+   */
   public static final SingleKeyScheme SHA1_CONSUMER =
     new SingleKeyScheme (3, SHA1, false, true);
 
@@ -74,7 +83,8 @@ public abstract class KeyScheme
     set (SHA1_CONSUMER, SHA1_PRODUCER, SHA1_DUAL);
   
   /**
-   * The ID of the scheme. Same as the on-the-wire value.
+   * The unique ID of the scheme. This is the same as the on-the-wire
+   * ID used by Elvin.
    */
   public final int id;
   
