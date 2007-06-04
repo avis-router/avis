@@ -126,7 +126,7 @@ public abstract class KeyScheme
    *         notification from a producer with producerKeys in this
    *         scheme.
    */
-  public boolean match (KeySet producerKeys, KeySet consumerKeys)
+  boolean match (KeySet producerKeys, KeySet consumerKeys)
   {
     if (isDual ())
     {
