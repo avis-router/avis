@@ -332,6 +332,9 @@ public class JUTestClient
     multiSubListener.waitForNotification ();
     generalListener.waitForNotification ();
     
+    assertTrue (generalListener.event.matches ().contains (insecureSub));
+    assertFalse (generalListener.event.matches ().contains (secureSub));
+    
     assertInsecureMatch (generalListener, insecureSub);
     assertInsecureMatch (generalListener, semiSecureSub);
     assertInsecureMatch (generalListener, multiSub);
