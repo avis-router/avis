@@ -119,8 +119,6 @@ public class Keys
    * @param subset The key subset (PRODUCER or CONSUMER) to add the key to. 
    * @param key The key to add.
    * 
-   * @throws IllegalArgumentException if prodOrCon is not valid.
-   * 
    * @see #remove(DualKeyScheme, org.avis.security.DualKeyScheme.Subset, Key)
    */
   public void add (DualKeyScheme scheme,
@@ -139,8 +137,6 @@ public class Keys
    * @param subset The key subset (PRODUCER or CONSUMER) to remove the
    *          key from.
    * @param key The key to remove.
-   * 
-   * @throws IllegalArgumentException if prodOrCon is not valid.
    * 
    * @see #add(DualKeyScheme, org.avis.security.DualKeyScheme.Subset,
    *      Key)
