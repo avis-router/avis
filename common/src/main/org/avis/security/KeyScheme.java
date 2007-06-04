@@ -6,19 +6,10 @@ import static org.avis.security.SecureHash.SHA1;
 import static org.avis.util.Collections.set;
 
 /**
- * An enumeration of supported Elvin security key schemes.
- * <p>
- * A key scheme is either <em>single</em> sheme containing a single
- * set of keys, or a <em>dual</em> scheme, containing two key sets,
- * one for consuming notifications and one for producing them. These
- * two schemes are represented by the two subclasses of this abstract
- * base class: {@link SingleKeyScheme} and {@link DualKeyScheme}.
- * <p>
- * A key scheme also defines a secure hash for generating public keys:
- * see the documentation on {@linkplain Key security keys} for more
- * information on public and private keys used in key schemes.
+ * An enumeration of supported Elvin security schemes. A key scheme
+ * defines a mode of sending or receiving notifications securely.
  * 
- * <h2>The Producer Scheme</h2>
+ * <h3>The Producer Scheme</h3>
  * 
  * In the producer scheme, consumers of notifications ensure that a
  * notification producer is known to them. The producer uses the
@@ -26,7 +17,7 @@ import static org.avis.util.Collections.set;
  * keeps its private key secure, consumers can be assured they are
  * receiving notifications from a trusted producer.
  * 
- * <h2>The Consumer Scheme</h2>
+ * <h3>The Consumer Scheme</h3>
  * 
  * In the consumer scheme, producers of notifications ensure that a
  * notification consumer is known to them, i.e. the producer controls
@@ -36,20 +27,33 @@ import static org.avis.util.Collections.set;
  * secure, then the producer can be assured that only the trusted
  * consumer can receive its notifications.
  * 
- * <h2>The Dual Scheme</h2>
+ * <h3>The Dual Scheme</h3>
  * 
- * The dual scheme combines both the producer and consumer shemes, so
+ * The dual scheme combines both the producer and consumer schemes, so
  * that both ends can send and receive securely. Typically both ends
  * exchange public keys, and each end then emits notifications with
  * both its private key and the public key(s) of its intended
  * consumer(s) attached. Similarly, each end would subscribe using its
  * private key and the public key(s) of its intended producer(s).
  * 
- * <h2>Supported Schemes</h2>
+ * <h3>Avis Key Scheme API</h3>
  * 
- * Avis currently supports only schemes using the SHA-1 secure hash as
- * defined in version 4.0 of the Elvin protocol. As such, three
- * schemes are available: {@link #SHA1_CONSUMER SHA1-Consumer},
+ * The Elvin Producer and Consumer schemes both use a single set of
+ * keys, whereas the Dual scheme requires both a consumer key set and
+ * a producer key set. The schemes that require a single set of keys
+ * are defined by an instance of {@link SingleKeyScheme}, the Dual
+ * scheme is defined by an instance of {@link DualKeyScheme}.
+ * <p>
+ * Each key scheme also defines a {@link #keyHash secure hash} for
+ * generating its public keys: see the documentation on
+ * {@linkplain Key security keys} for more information on public and
+ * private keys used in key schemes.
+ * 
+ * <h3>Supported Schemes</h3>
+ * 
+ * Avis currently supports just the SHA-1 secure hash as defined in
+ * version 4.0 of the Elvin protocol. As such, three schemes are
+ * available: {@link #SHA1_CONSUMER SHA1-Consumer},
  * {@link #SHA1_PRODUCER SHA1-Producer} and
  * {@link #SHA1_DUAL SHA1-Dual}.
  * 
