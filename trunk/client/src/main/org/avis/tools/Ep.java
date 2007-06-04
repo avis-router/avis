@@ -29,6 +29,9 @@ import static org.avis.util.Util.eof;
  */
 public class Ep
 {
+  /**
+   * Run ep.
+   */
   public static void main (String [] args)
   {
     Log.setApplicationName ("ep");
@@ -50,6 +53,7 @@ public class Ep
       
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
+        @Override
         public void run ()
         {
           System.err.println ("ep: Closing connection");

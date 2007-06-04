@@ -80,9 +80,15 @@ public final class ConnectionOptions
 
   private Map<String, Object> values;
 
+  /**
+   * An immutable set of empty options.
+   */
   public static final ConnectionOptions EMPTY_OPTIONS =
     new ConnectionOptions (EMPTY_MAP);
-    
+  
+  /**
+   * Create an empty instance.
+   */
   public ConnectionOptions ()
   {
     this (new HashMap<String, Object> ());
@@ -117,11 +123,23 @@ public final class ConnectionOptions
     }
   }
   
+  /**
+   * Set an integer value.
+   * 
+   * @param name 
+   * @param value 
+   */
   public void set (String name, int value)
   {
     values.put (name, value);
   }
-  
+
+  /**
+   * Set a string value.
+   * 
+   * @param name 
+   * @param value 
+   */
   public void set (String name, String value)
   {
     if (value == null)

@@ -20,6 +20,9 @@ public class Hash
   private static final Object USAGE =
     "\nUsage: hash hash_type\n";
   
+  /**
+   * Run hash command.
+   */
   public static void main (String [] args)
   {
     if (args.length != 1)

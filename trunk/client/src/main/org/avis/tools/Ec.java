@@ -34,6 +34,9 @@ import static org.avis.security.Keys.EMPTY_KEYS;
  */
 public class Ec
 {
+  /**
+   * Run ec.
+   */
   public static void main (String [] args)
   {
     Log.setApplicationName ("ec");
@@ -55,6 +58,7 @@ public class Ec
       
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
+        @Override
         public void run ()
         {
           System.err.println ("ec: Closing connection");
@@ -84,7 +88,7 @@ public class Ec
     private DateFormat iso8601Date;
     private BufferedWriter output;
 
-    public Listener () 
+    Listener () 
       throws IOException
     {
       iso8601Date = new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
