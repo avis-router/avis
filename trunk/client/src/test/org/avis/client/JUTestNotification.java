@@ -1,11 +1,13 @@
 package org.avis.client;
 
 import java.util.Arrays;
-
-import org.avis.client.Notification;
-import org.avis.util.InvalidFormatException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
+
+import org.avis.util.InvalidFormatException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -191,6 +193,35 @@ public class JUTestNotification
     try
     {
       ntfn.getString ("field");
+      
+      fail ();
+    } catch (IllegalArgumentException ex)
+    {
+      // ok
+    }
+  }
+  
+  @Test
+  public void testConstructors ()
+  {
+    Map<String, Object> map = new HashMap<String, Object> ();
+    
+    map.put ("int", 32);
+    map.put ("string", "hello");
+    map.put ("long", 42L);
+    
+    Notification ntfn = new Notification (map);
+    assertEquals (map, ntfn.asMap ());
+    
+    ntfn = new Notification ("int", 32, "string", "hello", "long", 42L);
+    assertEquals (map, ntfn.asMap ());
+    
+    // check bad values
+    map.put ("bad", new Date ());
+    
+    try
+    {
+      new Notification (map);
       
       fail ();
     } catch (IllegalArgumentException ex)
