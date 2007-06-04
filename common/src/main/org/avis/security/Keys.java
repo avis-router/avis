@@ -297,7 +297,7 @@ public class Keys
    * @see #keysetFor(KeyScheme)
    * @see #keysetFor(SingleKeyScheme)
    */
-  public DualKeySet keysetFor (DualKeyScheme scheme)
+  DualKeySet keysetFor (DualKeyScheme scheme)
   {
     DualKeySet keys = (DualKeySet)keySets.get (scheme);
     
@@ -318,7 +318,7 @@ public class Keys
    * @see #keysetFor(KeyScheme)
    * @see #keysetFor(DualKeyScheme)
    */
-  public SingleKeySet keysetFor (SingleKeyScheme scheme)
+  SingleKeySet keysetFor (SingleKeyScheme scheme)
   {
     SingleKeySet keys = (SingleKeySet)keySets.get (scheme);
     
