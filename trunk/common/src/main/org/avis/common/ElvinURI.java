@@ -24,20 +24,23 @@ import static org.avis.util.Collections.list;
  * An Elvin URI identifying an Elvin router as described in the "Elvin
  * URI Scheme" specification at
  * http://elvin.org/specs/draft-elvin-uri-prelim-02.txt. The most
- * common Elvin URI for a TCP endpoint is of the form:
+ * common Elvin URI for a TCP endpoint is of the form (sections in in []
+ * are optional):
  * 
  * <pre>
- *   elvin:[version]/[protocol]/hostname[:port];[options]
+ *   elvin:[version]/[protocol]/hostname[:port][;options]
  *   
- *   protocol: transport,security,marshalling
- *   options:  name1=value1[;name2=value2]*
+ *   version:  protocol version major.minor form e.g. "4.0"
+ *   protocol: protocol stack in transport,security,marshalling order
+ *             e.g. "tcp,none,xdr"
+ *   options:  name1=value1[;name2=value2]* e.g. foo=bar;black=white
  * </pre>
  * 
  * <p>
  * 
  * Example URI 1: <code>elvin://localhost:2917</code>
  * <p>
- * Example URI 2: <code>elvin://localhost:2917;foo=true</code>
+ * Example URI 2: <code>elvin://192.168.0.2:2917;foo=true</code>
  * <p>
  * Example URI 3: <code>elvin:4.0/ssl,none,xdr/localhost:443</code>
  * 
