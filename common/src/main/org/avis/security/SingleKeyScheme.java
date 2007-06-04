@@ -1,7 +1,7 @@
 package org.avis.security;
 
 /**
- * A key scheme that requires a single key set e.g. SHA-1 Consumer.
+ * A key scheme that requires a single key set. e.g. SHA-1 Consumer.
  * 
  * @author Matthew Phillips
  */

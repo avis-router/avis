@@ -1,7 +1,7 @@
 package org.avis.security;
 
 /**
- * A key scheme that requires a pair of keys e.g. SHA-1 Dual.
+ * A key scheme that requires a pair of keys. e.g. SHA-1 Dual.
  * 
  * @author Matthew Phillips
  */
