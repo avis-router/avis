@@ -14,11 +14,22 @@ public abstract class AvisEventObject extends EventObject
 {
   private Map<String, Object> data;
 
+  /**
+   * Create a new instance.
+   * 
+   * @param source
+   */
   public AvisEventObject (Object source)
   {
     this (source, new HashMap<String, Object> ());
   }
   
+  /**
+   * Create a new instance.
+   * 
+   * @param source The event source.
+   * @param data The initial associated data.
+   */
   public AvisEventObject (Object source, Map<String, Object> data)
   {
     super (source);

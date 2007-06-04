@@ -40,11 +40,22 @@ public abstract class ToolOptions extends CommandLineOptions
     "  -C file   Read hex-coded consumer key from file\n" +
     "  -P file   Read hex-coded producer key from file";
   
+  /**
+   * The Elvin router to connect to.
+   */
   public ElvinURI elvinUri;
+  
+  /**
+   * The security keys.
+   */
   public Keys keys;
+  
+  /**
+   * The security requirement.
+   */
   public SecureMode secureMode;
   
-  public ToolOptions ()
+  ToolOptions ()
   {
     this.secureMode = ALLOW_INSECURE_DELIVERY;
     this.keys = new Keys ();

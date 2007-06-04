@@ -19,7 +19,7 @@ public class ConnectionOptionsException extends IOException
   /** The rejected options and the actual value that the server will use. */
   public final Map<String, Object> rejectedOptions;
 
-  public ConnectionOptionsException (ConnectionOptions options,
+  ConnectionOptionsException (ConnectionOptions options,
                                      Map<String, Object> rejectedOptions)
   {
     super ("Router rejected connection options: " +

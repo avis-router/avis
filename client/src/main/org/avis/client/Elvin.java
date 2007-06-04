@@ -86,7 +86,7 @@ import static org.avis.util.Text.className;
  * 
  * <li>Clients should not take a lot of time in a callback, since all
  * other operations are blocked during this time. Use another thread,
- * e.g. via an {@link ExecutorService}, if you need to performs a
+ * e.g. via an {@link ExecutorService}, if you need to perform a
  * long-running operation.
  * </ul>
  * 
@@ -211,8 +211,6 @@ public final class Elvin implements Closeable
    *           connection options. The client may elect to change the
    *           options and try to create a new connection.
    * @throws IOException if some other IO error occurs.
-   * @throws ConnectionOptionsException if the router rejects a
-   *           connection option.
    *           
    * @see #subscribe(String, SecureMode, Keys)
    * @see #send(Notification, SecureMode, Keys)
@@ -432,6 +430,8 @@ public final class Elvin implements Closeable
    * See {@link #subscribe(String, SecureMode, Keys)} for details.
    * 
    * @param subscriptionExpr The subscription expression.
+   * @param keys The keys to add to the subscription.
+   * 
    * @return The subscription instance.
    * 
    * @throws IOException if an IO error occurs.
@@ -634,11 +634,16 @@ public final class Elvin implements Closeable
   
   /**
    * Send a notification with a set of keys but <b>with no requirement
-   * for secure delivery</b>: use
-   * <code>send (notification, REQUIRE_SECURE_DELIVERY, keys)</code>
-   * if you want only subscriptions with matching keys to receive this
-   * notification. See {@link #send(Notification, SecureMode, Keys)}
-   * for more details.
+   * for secure delivery</b>: use <code>send (notification,
+   * REQUIRE_SECURE_DELIVERY, keys)</code> if you want only
+   * subscriptions with matching keys to receive a notification.
+   * <p>
+   * See {@link #send(Notification, SecureMode, Keys)} for more details.
+   * 
+   * @param notification The notification to send.
+   * @param keys The keys to attach to the notification.
+   * 
+   * @throws IOException if an IO error occurs during sending.
    */
   public void send (Notification notification, Keys keys)
     throws IOException
@@ -654,7 +659,12 @@ public final class Elvin implements Closeable
    * {@link #setNotificationKeys(Keys)}, the notification will never
    * be able to to be delivered.
    * <p>
-   * See {@link #send(Notification, SecureMode, Keys)} for details.
+   * See {@link #send(Notification, SecureMode, Keys)} for more details.
+   * 
+   * @param notification The notification to send.
+   * @param secureMode The security requirement.
+   * 
+   * @throws IOException if an IO error occurs during sending.
    */
   public void send (Notification notification, SecureMode secureMode)
     throws IOException
@@ -1014,12 +1024,20 @@ public final class Elvin implements Closeable
   
   class MessageHandler extends IoHandlerAdapter
   {
+    /**
+     * Handle exceptions from MINA.
+     */
+    @Override
     public void exceptionCaught (IoSession session, Throwable cause)
       throws Exception
     {
       alarm ("Unexpected exception in Elvin client", this, cause);
     }
 
+    /**
+     * Handle incoming messages from MINA.
+     */
+    @Override
     public void messageReceived (IoSession session, Object message)
       throws Exception
     {

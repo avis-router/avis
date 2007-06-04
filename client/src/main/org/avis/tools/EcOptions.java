@@ -4,12 +4,20 @@ import java.util.Queue;
 
 import org.avis.util.IllegalOptionException;
 
+/**
+ * Options for the ec command.
+ * 
+ * @author Matthew Phillips
+ */
 public class EcOptions extends ToolOptions
 {
   private static final String USAGE =
     "Usage: ec " + COMMON_USAGE_SUMMARY + " subscription\n\n" +
     COMMON_USAGE_DETAIL;
 
+  /**
+   * The subscription expression.
+   */
   public String subscription;
  
   @Override
