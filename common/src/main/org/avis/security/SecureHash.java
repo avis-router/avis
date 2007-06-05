@@ -1,7 +1,7 @@
 package org.avis.security;
 
 /**
- * An enumeration of supported secure hash schemes.
+ * An enumeration of supported secure hash algorithms.
  * 
  * @author Matthew Phillips
  */
