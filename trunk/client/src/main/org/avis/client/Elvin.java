@@ -999,10 +999,13 @@ public final class Elvin implements Closeable
     {
       Subscription subscription = subscriptions.get (subscriptionId);
       
-      if (subscription != null && subscription.hasListeners ())
+      if (subscription != null)
       {
-        subscription.notifyListeners
-          (new NotificationEvent (subscription, ntfn, secure, data));
+        if (subscription.hasListeners ())
+        {
+          subscription.notifyListeners
+            (new NotificationEvent (subscription, ntfn, secure, data));
+        }
       } else
       {
         warn ("Received notification for unknown subscription ID " +
