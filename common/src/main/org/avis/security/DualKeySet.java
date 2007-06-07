@@ -45,11 +45,11 @@ class DualKeySet implements KeySet
   /**
    * Get the keys for a producer or consumer.
    * 
-   * @param component One of PRODUCER or CONSUMER.
+   * @param subset One of PRODUCER or CONSUMER.
    */           
-  public Set<Key> keysFor (DualKeyScheme.Subset component)
+  public Set<Key> keysFor (DualKeyScheme.Subset subset)
   {
-    if (component == PRODUCER)
+    if (subset == PRODUCER)
       return producerKeys;
     else
       return consumerKeys;
