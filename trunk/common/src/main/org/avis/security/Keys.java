@@ -125,9 +125,7 @@ public class Keys
                    DualKeyScheme.Subset subset, Key key)
     throws IllegalArgumentException
   {
-    DualKeySet keySet = (DualKeySet)newKeysetFor (scheme);
-    
-    keySet.keysFor (subset).add (key);
+    newKeysetFor (scheme).keysFor (subset).add (key);
   }
   
   /**
@@ -175,10 +173,8 @@ public class Keys
   
   private void add (KeyScheme scheme, KeySet keys)
   {
-    if (keys.isEmpty ())
-      return;
-    
-    newKeysetFor (scheme).add (keys);
+    if (!keys.isEmpty ())
+      newKeysetFor (scheme).add (keys);
   }
 
   /**
@@ -333,11 +329,39 @@ public class Keys
    */
   private KeySet newKeysetFor (KeyScheme scheme)
   {
-    KeySet keys = keySets.get (scheme);
+    if (scheme.isDual ())
+      return newKeysetFor ((DualKeyScheme)scheme);
+    else
+      return newKeysetFor ((SingleKeyScheme)scheme);
+  }
+  
+  /**
+   * Lookup/create a key set for a single key scheme.
+   */
+  private SingleKeySet newKeysetFor (SingleKeyScheme scheme)
+  {
+    SingleKeySet keys = (SingleKeySet)keySets.get (scheme);
     
     if (keys == null)
     {
-      keys = scheme.isDual () ? new DualKeySet () : new SingleKeySet ();
+      keys = new SingleKeySet ();
+      
+      keySets.put (scheme, keys);
+    }
+    
+    return keys;
+  }
+  
+  /**
+   * Lookup/create a key set for a single key scheme.
+   */
+  private DualKeySet newKeysetFor (DualKeyScheme scheme)
+  {
+    DualKeySet keys = (DualKeySet)keySets.get (scheme);
+    
+    if (keys == null)
+    {
+      keys = new DualKeySet ();
       
       keySets.put (scheme, keys);
     }
@@ -428,7 +452,7 @@ public class Keys
             throw new ProtocolCodecException
               ("Dual key scheme with " + keySetCount + " key sets");
           
-          DualKeySet keyset = (DualKeySet)keys.newKeysetFor (scheme);
+          DualKeySet keyset = keys.newKeysetFor ((DualKeyScheme)scheme);
           
           decodeKeys (in, keyset.producerKeys);
           decodeKeys (in, keyset.consumerKeys);
@@ -438,7 +462,7 @@ public class Keys
             throw new ProtocolCodecException
               ("Single key scheme with " + keySetCount + " key sets");
           
-          decodeKeys (in, (SingleKeySet)keys.newKeysetFor (scheme));
+          decodeKeys (in, keys.newKeysetFor ((SingleKeyScheme)scheme));
         }
       }
       
