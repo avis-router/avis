@@ -55,7 +55,8 @@
  
   <target name="compile-examples" depends="compile"
           description="Compile examples">
-    <ant antfile="${common}/build-common.xml" target="compile-module" inheritrefs="true">
+    <ant antfile="${common}/build-common.xml"
+         target="compile-module" inheritrefs="true">
       <property name="module" value="examples" />
     </ant> 
   </target>
@@ -255,13 +256,31 @@
   </target>
  
   <target name="example-helloworld" depends="compile-examples">
+    <antcall target="run-example">
+      <param name="example" value="HelloWorld" /> 
+    </antcall> 
+  </target> 
+
+  <target name="example-wall-broadcaster" depends="compile-examples">
+    <antcall target="run-example">
+      <param name="example" value="WallBroadcaster" /> 
+    </antcall> 
+  </target> 
+
+  <target name="example-wall-receiver" depends="compile-examples">
+    <antcall target="run-example">
+      <param name="example" value="WallReceiver" /> 
+    </antcall> 
+  </target> 
+        
+  <target name="run-example" depends="compile-examples">
     <java classpathref="classpath"
-          classname="org.avis.client.examples.HelloWorld" fork="true">
+          classname="org.avis.client.examples.${example}" fork="true">
      
       <syspropertyset>
         <propertyref prefix="elvin"  />
       </syspropertyset> 
     </java> 
   </target> 
-  
+ 
 </project>
