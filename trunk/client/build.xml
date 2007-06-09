@@ -86,18 +86,18 @@
   <target name="javadoc"
           depends="check-javadoc-uptodate" unless="javadoc-uptodate"
           description="Build Javadocs">
-    <javadoc
-      destdir="build/javadoc"
+    <javadoc destdir="build/javadoc"
       author="true"
       version="true"
       use="true"
       windowtitle="Avis Client Library For Elvin"
       classpathref="classpath"
-      excludepackagenames="org.apache.*,org.slf4j.*,dsto.*,">
+      excludepackagenames="org.apache.*,org.slf4j.*">
       
       <packageset dir="src/main" defaultexcludes="yes">
         <include name="org/avis/client/**"/>
       </packageset>
+      
       <packageset dir="${common}/src/main" defaultexcludes="yes">
         <include name="org/avis/common/**"/>
         <include name="org/avis/security/**"/>
@@ -107,10 +107,13 @@
       
       <doctitle><![CDATA[<h1>Avis Client Library</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; 2007 Matthew Phillips. All Rights Reserved.</i>]]></bottom>
+      
       <tag name="todo" scope="all" description="To do:"/>
       
-    	<group title="Avis Client Library" packages="org.avis.client,org.avis.security"/>
-      <group title="Avis Common Support" packages="org.avis.common,org.avis.util,org.avis.logging"/>
+    	<group title="Avis Client Library"
+             packages="org.avis.client,org.avis.security"/>
+      <group title="Avis Common Support"
+             packages="org.avis.common,org.avis.util,org.avis.logging"/>
     	
       <link offline="true" href="http://java.sun.com/j2se/1.5.0/docs/api/"
       	    packagelistLoc="${basedir}/doc/java5-package-list" />
