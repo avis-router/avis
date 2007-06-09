@@ -71,11 +71,6 @@
     <jar destfile="lib/dfc.jar">
       <fileset dir="${dfc.home}/classes">
         <include name="dsto/dfc/tools/**/*.class" />
-        <include name="dsto/dfc/util/IndentPrintWriter*.class" />
-        <include name="dsto/dfc/logging/Log*.class" />
-        <include name="dsto/dfc/logging/LogFilter*.class" />
-        <include name="dsto/dfc/logging/LogEvent*.class" />
-        <include name="dsto/dfc/logging/LogListener*.class" />
       </fileset>
     </jar>
   </target>
