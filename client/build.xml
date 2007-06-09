@@ -124,10 +124,8 @@
     
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
-    <mkdir dir="${src_tmp}/common/src/main" />
-    <mkdir dir="${src_tmp}/common/src/test" />
-    <mkdir dir="${src_tmp}/client/src/main" />
-    <mkdir dir="${src_tmp}/client/src/test" />
+    <mkdir dir="${src_tmp}/common/src" />
+    <mkdir dir="${src_tmp}/client/src" />
       
     <!-- create copy of source with license headers -->
     <property name="header" value="src/avis_java_header.txt" />
