@@ -8,8 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.avis.subscription.ast.nodes.Or;
-
-import dsto.dfc.util.IndentPrintWriter;
+import org.avis.util.IndentingWriter;
 
 /**
  * General utilities for node trees.
@@ -30,14 +29,14 @@ public final class Nodes
    */
   public static String toString (Node node)
   {
-    IndentPrintWriter out = new IndentPrintWriter (new StringWriter ());
+    IndentingWriter out = new IndentingWriter (new StringWriter ());
     
     print (out, node);
     
     return out.toString ();
   }
 
-  private static void print (IndentPrintWriter out, Node<?> node)
+  private static void print (IndentingWriter out, Node<?> node)
   {
     out.print (node.presentation ());
     
