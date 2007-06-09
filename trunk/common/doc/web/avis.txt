@@ -5,16 +5,12 @@ Avis is an event router service compatible with the commercial Elvin
 implementation developed by [Mantara Software][mantara]. Avis provides
 a fast, general-purpose publish/subscribe message bus.
 
-Elvin event routers alllow arbitrary messages, known as
-*notifications*, to be exchanged via a publish/subscribe model. Elvin
-clients subscribe to messages published by other clients using
-expressions that match messages by their content.
-
-The content-based routing approach used in Elvin routers differs from
-many other message bus systems that operate by selecting messages
-published on pre-defined channels, and has the advantage of promoting
-a much higher level of decoupling between producers and consumers of
-events.
+Elvin event routers allow arbitrary messages, known as
+*notifications*, to be exchanged via a publish/subscribe model &mdash;
+Elvin clients subscribe to messages published by other clients using
+pattern-matching expressions that select messages by their
+content. Multiple Elvin routers can be federated together to form
+wide-area, lightweight event notification buses.
 
 The name "Avis" derives from the French word *avis*, meaning advice or
 notification.
@@ -23,40 +19,28 @@ notification.
 Applications
 ----------------------------------------------------------------------
 
-Current uses for Elvin event routers include providing the message bus
-for [instant messaging and virtual presence][tickertape.org], device
+Current uses for Elvin include providing a wide-area message bus for
+[instant messaging and virtual presence][tickertape.org], device
 coordination for smart meeting rooms and [distributed speech
 transcription for meetings][AuTM]. The commercial implementation
 developed by Mantara has been used extensively for high-volume
 financial transaction routing.
 
 Elvin has been picked up in many applications because of its
-lightweight approach and flexibility: see [this page][why_avis] for
-more discussion on why you might want to use it. The [examples][] page
-also demonstrates in more detail a scenario in which it can be
-employed.
+lightweight nature and flexibility: see [this page][why_avis] for more
+discussion on why you might want to use it. The [examples][] page also
+demonstrates in more detail a scenario in which it can be employed.
 
 
 Current Status
 ----------------------------------------------------------------------
 
-Avis is currently usable as a drop-in replacement for Mantara's
+Avis can be used a compatible drop-in replacement for Mantara's
 commercial `elvind` if quenching (for discovery of subscriptions) and
-federation (for wide-area routing) are not required.
-
-Future development items include:
-
- * A Java client library providing a similar capability to Mantara's
-   `je4` library. At this stage, Avis is only useful as a router for
-   existing Elvin clients using Mantara's client programming
-   libraries. This library will be released under the LGPL.
-
- * An `ewafd`-style federator to fill in until real federation is
-   implemented. This style of federation essentially federates using a
-   special client to exchange notifications between servers.
-
- * Implementing the *quench* API for allowing producers to discover
-   what clients are listening for.
+federation (for wide-area routing) are not required. Although Avis has
+not had the extensive optimisation and tuning that Mantara's
+implementation has, for most uses it has proven fast enough for this
+not to be an issue.
 
 See the [roadmap page][roadmap] for more information on what's planned
 for Avis.
