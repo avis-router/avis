@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import dsto.dfc.logging.Log;
+import org.avis.logging.Log;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -40,7 +40,7 @@ public class JUTestClient
   public void setup ()
   {
     logTester = new LogFailTester ();
-    Log.setEnabled (Log.TRACE, false);
+    Log.enableLogging (Log.TRACE, false);
   }
   
   @After

@@ -41,12 +41,12 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.diagnostic;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.trace;
-import static dsto.dfc.logging.Log.warn;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.logging.Log.trace;
+import static org.avis.logging.Log.warn;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
@@ -801,7 +801,7 @@ public final class Elvin implements Closeable
   {
     checkConnected ();
   
-    if (isEnabled (TRACE))
+    if (shouldLog (TRACE))
       trace ("Client sent message: " + message, this);
   
     clientSession.write (message);
@@ -1044,7 +1044,7 @@ public final class Elvin implements Closeable
     public void messageReceived (IoSession session, Object message)
       throws Exception
     {
-      if (isEnabled (TRACE))
+      if (shouldLog (TRACE))
         trace ("Client got message: " + message, this);
       
       if (message instanceof XidMessage)

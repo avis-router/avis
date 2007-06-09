@@ -16,10 +16,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static dsto.dfc.logging.Log.DIAGNOSTIC;
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.info;
-import static dsto.dfc.logging.Log.setEnabled;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.info;
+import static org.avis.logging.Log.enableLogging;
 
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
@@ -40,8 +40,8 @@ public class JUTestServerAttack
   public void setup ()
     throws IOException
   {
-    setEnabled (TRACE, false);
-    setEnabled (DIAGNOSTIC, false);
+    enableLogging (TRACE, false);
+    enableLogging (DIAGNOSTIC, false);
     
     random = new Random ();
     server = new Server (PORT);

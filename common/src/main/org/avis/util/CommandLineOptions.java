@@ -3,8 +3,7 @@ package org.avis.util;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import dsto.dfc.logging.Log;
-
+import org.avis.logging.Log;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;

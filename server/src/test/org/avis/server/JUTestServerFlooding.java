@@ -15,11 +15,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static dsto.dfc.logging.Log.DIAGNOSTIC;
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.info;
-import static dsto.dfc.logging.Log.setEnabled;
-import static dsto.dfc.logging.Log.warn;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.info;
+import static org.avis.logging.Log.enableLogging;
+import static org.avis.logging.Log.warn;
 
 import static java.lang.Thread.sleep;
 
@@ -74,8 +74,8 @@ public class JUTestServerFlooding
   public void floodingFairness ()
     throws Exception
   {
-    setEnabled (TRACE, false);
-    setEnabled (DIAGNOSTIC, false);
+    enableLogging (TRACE, false);
+    enableLogging (DIAGNOSTIC, false);
     
     MaliciousClient badClient = new MaliciousClient ("Bad client", "localhost", PORT);
     GoodClient goodClient1 = new GoodClient ("Good client 1", "localhost", PORT);
@@ -123,8 +123,8 @@ public class JUTestServerFlooding
   public void floodingHeap ()
     throws Exception
   {
-    setEnabled (TRACE, false);
-    setEnabled (DIAGNOSTIC, false);
+    enableLogging (TRACE, false);
+    enableLogging (DIAGNOSTIC, false);
     
     List<MaliciousClient> badClients = new ArrayList<MaliciousClient> ();
     
