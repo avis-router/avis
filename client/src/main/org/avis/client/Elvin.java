@@ -342,6 +342,29 @@ public final class Elvin implements Closeable
     ioExecutor.shutdown ();
     callbackExecutor.shutdown ();
   }
+  
+  /**
+   * Signal that this connection should be automatically closed when
+   * the VM exits. This should be used with care since it creates a
+   * shutdown thread on each call, and stops the connection from being
+   * GC'd if it is closed manually.
+   * <p>
+   * It is most suitable for small applications that want to create a
+   * connection, do something with it, and then cleanly shut down
+   * without having to worry about whether the VM exits normally, on
+   * Ctrl+C, System.exit (), etc.
+   */
+  public void closeOnExit ()
+  {
+    Runtime.getRuntime ().addShutdownHook (new Thread ()
+    {
+      @Override
+      public void run ()
+      {
+        close ();
+      }
+    });
+  }
 
   /**
    * Test if this connection is open i.e. has not been
