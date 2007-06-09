@@ -1,20 +1,29 @@
 <!-- Avis common build macros -->
 <project name="avis.build-common">
 
+  <property name="debug" value="true" />
+  
   <target name="compile" depends="compile-main,compile-tests" />
 
   <target name="compile-main">
     <mkdir dir="classes/main" />
 
-    <javac debug="true" classpathref="classpath"
+    <javac debug="${debug}" classpathref="classpath"
            srcdir="src/main" destdir="classes/main" />
   </target>
 
   <target name="compile-tests">
     <mkdir dir="classes/test" />
 
-    <javac debug="true" classpathref="classpath"
+    <javac debug="${debug}" classpathref="classpath"
            srcdir="src/test" destdir="classes/test" />
+  </target>
+
+  <target name="compile-module">
+    <mkdir dir="classes/${module}" />
+
+    <javac debug="${debug}" classpathref="classpath"
+           srcdir="src/${module}" destdir="classes/${module}" />
   </target>
  
   <target name="clean">
