@@ -102,6 +102,7 @@
         <include name="org/avis/common/**"/>
         <include name="org/avis/security/**"/>
         <include name="org/avis/util/**"/>
+        <include name="org/avis/logging/**"/>
       </packageset>
       
       <doctitle><![CDATA[<h1>Avis Client Library</h1>]]></doctitle>
@@ -109,7 +110,7 @@
       <tag name="todo" scope="all" description="To do:"/>
       
     	<group title="Avis Client Library" packages="org.avis.client,org.avis.security"/>
-      <group title="Avis Common Support" packages="org.avis.common,org.avis.util"/>
+      <group title="Avis Common Support" packages="org.avis.common,org.avis.util,org.avis.logging"/>
     	
       <link offline="true" href="http://java.sun.com/j2se/1.5.0/docs/api/"
       	    packagelistLoc="${basedir}/doc/java5-package-list" />
