@@ -21,11 +21,11 @@ import org.avis.client.Subscription;
  * other compatible router) locally, or use the public Elvin router at
  * public.elvin.org. To run the example from the console:
  * 
- *   ant example-helloworld
+ * > ant example-helloworld
  * 
  * or, if you aren't using a local router (elvin://localhost),
  *   
- *   ant example-helloworld -Delvin=elvin://public.elvin.org
+ * > ant example-helloworld -Delvin=elvin://public.elvin.org
  */
 /**
  * The HelloWorld example. See source code for more information.
