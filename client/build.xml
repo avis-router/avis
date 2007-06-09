@@ -255,23 +255,26 @@
     
   </target>
  
-  <target name="example-helloworld" depends="compile-examples">
+  <target name="example-helloworld" depends="compile-examples"
+          description="Run the Hello World example">
     <antcall target="run-example">
       <param name="example" value="HelloWorld" /> 
     </antcall> 
   </target> 
 
-  <target name="example-wall-broadcaster" depends="compile-examples">
+  <target name="example-wall-broadcaster"
+         description="Run the Wall Broadcaster example">
     <antcall target="run-example">
       <param name="example" value="WallBroadcaster" /> 
     </antcall> 
   </target> 
 
-  <target name="example-wall-receiver" depends="compile-examples">
+  <target name="example-wall-receiver"
+          description="Run the Wall Receiver example">
     <antcall target="run-example">
       <param name="example" value="WallReceiver" /> 
     </antcall> 
-  </target> 
+  </target>
         
   <target name="run-example" depends="compile-examples">
     <java classpathref="classpath"
