@@ -10,10 +10,10 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import org.avis.common.ElvinURI;
+import org.avis.common.InvalidURIException;
 import org.avis.util.IllegalOptionException;
 import org.avis.util.OptionSet;
 import org.avis.util.Options;
@@ -113,7 +113,7 @@ public class ServerOptions extends Options
           else if (!address.isLinkLocalAddress ())
             addresses.add (new InetSocketAddress (address, uri.port));
         }
-      } catch (URISyntaxException ex)
+      } catch (InvalidURIException ex)
       {
         throw new IllegalOptionException
           ("Listen",

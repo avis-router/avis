@@ -185,7 +185,7 @@ public class JUTestElvinURI
       new ElvinURI (uriString);
       
       fail ("Invalid URI \"" + uriString + "\" not detected");
-    } catch (URISyntaxException ex)
+    } catch (InvalidURIException ex)
     {
       // ok
       // System.out.println ("error = " + ex.getMessage ());
