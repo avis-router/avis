@@ -96,7 +96,9 @@
 
   <target name="avisd-jar-uptodate">
     <dependset>
+      <srcfileset dir="${common}/classes/main" includes="**/*.class" />
       <srcfileset dir="classes/main" includes="**/*.class" />
+      
       <targetfileset dir="build">
         <include name="avisd.jar" />
       </targetfileset>
