@@ -17,15 +17,6 @@ import org.avis.util.ListenerList;
  */
 public final class Log
 {
-  private static final ThreadLocal<DateFormat> DATE_FORMAT =
-    new ThreadLocal<DateFormat> ()
-  {
-    protected DateFormat initialValue ()
-    {
-      return DateFormat.getTimeInstance ();
-    }
-  };
-  
   public static final int TRACE = 0;
   public static final int DIAGNOSTIC = 1;
   public static final int INFO = 2;
@@ -36,6 +27,15 @@ public final class Log
   private static final String [] TYPE_NAMES =
     new String [] {"Trace", "Diagnostic", "Info",
                    "Warning", "Alarm", "Internal Error"};
+  
+  private static final ThreadLocal<DateFormat> DATE_FORMAT =
+    new ThreadLocal<DateFormat> ()
+  {
+    protected DateFormat initialValue ()
+    {
+      return DateFormat.getTimeInstance ();
+    }
+  };
   
   private static String applicationName;
   private static PrintWriter stdout;
@@ -166,10 +166,9 @@ public final class Log
   private static void log (int type, String message, Object source,
                            Throwable exception)
   {
-    Date time = new Date ();
-
     if (shouldLog (type))
     {
+      Date time = new Date ();
       StringBuilder str = new StringBuilder ();
       
       printMessage (str, type, time, message, exception);
@@ -193,7 +192,8 @@ public final class Log
       if (listeners.hasListeners ())
       {
         listeners.fire ("messageLogged",
-                        new LogEvent (source, time, type, message, exception));
+                        new LogEvent (source, new Date (),
+                                      type, message, exception));
       }      
     }
   }
