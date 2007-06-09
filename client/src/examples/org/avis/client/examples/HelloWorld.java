@@ -18,9 +18,6 @@ import org.avis.client.Subscription;
  * See the documentation in "doc/examples.txt" for instructions on how to
  * use the Avis examples.
  */
-/**
- * The HelloWorld example. See source code for more information.
- */
 public class HelloWorld
 {
   public static void main (String [] args)
