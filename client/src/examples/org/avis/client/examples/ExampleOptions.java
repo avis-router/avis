@@ -7,6 +7,8 @@ import org.avis.common.InvalidURIException;
 import org.avis.util.CommandLineOptions;
 import org.avis.util.IllegalOptionException;
 
+import static java.lang.System.getProperty;
+
 /**
  * Command line options that are common across ec and ep.
  * 
@@ -27,7 +29,7 @@ public class ExampleOptions extends CommandLineOptions
   
   ExampleOptions (String appName)
   {
-    this.elvinUri = new ElvinURI ("elvin://localhost");
+    this.elvinUri = new ElvinURI (getProperty ("elvin", "elvin://localhost"));
     
     this.appName = appName;
   }
