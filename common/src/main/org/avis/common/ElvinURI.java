@@ -7,9 +7,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import java.net.URISyntaxException;
-
-
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
@@ -111,10 +108,10 @@ public final class ElvinURI
    * 
    * @param uriString The URI.
    * 
-   * @throws URISyntaxException if the URI is not valid.
+   * @throws InvalidURIException if the URI is not valid.
    */
   public ElvinURI (String uriString)
-    throws URISyntaxException
+    throws InvalidURIException
   {
     init ();
 
@@ -147,10 +144,10 @@ public final class ElvinURI
    * @param uriString The URI string.
    * @param defaultUri The URI to use for any values that are not
    *          specified by uriString.
-   * @throws URISyntaxException if the URI is not valid.
+   * @throws InvalidURIException if the URI is not valid.
    */
   public ElvinURI (String uriString, ElvinURI defaultUri)
-    throws URISyntaxException
+    throws InvalidURIException
   {
     init (defaultUri);
     
@@ -255,16 +252,16 @@ public final class ElvinURI
   }
   
   private void parseUri ()
-    throws URISyntaxException
+    throws InvalidURIException
   { 
     Matcher matcher = URL_PATTERN.matcher (uriString);
     
     if (!matcher.matches ())
     {
-      throw new URISyntaxException (uriString, "Not a valid Elvin URI");
+      throw new InvalidURIException (uriString, "Not a valid Elvin URI");
     } else if (!matcher.group (1).equals ("elvin"))
     {
-      throw new URISyntaxException (uriString,
+      throw new InvalidURIException (uriString,
                                     "Elvin URI scheme must be \"elvin:\"");
     }
     
@@ -285,7 +282,7 @@ public final class ElvinURI
   }
 
   private void parseVersion (String versionExpr)
-    throws URISyntaxException
+    throws InvalidURIException
   {
     Matcher versionMatch =
       Pattern.compile ("(\\d+)(?:\\.(\\d+))?").matcher (versionExpr);
@@ -300,20 +297,20 @@ public final class ElvinURI
           versionMinor = parseInt (versionMatch.group (2));
       } catch (NumberFormatException ex)
       {
-        throw new URISyntaxException (uriString,
-                                      "Number too large in version string: \"" +
-                                      versionExpr + "\"");
+        throw new InvalidURIException (uriString,
+                                       "Number too large in version string: \"" +
+                                       versionExpr + "\"");
       }
     } else
     {
-      throw new URISyntaxException (uriString,
-                                    "Invalid version string: \"" +
-                                    versionExpr + "\"");
+      throw new InvalidURIException (uriString,
+                                     "Invalid version string: \"" +
+                                     versionExpr + "\"");
     }
   }
   
   private void parseProtocol (String protocolExpr)
-    throws URISyntaxException
+    throws InvalidURIException
   {
     Matcher protocolMatch =
       Pattern.compile ("(?:(\\w+),(\\w+),(\\w+))|secure").matcher (protocolExpr);
@@ -326,14 +323,14 @@ public final class ElvinURI
         protocol = SECURE_PROTOCOL;
     } else
     {
-      throw new URISyntaxException (uriString,
-                                    "Invalid protocol: \"" +
-                                    protocolExpr + "\"");
+      throw new InvalidURIException (uriString,
+                                     "Invalid protocol: \"" +
+                                     protocolExpr + "\"");
     }
   }
   
   private void parseEndpoint (String endpoint)
-    throws URISyntaxException
+    throws InvalidURIException
   {
     Matcher endpointMatch =
       Pattern.compile ("([^:]+)(?::(\\d+))?").matcher (endpoint);
@@ -346,12 +343,12 @@ public final class ElvinURI
         port = parseInt (endpointMatch.group (2));
     } else
     {
-      throw new URISyntaxException (uriString, "Invalid port number");
+      throw new InvalidURIException (uriString, "Invalid port number");
     }
   }
   
   private void parseOptions (String optionsExpr)
-    throws URISyntaxException
+    throws InvalidURIException
   {
     Matcher optionMatch =
       Pattern.compile (";([^=;]+)=([^=;]*)").matcher (optionsExpr);
@@ -369,7 +366,7 @@ public final class ElvinURI
     }
     
     if (index != optionsExpr.length ())
-      throw new URISyntaxException
+      throw new InvalidURIException
         (uriString, "Invalid options: \"" + optionsExpr + "\"");
   }
 

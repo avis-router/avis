@@ -2,10 +2,9 @@ package org.avis.tools;
 
 import java.util.Queue;
 
-import java.net.URISyntaxException;
-
 import org.avis.client.SecureMode;
 import org.avis.common.ElvinURI;
+import org.avis.common.InvalidURIException;
 import org.avis.security.DualKeyScheme;
 import org.avis.security.Key;
 import org.avis.security.Keys;
@@ -72,7 +71,7 @@ public abstract class ToolOptions extends CommandLineOptions
       try
       {
         elvinUri = new ElvinURI (stringArg (args));
-      } catch (URISyntaxException ex)
+      } catch (InvalidURIException ex)
       {
         throw new IllegalOptionException
           (arg, "Invalid Elvin URI: " + ex.getMessage ());
