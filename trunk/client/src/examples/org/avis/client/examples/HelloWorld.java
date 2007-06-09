@@ -15,17 +15,8 @@ import org.avis.client.Subscription;
  * another to receive a message. In this example, we use the
  * subscription object to wait on the receipt of a greeting message.
  * 
- * Running The Example
- * 
- * You will need an Elvin router -- either install the Avis router (or
- * other compatible router) locally, or use the public Elvin router at
- * public.elvin.org. To run the example from the console:
- * 
- * > ant example-helloworld
- * 
- * or, if you aren't using a local router (elvin://localhost),
- *   
- * > ant example-helloworld -Delvin=elvin://public.elvin.org
+ * See the documentation in "doc/examples.txt" for instructions on how to
+ * use the Avis examples.
  */
 /**
  * The HelloWorld example. See source code for more information.

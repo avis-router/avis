@@ -9,26 +9,8 @@ import org.avis.client.GeneralNotificationListener;
  * example, one or more "wall" broadcasters send typed characters from
  * the console to zero or more wall receivers.
  * 
- * Running The Example
- * 
- * You will need an Elvin router -- either install the Avis router (or
- * other compatible router) locally, or use the public Elvin router at
- * public.elvin.org.
- * 
- * To run a receiver from the console:
- * 
- * > ant example-wall-receiver
- * 
- * To run the broadcaster, open a new console and run:
- * 
- * > ant example-wall-broadcaster
- * 
- * Try running multiple broadcasters and receivers.
- * 
- * If you aren't using a local router (elvin://localhost), add
- * -Delvin=elvin://public.elvin.org to the commands, e.g.
- * 
- * > ant example-wall-broadcaster -Delvin=elvin://public.elvin.org
+ * See the documentation in "doc/examples.txt" for instructions on how to
+ * use the Avis examples.
  */
 public class WallReceiver
 {
