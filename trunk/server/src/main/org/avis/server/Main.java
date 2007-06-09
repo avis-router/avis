@@ -8,16 +8,16 @@ import org.apache.mina.common.ByteBuffer;
 
 import org.avis.util.IllegalOptionException;
 
-import dsto.dfc.logging.Log;
+import org.avis.logging.Log;
 
-import static dsto.dfc.logging.Log.DIAGNOSTIC;
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.diagnostic;
-import static dsto.dfc.logging.Log.info;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.setEnabled;
-import static dsto.dfc.logging.Log.warn;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.info;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.logging.Log.enableLogging;
+import static org.avis.logging.Log.warn;
 
 import static org.avis.util.CommandLine.intArg;
 import static org.avis.util.CommandLine.stringArg;
@@ -44,8 +44,8 @@ public class Main
   {
     Log.setApplicationName ("Avis");
     
-    setEnabled (TRACE, false);
-    setEnabled (DIAGNOSTIC, false);
+    enableLogging (TRACE, false);
+    enableLogging (DIAGNOSTIC, false);
     
     /*
      * todo opt: consider heap or direct buffer setting. Some
@@ -72,11 +72,11 @@ public class Main
       
         if (arg.equals ("-v"))
         {
-          setEnabled (DIAGNOSTIC, true);
+          enableLogging (DIAGNOSTIC, true);
         } else if (arg.equals ("-vv"))
         {
-          setEnabled (DIAGNOSTIC, true);
-          setEnabled (TRACE, true);
+          enableLogging (DIAGNOSTIC, true);
+          enableLogging (TRACE, true);
         } else if (arg.equals ("-p"))
         {
           config.set ("Port", intArg (args, ++i));
@@ -98,7 +98,7 @@ public class Main
     {
       alarm ("Error configuring server: " + ex.getMessage (), Main.class);
       
-      if (isEnabled (DIAGNOSTIC))
+      if (shouldLog (DIAGNOSTIC))
         ex.printStackTrace ();
       
       exit (2);
@@ -126,7 +126,7 @@ public class Main
       else
         alarm ("Error starting server: " + ex.getMessage (), Main.class);
         
-      if (isEnabled (DIAGNOSTIC))
+      if (shouldLog (DIAGNOSTIC))
         ex.printStackTrace ();
       
       exit (2);

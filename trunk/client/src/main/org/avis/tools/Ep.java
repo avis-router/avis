@@ -10,12 +10,12 @@ import org.avis.client.Elvin;
 import org.avis.client.Notification;
 import org.avis.util.InvalidFormatException;
 
-import dsto.dfc.logging.Log;
+import org.avis.logging.Log;
 
-import static dsto.dfc.logging.Log.DIAGNOSTIC;
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.setEnabled;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.enableLogging;
 
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -36,8 +36,8 @@ public class Ep
   {
     Log.setApplicationName ("ep");
 
-    setEnabled (TRACE, false);
-    setEnabled (DIAGNOSTIC, false);
+    enableLogging (TRACE, false);
+    enableLogging (DIAGNOSTIC, false);
     
     EpOptions options = new EpOptions ();
     

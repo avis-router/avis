@@ -16,12 +16,12 @@ import org.avis.client.NotificationEvent;
 import org.avis.client.NotificationListener;
 import org.avis.client.Subscription;
 
-import dsto.dfc.logging.Log;
+import org.avis.logging.Log;
 
-import static dsto.dfc.logging.Log.DIAGNOSTIC;
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.setEnabled;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.enableLogging;
 
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -41,8 +41,8 @@ public class Ec
   {
     Log.setApplicationName ("ec");
 
-    setEnabled (TRACE, false);
-    setEnabled (DIAGNOSTIC, false);
+    enableLogging (TRACE, false);
+    enableLogging (DIAGNOSTIC, false);
     
     EcOptions options = new EcOptions ();
 

@@ -36,7 +36,7 @@ import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
 import org.avis.io.messages.XidMessage;
 
-import static dsto.dfc.logging.Log.internalError;
+import static org.avis.logging.Log.internalError;
 
 /**
  * Codec for Elvin message frames. Reads/writes messages to/from the

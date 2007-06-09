@@ -31,8 +31,8 @@ import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubRply;
 import org.avis.security.Keys;
 
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.trace;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.trace;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;

@@ -51,13 +51,13 @@ import org.avis.subscription.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 import org.avis.util.IllegalOptionException;
 
-import static dsto.dfc.logging.Log.DIAGNOSTIC;
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.diagnostic;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.trace;
-import static dsto.dfc.logging.Log.warn;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.logging.Log.trace;
+import static org.avis.logging.Log.warn;
 
 import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
@@ -149,7 +149,7 @@ public class Server implements IoHandler, Closeable
     
     for (InetSocketAddress address : options.bindAddresses ())
     {
-      if (isEnabled (DIAGNOSTIC))
+      if (shouldLog (DIAGNOSTIC))
         diagnostic ("Router binding to address: " + address, this);
 
       acceptor.bind (address, this, acceptorConfig);
@@ -206,7 +206,7 @@ public class Server implements IoHandler, Closeable
 
   private static WriteFuture send (IoSession session, Message message)
   {    
-    if (isEnabled (TRACE))
+    if (shouldLog (TRACE))
     {
       trace ("Server sent message to " + idFor (session) + ": " + message,
              Server.class);
@@ -223,7 +223,7 @@ public class Server implements IoHandler, Closeable
     if (closing)
       return;
     
-    if (isEnabled (TRACE))
+    if (shouldLog (TRACE))
       trace ("Server got message from " + idFor (session) +
              ": " + messageObject, this);
     
@@ -678,7 +678,7 @@ public class Server implements IoHandler, Closeable
   public void sessionClosed (IoSession session)
     throws Exception
   {
-    if (isEnabled (TRACE))
+    if (shouldLog (TRACE))
       trace ("Server session " + idFor (session) + " closed", this);
     
     sessions.remove (session);

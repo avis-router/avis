@@ -3,15 +3,13 @@ package org.avis.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import dsto.dfc.logging.LogEvent;
-import dsto.dfc.logging.LogListener;
+import org.avis.logging.LogEvent;
+import org.avis.logging.LogListener;
 
-import static dsto.dfc.logging.Log.ALARM;
-import static dsto.dfc.logging.Log.INTERNAL_ERROR;
-import static dsto.dfc.logging.Log.WARNING;
-import static dsto.dfc.logging.Log.addLogListener;
-import static dsto.dfc.logging.Log.removeLogListener;
-import static dsto.dfc.logging.Log.toLogString;
+import static org.avis.logging.Log.WARNING;
+import static org.avis.logging.Log.addLogListener;
+import static org.avis.logging.Log.removeLogListener;
+import static org.avis.logging.Log.toLogString;
 
 import static org.junit.Assert.fail;
 
@@ -49,15 +47,9 @@ public class LogFailTester implements LogListener
     }
   }
   
-  public void messageReceived (LogEvent e)
+  public void messageLogged (LogEvent e)
   {
-    int type = e.getType ();
-    
-    if (type == ALARM ||
-        type == INTERNAL_ERROR ||
-        type == WARNING)
-    {
+    if (e.type >= WARNING)
       errors.add (e);
-    }
   }
 }

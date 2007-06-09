@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
 
-import static dsto.dfc.logging.Log.alarm;
+import static org.avis.logging.Log.alarm;
 
 public class MaliciousClient extends AgentClient
 {
