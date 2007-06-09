@@ -189,7 +189,9 @@
 
   <target name="check-jars-uptodate">
     <dependset>
+      <srcfileset dir="${common}/classes/main" includes="**/*.class" />
       <srcfileset dir="classes/main" includes="**/*.class" />
+      
       <targetfileset dir="build">
         <include name="avis-client.jar" />
         <include name="avis-tools.jar" />
