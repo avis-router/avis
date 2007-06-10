@@ -75,3 +75,42 @@ it send) and see it sent to the two receivers. Try running more
 broadcasters and receivers.
 
 ec command: ec -e elvin://localhost "From == 'wall'"
+
+
+SecureSender & SecureReceiver
+----------------------------------------------------------------------
+
+In this example we set up a situation where a sender wants to ensure
+that only receivers it trusts can see its messages. The sender and
+receiver(s) agree on a secret password and security scheme (SHA-1
+Consumer), and then the sender uses the public version of the key and
+receivers use the private version.
+
+See the documentation attached to the Avis KeyScheme class for more
+details on how security schemes work.
+
+For example:
+
+  Console 1:
+  > ant example-secure-receiver
+  ...
+  > Enter the password for receiving: password
+  > Listening for messages...
+
+  Console 2:
+  > ant example-secure-sender
+  ...
+  > Enter the password for sending: password
+  > Enter the text to send: Hello (secure) world
+  > Message sent!
+
+You should see the message text from Console 2 appear on Console 1. If
+you run the command again in Console 2, but use a different password,
+you will see that the Console 1 client will no longer be able to
+receive it.
+
+ec command: for this example you need to provide ec with the security
+keys needed to receive the secure messages sent between the two
+clients. e.g.
+
+  > ec -e elvin://localhost -c password "From == 'secure-sender'"
