@@ -41,21 +41,21 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
-import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.alarm;
-import static org.avis.logging.Log.diagnostic;
-import static org.avis.logging.Log.shouldLog;
-import static org.avis.logging.Log.trace;
-import static org.avis.logging.Log.warn;
-
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.logging.Log.trace;
+import static org.avis.logging.Log.warn;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
+import static org.avis.util.Util.checkNotNull;
 
 /**
  * Manages a client's connection to an Elvin router. Typically a
@@ -272,9 +272,15 @@ public final class Elvin implements Closeable
     this.receiveTimeout = 10000;
     
     if (!routerUri.protocol.equals (defaultProtocol ()))
+    {
       throw new IllegalArgumentException
         ("Only the default protocol stack " +
          defaultProtocol () + " is currently supported");
+    }
+    
+    checkNotNull (notificationKeys, "Notification keys");
+    checkNotNull (subscriptionKeys, "Subscription keys");
+    checkNotNull (connectionOptions, "Connection  options");
     
     openConnection ();
     
@@ -447,6 +453,10 @@ public final class Elvin implements Closeable
    */
   public synchronized void setReceiveTimeout (int receiveTimeout)
   {
+    if (receiveTimeout < 0)
+      throw new IllegalArgumentException
+        ("Timeout cannot be < 0: " + receiveTimeout);
+    
     this.receiveTimeout = receiveTimeout;
   }
   
@@ -760,6 +770,9 @@ public final class Elvin implements Closeable
                                  SecureMode secureMode)
     throws IOException
   {
+    checkNotNull (secureMode, "Secure mode");
+    checkNotNull (keys, "Keys");
+    
     send (new NotifyEmit (notification.asMap (),
                           secureMode == ALLOW_INSECURE_DELIVERY, keys));
   }
@@ -844,6 +857,9 @@ public final class Elvin implements Closeable
                                     Keys newSubscriptionKeys)
     throws IOException
   {
+    checkNotNull (newNotificationKeys, "Notification keys");
+    checkNotNull (newSubscriptionKeys, "Subscription keys");
+    
     Keys.Delta deltaNotificationKeys =
       notificationKeys.deltaFrom (newNotificationKeys);
     Keys.Delta deltaSubscriptionKeys =
