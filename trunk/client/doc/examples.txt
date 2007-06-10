@@ -77,19 +77,20 @@ broadcasters and receivers.
 ec command: ec -e elvin://localhost "From == 'wall'"
 
 
-SecureSender & SecureReceiver
+Secure Sender & Secure Receiver
 ----------------------------------------------------------------------
 
 In this example we set up a situation where a sender wants to ensure
 that only receivers it trusts can see its messages. The sender and
 receiver(s) agree on a secret password and security scheme (SHA-1
-Consumer), and then the sender uses the public version of the key and
-receivers use the private version.
+Consumer), and the sender uses the public version of the key on
+notifications and receivers use the private version on their
+subscriptions.
 
 See the documentation attached to the Avis KeyScheme class for more
 details on how security schemes work.
 
-For example:
+Example usage:
 
   Console 1:
   > ant example-secure-receiver
