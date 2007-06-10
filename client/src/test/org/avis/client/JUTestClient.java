@@ -3,6 +3,7 @@ package org.avis.client;
 import java.io.IOException;
 
 import org.avis.common.ElvinURI;
+import org.avis.logging.Log;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.server.Server;
@@ -12,8 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import org.avis.logging.Log;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -253,6 +252,56 @@ public class JUTestClient
     aliceClient.close ();
     bobClient.close ();
     eveClient.close ();
+  }
+  
+  /**
+   * Test changing secure mode after subscription.
+   */
+  @Test
+  public void secureMode ()
+    throws Exception
+  {
+    createServer ();
+    
+    ElvinURI uri = new ElvinURI (ELVIN_URI);
+    
+    Key alicePrivate = new Key ("alice private");
+
+    Keys aliceNtfnKeys = new Keys ();
+    aliceNtfnKeys.add (SHA1_PRODUCER, alicePrivate);
+    
+    Keys bobSubKeys = new Keys ();
+    bobSubKeys.add (SHA1_PRODUCER, alicePrivate.publicKeyFor (SHA1_PRODUCER));
+    
+    Elvin aliceClient = new Elvin (uri, EMPTY_KEYS, EMPTY_KEYS);
+    Elvin bobClient = new Elvin (uri, EMPTY_KEYS, bobSubKeys);
+    
+    Subscription bobSub = bobClient.subscribe ("require (From-Alice)");
+    
+    TestNtfnListener listener = new TestNtfnListener (bobSub);
+    
+    // change secure mode after subscription
+    bobSub.setSecureMode (REQUIRE_SECURE_DELIVERY);
+    
+    Notification notification = new Notification ();
+    notification.set ("From-Alice", 1);
+    
+    // send insecure, bob should not get it
+    aliceClient.send (notification);
+    
+    listener.waitForNoNotification ();
+    
+    listener.reset ();
+    
+    // send secure
+    aliceClient.send (notification, aliceNtfnKeys);
+    
+    listener.waitForNotification ();
+    
+    assertTrue (listener.event.secure);
+    
+    aliceClient.close ();
+    bobClient.close ();
   }
   
   @Test
@@ -546,15 +595,26 @@ public class JUTestClient
     public synchronized void waitForNotification ()
       throws InterruptedException
     {
+      receiveNotification ();
+      
       if (event == null)
-      {
-        long now = currentTimeMillis ();
-        
+        fail ("No notification received");
+    }
+    
+    public synchronized void waitForNoNotification ()
+      throws InterruptedException
+    {
+      receiveNotification ();
+      
+      if (event != null)
+        fail ("Notification received");
+    }
+
+    private synchronized void receiveNotification ()
+      throws InterruptedException
+    {
+      if (event == null)
         wait (2000);
-        
-        if (currentTimeMillis () - now >= 2000)
-          fail ("No notification received");
-      }
     }
   }
   
