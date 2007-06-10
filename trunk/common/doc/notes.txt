@@ -71,7 +71,7 @@ R1.1
 
 Client
 
-* security -> ec/ep
+* security -> ec/ep. add option for text keys
 * unotify
 * auto connect/reconnect
 * events: connected etc
