@@ -243,7 +243,7 @@ public class JUTestClient
     eveClient = new Elvin (uri);
     
     bobSub = bobClient.subscribe ("require (From-Alice)",
-                                  REQUIRE_SECURE_DELIVERY, bobSubKeys);
+                                  bobSubKeys, REQUIRE_SECURE_DELIVERY);
     
     eveSub = eveClient.subscribe ("require (From-Alice)");
     
@@ -358,9 +358,9 @@ public class JUTestClient
     
     Elvin elvin = new Elvin (ELVIN_URI);
     Subscription secureSub =
-      elvin.subscribe ("require (test)", REQUIRE_SECURE_DELIVERY, secureSubKeys);
+      elvin.subscribe ("require (test)", secureSubKeys, REQUIRE_SECURE_DELIVERY);
     Subscription semiSecureSub =
-      elvin.subscribe ("require (test)", ALLOW_INSECURE_DELIVERY, secureSubKeys);
+      elvin.subscribe ("require (test)", secureSubKeys, ALLOW_INSECURE_DELIVERY);
     Subscription insecureSub = elvin.subscribe ("require (test)");
     Subscription multiSub =
       elvin.subscribe ("require (test) || require (frob)");
