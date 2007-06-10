@@ -191,6 +191,42 @@ public final class Elvin implements Closeable
    * Create a new connection to an Elvin router.
    * 
    * @param routerUri The URI of the router to connect to.
+   * @param notificationKeys These keys automatically apply to all
+   *          notifications, exactly as if they were added to the keys
+   *          in the
+   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          call.
+   * @param subscriptionKeys These keys automatically apply to all
+   *          subscriptions, exactly as if they were added to the keys
+   *          in the
+   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          call.
+   * 
+   * @throws IllegalArgumentException if one of the arguments is not
+   *           valid.
+   * @throws ConnectException if a socket to the router could not be
+   *           opened, e.g. connection refused.
+   * @throws ConnectionOptionsException if the router rejected the
+   *           connection options. The client may elect to change the
+   *           options and try to create a new connection.
+   * @throws IOException if some other IO error occurs.
+   *           
+   * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
+   */
+  public Elvin (ElvinURI routerUri,
+                Keys notificationKeys, Keys subscriptionKeys)
+    throws IllegalArgumentException,
+           ConnectException,
+           IOException,
+           ConnectionOptionsException
+  {
+    this (routerUri, EMPTY_OPTIONS, notificationKeys, subscriptionKeys);
+  }
+  
+  /**
+   * Create a new connection to an Elvin router.
+   * 
+   * @param routerUri The URI of the router to connect to.
    * @param options The connection options.
    * @param notificationKeys These keys automatically apply to all
    *          notifications, exactly as if they were added to the keys
@@ -591,6 +627,13 @@ public final class Elvin implements Closeable
     sendAndReceive
       (new SubModRqst (subscription.id, subscriptionExpr,
                        subscription.acceptInsecure ()));
+  }
+  
+  void modifySecureMode (Subscription subscription, SecureMode mode)
+    throws IOException
+  {
+    sendAndReceive
+      (new SubModRqst (subscription.id, "", mode == ALLOW_INSECURE_DELIVERY));
   }
   
   /**
