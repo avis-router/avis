@@ -194,12 +194,12 @@ public final class Elvin implements Closeable
    * @param notificationKeys These keys automatically apply to all
    *          notifications, exactly as if they were added to the keys
    *          in the
-   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          {@linkplain #send(Notification, Keys, SecureMode) send}
    *          call.
    * @param subscriptionKeys These keys automatically apply to all
    *          subscriptions, exactly as if they were added to the keys
    *          in the
-   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription},
    *          call.
    * 
    * @throws IllegalArgumentException if one of the arguments is not
@@ -231,12 +231,12 @@ public final class Elvin implements Closeable
    * @param notificationKeys These keys automatically apply to all
    *          notifications, exactly as if they were added to the keys
    *          in the
-   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          {@linkplain #send(Notification, Keys, SecureMode) send}
    *          call.
    * @param subscriptionKeys These keys automatically apply to all
    *          subscriptions, exactly as if they were added to the keys
    *          in the
-   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription},
    *          call.
    * 
    * @throws IllegalArgumentException if one of the arguments is not
@@ -248,8 +248,8 @@ public final class Elvin implements Closeable
    *           options and try to create a new connection.
    * @throws IOException if some other IO error occurs.
    *           
-   * @see #subscribe(String, SecureMode, Keys)
-   * @see #send(Notification, SecureMode, Keys)
+   * @see #subscribe(String, Keys, SecureMode)
+   * @see #send(Notification, Keys, SecureMode)
    * @see #setKeys(Keys, Keys)
    */
   public Elvin (ElvinURI routerUri, ConnectionOptions options,
@@ -456,7 +456,7 @@ public final class Elvin implements Closeable
    * otherwise need to be thread safe acquire this before operation.
    * Clients may choose to pre-acquire this mutex to execute several
    * operations atomically -- see example in
-   * {@link #subscribe(String, SecureMode, Keys)}.
+   * {@link #subscribe(String, Keys, SecureMode)}.
    * <p>
    * 
    * NB: while this mutex is held, all callbacks (e.g. notification
@@ -469,7 +469,7 @@ public final class Elvin implements Closeable
   
   /**
    * Create a new subscription. See
-   * {@link #subscribe(String, SecureMode, Keys)} for details.
+   * {@link #subscribe(String, Keys, SecureMode)} for details.
    * 
    * @param subscriptionExpr The subscription expression.
    * 
@@ -480,13 +480,13 @@ public final class Elvin implements Closeable
   public Subscription subscribe (String subscriptionExpr)
     throws IOException
   {
-    return subscribe (subscriptionExpr, ALLOW_INSECURE_DELIVERY, EMPTY_KEYS);
+    return subscribe (subscriptionExpr, EMPTY_KEYS, ALLOW_INSECURE_DELIVERY);
   }
   
   /**
    * Create a new subscription with a given set of security keys to
    * enable secure delivery, but also allowing insecure notifications.
-   * See {@link #subscribe(String, SecureMode, Keys)} for details.
+   * See {@link #subscribe(String, Keys, SecureMode)} for details.
    * 
    * @param subscriptionExpr The subscription expression.
    * @param keys The keys to add to the subscription.
@@ -498,7 +498,7 @@ public final class Elvin implements Closeable
   public Subscription subscribe (String subscriptionExpr, Keys keys)
     throws IOException
   {
-    return subscribe (subscriptionExpr, ALLOW_INSECURE_DELIVERY, keys);
+    return subscribe (subscriptionExpr, keys, ALLOW_INSECURE_DELIVERY);
   }
   
   /**
@@ -510,7 +510,7 @@ public final class Elvin implements Closeable
    * never be able to receive notifications.
    * <p>
    * 
-   * See {@link #subscribe(String, SecureMode, Keys)} for more details.
+   * See {@link #subscribe(String, Keys, SecureMode)} for more details.
    * 
    * @param subscriptionExpr The subscription expression.
    * @param secureMode The security mode: specifying
@@ -525,7 +525,7 @@ public final class Elvin implements Closeable
   public Subscription subscribe (String subscriptionExpr, SecureMode secureMode)
     throws IOException
   {
-    return subscribe (subscriptionExpr, secureMode, EMPTY_KEYS);
+    return subscribe (subscriptionExpr, EMPTY_KEYS, secureMode);
   }
   
   /**
@@ -553,25 +553,25 @@ public final class Elvin implements Closeable
    * 
    * @param subscriptionExpr The subscription expression to match
    *          notifications.
+   * @param keys The keys that must match notificiation keys for
+   *          secure delivery.
    * @param secureMode The security mode: specifying
    *          REQUIRE_SECURE_DELIVERY means the subscription will only
    *          receive notifications that are sent by clients with keys
    *          matching the set supplied here or the global subscription
    *          key set.
-   * @param keys The keys that must match notificiation keys for
-   *          secure delivery.
    * @return The subscription instance.
    * 
    * @throws IOException if an network error occurs.
    * 
-   * @see #send(Notification, SecureMode, Keys)
+   * @see #send(Notification, Keys, SecureMode)
    * @see Subscription
    * @see SecureMode
    * @see Keys
    */
   public synchronized Subscription subscribe (String subscriptionExpr,
-                                              SecureMode secureMode,
-                                              Keys keys)
+                                              Keys keys,
+                                              SecureMode secureMode)
     throws IOException
   {
     Subscription subscription =
@@ -690,12 +690,12 @@ public final class Elvin implements Closeable
 
   /**
    * Send a notification. See
-   * {@link #send(Notification, SecureMode, Keys)} for details.
+   * {@link #send(Notification, Keys, SecureMode)} for details.
    */
   public void send (Notification notification)
     throws IOException
   {
-    send (notification, ALLOW_INSECURE_DELIVERY, EMPTY_KEYS);
+    send (notification, EMPTY_KEYS, ALLOW_INSECURE_DELIVERY);
   }
   
   /**
@@ -704,7 +704,7 @@ public final class Elvin implements Closeable
    * REQUIRE_SECURE_DELIVERY, keys)</code> if you want only
    * subscriptions with matching keys to receive a notification.
    * <p>
-   * See {@link #send(Notification, SecureMode, Keys)} for more details.
+   * See {@link #send(Notification, Keys, SecureMode)} for more details.
    * 
    * @param notification The notification to send.
    * @param keys The keys to attach to the notification.
@@ -714,7 +714,7 @@ public final class Elvin implements Closeable
   public void send (Notification notification, Keys keys)
     throws IOException
   {
-    send (notification, ALLOW_INSECURE_DELIVERY, keys);
+    send (notification, keys, ALLOW_INSECURE_DELIVERY);
   }
   
   /**
@@ -725,7 +725,7 @@ public final class Elvin implements Closeable
    * {@link #setNotificationKeys(Keys)}, the notification will never
    * be able to to be delivered.
    * <p>
-   * See {@link #send(Notification, SecureMode, Keys)} for more details.
+   * See {@link #send(Notification, Keys, SecureMode)} for more details.
    * 
    * @param notification The notification to send.
    * @param secureMode The security requirement.
@@ -735,30 +735,29 @@ public final class Elvin implements Closeable
   public void send (Notification notification, SecureMode secureMode)
     throws IOException
   {
-    send (notification, secureMode, EMPTY_KEYS);
+    send (notification, EMPTY_KEYS, secureMode);
   }
 
   /**
    * Send a notification.
    * 
    * @param notification The notification to send.
+   * @param keys The keys that must match for secure delivery.
    * @param secureMode The security requirement.
    *          REQUIRE_SECURE_DELIVERY means the notification can only
    *          be received by subscriptions with keys matching the set
    *          supplied here (or the connections'
    *          {@linkplain #setNotificationKeys(Keys) global notification keys}).
-   * @param keys The keys that must match for secure delivery.
-   * 
    * @throws IOException if an IO error occurs.
    * 
-   * @see #subscribe(String, SecureMode, Keys)
+   * @see #subscribe(String, Keys, SecureMode)
    * @see Notification
    * @see SecureMode
    * @see Keys
    */
   public synchronized void send (Notification notification,
-                                 SecureMode secureMode,
-                                 Keys keys)
+                                 Keys keys,
+                                 SecureMode secureMode)
     throws IOException
   {
     send (new NotifyEmit (notification.asMap (),
@@ -780,7 +779,7 @@ public final class Elvin implements Closeable
    * @param newNotificationKeys The new notification keys. These
    *          automatically apply to all notifications, exactly as if
    *          they were added to the keys in the
-   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          {@linkplain #send(Notification, Keys, SecureMode) send}
    *          call.
    * 
    * @throws IOException if an IO error occurs.
@@ -809,7 +808,7 @@ public final class Elvin implements Closeable
    * @param newSubscriptionKeys The new subscription keys. These
    *          automatically apply to all subscriptions, exactly as if
    *          they were added to the keys in the
-   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription},
    *          call. This includes currently existing subscriptions.
    * 
    * @throws IOException if an IO error occurs.
@@ -830,12 +829,12 @@ public final class Elvin implements Closeable
    * @param newNotificationKeys The new notification keys. These
    *          automatically apply to all notifications, exactly as if
    *          they were added to the keys in the
-   *          {@linkplain #send(Notification, SecureMode, Keys) send}
+   *          {@linkplain #send(Notification, Keys, SecureMode) send}
    *          call.
    * @param newSubscriptionKeys The new subscription keys. These
    *          automatically apply to all subscriptions, exactly as if
    *          they were added to the keys in the
-   *          {@linkplain #subscribe(String, SecureMode, Keys) subscription},
+   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription},
    *          call. This applies to all existing and future
    *          subscriptions.
    * 

@@ -10,7 +10,7 @@ import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 /**
  * A subscription to notifications from an Elvin connection.
  *
- * @see Elvin#subscribe(String, SecureMode, Keys)
+ * @see Elvin#subscribe(String, Keys, SecureMode)
  * @see #addNotificationListener(NotificationListener)
  * 
  * @author Matthew Phillips
