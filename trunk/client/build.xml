@@ -120,7 +120,7 @@
     </javadoc>
   </target>
  
-  <target name="dist-client" depends="jar-client,javadoc"
+  <target name="dist-client" depends="jar-client,jar-tools,javadoc"
           description="Build the client library distribution package">
     
     <property name="ziproot" value="avis-client-${release-name}" />
@@ -168,10 +168,17 @@
         <include name=".settings/*" />
         <include name="build.xml" />
         <include name="lib/avis-client.jar" />
+        <include name="lib/avis-tools.jar" />
         <include name="doc/**" />
         <include name="src/avis_java_header.txt" />
         <include name="avis-client.properties" />
       </zipfileset>
+     
+      <zipfileset dir="." prefix="${ziproot}/client" filemode="755">
+        <include name="bin/ec" />
+        <include name="bin/ep" />
+        <include name="bin/sha1" />
+      </zipfileset> 
      
       <zipfileset dir="build" prefix="${ziproot}/client">
          <include name="javadoc/**" />
