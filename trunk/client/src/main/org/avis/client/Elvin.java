@@ -610,11 +610,11 @@ public final class Elvin implements Closeable
   void unsubscribe (Subscription subscription)
     throws IOException
   {
+    sendAndReceive (new SubDelRqst (subscription.id));
+
     if (subscriptions.remove (subscription.id) != subscription)
       throw new IllegalStateException
         ("Internal error: invalid subscription ID " + subscription.id);
-
-    sendAndReceive (new SubDelRqst (subscription.id));
   }
 
   void modifyKeys (Subscription subscription, Keys newKeys)
