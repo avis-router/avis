@@ -284,7 +284,21 @@
       <param name="example" value="WallReceiver" /> 
     </antcall> 
   </target>
-        
+
+  <target name="example-secure-sender"
+          description="Run the Secure Sender example">
+    <antcall target="run-example">
+      <param name="example" value="SecureSender" /> 
+    </antcall> 
+  </target>
+
+  <target name="example-secure-receiver"
+          description="Run the Secure Receiver example">
+    <antcall target="run-example">
+      <param name="example" value="SecureReceiver" /> 
+    </antcall> 
+  </target>
+ 
   <target name="run-example" depends="compile-examples">
     <java classpathref="classpath"
           classname="org.avis.client.examples.${example}" fork="true">
