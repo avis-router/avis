@@ -105,8 +105,15 @@
     <antcall target="fn:make-html">
       <param name="src" value="installation.txt" />
       <param name="dest" value="installation.html" />
-      <param name="web.title" value="Installation	" />
+      <param name="web.title" value="Installation" />
     </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="client_library.txt" />
+      <param name="dest" value="client_library.html" />
+      <param name="web.title" value="Client Library" />
+    </antcall>
+
   </target>
   
   <target name="deploy-website" depends="website"
