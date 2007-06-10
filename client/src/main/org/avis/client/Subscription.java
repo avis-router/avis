@@ -117,14 +117,14 @@ public final class Subscription
   public void setSubscriptionExpr (String newSubscriptionExpr)
     throws IOException
   {
-    subscriptionExpr = checkSubscription (newSubscriptionExpr);
+    newSubscriptionExpr = checkSubscription (newSubscriptionExpr);
     
-    if (!newSubscriptionExpr.equals (subscriptionExpr))
+    synchronized (elvin)
     {
-      synchronized (elvin)
+      checkLive ();
+
+      if (!newSubscriptionExpr.equals (subscriptionExpr))
       {
-        checkLive ();
-        
         elvin.modifySubscriptionExpr (this, newSubscriptionExpr);
         
         this.subscriptionExpr = newSubscriptionExpr;
@@ -143,13 +143,15 @@ public final class Subscription
   /**
    * Change the subscription's secure delivery requirement.
    * 
-   * @param newMode The secure delievry mode.
+   * @param newMode The secure delivery mode.
    * 
    * @throws IOException if an IO error occurs during the operation.
    */
   public void setSecureMode (SecureMode newMode)
     throws IOException
   {
+    checkNotNull (newMode, "Secure mode");
+    
     synchronized (elvin)
     {
       checkLive ();
@@ -187,8 +189,7 @@ public final class Subscription
   public void setKeys (Keys newKeys)
     throws IOException
   {
-    if (newKeys == null)
-      throw new IllegalArgumentException ("Keys cannot be null");
+    checkNotNull (newKeys, "Keys");
     
     synchronized (elvin)
     {
