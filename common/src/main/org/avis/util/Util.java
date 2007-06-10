@@ -145,4 +145,17 @@ public final class Util
     return reader instanceof BufferedReader ? (BufferedReader)reader :
                                               new BufferedReader (reader);
   }
+
+  /**
+   * Check a value is non-null or throw an IllegalArgumentException.
+   * 
+   * @param value The value to test.
+   * @param name The name of the value to be used in the exception.
+   */
+  public static void checkNotNull (Object value, String name)
+    throws IllegalArgumentException
+  {
+    if (value == null)
+      throw new IllegalArgumentException (value + " cannot be null");
+  }
 }
