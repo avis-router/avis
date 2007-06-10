@@ -6,6 +6,7 @@ import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
+import static org.avis.util.Util.checkNotNull;
 
 /**
  * A subscription to notifications from an Elvin connection.
@@ -28,10 +29,13 @@ public final class Subscription
                 String subscriptionExpr, SecureMode secureMode, Keys keys)
   {
     this.elvin = elvin;
-    this.subscriptionExpr = subscriptionExpr;
+    this.subscriptionExpr = checkSubscription (subscriptionExpr);
     this.secureMode = secureMode;
     this.keys = keys;
     this.notificationListeners = new ListenerList<NotificationListener> ();
+    
+    checkNotNull (keys, "Keys");
+    checkNotNull (secureMode, "Secure mode");
   }
   
   /**
@@ -79,6 +83,20 @@ public final class Subscription
     if (id == 0)
       throw new IllegalStateException ("Subscription is not active");
   }
+  
+  private static String checkSubscription (String subscriptionExpr)
+  {
+    if (subscriptionExpr == null)
+      throw new IllegalArgumentException ("Subscription cannot be null");
+    
+    subscriptionExpr = subscriptionExpr.trim ();
+    
+    if (subscriptionExpr.length () == 0)
+      throw new IllegalArgumentException
+        ("Subscription expression cannot be empty");
+    
+    return subscriptionExpr;
+  }
 
   /**
    * The subscription expression.
@@ -99,14 +117,7 @@ public final class Subscription
   public void setSubscriptionExpr (String newSubscriptionExpr)
     throws IOException
   {
-    if (newSubscriptionExpr == null)
-      throw new IllegalArgumentException ("Subscription cannot be null");
-    
-    newSubscriptionExpr = newSubscriptionExpr.trim ();
-    
-    if (newSubscriptionExpr.length () == 0)
-      throw new IllegalArgumentException
-        ("Subscription expression cannot be empty");
+    subscriptionExpr = checkSubscription (newSubscriptionExpr);
     
     if (!newSubscriptionExpr.equals (subscriptionExpr))
     {
