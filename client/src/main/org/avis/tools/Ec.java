@@ -71,7 +71,7 @@ public class Ec
         elvin.subscribe (options.subscription, options.keys,
                          options.secureMode);
       
-      sub.addNotificationListener (new Listener ());
+      sub.addListener (new Listener ());
     } catch (Exception ex)
     {
       if (ex instanceof ConnectException)

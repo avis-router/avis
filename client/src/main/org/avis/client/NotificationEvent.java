@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * A notification event sent to subscription listeners.
  * 
- * @see Subscription#addNotificationListener(NotificationListener)
+ * @see Subscription#addListener(NotificationListener)
  * 
  * @author Matthew Phillips
  */

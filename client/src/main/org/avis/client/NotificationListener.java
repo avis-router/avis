@@ -5,7 +5,7 @@ import java.util.EventListener;
 /**
  * A listener to notifications from a {@linkplain Subscription subscription}.
  *  
- * @see Subscription#addNotificationListener(NotificationListener)
+ * @see Subscription#addListener(NotificationListener)
  * @see GeneralNotificationListener
  * 
  * @author Matthew Phillips

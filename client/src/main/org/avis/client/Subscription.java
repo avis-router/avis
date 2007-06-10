@@ -12,7 +12,7 @@ import static org.avis.util.Util.checkNotNull;
  * A subscription to notifications from an Elvin connection.
  *
  * @see Elvin#subscribe(String, Keys, SecureMode)
- * @see #addNotificationListener(NotificationListener)
+ * @see #addListener(NotificationListener)
  * 
  * @author Matthew Phillips
  */
@@ -205,7 +205,7 @@ public final class Subscription
    * 
    * @see Elvin#addNotificationListener(GeneralNotificationListener)
    */
-  public void addNotificationListener (NotificationListener listener)
+  public void addListener (NotificationListener listener)
   {
     synchronized (elvin)
     {
@@ -215,10 +215,10 @@ public final class Subscription
   
   /**
    * Remove a previously
-   * {@linkplain #addNotificationListener(NotificationListener) added}
+   * {@linkplain #addListener(NotificationListener) added}
    * listener.
    */
-  public void removeNotificationListener (NotificationListener listener)
+  public void removeListener (NotificationListener listener)
   {
     synchronized (elvin)
     {
@@ -229,7 +229,7 @@ public final class Subscription
   /**
    * True if any listeners are in the listener list.
    * 
-   * @see #addNotificationListener(NotificationListener)
+   * @see #addListener(NotificationListener)
    */
   public boolean hasListeners ()
   {

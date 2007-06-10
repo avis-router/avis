@@ -57,7 +57,7 @@ public class SecureReceiver
       elvin.subscribe ("From == 'secure-sender' && string (Message)",
                        keys, REQUIRE_SECURE_DELIVERY);
     
-    messageSub.addNotificationListener (new NotificationListener ()
+    messageSub.addListener (new NotificationListener ()
     {
       public void notificationReceived (NotificationEvent e)
       {
