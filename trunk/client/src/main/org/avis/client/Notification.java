@@ -81,17 +81,9 @@ public final class Notification
         ("Attributes must be a list of name/value pairs");
     
     for (int i = 0; i < attributes.length; i += 2)
-    {
-      Object name = attributes [i];
-      
-      if (name instanceof String)
-        set ((String)name, attributes [i + 1]);
-      else
-        throw new IllegalArgumentException
-          ("Item " + i + " is not a string name \"" + name + "\"");
-    }
+      set (checkField (attributes [i]), attributes [i + 1]);
   }
-  
+
   /**
    * Create a notification from the values in a map.
    * 
@@ -100,13 +92,13 @@ public final class Notification
    * @throws IllegalArgumentException if one of the map values is not
    *           a valid type.
    */
-  public Notification (Map<String, Object> map)
+  public Notification (Map<?, ?> map)
     throws IllegalArgumentException
   {
-    this.attributes = new HashMap<String, Object> (map);
+    this ();
     
-    for (Object value : attributes.values ())
-      checkValue (value);
+    for (Map.Entry<?, ?> entry : map.entrySet ())
+      set (checkField (entry.getKey ()), entry.getValue ());
   } 
   
   /**
@@ -689,6 +681,18 @@ public final class Notification
     {
       throw new IllegalArgumentException
         ("Value must be a string, integer, long, double or byte array");
+    }
+  }
+  
+  private static String checkField (Object field)
+  {
+    if (field instanceof String)
+    {
+      return (String)field;
+    } else
+    {
+      throw new IllegalArgumentException 
+        ("Name must be a string: \"" + field + "\"");
     }
   }
 }
