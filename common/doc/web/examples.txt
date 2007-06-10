@@ -20,17 +20,17 @@ version.<sup>[2][]</sup> The messages describe the host's name,
 department and percentage of free disk space.
 
 <pre class="java">
-  <span class="type">Router</span> <span class="variable-name">router</span> = <span class="keyword">new</span> <span class="type">Router</span> (<span class="string">"elvin_router"</span>);
+  <span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
   <span class="type">Notification</span> <span class="variable-name">ntfn</span> = <span class="keyword">new</span> <span class="type">Notification</span> ();
   
-  ntfn.put (<span class="string">"Status-Message"</span>, 1000);
-  ntfn.put (<span class="string">"Host-Name"</span>, hostName ());
-  ntfn.put (<span class="string">"Department"</span>,  lookupDepartment ());
-  ntfn.put (<span class="string">"Percent-Disk-Free"</span>, diskFreePercentage ());
+  ntfn.set (<span class="string">"Status-Message"</span>, 1000);
+  ntfn.set (<span class="string">"Host-Name"</span>, hostName ());
+  ntfn.set (<span class="string">"Department"</span>,  lookupDepartment ());
+  ntfn.set (<span class="string">"Percent-Disk-Free"</span>, diskFreePercentage ());
   
-  router.send (ntfn);
+  elvin.send (ntfn);
   
-  router.close ();
+  elvin.close ();
 </pre>
 
 Logger
@@ -42,22 +42,20 @@ rotating log file. The code below does this by listening for any
 status message.
 
 <pre class="java">
-  <span class="type">Router</span> <span class="variable-name">router</span> = <span class="keyword">new</span> <span class="type">Router</span> (<span class="string">"elvin_router"</span>);
+  <span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
 
   <span class="comment-delimiter">// </span><span class="comment">Listen for any version 1.x status message 
 </span>  <span class="type">Subscription</span> <span class="variable-name">statusSub</span> =
-    <span class="keyword">new</span> <span class="type">Subscription</span> (<span class="string">"Status-Message &lt; 2000"</span>);
+    elvin.subscribe (<span class="string">"Status-Message &lt; 2000"</span>);
 
-  statusSub.addListener (<span class="keyword">new</span> <span class="type">SubscriptionListener</span> ()
+  statusSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
   {
-    <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">messageReceived</span> (<span class="type">Notification</span> <span class="variable-name">ntfn</span>)
+    <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
     {
-      addLog (ntfn.getString (<span class="string">"Host-Name"</span>),
-              ntfn.getInt (<span class="string">"Percent-Disk-Free"</span>));
+      addLog (e.notification.getString (<span class="string">"Host-Name"</span>),
+              e.notification.getInt (<span class="string">"Percent-Disk-Free"</span>));
     }
   });
-
-  router.addSubscription (statusSub);
 
   ...
 </pre>
@@ -69,7 +67,7 @@ Perhaps later on we decide we need to be alerted if any of the servers
 in in the "IT" department get too low on disk space.
 
 <pre class="java">
-  <span class="type">Router</span> <span class="variable-name">router</span> = <span class="keyword">new</span> <span class="type">Router</span> (<span class="string">"elvin_router"</span>);
+  <span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
 
   <span class="comment-delimiter">// </span><span class="comment">Listen status messages in the IT
 </span>  <span class="comment-delimiter">// </span><span class="comment">department where disk space is 10% or less
@@ -79,17 +77,17 @@ in in the "IT" department get too low on disk space.
        <span class="string">"Department == 'IT' &amp;&amp; "</span> +
        <span class="string">"Percent-Disk-Free &lt;= 10"</span>);
 
-  alertSub.addListener (<span class="keyword">new</span> <span class="type">SubscriptionListener</span> ()
+  alertSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
   {
-    <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">messageReceived</span> (<span class="type">Notification</span> <span class="variable-name">ntfn</span>)
+    <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
     {
       alert (<span class="string">"Host %s has low disk space (%i percent)"</span>,
-             ntfn.get (<span class="string">"Host-Name"</span>),
-             ntfn.get (<span class="string">"Percent-Disk-Free"</span>));
+             e.notification.get (<span class="string">"Host-Name"</span>),
+             e.notification.get (<span class="string">"Percent-Disk-Free"</span>));
     }
   });
 
-  router.addSubscription (alertSub);
+  elvin.addSubscription (alertSub);
 </pre>
 
 The `alert ()` routine called by the subscription handler above might
@@ -118,7 +116,12 @@ If you're interested in a real Elvin client, the source code for
 Sticker is available at [the tickertape.org downloads
 page][tickertape_downloads].
 
+The examples on this page are written using the Avis Java client
+library for Elvin. Please see the [client library
+page][client_library] for more details.
+
 <div class="footnotes">
+
 <hr />
 
 Footnotes
@@ -126,20 +129,22 @@ Footnotes
 <ol>
 
 <li id="fn1-examples">
-<p>NOTE: these examples are written using a (currently) fictitious
-   Java client library for Elvin, although the API in this example is
-   very similar to the commercial <code>je4</code> Java API shipped by
-   Mantara. An open source library is scheduled for availability by
-   end of April, 2007. See the <a href="roadmap.html">roadmap</a> for
-   more information.</p>
+
+<p> The examples on this page are written using the Avis Java client
+    library for Elvin. Please see the <a
+    href="client_library.html">client library page</a> for more
+    details.</p>
+
 </li>
 
 <li id="fn2-examples">
+
 <p> A tag value of <code>1000 == version 1.0</code>, <code>1001 ==
     1.1</code>, <code>2000 == 2.0</code> etc. This kind of versioning
     can be very useful for long-lived formats allowing you to have
     several versions in use on the bus without interfering with each
     other.</p>
+
 </li>
 
 </ol>
@@ -151,3 +156,4 @@ Footnotes
 [ticker_clients]: http://tickertape.org/get_tickertape.html
 [tickertape_downloads]: http://tickertape.org/download
 [sticker]: http://tickertape.org/projects/sticker
+[client_library]: client_library.html
