@@ -130,6 +130,29 @@ public final class Subscription
   }
   
   /**
+   * Change the subscription's secure delivery requirement.
+   * 
+   * @param newMode The secure delievry mode.
+   * 
+   * @throws IOException if an IO error occurs during the operation.
+   */
+  public void setSecureMode (SecureMode newMode)
+    throws IOException
+  {
+    synchronized (elvin)
+    {
+      checkLive ();
+      
+      if (newMode != secureMode)
+      {
+        elvin.modifySecureMode (this, newMode);
+      
+        this.secureMode = newMode;
+      }
+    }
+  }     
+  
+  /**
    * True if ALLOW_INSECURE_DELIVERY is enabled.
    * 
    * @see #secureMode()
