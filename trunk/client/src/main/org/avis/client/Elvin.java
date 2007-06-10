@@ -674,7 +674,7 @@ public final class Elvin implements Closeable
    * of this connection.
    * 
    * @see #removeNotificationListener(GeneralNotificationListener)
-   * @see Subscription#addNotificationListener(NotificationListener)
+   * @see Subscription#addListener(NotificationListener)
    */
   public void addNotificationListener (GeneralNotificationListener listener)
   {

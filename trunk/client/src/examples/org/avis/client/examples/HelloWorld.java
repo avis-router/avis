@@ -34,7 +34,7 @@ public class HelloWorld
     final Subscription greetingSubscription =
       listeningClient.subscribe ("require (Greeting)");
     
-    greetingSubscription.addNotificationListener (new NotificationListener ()
+    greetingSubscription.addListener (new NotificationListener ()
     {
       public void notificationReceived (NotificationEvent e)
       {

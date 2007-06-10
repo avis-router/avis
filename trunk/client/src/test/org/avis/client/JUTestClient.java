@@ -72,7 +72,7 @@ public class JUTestClient
     
     assertTrue (client.hasSubscription (sub));
     
-    sub.addNotificationListener (new NotificationListener ()
+    sub.addListener (new NotificationListener ()
     {
       public void notificationReceived (NotificationEvent e)
       {
@@ -123,7 +123,7 @@ public class JUTestClient
     final Elvin client = new Elvin (ELVIN_URI);
     final Subscription sub = client.subscribe ("require (test)");
     
-    sub.addNotificationListener (new NotificationListener ()
+    sub.addListener (new NotificationListener ()
     {
       public void notificationReceived (NotificationEvent e)
       {
@@ -316,7 +316,7 @@ public class JUTestClient
     // change subscription
     sub.setSubscriptionExpr ("require (test2)");
     
-    sub.addNotificationListener (new NotificationListener ()
+    sub.addListener (new NotificationListener ()
     {
       public void notificationReceived (NotificationEvent e)
       {
@@ -568,7 +568,7 @@ public class JUTestClient
 
     public TestNtfnListener (Subscription sub)
     {
-      sub.addNotificationListener (this);
+      sub.addListener (this);
     }
 
     public synchronized void notificationReceived (NotificationEvent e)
