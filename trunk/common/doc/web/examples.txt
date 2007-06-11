@@ -66,13 +66,13 @@ Alerter
 Perhaps later on we decide we need to be alerted if any of the servers
 in in the "IT" department get too low on disk space.
 
-<pre class="java">
+<pre>
   <span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
 
   <span class="comment-delimiter">// </span><span class="comment">Listen status messages in the IT
 </span>  <span class="comment-delimiter">// </span><span class="comment">department where disk space is 10% or less
 </span>  <span class="type">Subscription</span> <span class="variable-name">alertSub</span> =
-    <span class="keyword">new</span> <span class="type">Subscription</span>
+    elvin.subscribe
       (<span class="string">"Status-Message &lt; 2000 &amp;&amp; "</span> +
        <span class="string">"Department == 'IT' &amp;&amp; "</span> +
        <span class="string">"Percent-Disk-Free &lt;= 10"</span>);
@@ -86,8 +86,6 @@ in in the "IT" department get too low on disk space.
              e.notification.get (<span class="string">"Percent-Disk-Free"</span>));
     }
   });
-
-  elvin.addSubscription (alertSub);
 </pre>
 
 The `alert ()` routine called by the subscription handler above might
@@ -105,20 +103,16 @@ administrator's desktop.
 More Information
 ----------------------------------------------------------------------
 
-While Elvin has been used in many projects, most of these have been
-internal and aren't publically available. One openly-available project
-written in Java that uses Elvin is the [Sticker tickertape messaging
-client][sticker]. Sticker is both a useful testing client for Avis and
-a real world example of using Elvin messaging (Sticker uses Elvin both
-for instant messaging and virtual presence).
+One widely deployed public use of Elvin has been as a wide-area
+instant messaging and presence network. This network was initiated by
+the Elvin project at DSTC as an inter-organisation communication aid
+and has continued to be maintained since DSTC's closure.
 
-If you're interested in a real Elvin client, the source code for
+One client for this network is the [Sticker tickertape messaging
+client][sticker]. Sticker can be both a useful testing client for Avis
+and a real world example of using Elvin messaging. The source code for
 Sticker is available at [the tickertape.org downloads
 page][tickertape_downloads].
-
-The examples on this page are written using the Avis Java client
-library for Elvin. Please see the [client library
-page][client_library] for more details.
 
 <div class="footnotes">
 
@@ -130,8 +124,8 @@ Footnotes
 
 <li id="fn1-examples">
 
-<p> The examples on this page are written using the Avis Java client
-    library for Elvin. Please see the <a
+<p> The source code examples on this page are written using the Avis
+    Java client library for Elvin. Please see the <a
     href="client_library.html">client library page</a> for more
     details.</p>
 
