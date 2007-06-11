@@ -57,11 +57,50 @@ public class Nack extends XidMessage
    * 
    * @see #errorTextFor(int)
    */
-  public String errorText ()
+  public String errorCodeText ()
   {
     return errorTextFor (error);
   }
   
+  /**
+   * Generate a formatted message from the message template returned
+   * by the router. e.g. expand the %1 and %2 in "%1: Expression '%2'
+   * does not refer to a name" to the values in <tt>arg [0]</tt> and
+   * <tt>arg [1]</tt>.
+   */
+  public String formattedMessage ()
+  {
+    if (args.length == 0)
+    {
+      return message;
+    } else
+    {
+      StringBuilder str = new StringBuilder (message);
+      
+      for (int i = 0; i < args.length; i++)
+        replace (str, i + 1, args [i]);
+      
+      return str.toString ();
+    }
+  }
+  
+  /**
+   * Replace embedded arg reference(s) with a value.
+   * 
+   * @param str The string builder to modify.
+   * @param argNumber The argument number (1..)
+   * @param arg The arg value.
+   */
+  private static void replace (StringBuilder str, int argNumber, Object arg)
+  {
+    String tag = "%" + argNumber;
+    
+    int index;
+    
+    while ((index = str.indexOf (tag)) != -1)
+      str.replace (index, index + tag.length (), arg.toString ());
+  }
+
   /**
    * Return the error text for a given NACK error code.
    */
