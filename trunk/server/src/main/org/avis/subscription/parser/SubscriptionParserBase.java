@@ -1,9 +1,71 @@
 package org.avis.subscription.parser;
 
+import java.util.regex.PatternSyntaxException;
+
+import org.avis.subscription.ast.IllegalChildException;
+import org.avis.subscription.ast.Node;
+import org.avis.subscription.ast.nodes.Const;
 import org.avis.util.Text;
 
 public abstract class SubscriptionParserBase
 {
+  public abstract Node doParse ()
+    throws ParseException;
+  
+  /**
+   * Parse an expression with syntax and basic type checking. Does not check
+   * for boolean result type or const-ness. See {@link #parseAndValidate} if
+   * you want a guaranteed correct subscription expression.
+   */
+  public Node parse ()
+    throws ParseException
+  {
+    try
+    {
+      return doParse ();
+    } catch (IllegalChildException ex)
+    {
+      throw new ParseException ("Illegal expression: " + ex.getMessage ());
+    } catch (TokenMgrError ex)
+    {
+      throw new ParseException (ex.getMessage ());
+    } catch (PatternSyntaxException ex)
+    {
+      // regex () had an invalid pattern
+      throw new ParseException
+        ("Invalid regex \"" + ex.getPattern () + "\": " + ex.getDescription ());
+    }
+  }
+  
+  /**
+   * Execute {@link #parse()} and validate the result is a
+   * type-correct, non-constant subscription expression.
+   * 
+   * @throws ParseExpression if parse () fails or if the resulting
+   *           expression is not a valid subscription.
+   * @throws ConstantExpressionException if the expression is contant.
+   */
+  @SuppressWarnings("unchecked")
+  public Node<Boolean> parseAndValidate ()
+    throws ParseException, ConstantExpressionException
+  {
+    Node node = parse ();
+    
+    if (node.evalType () == Boolean.class)
+    {
+      node = node.inlineConstants ();
+        
+      if (!(node instanceof Const))
+        return node;
+      else
+        throw new ConstantExpressionException ("Expression is " + node.expr ());
+    } else
+    {
+      throw new ParseException
+        ("Expression does not evaluate to boolean true/false: " + node.expr ());
+    }
+  }
+  
   /**
    * Strip backslashed codes from a string.
    */
