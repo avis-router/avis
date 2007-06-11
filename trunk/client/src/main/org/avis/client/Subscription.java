@@ -109,8 +109,6 @@ public final class Subscription
   /**
    * Change the subscription expression.
    * 
-   * @todo Use custom exception for invalid subscriptions.
-   * 
    * @throws IOException if the subscription is invalid or if a
    *           network error occurs.
    * @throws InvalidSubscriptionException if the subscription expression
