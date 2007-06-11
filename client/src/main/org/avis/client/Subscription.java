@@ -113,9 +113,11 @@ public final class Subscription
    * 
    * @throws IOException if the subscription is invalid or if a
    *           network error occurs.
+   * @throws SubscriptionParseException if the subscription expression
+   *           is invalid.
    */
   public void setSubscriptionExpr (String newSubscriptionExpr)
-    throws IOException
+    throws IOException, SubscriptionParseException
   {
     newSubscriptionExpr = checkSubscription (newSubscriptionExpr);
     
