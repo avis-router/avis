@@ -5,25 +5,27 @@ import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubModRqst;
 
+import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
+
 /**
  * Thrown when a subscription parse error is detected by the router.
  * 
  * @author Matthew Phillips
  */
-public class SubscriptionParseException extends RouterException
+public class InvalidSubscriptionException extends RouterException
 {
   /**
    * Rejection code indicating there was a syntax error that prevented
    * parsing. e.g. missing ")".
    */
-  public static final int INVALID_SYNTAX = Nack.PARSE_ERROR;
+  public static final int SYNTAX_ERROR = 0;
   
   /**
    * Rejection code indicating the expression was constant. i.e it
    * matches everything or nothing. e.g. <tt>1 != 1</tt> or
    * <tt>string ('hello')</tt>.
    */
-  public static final int TRIVIAL_EXPRESSION = Nack.EXP_IS_TRIVIAL;
+  public static final int TRIVIAL_EXPRESSION = 1;
   
   /**
    * The subscription expression that was rejected.
@@ -32,11 +34,11 @@ public class SubscriptionParseException extends RouterException
   
   /**
    * The reason the expression was rejected: one of
-   * {@link #INVALID_SYNTAX} or {@link #TRIVIAL_EXPRESSION}.
+   * {@link #SYNTAX_ERROR} or {@link #TRIVIAL_EXPRESSION}.
    */
   public final int reason;
 
-  SubscriptionParseException (RequestMessage request, Nack nack)
+  InvalidSubscriptionException (RequestMessage request, Nack nack)
   {
     super (nack);
     
@@ -47,6 +49,6 @@ public class SubscriptionParseException extends RouterException
     else
       expression = null;
     
-    reason = nack.error;
+    reason = nack.error == EXP_IS_TRIVIAL ? TRIVIAL_EXPRESSION : SYNTAX_ERROR;
   }
 }
