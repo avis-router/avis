@@ -984,7 +984,7 @@ public final class Elvin implements Closeable
       if (nack.error / 100 == 21)
         throw new InvalidSubscriptionException (request, nack);
       else
-        throw new RouterException (nack);
+        throw new RouterNackException (nack);
     } else
     {
       // todo this indicates a pretty serious fuckup. should try to reconnect?

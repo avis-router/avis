@@ -12,7 +12,7 @@ import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
  * 
  * @author Matthew Phillips
  */
-public class InvalidSubscriptionException extends RouterException
+public class InvalidSubscriptionException extends RouterNackException
 {
   /**
    * Rejection code indicating there was a syntax error that prevented
