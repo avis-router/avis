@@ -47,6 +47,7 @@ import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
 import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
+import org.avis.subscription.parser.ConstantExpressionException;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 import org.avis.util.IllegalOptionException;
@@ -71,6 +72,8 @@ import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
+import static org.avis.io.messages.Nack.EMPTY_ARGS;
+import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.IMPL_LIMIT;
 import static org.avis.io.messages.Nack.NOT_IMPL;
 import static org.avis.io.messages.Nack.NO_SUCH_SUB;
@@ -625,9 +628,6 @@ public class Server implements IoHandler, Closeable
 
   /**
    * Send a NACK response for a parse error with error info.
-   * 
-   * todo should provide better error info (see sec 7.4.2 and 6.3)
-   * todo should use EXP_IS_TRIVIAL code for constant expressions
    */
   private static void nackParseError (IoSession session,
                                       XidMessage inReplyTo,
@@ -638,7 +638,21 @@ public class Server implements IoHandler, Closeable
                 ex.getMessage (), Server.class);
     diagnostic ("Subscription was: " + expr, Server.class);
     
-    send (session, new Nack (inReplyTo, PARSE_ERROR, ex.getMessage (), 0, ""));
+    int code;
+    Object [] args;
+    
+    if (ex instanceof ConstantExpressionException)
+    {
+      code = EXP_IS_TRIVIAL;
+      args = EMPTY_ARGS;
+    } else
+    {
+      // todo could provide better error args (see sec 7.4.2 and 6.3)
+      code = PARSE_ERROR;
+      args = new Object [] {0, ""};
+    }
+    
+    send (session, new Nack (inReplyTo, code, ex.getMessage (), args));
   }
   
   /**
