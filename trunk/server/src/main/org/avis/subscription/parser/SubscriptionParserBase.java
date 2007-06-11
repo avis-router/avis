@@ -62,7 +62,7 @@ public abstract class SubscriptionParserBase
     } else
     {
       throw new ParseException
-        ("Expression does not evaluate to boolean true/false: " + node.expr ());
+        ("Expression does not evaluate to boolean: " + node.expr ());
     }
   }
   
@@ -177,5 +177,29 @@ public abstract class SubscriptionParserBase
     String name = type.getName ();
     
     return name.substring (name.lastIndexOf ('.') + 1);
+  }
+  
+  /**
+   * Generate a string describing the expected tokens from token info
+   * in a parse exception. Cribbed from the ParseException.getMessage ()
+   * method.
+   */
+  public static String expectedTokensFor (ParseException ex)
+  {
+    StringBuilder expected = new StringBuilder ();
+    boolean first = true;
+    
+    for (int i = 0; i < ex.expectedTokenSequences.length; i++)
+    {
+      if (!first)
+        expected.append (", ");
+      
+      first = false;
+      
+      for (int j = 0; j < ex.expectedTokenSequences [i].length; j++)
+        expected.append (ex.tokenImage [ex.expectedTokenSequences [i] [j]]);
+    }
+
+    return expected.toString ();
   }
 }
