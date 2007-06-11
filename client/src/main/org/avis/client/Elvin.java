@@ -578,7 +578,7 @@ public final class Elvin implements Closeable
    *          subscription key set.
    * @return The subscription instance.
    * 
-   * @throws IOException if an network error occurs.
+   * @throws IOException if a network error occurs.
    * @throws InvalidSubscriptionException if the subscription expression
    *           is invalid.
    * 
@@ -960,7 +960,7 @@ public final class Elvin implements Closeable
    * 
    * @return The reply message.
    * 
-   * @throws IOException if no suitable reply is seen or an network
+   * @throws IOException if no suitable reply is seen or a network
    *           error occurs.
    */
   @SuppressWarnings("unchecked")
