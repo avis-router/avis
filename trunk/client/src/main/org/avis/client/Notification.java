@@ -421,9 +421,8 @@ public final class Notification
   @Override
   public int hashCode ()
   {
-    // todo opt: get a better hashcode?
     // can't use HashMap.hashCode () for same reason as can't use equals ().
-    return attributes.size ();
+    return attributes.keySet ().hashCode ();
   }
 
   /**
