@@ -972,10 +972,9 @@ public final class Elvin implements Closeable
     {
       Nack nack = (Nack)reply;
       
-      // todo need to expand arg refs in nack error message from Mantara Elvin 
-      // e.g. %1: Expression '%2' does not refer to a name
       throw new IOException
-        ("Router rejected request: " + nack.errorText () + ": " + nack.message);
+        ("Router rejected request: " + nack.errorCodeText () + ": " +
+         nack.formattedMessage ());
     } else
     {
       // todo this indicates a pretty serious fuckup. should try to reconnect?
