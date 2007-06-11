@@ -16,12 +16,20 @@ You can run Avis with a minimal Java Runtime Environment (JRE) but if
 you wish to get optimal performance, it is recommended you install the
 full JDK to gain access to the "server" optimizing VM.
 
+Configuration
+----------------------------------------------------------------------
+
+The Avis router will install and run with no configuration
+required. If you do wish to change any of the router's default
+parameters, these are specified in a file called `avisd.config`. See
+the installation instructions for your platform below for information
+on where this file can be found.
 
 Windows
 ----------------------------------------------------------------------
 
 To install, run the self-installer package. By default this will
-install Avis in `C:\Program Files\Avis` (this can be customised).
+install Avis in `C:\Program Files\Avis`.
 
 You may also elect to add Avis as a system service, which will run
 Avis in the background as a startup service. If you don't wish to add

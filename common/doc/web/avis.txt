@@ -10,7 +10,7 @@ Elvin event routers allow arbitrary messages, known as
 Elvin clients subscribe to messages published by other clients using
 pattern-matching expressions that select messages by their
 content. Multiple Elvin routers can be federated together to form
-wide-area, lightweight event notification buses.
+wide-area, lightweight event notification networks.
 
 The name "Avis" derives from the French word *avis*, meaning advice or
 notification.
@@ -20,27 +20,27 @@ Applications
 ----------------------------------------------------------------------
 
 Current uses for Elvin include providing a wide-area message bus for
-[instant messaging and virtual presence][tickertape.org], device
-coordination for smart meeting rooms and [distributed speech
-transcription for meetings][AuTM]. The commercial implementation
-developed by Mantara has been used extensively for high-volume
-financial transaction routing.
+[instant messaging and presence][tickertape.org], device discovery and
+coordination for smart meeting rooms, and as a carrier of [distributed
+speech transcription for meetings][AuTM]. The commercial
+implementation developed by Mantara has been used extensively for
+high-volume financial transaction routing.
 
-Elvin has been picked up in many applications because of its
-lightweight nature and flexibility: see [this page][why_avis] for more
-discussion on why you might want to use it. The [examples][] page also
-demonstrates in more detail a scenario in which it can be employed.
+Elvin has been picked up in such a wide variety of applications
+because of its lightweight nature and flexibility: see [this
+page][why_avis] for more discussion on why you might want to use
+it. The [examples][] page also demonstrates in more detail a scenario
+in which it can be employed.
 
 
 Current Status
 ----------------------------------------------------------------------
 
-Avis can be used a compatible drop-in replacement for Mantara's
-commercial `elvind` if quenching (for discovery of subscriptions) and
-federation (for wide-area routing) are not required. Although Avis has
-not had the extensive optimisation and tuning that Mantara's
-implementation has, for most uses it has proven fast enough for this
-not to be an issue.
+Avis is a compatible drop-in replacement for Mantara's commercial
+`elvind` if quenching (for discovery of subscriptions) and federation
+(for wide-area routing) are not required. Although Avis has not had
+the extensive optimisation and tuning that Mantara's implementation
+has, for most uses it will be fast enough for this not to be an issue.
 
 See the [roadmap page][roadmap] for more information on what's planned
 for Avis.
@@ -50,19 +50,18 @@ History
 ----------------------------------------------------------------------
 
 Elvin orginated as a project at the [Distributed Systems Technology
-Centre][DSTC_wikipedia] (DSTC), a part government, part commercial
-Cooperative Research Centre, which operated from 1992 until mid
-2006. Elvin was incorporated into a number of DSTC projects and
-adopted by several of DSTC's partners, such as the [Australian Defence
-Science and Technology Organisation][DSTO] (DSTO), due to its ability
-to provide a reliable, generic, and fast wide-area communication bus.
+Centre][DSTC_wikipedia] (DSTC), a Cooperative Research Centre, which
+operated from 1992 until mid 2006. During this time Elvin was
+incorporated into a number of DSTC projects and adopted by several of
+DSTC's partners, such as the [Australian Defence Science and
+Technology Organisation][DSTO] (DSTO).
 
-Mantara Software Inc was created as a DSTC spin-off commercial entity
-in 2003 in order to further develop and market Elvin as a supported
+In 2003 Mantara Software Inc was created as a DSTC spin-off commercial
+entity in order to further develop and market Elvin as a supported
 product. When Mantara announced it would stop offering Elvin as a
-standalone supported product, Matthew Phillips began to implement the
-Elvin open specifications published at [elvin.org][] as part of the
-Open Source Avis project.
+standalone product, Matthew Phillips began to implement the Elvin open
+specifications published at [elvin.org][] as part of the Open Source
+Avis project.
 
 The Avis project's goal is to enable users to continue developing
 systems using the proven Elvin message bus technology. It is intended
