@@ -16,12 +16,15 @@ import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
 
+import static org.avis.client.InvalidSubscriptionException.SYNTAX_ERROR;
+import static org.avis.client.InvalidSubscriptionException.TRIVIAL_EXPRESSION;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -487,6 +490,39 @@ public class JUTestClient
       // ok
 
       // System.out.println ("error = " + ex.getMessage ());
+    }
+  }
+  
+  @Test
+  public void invalidSubscription ()
+    throws Exception
+  {
+    createServer ();
+    
+    Elvin elvin = new Elvin (ELVIN_URI);
+    
+    try
+    {
+      elvin.subscribe ("require (foo");
+      
+      fail ();
+    } catch (InvalidSubscriptionException ex)
+    {
+      // ok
+      assertEquals ("require (foo", ex.expression);
+      assertEquals (SYNTAX_ERROR, ex.reason);
+    }
+    
+    try
+    {
+      elvin.subscribe ("1 == 1");
+      
+      fail ();
+    } catch (InvalidSubscriptionException ex)
+    {
+      // ok
+      assertEquals ("1 == 1", ex.expression);
+      assertEquals (TRIVIAL_EXPRESSION, ex.reason);
     }
   }
   
