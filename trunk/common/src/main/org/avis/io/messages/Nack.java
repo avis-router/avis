@@ -21,7 +21,7 @@ public class Nack extends XidMessage
   public static final int PARSE_ERROR    = 2101;
   public static final int EXP_IS_TRIVIAL = 2110;
   
-  private static final Object [] EMPTY_ARGS = new Object [0];
+  public static final Object [] EMPTY_ARGS = new Object [0];
   
   public int error;
   public String message;
