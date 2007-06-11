@@ -47,8 +47,6 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
-import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
-import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
@@ -488,11 +486,11 @@ public final class Elvin implements Closeable
    * @return The subscription instance.
    * 
    * @throws IOException if an IO error occurs.
-   * @throws SubscriptionParseException if the subscription expression
+   * @throws InvalidSubscriptionException if the subscription expression
    *           is invalid.
    */
   public Subscription subscribe (String subscriptionExpr)
-    throws IOException, SubscriptionParseException
+    throws IOException, InvalidSubscriptionException
   {
     return subscribe (subscriptionExpr, EMPTY_KEYS, ALLOW_INSECURE_DELIVERY);
   }
@@ -508,11 +506,11 @@ public final class Elvin implements Closeable
    * @return The subscription instance.
    * 
    * @throws IOException if an IO error occurs.
-   * @throws SubscriptionParseException if the subscription expression
+   * @throws InvalidSubscriptionException if the subscription expression
    *           is invalid.
    */
   public Subscription subscribe (String subscriptionExpr, Keys keys)
-    throws IOException, SubscriptionParseException
+    throws IOException, InvalidSubscriptionException
   {
     return subscribe (subscriptionExpr, keys, ALLOW_INSECURE_DELIVERY);
   }
@@ -537,11 +535,11 @@ public final class Elvin implements Closeable
    * @return The subscription instance.
    * 
    * @throws IOException if an IO error occurs.
-   * @throws SubscriptionParseException if the subscription expression
+   * @throws InvalidSubscriptionException if the subscription expression
    *           is invalid.
    */
   public Subscription subscribe (String subscriptionExpr, SecureMode secureMode)
-    throws IOException, SubscriptionParseException
+    throws IOException, InvalidSubscriptionException
   {
     return subscribe (subscriptionExpr, EMPTY_KEYS, secureMode);
   }
@@ -581,7 +579,7 @@ public final class Elvin implements Closeable
    * @return The subscription instance.
    * 
    * @throws IOException if an network error occurs.
-   * @throws SubscriptionParseException if the subscription expression
+   * @throws InvalidSubscriptionException if the subscription expression
    *           is invalid.
    * 
    * @see #send(Notification, Keys, SecureMode)
@@ -592,7 +590,7 @@ public final class Elvin implements Closeable
   public synchronized Subscription subscribe (String subscriptionExpr,
                                               Keys keys,
                                               SecureMode secureMode)
-    throws IOException, SubscriptionParseException
+    throws IOException, InvalidSubscriptionException
   {
     Subscription subscription =
       new Subscription (this, subscriptionExpr, secureMode, keys);
@@ -982,8 +980,9 @@ public final class Elvin implements Closeable
     {
       Nack nack = (Nack)reply;
       
-      if (nack.error == EXP_IS_TRIVIAL || nack.error == PARSE_ERROR)
-        throw new SubscriptionParseException (request, nack);
+      // 21xx NACK code is subscription errors
+      if (nack.error / 100 == 21)
+        throw new InvalidSubscriptionException (request, nack);
       else
         throw new RouterException (nack);
     } else
