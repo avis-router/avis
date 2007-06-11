@@ -45,6 +45,15 @@ import static org.avis.util.Util.bufferedReaderFor;
  * <li><tt>byte [] => Elvin Opaque</tt>
  * </ul>
  * 
+ * <h3>Byte Arrays</h3>
+ * <p>
+ * For efficiency, byte arrays passed in via the set () methods,
+ * constuctors, and clone () are not copied before being added to this
+ * object, nor are they copied before being returned by the get ()
+ * methods. Please note that modifying a byte array that is part of a
+ * notification can cause undefined behaviour: treat all values of a
+ * notification as immutable.
+ * 
  * @author Matthew Phillips
  */
 public final class Notification
@@ -239,18 +248,16 @@ public final class Notification
     attributes.clear ();
   }
 
-  /**
-   * Create a copy of the notification.
-   * 
-   * @todo copy opaque arrays.
-   */
   @Override
   public Notification clone ()
     throws CloneNotSupportedException
   {
     Notification copy = (Notification)super.clone ();
     
-    copy.attributes = new HashMap<String, Object> (attributes);
+    copy.attributes = new HashMap<String, Object> ();
+    
+    for (Entry<String, Object> entry : attributes.entrySet ())
+      copy.attributes.put (entry.getKey (), entry.getValue ());
     
     return copy;
   }
