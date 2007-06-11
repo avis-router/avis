@@ -57,17 +57,17 @@ R1.1
 
 * OS X: installation in /usr/local means getting blown away on system
   reinstall. should we go in /opt?
-* think about putting expected reply type in XID messages: would
+* DONE: think about putting expected reply type in XID messages: would
   remove need for param in sendAndReceive ().
 * Key I/O
 * BUG: ec hangs on Presence-Protocol from public.elvin.org. Takes a long time
   to close connection. possibly related to use of "tee" on command line
-* look at retiring ".net" and maybe "org." in package names.
+* DONE: look at retiring ".net" and maybe "org." in package names.
   maybe "org.elvin.avis"?
 * DEB, Solaris: look at je4 packages dir
 * windows JRE does not have -server, need to add installer option
 * thread pool size option?
-* remove DSTO DFC log - use slf4j
+* DONE: remove DSTO DFC log - use slf4j
 
 Client
 
@@ -79,14 +79,14 @@ Client
 Not allocated
 
 * could use fast collection for client subscription map
-* re org into client, server and common projects?
+* DONE: re org into client, server and common projects?
 * keepalives? connection test
 * lots of ec/ep options
 * replace IOException witn RuntimeIOException? relates/affected by async idea
 * discovery
 * async/future-based messaging in client. use futures to track responses.
 * what happens when sending ntfn to client that's too big?
-* sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
+* DONE: sub expr error reporting as in sec 6.3 and 7.4.2 (NACK codes)
 * test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
 * profile performance
 * switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
