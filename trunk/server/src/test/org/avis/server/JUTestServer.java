@@ -28,6 +28,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
+import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
@@ -221,7 +223,13 @@ public class JUTestServer
     client.send (subAddRqst);
     
     Nack nackReply = (Nack)client.receive ();
-    assertEquals (Nack.PARSE_ERROR, nackReply.error);
+    assertEquals (PARSE_ERROR, nackReply.error);
+    
+    subAddRqst = new SubAddRqst ("1 == 1");
+    client.send (subAddRqst);
+    
+    nackReply = (Nack)client.receive ();
+    assertEquals (EXP_IS_TRIVIAL, nackReply.error);
     
     // send notification
     Map<String, Object> ntfn = new HashMap<String, Object> ();
