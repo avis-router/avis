@@ -52,14 +52,6 @@ import org.avis.subscription.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 import org.avis.util.IllegalOptionException;
 
-import static org.avis.logging.Log.DIAGNOSTIC;
-import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.alarm;
-import static org.avis.logging.Log.diagnostic;
-import static org.avis.logging.Log.shouldLog;
-import static org.avis.logging.Log.trace;
-import static org.avis.logging.Log.warn;
-
 import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
@@ -80,8 +72,16 @@ import static org.avis.io.messages.Nack.NO_SUCH_SUB;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.io.messages.Nack.PROT_ERROR;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.logging.Log.trace;
+import static org.avis.logging.Log.warn;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
 import static org.avis.util.Text.shortException;
 
 public class Server implements IoHandler, Closeable
@@ -634,25 +634,46 @@ public class Server implements IoHandler, Closeable
                                       String expr,
                                       ParseException ex)
   {
-    diagnostic ("Subscription add/modify failed with parse error: " +
-                ex.getMessage (), Server.class);
-    diagnostic ("Subscription was: " + expr, Server.class);
-    
     int code;
-    Object [] args;
+    Object [] args = EMPTY_ARGS;
+    String message;
     
     if (ex instanceof ConstantExpressionException)
     {
       code = EXP_IS_TRIVIAL;
-      args = EMPTY_ARGS;
+      message = ex.getMessage ();
     } else
     {
-      // todo could provide better error args (see sec 7.4.2 and 6.3)
       code = PARSE_ERROR;
-      args = new Object [] {0, ""};
+      
+      if (ex.currentToken == null)
+      {
+        // handle ParseException with no token info
+        
+        message = ex.getMessage ();
+        args = new Object [] {0, ""};
+      } else
+      {
+        // use token info to generate a better error message
+        
+        args = new Object [] {ex.currentToken.next.beginColumn,
+                              ex.currentToken.next.image};
+        
+        /*
+         * NB: we could use %1 and %2 to refer to args in the message
+         * here, but why make it harder for the client?
+         */
+        message = "Parse error at column " + args [0] + 
+                  ", token \"" + args [1] + "\": expected: " +
+                  expectedTokensFor (ex);
+      }
     }
     
-    send (session, new Nack (inReplyTo, code, ex.getMessage (), args));
+    diagnostic ("Subscription add/modify failed with parse error: " +
+                message, Server.class);
+    diagnostic ("Subscription was: " + expr, Server.class);
+    
+    send (session, new Nack (inReplyTo, code, message, args));
   }
   
   /**
