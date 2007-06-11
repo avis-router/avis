@@ -164,6 +164,29 @@ public class JUTestElvinURI
     assertEquals (5678, uri.port);
   }
   
+  @Test
+  public void ipv6 ()
+    throws URISyntaxException
+  {
+    ElvinURI uri =
+      new ElvinURI ("elvin://[2001:0db8:85a3:08d3:1319:8a2e:0370:7344]:1234");
+    
+    assertEquals ("[2001:0db8:85a3:08d3:1319:8a2e:0370:7344]", uri.host);
+    assertEquals (1234, uri.port);
+    
+    uri = new ElvinURI ("elvin:/tcp,xdr,ssl/[::1/128]:4567");
+    
+    assertEquals (list ("tcp", "xdr", "ssl"), uri.protocol);
+    assertEquals ("[::1/128]", uri.host);
+    assertEquals (4567, uri.port);
+    
+    assertInvalid ("elvin://[::1/128");
+    assertInvalid ("elvin://[[::1/128");
+    assertInvalid ("elvin://[::1/128]]");
+    assertInvalid ("elvin://[]");
+    assertInvalid ("elvin://[");
+  }
+  
   private static void assertSameUri (String uri1, String uri2)
     throws URISyntaxException
   {

@@ -41,8 +41,6 @@ import static org.avis.util.Collections.list;
  * <p>
  * Example URI 3: <code>elvin:4.0/ssl,none,xdr/localhost:443</code>
  * 
- * @todo need to support []'s in IPv6 addresses
- * 
  * @author Matthew Phillips
  */
 public final class ElvinURI
@@ -332,8 +330,15 @@ public final class ElvinURI
   private void parseEndpoint (String endpoint)
     throws InvalidURIException
   {
-    Matcher endpointMatch =
-      Pattern.compile ("([^:]+)(?::(\\d+))?").matcher (endpoint);
+    Pattern pattern;
+    
+    // choose between IPv6 and IPv4 address scheme
+    if (endpoint.charAt (0) == '[')
+      pattern = Pattern.compile ("(\\[[^\\]]+\\])(?::(\\d+))?");
+    else
+      pattern = Pattern.compile ("([^:]+)(?::(\\d+))?");
+    
+    Matcher endpointMatch = pattern.matcher (endpoint);
     
     if (endpointMatch.matches ())
     {
