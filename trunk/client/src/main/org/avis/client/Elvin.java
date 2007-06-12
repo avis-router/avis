@@ -280,7 +280,7 @@ public final class Elvin implements Closeable
     
     checkNotNull (notificationKeys, "Notification keys");
     checkNotNull (subscriptionKeys, "Subscription keys");
-    checkNotNull (connectionOptions, "Connection  options");
+    checkNotNull (connectionOptions, "Connection options");
     
     openConnection ();
     
@@ -391,10 +391,10 @@ public final class Elvin implements Closeable
    * shutdown thread on each call, and stops the connection from being
    * GC'd if it is closed manually.
    * <p>
-   * It is most suitable for small applications that want to create a
-   * connection, do something with it, and then cleanly shut down
-   * without having to worry about whether the VM exits normally, on
-   * Ctrl+C, System.exit (), etc.
+   * This method is most suitable for small applications that want to
+   * create a connection, do something with it, and then cleanly shut
+   * down without having to worry about whether the VM exits normally,
+   * on Ctrl+C, System.exit (), etc.
    */
   public void closeOnExit ()
   {
@@ -980,7 +980,7 @@ public final class Elvin implements Closeable
     {
       Nack nack = (Nack)reply;
       
-      // 21xx NACK code is subscription errors
+      // 21xx NACK code => subscription error
       if (nack.error / 100 == 21)
         throw new InvalidSubscriptionException (request, nack);
       else
