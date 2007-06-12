@@ -54,10 +54,10 @@ public class SecureSender
      * To ensure only known consumers can receive this message, we use
      * a consumer key scheme, where the producer (this class) uses a
      * public key for its messages and consumers can receive only if
-     * they know the private version of the key. The private key for a
-     * public key is almost impossible to work out if you don't know
-     * it, since the key schemes all use a secure one-way hash such as
-     * SHA-1.
+     * they know the private version of the key. It is effectively
+     * impossible for untrusted clients to work out the private key
+     * even if they know its public half due to the use of a secure
+     * one-way hash such as SHA-1.
      */
     Key privateKey = new Key (password);
     Keys sendingKeys = new Keys ();
