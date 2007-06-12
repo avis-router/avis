@@ -1,8 +1,9 @@
 Release 0.2 (June 11, 2007)
 ----------------------------------------------------------------------
 
-Many improvements and general solidification of the API, including a
-few incompatible changes. Added programming examples.
+This release contains many improvements and general solidification of
+the API, including a few incompatible changes. Added programming
+examples.
 
 * Added example code in src/examples and instructions in
   doc/examples.txt.
