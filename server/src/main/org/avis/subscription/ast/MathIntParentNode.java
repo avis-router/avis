@@ -33,8 +33,8 @@ public abstract class MathIntParentNode extends MathParentNode
     } else if (!(Integer.class.isAssignableFrom (childType) ||
                  Long.class.isAssignableFrom (childType)))
     {
-      return expr () + " needs an integer as an argument (was " +
-             className (child.evalType ()) + ")";
+      return "\"" + expr () + "\" needs an integer as an argument (was " +
+             className (child.evalType ()).toLowerCase () + ")";
     } else 
     {
       return null;
