@@ -47,6 +47,11 @@ public abstract class Message
   @Override
   public String toString ()
   {
+    return name ();
+  }
+
+  public String name ()
+  {
     return className (this);
   }
 }
