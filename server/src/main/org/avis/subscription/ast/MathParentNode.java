@@ -31,8 +31,8 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
       return null; 
     } else if (!Number.class.isAssignableFrom (childType))
     {
-      return expr () + " needs a number as an argument (was " +
-             className (child.evalType ()) + ")";
+      return "\"" + expr () + "\" needs a number as an argument (was " +
+             className (child.evalType ()).toLowerCase () + ")";
     } else
     {
       return null;
