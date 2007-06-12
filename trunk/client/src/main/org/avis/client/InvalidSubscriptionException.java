@@ -6,6 +6,7 @@ import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubModRqst;
 
 import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
+import static org.avis.io.messages.Nack.PARSE_ERROR;
 
 /**
  * Thrown when a subscription parse error is detected by the router.
@@ -40,7 +41,7 @@ public class InvalidSubscriptionException extends RouterNackException
 
   InvalidSubscriptionException (RequestMessage request, Nack nack)
   {
-    super (request, nack);
+    super (textForErrorCode (nack.error) + ": " + nack.formattedMessage ());
     
     if (request instanceof SubAddRqst)
       expression = ((SubAddRqst)request).subscriptionExpr;
@@ -50,5 +51,18 @@ public class InvalidSubscriptionException extends RouterNackException
       expression = null;
     
     reason = nack.error == EXP_IS_TRIVIAL ? TRIVIAL_EXPRESSION : SYNTAX_ERROR;
+  }
+
+  private static String textForErrorCode (int error)
+  {
+    switch (error)
+    {
+      case PARSE_ERROR:
+        return "Syntax error";
+      case EXP_IS_TRIVIAL:
+        return "Trivial expression";
+      default:
+        return "Syntax error (" + error + ")";
+    }
   }
 }

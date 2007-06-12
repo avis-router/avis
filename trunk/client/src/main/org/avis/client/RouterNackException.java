@@ -13,6 +13,11 @@ import org.avis.io.messages.XidMessage;
  */
 public class RouterNackException extends IOException
 {
+  RouterNackException (String message)
+  {
+    super (message);
+  }
+  
   RouterNackException (XidMessage request, Nack nack)
   {
     super ("Router rejected " + request.name () +
