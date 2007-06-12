@@ -123,7 +123,7 @@ public class Nack extends XidMessage
       case EXP_IS_TRIVIAL:
         return "Expression is trivial (constant)";
       default:
-        throw new IllegalArgumentException ("Unknown error code: " + error);
+        return "Error code " + error;
     }
   }
 
