@@ -295,7 +295,7 @@ public class Server implements IoHandler, Closeable
     
     int maxKeys = connection.options.getInt ("Connection.Max-Keys");
     
-    if (message.versionMajor > CLIENT_VERSION_MAJOR ||
+    if (message.versionMajor != CLIENT_VERSION_MAJOR ||
         message.versionMinor > CLIENT_VERSION_MINOR)
     {
       send (session,
