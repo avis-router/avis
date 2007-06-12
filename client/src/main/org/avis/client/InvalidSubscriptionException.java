@@ -40,7 +40,7 @@ public class InvalidSubscriptionException extends RouterNackException
 
   InvalidSubscriptionException (RequestMessage request, Nack nack)
   {
-    super (nack);
+    super (request, nack);
     
     if (request instanceof SubAddRqst)
       expression = ((SubAddRqst)request).subscriptionExpr;
