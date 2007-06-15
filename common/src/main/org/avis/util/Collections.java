@@ -1,6 +1,5 @@
 package org.avis.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * General collection utilities.
@@ -22,24 +24,24 @@ public final class Collections
   }
   
   /**
-   * Create a set from a number of items.
+   * Create an immutable set from a number of items.
    */
   public static <E> Set<E> set (E... items)
   {
-    return new HashSet<E> (asList (items));
+    return unmodifiableSet (new HashSet<E> (asList (items)));
   }
   
   /**
-   * Create a list from a number of items.
+   * Create an immutable list from a number of items.
    */
   public static <E> List<E> list (E... items)
   {
-    return new ArrayList<E> (asList (items));
+    return unmodifiableList ((asList (items)));
   }
   
   /**
-   * Create a map from a number of item pairs, even items are keys,
-   * adjacent items are values.
+   * Create an immutable map from a number of item pairs: even items
+   * are keys, their adjacent items are values.
    */
   public static <E> Map<E, E> map (E... pairs)
   {
@@ -51,7 +53,7 @@ public final class Collections
     for (int i = 0; i < pairs.length; i += 2)
       map.put (pairs [i], pairs [i + 1]);
 
-    return map;
+    return unmodifiableMap (map);
   }
 
   /**
