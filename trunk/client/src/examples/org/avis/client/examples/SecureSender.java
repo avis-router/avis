@@ -55,7 +55,7 @@ public class SecureSender
      * a consumer key scheme, where the producer (this class) uses a
      * public key for its messages and consumers can receive only if
      * they know the private version of the key. It is effectively
-     * impossible for untrusted clients to work out the private key
+     * impossible for untrusted consumers to work out the private key
      * even if they know its public half due to the use of a secure
      * one-way hash such as SHA-1.
      */
@@ -65,7 +65,7 @@ public class SecureSender
     // add the public key
     sendingKeys.add (SHA1_CONSUMER, privateKey.publicKeyFor (SHA1_CONSUMER));
     
-    // send message with keys and requiring the message be delivered securely
+    // send message, requiring it be delivered securely
     elvin.send (secretMessage, sendingKeys, REQUIRE_SECURE_DELIVERY);
     
     System.out.println ("Message sent!");

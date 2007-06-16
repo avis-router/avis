@@ -10,7 +10,8 @@ import org.avis.util.IllegalOptionException;
 import static java.lang.System.getProperty;
 
 /**
- * Command line options that are common across ec and ep.
+ * Command line options that are common across the example
+ * applications.
  * 
  * @author Matthew Phillips
  */
@@ -57,13 +58,5 @@ public class ExampleOptions extends CommandLineOptions
           (arg, "Invalid Elvin URI: " + ex.getMessage ());
       }
     }
-  }
-
-  @Override
-  protected void checkOptions ()
-    throws IllegalOptionException
-  {
-    if (elvinUri == null)
-      throw new IllegalOptionException ("Missing Elvin URI");
   }
 }
