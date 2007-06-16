@@ -4,9 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import org.avis.client.Elvin;
-import org.avis.client.NotificationEvent;
-import org.avis.client.NotificationListener;
-import org.avis.client.Subscription;
+import org.avis.client.GeneralNotificationEvent;
+import org.avis.client.GeneralNotificationListener;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 
@@ -53,13 +52,12 @@ public class SecureReceiver
     Keys keys = new Keys ();
     keys.add (SHA1_CONSUMER, privateKey);
     
-    Subscription messageSub = 
-      elvin.subscribe ("From == 'secure-sender' && string (Message)",
-                       keys, REQUIRE_SECURE_DELIVERY);
+    elvin.subscribe ("From == 'secure-sender' && string (Message)",
+                     keys, REQUIRE_SECURE_DELIVERY);
     
-    messageSub.addListener (new NotificationListener ()
+    elvin.addNotificationListener (new GeneralNotificationListener ()
     {
-      public void notificationReceived (NotificationEvent e)
+      public void notificationReceived (GeneralNotificationEvent e)
       {
         System.out.println ("Received message: " +
                             e.notification.get ("Message"));
