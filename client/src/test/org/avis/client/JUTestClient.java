@@ -609,6 +609,7 @@ public class JUTestClient
     
     client.close ();
     
+    // close event must be fired before close () returns
     assertNotNull (listener.event);
     assertEquals (REASON_CLIENT_SHUTDOWN, listener.event.reason);
     
@@ -628,9 +629,12 @@ public class JUTestClient
     assertNotNull ("No event fired", listener.event);
     assertEquals (REASON_ROUTER_SHUTDOWN, listener.event.reason);
     
+    // check we don't get another close event
     listener.event = null;
     client.close ();
     assertNull (listener.event);
+    
+    // todo test close () in callback
     
     // simulate server crash
 //    createServer ();

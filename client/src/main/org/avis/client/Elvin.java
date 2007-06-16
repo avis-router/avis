@@ -38,11 +38,13 @@ import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubDelRqst;
 import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.XidMessage;
+import org.avis.logging.Log;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
@@ -356,7 +358,7 @@ public final class Elvin implements Closeable
     }
   }
   
-  public synchronized void close ()
+  public void close ()
   {
     close (REASON_CLIENT_SHUTDOWN);
   }
@@ -368,38 +370,55 @@ public final class Elvin implements Closeable
    */
   void close (int reason)
   {
-    if (isOpen ())
+    synchronized (this)
     {
-      if (elvinConnectionOpen && reason == REASON_CLIENT_SHUTDOWN)
+      if (isOpen ())
       {
-        try
+        if (elvinConnectionOpen && reason == REASON_CLIENT_SHUTDOWN)
         {
-          sendAndReceive (new DisconnRqst ());
-        } catch (Exception ex)
-        {
-          diagnostic ("Failed to cleanly disconnect", this, ex);
-        } finally
-        {
-          elvinConnectionOpen = false;
+          try
+          {
+            sendAndReceive (new DisconnRqst ());
+          } catch (Exception ex)
+          {
+            diagnostic ("Failed to cleanly disconnect", this, ex);
+          } finally
+          {
+            elvinConnectionOpen = false;
+          }
         }
+        
+        clientSession.close ();
+        clientSession = null;
       }
-      
-      clientSession.close ();
-      clientSession = null;
+  
+      // use subscriptions == null as flag that we already close ()'ed once
+      if (subscriptions != null)
+      {
+        for (Subscription subscription : subscriptions.values ())
+          subscription.id = 0;
+        
+        fireCloseEvent (reason);
+        
+        ioExecutor.shutdown ();
+        callbackExecutor.shutdown ();
+  
+        subscriptions = null;
+      }
     }
-
-    // use subscriptions == null as flag that we already close ()'ed once
-    if (subscriptions != null)
+    
+    // wait for callback events to flush
+    
+    try
     {
-      for (Subscription subscription : subscriptions.values ())
-        subscription.id = 0;
+      // todo work out why interrupted flag is set when called from MINA IO
+      // for now just clear the flag, or awaitTermination () throws a wobbly
+      Thread.interrupted ();
       
-      fireCloseEvent (reason);
-      
-      ioExecutor.shutdown ();
-      callbackExecutor.shutdown ();
-
-      subscriptions = null;
+      callbackExecutor.awaitTermination (receiveTimeout, MILLISECONDS);
+    } catch (InterruptedException ex)
+    {
+      Log.warn ("Failed to shutdown callbacks", this, ex);
     }
   }
   
@@ -411,8 +430,12 @@ public final class Elvin implements Closeable
       {
         public void run ()
         {
-          closeListeners.fire ("connectionClosed",
-                                    new CloseEvent (this, reason));
+          synchronized (mutex ())
+          {
+            closeListeners.fire ("connectionClosed",
+                                 new CloseEvent (this, reason));
+            
+          }
         }
       });
     }
@@ -1072,7 +1095,7 @@ public final class Elvin implements Closeable
     }
   }
 
-  private synchronized void handleDisconnect (Disconn disconn)
+  private void handleDisconnect (Disconn disconn)
   {
     close (REASON_ROUTER_SHUTDOWN);
   }
@@ -1091,7 +1114,7 @@ public final class Elvin implements Closeable
       {
         Notification ntfn = new Notification (message);
        
-        synchronized (Elvin.this)
+        synchronized (mutex ())
         {
           if (isOpen ())
           {
