@@ -16,6 +16,8 @@ import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
 
+import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
+import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
 import static org.avis.client.InvalidSubscriptionException.SYNTAX_ERROR;
 import static org.avis.client.InvalidSubscriptionException.TRIVIAL_EXPRESSION;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
@@ -587,6 +589,62 @@ public class JUTestClient
     client.close ();
   }
   
+  @Test
+  public void closeListener ()
+    throws Exception
+  {
+    createServer ();
+    Elvin client = new Elvin (ELVIN_URI);
+    
+    // client shuts down
+    TestCloseListener listener = new TestCloseListener ();
+    
+    client.addCloseListener (listener);
+    
+    client.close ();
+    
+    assertNotNull (listener.event);
+    assertEquals (REASON_CLIENT_SHUTDOWN, listener.event.reason);
+    
+    // server shuts down cleanly
+    client = new Elvin (ELVIN_URI);
+    listener = new TestCloseListener ();
+    
+    client.addCloseListener (listener);
+    
+    synchronized (listener)
+    {
+      server.close ();
+      
+      listener.wait (5000);
+    }
+    
+    assertNotNull ("No event fired", listener.event);
+    assertEquals (REASON_ROUTER_SHUTDOWN, listener.event.reason);
+    
+    listener.event = null;
+    client.close ();
+    assertNull (listener.event);
+    
+    // simulate server crash
+//    createServer ();
+//    
+//    client = new Elvin (ELVIN_URI);
+//    listener = new TestConnectionListener ();
+//    
+//    client.setLivenessTimeout (1000);
+//    
+//    client.addConnectionListener (listener);
+//    
+//    server.testSimulateHang ();
+//    
+//    Thread.sleep (2000);
+//    assertNotNull (listener.event);
+//    assertEquals (ConnectionEvent.REASON_ROUTER_STOPPED_RESPONDING,
+//                  listener.event.reason);
+    
+  }
+  
   private static void wait (Object sem)
     throws InterruptedException
   {
@@ -596,6 +654,18 @@ public class JUTestClient
     
     if (currentTimeMillis () - waitStart >= 10000)
       fail ("Timed out waiting for response");
+  }
+  
+  static class TestCloseListener implements CloseListener
+  {
+    public CloseEvent event;
+
+    public synchronized void connectionClosed (CloseEvent e)
+    {
+      event = e;
+      
+      notifyAll ();
+    }
   }
   
   static class TestNtfnListener implements NotificationListener
