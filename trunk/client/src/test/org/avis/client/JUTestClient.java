@@ -569,10 +569,16 @@ public class JUTestClient
     
     client.subscribe ("require (test)");
     
-    server.close ();
+    TestCloseListener listener = new TestCloseListener ();
     
-    // todo should listen for event here when supported
-    Thread.sleep (2000);
+    client.addCloseListener (listener);
+    
+    synchronized (listener)
+    {
+      server.close ();
+
+      listener.wait (5000);
+    }
     
     assertFalse (client.isOpen ());
     
