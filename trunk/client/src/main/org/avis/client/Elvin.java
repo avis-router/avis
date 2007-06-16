@@ -44,6 +44,9 @@ import org.avis.util.ListenerList;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
+import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
+import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
+import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY;
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
@@ -91,6 +94,7 @@ import static org.avis.util.Util.checkNotNull;
  * </ul>
  * 
  * @todo add liveness test
+ * @todo throw exceptions on methods when closed
  * 
  * @author Matthew Phillips
  */
@@ -105,6 +109,7 @@ public final class Elvin implements Closeable
   private Keys subscriptionKeys;
   private int receiveTimeout;
 
+  ListenerList<CloseListener> closeListeners;
   ListenerList<GeneralNotificationListener> notificationListeners;
 
   /**
@@ -264,6 +269,8 @@ public final class Elvin implements Closeable
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
+    this.closeListeners =
+      new ListenerList<CloseListener> ();
     this.notificationListeners =
       new ListenerList<GeneralNotificationListener> ();
     this.ioExecutor = newCachedThreadPool ();
@@ -349,16 +356,21 @@ public final class Elvin implements Closeable
     }
   }
   
+  public synchronized void close ()
+  {
+    close (REASON_CLIENT_SHUTDOWN);
+  }
+  
   /** 
    * Close this connection. May be executed more than once.
    * 
    * @see #isOpen()
    */
-  public synchronized void close ()
+  void close (int reason)
   {
     if (isOpen ())
     {
-      if (elvinConnectionOpen)
+      if (elvinConnectionOpen && reason == REASON_CLIENT_SHUTDOWN)
       {
         try
         {
@@ -374,17 +386,38 @@ public final class Elvin implements Closeable
       
       clientSession.close ();
       clientSession = null;
-      
+    }
+
+    // use subscriptions == null as flag that we already close ()'ed once
+    if (subscriptions != null)
+    {
       for (Subscription subscription : subscriptions.values ())
         subscription.id = 0;
       
+      fireCloseEvent (reason);
+      
+      ioExecutor.shutdown ();
+      callbackExecutor.shutdown ();
+
       subscriptions = null;
     }
-    
-    ioExecutor.shutdown ();
-    callbackExecutor.shutdown ();
   }
   
+  private void fireCloseEvent (final int reason)
+  {
+    if (closeListeners.hasListeners ())
+    {
+      callbackExecutor.execute (new Runnable ()
+      {
+        public void run ()
+        {
+          closeListeners.fire ("connectionClosed",
+                                    new CloseEvent (this, reason));
+        }
+      });
+    }
+  }
+
   /**
    * Signal that this connection should be automatically closed when
    * the VM exits. This should be used with care since it creates a
@@ -458,6 +491,16 @@ public final class Elvin implements Closeable
         ("Timeout cannot be < 0: " + receiveTimeout);
     
     this.receiveTimeout = receiveTimeout;
+  }
+  
+  public synchronized void addCloseListener (CloseListener listener)
+  {
+    closeListeners.add (listener);
+  }
+  
+  public synchronized void removeCloseListener (CloseListener listener)
+  {
+    closeListeners.remove (listener);
   }
   
   /**
@@ -1031,9 +1074,7 @@ public final class Elvin implements Closeable
 
   private synchronized void handleDisconnect (Disconn disconn)
   {
-    elvinConnectionOpen = false;
-    
-    close ();
+    close (REASON_ROUTER_SHUTDOWN);
   }
   
   private void handleNotifyDeliver (final NotifyDeliver message)
@@ -1148,7 +1189,7 @@ public final class Elvin implements Closeable
     public void sessionClosed (IoSession session)
       throws Exception
     {
-      close ();
+      close (REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY);
     }
   }
 }
