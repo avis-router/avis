@@ -47,6 +47,8 @@ console.
 It also demonstrates an easy way to have one thread wait for another
 to receive a message. 
 
+command: ant example-helloworld
+
 ec command: ec -e elvin://localhost "require (Greeting)"
 
 
