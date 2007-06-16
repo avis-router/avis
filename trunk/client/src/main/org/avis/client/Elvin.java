@@ -105,7 +105,7 @@ public final class Elvin implements Closeable
   private Keys subscriptionKeys;
   private int receiveTimeout;
 
-  protected ListenerList<GeneralNotificationListener> notificationListeners;
+  ListenerList<GeneralNotificationListener> notificationListeners;
 
   /**
    * We use a multiple-thread IO pool and a single-thread callback
@@ -199,7 +199,7 @@ public final class Elvin implements Closeable
    * @param subscriptionKeys These keys automatically apply to all
    *          subscriptions, exactly as if they were added to the keys
    *          in the
-   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription},
+   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription}
    *          call.
    * 
    * @throws IllegalArgumentException if one of the arguments is not
@@ -236,7 +236,7 @@ public final class Elvin implements Closeable
    * @param subscriptionKeys These keys automatically apply to all
    *          subscriptions, exactly as if they were added to the keys
    *          in the
-   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription},
+   *          {@linkplain #subscribe(String, Keys, SecureMode) subscription}
    *          call.
    * 
    * @throws IllegalArgumentException if one of the arguments is not
@@ -550,9 +550,9 @@ public final class Elvin implements Closeable
    * and unsubscribe.
    * <p>
    * 
-   * NB: there exists the possibility that, between creating a
+   * There exists the possibility that, between creating a
    * subscription and adding a listener to it, the client could miss a
-   * notification. If necessary, the client may ensure this will not
+   * notification. If needed, the client may ensure this will not
    * happen by acquiring the connection's {@linkplain #mutex() mutex}
    * before subscribing. e.g.
    * 
@@ -583,6 +583,7 @@ public final class Elvin implements Closeable
    *           is invalid.
    * 
    * @see #send(Notification, Keys, SecureMode)
+   * @see #addNotificationListener(GeneralNotificationListener)
    * @see Subscription
    * @see SecureMode
    * @see Keys
