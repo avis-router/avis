@@ -218,6 +218,16 @@ public class Server implements IoHandler, Closeable
     return session.write (message);
   }
   
+  /**
+   * Used for testing to simulate server hanging: server stops
+   * responding to messages but keeps connection open.
+   */
+  public void testSimulateHang ()
+  {
+    // cause messageReceived () to stop processing
+    closing = true;
+  }
+  
   // IoHandler interface
 
   public void messageReceived (IoSession session, Object messageObject)
