@@ -98,17 +98,20 @@ public abstract class CommandLineOptions
     throws IllegalOptionException;
 
   /**
+   * Generate a usage string suitable for printing to the console.
+   */
+  protected abstract String usage ();
+
+  /**
    * Called at the end of parsing. Throw IllegalOptionException if the
    * command line options are not in a valid state e.g. a required
    * parameter not specified.
    */
-  protected abstract void checkOptions ()
-    throws IllegalOptionException;
-
-  /**
-   * Generate a usage string suitable for printing to the console.
-   */
-  protected abstract String usage ();
+  protected void checkOptions ()
+    throws IllegalOptionException
+  {
+    // zip
+  }
   
   /**
    * Take an option switch plus its string parameter (in the form of

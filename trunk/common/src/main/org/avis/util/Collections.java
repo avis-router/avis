@@ -36,7 +36,7 @@ public final class Collections
    */
   public static <E> List<E> list (E... items)
   {
-    return unmodifiableList ((asList (items)));
+    return unmodifiableList (asList (items));
   }
   
   /**
