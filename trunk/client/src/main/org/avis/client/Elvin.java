@@ -26,6 +26,7 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.ElvinURI;
 import org.avis.io.FrameCodec;
+import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.Disconn;
@@ -604,7 +605,9 @@ public final class Elvin implements Closeable
     unscheduleLivenessCheck ();
     
     livenessFuture =
-      callbackExecutor.schedule (livenessCheck, livenessTimeout, MILLISECONDS);
+      callbackExecutor.schedule
+        (livenessCheck,
+         livenessTimeout - (currentTimeMillis () - lastMessageTime), MILLISECONDS);
   }
 
   void unscheduleLivenessCheck ()
@@ -1218,8 +1221,11 @@ public final class Elvin implements Closeable
       case Disconn.ID:
         handleDisconnect ((Disconn)message);
         break;
+      case ConfConn.ID:
+        // zip: used for liveness checking
+        break;
       default:
-        alarm ("Unexpected server message: " + message, this);
+        warn ("Unexpected server message: " + message, this);
     }
   }
 

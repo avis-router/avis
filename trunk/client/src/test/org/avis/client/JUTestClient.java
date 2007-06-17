@@ -648,8 +648,19 @@ public class JUTestClient
     
     client.addCloseListener (listener);
     
+    // check liveness check keeps connection open
+    synchronized (listener)
+    {
+      listener.wait (3000);
+    }
+    
+    assertNull (listener.event);
+    assertTrue (client.isOpen ());
+    
+    // hang server
     server.testSimulateHang ();
     
+    // check liveness detects within 6 seconds
     synchronized (listener)
     {
       listener.wait (6000);
