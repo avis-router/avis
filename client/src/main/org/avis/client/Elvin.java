@@ -3,6 +3,8 @@ package org.avis.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -37,18 +39,21 @@ import org.avis.io.messages.SecRqst;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubDelRqst;
 import org.avis.io.messages.SubModRqst;
+import org.avis.io.messages.TestConn;
 import org.avis.io.messages.XidMessage;
 import org.avis.logging.Log;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
+import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY;
+import static org.avis.client.CloseEvent.REASON_ROUTER_STOPPED_RESPONDING;
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
@@ -109,23 +114,39 @@ public final class Elvin implements Closeable
   private Map<Long, Subscription> subscriptions;
   private Keys notificationKeys;
   private Keys subscriptionKeys;
-  private int receiveTimeout;
-
-  ListenerList<CloseListener> closeListeners;
-  ListenerList<GeneralNotificationListener> notificationListeners;
-
+ 
+  /*
+   * The following fields are used for liveness checking.
+   * lastMessageTime is updated to the current time on any received
+   * message. livenessFuture is a scheduled future on the
+   * callbackExecutor that is either periodically checking liveness or
+   * waiting for a reply to a TestConn sent due to livenessTimeout
+   * expiring with no messages from the router.
+   */
+  int receiveTimeout;
+  int livenessTimeout;
+  long lastMessageTime;
+  ScheduledFuture<?> livenessFuture;
+  
   /**
-   * We use a multiple-thread IO pool and a single-thread callback
-   * pool. Using the IO pool for callbacks results in a lot of threads
-   * being spawned when a sudden influx of notifications come in.
+   * We use a multiple-thread IO pool and a single-thread
+   * callback/scheduler pool. Using the IO pool for callbacks results
+   * in a lot of threads being spawned when a sudden influx of
+   * notifications come in.
    */
   private ExecutorService ioExecutor;
-  private ExecutorService callbackExecutor;
+  private ScheduledExecutorService callbackExecutor;
 
-  /** lastReply is effectively a single-item queue for handling responses
-      to XID-based requests, using replySemaphore to synchronize access. */
+  /**
+   * lastReply is effectively a single-item queue for handling
+   * responses to XID-based requests, using replySemaphore to
+   * synchronize access.
+   */
   private XidMessage lastReply;
   private Object replySemaphore;
+  
+  ListenerList<CloseListener> closeListeners;
+  ListenerList<GeneralNotificationListener> notificationListeners;
   
   /**
    * Create a new connection to an Elvin router.
@@ -275,10 +296,10 @@ public final class Elvin implements Closeable
       new ListenerList<CloseListener> ();
     this.notificationListeners =
       new ListenerList<GeneralNotificationListener> ();
-    this.ioExecutor = newCachedThreadPool ();
-    this.callbackExecutor = newSingleThreadExecutor ();
     this.replySemaphore = new Object ();
+    this.lastMessageTime = currentTimeMillis ();
     this.receiveTimeout = 10000;
+    this.livenessTimeout = 60000;
     
     if (!routerUri.protocol.equals (defaultProtocol ()))
     {
@@ -291,6 +312,9 @@ public final class Elvin implements Closeable
     checkNotNull (subscriptionKeys, "Subscription keys");
     checkNotNull (connectionOptions, "Connection options");
     
+    this.ioExecutor = newCachedThreadPool ();
+    this.callbackExecutor = newScheduledThreadPool (1);
+
     openConnection ();
     
     ConnRply connRply =
@@ -310,8 +334,10 @@ public final class Elvin implements Closeable
       
       throw new ConnectionOptionsException (options, rejectedOptions);
     }
+    
+    scheduleLivenessCheck ();
   }
-
+  
   private void openConnection ()
     throws IOException
   {
@@ -346,7 +372,6 @@ public final class Elvin implements Closeable
           (new InetSocketAddress (routerUri.host, routerUri.port),
            new MessageHandler (), connectorConfig);
                         
-      // todo how to handle auto reconnect?
       if (!connectFuture.join (receiveTimeout))
         throw new IOException ("Timed out connecting to router " + routerUri);
       
@@ -372,6 +397,8 @@ public final class Elvin implements Closeable
   {
     synchronized (this)
     {
+      unscheduleLivenessCheck ();
+      
       if (isOpen ())
       {
         if (elvinConnectionOpen && reason == REASON_CLIENT_SHUTDOWN)
@@ -503,9 +530,13 @@ public final class Elvin implements Closeable
   }
 
   /**
-   * Set the amount of time (in milliseconds) that must pass before
-   * the router is assumed not to be responding. Default is 10
-   * seconds (10,000 millis).
+   * Set the amount of time that must pass before the router is
+   * assumed not to be responding to a request message (default is 10
+   * seconds).
+   * 
+   * @param receiveTimeout The new receive timeout in milliseconds.
+   * 
+   * @see #setLivenessTimeout(int)
    */
   public synchronized void setReceiveTimeout (int receiveTimeout)
   {
@@ -516,6 +547,102 @@ public final class Elvin implements Closeable
     this.receiveTimeout = receiveTimeout;
   }
   
+  /**
+   * @see #setLivenessTimeout(int)
+   */
+  public int livenessTimeout ()
+  {
+    return livenessTimeout;
+  }
+  
+  /**
+   * Set the liveness timeout period (default is 60 seconds). If no
+   * messages are seen from the router in this period, a connection
+   * test message is sent and, if no reply is seen within the
+   * {@linkplain #receiveTimeout() receive timeout period}, the
+   * connection is deemed to be closed.
+   * 
+   * @param livenessTimeout The new liveness timeout in milliseconds.
+   *          Cannot be less than 1000.
+   * 
+   * @see #setReceiveTimeout(int)
+   */
+  public synchronized void setLivenessTimeout (int livenessTimeout)
+  {
+    if (livenessTimeout < 1000)
+      throw new IllegalArgumentException
+        ("Timeout cannot be < 1000: " + livenessTimeout);
+    
+    this.livenessTimeout = livenessTimeout;
+
+    scheduleLivenessCheck ();
+  }
+  
+  /**
+   * Schedule a liveness checking task to run in livenessTimeout
+   * milliseconds.
+   */
+  void scheduleLivenessCheck ()
+  {
+    Runnable livenessCheck = new Runnable ()
+    {
+      public void run ()
+      {
+        synchronized (mutex ())
+        {
+          if (isOpen ())
+          {
+            if (currentTimeMillis () - lastMessageTime >= livenessTimeout)
+              scheduleConnectionTest ();
+            else
+              scheduleLivenessCheck ();
+          }
+        }
+      }
+    };
+    
+    unscheduleLivenessCheck ();
+    
+    livenessFuture =
+      callbackExecutor.schedule (livenessCheck, livenessTimeout, MILLISECONDS);
+  }
+
+  void unscheduleLivenessCheck ()
+  {
+    if (livenessFuture != null)
+      livenessFuture.cancel (true);
+  }
+
+  /**
+   * Send a TestConn message and schedule a liveness checking task to
+   * run in receiveTimeout milliseconds. If no message is seen in this
+   * period, the connection is closed.
+   */
+  void scheduleConnectionTest ()
+  {
+    try
+    {
+      send (new TestConn ());
+      
+      Runnable connCheck = new Runnable ()
+      {
+        public void run ()
+        {
+          if (currentTimeMillis () - lastMessageTime >= receiveTimeout)
+            close (REASON_ROUTER_STOPPED_RESPONDING);
+          else
+            scheduleLivenessCheck ();
+        }
+      };
+        
+      livenessFuture = 
+        callbackExecutor.schedule (connCheck, receiveTimeout, MILLISECONDS);
+    } catch (IOException ex)
+    {
+      close (REASON_ROUTER_STOPPED_RESPONDING);
+    }
+  }
+
   public synchronized void addCloseListener (CloseListener listener)
   {
     closeListeners.add (listener);
@@ -1014,6 +1141,7 @@ public final class Elvin implements Closeable
         // may have failed because we are simply not connected any more
         checkConnected ();
         
+        // todo close connection
         throw new IOException ("Timeout error: did not receive a reply");
       }
     }
@@ -1201,6 +1329,8 @@ public final class Elvin implements Closeable
     {
       if (shouldLog (TRACE))
         trace ("Client got message: " + message, this);
+     
+      lastMessageTime = currentTimeMillis ();
       
       if (message instanceof XidMessage)
         handleReply ((XidMessage)message);
