@@ -18,6 +18,7 @@ import static java.lang.System.currentTimeMillis;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
+import static org.avis.client.CloseEvent.REASON_ROUTER_STOPPED_RESPONDING;
 import static org.avis.client.InvalidSubscriptionException.SYNTAX_ERROR;
 import static org.avis.client.InvalidSubscriptionException.TRIVIAL_EXPRESSION;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
@@ -637,22 +638,28 @@ public class JUTestClient
     // todo test close () in callback
     
     // simulate server crash
-//    createServer ();
-//    
-//    client = new Elvin (ELVIN_URI);
-//    listener = new TestConnectionListener ();
-//    
-//    client.setLivenessTimeout (1000);
-//    
-//    client.addConnectionListener (listener);
-//    
-//    server.testSimulateHang ();
-//    
-//    Thread.sleep (2000);
-//    assertNotNull (listener.event);
-//    assertEquals (ConnectionEvent.REASON_ROUTER_STOPPED_RESPONDING,
-//                  listener.event.reason);
+    createServer ();
     
+    client = new Elvin (ELVIN_URI);
+    listener = new TestCloseListener ();
+    
+    client.setReceiveTimeout (1000);
+    client.setLivenessTimeout (1000);
+    
+    client.addCloseListener (listener);
+    
+    server.testSimulateHang ();
+    
+    synchronized (listener)
+    {
+      listener.wait (6000);
+    }
+    
+    assertNotNull (listener.event);
+    assertEquals (REASON_ROUTER_STOPPED_RESPONDING,
+                  listener.event.reason);
+    
+    server.testSimulateUnhang ();
   }
   
   private static void wait (Object sem)
