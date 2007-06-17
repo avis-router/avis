@@ -228,6 +228,11 @@ public class Server implements IoHandler, Closeable
     closing = true;
   }
   
+  public void testSimulateUnhang ()
+  {
+    closing = false;
+  }
+  
   // IoHandler interface
 
   public void messageReceived (IoSession session, Object messageObject)
