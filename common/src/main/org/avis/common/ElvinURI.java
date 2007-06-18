@@ -29,7 +29,9 @@ import static org.avis.util.Collections.list;
  *   
  *   version:  protocol version major.minor form e.g. "4.0"
  *   protocol: protocol stack in transport,security,marshalling order
- *             e.g. "tcp,none,xdr"
+ *             e.g. "tcp,none,xdr". Alternatively the alias "secure"
+ *             can be used to denote the default secure stack
+ *             ("ssl,none,xdr").
  *   options:  name1=value1[;name2=value2]* e.g. foo=bar;black=white
  * </pre>
  * 
