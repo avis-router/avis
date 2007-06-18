@@ -10,14 +10,9 @@ import org.avis.client.Elvin;
 import org.avis.client.Notification;
 import org.avis.util.InvalidFormatException;
 
-import org.avis.logging.Log;
-
-import static org.avis.logging.Log.DIAGNOSTIC;
-import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.alarm;
-import static org.avis.logging.Log.enableLogging;
-
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.setApplicationName;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Util.eof;
 
@@ -34,11 +29,8 @@ public class Ep
    */
   public static void main (String [] args)
   {
-    Log.setApplicationName ("ep");
+    setApplicationName ("ep");
 
-    enableLogging (TRACE, false);
-    enableLogging (DIAGNOSTIC, false);
-    
     EpOptions options = new EpOptions ();
     
     options.parseOrExit (args);
