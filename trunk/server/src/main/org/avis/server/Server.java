@@ -56,9 +56,10 @@ import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
-
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
@@ -189,7 +190,7 @@ public class Server implements IoHandler, Closeable
         {
           if (connection.isOpen ())
           {
-            send (session, disconnMessage).join (10000);
+            send (session, disconnMessage).addListener (CLOSE);
 
             connection.close ();
           }
@@ -198,13 +199,20 @@ public class Server implements IoHandler, Closeable
           connection.unlockWrite ();
         }
       }
-      
-      session.close ();
     }
     
     sessions.clear ();
     acceptor.unbindAll ();
     executor.shutdown ();
+    
+    try
+    {
+      if (!executor.awaitTermination (15000, SECONDS))
+        warn ("Failed to cleanly shut down thread pool", this);
+    } catch (InterruptedException ex)
+    {
+      diagnostic ("Interrupted while waiting for shutdown", this, ex);
+    }
   }
 
   private static WriteFuture send (IoSession session, Message message)
