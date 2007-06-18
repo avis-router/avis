@@ -373,18 +373,18 @@ public class Keys
    * Test whether a given key collection matches this one for the
    * purpose of notification delivery.
    * 
-   * @param keys The producer keys to match against this (consumer)
-   *          key collection.
+   * @param producerKeys The producer keys to match against this
+   *          (consumer) key collection.
    * @return True if a consumer using this key collection could
    *         receive a notification from a producer with the given
    *         producer key collection.
    */
-  public boolean match (Keys keys)
+  public boolean match (Keys producerKeys)
   {
-    if (isEmpty () || keys.isEmpty ())
+    if (isEmpty () || producerKeys.isEmpty ())
       return false;
     
-    for (Entry<KeyScheme, KeySet> entry : keys.keySets.entrySet ())
+    for (Entry<KeyScheme, KeySet> entry : producerKeys.keySets.entrySet ())
     {
       KeyScheme scheme = entry.getKey ();
       KeySet keyset = entry.getValue ();
