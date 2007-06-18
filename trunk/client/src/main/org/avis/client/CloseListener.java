@@ -5,6 +5,8 @@ import java.util.EventListener;
 /**
  * A listener to the close event sent when the client's connection to
  * the router is disconnected.
+ *
+ * @see Elvin#addCloseListener(CloseListener)
  */
 public interface CloseListener extends EventListener
 {
