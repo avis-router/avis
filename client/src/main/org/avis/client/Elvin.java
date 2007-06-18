@@ -1235,22 +1235,31 @@ public final class Elvin implements Closeable
   private void handleDisconnect (Disconn disconn)
   {
     int reason;
+    String message;
     
     switch (disconn.reason)
     {
       case Disconn.REASON_SHUTDOWN:
-      case Disconn.REASON_SHUTDOWN_REDIRECT:
-        // todo handle REASON_SHUTDOWN_REDIRECT
         reason = REASON_ROUTER_SHUTDOWN;
+        message =
+          disconn.hasArgs () ? disconn.args : "Router is shutting down";
+        break;
+      case Disconn.REASON_SHUTDOWN_REDIRECT:
+        // todo handle REASON_SHUTDOWN_REDIRECT properly
+        reason = REASON_ROUTER_SHUTDOWN;
+        message = "Router suggested redirect to " + disconn.args;
         break;
       case Disconn.REASON_PROTOCOL_VIOLATION:
         reason = REASON_PROTOCOL_VIOLATION;
+        message =
+          disconn.hasArgs () ? disconn.args : "Protocol violation";
         break;
       default:
         reason = REASON_PROTOCOL_VIOLATION;
+        message = "Protocol violation";
     }
     
-    close (reason, disconn.args);
+    close (reason, message);
   }
   
   private void handleNotifyDeliver (final NotifyDeliver message)
