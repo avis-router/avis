@@ -32,6 +32,13 @@ public class CloseEvent extends EventObject
    * connection between client and router has been disconnected.
    */
   public static final int REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY = 3;
+
+  /**
+   * The router decided that the client violated the protocol rules.
+   * This would only happen in the case of a serious bug in the client
+   * or router.
+   */
+  public static final int REASON_PROTOCOL_VIOLATION = 4;
   
   /**
    * The reason for the shutdown: {@link #REASON_CLIENT_SHUTDOWN},
@@ -41,10 +48,19 @@ public class CloseEvent extends EventObject
    */
   public final int reason;
 
-  public CloseEvent (Object source, int reason)
+  /**
+   * The message from the router in the case that the connection was
+   * closed at its request (REASON_ROUTER_SHUTDOWN or
+   * REASON_PROTOCOL_VIOLATION), the client's description of the
+   * reason otherwise.
+   */
+  public final String message;
+
+  public CloseEvent (Object source, int reason, String message)
   {
     super (source);
     
     this.reason = reason;
+    this.message = message;
   }
 }
