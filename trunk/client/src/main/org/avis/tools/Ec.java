@@ -11,19 +11,15 @@ import java.net.ConnectException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import org.avis.client.CloseEvent;
+import org.avis.client.CloseListener;
 import org.avis.client.Elvin;
-import org.avis.client.NotificationEvent;
-import org.avis.client.NotificationListener;
-import org.avis.client.Subscription;
-
-import org.avis.logging.Log;
-
-import static org.avis.logging.Log.DIAGNOSTIC;
-import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.alarm;
-import static org.avis.logging.Log.enableLogging;
+import org.avis.client.GeneralNotificationEvent;
+import org.avis.client.GeneralNotificationListener;
 
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.setApplicationName;
 import static org.avis.security.Keys.EMPTY_KEYS;
 
 /**
@@ -39,11 +35,8 @@ public class Ec
    */
   public static void main (String [] args)
   {
-    Log.setApplicationName ("ec");
+    setApplicationName ("ec");
 
-    enableLogging (TRACE, false);
-    enableLogging (DIAGNOSTIC, false);
-    
     EcOptions options = new EcOptions ();
 
     options.parseOrExit (args);
@@ -56,22 +49,27 @@ public class Ec
       System.err.println ("ec: Connected to server " +
                           options.elvinUri.toCanonicalString ());
       
+      elvin.addCloseListener (new CloseListener ()
+      {
+        public void connectionClosed (CloseEvent e)
+        {
+          System.err.println ("ec: Connection closed: " + e.message);
+        }
+      });
+      
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
         @Override
         public void run ()
         {
-          System.err.println ("ec: Closing connection");
-          
           elvin.close ();
         }
       });
 
-      Subscription sub =
-        elvin.subscribe (options.subscription, options.keys,
-                         options.secureMode);
+      elvin.subscribe (options.subscription, options.keys, options.secureMode);
       
-      sub.addListener (new Listener ());
+      elvin.addNotificationListener (new Listener ());
+      
     } catch (Exception ex)
     {
       if (ex instanceof ConnectException)
@@ -83,7 +81,7 @@ public class Ec
     }
   }
 
-  static class Listener implements NotificationListener
+  static class Listener implements GeneralNotificationListener
   {
     private DateFormat iso8601Date;
     private BufferedWriter output;
@@ -92,10 +90,11 @@ public class Ec
       throws IOException
     {
       iso8601Date = new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-      output = new BufferedWriter (new OutputStreamWriter (System.out, "UTF-8"));
+      output =
+        new BufferedWriter (new OutputStreamWriter (System.out, "UTF-8"));
     }
     
-    public void notificationReceived (NotificationEvent e)
+    public void notificationReceived (GeneralNotificationEvent e)
     {
       try
       {
