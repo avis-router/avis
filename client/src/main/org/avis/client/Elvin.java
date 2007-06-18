@@ -52,6 +52,7 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
+import static org.avis.client.CloseEvent.REASON_PROTOCOL_VIOLATION;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY;
 import static org.avis.client.CloseEvent.REASON_ROUTER_STOPPED_RESPONDING;
@@ -386,7 +387,7 @@ public final class Elvin implements Closeable
   
   public void close ()
   {
-    close (REASON_CLIENT_SHUTDOWN);
+    close (REASON_CLIENT_SHUTDOWN, "Client shutting down normally");
   }
   
   /** 
@@ -394,7 +395,7 @@ public final class Elvin implements Closeable
    * 
    * @see #isOpen()
    */
-  void close (int reason)
+  void close (int reason, String message)
   {
     synchronized (this)
     {
@@ -426,7 +427,7 @@ public final class Elvin implements Closeable
         for (Subscription subscription : subscriptions.values ())
           subscription.id = 0;
         
-        fireCloseEvent (reason);
+        fireCloseEvent (reason, message);
         
         ioExecutor.shutdown ();
         callbackExecutor.shutdown ();
@@ -450,7 +451,7 @@ public final class Elvin implements Closeable
     }
   }
   
-  private void fireCloseEvent (final int reason)
+  private void fireCloseEvent (final int reason, final String message)
   {
     if (closeListeners.hasListeners ())
     {
@@ -461,7 +462,7 @@ public final class Elvin implements Closeable
           synchronized (mutex ())
           {
             closeListeners.fire ("connectionClosed",
-                                 new CloseEvent (this, reason));
+                                 new CloseEvent (this, reason, message));
             
           }
         }
@@ -607,7 +608,8 @@ public final class Elvin implements Closeable
     livenessFuture =
       callbackExecutor.schedule
         (livenessCheck,
-         livenessTimeout - (currentTimeMillis () - lastMessageTime), MILLISECONDS);
+         livenessTimeout - (currentTimeMillis () - lastMessageTime),
+         MILLISECONDS);
   }
 
   void unscheduleLivenessCheck ()
@@ -632,7 +634,7 @@ public final class Elvin implements Closeable
         public void run ()
         {
           if (currentTimeMillis () - lastMessageTime >= receiveTimeout)
-            close (REASON_ROUTER_STOPPED_RESPONDING);
+            close (REASON_ROUTER_STOPPED_RESPONDING, "Router stopped responding");
           else
             scheduleLivenessCheck ();
         }
@@ -642,7 +644,8 @@ public final class Elvin implements Closeable
         callbackExecutor.schedule (connCheck, receiveTimeout, MILLISECONDS);
     } catch (IOException ex)
     {
-      close (REASON_ROUTER_STOPPED_RESPONDING);
+      close (REASON_ROUTER_STOPPED_RESPONDING,
+             "IO error checking router connection: " + ex.getMessage ());
     }
   }
 
@@ -1231,7 +1234,23 @@ public final class Elvin implements Closeable
 
   private void handleDisconnect (Disconn disconn)
   {
-    close (REASON_ROUTER_SHUTDOWN);
+    int reason;
+    
+    switch (disconn.reason)
+    {
+      case Disconn.REASON_SHUTDOWN:
+      case Disconn.REASON_SHUTDOWN_REDIRECT:
+        // todo handle REASON_SHUTDOWN_REDIRECT
+        reason = REASON_ROUTER_SHUTDOWN;
+        break;
+      case Disconn.REASON_PROTOCOL_VIOLATION:
+        reason = REASON_PROTOCOL_VIOLATION;
+        break;
+      default:
+        reason = REASON_PROTOCOL_VIOLATION;
+    }
+    
+    close (reason, disconn.args);
   }
   
   private void handleNotifyDeliver (final NotifyDeliver message)
@@ -1348,7 +1367,8 @@ public final class Elvin implements Closeable
     public void sessionClosed (IoSession session)
       throws Exception
     {
-      close (REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY);
+      close (REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY,
+             "Connection to router closed without warning");
     }
   }
 }
