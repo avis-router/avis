@@ -173,8 +173,7 @@ public class Server implements IoHandler, Closeable
       closing = true; 
     }
     
-    Disconn disconnMessage =
-      new Disconn (REASON_SHUTDOWN, "Router is shutting down");
+    Disconn disconnMessage = new Disconn (REASON_SHUTDOWN);
     
     for (IoSession session : sessions)
     {
