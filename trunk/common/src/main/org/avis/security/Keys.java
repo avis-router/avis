@@ -18,7 +18,7 @@ import static org.avis.security.Keys.Delta.EMPTY_DELTA;
  * contains zero or more mappings from a {@linkplain KeyScheme key
  * scheme} to the {@linkplain Key keys} registered for that scheme.
  * <p>
- * NB: Once in use, key collections should be treated as immutable
+ * Once in use, key collections should be treated as immutable
  * i.e. never be modified directly after construction.
  * <p>
  * See also section 7.4 of the client protocol spec.
