@@ -39,6 +39,11 @@ public class Disconn extends Message
     return ID;
   }
   
+  public boolean hasArgs ()
+  {
+    return args.length () > 0;
+  }
+  
   @Override
   public void decode (ByteBuffer in)
     throws ProtocolCodecException
