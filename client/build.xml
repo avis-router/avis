@@ -4,7 +4,7 @@
   Avis Elvin Client Library For Java
   ======================================================================
 -->
-<project name="avis.client" default="dist-client">
+<project name="avis.client" default="jars">
   
   <description>Avis client library</description>
   
