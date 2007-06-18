@@ -10,7 +10,8 @@ import java.util.EventObject;
 public class CloseEvent extends EventObject
 {
   /**
-   * The client was shut down normally with a call to {@link Elvin#close()}.
+   * The client was shut down normally with a call to
+   * {@link Elvin#close()}.
    */
   public static final int REASON_CLIENT_SHUTDOWN = 0;
   
@@ -44,15 +45,14 @@ public class CloseEvent extends EventObject
    * The reason for the shutdown: {@link #REASON_CLIENT_SHUTDOWN},
    * {@link #REASON_ROUTER_SHUTDOWN},
    * {@link #REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY},
-   * {@link #REASON_ROUTER_STOPPED_RESPONDING}.
+   * {@link #REASON_ROUTER_STOPPED_RESPONDING},
+   * {@link #REASON_PROTOCOL_VIOLATION}.
    */
   public final int reason;
 
   /**
-   * The message from the router in the case that the connection was
-   * closed at its request (REASON_ROUTER_SHUTDOWN or
-   * REASON_PROTOCOL_VIOLATION), the client's description of the
-   * reason otherwise.
+   * The message from the router, if any, or the client's description
+   * of the reason otherwise.
    */
   public final String message;
 
