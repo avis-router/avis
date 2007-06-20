@@ -65,7 +65,8 @@
 
   <target name="compile" description="Compile source and tests">
     <ant antfile="${common}/build.xml" target="compile" inheritall="false"/>
-    <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" inheritall="true"/>
+    <ant antfile="${common}/build-common.xml" target="compile"
+         inheritrefs="true" inheritall="true"/>
   </target>
 
   <target name="tests" depends="compile" description="Run unit tests">
@@ -73,9 +74,9 @@
   </target>
 
   <target name="clean" description="Clean built artifacts">
-    <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="clean" inheritall="true" />
     
-    <delete dir="lib" file="avisd.jar" includeemptydirs="true" />
+    <delete file="lib/avisd.jar" includeemptydirs="true" />
   </target>
 
   <target name="clean-javacc" description="Clean JavaCC-generated files">
