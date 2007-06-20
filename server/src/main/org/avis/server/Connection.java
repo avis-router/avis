@@ -3,7 +3,6 @@ package org.avis.server;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import org.avis.security.Keys;
@@ -37,14 +36,10 @@ class Connection
    * The client's subscription set. Maps subscription ID's to their
    * {@link Subscription} instance.
    */
-  public Long2ObjectMap<Subscription> subscriptions;
+  public Long2ObjectOpenHashMap<Subscription> subscriptions;
 
   /**
-   * TODO opt: could look at using the concept of a SeqLock for this
-   * instead of a traditional lock. For our situation where we mainly
-   * read, SeqLock's greatly reduce cache invalidation due to repeatedly
-   * modifying the lock.
-   * See http://blogs.sun.com/dave/entry/seqlocks_in_java.
+   * Single writer/multiple reader lock.
    */
   private ReentrantReadWriteLock lock;
 
