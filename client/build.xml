@@ -200,9 +200,14 @@
   </target>
 
   <target name="clean" description="Clean built artifacts">
-    <ant antfile="${common}/build-common.xml" target="clean" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="clean" inheritall="true" />
     
-    <delete dir="lib" file="avis-tools.jar" includeemptydirs="true" />
+    <delete includeemptydirs="true">
+      <fileset dir="lib">
+        <include name="avis-client.jar" />
+        <include name="avis-tools.jar" />
+      </fileset>
+    </delete>
   </target>
 
   <target name="check-jars-uptodate">
