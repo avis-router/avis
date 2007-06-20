@@ -1,19 +1,16 @@
 package org.avis.server;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import org.avis.security.Keys;
 
 /**
  * Stores the state needed for a client's connection to the router.
- * The operations that support the client's subscriptions are
- * thread-safe, allowing one session to modify the subscription (e.g.
- * SubModify) while another is testing for notification matches (e.g.
- * as a result of a NotifyEmit).
+ * Thread access is managed via a single writer/multiple reader lock.
  * 
  * @author Matthew Phillips
  */
@@ -26,24 +23,21 @@ class Connection
 
   /**
    * Connection-wide subscription keys that apply to all
-   * subscriptions. Not thread safe: treat instances as immutable once
-   * assigned.
+   * subscriptions. Teat as immutable once assigned.
    */
   public Keys subscriptionKeys;
 
   /**
    * Connection-wide notification keys that apply to all
-   * notifications. Not thread safe: treat instances as immutable once
-   * assigned.
+   * notifications. Treat as immutable once assigned.
    */
   public Keys notificationKeys;
   
   /**
    * The client's subscription set. Maps subscription ID's to their
-   * {@link Subscription} instance. Thread safe: may be safely
-   * accessed and modified across sessions.
+   * {@link Subscription} instance.
    */
-  private Long2ObjectMap<Subscription> subscriptions;
+  public Long2ObjectMap<Subscription> subscriptions;
 
   /**
    * TODO opt: could look at using the concept of a SeqLock for this
