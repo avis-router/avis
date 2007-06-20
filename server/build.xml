@@ -39,6 +39,10 @@
       <include name="*.jar" />
     </fileset>    
     
+    <fileset dir="lib">
+      <include name="fastutil-subset.jar" />
+    </fileset>
+          
     <pathelement path="classes/main" />
     <pathelement path="classes/test" />
     <pathelement path="${common}/classes/main" />
@@ -61,7 +65,7 @@
 
   <target name="compile" description="Compile source and tests">
     <ant antfile="${common}/build.xml" target="compile" inheritall="false"/>
-    <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="compile" inheritrefs="true" inheritall="true"/>
   </target>
 
   <target name="tests" depends="compile" description="Run unit tests">
@@ -128,6 +132,25 @@
     
     <mkdir dir="lib" />
     <copy file="build/avisd.jar" todir="lib" />
+  </target>
+
+  <target name="jar-fastutil-subset"
+          description="Build minimal fastutil subset">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/dfc.jar" />
+
+    <mkdir dir="lib" />
+    
+    <path id="fastutil-full">
+      <fileset dir="lib" includes="fastutil-5*.jar" />
+    </path>
+      
+    <jarx archive="lib/fastutil-subset.jar"
+          classpathref="fastutil-full">
+      <include name="it/unimi/dsi/fastutil/longs/Long2ObjectOpenHashMap.class" />
+      <include name="it/unimi/dsi/fastutil/longs/LongArrayList.class" />
+    </jarx>    
   </target>
 
   <target name="dist-source" depends="jar-server"
