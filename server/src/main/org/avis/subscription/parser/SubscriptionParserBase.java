@@ -9,7 +9,7 @@ import org.avis.util.Text;
 
 public abstract class SubscriptionParserBase
 {
-  public abstract Node doParse ()
+  abstract Node doParse ()
     throws ParseException;
   
   /**
