@@ -9,7 +9,7 @@ import org.avis.subscription.ast.nodes.*;
 
 @SuppressWarnings ("all")
 public class SubscriptionParser extends SubscriptionParserBase implements SubscriptionParserConstants {
-  public Node doParse ()
+  Node doParse ()
     throws ParseException
   {
         return Start ();
