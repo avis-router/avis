@@ -349,7 +349,7 @@ public final class Elvin implements Closeable
 
       /* Change the worker timeout to 1 second to make the I/O thread
        * quit soon when there's no connection to manage. */
-      connector.setWorkerTimeout (1);
+      connector.setWorkerTimeout (0);
       
       SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
       connectorConfig.setThreadModel (ThreadModel.MANUAL);
@@ -365,10 +365,6 @@ public final class Elvin implements Closeable
       filterChainBuilder.addLast
         ("codec", new ProtocolCodecFilter (codecFactory));
       
-      // below adds a thread pool to IO processor: probably don't need this
-      // filterChainBuilder.addLast
-      //   ("threadPool", new ExecutorFilter (executor));
-
       ConnectFuture connectFuture =
         connector.connect
           (new InetSocketAddress (routerUri.host, routerUri.port),
