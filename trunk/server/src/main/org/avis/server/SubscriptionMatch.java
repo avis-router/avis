@@ -13,9 +13,9 @@ class SubscriptionMatch
   private static final long [] EMPTY = new long [0];
   
   /** Securely matched subscription ID's */
-  public LongList secure;
+  public final LongArrayList secure;
   /** Insecurely matched subscription ID's */
-  public LongList insecure;
+  public final LongArrayList insecure;
   
   public SubscriptionMatch ()
   {
