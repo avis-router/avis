@@ -21,7 +21,7 @@ class Subscription
 {
   private static final AtomicLong idCounter = new AtomicLong ();
   
-  public Long id;
+  public long id;
   public String expr;
   public boolean acceptInsecure;
   public Keys keys;

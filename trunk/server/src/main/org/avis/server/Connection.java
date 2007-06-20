@@ -1,7 +1,9 @@
 package org.avis.server;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.avis.security.Keys;
@@ -41,7 +43,7 @@ class Connection
    * {@link Subscription} instance. Thread safe: may be safely
    * accessed and modified across sessions.
    */
-  private Map<Long, Subscription> subscriptions;
+  private Long2ObjectMap<Subscription> subscriptions;
 
   /**
    * TODO opt: could look at using the concept of a SeqLock for this
@@ -55,7 +57,7 @@ class Connection
   public Connection (Map<String, Object> options,
                      Keys subscriptionKeys, Keys notificationKeys)
   {
-    this.subscriptions = new ConcurrentHashMap<Long, Subscription> ();
+    this.subscriptions = new Long2ObjectOpenHashMap<Subscription> ();
     this.subscriptionKeys = subscriptionKeys;
     this.notificationKeys = notificationKeys;
     this.options = new ConnectionOptions (options);

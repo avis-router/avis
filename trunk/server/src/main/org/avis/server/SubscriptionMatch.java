@@ -1,7 +1,7 @@
 package org.avis.server;
 
-import java.util.HashSet;
-import java.util.Set;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 
 /**
  * Represents the result of matching a subscription against a message.
@@ -13,14 +13,14 @@ class SubscriptionMatch
   private static final long [] EMPTY = new long [0];
   
   /** Securely matched subscription ID's */
-  public Set<Long> secure;
+  public LongList secure;
   /** Insecurely matched subscription ID's */
-  public Set<Long> insecure;
+  public LongList insecure;
   
   public SubscriptionMatch ()
   {
-    this.secure = new HashSet<Long> ();
-    this.insecure = new HashSet<Long> ();
+    this.secure = new LongArrayList ();
+    this.insecure = new LongArrayList ();
   }
   
   public long [] secure ()
@@ -38,21 +38,11 @@ class SubscriptionMatch
     return !insecure.isEmpty () || !secure.isEmpty ();
   }
 
-  private static long [] toArray (Set<Long> set)
+  private static long [] toArray (LongList ids)
   {
-    if (set.isEmpty ())
-    {
+    if (ids.isEmpty ())
       return EMPTY;
-    } else
-    {
-      long [] longs = new long [set.size ()];
-      
-      int index = 0;
-
-      for (Long l : set)
-        longs [index++] = l;
-      
-      return longs;
-    }
+    else
+      return ids.toLongArray ();
   }
 }
