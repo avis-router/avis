@@ -347,8 +347,8 @@ public final class Elvin implements Closeable
     {
       SocketConnector connector = new SocketConnector (1, ioExecutor);
 
-      /* Change the worker timeout to 1 second to make the I/O thread
-       * quit soon when there's no connection to manage. */
+      /* Change the worker timeout to make the I/O thread quit soon
+       * when there's no connection to manage. */
       connector.setWorkerTimeout (0);
       
       SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
@@ -629,7 +629,9 @@ public final class Elvin implements Closeable
       {
         public void run ()
         {
-          if (currentTimeMillis () - lastMessageTime >= receiveTimeout)
+          /* Note use of ">" not ">=" below: in tests on a fast multi-core
+           * machine, server may respond in 0 measurable millis */
+          if (currentTimeMillis () - lastMessageTime > receiveTimeout)
             close (REASON_ROUTER_STOPPED_RESPONDING, "Router stopped responding");
           else
             scheduleLivenessCheck ();
