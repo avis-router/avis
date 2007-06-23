@@ -18,9 +18,9 @@ import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.security.KeyScheme.SHA1_DUAL;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
-import static org.avis.util.Text.hexToBytes;
+import static org.avis.util.Text.dataToBytes;
+import static org.avis.util.Util.bytesFrom;
 import static org.avis.util.Util.fileStream;
-import static org.avis.util.Util.stringFrom;
 
 /**
  * Command line options that are common across ec and ep.
@@ -36,8 +36,14 @@ public abstract class ToolOptions extends CommandLineOptions
     "  -e elvin  Set the Elvin URI e.g. elvin://host:port\n" +
     "  -x        Allow only secure notifications\n" +
     "  -X        Allow insecure notifications (default)\n" +
-    "  -C file   Read hex-coded consumer key from file\n" +
-    "  -P file   Read hex-coded producer key from file";
+    "  -C file   Read consumer key from file\n" +
+    "  -P file   Read producer key from file\n" +
+    "\n" +
+    "  Key file formats are: \n" +
+    "\n" +
+    "     Hex coded  e.g. [00 de ad be ef]\n" +
+    "     String     e.g. \"some characters\"\n" +
+    "     Raw data   e.g. #<any data>\n";
   
   /**
    * The Elvin router to connect to.
@@ -84,10 +90,10 @@ public abstract class ToolOptions extends CommandLineOptions
       secureMode = ALLOW_INSECURE_DELIVERY;
     } else if (arg.equals ("-C"))
     {
-      addKey (CONSUMER, hexKeyFromFile (stringArg (args)));
+      addKey (CONSUMER, keyFromFile (stringArg (args)));
     } else if (arg.equals ("-P"))                
     {
-      addKey (PRODUCER, hexKeyFromFile (stringArg (args)));
+      addKey (PRODUCER, keyFromFile (stringArg (args)));
     }
   }
   
@@ -97,11 +103,11 @@ public abstract class ToolOptions extends CommandLineOptions
     keys.add (SHA1_DUAL, subset, key);
   }
 
-  private static Key hexKeyFromFile (String filename)
+  private static Key keyFromFile (String filename)
   {
     try
     {
-      return new Key (hexToBytes (stringFrom (fileStream (filename))));
+      return new Key (dataToBytes (bytesFrom (fileStream (filename))));
     } catch (Exception ex)
     {
       throw new IllegalOptionException
