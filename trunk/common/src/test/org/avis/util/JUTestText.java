@@ -83,13 +83,13 @@ public class JUTestText
   public void dataToByte ()
     throws Exception
   {
-    byte [] bytes = dataToBytes ("[00 01 0a ff]".getBytes ("UTF-8"));
+    byte [] bytes = dataToBytes ("[00 01 0a ff] ".getBytes ("UTF-8"));
     
     assertTrue (Arrays.equals (new byte [] {00, 01, 0x0a, (byte)0xff}, bytes));
     
-    bytes = dataToBytes ("\"hello \u1111 world\"".getBytes ("UTF-8"));
+    bytes = dataToBytes ("\"hello \u0234 world\"\n".getBytes ("UTF-8"));
     
-    assertTrue (Arrays.equals ("hello \u1111 world".getBytes ("UTF-8"), bytes));
+    assertEquals ("hello \u0234 world", new String (bytes, "UTF-8"));
     
     bytes = dataToBytes (new byte [] {'#', (byte)0xde, (byte)0xad});
     
