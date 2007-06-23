@@ -12,7 +12,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
   Node doParse ()
     throws ParseException
   {
-        return Start ();
+    return Start ();
   }
 
   final public Node Start() throws ParseException {
@@ -656,7 +656,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
   Token t;
     t = jj_consume_token(STRING_LITERAL);
     {if (true) return new Const
-      (expandBackslashes (t.image.substring (1, t.image.length () - 1)));}
+      (stripBackslashes (t.image.substring (1, t.image.length () - 1)));}
     throw new Error("Missing return statement in function");
   }
 

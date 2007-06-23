@@ -3,9 +3,6 @@ package org.avis.subscription.parser;
 import java.io.StringReader;
 
 import org.avis.subscription.ast.Node;
-import org.avis.subscription.parser.ParseException;
-import org.avis.subscription.parser.SubscriptionParser;
-import org.avis.subscription.parser.SubscriptionParserBase;
 
 import org.junit.Test;
 
@@ -22,47 +19,36 @@ import static org.junit.Assert.fail;
 public class JUTestParser
 {
   /**
-   * Test handling of backslash escapes in strings and identifiers.
+   * Test identifiers as per Appendix A of client spec.
    */
   @Test
-  public void escapeHandling ()
+  public void identifiers ()
+    throws Exception
   {
-    String expanded;
+    assertParsesTo ("hello", "(field 'hello')");
+    assertParsesTo ("_hello", "(field '_hello')");
+    assertParsesTo ("_", "(field '_')");
+    assertParsesTo ("_1", "(field '_1')");
     
-    expanded = SubscriptionParser.expandBackslashes ("\\n\\t\\b\\r\\f\\v\\a");
-    assertEquals
-      (new String (new byte [] {'\n', '\t', '\b', '\r', '\f', 11, 7}), expanded);
+    for (int i = 0x21; i <= 0xff; i++)
+    {
+      if (i == 0x22 || i == 0x27 || i == 0x29 || i == 0x30 || i == 0x2c ||
+          i == 0x5b || i == 0x5c || i == 0x5d)
+        continue;
+      
+      assertParsesTo ("tricky" + (char)i + "id",
+                      "(field 'tricky" + (char)i + "id')");
+    }
+  }
+  
+  @Test
+  public void strings ()
+    throws Exception
+  {
+    assertParsesTo ("'a\\n'", "(string 'an')");
+    assertParsesTo ("'a\\\\'", "(string 'a\\')");
     
-    expanded = SubscriptionParser.expandBackslashes ("\\x32");
-    assertEquals
-      (new String (new byte [] {0x32}), expanded);
-    
-    expanded = SubscriptionParser.expandBackslashes ("\\xf:");
-    assertEquals
-      (new String (new byte [] {0xF, ':'}), expanded);
-    
-    expanded = SubscriptionParser.expandBackslashes ("\\x424");
-    assertEquals
-      (new String (new byte [] {0x42, '4'}), expanded);
-    
-    expanded = SubscriptionParserBase.expandBackslashes ("\\034");
-    assertEquals
-      (new String (new byte [] {034}), expanded);
-    
-    expanded = SubscriptionParserBase.expandBackslashes ("\\34:");
-    assertEquals
-      (new String (new byte [] {034, ':'}), expanded);
-    
-    expanded = SubscriptionParserBase.expandBackslashes ("\\7:");
-    assertEquals
-      (new String (new byte [] {07, ':'}), expanded);
-    
-    expanded = SubscriptionParserBase.expandBackslashes ("\\1234");
-    assertEquals
-      (new String (new byte [] {0123, '4'}), expanded);
-    
-    expanded = SubscriptionParser.stripBackslashes ("a \\test\\ string\\:");
-    assertEquals ("a test string:", expanded);
+    assertParseError ("'a\\'");
   }
   
   /**
@@ -85,9 +71,9 @@ public class JUTestParser
   public void basic () 
     throws Exception
   {
-    assertParsesTo ("field1 > 2 && field2 == 'hello\\tthere\\x23'",
+    assertParsesTo ("field1 > 2 && field2 == 'hello\\'there'",
                     "(&& (> (field 'field1') (int32 2)) (== (field 'field2') " +
-                      "(string 'hello\tthere\u0023')))");
+                      "(string 'hello'there')))");
     
     assertParsesTo ("(field1 != 10L || field2 < 3.2) ^^ (field3 == \"hello\")",
                     "(^^ (|| (! (== (field 'field1') (int64 10))) " +
@@ -190,10 +176,6 @@ public class JUTestParser
     throws Exception
   {
     // token errors
-    assertParseError ("'\\x'");
-    assertParseError ("'\\h'");
-    assertParseError ("'\\888'");
-    assertParseError ("'\\k'");
     assertParseError ("'");
     assertParseError ("\"");
     
