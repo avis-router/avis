@@ -1,6 +1,6 @@
 #!/bin/sh
 
-tools_jar=$(dirname $0)/../lib/avis-tools.jar
+tools_jar=$(dirname "$0")/../lib/avis-tools.jar
 java_opts="-Xverify:none"
 
 if [ ! -f "$tools_jar" ]; then
