@@ -42,7 +42,6 @@ import org.avis.io.messages.SubDelRqst;
 import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.XidMessage;
-import org.avis.logging.Log;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
@@ -70,13 +69,42 @@ import static org.avis.util.Text.className;
 import static org.avis.util.Util.checkNotNull;
 
 /**
- * Manages a client's connection to an Elvin router. Typically a
- * client creates a connection and then
- * {@linkplain #subscribe(String) subscribes} to notifications and/or
- * {@linkplain #send(Notification) sends} them.
+ * The core class in the Avis client library which manages a client's
+ * connection to an Elvin router. Typically a client creates a
+ * connection and then {@linkplain #subscribe(String) subscribes} to
+ * notifications and/or {@linkplain #send(Notification) sends} them.
+ * <p>
+ * Example:
+ * 
+ * <pre>
+ * Elvin elvin = new Elvin (&quot;elvin://elvinhostname&quot;);
+ * 
+ * // subscribe to some notifications
+ * elvin.subscribe (&quot;Foo == 42 || Bar == 'baz'&quot;);
+ * 
+ * // add a handler for notifications
+ * elvin.addSubscriptionListener (new GeneralSubscriptionListener ()
+ * {
+ *   public void notificationReceived (GeneralNotificationEvent e)
+ *   {
+ *     System.out.println (&quot;Got a notification:\n&quot; + e.notification);
+ *   }
+ * });
+ * 
+ * // send a notification that we will get back from the router
+ * Notification notification = new Notification ();
+ * notification.set (&quot;Foo&quot;, 42);
+ * notification.set (&quot;Bar&quot;, &quot;bar&quot;);
+ * notification.set (&quot;Data&quot;, new byte [] {0x00, 0xff});
+ * 
+ * elvin.send (notification);
+ * 
+ * elvin.close ();
+ * </pre>
+ * 
  * <p>
  * 
- * <h3>Threading and synchrony notes</h3>
+ * <h3>Threading And Synchronisation Notes</h3>
  * <p>
  * 
  * <ul>
@@ -102,20 +130,17 @@ import static org.avis.util.Util.checkNotNull;
  * long-running operation.
  * </ul>
  * 
- * @todo add liveness test
- * @todo throw exceptions on methods when closed
- * 
  * @author Matthew Phillips
  */
 public final class Elvin implements Closeable
 {
-  private ElvinURI routerUri;
-  private ConnectionOptions connectionOptions;
-  private IoSession clientSession;
-  private boolean elvinConnectionOpen;
-  private Map<Long, Subscription> subscriptions;
-  private Keys notificationKeys;
-  private Keys subscriptionKeys;
+  ElvinURI routerUri;
+  IoSession connection;
+  ConnectionOptions connectionOptions;
+  boolean elvinConnectionOpen;
+  Map<Long, Subscription> subscriptions;
+  Keys notificationKeys;
+  Keys subscriptionKeys;
  
   /*
    * The following fields are used for liveness checking.
@@ -136,16 +161,16 @@ public final class Elvin implements Closeable
    * in a lot of threads being spawned when a sudden influx of
    * notifications come in.
    */
-  private ExecutorService ioExecutor;
-  private ScheduledExecutorService callbackExecutor;
+  ExecutorService ioExecutor;
+  ScheduledExecutorService callbackExecutor;
 
   /**
    * lastReply is effectively a single-item queue for handling
    * responses to XID-based requests, using replySemaphore to
    * synchronize access.
    */
-  private XidMessage lastReply;
-  private Object replySemaphore;
+  XidMessage lastReply;
+  Object replySemaphore;
   
   ListenerList<CloseListener> closeListeners;
   ListenerList<GeneralNotificationListener> notificationListeners;
@@ -340,7 +365,7 @@ public final class Elvin implements Closeable
     scheduleLivenessCheck ();
   }
   
-  private void openConnection ()
+  void openConnection ()
     throws IOException
   {
     try
@@ -373,7 +398,7 @@ public final class Elvin implements Closeable
       if (!connectFuture.join (receiveTimeout))
         throw new IOException ("Timed out connecting to router " + routerUri);
       
-      clientSession = connectFuture.getSession ();
+      connection = connectFuture.getSession ();
     } catch (RuntimeIOException ex)
     {
       // unwrap MINA's RuntimeIOException
@@ -381,6 +406,12 @@ public final class Elvin implements Closeable
     }
   }
   
+  /**
+   * Close the connection to the router. May be executed more than
+   * once with no effect.
+   * 
+   * @see #addCloseListener(CloseListener)
+   */
   public void close ()
   {
     close (REASON_CLIENT_SHUTDOWN, "Client shutting down normally");
@@ -413,8 +444,8 @@ public final class Elvin implements Closeable
           }
         }
         
-        clientSession.close ();
-        clientSession = null;
+        connection.close ();
+        connection = null;
       }
   
       // use subscriptions == null as flag that we already close ()'ed once
@@ -436,18 +467,19 @@ public final class Elvin implements Closeable
     
     try
     {
-      // todo work out why interrupted flag is set when called from MINA IO
-      // for now just clear the flag, or awaitTermination () throws a wobbly
+      /* todo work out why interrupted flag is set when called from
+       * MINA IO. For now just clear the flag, or awaitTermination ()
+       * throws a wobbly. */
       Thread.interrupted ();
       
       callbackExecutor.awaitTermination (receiveTimeout, MILLISECONDS);
     } catch (InterruptedException ex)
     {
-      Log.warn ("Failed to shutdown callbacks", this, ex);
+      warn ("Shutdown callbacks took too long to finish", this, ex);
     }
   }
   
-  private void fireCloseEvent (final int reason, final String message)
+  void fireCloseEvent (final int reason, final String message)
   {
     if (closeListeners.hasListeners ())
     {
@@ -491,13 +523,14 @@ public final class Elvin implements Closeable
 
   /**
    * Test if this connection is open i.e. has not been
-   * {@linkplain #close() closed}.
+   * {@linkplain #close() closed} locally or disconnected by the
+   * remote router.
    * 
    * @see #close()
    */
   public synchronized boolean isOpen ()
   {
-    return clientSession != null && clientSession.isConnected ();
+    return connection != null && connection.isConnected ();
   }
   
   /**
@@ -555,9 +588,9 @@ public final class Elvin implements Closeable
   
   /**
    * Set the liveness timeout period (default is 60 seconds). If no
-   * messages are seen from the router in this period, a connection
-   * test message is sent and, if no reply is seen within the
-   * {@linkplain #receiveTimeout() receive timeout period}, the
+   * messages are seen from the router in this period a connection
+   * test message is sent and if no reply is seen within the
+   * {@linkplain #receiveTimeout() receive timeout period} the
    * connection is deemed to be closed.
    * 
    * @param livenessTimeout The new liveness timeout in milliseconds.
@@ -670,10 +703,10 @@ public final class Elvin implements Closeable
   
   /**
    * Return the mutex used to synchronize access to this connection.
-   * All public methods on this connection that modify state or
-   * otherwise need to be thread safe acquire this before operation.
-   * Clients may choose to pre-acquire this mutex to execute several
-   * operations atomically -- see example in
+   * All methods on the connection that modify state or otherwise need
+   * to be thread safe acquire this before operation. Clients may
+   * choose to pre-acquire this mutex to execute several operations
+   * atomically -- see example in
    * {@link #subscribe(String, Keys, SecureMode)}.
    * <p>
    * 
@@ -1094,7 +1127,7 @@ public final class Elvin implements Closeable
     }
   }
   
-  private void send (Message message)
+  void send (Message message)
     throws IOException
   {
     checkConnected ();
@@ -1102,7 +1135,7 @@ public final class Elvin implements Closeable
     if (shouldLog (TRACE))
       trace ("Client sent message: " + message, this);
   
-    clientSession.write (message);
+    connection.write (message);
   }
 
   /**
@@ -1116,7 +1149,7 @@ public final class Elvin implements Closeable
    * @throws IOException if no suitable reply is seen or a network
    *           error occurs.
    */
-  private <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
+  <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
     throws IOException
   {
     send (request);
@@ -1128,7 +1161,7 @@ public final class Elvin implements Closeable
    * Block the calling thread for up to receiveTimeout millis waiting
    * for a reply message to arrive from the router.
    */
-  private XidMessage receiveReply ()
+  XidMessage receiveReply ()
     throws IOException
   {
     synchronized (replySemaphore)
@@ -1174,7 +1207,7 @@ public final class Elvin implements Closeable
    *           error occurs.
    */
   @SuppressWarnings("unchecked")
-  private <R extends XidMessage> R receiveReply (RequestMessage<R> request)
+  <R extends XidMessage> R receiveReply (RequestMessage<R> request)
     throws IOException
   {
     XidMessage reply = receiveReply ();
@@ -1197,7 +1230,7 @@ public final class Elvin implements Closeable
         throw new RouterNackException (request, nack);
     } else
     {
-      // todo this indicates a pretty serious fuckup. should try to reconnect?
+      // todo this indicates a pretty serious fuckup. should close?
       throw new IOException
         ("Protocol error: received a " + className (reply) +
          ": was expecting " + className (request.replyType ()));
@@ -1241,7 +1274,7 @@ public final class Elvin implements Closeable
     }
   }
 
-  private void handleDisconnect (Disconn disconn)
+  void handleDisconnect (Disconn disconn)
   {
     int reason;
     String message;
@@ -1271,7 +1304,7 @@ public final class Elvin implements Closeable
     close (reason, message);
   }
   
-  private void handleNotifyDeliver (final NotifyDeliver message)
+  void handleNotifyDeliver (final NotifyDeliver message)
   {
     /*
      * Do not fire event in this thread since a listener may trigger a
@@ -1340,10 +1373,10 @@ public final class Elvin implements Closeable
     }
   }
   
-  private void checkConnected ()
+  void checkConnected ()
     throws IOException
   {
-    IoSession session = clientSession;
+    IoSession session = connection;
     
     if (session == null)
       throw new IOException ("Connection is closed");
