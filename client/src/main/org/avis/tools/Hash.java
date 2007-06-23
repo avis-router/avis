@@ -4,6 +4,7 @@ import org.avis.security.SecureHash;
 
 import static org.avis.util.Text.bytesToHex;
 import static org.avis.util.Text.dataToBytes;
+import static org.avis.util.Text.join;
 import static org.avis.util.Util.bytesFrom;
 
 /**
@@ -15,14 +16,20 @@ import static org.avis.util.Util.bytesFrom;
 public class Hash
 {
   private static final Object USAGE =
-    "\nUsage: hash hash_type\n";
+    "\nUsage: hash hash_function\n" +
+    "\n" +
+    "  Data is read from standard input, hashed data is written to\n" +
+    "  standard output.\n" +
+    "\n" +
+    "  Supported hash functions:\n" +
+    "      " + join (SecureHash.values ()) + "\n";
   
   /**
    * Run hash command.
    */
   public static void main (String [] args)
   {
-    if (args.length != 1)
+    if (args.length != 1 || args [0].equals ("-h"))
       usageError ();
     
     try
@@ -50,7 +57,7 @@ public class Hash
   
   private static void usageError (String message)
   {
-    System.err.println ("hashkey: " + message);
+    System.err.println ("hash: " + message);
     System.err.println (USAGE);
     System.exit (1);
   }
