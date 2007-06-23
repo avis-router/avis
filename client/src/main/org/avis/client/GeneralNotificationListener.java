@@ -11,7 +11,7 @@ import java.util.EventListener;
  * <p>
  * A general subscription listener can be useful in the case where
  * multiple subscriptions match a notification and the client only
- * wishes to process each notification once. NB: another way to handle
+ * wishes to process each notification once. Another way to handle
  * this would be to mark processed notifications with the
  * {@link AvisEventObject#setData(String, Object)} and
  * {@link AvisEventObject#getData(String)} methods.
