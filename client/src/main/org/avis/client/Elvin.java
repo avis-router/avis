@@ -71,8 +71,10 @@ import static org.avis.util.Util.checkNotNull;
 /**
  * The core class in the Avis client library which manages a client's
  * connection to an Elvin router. Typically a client creates a
- * connection and then {@linkplain #subscribe(String) subscribes} to
- * notifications and/or {@linkplain #send(Notification) sends} them.
+ * connection and then
+ * {@linkplain #subscribe(String, Keys, SecureMode) subscribes} to
+ * notifications and/or
+ * {@linkplain #send(Notification, Keys, SecureMode) sends} them.
  * <p>
  * Example:
  * 
@@ -95,7 +97,7 @@ import static org.avis.util.Util.checkNotNull;
  * Notification notification = new Notification ();
  * notification.set (&quot;Foo&quot;, 42);
  * notification.set (&quot;Bar&quot;, &quot;bar&quot;);
- * notification.set (&quot;Data&quot;, new byte [] {0x00, 0xff});
+ * notification.set (&quot;Data&quot;, new byte []{0x00, 0xff});
  * 
  * elvin.send (notification);
  * 
