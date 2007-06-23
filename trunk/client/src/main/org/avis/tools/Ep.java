@@ -10,7 +10,6 @@ import org.avis.client.Elvin;
 import org.avis.client.Notification;
 import org.avis.util.InvalidFormatException;
 
-import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.setApplicationName;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -38,7 +37,7 @@ public class Ep
     try
     {
       final Elvin elvin =
-        new Elvin (options.elvinUri, EMPTY_OPTIONS, options.keys, EMPTY_KEYS);
+        new Elvin (options.elvinUri, options.keys, EMPTY_KEYS);
       
       System.err.println ("ep: Connected to server " +
                           options.elvinUri.toCanonicalString ());
