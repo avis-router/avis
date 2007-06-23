@@ -1,12 +1,15 @@
 package org.avis.util;
 
+import java.util.List;
 import java.util.Map;
 
 import java.nio.charset.CharacterCodingException;
 
 import static java.lang.System.arraycopy;
+import static java.util.Arrays.asList;
 
 import static org.avis.io.IO.fromUTF8;
+import static org.avis.io.IO.toUTF8;
 
 
 /**
@@ -188,8 +191,6 @@ public final class Text
   public static byte [] stringToOpaque (String valueExpr)
     throws InvalidFormatException
   {
-    valueExpr = valueExpr.trim ();
-    
     if (valueExpr.length () < 2)
       throw new InvalidFormatException ("Opaque value too short");
     else if (valueExpr.charAt (0) != '[')
@@ -259,19 +260,14 @@ public final class Text
     if (expr.length == 0)
       throw new InvalidFormatException ("Expression cannot be empty");
     
-    int last = expr.length - 1;
-
     try
     {
       switch (expr [0])
       {
         case '[':
-          return stringToOpaque (fromUTF8 (expr, 0, expr.length));
+          return stringToOpaque (fromUTF8 (expr, 0, expr.length).trim ());
         case '"':
-          if (expr [last] != '"')
-            throw new InvalidFormatException ("Missing terminating quote");
-          
-          return slice (expr, 1, expr.length - 1);
+          return toUTF8 (quotedStringToString (fromUTF8 (expr, 0, expr.length).trim ()));
         case '#':
           return slice (expr, 1, expr.length);
         default:
@@ -373,13 +369,65 @@ public final class Text
     else
       return text.split (regex);
   }
+  
+  /**
+   * Join a list of objects into a string.
+   * 
+   * @param items The items to stringify.
+   * 
+   * @return The stringified list.
+   */
+  public static String join (Object [] items)
+  {
+    return join (items, ", ");
+  }
+  
+  /**
+   * Join a list of objects into a string.
+   * 
+   * @param items The items to stringify.
+   * @param separator The separator between items.
+   * 
+   * @return The stringified list.
+   */
+  public static String join (Object [] items, String separator)
+  {
+    return join (asList (items), separator);
+  }
+
+  /**
+   * Join a list of objects into a string.
+   * 
+   * @param items The items to stringify.
+   * @param separator The separator between items.
+   * 
+   * @return The stringified list.
+   */
+  public static String join (List<?> items, String separator)
+  {
+    StringBuilder str = new StringBuilder ();
+    
+    boolean first = true;
+    
+    for (Object item : items)
+    {
+      if (!first)
+        str.append (separator);
+      
+      first = false;
+
+      str.append (item);
+    }
+    
+    return str.toString ();
+  }
 
   /**
    * Generate human friendly string dump of a Map.
    */
   public static String mapToString (Map<?, ?> map)
   {
-    StringBuffer str = new StringBuffer ();
+    StringBuilder str = new StringBuilder ();
     boolean first = true;
     
     for (Map.Entry<?, ?> entry : map.entrySet ())
