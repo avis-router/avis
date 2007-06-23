@@ -17,7 +17,6 @@ import org.avis.client.Elvin;
 import org.avis.client.GeneralNotificationEvent;
 import org.avis.client.GeneralNotificationListener;
 
-import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.setApplicationName;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -44,7 +43,7 @@ public class Ec
     try
     {
       final Elvin elvin =
-        new Elvin (options.elvinUri, EMPTY_OPTIONS, EMPTY_KEYS, options.keys);
+        new Elvin (options.elvinUri, EMPTY_KEYS, options.keys);
       
       System.err.println ("ec: Connected to server " +
                           options.elvinUri.toCanonicalString ());

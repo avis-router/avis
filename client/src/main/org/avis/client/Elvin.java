@@ -647,11 +647,22 @@ public final class Elvin implements Closeable
     }
   }
 
+  /**
+   * Add listener to the close event sent when the client's connection
+   * to the router is disconnected. This includes normal disconnection
+   * via {@link #close()}, disconnections caused by the remote router
+   * shutting down, and abnormal disconnections caused by
+   * communications errors.
+   */
   public synchronized void addCloseListener (CloseListener listener)
   {
     closeListeners.add (listener);
   }
   
+  /**
+   * Remove a {@linkplain #addCloseListener(CloseListener) previously
+   * added} close listener.
+   */
   public synchronized void removeCloseListener (CloseListener listener)
   {
     closeListeners.remove (listener);
