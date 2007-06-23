@@ -1,13 +1,10 @@
 package org.avis.tools;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-
 import org.avis.security.SecureHash;
 
 import static org.avis.util.Text.bytesToHex;
-import static org.avis.util.Text.hexToBytes;
-import static org.avis.util.Util.stringFrom;
+import static org.avis.util.Text.dataToBytes;
+import static org.avis.util.Util.bytesFrom;
 
 /**
  * Command line utility to run a secure hash function on an
@@ -32,12 +29,13 @@ public class Hash
     {
       SecureHash hashFunction = SecureHash.valueOf (args [0]);
       
-      Reader reader = new InputStreamReader (System.in);
-      
       byte [] hashedData =
-        hashFunction.hash (hexToBytes (stringFrom (reader)));
+        hashFunction.hash (dataToBytes (bytesFrom (System.in)));
       
-      System.out.println (bytesToHex (hashedData));
+      System.out.print ('[');
+      System.out.print (bytesToHex (hashedData));
+      System.out.print (']');
+      System.out.println ();
     } catch (Exception ex)
     {
       usageError (ex.getMessage ());
