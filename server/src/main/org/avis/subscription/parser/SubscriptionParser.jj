@@ -41,11 +41,12 @@ SKIP :
 
 TOKEN : /* IDENTIFIERS */
 {
-  < IDENTIFIER:  (<LETTER>|<BACKSLASH>) (<LETTER>|<DIGIT>|<BACKSLASH>)* >
+  < IDENTIFIER:  (<LETTER>|<BACKSLASH>) (<LETTER>|<BACKSLASH>|<ID_CHAR>)* >
 |
-  < #LETTER: [ "a"-"z", "A"-"Z", "_"] >
-|
-  < #DIGIT: [ "0"-"9", "-", ":", "."] >
+  < #LETTER:  [ "a"-"z", "A"-"Z", "_"] >
+
+| < #ID_CHAR: [ "\u0021", "\u0023"-"\u0026", "\u0028", "\u002a"-"\u002b",
+                "\u002d"-"\u005a", "\u005e"-"\u00ff" ] >
 |
   < #BACKSLASH: "\\" ~[] >
 }
@@ -81,15 +82,7 @@ TOKEN : /* LITERALS */
 |
   < #SQUOTE_STRING_LITERAL: "'"  (~["'", "\\"] | <BACKSLASH_EXPR>)* "'" >
 |
-  < #BACKSLASH_EXPR:
-    ("\\"
-       ( [ "n","t","b","r","f","v","a","\\","'","\""]
-         | ["0"-"7"] ( ["0"-"7"] )?
-         | ["0"-"3"] ["0"-"7"] ["0"-"7"]
-         | "x" <HEX_DIGIT> ( <HEX_DIGIT> )? 
-       )
-    )
-  >
+  < #BACKSLASH_EXPR: "\\" ~[] >
 }
 
 Node Start () :
@@ -486,6 +479,6 @@ Const StringLiteral () :
   t=<STRING_LITERAL>
   {
     return new Const
-      (expandBackslashes (t.image.substring (1, t.image.length () - 1)));
+      (stripBackslashes (t.image.substring (1, t.image.length () - 1)));
   }  
 }
