@@ -86,6 +86,27 @@ public final class IO
   }
   
   /**
+   * Turn a UTF-8 byte array into a string.
+   * 
+   * @param utf8Bytes The bytes.
+   * @param offset The offset into bytes.
+   * @param length The number of bytes to use.
+   * @return The string.
+   * 
+   * @throws CharacterCodingException if the bytes do not represent a
+   *           UTF-8 string.
+   */
+  public static String fromUTF8 (byte [] utf8Bytes, int offset, int length)
+    throws CharacterCodingException
+  { 
+    if (utf8Bytes.length == 0)
+      return "";
+    else
+      return UTF8_DECODER.get ().decode
+        (java.nio.ByteBuffer.wrap (utf8Bytes, offset, length)).toString ();
+  }
+  
+  /**
    * Read a length-delimited 4-byte-aligned UTF-8 string.
    */
   public static String getString (ByteBuffer in)
