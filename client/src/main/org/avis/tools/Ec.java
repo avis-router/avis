@@ -97,7 +97,13 @@ public class Ec
     {
       try
       {
-        println ("$time " + iso8601Date.format (new Date ()));
+        print ("$time " + iso8601Date.format (new Date ()));
+        
+        if (!e.secureMatches ().isEmpty ())
+          println (" [secure]");
+        else
+          println ();
+        
         println (e.notification.toString ());
         println ("---");
         
@@ -108,10 +114,22 @@ public class Ec
       }
     }
 
-    private void println (String string)
+    private void print (String string)
       throws IOException
     {
       output.write (string);
+    }
+    
+    private void println (String string)
+      throws IOException
+    {
+      print (string);
+      println ();
+    }
+
+    private void println ()
+      throws IOException
+    {
       output.write ('\n');
     }
   }
