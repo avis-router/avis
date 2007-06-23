@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -97,6 +98,8 @@ public final class Util
   
   /**
    * Read the entirety of stream into a string.
+   * 
+   * @see #bytesFrom(InputStream)
    */
   public static String stringFrom (Reader reader)
     throws IOException
@@ -112,6 +115,32 @@ public final class Util
     reader.close ();
     
     return str.toString ();
+  }
+  
+  /**
+   * Read all the bytes from a stream and then close it.
+   * 
+   * @param in The input stream to read.
+   * @return The bytres read.
+   * 
+   * @throws IOException if an error occurs reading stream.
+   * 
+   * @see #stringFrom(InputStream)
+   */
+  public static byte [] bytesFrom (InputStream in)
+    throws IOException
+  {
+    ByteArrayOutputStream str = new ByteArrayOutputStream (4096);
+    
+    byte [] buffer = new byte [4096];
+    int length;
+    
+    while ((length = in.read (buffer)) != -1)
+      str.write (buffer, 0, length);
+    
+    in.close ();
+    
+    return str.toByteArray ();
   }
 
   /**
