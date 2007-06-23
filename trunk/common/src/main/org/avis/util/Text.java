@@ -2,6 +2,12 @@ package org.avis.util;
 
 import java.util.Map;
 
+import java.nio.charset.CharacterCodingException;
+
+import static java.lang.System.arraycopy;
+
+import static org.avis.io.IO.fromUTF8;
+
 
 /**
  * General text formatting utilities.
@@ -182,6 +188,8 @@ public final class Text
   public static byte [] stringToOpaque (String valueExpr)
     throws InvalidFormatException
   {
+    valueExpr = valueExpr.trim ();
+    
     if (valueExpr.length () < 2)
       throw new InvalidFormatException ("Opaque value too short");
     else if (valueExpr.charAt (0) != '[')
@@ -230,6 +238,60 @@ public final class Text
     return str.toString ();
   }
   
+  /**
+   * Turn a data block expression into a block of bytes.
+   * 
+   * Formats:
+   * <pre>
+   *   Hex pairs: [0a 02 ff 31]
+   *   String:    "hello"
+   *   Raw data:  #data
+   * </pre>
+   * 
+   * @param expr The data block expression
+   * @return The data.
+   * 
+   * @throws InvalidFormatException if the expression was not valid. 
+   */
+  public static byte [] dataToBytes (byte [] expr) 
+    throws InvalidFormatException
+  {
+    if (expr.length == 0)
+      throw new InvalidFormatException ("Expression cannot be empty");
+    
+    int last = expr.length - 1;
+
+    try
+    {
+      switch (expr [0])
+      {
+        case '[':
+          return stringToOpaque (fromUTF8 (expr, 0, expr.length));
+        case '"':
+          if (expr [last] != '"')
+            throw new InvalidFormatException ("Missing terminating quote");
+          
+          return slice (expr, 1, expr.length - 1);
+        case '#':
+          return slice (expr, 1, expr.length);
+        default:
+          throw new InvalidFormatException ("Unknown data block format");
+      }
+    } catch (CharacterCodingException ex)
+    {
+      throw new InvalidFormatException ("Invalid UTF-8 string");
+    }
+  }
+  
+  public static byte [] slice (byte [] bytes, int start, int end)
+  {
+    byte [] slice = new byte [end - start];
+    
+    arraycopy (bytes, start, slice, 0, slice.length);
+    
+    return slice;
+  }
+
   /**
    * Find the first index of the given character, skipping instances
    * that are escaped by '\'.

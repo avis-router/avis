@@ -1,12 +1,16 @@
 package org.avis.util;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import static org.avis.util.Text.bytesToHex;
+import static org.avis.util.Text.dataToBytes;
 import static org.avis.util.Text.expandBackslashes;
 import static org.avis.util.Text.stripBackslashes;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class JUTestText
@@ -73,5 +77,22 @@ public class JUTestText
     {
       // ok
     }
+  }
+  
+  @Test
+  public void dataToByte ()
+    throws Exception
+  {
+    byte [] bytes = dataToBytes ("[00 01 0a ff]".getBytes ("UTF-8"));
+    
+    assertTrue (Arrays.equals (new byte [] {00, 01, 0x0a, (byte)0xff}, bytes));
+    
+    bytes = dataToBytes ("\"hello \u1111 world\"".getBytes ("UTF-8"));
+    
+    assertTrue (Arrays.equals ("hello \u1111 world".getBytes ("UTF-8"), bytes));
+    
+    bytes = dataToBytes (new byte [] {'#', (byte)0xde, (byte)0xad});
+    
+    assertTrue (Arrays.equals (new byte [] {(byte)0xde, (byte)0xad}, bytes));
   }
 }
