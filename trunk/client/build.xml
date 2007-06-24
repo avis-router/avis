@@ -162,6 +162,10 @@
       </zipfileset>
       
       <!-- others -->
+      <zipfileset dir="doc" prefix="${ziproot}">
+        <include name="README.txt" />
+      </zipfileset>
+        
       <zipfileset dir="." prefix="${ziproot}/client">
         <include name=".project" />
         <include name=".classpath" />
@@ -169,7 +173,9 @@
         <include name="build.xml" />
         <include name="lib/avis-client.jar" />
         <include name="lib/avis-tools.jar" />
-        <include name="doc/**" />
+        <include name="doc/examples.txt" />
+        <include name="doc/history.txt" />
+        <include name="doc/java5-package-list/**" />
         <include name="src/avis_java_header.txt" />
         <include name="avis-client.properties" />
       </zipfileset>
