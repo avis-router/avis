@@ -242,7 +242,7 @@
           description="Build avis-client.jar" unless="jars-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
-             classpath="${common}/lib/dfc.jar" />
+             classpath="${common}/lib/jarx.jar" />
 
     <mkdir dir="build" />
       
@@ -261,7 +261,7 @@
           unless="jars-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
-             classpath="${common}/lib/dfc.jar" />
+             classpath="${common}/lib/jarx.jar" />
 
     <jarx archive="build/avis-tools.jar" classpathref="classpath">
 

@@ -120,7 +120,7 @@
           description="Build avisd.jar" unless="avisd-jar-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
-             classpath="${common}/lib/dfc.jar" />
+             classpath="${common}/lib/jarx.jar" />
 
     <mkdir dir="build" />
       
@@ -139,7 +139,7 @@
           description="Build minimal fastutil subset">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
-             classpath="${common}/lib/dfc.jar" />
+             classpath="${common}/lib/jarx.jar" />
 
     <mkdir dir="lib" />
     

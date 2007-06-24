@@ -68,7 +68,7 @@
     
     <ant dir="${dfc.home}" target="compile" inheritall="false" />
     
-    <jar destfile="lib/dfc.jar">
+    <jar destfile="lib/jarx.jar">
       <fileset dir="${dfc.home}/classes">
         <include name="dsto/dfc/tools/**/*.class" />
       </fileset>
