@@ -14,7 +14,6 @@ import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 
 import org.apache.mina.common.ConnectFuture;
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
@@ -381,11 +380,8 @@ public final class Elvin implements Closeable
       connectorConfig.setThreadModel (ThreadModel.MANUAL);
       connectorConfig.setConnectTimeout (receiveTimeout);
       
-      DefaultIoFilterChainBuilder filterChainBuilder =
-        connectorConfig.getFilterChain ();
-      
-      filterChainBuilder.addLast ("codec",
-                                  new ProtocolCodecFilter (FrameCodec.INSTANCE));
+      connectorConfig.getFilterChain ().addLast
+        ("codec", new ProtocolCodecFilter (FrameCodec.INSTANCE));
       
       ConnectFuture connectFuture =
         connector.connect
