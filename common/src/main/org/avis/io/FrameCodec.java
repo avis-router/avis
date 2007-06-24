@@ -108,44 +108,6 @@ public class FrameCodec
     }
   }
 
-  protected static boolean haveFullFrame (IoSession session,
-                                          ByteBuffer in)
-  {
-    if (in.remaining () < 4)
-      return false;
-    
-    boolean haveFrame;
-    int start = in.position ();
-    
-    int frameSize = in.getInt ();
-    
-    if (frameSize > maxFrameLengthFor (session))
-    {
-      // when frame too big, OK it and let decode () generate error
-      haveFrame = true;
-    } else if (in.remaining () < frameSize)
-    {
-      if (in.capacity () < frameSize + 4)
-      {
-        // need to save and restore limit
-        int limit = in.limit ();
-        
-        in.expand (frameSize);
-      
-        in.limit (limit);
-      }
-      
-      haveFrame = false;
-    } else
-    {
-      haveFrame = true;
-    }
-
-    in.position (start);
-    
-    return haveFrame;
-  }
-
   protected boolean doDecode (IoSession session,
                               ByteBuffer in,
                               ProtocolDecoderOutput out)
@@ -216,13 +178,50 @@ public class FrameCodec
     return true;
   }
   
-
   public void finishDecode (IoSession session, ProtocolDecoderOutput out)
     throws Exception
   {
     // zip
   }
-  
+
+  private static boolean haveFullFrame (IoSession session,
+                                        ByteBuffer in)
+  {
+    if (in.remaining () < 4)
+      return false;
+    
+    boolean haveFrame;
+    int start = in.position ();
+    
+    int frameSize = in.getInt ();
+    
+    if (frameSize > maxFrameLengthFor (session))
+    {
+      // when frame too big, OK it and let decode () generate error
+      haveFrame = true;
+    } else if (in.remaining () < frameSize)
+    {
+      if (in.capacity () < frameSize + 4)
+      {
+        // need to save and restore limit
+        int limit = in.limit ();
+        
+        in.expand (frameSize);
+      
+        in.limit (limit);
+      }
+      
+      haveFrame = false;
+    } else
+    {
+      haveFrame = true;
+    }
+
+    in.position (start);
+    
+    return haveFrame;
+  }
+
   /**
    * Create a new message for a given type code.
    */
