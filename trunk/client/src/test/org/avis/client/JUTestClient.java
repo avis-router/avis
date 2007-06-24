@@ -673,6 +673,44 @@ public class JUTestClient
     server.testSimulateUnhang ();
   }
   
+  /**
+   * Test that calling close () in a callback works.
+   */
+  @Test
+  public void closeInCallback ()
+    throws Exception
+  {
+    createServer ();
+    final Elvin client = new Elvin (ELVIN_URI);
+    
+    TestCloseListener closeListener = new TestCloseListener ();
+    
+    client.addCloseListener (closeListener);
+    
+    NotificationListener listener = new NotificationListener ()
+    {
+      public void notificationReceived (NotificationEvent e)
+      {
+        client.close ();
+      } 
+    };
+    
+    client.subscribe ("require (test)").addListener (listener);
+    
+    Notification ntfn = new Notification ();
+    
+    ntfn.set ("test", 1);
+    
+    synchronized (closeListener)
+    {
+      client.send (ntfn);
+      
+      wait (closeListener);
+    }
+    
+    assertFalse (client.isOpen ());
+  }
+  
   private static void wait (Object sem)
     throws InterruptedException
   {
