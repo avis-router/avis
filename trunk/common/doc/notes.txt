@@ -15,8 +15,8 @@ Server 1.1
 
 Client 1.0
 
-* test close in callback
-* remove multiplex codec: CumulativeProtocolDecoder and ProtocolCodecFilter
+* DONE: test close in callback
+* DONE: remove multiplex codec: CumulativeProtocolDecoder and ProtocolCodecFilter
 * DONE: security -> ec/ep. add option for text keys
 * DONE: events: connected etc
 
@@ -28,7 +28,7 @@ Client
 * unotify
 * auto connect/reconnect
 * could use fast collection for client subscription map
-* keepalives? connection test
+* DONE: keepalives? connection test
 * lots of ec/ep options
 * replace IOException witn RuntimeIOException? relates/affected by async idea
 * discovery
