@@ -1,3 +1,35 @@
+Release 1.0 (June 24, 2007)
+----------------------------------------------------------------------
+
+This release marks the first baseline of the Java client API. The core
+set of features required for an Elvin client library are now
+implemented and stable, including subscription, notification,
+security, close event notification, liveness checking and router
+connection option support.
+
+Still to come are SSL/TLS support and quench. A utility to add
+auto-reconnect-on-close behaviour is also planned.
+
+* Improved error messages for rejected requests from router.
+
+* Added close event notification support. Clients can now listen for
+  both client-initiated and router-initiated shutdowns.
+
+* Added connection liveness checking using the TestConn message when
+  connection is idle past a certain amount of time.
+
+* ec and ep now accept multiple key formats via the -C and -P
+  options. Now supports hex-coded, string and raw keys. sha1 now
+  generates compatible hex-coded keys.
+
+* ec now shows "[secure]" in the header of securely-received
+  notifications.
+
+* Simplified MINA I/O setup to use a single fixed codec factory.
+
+* Many code cleanups and javadoc improvements.
+
+
 Release 0.2 (June 11, 2007)
 ----------------------------------------------------------------------
 
@@ -39,6 +71,8 @@ examples.
 
 * New InvalidSubscriptionException is now thrown on subscription
   expression errors rather than a generic IOException.
+
+* Added support for IPv6 addresses in Elvin URI's.
 
 
 Release 0.1 (June 5, 2007)
