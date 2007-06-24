@@ -46,11 +46,13 @@
   <target name="compile" description="Compile source">
     <ant antfile="${common}/build.xml" target="compile"
          inheritall="false" />
-    <ant antfile="${common}/build-common.xml" target="compile-main" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="compile-main"
+         inheritrefs="true" />
   </target>
 
   <target name="compile-tests" depends="compile" description="Compile tests">
-    <ant antfile="${common}/build-common.xml" target="compile-tests" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="compile-tests"
+         inheritrefs="true" />
   </target>
  
   <target name="compile-examples" depends="compile"
@@ -64,7 +66,8 @@
   <target name="tests" depends="compile,compile-tests"
           description="Run unit tests">
     <ant antfile="${server}/build.xml" target="compile" inheritall="false"/> 
-    <ant antfile="${common}/build-common.xml" target="tests" inheritrefs="true" />
+    <ant antfile="${common}/build-common.xml" target="tests"
+         inheritrefs="true" />
   </target>
 
   <target name="check-javadoc-uptodate">
@@ -206,7 +209,8 @@
   </target>
 
   <target name="clean" description="Clean built artifacts">
-    <ant antfile="${common}/build-common.xml" target="clean" inheritall="true" />
+    <ant antfile="${common}/build-common.xml" target="clean"
+         inheritall="true" />
     
     <delete includeemptydirs="true">
       <fileset dir="lib">
