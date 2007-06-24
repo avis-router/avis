@@ -170,7 +170,7 @@ public final class Elvin implements Closeable
    * synchronize access.
    */
   XidMessage lastReply;
-  Object replySemaphore;
+  Object replyLock;
   
   ListenerList<CloseListener> closeListeners;
   ListenerList<GeneralNotificationListener> notificationListeners;
@@ -323,7 +323,7 @@ public final class Elvin implements Closeable
       new ListenerList<CloseListener> ();
     this.notificationListeners =
       new ListenerList<GeneralNotificationListener> ();
-    this.replySemaphore = new Object ();
+    this.replyLock = new Object ();
     this.lastMessageTime = currentTimeMillis ();
     this.receiveTimeout = 10000;
     this.livenessTimeout = 60000;
@@ -1157,13 +1157,13 @@ public final class Elvin implements Closeable
   XidMessage receiveReply ()
     throws IOException
   {
-    synchronized (replySemaphore)
+    synchronized (replyLock)
     {
       if (lastReply == null)
       {
         try
         {
-          replySemaphore.wait (receiveTimeout);
+          replyLock.wait (receiveTimeout);
         } catch (InterruptedException ex)
         {
           throw new RuntimeException (ex);
@@ -1236,13 +1236,14 @@ public final class Elvin implements Closeable
    */
   void handleReply (XidMessage reply)
   {
-    synchronized (replySemaphore)
+    synchronized (replyLock)
     {
       if (lastReply != null)
         throw new IllegalStateException ("Reply buffer overflow");
 
       lastReply = reply;
-      replySemaphore.notify ();
+      
+      replyLock.notify ();
     }
   }
   
@@ -1299,22 +1300,20 @@ public final class Elvin implements Closeable
   
   void handleNotifyDeliver (final NotifyDeliver message)
   {
-    /*
-     * Do not fire event in this thread since a listener may trigger a
-     * receive () which will block the IO processor thread by waiting
-     * for a reply that cannot be processed since the IO processor is
-     * busy calling this method.
-     */
+    /* Firing an event in this thread could cause deadlock if a
+     * listener triggers a receive () since the IO processor thread
+     * will then be waiting for a reply that cannot be processed since
+     * it is busy calling this method. */
     callbackExecutor.execute (new Runnable ()
     {
       public void run ()
       {
-        Notification ntfn = new Notification (message);
-       
         synchronized (mutex ())
         {
           if (isOpen ())
           {
+            Notification ntfn = new Notification (message);
+
             if (notificationListeners.hasListeners ())
             {
               notificationListeners.fire
