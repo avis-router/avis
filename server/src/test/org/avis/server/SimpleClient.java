@@ -15,7 +15,6 @@ import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -31,13 +30,12 @@ import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubRply;
 import org.avis.security.Keys;
 
-import static org.avis.logging.Log.alarm;
-import static org.avis.logging.Log.trace;
-
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.trace;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.server.JUTestServer.PORT;
 
@@ -90,13 +88,9 @@ class SimpleClient implements IoHandler
     SocketConnectorConfig cfg = new SocketConnectorConfig ();
     cfg.setConnectTimeout (10);
     
-    DemuxingProtocolCodecFactory codecFactory =
-      new DemuxingProtocolCodecFactory ();
-    codecFactory.register (FrameCodec.class);
-    
     cfg.getFilterChain ().addLast
-      ("codec", new ProtocolCodecFilter (codecFactory));
-    
+      ("codec",
+       new ProtocolCodecFilter (FrameCodec.INSTANCE));
     ConnectFuture future =
       connector.connect (new InetSocketAddress (hostname, port),
                          this, cfg);

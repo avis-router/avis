@@ -20,7 +20,6 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -382,15 +381,11 @@ public final class Elvin implements Closeable
       connectorConfig.setThreadModel (ThreadModel.MANUAL);
       connectorConfig.setConnectTimeout (receiveTimeout);
       
-      DemuxingProtocolCodecFactory codecFactory =
-        new DemuxingProtocolCodecFactory ();
-      codecFactory.register (FrameCodec.class);
-      
       DefaultIoFilterChainBuilder filterChainBuilder =
         connectorConfig.getFilterChain ();
       
-      filterChainBuilder.addLast
-        ("codec", new ProtocolCodecFilter (codecFactory));
+      filterChainBuilder.addLast ("codec",
+                                  new ProtocolCodecFilter (FrameCodec.INSTANCE));
       
       ConnectFuture connectFuture =
         connector.connect
