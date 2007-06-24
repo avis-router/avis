@@ -17,7 +17,6 @@ import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.ReadThrottleFilterBuilder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
@@ -57,9 +56,9 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
+
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
@@ -126,10 +125,6 @@ public class Server implements IoHandler, Closeable
       new SocketAcceptor (getRuntime ().availableProcessors () + 1,
                           executor);
     
-    DemuxingProtocolCodecFactory codecFactory =
-      new DemuxingProtocolCodecFactory ();
-    codecFactory.register (FrameCodec.class);
-    
     SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
     
     acceptorConfig.setReuseAddress (true);
@@ -145,8 +140,8 @@ public class Server implements IoHandler, Closeable
     DefaultIoFilterChainBuilder filterChainBuilder =
       acceptorConfig.getFilterChain ();
 
-    filterChainBuilder.addLast
-      ("codec", new ProtocolCodecFilter (codecFactory));
+    filterChainBuilder.addLast ("codec",
+                                new ProtocolCodecFilter (FrameCodec.INSTANCE));
     
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));

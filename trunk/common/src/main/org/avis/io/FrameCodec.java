@@ -1,18 +1,16 @@
 package org.avis.io;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import java.nio.BufferUnderflowException;
 
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
+import org.apache.mina.filter.codec.ProtocolCodecFactory;
+import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
+import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
-import org.apache.mina.filter.codec.demux.MessageDecoder;
-import org.apache.mina.filter.codec.demux.MessageDecoderResult;
-import org.apache.mina.filter.codec.demux.MessageEncoder;
 
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
@@ -46,38 +44,24 @@ import static org.avis.logging.Log.internalError;
  * 
  * @author Matthew Phillips
  */
-public class FrameCodec implements MessageDecoder, MessageEncoder
+public class FrameCodec
+  extends CumulativeProtocolDecoder
+  implements ProtocolEncoder, ProtocolDecoder, ProtocolCodecFactory
 {
-  private static final Set<Class> MESSAGE_TYPES;
-  
-  static
-  {
-    MESSAGE_TYPES = new HashSet<Class> ();
-    
-    MESSAGE_TYPES.add (ConnRqst.class);
-    MESSAGE_TYPES.add (ConnRply.class);
-    MESSAGE_TYPES.add (DisconnRqst.class);
-    MESSAGE_TYPES.add (DisconnRply.class);
-    MESSAGE_TYPES.add (Disconn.class);
-    MESSAGE_TYPES.add (SubAddRqst.class);
-    MESSAGE_TYPES.add (SubModRqst.class);
-    MESSAGE_TYPES.add (SubRply.class);
-    MESSAGE_TYPES.add (SubDelRqst.class);
-    MESSAGE_TYPES.add (Nack.class);
-    MESSAGE_TYPES.add (NotifyDeliver.class);
-    MESSAGE_TYPES.add (NotifyEmit.class);
-    MESSAGE_TYPES.add (TestConn.class);
-    MESSAGE_TYPES.add (ConfConn.class);
-    MESSAGE_TYPES.add (SecRqst.class);
-    MESSAGE_TYPES.add (SecRply.class);
-    MESSAGE_TYPES.add (UNotify.class);
-  }
-  
-  public Set<Class> getMessageTypes ()
-  {
-    return MESSAGE_TYPES;
-  }
+  public static final FrameCodec INSTANCE = new FrameCodec ();
 
+  public ProtocolEncoder getEncoder ()
+    throws Exception
+  {
+    return INSTANCE;
+  }
+  
+  public ProtocolDecoder getDecoder ()
+    throws Exception
+  {
+    return INSTANCE;
+  }
+  
   public void encode (IoSession session,
                       Object messageObject,
                       ProtocolEncoderOutput out)
@@ -124,37 +108,54 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     }
   }
 
-  public MessageDecoderResult decodable (IoSession session,
-                                         ByteBuffer in)
+  protected static boolean haveFullFrame (IoSession session,
+                                          ByteBuffer in)
   {
     if (in.remaining () < 4)
-      return NEED_DATA;
+      return false;
+    
+    boolean haveFrame;
+    int start = in.position ();
     
     int frameSize = in.getInt ();
     
     if (frameSize > maxFrameLengthFor (session))
     {
       // when frame too big, OK it and let decode () generate error
-      return OK;
+      haveFrame = true;
     } else if (in.remaining () < frameSize)
     {
       if (in.capacity () < frameSize + 4)
-        in.expand (frameSize + 4);
+      {
+        // need to save and restore limit
+        int limit = in.limit ();
+        
+        in.expand (frameSize);
       
-      return NEED_DATA;
+        in.limit (limit);
+      }
+      
+      haveFrame = false;
     } else
     {
-      return OK;
+      haveFrame = true;
     }
+
+    in.position (start);
+    
+    return haveFrame;
   }
 
-  public MessageDecoderResult decode (IoSession session,
-                                      ByteBuffer in,
-                                      ProtocolDecoderOutput out)
+  protected boolean doDecode (IoSession session,
+                              ByteBuffer in,
+                              ProtocolDecoderOutput out)
     throws Exception
   {
     // if (isEnabled (TRACE) && in.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec input: " + in.getHexDump (), this);
+    
+    if (!haveFullFrame (session, in))
+      return false;
     
     int maxLength = maxFrameLengthFor (session);
     
@@ -212,7 +213,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     
     out.write (message);
     
-    return OK;
+    return true;
   }
   
 
