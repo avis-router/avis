@@ -41,9 +41,9 @@ client                          Avis client library packages
 Building (Ant 1.6 or later)
 ----------------------------------------------------------------------
 
-The Avis client library comes pre-built in the lib directory of this
-distribution. If you wish to modify the library, you may re-build it
-as below:
+The Avis client library comes pre-built in the client/lib directory of
+this distribution. If you wish to modify the library, you may re-build
+it as below:
 
   > cd avis-client-1.0.0/client
   > ant
