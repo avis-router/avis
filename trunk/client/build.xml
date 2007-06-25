@@ -176,6 +176,9 @@
         <include name="build.xml" />
         <include name="lib/avis-client.jar" />
         <include name="lib/avis-tools.jar" />
+        <include name="bin/ec.cmd" />
+        <include name="bin/ep.cmd" />
+        <include name="bin/sha1.cmd" />
         <include name="doc/examples.txt" />
         <include name="doc/history.txt" />
         <include name="doc/java5-package-list/**" />
