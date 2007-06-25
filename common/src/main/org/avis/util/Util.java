@@ -185,6 +185,6 @@ public final class Util
     throws IllegalArgumentException
   {
     if (value == null)
-      throw new IllegalArgumentException (value + " cannot be null");
+      throw new IllegalArgumentException (name + " cannot be null");
   }
 }
