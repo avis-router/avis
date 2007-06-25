@@ -4,6 +4,8 @@ Releases
 
 Server 1.1
 
+* look into whether server can store hashed keys only and avoid
+  hashing them on each match. See Connection.matchSubscriptions ()
 * OS X: installation in /usr/local means getting blown away on system
   reinstall. should we go in /opt?
 * DONE: look at retiring ".net" and maybe "org." in package names.
@@ -27,10 +29,11 @@ Client
 
 * unotify
 * auto connect/reconnect
-* could use fast collection for client subscription map
+* WONT DO: could use fast collection for client subscription map
 * DONE: keepalives? connection test
 * lots of ec/ep options
-* replace IOException witn RuntimeIOException? relates/affected by async idea
+* MAYBE: replace IOException witn RuntimeIOException? relates/affected
+  by async idea
 * discovery
 * async/future-based messaging in client. use futures to track responses.
 * BUG: ec hangs on Presence-Protocol from public.elvin.org. Takes a long time
