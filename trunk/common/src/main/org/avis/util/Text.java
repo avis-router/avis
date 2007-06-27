@@ -201,7 +201,7 @@ public final class Text
     if (closingBrace == -1)
       throw new InvalidFormatException ("Missing closing \"]\"");
     else if (closingBrace != valueExpr.length () - 1)
-      throw new InvalidFormatException ("Junk at end of oqaque value");
+      throw new InvalidFormatException ("Junk at end of opaque value");
   
     return hexToBytes (valueExpr.substring (1, closingBrace));
   }
