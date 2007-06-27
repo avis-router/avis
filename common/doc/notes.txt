@@ -27,6 +27,8 @@ Not allocated
 
 Client
 
+* synchronous reconnect/redirect? block for up to x secs before closing
+* better reporting for going over connection limits (e.g. max subs)
 * unotify
 * auto connect/reconnect
 * WONT DO: could use fast collection for client subscription map
