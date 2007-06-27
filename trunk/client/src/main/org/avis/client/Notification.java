@@ -254,10 +254,7 @@ public final class Notification
   {
     Notification copy = (Notification)super.clone ();
     
-    copy.attributes = new HashMap<String, Object> ();
-    
-    for (Entry<String, Object> entry : attributes.entrySet ())
-      copy.attributes.put (entry.getKey (), entry.getValue ());
+    copy.attributes = new HashMap<String, Object> (attributes);
     
     return copy;
   }
@@ -653,14 +650,14 @@ public final class Notification
       return value;
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings ("unchecked")
   private <T> T get (String name, Class<T> type)
   {
-    T value = (T)attributes.get (name);
+    Object value = attributes.get (name);
     
     if (value == null || type.isAssignableFrom (value.getClass ()))
     {
-      return value;
+      return (T)value;
     } else
     {
       throw new IllegalArgumentException
