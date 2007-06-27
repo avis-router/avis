@@ -153,7 +153,7 @@ public final class Elvin implements Closeable
   int receiveTimeout;
   int livenessTimeout;
   long lastMessageTime;
-  ScheduledFuture<?> livenessFuture;
+  ScheduledFuture livenessFuture;
   
   /**
    * We use a multiple-thread IO pool and a single-thread
@@ -166,8 +166,8 @@ public final class Elvin implements Closeable
 
   /**
    * lastReply is effectively a single-item queue for handling
-   * responses to XID-based requests, using replySemaphore to
-   * synchronize access.
+   * responses to XID-based requests, using replyLock to synchronize
+   * access.
    */
   XidMessage lastReply;
   Object replyLock;
