@@ -78,21 +78,42 @@ public final class Collections
   }
 
   /**
-   * Compute the difference between set1 and set2.
+   * Compute the difference between set1 and set2. This is not
+   * guaranteed to generate a new set instance.
    */
-  public static <E> Set<E> difference (Set<E> set1, Set<E> set2)
+  public static <T> Set<T> difference (Set<T> set1, Set<T> set2)
   {
     if (set1.isEmpty () || set2.isEmpty ())
       return set1;
 
-    Set<E> diff = new HashSet<E> ();
+    HashSet<T> diff = new HashSet<T> ();
     
-    for (E item : set1)
+    for (T item : set1)
     {
       if (!set2.contains (item))
         diff.add (item);
     }
     
     return diff;
+  }
+
+  /**
+   * Compute the union of set1 and set2. This is not guaranteed to
+   * generate a new set instance: it will return set1 or set2 directly
+   * if the other set is empty.
+   */
+  public static <T> Set<T> union (Set<T> set1, Set<T> set2)
+  {
+    if (set1.isEmpty ())
+      return set2;
+    else if (set2.isEmpty ())
+      return set1;
+
+    HashSet<T> union = new HashSet<T> ();
+    
+    union.addAll (set1);
+    union.addAll (set2);
+    
+    return union;
   }
 }
