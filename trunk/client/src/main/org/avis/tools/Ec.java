@@ -99,7 +99,7 @@ public class Ec
       {
         print ("$time " + iso8601Date.format (new Date ()));
         
-        if (!e.secureMatches ().isEmpty ())
+        if (!e.secureMatches.isEmpty ())
           println (" [secure]");
         else
           println ();
