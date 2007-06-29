@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -12,6 +15,8 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
+
+import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoHandlerAdapter;
@@ -44,6 +49,7 @@ import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -137,7 +143,8 @@ public final class Elvin implements Closeable
   ElvinURI routerUri;
   IoSession connection;
   ConnectionOptions connectionOptions;
-  boolean elvinConnectionOpen;
+  AtomicBoolean connectionOpen;
+  boolean elvinSessionEstablished;
   Map<Long, Subscription> subscriptions;
   Keys notificationKeys;
   Keys subscriptionKeys;
@@ -156,10 +163,9 @@ public final class Elvin implements Closeable
   ScheduledFuture livenessFuture;
   
   /**
-   * We use a multiple-thread IO pool and a single-thread
-   * callback/scheduler pool. Using the IO pool for callbacks results
-   * in a lot of threads being spawned when a sudden influx of
-   * notifications come in.
+   * We use a multi-thread I/O pool and a single-thread
+   * callback/scheduler pool, which ensures callbacks are executed
+   * sequentially.
    */
   ExecutorService ioExecutor;
   ScheduledExecutorService callbackExecutor;
@@ -316,6 +322,7 @@ public final class Elvin implements Closeable
   {
     this.routerUri = routerUri;
     this.connectionOptions = options;
+    this.connectionOpen = new AtomicBoolean (true);
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
@@ -340,29 +347,43 @@ public final class Elvin implements Closeable
     checkNotNull (connectionOptions, "Connection options");
     
     this.ioExecutor = newCachedThreadPool ();
-    this.callbackExecutor = newScheduledThreadPool (1);
+    
+    // create callbackExecutor that uses a single CallbackThread
+    this.callbackExecutor =
+      newScheduledThreadPool
+        (1, new ThreadFactory ()
+            {
+              public Thread newThread (Runnable target)
+              {
+                return new CallbackThread (target);
+              }
+            });
+    
+    try
+    {
+      openConnection ();      
 
-    openConnection ();
-    
-    ConnRply connRply =
-      sendAndReceive (new ConnRqst (routerUri.versionMajor,
-                                    routerUri.versionMinor,
-                                    options.asMap (),
-                                    notificationKeys, subscriptionKeys));
-    
-    elvinConnectionOpen = true;
-    
-    Map<String, Object> rejectedOptions =
-      options.differenceFrom (connRply.options);
-    
-    if (!rejectedOptions.isEmpty ())
+      ConnRply connRply =
+        sendAndReceive (new ConnRqst (routerUri.versionMajor,
+                                      routerUri.versionMinor,
+                                      options.asMap (),
+                                      notificationKeys, subscriptionKeys));
+      
+      elvinSessionEstablished = true;
+      
+      Map<String, Object> rejectedOptions =
+        options.differenceFrom (connRply.options);
+      
+      if (!rejectedOptions.isEmpty ())
+        throw new ConnectionOptionsException (options, rejectedOptions);
+      
+      scheduleLivenessCheck ();
+    } catch (IOException ex)
     {
       close ();
       
-      throw new ConnectionOptionsException (options, rejectedOptions);
+      throw ex;
     }
-    
-    scheduleLivenessCheck ();
   }
   
   void openConnection ()
@@ -386,7 +407,7 @@ public final class Elvin implements Closeable
       ConnectFuture connectFuture =
         connector.connect
           (new InetSocketAddress (routerUri.host, routerUri.port),
-           new MessageHandler (), connectorConfig);
+           new IoHandler (), connectorConfig);
                         
       if (!connectFuture.join (receiveTimeout))
         throw new IOException ("Timed out connecting to router " + routerUri);
@@ -417,13 +438,19 @@ public final class Elvin implements Closeable
    */
   void close (int reason, String message)
   {
+    /* Use of atomic flag allows close() to be lock-free when already
+     * closed, which avoids contention when IoHandler gets a
+     * sessionClosed () event triggered by this method. */
+    if (!connectionOpen.getAndSet (false))
+      return;
+
     synchronized (this)
     {
       unscheduleLivenessCheck ();
       
       if (isOpen ())
       {
-        if (elvinConnectionOpen && reason == REASON_CLIENT_SHUTDOWN)
+        if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
         {
           try
           {
@@ -431,9 +458,6 @@ public final class Elvin implements Closeable
           } catch (Exception ex)
           {
             diagnostic ("Failed to cleanly disconnect", this, ex);
-          } finally
-          {
-            elvinConnectionOpen = false;
           }
         }
         
@@ -441,34 +465,32 @@ public final class Elvin implements Closeable
         connection = null;
       }
   
-      // use subscriptions == null as flag that we already close ()'ed once
-      if (subscriptions != null)
-      {
-        for (Subscription subscription : subscriptions.values ())
-          subscription.id = 0;
-        
-        fireCloseEvent (reason, message);
-        
-        ioExecutor.shutdown ();
-        callbackExecutor.shutdown ();
-  
-        subscriptions = null;
-      }
+      // de-activate subscriptions
+      for (Subscription subscription : subscriptions.values ())
+        subscription.id = 0;
+      
+      fireCloseEvent (reason, message);
+      
+      ioExecutor.shutdown ();
+      callbackExecutor.shutdown ();
     }
     
-    // wait for callback events to flush
-    
-    try
+    // wait for callback events to flush if we're not already in a callback
+    if (!(currentThread () instanceof CallbackThread))
     {
-      /* todo work out why interrupted flag is set when called from
-       * MINA IO. For now just clear the flag, or awaitTermination ()
-       * throws a wobbly. */
-      Thread.interrupted ();
-      
-      callbackExecutor.awaitTermination (receiveTimeout, MILLISECONDS);
-    } catch (InterruptedException ex)
-    {
-      warn ("Shutdown callbacks took too long to finish", this, ex);
+      try
+      {
+        /* todo work out why interrupted flag is set when called from
+         * MINA IO. For now just clear the flag, or awaitTermination ()
+         * throws a wobbly. */
+        Thread.interrupted ();
+        
+        if (!callbackExecutor.awaitTermination (receiveTimeout, MILLISECONDS))
+          warn ("Shutdown callbacks took too long to finish", this);
+      } catch (InterruptedException ex)
+      {
+        warn ("Interrupted waiting for shutdown callbacks", this, ex);
+      }
     }
   }
   
@@ -637,7 +659,7 @@ public final class Elvin implements Closeable
   void unscheduleLivenessCheck ()
   {
     if (livenessFuture != null)
-      livenessFuture.cancel (true);
+      livenessFuture.cancel (false);
   }
 
   /**
@@ -1376,7 +1398,7 @@ public final class Elvin implements Closeable
       throw new IOException ("Cannot operate while not connected to router");
   }
   
-  class MessageHandler extends IoHandlerAdapter
+  class IoHandler extends IoHandlerAdapter
   {
     /**
      * Handle exceptions from MINA.
@@ -1412,6 +1434,27 @@ public final class Elvin implements Closeable
     {
       close (REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY,
              "Connection to router closed without warning");
+    }
+  }
+
+  /**
+   * The thread used for all callbacks in the callbackExecutor.
+   */
+  static class CallbackThread
+    extends Thread implements UncaughtExceptionHandler
+  {
+    private static final AtomicInteger counter = new AtomicInteger ();
+    
+    public CallbackThread (Runnable target)
+    {
+      super (target, "Elvin callback thread " + counter.getAndIncrement ());
+      
+      setUncaughtExceptionHandler (this);
+    }
+    
+    public void uncaughtException (Thread t, Throwable ex)
+    {
+      warn ("Uncaught exception in Elvin callback", Elvin.class, ex);
     }
   }
 }
