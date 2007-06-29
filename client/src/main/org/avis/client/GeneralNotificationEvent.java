@@ -6,6 +6,8 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 
+import static org.avis.util.Collections.union;
+
 /**
  * A notification event sent to Elvin subscription listeners.
  * 
@@ -19,14 +21,21 @@ public final class GeneralNotificationEvent extends AvisEventObject
    * The notification.
    */
   public final Notification notification;
+
+  /**
+   * The subscriptions that securely matched the notification.
+   */
+  public final Set<Subscription> secureMatches;
   
-  private final long [] insecureSubscriptionIds;
-  private final long [] secureSubscriptionIds;
-
-  private Set<Subscription> secureMatches;
-  private Set<Subscription> insecureMatches;
-
-  private Set<Subscription> matches;
+  /**
+   * The subscriptions that insecurely matched the notification.
+   */
+  public final Set<Subscription> insecureMatches;
+  
+  /**
+   * All subscriptions that securely matched the notification.
+   */
+  public final Set<Subscription> matches;
 
   GeneralNotificationEvent (Elvin elvin,
                             Notification notification,
@@ -36,8 +45,9 @@ public final class GeneralNotificationEvent extends AvisEventObject
     super (elvin);
     
     this.notification = notification;
-    this.insecureSubscriptionIds = insecureSubscriptionIds;
-    this.secureSubscriptionIds = secureSubscriptionIds;
+    this.insecureMatches = subscriptionSetFor (elvin, insecureSubscriptionIds);
+    this.secureMatches = subscriptionSetFor (elvin, secureSubscriptionIds);
+    this.matches = union (secureMatches, insecureMatches);
   }
   
   /**
@@ -52,67 +62,49 @@ public final class GeneralNotificationEvent extends AvisEventObject
   /**
    * The subscriptions that securely matched the notification.
    * 
-   * @see #matches()
-   * @see #insecureMatches()
+   * @deprecated Since release 1.1, use {@link #secureMatches} instead.
    */
+  @Deprecated
   public Set<Subscription> secureMatches ()
   {
-    if (secureMatches == null)
-      secureMatches = subscriptionSetFor (secureSubscriptionIds);
-    
     return secureMatches;
   }
   
   /**
    * The subscriptions that insecurely matched the notification.
    * 
-   * @see #matches()
-   * @see #secureMatches()
+   * @deprecated Since release 1.1, use {@link #insecureMatches} instead.
    */
+  @Deprecated
   public Set<Subscription> insecureMatches ()
   {
-    if (insecureMatches == null)
-      insecureMatches = subscriptionSetFor (insecureSubscriptionIds);
-    
     return insecureMatches;
   }
   
   /**
    * All subscriptions that matched the notification.
    * 
-   * @see #secureMatches()
-   * @see #insecureMatches()
-   * 
-   * @see Elvin#setKeys(org.avis.security.Keys, org.avis.security.Keys)
-   * @see Subscription#setKeys(org.avis.security.Keys)
+   * @deprecated Since release 1.1, use {@link #matches} instead.
    */
+  @Deprecated
   public Set<Subscription> matches ()
   {
-    if (matches == null)
-    {
-      matches = new HashSet<Subscription> ();
-      
-      matches.addAll (secureMatches ());
-      matches.addAll (insecureMatches ());
-      
-      matches = unmodifiableSet (matches);
-    }
-    
     return matches;
   }
   
   /**
    * Generate a subscription set for a given set of ID's
    */
-  private Set<Subscription> subscriptionSetFor (long [] ids)
+  private static Set<Subscription> subscriptionSetFor (Elvin elvin,
+                                                       long [] ids)
   {
     if (ids.length == 0)
       return emptySet ();
     
-    Set<Subscription> subscriptions = new HashSet<Subscription> ();
+    HashSet<Subscription> subscriptions = new HashSet<Subscription> ();
     
     for (long id : ids)
-      subscriptions.add (elvin ().subscriptionFor (id));
+      subscriptions.add (elvin.subscriptionFor (id));
     
     return unmodifiableSet (subscriptions);
   }

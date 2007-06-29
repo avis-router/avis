@@ -387,8 +387,8 @@ public class JUTestClient
     multiSubListener.waitForNotification ();
     generalListener.waitForNotification ();
     
-    assertTrue (generalListener.event.matches ().contains (insecureSub));
-    assertFalse (generalListener.event.matches ().contains (secureSub));
+    assertTrue (generalListener.event.matches.contains (insecureSub));
+    assertFalse (generalListener.event.matches.contains (secureSub));
     
     assertInsecureMatch (generalListener, insecureSub);
     assertInsecureMatch (generalListener, semiSecureSub);
@@ -436,13 +436,13 @@ public class JUTestClient
   private static void assertInsecureMatch (TestGeneralNtfnListener listener,
                                            Subscription subscription)
   {
-    assertTrue (listener.event.insecureMatches ().contains (subscription));
+    assertTrue (listener.event.insecureMatches.contains (subscription));
   }
   
   private static void assertSecureMatch (TestGeneralNtfnListener listener,
                                          Subscription subscription)
   {
-    assertTrue (listener.event.secureMatches ().contains (subscription));
+    assertTrue (listener.event.secureMatches.contains (subscription));
   }
 
   @Test
