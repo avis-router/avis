@@ -70,7 +70,7 @@ public class JUTestClient
    * Test that client handles changing subs in a notification callback.
    */
   @Test
-  public void modifySubInNotifyEvent ()
+  public void modifySubInNotify ()
     throws Exception
   {
     createServer ();
@@ -120,34 +120,32 @@ public class JUTestClient
   }
   
   /**
-   * Test that client handles sending a notificaion in a notification
-   * callback.
+   * Test that client handles notifying in a notification callback.
    */
   @Test
-  public void notifyInNotifyEvent ()
+  public void notifyInNotify ()
     throws Exception
   {
     createServer ();
     
-    final Elvin client = new Elvin (ELVIN_URI);
-    final Subscription sub = client.subscribe ("require (test)");
+    Elvin client = new Elvin (ELVIN_URI);
+    
+    final Subscription sub = client.subscribe ("require (Test)");
     
     sub.addListener (new NotificationListener ()
     {
       public void notificationReceived (NotificationEvent e)
       {
-        assertFalse (e.secure);
-        
         try
         {
-          if (e.notification.get ("payload").equals ("test 1"))
+          if (e.notification.getInt ("Message-Number") == 1)
           {
             Notification ntfn = new Notification ();
-            ntfn.set ("test", 1);
-            ntfn.set ("payload", "test 2");
+            ntfn.set ("Test", 1);
+            ntfn.set ("Message-Number", 2);
             
-            client.send (ntfn);
-          } else
+            e.subscription.elvin ().send (ntfn);
+          } else if (e.notification.getInt ("Message-Number") == 2)
           {
             synchronized (sub)
             {
@@ -162,8 +160,8 @@ public class JUTestClient
     });
     
     Notification ntfn = new Notification ();
-    ntfn.set ("test", 1);
-    ntfn.set ("payload", "test 1");
+    ntfn.set ("Test", 1);
+    ntfn.set ("Message-Number", 1);
     
     synchronized (sub)
     {
@@ -560,7 +558,7 @@ public class JUTestClient
     {
       System.out.println ("***** " + i);
       
-      modifySubInNotifyEvent ();
+      modifySubInNotify ();
     }
   }
   
