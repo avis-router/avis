@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.sleep;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
@@ -37,6 +38,8 @@ import static org.junit.Assert.fail;
 public class JUTestClient
 {
   private static final String ELVIN_URI = "elvin://localhost:29170";
+
+  private static final long WAIT_TIMEOUT = 10000;
   
   private Server server;
   private LogFailTester logTester;
@@ -107,7 +110,7 @@ public class JUTestClient
     {
       client.send (ntfn);
       
-      wait (sub);
+      waitOn (sub);
     }
     
     assertFalse (client.hasSubscription (sub));
@@ -166,7 +169,7 @@ public class JUTestClient
     {
       client.send (ntfn);
       
-      wait (sub);
+      waitOn (sub);
     }
     
     client.close ();
@@ -340,7 +343,7 @@ public class JUTestClient
     {
       client.send (ntfn);
       
-      wait (sub);
+      waitOn (sub);
     }
   }
 
@@ -624,7 +627,7 @@ public class JUTestClient
     {
       server.close ();
       
-      listener.wait (5000);
+      waitOn (listener, 4000);
     }
     
     assertNotNull ("No event fired", listener.event);
@@ -634,8 +637,6 @@ public class JUTestClient
     listener.event = null;
     client.close ();
     assertNull (listener.event);
-    
-    // todo test close () in callback
     
     // simulate server crash
     createServer ();
@@ -649,10 +650,7 @@ public class JUTestClient
     client.addCloseListener (listener);
     
     // check liveness check keeps connection open
-    synchronized (listener)
-    {
-      listener.wait (3000);
-    }
+    sleep (3000);
     
     assertNull (listener.event);
     assertTrue (client.isOpen ());
@@ -660,10 +658,10 @@ public class JUTestClient
     // hang server
     server.testSimulateHang ();
     
-    // check liveness detects within 6 seconds
+    // check liveness detects and closes within 6 seconds
     synchronized (listener)
     {
-      listener.wait (6000);
+      waitOn (listener, 4000);
     }
     
     assertNotNull (listener.event);
@@ -701,24 +699,27 @@ public class JUTestClient
     
     ntfn.set ("test", 1);
     
-    synchronized (closeListener)
-    {
-      client.send (ntfn);
+    client.send (ntfn);
       
-      wait (closeListener);
-    }
+    closeListener.waitForEvent ();
     
     assertFalse (client.isOpen ());
   }
   
-  private static void wait (Object sem)
+  static void waitOn (Object lock)
+    throws InterruptedException
+  {
+    waitOn (lock, WAIT_TIMEOUT);
+  }
+  
+  static void waitOn (Object lock, long timeout)
     throws InterruptedException
   {
     long waitStart = currentTimeMillis ();
     
-    sem.wait (10000);
+    lock.wait (timeout);
     
-    if (currentTimeMillis () - waitStart >= 10000)
+    if (currentTimeMillis () - waitStart >= timeout)
       fail ("Timed out waiting for response");
   }
   
@@ -731,6 +732,13 @@ public class JUTestClient
       event = e;
       
       notifyAll ();
+    }
+    
+    public synchronized void waitForEvent ()
+      throws InterruptedException
+    {
+      if (event == null)
+        waitOn (this);
     }
   }
   
