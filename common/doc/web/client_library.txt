@@ -4,8 +4,7 @@ Avis Client Library
 The Avis Client Library is an API to aid Java clients in communicating
 with an Elvin router. It is based on the same foundations as the Avis
 router, but is made available under the terms of the GNU Lesser
-General Public License (LGPL) version 2.1 rather than the GPL used by
-the router.
+General Public License (LGPL) rather than the GPL used by the router.
 
 <ul>
   <li><a href="https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706">Download the client library</a></li>
