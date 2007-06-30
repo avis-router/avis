@@ -7,9 +7,9 @@ import java.util.Collection;
 /**
  * Base class for nodes with an arbitrary number of children. This
  * class requires that all children have the same evaluation type.
- * 
- * @param E The type of value that this node evaluates to.
- * @param CHILD_E The type that children of this node evaluate to.
+ * <p>
+ * E is the type of value that this node evaluates to. CHILD_E is the
+ * type that children of this node evaluate to.
  * 
  * @author Matthew Phillips
  */

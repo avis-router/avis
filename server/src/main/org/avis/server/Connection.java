@@ -34,7 +34,7 @@ class Connection
   
   /**
    * The client's subscription set. Maps subscription ID's to their
-   * {@link Subscription} instance.
+   * Subscription instance.
    */
   public Long2ObjectOpenHashMap<Subscription> subscriptions;
 
