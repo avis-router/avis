@@ -86,7 +86,7 @@ import static org.avis.util.Util.checkNotNull;
  * Elvin elvin = new Elvin (&quot;elvin://elvinhostname&quot;);
  * 
  * // subscribe to some notifications
- * elvin.subscribe (&quot;Foo == 42 || Bar == 'baz'&quot;);
+ * elvin.subscribe (&quot;Foo == 42 || begins-with (Bar, 'baz')&quot;);
  * 
  * // add a handler for notifications
  * elvin.addSubscriptionListener (new GeneralSubscriptionListener ()
