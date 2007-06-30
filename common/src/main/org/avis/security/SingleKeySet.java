@@ -40,6 +40,6 @@ class SingleKeySet extends HashSet<Key> implements KeySet, Set<Key>
   
   public KeySet subtract (KeySet keys)
   {
-    return new SingleKeySet (difference ((Set<Key>)this, (Set<Key>)keys));
+    return new SingleKeySet (difference (this, (SingleKeySet)keys));
   }
 }

@@ -21,9 +21,9 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
   }
 
   @Override
-  protected String validateChild (Node child)
+  protected String validateChild (Node<? extends Number> child)
   {
-    Class childType = child.evalType ();
+    Class<? extends Number> childType = child.evalType ();
     
     if (childType == Object.class)
     {
@@ -40,7 +40,7 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
   }
   
   @Override
-  public Class evalType ()
+  public Class<? extends Number> evalType ()
   {
     return Number.class;
   }

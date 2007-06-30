@@ -1,6 +1,6 @@
 package org.avis.subscription.ast;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +9,6 @@ import java.io.StringReader;
 
 import java.lang.reflect.Constructor;
 
-import org.avis.subscription.ast.Node;
-import org.avis.subscription.ast.Nodes;
-import org.avis.subscription.ast.StringCompareNode;
 import org.avis.subscription.ast.nodes.And;
 import org.avis.subscription.ast.nodes.Compare;
 import org.avis.subscription.ast.nodes.Const;
@@ -283,13 +280,13 @@ public class JUTestEvaluation
     ntfn.put ("notnan_int", 42);
     
     assertEquals (TRUE,
-                  new Nan (new Field<Double> ("nan")).evaluate (ntfn));
+                  new Nan (new Field ("nan")).evaluate (ntfn));
     assertEquals (FALSE,
-                  new Nan (new Field<Double> ("notnan")).evaluate (ntfn));
+                  new Nan (new Field ("notnan")).evaluate (ntfn));
     assertEquals (BOTTOM,
-                  new Nan (new Field<Double> ("notnan_int")).evaluate (ntfn));
+                  new Nan (new Field ("notnan_int")).evaluate (ntfn));
     assertEquals (BOTTOM,
-                  new Nan (new Field<Double> ("nonexistent")).evaluate (ntfn));
+                  new Nan (new Field ("nonexistent")).evaluate (ntfn));
     
     // type checks
     ntfn = new HashMap<String, Object> ();
@@ -300,19 +297,19 @@ public class JUTestEvaluation
     ntfn.put ("opaque", new byte [] {1, 2, 3});
     
     assertEquals (TRUE,
-                  new Type (new Field<Integer> ("int32"), Integer.class).evaluate (ntfn));
+                  new Type (new Field ("int32"), Integer.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field<Long> ("int64"), Long.class).evaluate (ntfn));
+                 new Type (new Field ("int64"), Long.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field<Double> ("real64"), Double.class).evaluate (ntfn));
+                 new Type (new Field ("real64"), Double.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field<String> ("string"), String.class).evaluate (ntfn));
+                 new Type (new Field ("string"), String.class).evaluate (ntfn));
     assertEquals (TRUE,
-                  new Type (new Field<byte []> ("opaque"), byte [].class).evaluate (ntfn));
+                  new Type (new Field ("opaque"), byte [].class).evaluate (ntfn));
     assertEquals (FALSE,
-                  new Type (new Field<String> ("string"), Integer.class).evaluate (ntfn));
+                  new Type (new Field ("string"), Integer.class).evaluate (ntfn));
     assertEquals (BOTTOM,
-                  new Type (new Field<String> ("nonexistent"), String.class).evaluate (ntfn));
+                  new Type (new Field ("nonexistent"), String.class).evaluate (ntfn));
   }
   
   /**
@@ -326,7 +323,7 @@ public class JUTestEvaluation
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("name", "foobar");
     
-    Node<Boolean> node = Compare.create (argsList (new Field<String> ("name"),
+    Node<Boolean> node = Compare.create (argsList (field ("name"),
                                                    Const.string ("foobar"),
                                                    Const.int32 (42)));
     assertEquals (TRUE, node.evaluate (ntfn));
@@ -338,6 +335,7 @@ public class JUTestEvaluation
     assertEquals (BOTTOM, node.evaluate (ntfn));
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void mathOps ()
     throws Exception
@@ -346,8 +344,8 @@ public class JUTestEvaluation
     testMathOp (MathMinus.class, 20L - 30L, Const.int64 (20), Const.int64 (30));
     testMathOp (MathMinus.class, 10.5 - 20.25, Const.real64 (10.5), Const.real64 (20.25));
     testMathOp (MathMinus.class, 10 - 20.25, Const.int32 (10), Const.real64 (20.25));
-    testMathOp (MathMinus.class, null, new Field<String> ("string"), Const.real64 (20.25));
-    testMathOp (MathMinus.class, null, Const.int32 (10), new Field<Number> (""));
+    testMathOp (MathMinus.class, null, new Field ("string"), Const.real64 (20.25));
+    testMathOp (MathMinus.class, null, Const.int32 (10), new Field (""));
     
     testMathOp (MathPlus.class, 20 + 30, Const.int32 (20), Const.int32 (30));
     testMathOp (MathPlus.class, 20L + 30L, Const.int64 (20), Const.int64 (30));
@@ -415,7 +413,7 @@ public class JUTestEvaluation
     invert = new MathBitInvert (Const.int64 (1234567890L));
     assertEquals (~1234567890L, invert.evaluate (ntfn));
     
-    invert = new MathBitInvert (new Field<Integer> ("string"));
+    invert = new MathBitInvert ((Node<? extends Number>)new Field ("string"));
     assertEquals (null, invert.evaluate (ntfn));
   }
   
@@ -508,12 +506,14 @@ public class JUTestEvaluation
    * @param number1 Number parameter 1
    * @param number2 Number parameter 1
    */
-  private static void testMathOp (Class<? extends Node> opType, Object correct,
-                                  Node number1, Node number2)
+  private static void testMathOp (Class<? extends Node<?>> opType,
+                                  Object correct,
+                                  Node<?> number1, Node<?> number2)
     throws Exception
   {
     Node<?> op =
-      opType.getConstructor (Node.class, Node.class).newInstance (number1, number2);
+      opType.getConstructor (Node.class, Node.class).newInstance (number1,
+                                                                  number2);
     
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("string", "string");
@@ -524,10 +524,16 @@ public class JUTestEvaluation
   /**
    * Create a list from an array of nodes.
    */
-  private static List<Node<? extends Comparable>>
-    argsList (Node<? extends Comparable>... args)
+  @SuppressWarnings("unchecked")
+  private static List<Node<? extends Comparable<?>>> argsList (Node<?>... args)
   {
-    return Arrays.asList (args);
+    ArrayList<Node<? extends Comparable<?>>> argArray =
+      new ArrayList<Node<? extends Comparable<?>>> (args.length);
+    
+    for (Node<?> node : args)
+      argArray.add ((Node<? extends Comparable<?>>)node);
+
+    return argArray;
   }
 
   /**
@@ -558,7 +564,7 @@ public class JUTestEvaluation
                   Nodes.unparse (parse (subExpr).inlineConstants ()));
   }
   
-  private static Node parse (String expr)
+  private static Node<?> parse (String expr)
     throws org.avis.subscription.parser.ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parse ();
@@ -624,14 +630,14 @@ public class JUTestEvaluation
   {
     return new And
       (new Compare
-        (new Field<String> ("name"), new Const<String> ("Matt"), 0, true),
+        (field ("name"), new Const<String> ("Matt"), 0, true),
        new Or
          (new Compare
-           (new Field<Integer> ("age"), new Const<Integer> (20), -1, false),
+           (field ("age"), new Const<Integer> (20), -1, false),
           new Compare
-           (new Field<Integer> ("age"), new Const<Integer> (50), 1, true)),
+           (field ("age"), new Const<Integer> (50), 1, true)),
        new Not
-         (new Compare (new Field<String> ("blah"), new Const<String> ("frob"), 0, true)));
+         (new Compare (field ("blah"), new Const<String> ("frob"), 0, true)));
   }
 
  /**
@@ -643,8 +649,14 @@ public class JUTestEvaluation
   {
     return new Xor
       (new Compare
-        (new Field<String> ("name"), new Const<String> ("Matt"), 0, true),
+        (field ("name"), new Const<String> ("Matt"), 0, true),
        new Compare
-        (new Field<Integer> ("age"), new Const<Integer> (30), 0, true));
+        (field ("age"), new Const<Integer> (30), 0, true));
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static Node<? extends Comparable<?>> field (String name)
+  {
+    return (Node<? extends Comparable<?>>)new Field (name);
   }
 }

@@ -29,7 +29,7 @@ public abstract class StringCompareNode extends Node<Boolean>
   }
 
   @Override
-  public Class evalType ()
+  public Class<Boolean> evalType ()
   {
     return Boolean.class;
   }

@@ -58,12 +58,13 @@ public class Const<E> extends Node<E>
   }
 
   @Override
-  public Class evalType ()
+  @SuppressWarnings("unchecked")
+  public Class<? extends E> evalType ()
   {
     if (value == BOTTOM)
-      return Boolean.class;
+      return (Class<E>)Boolean.class;
     else
-      return value.getClass ();
+      return (Class<E>)value.getClass ();
   }
 
   @Override

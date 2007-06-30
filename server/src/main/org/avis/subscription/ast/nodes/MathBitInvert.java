@@ -14,7 +14,7 @@ public class MathBitInvert extends Node<Number>
   public MathBitInvert (Node<? extends Number> child)
     throws IllegalChildException
   {
-    Class childType = child.evalType ();
+    Class<? extends Number> childType = child.evalType ();
     
     if (childType != Object.class &&
         !(childType == Integer.class || child.evalType () == Long.class))
@@ -39,7 +39,7 @@ public class MathBitInvert extends Node<Number>
   }
   
   @Override
-  public Class evalType ()
+  public Class<? extends Number> evalType ()
   {
     return child.evalType ();
   }

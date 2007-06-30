@@ -37,13 +37,13 @@ public abstract class BoolParentNode
   }
 
   @Override
-  public Class evalType ()
+  public Class<Boolean> evalType ()
   {
     return Boolean.class;
   }
   
   @Override
-  public String validateChild (Node child)
+  public String validateChild (Node<? extends Boolean> child)
   {
     if (child.evalType () != Boolean.class)
       return expr () + " requires boolean arguments (" + child.expr () + ")";

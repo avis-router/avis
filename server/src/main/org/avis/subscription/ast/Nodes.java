@@ -27,7 +27,7 @@ public final class Nodes
    * 
    * @see #unparse(Node)
    */
-  public static String toString (Node node)
+  public static String toString (Node<?> node)
   {
     IndentingWriter out = new IndentingWriter (new StringWriter ());
     

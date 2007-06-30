@@ -8,7 +8,7 @@ public class Size extends Node<Integer>
 {
   private String name;
 
-  public Size (Field<?> field)
+  public Size (Field field)
   {
     this (field.fieldName ());
   }
@@ -31,7 +31,7 @@ public class Size extends Node<Integer>
   }
   
   @Override
-  public Class evalType ()
+  public Class<? extends Integer> evalType ()
   {
     return Integer.class;
   }

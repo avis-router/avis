@@ -263,7 +263,7 @@ public class JUTestParser
     return new SubscriptionParser (new StringReader (expr)).parseAndValidate ();
   }
   
-  private static Node parse (String expr)
+  private static Node<?> parse (String expr)
     throws ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parse ();

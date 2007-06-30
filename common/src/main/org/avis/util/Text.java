@@ -41,7 +41,7 @@ public final class Text
   /**
    * Return just the name (minus the package) of a class.
    */
-  public static String className (Class type)
+  public static String className (Class<?> type)
   {
     String name = type.getName ();
     
