@@ -1,41 +1,44 @@
 Avis Roadmap
 ======================================================================
 
-NOTE: This is a provisional roadmap reflecting the development goals
-at any one time, and is subject to change. The priorities are driven
-by the need to support migration of existing clients from Mantara
-Elvin to Avis by the end of October 2007.
+This is a provisional roadmap reflecting the development goals at any
+one time, and is subject to change. The priorities are driven by the
+need to support migration of existing clients from Mantara Elvin to
+Avis by the end of October 2007.
 
 Release Schedule
 ----------------------------------------------------------------------
 
-1.1 (June 2007)
+Router Release 1.1 (August 2007)
 
-* Java client library.
+ * Federation.
 
-* SSL/TLS support.
+ * SSL/TLS encryption.
 
-* Quench support (i.e. subset C of protocol spec).
+ * Benchmarking suite and performance optimisation work.
 
-1.2 (September 2007)
+Client Library Release 1.1 (Sep 2007)
 
-* OSGi integration for router.
+ * Auto-reconnect support: subscribe/notify calls to disconnected
+   client block until re-connect or timeout.
 
-* ewafd-style federator as an OSGi add-on.
+ * Quench support.
 
-1.3 (Jan 2008)
+Router Release 1.2 (December 2007)
 
-* Improved robustness via server-wide resource monitoring.
-
-* Basic web monitoring interface OSGi add-on.
-
-* Inbuilt federation OSGi module compliant with spec
+ * Quench support (subset C of the protocol spec).
 
 
 Completed
 ----------------------------------------------------------------------
 
-1.0 (Released in March 2007)
+Client Library Release 1.0 (June 2007)
+
+* Includes subscription, notification, security, close event
+  notification, liveness checking and router connection option
+  support.
+
+Router Release 1.0 (March 2007)
 
 * Supports A & B subsets of the final 4.0 [protocol spec][client_spec].
 
@@ -46,12 +49,16 @@ Completed
   package and RPM) and Windows.
 
 
-Others (not yet scheduled)
+Others
 ----------------------------------------------------------------------
+
+Not yet scheduled:
+
+* Web monitoring/configuration interface.
 
 * Router auto discovery.
 
-* Performance optimization work on subscription matching.
+* OSGi packaging for router and other components.
 
 
 [client_spec]: http://elvin.org/specs
