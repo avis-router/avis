@@ -47,6 +47,8 @@ public class JUTestParser
   {
     assertParsesTo ("'a\\n'", "(string 'an')");
     assertParsesTo ("'a\\\\'", "(string 'a\\')");
+    assertParsesTo ("\"a\\\\!\"", "(string 'a\\!')");
+    assertParsesTo ("\"a\\\"\"", "(string 'a\"')");
     
     assertParseError ("'a\\'");
   }
