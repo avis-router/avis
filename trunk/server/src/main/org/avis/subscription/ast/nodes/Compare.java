@@ -16,7 +16,7 @@ import static org.avis.util.Numbers.upconvert;
  * 
  * @author Matthew Phillips
  */
-public class Compare extends ParentBiNode<Boolean, Comparable>
+public class Compare extends ParentBiNode<Boolean, Comparable<?>>
 {
   private int inequality;
   private boolean equality;
@@ -25,7 +25,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
    * Create compare node from a list of comparable children (size >=
    * 2). If more than two children, generates an OR wrapper.
    */
-  public static Node<Boolean> create (List<Node<? extends Comparable>> args)
+  public static Node<Boolean> create (List<Node<? extends Comparable<?>>> args)
   {
     if (args.size () < 2)
     {
@@ -35,7 +35,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
       return new Compare (args.get (0), args.get (1), 0, true);
     } else
     {
-      Node<? extends Comparable> arg0 = args.get (0);
+      Node<? extends Comparable<?>> arg0 = args.get (0);
       
       Or or = new Or ();
       
@@ -57,8 +57,8 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
    *          &lt; right.
    * @param equality True => true if equal.
    */
-  public Compare (Node<? extends Comparable> child1,
-                  Node<? extends Comparable> child2,
+  public Compare (Node<? extends Comparable<?>> child1,
+                  Node<? extends Comparable<?>> child2,
                   int inequality, boolean equality)
   {
     this.inequality = inequality;
@@ -68,9 +68,9 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
   }
 
   @Override
-  protected String validateChild (Node child)
+  protected String validateChild (Node<? extends Comparable<?>> child)
   {
-    Class childType = child.evalType ();
+    Class<?> childType = child.evalType ();
     
     if (childType == Object.class)
     {
@@ -84,7 +84,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
              className (childType) + " as an argument";
     } else if (child1 != null)
     {
-      Class evalType = child1.evalType ();
+      Class<? extends Comparable<?>> evalType = child1.evalType ();
     
       if (evalType != Object.class &&
           evalType != childType)
@@ -103,7 +103,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
   }
   
   @Override
-  public Class evalType ()
+  public Class<Boolean> evalType ()
   {
     return Boolean.class;
   }

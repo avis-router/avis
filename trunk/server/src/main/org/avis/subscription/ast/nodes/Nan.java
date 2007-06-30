@@ -19,7 +19,7 @@ public class Nan extends Node<Boolean>
   }
 
   @Override
-  public Class evalType ()
+  public Class<? extends Boolean> evalType ()
   {
     return Boolean.class;
   }

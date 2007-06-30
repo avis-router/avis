@@ -45,7 +45,7 @@ public abstract class ParentBiNode<E, E_CHILD>
       throw new IllegalChildException (error, this, child);
   }
   
-  protected abstract String validateChild (Node child);
+  protected abstract String validateChild (Node<? extends E_CHILD> child);
   
   @Override
   public String presentation ()

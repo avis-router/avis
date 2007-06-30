@@ -8,7 +8,7 @@ public class Require extends Node<Boolean>
 {
   private String name;
 
-  public Require (Field<?> field)
+  public Require (Field field)
   {
     this (field.fieldName ());
   }
@@ -25,7 +25,7 @@ public class Require extends Node<Boolean>
   }
 
   @Override
-  public Class evalType ()
+  public Class<? extends Boolean> evalType ()
   {
     return Boolean.class;
   }

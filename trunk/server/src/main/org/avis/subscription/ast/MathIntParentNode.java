@@ -16,15 +16,15 @@ public abstract class MathIntParentNode extends MathParentNode
   }
   
   @Override
-  public Class evalType ()
+  public Class<? extends Number> evalType ()
   {
     return Integer.class;
   }
   
   @Override
-  protected String validateChild (Node child)
+  protected String validateChild (Node<? extends Number> child)
   {
-    Class childType = child.evalType ();
+    Class<? extends Number> childType = child.evalType ();
     
     if (childType == Object.class)
     {

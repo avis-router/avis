@@ -101,7 +101,7 @@ public class JUTestIO
     } else if (o1 != null && o2 != null)
     {
       // deep test for array equality
-      Class cls = o1.getClass ();
+      Class<?> cls = o1.getClass ();
       
       if (cls == o2.getClass () && cls.isArray ())
       {

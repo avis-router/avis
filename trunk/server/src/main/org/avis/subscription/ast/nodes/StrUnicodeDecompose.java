@@ -17,6 +17,7 @@ import static sun.text.Normalizer.normalize;
  * 
  * @author Matthew Phillips
  */
+@SuppressWarnings("restriction")
 public class StrUnicodeDecompose extends Node<String>
 {
   public static final Mode DECOMPOSE = Normalizer.DECOMP;
@@ -32,7 +33,7 @@ public class StrUnicodeDecompose extends Node<String>
   }
   
   @Override
-  public Class evalType ()
+  public Class<? extends String> evalType ()
   {
     return String.class;
   }

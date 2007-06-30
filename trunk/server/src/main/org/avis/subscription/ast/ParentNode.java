@@ -59,7 +59,7 @@ public abstract class ParentNode<E, CHILD_E> extends Node<E>
    * @return An error message if not valid, null if child is OK to be
    *         added.
    */
-  protected abstract String validateChild (Node child);
+  protected abstract String validateChild (Node<? extends CHILD_E> child);
   
   @SuppressWarnings("unchecked")
   public void addChild (Node child)

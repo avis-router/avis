@@ -13,21 +13,21 @@ import org.avis.subscription.ast.Node;
 public class Type extends Node<Boolean>
 {
   private String field;
-  private Class type;
+  private Class<?> type;
 
-  public Type (Field field, Class type)
+  public Type (Field field, Class<?> type)
   {
     this (field.fieldName (), type);
   }
 
-  public Type (String field, Class type)
+  public Type (String field, Class<?> type)
   {
     this.field = field;
     this.type = type;
   }
 
   @Override
-  public Class evalType ()
+  public Class<? extends Boolean> evalType ()
   {
     return Boolean.class;
   }

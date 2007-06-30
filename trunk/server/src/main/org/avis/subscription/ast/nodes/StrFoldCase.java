@@ -17,7 +17,7 @@ public class StrFoldCase extends Node<String>
   }
   
   @Override
-  public Class evalType ()
+  public Class<? extends String> evalType ()
   {
     return String.class;
   }

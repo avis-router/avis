@@ -10,7 +10,7 @@ import org.avis.util.Text;
 
 public abstract class SubscriptionParserBase
 {
-  abstract Node doParse ()
+  abstract Node<?> doParse ()
     throws ParseException;
   
   /**
@@ -18,7 +18,7 @@ public abstract class SubscriptionParserBase
    * for boolean result type or const-ness. See {@link #parseAndValidate} if
    * you want a guaranteed correct subscription expression.
    */
-  public Node parse ()
+  public Node<?> parse ()
     throws ParseException
   {
     try
@@ -82,7 +82,7 @@ public abstract class SubscriptionParserBase
     }
   }
 
-  protected static String className (Class type)
+  protected static String className (Class<?> type)
   {
     return Text.className (type);
   }
