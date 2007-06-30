@@ -63,7 +63,6 @@ import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.internalError;
 import static org.avis.logging.Log.shouldLog;
