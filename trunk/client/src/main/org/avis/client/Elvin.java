@@ -65,6 +65,7 @@ import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.internalError;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
@@ -1407,7 +1408,7 @@ public final class Elvin implements Closeable
     public void exceptionCaught (IoSession session, Throwable cause)
       throws Exception
     {
-      alarm ("Unexpected exception in Elvin client", this, cause);
+      internalError ("Unexpected exception in Elvin client", this, cause);
     }
 
     /**
