@@ -235,6 +235,10 @@ public class JUTestEvaluation
     testPred (StrWildcard.class, "foobar", "fo*a?", TRUE);
     testPred (StrWildcard.class, "foobar", "fo*a", FALSE);
     testPred (StrWildcard.class, null, "fo*a?", BOTTOM);
+    testPred (StrWildcard.class, "fo*a", "fo\\*a", TRUE);
+    testPred (StrWildcard.class, "foxa", "fo\\*a", FALSE);
+    testPred (StrWildcard.class, "fo\\", "fo\\\\", TRUE);
+    testPred (StrWildcard.class, "fo\\", "fo\\", TRUE);
     
     // require
     ntfn = new HashMap<String, Object> ();

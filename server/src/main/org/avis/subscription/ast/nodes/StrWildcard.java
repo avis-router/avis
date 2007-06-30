@@ -57,6 +57,16 @@ public class StrWildcard extends StringCompareNode
         case '?':
           regex.append ('.');
           break;
+        case '\\':
+          if (++i < wildcard.length ())
+          {
+            regex.append ('\\');
+            regex.append (wildcard.charAt (i));
+          } else
+          {
+            regex.append ("\\\\");
+          }
+          break;
         default:
           if (isLetterOrDigit (c) || isWhitespace (c))
             regex.append (c);
