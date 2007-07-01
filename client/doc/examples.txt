@@ -114,6 +114,11 @@ receive it.
 
 ec command: for this example you need to provide ec with the security
 keys needed to receive the secure messages sent between the two
-clients. e.g.
+clients. ec expects keys to be stored in key files, create a file
+named "password.key" containing the single line:
 
-  > ec -e elvin://localhost -c password "From == 'secure-sender'"
+  "password"
+
+Then run ec as below:
+
+  > ec -e elvin://localhost -C password.key "From == 'secure-sender'"
