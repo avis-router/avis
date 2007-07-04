@@ -451,14 +451,9 @@ public final class Notification
     throws IllegalArgumentException
   {
     if (value == null)
-    {
       attributes.remove (name);
-    } else
-    {
-      checkValue (value);
-      
-      attributes.put (name, value);
-    }
+    else
+      attributes.put (name, checkValue (value));
   }
 
   /**
@@ -673,14 +668,17 @@ public final class Notification
       return className (type).toLowerCase ();
   }
   
-  private static void checkValue (Object value)
+  private static Object checkValue (Object value)
     throws IllegalArgumentException
   {
-    if (!(value instanceof String ||
-          value instanceof Integer ||
-          value instanceof Long ||
-          value instanceof Double ||
-          value instanceof byte []))
+    if ((value instanceof String ||
+         value instanceof Integer ||
+         value instanceof Long ||
+         value instanceof Double ||
+         value instanceof byte []))
+    {
+      return value;
+    } else
     {
       throw new IllegalArgumentException
         ("Value must be a string, integer, long, double or byte array");
