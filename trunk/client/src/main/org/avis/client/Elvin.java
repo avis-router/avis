@@ -1038,7 +1038,7 @@ public final class Elvin implements Closeable
     checkNotNull (secureMode, "Secure mode");
     checkNotNull (keys, "Keys");
     
-    send (new NotifyEmit (notification.asMap (),
+    send (new NotifyEmit (notification.attributes,
                           secureMode == ALLOW_INSECURE_DELIVERY, keys));
   }
   
