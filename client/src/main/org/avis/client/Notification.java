@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
@@ -148,9 +149,9 @@ public final class Notification
    * <code>ep</code> utilities. For example:
    * 
    * <pre>
-   *   An int32: 42
-   *   An int64: 24L
-   *   Real64:   3.14
+   *   An-Int32: 42
+   *   An-Int64: 24L
+   *   A-Real64: 3.14
    *   String:   &quot;String with a \&quot; in it&quot;
    *   Opaque:   [01 02 0f ff]
    *   A field with a \: in it: 1
@@ -269,7 +270,7 @@ public final class Notification
   {
     StringBuilder str = new StringBuilder ();
 
-    Set<String> names = new TreeSet<String> (CASE_INSENSITIVE_ORDER);
+    SortedSet<String> names = new TreeSet<String> (CASE_INSENSITIVE_ORDER);
     names.addAll (attributes.keySet ());
     
     boolean first = true;
