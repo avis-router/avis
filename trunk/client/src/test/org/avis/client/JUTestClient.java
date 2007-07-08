@@ -181,7 +181,6 @@ public class JUTestClient
     createServer ();
     
     ElvinURI uri = new ElvinURI (ELVIN_URI);
-    ConnectionOptions options = new ConnectionOptions ();
     
     Key alicePrivate = new Key ("alice private");
 
@@ -192,9 +191,9 @@ public class JUTestClient
     bobSubKeys.add (SHA1_PRODUCER, alicePrivate.publicKeyFor (SHA1_PRODUCER));
     
     // subscribe with global keys
-    Elvin aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
-    Elvin bobClient = new Elvin (uri, options, EMPTY_KEYS, bobSubKeys);
-    Elvin eveClient = new Elvin (uri, options);
+    Elvin aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
+    Elvin bobClient = new Elvin (uri, EMPTY_KEYS, bobSubKeys);
+    Elvin eveClient = new Elvin (uri);
     
     Subscription bobSub =
       bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
@@ -227,7 +226,7 @@ public class JUTestClient
     eveClient.close ();
     
     // check we can add subscription keys for same result
-    aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
+    aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     eveClient = new Elvin (uri);
     
@@ -245,7 +244,7 @@ public class JUTestClient
     eveClient.close ();
     
     // check we can subscribe securely in one step
-    aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
+    aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     eveClient = new Elvin (uri);
     
@@ -656,7 +655,7 @@ public class JUTestClient
     // hang server
     server.testSimulateHang ();
     
-    // check liveness detects and closes within 6 seconds
+    // check liveness detects and closes connection
     synchronized (listener)
     {
       waitOn (listener, 4000);
@@ -665,6 +664,7 @@ public class JUTestClient
     assertNotNull (listener.event);
     assertEquals (REASON_ROUTER_STOPPED_RESPONDING,
                   listener.event.reason);
+    assertFalse (client.isOpen ());
     
     server.testSimulateUnhang ();
   }
