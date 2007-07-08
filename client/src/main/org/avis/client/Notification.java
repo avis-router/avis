@@ -10,7 +10,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -23,6 +22,7 @@ import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 
+import static org.avis.util.Streams.readLine;
 import static org.avis.util.Text.appendEscaped;
 import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.className;
@@ -31,7 +31,6 @@ import static org.avis.util.Text.quotedStringToString;
 import static org.avis.util.Text.stringToNumber;
 import static org.avis.util.Text.stringToOpaque;
 import static org.avis.util.Text.stripBackslashes;
-import static org.avis.util.Util.bufferedReaderFor;
 
 /**
  * A notification sent via an Elvin router. A notification is a set of
@@ -161,16 +160,15 @@ public final class Notification
    * stream or "---".
    * 
    * @param ntfn The notification to add values to.
-   * @param reader The source to read the expression from.
+   * @param in The source to read the expression from.
    * @throws IOException If reader throws an IO exception.
    * @throws InvalidFormatException If there is an error in the format
    *           of the expression. The notification may contain a
    *           partial set of values already successfully read.
    */
-  public static void parse (Notification ntfn, Reader reader)
+  public static void parse (Notification ntfn, Reader in)
     throws IOException, InvalidFormatException
   {
-    BufferedReader in = bufferedReaderFor (reader);
     String line = null;
     
     try
@@ -191,14 +189,14 @@ public final class Notification
    * @return The next line, or null if at eof or the notification
    *         "---" terminator.
    */
-  private static String nextLine (BufferedReader in)
+  private static String nextLine (Reader in)
     throws IOException
   {
     String line;
     
     do
     {
-      line = in.readLine ();
+      line = readLine (in);
     } while (line != null && line.startsWith ("$"));
     
     if (line != null)
