@@ -18,9 +18,9 @@ import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.security.KeyScheme.SHA1_DUAL;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
+import static org.avis.util.Streams.bytesFrom;
+import static org.avis.util.Streams.fileStream;
 import static org.avis.util.Text.dataToBytes;
-import static org.avis.util.Util.bytesFrom;
-import static org.avis.util.Util.fileStream;
 
 /**
  * Command line options that are common across ec and ep.
