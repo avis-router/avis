@@ -27,6 +27,7 @@ Not allocated
 
 Client
 
+* allow connection options in URI
 * DONE: we allow unsubscribe from notification: should resolve sub
   ID's to objects before firing event.
 * synchronous reconnect/redirect? block for up to x secs before closing
