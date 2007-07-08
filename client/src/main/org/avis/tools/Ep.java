@@ -13,7 +13,7 @@ import org.avis.util.InvalidFormatException;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.setApplicationName;
 import static org.avis.security.Keys.EMPTY_KEYS;
-import static org.avis.util.Util.eof;
+import static org.avis.util.Streams.eof;
 
 /**
  * The ep command line utility. Reads a notification from standard

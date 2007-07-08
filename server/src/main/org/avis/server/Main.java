@@ -6,24 +6,22 @@ import java.io.IOException;
 
 import org.apache.mina.common.ByteBuffer;
 
-import org.avis.util.IllegalOptionException;
-
 import org.avis.logging.Log;
+import org.avis.util.IllegalOptionException;
 
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.shouldLog;
-import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.warn;
-
 import static org.avis.util.CommandLine.intArg;
 import static org.avis.util.CommandLine.stringArg;
-import static org.avis.util.Util.fileStream;
-import static org.avis.util.Util.propertiesFrom;
-import static org.avis.util.Util.resourceStream;
+import static org.avis.util.Streams.fileStream;
+import static org.avis.util.Streams.propertiesFrom;
+import static org.avis.util.Streams.resourceStream;
 
 /**
  * Invokes the Avis router from the command line.

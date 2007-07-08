@@ -2,10 +2,10 @@ package org.avis.tools;
 
 import org.avis.security.SecureHash;
 
+import static org.avis.util.Streams.bytesFrom;
 import static org.avis.util.Text.bytesToHex;
 import static org.avis.util.Text.dataToBytes;
 import static org.avis.util.Text.join;
-import static org.avis.util.Util.bytesFrom;
 
 /**
  * Command line utility to run a secure hash function on an
