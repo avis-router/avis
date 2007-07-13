@@ -35,8 +35,6 @@
   <target name="tests">
     <junit fork="yes" haltonfailure="yes" printsummary="true">
    
-      <sysproperty key="dfc.log.console.hide" value="TRACE,DIAGNOSTIC" />
-        
       <formatter type="plain" usefile="false" />
       <classpath refid="classpath" />
       
