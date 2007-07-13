@@ -65,7 +65,7 @@ public class Ec
         }
       });
 
-      elvin.subscribe (options.subscription, options.keys, options.secureMode);
+      elvin.subscribe (options.subscription, options.secureMode);
       
       elvin.addNotificationListener (new Listener ());
       
