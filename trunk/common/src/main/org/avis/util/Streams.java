@@ -194,7 +194,7 @@ public final class Streams
   public static InputStream resourceStream (String resource)
     throws FileNotFoundException
   {
-    InputStream in = Util.class.getResourceAsStream (resource);
+    InputStream in = Streams.class.getResourceAsStream (resource);
     
     if (in == null)
       throw new FileNotFoundException ("Missing resource: " + resource);
