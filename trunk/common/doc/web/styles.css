@@ -5,10 +5,14 @@ body {
 	color:#222;
 	margin-top:0px;
 }
+#nav-home, h1, h2, h3, h4, h5
+{ 
+  font-family:optima,trebuchet ms,verdana,helvetica,sans-serif;
+  font-weight:normal;
+  letter-spacing:.005em;
+}
+
 h1, h2, h3, h4, h5 {
-	font-family:trebuchet ms,arial,tahoma,verdana,sans-serif;
-	font-weight:normal;
-	letter-spacing:.005em;
 	color:#555;
 }
 h1 {
@@ -18,7 +22,9 @@ h1 {
 	letter-spacing:-.015em;
 	border-bottom:1px solid #f0f0f0;
 	line-height:2em;
+
 }
+
 h1, h2, h3, h4, p {
 	padding-left:3px;
 }
@@ -120,6 +126,10 @@ a img {
 	border:none;
 }
 
+#nav-home
+{
+   
+}
 /*
  Structure
  */
