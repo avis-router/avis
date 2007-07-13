@@ -58,7 +58,7 @@ public class Ep
       
       while (!eof (input))
       {
-        elvin.send (new Notification (input), options.keys, options.secureMode);
+        elvin.send (new Notification (input), options.secureMode);
       }
       
       System.exit (0);
