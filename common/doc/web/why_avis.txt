@@ -39,27 +39,6 @@ who can and cannot receive which messages and how they're federated
 across trust boundaries. Security will never be easy, but this
 approach can help to focus on where to apply it.
 
-Where To Use An Elvin Bus
-----------------------------------------------------------------------
-
-Elvin is just one of a number of message bus middleware standards,
-which include enterprise standards such as the Java Messaging System
-(JMS) and wide-area messaging systems such as XMPP.
- 
-The Elvin bus has three key features that make it different:
-
- * It's considerably less complex and lighter-weight than other
-   messaging systems, but can scale to large systems.
-
- * The stateless routing approach is naturally conducive to high
-   performance, allowing it to be used for applications that send lots
-   of messages and need them delivered fast.
-
- * Its design incorporates support for efficient federation of
-   multiple routers into wide-area event routing networks.
-
-Elvin is also an open standard and available as Free Software.
-
 Lightweight Messaging
 ----------------------------------------------------------------------
 
@@ -117,6 +96,27 @@ subscriptions, you may find a heavyweight enterprise messaging system
 such JMS a more appropriate choice, especially if you're already using
 a Java EE or .NET system where such a choice will allow you to
 integrate better with other components.<sup>[2][]</sup>
+
+Where To Use An Elvin Bus
+----------------------------------------------------------------------
+
+Elvin is just one of a number of message bus middleware standards,
+which include enterprise standards such as the Java Messaging System
+(JMS) and wide-area messaging systems such as XMPP.
+ 
+The Elvin bus has three key features that make it different:
+
+ * It's considerably less complex and lighter-weight than other
+   messaging systems, but can scale to large systems.
+
+ * The stateless routing approach is naturally conducive to high
+   performance, allowing it to be used for applications that send lots
+   of messages and need them delivered fast.
+
+ * Its design incorporates support for efficient federation of
+   multiple routers into wide-area event routing networks.
+
+Elvin is also an open standard and available as Free Software.
 
 Current Uses
 ----------------------------------------------------------------------
