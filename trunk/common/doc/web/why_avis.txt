@@ -1,61 +1,52 @@
-Why Choose Avis?
+Why Avis?
 ======================================================================
 
 Avis supports building systems using the Elvin publish/subscribe
-message bus architecture, an approach which shifts the systems
-architect up a level from thinking of communication in terms of
-protocols and point to point networking, and instead think in terms of
-a connectionless, flat communication space.
+message bus architecture, an approach which shifts the network
+architecture up a level from being in terms of protocols and
+point-to-point networking, to being based on the concept of a
+connectionless, flat event space.
 
 Adaptable Communications
 ----------------------------------------------------------------------
 
-A message bus supports many communications arrangements: one to one,
-one to many, many to many. Clients simply emit and receive messages on
-a global bus &mdash; there is no direct connection between clients,
-they simply receive messages they've nominated an interest in if
-another client somewhere on the bus emits them.
+A message bus supports arbitrary communications topologies: one to
+one, one to many, many to many. Clients simply emit and receive
+messages on the bus &mdash; there is no direct connection required
+between them, they simply receive messages they've nominated an
+interest in if another client somewhere on the bus emits them.
 
 A message bus can be used to implement traditional client-server
-remote procedure calls (RPC's) if needed, but can also support other
-kinds of communications, such as textual message broadcast
-(e.g. instant messaging, SNMP device monitoring, stock tickers, RSS
-news) and discovery (e.g. software service discovery, Bonjour, UPnP).
-
-Extension and Monitoring
-----------------------------------------------------------------------
-
-Because the bus can be joined from anywhere on the network and uses a
-uniform message format, any client can monitor, consume, modify,
-augment, forward, proxy and generate messages, making on-the-fly
-extendability and monitoring far more straightforward than with opaque
-RPC and multicast-style systems
+request-reply protocols, but can also support other kinds of
+communications, such as message broadcast (e.g. instant messaging,
+SNMP device monitoring, stock tickers, RSS news) and discovery
+(e.g. software service discovery, Bonjour, UPnP).
 
 Protocols, Statelessness, Security
 ----------------------------------------------------------------------
 
-A standard messaging format means communication protocols become more
-uniform: you design the content independent of on-the-wire encoding,
-network stacks, etc. The bus architecture also encourages a stateless
-connection between clients and obsoletes the issues of deciding who
+A uniform message format means communication protocols become oriented
+around message content rather than on-the-wire encoding formats and
+network stacks.
+
+The bus architecture encourages a stateless connection between clients
+where possible, and often obsoletes the issues of deciding who
 initiates a connection, how to handle disconnection and reconnection,
 and how to find the service to connect to.
 
-Security becomes a matter of deciding who can and cannot receive which
-messages and how they're federated outside &mdash; security is never
-easy, but this can help to narrow the number of issues to cover.
-
+In a message bus architecture security becomes a matter of deciding
+who can and cannot receive which messages and how they're federated
+across trust boundaries. Security will never be easy, but this
+approach can help to focus on where to apply it.
 
 Where To Use An Elvin Bus
 ----------------------------------------------------------------------
 
-Hopefully the above will have described how a message bus architecture
-can be a good choice for many communication-based systems. Elvin is
-just one of a number of message bus "middleware" standards, which
-include enterprise standards such as the Java Messaging System (JMS)
-and wide-area messaging systems such as XMPP.
+Elvin is just one of a number of message bus middleware standards,
+which include enterprise standards such as the Java Messaging System
+(JMS) and wide-area messaging systems such as XMPP.
  
-The Elvin bus has two key features that make it different:
+The Elvin bus has three key features that make it different:
 
  * It's considerably less complex and lighter-weight than other
    messaging systems, but can scale to large systems.
@@ -64,85 +55,76 @@ The Elvin bus has two key features that make it different:
    performance, allowing it to be used for applications that send lots
    of messages and need them delivered fast.
 
-It's also an open standard and available as Free Software, which can't
-hurt. This means no licensing hassles and unlimited deployment.
+ * Its design incorporates support for efficient federation of
+   multiple routers into wide-area event routing networks.
 
-Many middleware systems are claimed to be simple, possibly because
-middleware is traditionally thought to be hard. We think the claim is
-justified in this case &mdash; the next two sections will elaborate.
+Elvin is also an open standard and available as Free Software.
 
-
-Lightweight
+Lightweight Messaging
 ----------------------------------------------------------------------
 
 Elvin messaging is easy to add to a client application: adding the
 client library and a few lines of code are needed to subscribe or emit
-a message &mdash; no factories, registries, queues or network
-configuration needed. As an Elvin router, Avis provides an easy to
-install package which requires no configuration or other
-dependencies. So deciding to experiment with Elvin is a low cost
-decision, and the overhead of getting started should not dominate a
-small project as would choosing something like JMS.
+a message &mdash; no factories, registries, queues, databases or
+network configuration are required.
 
-Elvin's simplicity goes a long way towards making it easy to get
-started, and its flexibility allows it to scale upwards to more
-complex jobs. Once you've set up an Elvin server somewhere on the
-network for one project, you'll find it even easier to use it for
-other projects and, by federating it with other routers, scaled up to
-bigger networks.
+Deciding to experiment with Elvin is a low cost decision &mdash; Avis
+provides an easy to install package which requires no configuration or
+other dependencies.
+
+While Elvin's simplicity makes it easy to get started, its flexibility
+allows it to scale to more complex jobs. Once an Elvin router is
+available somewhere on the network, it may become a convenient
+resource for other applications, and federating it with other routers
+allows to to be scaled up for bigger projects.
 
 Speed
 ----------------------------------------------------------------------
 
 An Elvin message router only delivers messages to clients that are
-interested in them and, thanks the Elvin subscription language,
-clients can usually be specific enough in what they require that they
-don't have to receive messages they're not interested in.
+interested in them, and Elvin's subscription language allows clients
+to be specific enough that they don't receive messages they're not
+interested in.
 
 Because the router is stateless, does not need to support guaranteed
 delivery, transactions or durable subscriptions, and optimises the way
-it scans for matching subscriptions, it can achieve very good message
-throughput. This allows it to be used for semi real-time
+it scans for matching subscriptions, it can achieve very high message
+throughputs. This allows it to be used for near real-time
 applications.<sup>[1][]</sup>
 
-In fact, although we've compared Elvin to enterprise messaging systems
-such as JMS, it really falls somwhere between low-level IP multicast
-messaging and more heavyweight messaging systems.
+In fact, although Elvin may be initially be thought of as a peer to
+enterprise messaging systems such as JMS it really falls somewhere
+between IP multicast and more heavyweight messaging systems.
 
-Note that Avis *is* reliable in the sense that it's stable and
-thoroughly tested, but it does not provide an absolute guarantee of
-delivery, just its best-effort attempt. If this sounds scary, we can
-testify from first hand experience that many systems can effectively
-and safely operate without absolutely guaranteed delivery, especially
-given the significant cost associated with providing such guarantees.
-
-Costs of guaranteed delivery include slower delivery speed and much
-more complex supporting infrastructure: a guaranteed delivery system
-needs a persistent, transactional message store, tracking for what
-clients have received which messages, acknowledgment of message
-receipt, etc. Such systems also store a lot of state on the server,
-which makes server failover, load-balancing and federation much
-harder.
-
-
-Where Elvin May Not Be A Good Choice
+Best Effort Delivery
 ----------------------------------------------------------------------
 
-If you need absolute guaranteed message delivery or durable
-subscriptions, you'll find something like JMS a more appropriate
-choice, especially if you're already using a Java Enterprise or .NET
-system where such a choice will allow you to integrate better with
-other components.<sup>[2][]</sup>
+The Elvin protocol does not provide an absolute guarantee of delivery,
+just a best-effort attempt. If this sounds scary, first hand
+experience indicates that many systems simply do not require
+absolutely guaranteed message delivery, especially given the
+significant cost associated with providing such a guarantee.
 
+Costs of guaranteed delivery include slower delivery speed and complex
+supporting infrastructure: a guaranteed delivery system needs a
+persistent, transactional message store, tracking for what clients
+have received which messages, acknowledgment of message receipt,
+etc. Such systems store a lot of state on the server, which makes
+server failover, load-balancing and federation much harder.
 
-Current Users
+However, if you need absolute guaranteed message delivery or durable
+subscriptions, you may find a heavyweight enterprise messaging system
+such JMS a more appropriate choice, especially if you're already using
+a Java EE or .NET system where such a choice will allow you to
+integrate better with other components.<sup>[2][]</sup>
+
+Current Uses
 ----------------------------------------------------------------------
 
-A testament to how an Elvin message bus works in real use is the
-successful adoption of Avis' commercial big brother and predecessor,
-Mantara's original `elvind`. Mantara's Elvin has become a core
-component of a number of projects at DSTC, DSTO, and several academic
-institutions. Elvin has been used:
+Elvin has become a core component of a number of projects at DSTC,
+DSTO, and several academic institutions.
+
+Elvin has been used:
 
  * To implement a wide-area instant messaging and presence network
    across several organisations,
@@ -154,16 +136,9 @@ institutions. Elvin has been used:
 
  * To route Stock trade notifications.
 
-For a simple example of how to use Avis, please see the [examples][]
-page.
-
 Elvin has also been used in a number of projects where it simply
 provides a convenient way to instrument or otherwise send a message
-from a program that is otherwise not communication oriented at all
-(e.g. instrumenting a web application).
-
-As Mantara Elvin is phased out, Avis is being brought in as a
-compatible replacement.
+from a program or service (e.g. instrumenting a web application).
 
 <div class="footnotes">
 <hr />
@@ -174,10 +149,10 @@ Footnotes
 
 <li id="fn1-why">
 
-<p>A real application of this uses Avis for sending remote mouse
-   control events to a display server computer, where timely delivery
-   is crucial in order for the remote mouse cursor movement to feel
-   smooth.</p>
+<p>An example of the use of Avis for a semi real-time application is
+   sending mouse input events to remote-control another computer: in
+   this scenario timely delivery is crucial in order for the remote
+   mouse cursor movement to feel smooth.</p>
 
 </li>
 
