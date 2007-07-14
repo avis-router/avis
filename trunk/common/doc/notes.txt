@@ -1,6 +1,13 @@
-TODO
+Federation
+----------------------------------------------------------------------
+
+* Will probably encounter FedSubDiff from 4.4: may need to rev-engineer
+* How insecure is it to allow anyone to federate with no SSL? Do we
+  need SSL?
+
 
 Releases
+----------------------------------------------------------------------
 
 Server 1.1
 
@@ -27,6 +34,7 @@ Not allocated
 
 Client
 
+* add subscription string escape utilities
 * allow connection options in URI
 * DONE: we allow unsubscribe from notification: should resolve sub
   ID's to objects before firing event.
