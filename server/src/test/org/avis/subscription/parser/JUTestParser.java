@@ -53,6 +53,25 @@ public class JUTestParser
     assertParseError ("'a\\'");
   }
   
+  @Test
+  public void numbers ()
+    throws Exception
+  {
+    assertParsesTo ("0.0", "(real64 0.0)");
+    assertParsesTo ("3.4", "(real64 3.4)");
+    assertParsesTo ("1.2e10", "(real64 1.2E10)");
+    assertParsesTo ("1.2E10", "(real64 1.2E10)");
+    assertParsesTo ("1.2E+10", "(real64 1.2E10)");
+    assertParsesTo ("1.2E-10", "(real64 1.2E-10)");
+    
+    assertParseError ("0.");
+    assertParseError (".1");
+    assertParseError ("0.1e");
+    assertParseError ("0.1e-");
+    assertParseError ("0.1eg");
+    assertParseError ("0.1f");
+  }
+  
   /**
    * Test parser doesn't get confused by a function names as a field.
    */
