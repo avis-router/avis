@@ -477,7 +477,8 @@ public class JUTestEvaluation
     assertReducesTo ("1 == 1 ^^ 10 > 9", "(constant 'false')");
     assertReducesTo ("1 != 1 || 2 != 2 || 3 != 3", "(constant 'false')");
     assertReducesTo ("1 == 1 && 2 == 2 && 3 == 3", "(constant 'true')");
-
+    assertReducesTo ("! ! (1 == 1)", "(constant 'true')");
+    
     // test AND/OR erasure of constant non-contributing subtree
     assertReducesTo ("field == 5 && 10 > 9", "(== (field 'field') (int32 5))");
     assertReducesTo ("field == 5 || 10 < 9", "(== (field 'field') (int32 5))");
