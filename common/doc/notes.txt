@@ -34,6 +34,7 @@ Not allocated
 
 Client
 
+* fix bogus generics in AST nodes: do not compile with javac
 * add subscription string escape utilities
 * allow connection options in URI
 * DONE: we allow unsubscribe from notification: should resolve sub
