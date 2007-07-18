@@ -83,11 +83,16 @@ Secure Sender & Secure Receiver
 ----------------------------------------------------------------------
 
 In this example we set up a situation where a sender wants to ensure
-that only receivers it trusts can see its messages. The sender and
-receiver(s) agree on a secret password and security scheme (SHA-1
-Consumer), and the sender uses the public version of the key on
-notifications and receivers use the private version on their
-subscriptions.
+that only receivers it trusts can see its messages. To ensure
+security:
+
+  * The sender and receiver(s) agree on a secret password and security
+    scheme (SHA-1 Consumer).
+
+  * The sender uses the public version of the key on notifications.
+
+  * Receivers use the private version of the key on their
+    subscriptions.
 
 See the documentation attached to the Avis KeyScheme class for more
 details on how security schemes work.
@@ -113,8 +118,8 @@ you will see that the Console 1 client will no longer be able to
 receive it.
 
 ec command: for this example you need to provide ec with the security
-keys needed to receive the secure messages sent between the two
-clients. ec expects keys to be stored in key files, create a file
+key needed to receive the secure messages sent between the two
+clients. ec expects keys to be stored in key files, so create a file
 named "password.key" containing the single line:
 
   "password"
