@@ -12,7 +12,7 @@
   
   <property name="common" value="${basedir}/../common" />
 	
-	<!-- svn2cl: only needed to generate changelog -->
+  <!-- svn2cl: only needed to generate changelog -->
   <property name="svn2cl" value="/usr/local/bin/svn2cl" />
  
   <!-- Markdown 1.0.1: only needed to build web page -->
@@ -62,7 +62,7 @@
 
   </target>
 
-  <target name="jar-dfc">
+  <target name="jar-jarx">
     
     <property name="dfc.home" value="../../dfc.core" />
     
