@@ -167,14 +167,10 @@ public final class IO
   /**
    * Calculate the padding for a block of length bytes to a multiple
    * of 4.
-   * 
-   * TODO opt: there's probably some funky faster way to do this.
    */
   public static int paddingFor (int length)
   {
-    int mod = length % 4;
-    
-    return mod == 0 ? 0 : 4 - mod;
+    return (4 - length % 4) % 4;
   }
 
   /**

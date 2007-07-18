@@ -73,6 +73,17 @@ public class JUTestIO
     assertArraysEquals (objects, objectsCopy);
   }
   
+  @Test
+  public void padding ()
+  {
+    assertEquals (0, IO.paddingFor (0));
+    assertEquals (3, IO.paddingFor (1));
+    assertEquals (2, IO.paddingFor (2));
+    assertEquals (1, IO.paddingFor (3));
+    assertEquals (0, IO.paddingFor (4));
+    assertEquals (3, IO.paddingFor (5));
+  }
+  
   private void assertArraysEquals (Object [] o1, Object [] o2)
   {
     assertEquals (o1.length, o2.length);
