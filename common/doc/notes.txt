@@ -5,6 +5,154 @@ Federation
 * How insecure is it to allow anyone to federate with no SSL? Do we
   need SSL?
 
+################################################################
+# federation
+#
+# Default: no
+# 
+# Controls whether the router's support for wide area federation is to
+# be activated.  If not, none of the other federation configuration
+# options will have any effect.
+#
+# federation no
+
+################################################################
+# federation.name
+#
+# Default: <automatic>
+# 
+# The name the router will use for wide area federation. This name
+# MUST be globally unique (we strongly recommend your host name from
+# DNS), but the same across all members of a failover set.  If no name
+# is provided, elvind will attempt to determine a unique name for
+# itself.
+#
+# federation.name miles.mantara.com
+
+################################################################
+# federation.protocol
+#
+# Default: <none>
+# 
+# The protocols the server will listen for wide area federation
+# connections with.
+#
+# federation.protocol ewaf:/tcp,none,xdr/0.0.0.0:2916
+# federation.protocol ewaf:/ssl,none,xdr/0.0.0.0:12304
+
+################################################################
+# federation.class
+#
+# Default: <none>
+#
+# Each class entry defines the name of a class of federation links.
+# The policies below are applied to links on the basis of their class.
+# 
+# federation.class public
+# federation.class internal
+# federation.class partner
+
+################################################################
+# federation.class.require
+#
+# Default: <none>
+#
+# The router may require federation links to be active in specific
+# link classes before allowing clients to connect.  If at any time
+# there is not at least one connected link in each such required link
+# class then any existing clients will be disconnected and no new
+# clients accepted until all required link classes have at least one
+# connected link.
+# 
+# federation.class.require internal
+
+################################################################
+# federation.identify.address
+# federation.identify.domain
+# federation.identify.id
+#
+# Default: <none>
+#
+# Restrict the machines that may connect to us with this class of
+# federation link.  This serves to identify incoming federation links
+# and assign them to classes.
+# 
+# federation.identify.address	public		public.elvin.org
+# federation.identify.address	internal	10.20.30.0/24
+# federation.identify.domain	partner		.example.com
+
+################################################################
+# federation.subscribe
+#
+# Default: <none>
+#
+# Specifies the notifications we are willing to receive from the other
+# servers in the federation.  The notifications are specified by a
+# standard Elvin subscription expression or the keywords `TRUE' (to
+# accept any notifications) or `FALSE' (to accept none).
+# 
+# federation.subscribe public require(X-NNTP-Host)
+# federation.subscribe internal TRUE
+# federation.subscribe partner TICKERTAPE == "partner chat"
+
+################################################################
+# federation.provide
+#
+# Default: <none>
+#
+# Specifies the notifications we are willing to provide to the other
+# servers in the federation.  The notifications are specified by a
+# standard Elvin subscription expression or the keywords `TRUE' (to
+# provide all notifications) or `FALSE' (to provide none).
+# 
+# federation.provide public FALSE
+# federation.provide internal require(TICKERTAPE) || require(NEWSGROUPS)
+# federation.provide partner TICKERTAPE == "partner chat"
+
+################################################################
+# federation.link
+#
+# Default: <none>
+#
+# Each federation link defines a connection to be initiated to another
+# router.
+# 
+# federation.link public ewaf:/tcp,none,xdr/public.elvin.org:2916
+# federation.link partner ewaf:/ssl,none,xdr/elvin.example.org:12304
+
+################################################################
+# federation.keepalive.period
+#
+# Default: 2 minutes
+#
+# The frequency with which to test each federation connection.
+# 
+# federation.keepalive.period 2m
+
+################################################################
+# federation.keepalive.timeout
+#
+# Default: 20 seconds
+#
+# The maximum length of time to wait for a response to a test before
+# declaring the link dead.
+# 
+# federation.keepalive.timeout 20s
+
+################################################################
+# federation.propagation.interval
+#
+# Default: off
+#
+# The minimum length of time between receiving acknowledgement of one
+# subscription update and sending the next. If set to zero, subsequent
+# subscription updates will be propagated immediately, even before the
+# previous update has been acknowledged. If updates have to be delayed
+# then after the propagation interval has expired the entire
+# subscription database will be re-sent, not just the changes.
+# 
+# federation.propagation.interval 500ms
+
 
 Releases
 ----------------------------------------------------------------------
