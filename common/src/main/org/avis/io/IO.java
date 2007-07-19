@@ -161,7 +161,8 @@ public final class IO
    */
   public static void putPadding (ByteBuffer out, int length)
   {
-    putBytes (out, (byte)0, paddingFor (length));
+    for (int count = paddingFor (length); count > 0; count--)
+      out.put ((byte)0);
   }
 
   /**
@@ -300,19 +301,6 @@ public final class IO
     putPadding (out, bytes.length);
   }
 
-  /**
-   * Write a series of bytes.
-   * 
-   * @param out The buffer to write to.
-   * @param value The value to write
-   * @param count The number of times to write value.
-   */
-  public static void putBytes (ByteBuffer out, byte value, int count)
-  {
-    for ( ; count > 0; count--)
-      out.put (value);
-  }
-  
   /**
    * Read a length-delimited, 4-byte-aligned byte array.
    */
