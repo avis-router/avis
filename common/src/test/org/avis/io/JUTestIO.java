@@ -82,6 +82,8 @@ public class JUTestIO
     assertEquals (1, IO.paddingFor (3));
     assertEquals (0, IO.paddingFor (4));
     assertEquals (3, IO.paddingFor (5));
+    assertEquals (3, IO.paddingFor (25));
+    assertEquals (3, IO.paddingFor (4 * 1234 + 1));
   }
   
   private void assertArraysEquals (Object [] o1, Object [] o2)
