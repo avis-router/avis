@@ -45,7 +45,7 @@ import static org.junit.Assert.fail;
  * 
  * @author Matthew Phillips
  */
-public class JUTestServer
+public class JUTestRouter
 {
   static final int PORT = 29170;
 

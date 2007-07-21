@@ -20,7 +20,7 @@ import static org.avis.common.Common.DEFAULT_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class JUTestServerOptions
+public class JUTestRouterOptions
 {
   @Test
   public void bindAll ()

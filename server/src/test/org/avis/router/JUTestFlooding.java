@@ -23,7 +23,7 @@ import static org.avis.logging.Log.warn;
 
 import static java.lang.Thread.sleep;
 
-import static org.avis.router.JUTestServer.PORT;
+import static org.avis.router.JUTestRouter.PORT;
 
 /**
  * Tests for the server's robustness to clients spamming with large
@@ -32,7 +32,7 @@ import static org.avis.router.JUTestServer.PORT;
  * USE_EXTERNAL_SERVER to true if you want to do this and run a server
  * on port 29170.
  */
-public class JUTestServerFlooding
+public class JUTestFlooding
 {
   private static final boolean USE_EXTERNAL_SERVER = false;
 
