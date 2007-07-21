@@ -37,7 +37,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.trace;
-import static org.avis.router.JUTestServer.PORT;
+import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
 
 import static org.junit.Assert.assertEquals;

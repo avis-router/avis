@@ -22,7 +22,7 @@ import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.enableLogging;
 
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
-import static org.avis.router.JUTestServer.PORT;
+import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 
 /**
@@ -31,7 +31,7 @@ import static org.avis.security.KeyScheme.SHA1_CONSUMER;
  * 
  * @author Matthew Phillips
  */
-public class JUTestServerAttack
+public class JUTestAttack
 {
   private Random random;
   private Router server;
