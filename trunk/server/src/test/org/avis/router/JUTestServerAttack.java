@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +22,8 @@ import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.enableLogging;
 
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.router.JUTestServer.PORT;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
-import static org.avis.server.JUTestServer.PORT;
 
 /**
  * Test attacks deliberately designed to DOS/crash the server by
