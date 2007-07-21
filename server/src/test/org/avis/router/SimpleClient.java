@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -37,8 +37,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.trace;
+import static org.avis.router.JUTestServer.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
-import static org.avis.server.JUTestServer.PORT;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

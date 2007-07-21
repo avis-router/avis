@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import static org.avis.logging.Log.warn;
 
 import static java.lang.Thread.sleep;
 
-import static org.avis.server.JUTestServer.PORT;
+import static org.avis.router.JUTestServer.PORT;
 
 /**
  * Tests for the server's robustness to clients spamming with large

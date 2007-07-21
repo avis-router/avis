@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 public class MessageTimeoutException extends Exception
 {
