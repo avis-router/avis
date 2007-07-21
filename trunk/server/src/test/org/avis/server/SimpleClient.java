@@ -46,7 +46,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Basic Avis test client.
  */
-class SimpleClient implements IoHandler
+public class SimpleClient implements IoHandler
 {
   protected static final int RECEIVE_TIMEOUT = 5000;
   
