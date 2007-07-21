@@ -19,6 +19,7 @@ import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.SubRply;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
+import org.avis.router.Server;
 import org.avis.security.Key;
 import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
@@ -30,9 +31,9 @@ import org.junit.Test;
 
 import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
+import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
-import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

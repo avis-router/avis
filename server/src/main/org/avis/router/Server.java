@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import java.util.concurrent.ExecutorService;
 
@@ -79,8 +79,8 @@ import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
+import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.Keys.EMPTY_KEYS;
-import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
 import static org.avis.util.Text.shortException;
 

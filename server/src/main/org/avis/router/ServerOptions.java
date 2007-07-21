@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import java.util.Collection;
 import java.util.Enumeration;
@@ -22,7 +22,7 @@ import static java.util.Arrays.asList;
 
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.common.ElvinURI.defaultProtocol;
-import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.util.Text.split;
 
 /**

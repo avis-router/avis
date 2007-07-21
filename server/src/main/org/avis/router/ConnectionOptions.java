@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import org.avis.util.Options;
 
 import static java.util.Collections.emptyMap;
 
-import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 /**
  * Avis router connection options.

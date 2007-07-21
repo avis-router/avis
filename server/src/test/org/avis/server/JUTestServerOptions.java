@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 
-import org.avis.server.ServerOptions;
+import org.avis.router.ServerOptions;
 
 import org.junit.Test;
 

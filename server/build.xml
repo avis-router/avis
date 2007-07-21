@@ -125,7 +125,7 @@
     <mkdir dir="build" />
       
     <jarx archive="build/avisd.jar"
-          mainClass="org.avis.server.Main"
+          mainClass="org.avis.router.Main"
           classpathref="classpath">
       
       <include name="avis.properties" />

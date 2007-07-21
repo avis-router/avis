@@ -28,6 +28,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubRply;
+import org.avis.router.NoConnectionException;
 import org.avis.security.Keys;
 
 import static java.lang.System.currentTimeMillis;

@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import org.apache.mina.filter.codec.ProtocolCodecException;
 

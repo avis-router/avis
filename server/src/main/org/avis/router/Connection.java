@@ -1,4 +1,4 @@
-package org.avis.server;
+package org.avis.router;
 
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
