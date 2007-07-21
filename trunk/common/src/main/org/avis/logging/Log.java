@@ -209,10 +209,8 @@ public final class Log
     if (applicationName != null)
       str.append (": ").append (applicationName);
 
-    str.append (" ");
-
-    str.append ("[").append (TYPE_NAMES [type]);
-    str.append ("] ").append (messageStr);
+    str.append (": ").append (TYPE_NAMES [type]);
+    str.append (": ").append (messageStr);
     
     if (exception != null && exception.getMessage () != null)
       str.append (": " + exception.getMessage ());
