@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.avis.common.ElvinURI;
 import org.avis.logging.Log;
+import org.avis.router.Server;
 import org.avis.security.Key;
 import org.avis.security.Keys;
-import org.avis.server.Server;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;

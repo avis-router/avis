@@ -7,9 +7,9 @@ import java.util.Random;
 import java.io.IOException;
 
 import org.avis.io.messages.SubAddRqst;
+import org.avis.router.Server;
 import org.avis.security.Key;
 import org.avis.security.Keys;
-import org.avis.server.Server;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,8 +21,8 @@ import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.enableLogging;
 
+import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
-import static org.avis.server.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.server.JUTestServer.PORT;
 
 /**

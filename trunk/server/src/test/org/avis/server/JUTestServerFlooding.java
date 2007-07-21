@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.apache.mina.common.ByteBuffer;
 
-import org.avis.server.Server;
+import org.avis.router.Server;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
