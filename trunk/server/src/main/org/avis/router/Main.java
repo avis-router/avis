@@ -60,7 +60,7 @@ public class Main
     info ("Avis event router version " +
           avisProperties.getProperty ("avis.router.version"), Main.class);
     
-    ServerOptions config = new ServerOptions ();
+    RouterOptions config = new RouterOptions ();
 
     try
     {
@@ -104,7 +104,7 @@ public class Main
     
     try
     {
-      final Server server = new Server (config);
+      final Router router = new Router (config);
       
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
@@ -112,17 +112,17 @@ public class Main
         {
           info ("Shutting down...", Main.class);
           
-          server.close ();
+          router.close ();
         }
       });
       
-      info ("Server listening on port " + config.get ("Port"), Main.class);
+      info ("Router listening on port " + config.get ("Port"), Main.class);
     } catch (Throwable ex)
     {
       if (ex instanceof IllegalOptionException)
         alarm ("Error in server configuration: " + ex.getMessage (), Main.class);
       else
-        alarm ("Error starting server: " + ex.getMessage (), Main.class);
+        alarm ("Error starting router: " + ex.getMessage (), Main.class);
         
       if (shouldLog (DIAGNOSTIC))
         ex.printStackTrace ();

@@ -7,7 +7,7 @@ import java.util.Random;
 import java.io.IOException;
 
 import org.avis.io.messages.SubAddRqst;
-import org.avis.router.Server;
+import org.avis.router.Router;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 
@@ -34,7 +34,7 @@ import static org.avis.server.JUTestServer.PORT;
 public class JUTestServerAttack
 {
   private Random random;
-  private Server server;
+  private Router server;
 
   @Before
   public void setup ()
@@ -44,7 +44,7 @@ public class JUTestServerAttack
     enableLogging (DIAGNOSTIC, false);
     
     random = new Random ();
-    server = new Server (PORT);
+    server = new Router (PORT);
   }
   
   @After

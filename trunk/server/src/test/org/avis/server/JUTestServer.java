@@ -19,7 +19,7 @@ import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.SubRply;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
-import org.avis.router.Server;
+import org.avis.router.Router;
 import org.avis.security.Key;
 import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
@@ -49,7 +49,7 @@ public class JUTestServer
 {
   static final int PORT = 29170;
 
-  private Server server;
+  private Router server;
   private Random random;
   private LogFailTester logTester;
 
@@ -73,7 +73,7 @@ public class JUTestServer
   public void connect ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     
     ConnRqst connRqst = new ConnRqst (4, 0);
@@ -102,7 +102,7 @@ public class JUTestServer
   public void connectionOptions ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
     HashMap<String, Object> options = new HashMap<String, Object> ();
@@ -208,7 +208,7 @@ public class JUTestServer
   public void subscribe ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     
     client.connect ();
@@ -290,7 +290,7 @@ public class JUTestServer
   public void multiClient ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     
     // client 1
     SimpleClient client1 = new SimpleClient ();
@@ -362,7 +362,7 @@ public class JUTestServer
   public void security ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     
 //    SimpleClient alice = new SimpleClient ("localhost", 2917);
 //    SimpleClient bob = new SimpleClient ("localhost", 2917);
@@ -425,7 +425,7 @@ public class JUTestServer
   public void securitySubModify ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     
     SimpleClient alice = new SimpleClient ("alice");
     SimpleClient bob = new SimpleClient ("bob");
@@ -515,7 +515,7 @@ public class JUTestServer
   public void unotify ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     SimpleClient client1 = new SimpleClient ("client1");
     SimpleClient client2 = new SimpleClient ("client2");
     
@@ -542,7 +542,7 @@ public class JUTestServer
   public void badClient ()
     throws Exception
   {
-    server = new Server (PORT);
+    server = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     SimpleClient badClient = new SimpleClient ();
     
