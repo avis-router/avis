@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 
-import org.avis.router.ServerOptions;
+import org.avis.router.RouterOptions;
 
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class JUTestServerOptions
   public void bindAll ()
     throws Exception
   {
-    ServerOptions options = new ServerOptions ();
+    RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://0.0.0.0");
     
     Set<InetSocketAddress> addresses = options.bindAddresses ();
@@ -92,7 +92,7 @@ public class JUTestServerOptions
   public void multipleURIs ()
     throws Exception
   {
-    ServerOptions options = new ServerOptions ();
+    RouterOptions options = new RouterOptions ();
     options.set ("Listen",
                  "elvin:/tcp,none,xdr/localhost:1234 \t elvin://localhost");
     
@@ -112,7 +112,7 @@ public class JUTestServerOptions
   private void testHost (Set<InetAddress> hostAddresses, String hostOption, int port)
     throws SocketException
   {
-    ServerOptions options = new ServerOptions ();
+    RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://" + hostOption);
     
     Set<InetSocketAddress> addresses = options.bindAddresses ();
@@ -128,7 +128,7 @@ public class JUTestServerOptions
                                int port)
     throws SocketException
   {
-    ServerOptions options = new ServerOptions ();
+    RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://!" + interfaceOption);
     
     Set<InetSocketAddress> addresses = options.bindAddresses ();

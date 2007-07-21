@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.avis.common.ElvinURI;
 import org.avis.logging.Log;
-import org.avis.router.Server;
+import org.avis.router.Router;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.util.LogFailTester;
@@ -41,7 +41,7 @@ public class JUTestClient
 
   private static final long WAIT_TIMEOUT = 10000;
   
-  private Server server;
+  private Router server;
   private LogFailTester logTester;
 
   @Before
@@ -63,7 +63,7 @@ public class JUTestClient
   private void createServer ()
     throws IOException
   {
-    server = new Server (29170);
+    server = new Router (29170);
   }
   
   /**

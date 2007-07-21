@@ -30,7 +30,7 @@ import static org.avis.util.Text.split;
  * 
  * @author Matthew Phillips
  */
-public class ServerOptions extends Options
+public class RouterOptions extends Options
 {
   private static final OptionSet OPTION_SET = new ServerOptionSet ();
 
@@ -43,7 +43,7 @@ public class ServerOptions extends Options
     }
   }
   
-  public ServerOptions ()
+  public RouterOptions ()
   {
     super (OPTION_SET);
     
@@ -54,7 +54,7 @@ public class ServerOptions extends Options
   /**
    * Shortcut to create an option set with a given "Port" setting.
    */
-  public ServerOptions (int port)
+  public RouterOptions (int port)
   {
     this ();
     
@@ -69,7 +69,7 @@ public class ServerOptions extends Options
    * 
    * @see #setAll(Properties)
    */
-  public ServerOptions (Properties properties)
+  public RouterOptions (Properties properties)
   {
     this ();
     

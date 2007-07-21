@@ -84,7 +84,7 @@ import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
 import static org.avis.util.Text.shortException;
 
-public class Server implements IoHandler, Closeable
+public class Router implements IoHandler, Closeable
 {
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
@@ -104,19 +104,19 @@ public class Server implements IoHandler, Closeable
    */
   private ConcurrentHashSet<IoSession> sessions;
   
-  public Server ()
+  public Router ()
     throws IOException
   {
     this (DEFAULT_PORT);
   }
   
-  public Server (int port)
+  public Router (int port)
     throws IOException
   {
-    this (new ServerOptions (port));
+    this (new RouterOptions (port));
   }
   
-  public Server (ServerOptions options)
+  public Router (RouterOptions options)
     throws IOException, IllegalOptionException
   {
     sessions = new ConcurrentHashSet<IoSession> ();
@@ -214,7 +214,7 @@ public class Server implements IoHandler, Closeable
     if (shouldLog (TRACE))
     {
       trace ("Server sent message to " + idFor (session) + ": " + message,
-             Server.class);
+             Router.class);
     }
     
     return session.write (message);
@@ -563,7 +563,7 @@ public class Server implements IoHandler, Closeable
   {
     diagnostic
       ("Rejecting quench request from client: quench is not supported",
-       Server.class);
+       Router.class);
     
     send (session, new Nack (message, NOT_IMPL, "Quench not supported"));
   }
@@ -588,7 +588,7 @@ public class Server implements IoHandler, Closeable
                                                String diagnosticMessage)
   {
     diagnostic ("Disconnecting client due to protocol violation: " +
-                diagnosticMessage, Server.class);
+                diagnosticMessage, Router.class);
     
     session.suspendRead ();
 
@@ -687,8 +687,8 @@ public class Server implements IoHandler, Closeable
     }
     
     diagnostic ("Subscription add/modify failed with parse error: " +
-                message, Server.class);
-    diagnostic ("Subscription was: " + expr, Server.class);
+                message, Router.class);
+    diagnostic ("Subscription was: " + expr, Router.class);
     
     send (session, new Nack (inReplyTo, code, message, args));
   }

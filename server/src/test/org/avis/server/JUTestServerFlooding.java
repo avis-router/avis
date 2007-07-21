@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.apache.mina.common.ByteBuffer;
 
-import org.avis.router.Server;
+import org.avis.router.Router;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
@@ -39,7 +39,7 @@ public class JUTestServerFlooding
   /** Time in millis to run flood tests. */
   private static final long FLOODING_TIME = 5 * 1000;
   
-  private Server server;
+  private Router server;
   private LogFailTester logTester;
 
   @Before
@@ -47,7 +47,7 @@ public class JUTestServerFlooding
     throws IOException
   {
     if (!USE_EXTERNAL_SERVER)
-      server = new Server (PORT);
+      server = new Router (PORT);
     
     logTester = new LogFailTester ();
     
