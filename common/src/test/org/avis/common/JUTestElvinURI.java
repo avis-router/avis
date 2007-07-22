@@ -149,6 +149,7 @@ public class JUTestElvinURI
     
     ElvinURI uri = new ElvinURI ("elvin://host", defaultUri);
     
+    assertEquals (defaultUri.scheme, "elvin");
     assertEquals (defaultUri.versionMajor, uri.versionMajor);
     assertEquals (defaultUri.versionMinor, uri.versionMinor);
     assertEquals (defaultUri.protocol, uri.protocol);
