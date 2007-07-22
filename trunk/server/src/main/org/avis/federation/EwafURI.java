@@ -6,6 +6,8 @@ public class EwafURI extends ElvinURI
 {
   public static final int VERSION_MAJOR = 1;
   public static final int VERSION_MINOR = 0;
+  
+  public static final int DEFAULT_EWAF_PORT = 2916;
 
   public EwafURI (String uri)
   {
@@ -25,5 +27,6 @@ public class EwafURI extends ElvinURI
     
     this.versionMajor = VERSION_MAJOR;
     this.versionMinor = VERSION_MINOR;
+    this.port = DEFAULT_EWAF_PORT;
   }
 }
