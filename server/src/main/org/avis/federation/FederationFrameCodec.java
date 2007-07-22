@@ -10,7 +10,9 @@ import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
 import org.avis.federation.messages.FedModify;
 import org.avis.io.FrameCodec;
+import org.avis.io.messages.Disconn;
 import org.avis.io.messages.Message;
+import org.avis.io.messages.Nack;
 
 public class FederationFrameCodec
   extends FrameCodec implements ProtocolCodecFactory
@@ -36,6 +38,10 @@ public class FederationFrameCodec
   {
     switch (messageType)
     {
+      case Nack.ID:
+        return new Nack ();
+      case Disconn.ID:
+        return new Disconn ();
       case Ack.ID:
         return new Ack ();
       case FedConnRply.ID:
