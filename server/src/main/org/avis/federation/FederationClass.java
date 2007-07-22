@@ -6,6 +6,8 @@ import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.subscription.parser.SubscriptionParser;
 
+import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
+
 public class FederationClass
 {
   public final Node incomingFilter;
@@ -26,7 +28,14 @@ public class FederationClass
   private static Node parse (String subExpr)
     throws ParseException
   {
-    return new SubscriptionParser 
-      (new StringReader (subExpr)).parseAndValidate ();
+    if (subExpr.trim ().equalsIgnoreCase ("true"))
+    {
+      // todo is this the correct way to subscribe to all? can you sub all?
+      return CONST_TRUE;
+    } else
+    {
+      return new SubscriptionParser 
+        (new StringReader (subExpr)).parseAndValidate ();
+    }
   }
 }
