@@ -10,7 +10,7 @@ import org.avis.subscription.ast.Node;
  * 
  * @author Matthew Phillips
  */
-public class Type extends Node<Boolean>
+public class Type extends Node
 {
   private String field;
   private Class<?> type;
@@ -27,7 +27,7 @@ public class Type extends Node<Boolean>
   }
 
   @Override
-  public Class<? extends Boolean> evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
@@ -39,13 +39,13 @@ public class Type extends Node<Boolean>
   }
 
   @Override
-  public Node<Boolean> inlineConstants ()
+  public Node inlineConstants ()
   {
     return this;
   }
 
   @Override
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Object value = attrs.get (field);
     

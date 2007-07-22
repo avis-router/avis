@@ -278,13 +278,13 @@ public class JUTestParser
     assertEquals (treeExpr, unparse (parse (subExpr)));
   }
   
-  private static Node<Boolean> parseAndValidate (String expr)
+  private static Node parseAndValidate (String expr)
     throws ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parseAndValidate ();
   }
   
-  private static Node<?> parse (String expr)
+  private static Node parse (String expr)
     throws ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parse ();

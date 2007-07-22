@@ -5,8 +5,8 @@ import org.avis.subscription.ast.Node;
 
 public class MathBitAnd extends MathIntParentNode
 {
-  public MathBitAnd (Node<? extends Number> child1,
-                     Node<? extends Number> child2)
+  public MathBitAnd (Node child1,
+                     Node child2)
   {
     super (child1, child2);
   }

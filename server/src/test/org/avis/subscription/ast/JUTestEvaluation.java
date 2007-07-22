@@ -95,7 +95,7 @@ public class JUTestEvaluation
     for (Boolean state : LOGIC_STATES)
     {
       assertEquals (NOT_TRUTH_TABLE [index],
-                    new Not (new Const<Boolean> (state)).evaluate (EMPTY_NOTIFICATION));
+                    new Not (new Const (state)).evaluate (EMPTY_NOTIFICATION));
       
       index++;
     }
@@ -151,21 +151,21 @@ public class JUTestEvaluation
   @Test
   public void logicOpExprs ()
   {
-    Node<Boolean> expr1 = logicOpExpr1 ();
+    Node expr1 = logicOpExpr1 ();
     
     Map<String, Object> n1 = new HashMap<String, Object> ();
     n1.put ("name", "Matt");
     n1.put ("age", 19);
     n1.put ("blah", "blah");
     
-    assertTrue (expr1.evaluate (n1));
+    assertTrue (expr1.evaluate (n1) == TRUE);
     
     Map<String, Object> n2 = new HashMap<String, Object> ();
     n2.put ("name", "Matt");
     n2.put ("age", 30);
     n2.put ("blah", "blah");
     
-    assertFalse (expr1.evaluate (n2));
+    assertFalse (expr1.evaluate (n2) == TRUE);
     
     Map<String, Object> n3 = new HashMap<String, Object> ();
     n3.put ("name", "Matt");
@@ -178,23 +178,23 @@ public class JUTestEvaluation
     n4.put ("age", 19);
     n4.put ("blah", "frob");
     
-    assertFalse (expr1.evaluate (n4));
+    assertFalse (expr1.evaluate (n4) == TRUE);
     
     // XOR tests
     
-    Node<Boolean> expr2 = logicOpExpr2 ();
+    Node expr2 = logicOpExpr2 ();
     
     Map<String, Object> n5 = new HashMap<String, Object> ();
     n5.put ("name", "Matt");
     n5.put ("age", 5);
     
-    assertTrue (expr2.evaluate (n5));
+    assertTrue (expr2.evaluate (n5) == TRUE);
     
     Map<String, Object> n6 = new HashMap<String, Object> ();
     n6.put ("name", "Matt");
     n6.put ("age", 30);
     
-    assertFalse (expr2.evaluate (n6));
+    assertFalse (expr2.evaluate (n6) == TRUE);
     
     Map<String, Object> n7 = new HashMap<String, Object> ();
     n7.put ("hello", "there");
@@ -258,23 +258,23 @@ public class JUTestEvaluation
     
     // fold-case
     assertEquals ("hello",
-                  new StrFoldCase (new Const<String> ("HellO")).evaluate (EMPTY_NOTIFICATION));
+                  new StrFoldCase (new Const ("HellO")).evaluate (EMPTY_NOTIFICATION));
     assertEquals (BOTTOM,
-                  new StrFoldCase (new Const<String> (null)).evaluate (EMPTY_NOTIFICATION));
+                  new StrFoldCase (new Const (null)).evaluate (EMPTY_NOTIFICATION));
     
     // decompose
     // see examples at http://unicode.org/reports/tr15/#Canonical_Composition_Examples
     assertEquals ("\u0041\u0301",
                   new StrUnicodeDecompose
-                    (new Const<String> ("\u00C1"),
+                    (new Const ("\u00C1"),
                      DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
     assertEquals ("A\u0308\uFB03n",
                   new StrUnicodeDecompose
-                    (new Const<String> ("\u00C4\uFB03n"),
+                    (new Const ("\u00C4\uFB03n"),
                      DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
     assertEquals ("A\u0308ffin",
                   new StrUnicodeDecompose
-                    (new Const<String> ("\u00C4\uFB03n"),
+                    (new Const ("\u00C4\uFB03n"),
                      DECOMPOSE_COMPAT).evaluate (EMPTY_NOTIFICATION));
     
     // nan
@@ -320,14 +320,13 @@ public class JUTestEvaluation
    * Check that variable-type expressions like equals (name, "foobar",
    * 42) work.
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void compareMultitype ()
   {
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("name", "foobar");
     
-    Node<Boolean> node = Compare.create (argsList (field ("name"),
+    Node node = Compare.create (argsList (field ("name"),
                                                    Const.string ("foobar"),
                                                    Const.int32 (42)));
     assertEquals (TRUE, node.evaluate (ntfn));
@@ -339,7 +338,6 @@ public class JUTestEvaluation
     assertEquals (BOTTOM, node.evaluate (ntfn));
   }
   
-  @SuppressWarnings("unchecked")
   @Test
   public void mathOps ()
     throws Exception
@@ -417,7 +415,7 @@ public class JUTestEvaluation
     invert = new MathBitInvert (Const.int64 (1234567890L));
     assertEquals (~1234567890L, invert.evaluate (ntfn));
     
-    invert = new MathBitInvert ((Node<? extends Number>)new Field ("string"));
+    invert = new MathBitInvert (new Field ("string"));
     assertEquals (null, invert.evaluate (ntfn));
   }
   
@@ -427,10 +425,10 @@ public class JUTestEvaluation
   @Test
   public void numericPromotion ()
   {
-    Const<Long> thirtyTwoLong = new Const<Long> (32L);
-    Const<Integer> thirtyTwoInt = new Const<Integer> (32);
-    Const<Integer> tenInt = new Const<Integer> (10);
-    Const<Double> piDouble = new Const<Double> (3.1415);
+    Const thirtyTwoLong = new Const (32L);
+    Const thirtyTwoInt = new Const (32);
+    Const tenInt = new Const (10);
+    Const piDouble = new Const (3.1415);
     
     Compare compare;
    
@@ -511,12 +509,12 @@ public class JUTestEvaluation
    * @param number1 Number parameter 1
    * @param number2 Number parameter 1
    */
-  private static void testMathOp (Class<? extends Node<?>> opType,
+  private static void testMathOp (Class<? extends Node> opType,
                                   Object correct,
-                                  Node<?> number1, Node<?> number2)
+                                  Node number1, Node number2)
     throws Exception
   {
-    Node<?> op =
+    Node op =
       opType.getConstructor (Node.class, Node.class).newInstance (number1,
                                                                   number2);
     
@@ -529,14 +527,13 @@ public class JUTestEvaluation
   /**
    * Create a list from an array of nodes.
    */
-  @SuppressWarnings("unchecked")
-  private static List<Node<? extends Comparable<?>>> argsList (Node<?>... args)
+  private static List<Node> argsList (Node... args)
   {
-    ArrayList<Node<? extends Comparable<?>>> argArray =
-      new ArrayList<Node<? extends Comparable<?>>> (args.length);
+    ArrayList<Node> argArray =
+      new ArrayList<Node> (args.length);
     
-    for (Node<?> node : args)
-      argArray.add ((Node<? extends Comparable<?>>)node);
+    for (Node node : args)
+      argArray.add (node);
 
     return argArray;
   }
@@ -553,9 +550,9 @@ public class JUTestEvaluation
                                 String arg1, String arg2, Boolean answer)
     throws Exception
   {
-    Node<Boolean> node =
+    Node node =
       type.getConstructor (Node.class, Const.class).newInstance
-        (new Const<String> (arg1), new Const<String> (arg2));
+        (new Const (arg1), new Const (arg2));
     
     assertEquals (answer, node.evaluate (EMPTY_NOTIFICATION));
   }
@@ -569,7 +566,7 @@ public class JUTestEvaluation
                   Nodes.unparse (parse (subExpr).inlineConstants ()));
   }
   
-  private static Node<?> parse (String expr)
+  private static Node parse (String expr)
     throws org.avis.subscription.parser.ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parse ();
@@ -583,14 +580,14 @@ public class JUTestEvaluation
    * @param b Right value
    * @param correct Correct result
    */
-  private static <NODE extends Node<Boolean>>
+  private static <NODE extends Node>
     void checkTruthTable (Class<NODE> opType,
                           Boolean a, Boolean b,
                           Boolean correct)
     throws Exception
   {
     NODE node = newLogicNodeInstance (opType, a, b);
-    Boolean result = node.evaluate (EMPTY_NOTIFICATION);
+    Object result = node.evaluate (EMPTY_NOTIFICATION);
     
     assertEquals (String.format
                     ("Truth table check failed: " +
@@ -604,14 +601,14 @@ public class JUTestEvaluation
    * Create a new node instance for nodes taking two fixed value
    * boolean children.
    */
-  private static <NODE extends Node<Boolean>>
+  private static <NODE extends Node>
     NODE newLogicNodeInstance (Class<NODE> nodeType, Boolean a, Boolean b)
     throws Exception
   {
     Constructor<NODE> c =
       nodeType.getConstructor (Node.class, Node.class);
     
-    return c.newInstance (new Const<Boolean> (a), new Const<Boolean> (b));
+    return c.newInstance (new Const (a), new Const (b));
   }
 
   /**
@@ -619,9 +616,9 @@ public class JUTestEvaluation
    */
   private Boolean compare (int n1, int n2, int inequality, boolean equality)
   {
-    return new Compare
-      (new Const<Integer> (n1),
-       new Const<Integer> (n2),
+    return (Boolean)new Compare
+      (new Const (n1),
+       new Const (n2),
        inequality, equality).evaluate (EMPTY_NOTIFICATION);
   }
   
@@ -630,19 +627,18 @@ public class JUTestEvaluation
   * 
   * name == "Matt" && (age < 20 || age >= 50) && ! blah == "frob"
   */
-  @SuppressWarnings("unchecked")
-  private static Node<Boolean> logicOpExpr1 ()
+  private static Node logicOpExpr1 ()
   {
     return new And
       (new Compare
-        (field ("name"), new Const<String> ("Matt"), 0, true),
+        (field ("name"), new Const ("Matt"), 0, true),
        new Or
          (new Compare
-           (field ("age"), new Const<Integer> (20), -1, false),
+           (field ("age"), new Const (20), -1, false),
           new Compare
-           (field ("age"), new Const<Integer> (50), 1, true)),
+           (field ("age"), new Const (50), 1, true)),
        new Not
-         (new Compare (field ("blah"), new Const<String> ("frob"), 0, true)));
+         (new Compare (field ("blah"), new Const ("frob"), 0, true)));
   }
 
  /**
@@ -650,18 +646,17 @@ public class JUTestEvaluation
   *
   * name == "Matt" ^^ age == 30";
   */
-  private static Node<Boolean> logicOpExpr2 ()
+  private static Node logicOpExpr2 ()
   {
     return new Xor
       (new Compare
-        (field ("name"), new Const<String> ("Matt"), 0, true),
+        (field ("name"), new Const ("Matt"), 0, true),
        new Compare
-        (field ("age"), new Const<Integer> (30), 0, true));
+        (field ("age"), new Const (30), 0, true));
   }
   
-  @SuppressWarnings("unchecked")
-  private static Node<? extends Comparable<?>> field (String name)
+  private static Node field (String name)
   {
-    return (Node<? extends Comparable<?>>)new Field (name);
+    return new Field (name);
   }
 }

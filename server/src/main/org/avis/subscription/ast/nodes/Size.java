@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.avis.subscription.ast.Node;
 
-public class Size extends Node<Integer>
+public class Size extends Node
 {
   private String name;
 
@@ -31,13 +31,13 @@ public class Size extends Node<Integer>
   }
   
   @Override
-  public Class<? extends Integer> evalType ()
+  public Class<?> evalType ()
   {
     return Integer.class;
   }
 
   @Override
-  public Integer evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Object value = attrs.get (name);
     
@@ -50,7 +50,7 @@ public class Size extends Node<Integer>
   }
 
   @Override
-  public Node<Integer> inlineConstants ()
+  public Node inlineConstants ()
   {
     return this;
   }

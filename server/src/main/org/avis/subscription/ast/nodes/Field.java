@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.avis.subscription.ast.Node;
 
-public class Field extends Node<Object>
+public class Field extends Node
 {
   public String name;
   
@@ -31,19 +31,18 @@ public class Field extends Node<Object>
   }
 
   @Override
-  public Class<? extends Object> evalType ()
+  public Class<?> evalType ()
   {
     return Object.class;
   }
   
   @Override
-  public Node<Object> inlineConstants ()
+  public Node inlineConstants ()
   {
     return this;
   }
   
   @Override
-  @SuppressWarnings("unchecked")
   public Object evaluate (Map<String, Object> attrs)
   {
     return attrs.get (name);

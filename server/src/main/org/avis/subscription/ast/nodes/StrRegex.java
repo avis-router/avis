@@ -10,7 +10,7 @@ import org.avis.subscription.ast.StringCompareNode;
 import static java.util.regex.Pattern.DOTALL;
 import static java.util.regex.Pattern.compile;
 
-import static org.avis.subscription.ast.Nodes.createNary;
+import static org.avis.subscription.ast.Nodes.createConjunction;
 
 public class StrRegex extends StringCompareNode
 {
@@ -19,12 +19,12 @@ public class StrRegex extends StringCompareNode
   /**
    * Create from a list of arguments.
    */
-  public static Node<Boolean> create (List<Node<String>> args)
+  public static Node create (List<Node> args)
   {
-    return createNary (StrRegex.class, Node.class, Const.class, args);
+    return createConjunction (StrRegex.class, Node.class, Const.class, args);
   }
   
-  public StrRegex (Node<String> stringExpr, Const<String> stringConst)
+  public StrRegex (Node stringExpr, Const stringConst)
     throws PatternSyntaxException
   {
     super (stringExpr, stringConst);
