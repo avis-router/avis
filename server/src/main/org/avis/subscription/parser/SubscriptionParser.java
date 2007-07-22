@@ -427,7 +427,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
       case 30:
         jj_consume_token(30);
         node = ValueExp();
-                            {if (true) return new MathMinus (Const.CONST_ZERO, node);}
+                            {if (true) return new MathUnaryMinus (node);}
         break;
       case 31:
         jj_consume_token(31);

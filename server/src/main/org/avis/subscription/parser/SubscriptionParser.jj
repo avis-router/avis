@@ -312,7 +312,7 @@ Node ValueExp () :
   node = Name ()           {return node;} |
   node = NumLiteral ()     {return node;} |
   node = StringLiteral ()  {return node;} |
-  "-" node = ValueExp ()   {return new MathMinus (Const.CONST_ZERO, node);} |
+  "-" node = ValueExp ()   {return new MathUnaryMinus (node);} |
   "+" node = ValueExp ()   {return node;} | 
   "~" node = ValueExp ()   {return new MathBitInvert (node);} |
   "(" node = SubExp () ")" {return node;}

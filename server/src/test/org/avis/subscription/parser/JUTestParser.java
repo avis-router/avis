@@ -156,8 +156,8 @@ public class JUTestParser
 
     assertParsesTo ("1 % 2", "(% (int32 1) (int32 2))");
     
-    // check "-" operator generates 0 - n
-    assertParsesTo ("-2", "(- (int32 0) (int32 2))");
+    // check "-" operator
+    assertParsesTo ("-2", "(- (int32 2))");
 
     assertParsesTo ("~10", "(~ (int32 10))");
 
@@ -186,6 +186,8 @@ public class JUTestParser
     assertParseError ("1.0 << 2");
     assertParseError ("1 << 2.0");
     assertParseError ("~'hello'");
+    assertParseError ("- 'hello'");
+    assertParseError ("--");
   }
   
   /**

@@ -25,6 +25,7 @@ import org.avis.subscription.ast.nodes.MathMinus;
 import org.avis.subscription.ast.nodes.MathMod;
 import org.avis.subscription.ast.nodes.MathMult;
 import org.avis.subscription.ast.nodes.MathPlus;
+import org.avis.subscription.ast.nodes.MathUnaryMinus;
 import org.avis.subscription.ast.nodes.Nan;
 import org.avis.subscription.ast.nodes.Not;
 import org.avis.subscription.ast.nodes.Or;
@@ -417,6 +418,25 @@ public class JUTestEvaluation
     
     invert = new MathBitInvert (new Field ("string"));
     assertEquals (null, invert.evaluate (ntfn));
+    
+    // unary minus
+    MathUnaryMinus unaryMinus = new MathUnaryMinus (Const.int32 (42));
+    assertEquals (-42, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.int32 (-42));
+    assertEquals (42, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.int32 (0));
+    assertEquals (0, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.int64 (123));
+    assertEquals (-123l, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.real64 (3.14));
+    assertEquals (-3.14, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (new Field ("string"));
+    assertEquals (null, unaryMinus.evaluate (ntfn));
   }
   
   /**
