@@ -33,12 +33,14 @@ public class JUTestFederation
     new FederationListener (server2, "server2", federationMap,
                             set (new EwafURI ("ewaf://0.0.0.0:" + (PORT2 + 1))));
     
-    Map<EwafURI, FederationClass> connectMap =
-      new HashMap<EwafURI, FederationClass> ();
+//    Map<EwafURI, FederationClass> connectMap =
+//      new HashMap<EwafURI, FederationClass> ();
     
-    connectMap.put (new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1)), fedClass);
+//    connectMap.put (new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1)), fedClass);
     
-    new FederationConnector (server1, "server1", connectMap);
+    new FederationConnector (server1, "server1",
+                             new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1)),
+                             fedClass);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
