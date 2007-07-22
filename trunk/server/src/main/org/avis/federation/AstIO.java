@@ -147,7 +147,7 @@ public final class AstIO
       switch (compare.inequality)
       {
         case 0:
-          return EQUALS;
+          return F_EQUALS;
         case -1:
           return compare.equality ? LESS_THAN_EQUALS : LESS_THAN;
         case 1:
