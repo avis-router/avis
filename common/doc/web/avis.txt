@@ -13,8 +13,9 @@ content. Multiple Elvin routers can be federated together to form
 wide-area event notification networks.
 
 The name "Avis" derives from the French word *avis*, meaning *advice*
-or *notification*.
-
+or *notification*. Alternatively, the name could be taken from the
+Latin meaning <em>bird</em>, which makes less sense, but sounds nice
+and classical.
 
 Applications
 ----------------------------------------------------------------------
