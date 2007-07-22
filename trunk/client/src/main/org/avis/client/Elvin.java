@@ -28,7 +28,7 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.ElvinURI;
-import org.avis.io.FrameCodec;
+import org.avis.io.ClientFrameCodec;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -402,7 +402,7 @@ public final class Elvin implements Closeable
       connectorConfig.setConnectTimeout (receiveTimeout);
       
       connectorConfig.getFilterChain ().addLast
-        ("codec", new ProtocolCodecFilter (FrameCodec.INSTANCE));
+        ("codec", new ProtocolCodecFilter (ClientFrameCodec.INSTANCE));
       
       ConnectFuture connectFuture =
         connector.connect
