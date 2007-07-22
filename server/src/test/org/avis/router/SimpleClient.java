@@ -18,7 +18,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
-import org.avis.io.FrameCodec;
+import org.avis.io.ClientFrameCodec;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.DisconnRply;
@@ -91,7 +91,7 @@ public class SimpleClient implements IoHandler
     
     cfg.getFilterChain ().addLast
       ("codec",
-       new ProtocolCodecFilter (FrameCodec.INSTANCE));
+       new ProtocolCodecFilter (ClientFrameCodec.INSTANCE));
     ConnectFuture future =
       connector.connect (new InetSocketAddress (hostname, port),
                          this, cfg);

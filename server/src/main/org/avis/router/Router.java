@@ -22,7 +22,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
-import org.avis.io.FrameCodec;
+import org.avis.io.ClientFrameCodec;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -141,7 +141,7 @@ public class Router implements IoHandler, Closeable
       acceptorConfig.getFilterChain ();
 
     filterChainBuilder.addLast ("codec",
-                                new ProtocolCodecFilter (FrameCodec.INSTANCE));
+                                new ProtocolCodecFilter (ClientFrameCodec.INSTANCE));
     
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));
@@ -218,6 +218,15 @@ public class Router implements IoHandler, Closeable
     }
     
     return session.write (message);
+  }
+  
+  /**
+   * The shared executor thread pool used by the router. Plugins may
+   * share this.
+   */
+  public ExecutorService executor ()
+  {
+    return executor;
   }
   
   /**
@@ -800,7 +809,7 @@ public class Router implements IoHandler, Closeable
   {
     session.setAttachment (connection);
     
-    FrameCodec.setMaxFrameLengthFor
+    ClientFrameCodec.setMaxFrameLengthFor
       (session, connection.options.getInt ("Packet.Max-Length"));
   }
   
