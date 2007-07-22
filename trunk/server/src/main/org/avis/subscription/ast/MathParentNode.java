@@ -12,18 +12,18 @@ import static org.avis.util.Numbers.upconvert;
  * 
  * @author Matthew Phillips
  */
-public abstract class MathParentNode extends ParentBiNode<Number, Number>
+public abstract class MathParentNode extends ParentBiNode
 {
-  public MathParentNode (Node<? extends Number> child1,
-                         Node<? extends Number> child2)
+  public MathParentNode (Node child1,
+                         Node child2)
   {
     super (child1, child2);
   }
 
   @Override
-  protected String validateChild (Node<? extends Number> child)
+  protected String validateChild (Node child)
   {
-    Class<? extends Number> childType = child.evalType ();
+    Class<?> childType = child.evalType ();
     
     if (childType == Object.class)
     {
@@ -40,13 +40,13 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
   }
   
   @Override
-  public Class<? extends Number> evalType ()
+  public Class<?> evalType ()
   {
     return Number.class;
   }
  
   @Override
-  public Number evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Number number1 = evaluate (child1, attrs);
     
@@ -87,7 +87,7 @@ public abstract class MathParentNode extends ParentBiNode<Number, Number>
     }
   }
 
-  private Number evaluate (Node<? extends Number> child,
+  private Number evaluate (Node child,
                            Map<String, Object> attrs)
   {
     Object result = child.evaluate (attrs);

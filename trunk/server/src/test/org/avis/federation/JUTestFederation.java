@@ -7,6 +7,7 @@ import org.avis.io.messages.NotifyDeliver;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.avis.util.Collections.set;
@@ -19,6 +20,7 @@ public class JUTestFederation
   private static final int PORT2 = 29180;
 
   @Test
+  @Ignore
   public void basic ()
     throws Exception
   {

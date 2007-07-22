@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.avis.subscription.ast.Node;
 
-public class Require extends Node<Boolean>
+public class Require extends Node
 {
   private String name;
 
@@ -25,13 +25,13 @@ public class Require extends Node<Boolean>
   }
 
   @Override
-  public Class<? extends Boolean> evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
 
   @Override
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     return attrs.containsKey (name) ? TRUE : BOTTOM;
   }
@@ -43,7 +43,7 @@ public class Require extends Node<Boolean>
   }
 
   @Override
-  public Node<Boolean> inlineConstants ()
+  public Node inlineConstants ()
   {
     return this;
   }

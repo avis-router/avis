@@ -7,25 +7,25 @@ import org.avis.subscription.ast.Node;
 
 import static java.util.Collections.singleton;
 
-public class StrFoldCase extends Node<String>
+public class StrFoldCase extends Node
 {
-  private Node<String> stringExpr;
+  private Node stringExpr;
   
-  public StrFoldCase (Node<String> stringExpr)
+  public StrFoldCase (Node stringExpr)
   {
     this.stringExpr = stringExpr;
   }
   
   @Override
-  public Class<? extends String> evalType ()
+  public Class<?> evalType ()
   {
     return String.class;
   }
 
   @Override
-  public String evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
-    String result = stringExpr.evaluate (attrs);
+    String result = (String)stringExpr.evaluate (attrs);
     
     return result == null ? null : result.toLowerCase ();
   }
@@ -43,11 +43,11 @@ public class StrFoldCase extends Node<String>
   }
 
   @Override
-  public Node<String> inlineConstants ()
+  public Node inlineConstants ()
   {
-    String result = evaluate (EMPTY_NOTIFICATION);
+    Object result = evaluate (EMPTY_NOTIFICATION);
     
-    return result == null ? this : new Const<String> (result);
+    return result == null ? this : new Const (result);
   }
   
   @Override
@@ -57,7 +57,7 @@ public class StrFoldCase extends Node<String>
   }
   
   @Override
-  public Collection<? extends Node<?>> children ()
+  public Collection<? extends Node> children ()
   {
     return singleton (stringExpr);
   }

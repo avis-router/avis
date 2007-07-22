@@ -10,7 +10,7 @@ import static java.lang.Character.isLetterOrDigit;
 import static java.lang.Character.isWhitespace;
 import static java.util.regex.Pattern.compile;
 
-import static org.avis.subscription.ast.Nodes.createNary;
+import static org.avis.subscription.ast.Nodes.createConjunction;
 
 /**
  * NOTE: no real spec for wildcard exists. This implements ? and *
@@ -25,12 +25,12 @@ public class StrWildcard extends StringCompareNode
   /**
    * Create from a list of arguments.
    */
-  public static Node<Boolean> create (List<Node<String>> args)
+  public static Node create (List<Node> args)
   {
-    return createNary (StrWildcard.class, Node.class, Const.class, args);
+    return createConjunction (StrWildcard.class, Node.class, Const.class, args);
   }
   
-  public StrWildcard (Node<String> stringExpr, Const<String> stringConst)
+  public StrWildcard (Node stringExpr, Const stringConst)
   {
     super (stringExpr, stringConst);
     

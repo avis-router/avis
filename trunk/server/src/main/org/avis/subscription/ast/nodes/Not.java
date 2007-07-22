@@ -7,11 +7,11 @@ import org.avis.subscription.ast.Node;
 
 import static java.util.Collections.singleton;
 
-public class Not extends Node<Boolean>
+public class Not extends Node
 {
-  private Node<Boolean> child;
+  private Node child;
   
-  public Not (Node<Boolean> child)
+  public Not (Node child)
   {
     this.child = child;
   }
@@ -29,11 +29,11 @@ public class Not extends Node<Boolean>
   }
   
   @Override
-  public Node<Boolean> inlineConstants ()
+  public Node inlineConstants ()
   {
     child = child.inlineConstants ();
     
-    Boolean result = evaluate (EMPTY_NOTIFICATION);
+    Boolean result = (Boolean)evaluate (EMPTY_NOTIFICATION);
     
     if (result != BOTTOM)
       return Const.bool (result);
@@ -42,9 +42,9 @@ public class Not extends Node<Boolean>
   }
   
   @Override
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
-    Boolean result = child.evaluate (attrs);
+    Boolean result = (Boolean)child.evaluate (attrs);
     
     if (result == BOTTOM)
       return BOTTOM;
@@ -59,13 +59,13 @@ public class Not extends Node<Boolean>
   }
   
   @Override
-  public Collection<? extends Node<?>> children ()
+  public Collection<? extends Node> children ()
   {
     return singleton (child);
   }
   
   @Override
-  public Class<? extends Boolean> evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }

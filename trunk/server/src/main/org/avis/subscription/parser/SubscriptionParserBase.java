@@ -10,7 +10,7 @@ import org.avis.util.Text;
 
 public abstract class SubscriptionParserBase
 {
-  abstract Node<?> doParse ()
+  abstract Node doParse ()
     throws ParseException;
   
   /**
@@ -18,7 +18,7 @@ public abstract class SubscriptionParserBase
    * for boolean result type or const-ness. See {@link #parseAndValidate} if
    * you want a guaranteed correct subscription expression.
    */
-  public Node<?> parse ()
+  public Node parse ()
     throws ParseException
   {
     try
@@ -46,8 +46,7 @@ public abstract class SubscriptionParserBase
    *           expression is not a valid subscription.
    * @throws ConstantExpressionException if the expression is contant.
    */
-  @SuppressWarnings("unchecked")
-  public Node<Boolean> parseAndValidate ()
+  public Node parseAndValidate ()
     throws ParseException, ConstantExpressionException
   {
     Node node = parse ();

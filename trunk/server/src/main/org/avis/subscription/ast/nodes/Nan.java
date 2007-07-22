@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.avis.subscription.ast.Node;
 
-public class Nan extends Node<Boolean>
+public class Nan extends Node
 {
   private String field;
   
@@ -19,7 +19,7 @@ public class Nan extends Node<Boolean>
   }
 
   @Override
-  public Class<? extends Boolean> evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
@@ -31,13 +31,13 @@ public class Nan extends Node<Boolean>
   }
   
   @Override
-  public Node<Boolean> inlineConstants ()
+  public Node inlineConstants ()
   {
     return this;
   }
 
   @Override
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Object value = attrs.get (field);
     

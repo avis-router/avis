@@ -5,8 +5,8 @@ import org.avis.subscription.ast.Node;
 
 public class MathMod extends MathParentNode
 {
-  public MathMod (Node<? extends Number> child1,
-                  Node<? extends Number> child2)
+  public MathMod (Node child1,
+                  Node child2)
   {
     super (child1, child2);
   }

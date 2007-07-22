@@ -10,14 +10,14 @@ public class FedModify extends RequestMessage<Ack>
 {
   public static final int ID = 194;
   
-  public Node<?> incomingFilter;
+  public Node incomingFilter;
   
   public FedModify ()
   {
     // zip
   }
   
-  public FedModify (Node<?> incomingFilter)
+  public FedModify (Node incomingFilter)
   {
     this.incomingFilter = incomingFilter;
   }

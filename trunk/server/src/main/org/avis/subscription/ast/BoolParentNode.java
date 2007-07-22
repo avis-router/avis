@@ -7,25 +7,25 @@ package org.avis.subscription.ast;
  * @author Matthew Phillips
  */
 public abstract class BoolParentNode
-  extends ParentNode<Boolean, Boolean>
+  extends ParentNode
 {
   public BoolParentNode ()
   {
     // zip
   }
 
-  public BoolParentNode (Node<Boolean> node1)
+  public BoolParentNode (Node node1)
   {
     super (node1);
   }
 
-  public BoolParentNode (Node<Boolean> node1,
-                         Node<Boolean> node2)
+  public BoolParentNode (Node node1,
+                         Node node2)
   {
     super (node1, node2);
   }
 
-  public BoolParentNode (Node<Boolean>... children)
+  public BoolParentNode (Node... children)
   {
     super (children);
   }
@@ -37,13 +37,13 @@ public abstract class BoolParentNode
   }
 
   @Override
-  public Class<Boolean> evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
   
   @Override
-  public String validateChild (Node<? extends Boolean> child)
+  public String validateChild (Node child)
   {
     if (child.evalType () != Boolean.class)
       return expr () + " requires boolean arguments (" + child.expr () + ")";

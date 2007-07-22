@@ -5,32 +5,27 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Base class for nodes with an arbitrary number of children. This
- * class requires that all children have the same evaluation type.
- * <p>
- * E is the type of value that this node evaluates to. CHILD_E is the
- * type that children of this node evaluate to.
+ * Base class for nodes with an arbitrary number of children.
  * 
  * @author Matthew Phillips
  */
-public abstract class ParentNode<E, CHILD_E> extends Node<E>
+public abstract class ParentNode extends Node
 {
-  protected ArrayList<Node<CHILD_E>> children;
+  protected ArrayList<Node> children;
   
   public ParentNode ()
   {
-    this.children = new ArrayList<Node<CHILD_E>> (2);
+    this.children = new ArrayList<Node> (2);
   }
 
-  public ParentNode (Node<? extends CHILD_E> node1)
+  public ParentNode (Node node1)
   {
     this ();
     
     addChild (node1);
   }
   
-  public ParentNode (Node<? extends CHILD_E> node1,
-                     Node<? extends CHILD_E> node2)
+  public ParentNode (Node node1, Node node2)
     throws IllegalChildException
   {
     this ();
@@ -44,10 +39,10 @@ public abstract class ParentNode<E, CHILD_E> extends Node<E>
    * 
    * @param children
    */
-  public ParentNode (Node<CHILD_E> ...children)
+  public ParentNode (Node ...children)
   {
     this.children =
-      new ArrayList<Node<CHILD_E>> (Arrays.asList (children));
+      new ArrayList<Node> (Arrays.asList (children));
   }
 
   /**
@@ -59,9 +54,8 @@ public abstract class ParentNode<E, CHILD_E> extends Node<E>
    * @return An error message if not valid, null if child is OK to be
    *         added.
    */
-  protected abstract String validateChild (Node<? extends CHILD_E> child);
+  protected abstract String validateChild (Node child);
   
-  @SuppressWarnings("unchecked")
   public void addChild (Node child)
     throws IllegalChildException
   {
@@ -80,7 +74,7 @@ public abstract class ParentNode<E, CHILD_E> extends Node<E>
   }
   
   @Override
-  public Collection<? extends Node<?>> children ()
+  public Collection<? extends Node> children ()
   {
     return children;
   }

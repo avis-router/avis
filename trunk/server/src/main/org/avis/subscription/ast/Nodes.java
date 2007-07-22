@@ -27,7 +27,7 @@ public final class Nodes
    * 
    * @see #unparse(Node)
    */
-  public static String toString (Node<?> node)
+  public static String toString (Node node)
   {
     IndentingWriter out = new IndentingWriter (new StringWriter ());
     
@@ -36,7 +36,7 @@ public final class Nodes
     return out.toString ();
   }
 
-  private static void print (IndentingWriter out, Node<?> node)
+  private static void print (IndentingWriter out, Node node)
   {
     out.print (node.presentation ());
     
@@ -44,7 +44,7 @@ public final class Nodes
     {
       out.indent ();
       
-      for (Node<?> child : node.children ())
+      for (Node child : node.children ())
       {
         out.println ();
         
@@ -67,7 +67,7 @@ public final class Nodes
    * @see Node#expr()
    * @see #toString(Node)
    */
-  public static String unparse (Node<?> node)
+  public static String unparse (Node node)
   {
     StringBuilder str = new StringBuilder ();
     
@@ -76,13 +76,13 @@ public final class Nodes
     return str.toString ();
   }
 
-  private static void unparse (StringBuilder str, Node<?> node)
+  private static void unparse (StringBuilder str, Node node)
   {
     str.append ('(').append (node.expr ());
     
     if (node.hasChildren ())
     {
-      for (Node<?> child : node.children ())
+      for (Node child : node.children ())
       {
         str.append (' ');
        
@@ -108,11 +108,11 @@ public final class Nodes
    *          arg1... as children to an OR parent node.
    * @return Either an instance of T or Or with T children.
    */
-  public static <T extends Node<Boolean>> 
-    Node<Boolean> createNary (Class<T> type,
-                              Class<?> constParam1,
-                              Class<?> constParam2,
-                              List<? extends Node<?>> args)
+  public static <T extends Node> 
+    Node createConjunction (Class<T> type,
+                            Class<?> constParam1,
+                            Class<?> constParam2,
+                            List<? extends Node> args)
   {
     try
     {
@@ -124,7 +124,7 @@ public final class Nodes
         return cons.newInstance (args.get (0), args.get (1));
       } else
       {
-        Node<?> arg0 = args.get (0);
+        Node arg0 = args.get (0);
         
         Or or = new Or ();
         
