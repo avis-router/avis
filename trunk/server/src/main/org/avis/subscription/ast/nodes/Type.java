@@ -12,8 +12,8 @@ import org.avis.subscription.ast.Node;
  */
 public class Type extends Node
 {
-  private String field;
-  private Class<?> type;
+  public String field;
+  public Class<?> type;
 
   public Type (Field field, Class<?> type)
   {

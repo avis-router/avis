@@ -23,8 +23,8 @@ public class StrUnicodeDecompose extends Node
   public static final Mode DECOMPOSE = Normalizer.DECOMP;
   public static final Mode DECOMPOSE_COMPAT = Normalizer.DECOMP_COMPAT;
   
-  private Node stringExpr;
-  private Mode mode;
+  public Node stringExpr;
+  public Mode mode;
 
   public StrUnicodeDecompose (Node stringExpr, Mode mode)
   {
