@@ -40,10 +40,10 @@ public class FederationConnector
   boolean federationLinkConnected;
   volatile boolean closing;
   
-  public FederationConnector (Router router, String federationId,
+  public FederationConnector (Router router, String serverDomain,
                               EwafURI uri, FederationClass federationClass)
   {
-    super (router, federationId);
+    super (router, serverDomain);
     
     this.uri = uri;
     this.federationClass = federationClass;
@@ -97,7 +97,7 @@ public class FederationConnector
 
   private void federationConnect ()
   {
-    send (new FedConnRqst (VERSION_MAJOR, VERSION_MAJOR, federationId));
+    send (new FedConnRqst (VERSION_MAJOR, VERSION_MAJOR, serverDomain));
   }
   
   private void handleHandshakeMessage (Message message)
@@ -145,7 +145,7 @@ public class FederationConnector
   private void send (Message message)
   {
     if (shouldLog (TRACE))
-      trace ("Federator " + federationId + " sent message: " +  message, this);
+      trace ("Federator " + serverDomain + " sent message: " +  message, this);
     
     connection.write (message);
   }
