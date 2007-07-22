@@ -114,6 +114,12 @@
       <param name="web.title" value="Client Library" />
     </antcall>
 
+    <antcall target="fn:make-html">
+      <param name="src" value="downloads.txt" />
+      <param name="dest" value="downloads.html" />
+      <param name="web.title" value="Downloads" />
+    </antcall>
+
   </target>
   
   <target name="deploy-website" depends="website"
