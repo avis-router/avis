@@ -45,7 +45,7 @@ import static org.avis.util.Collections.list;
  * 
  * @author Matthew Phillips
  */
-public final class ElvinURI
+public class ElvinURI
 {
   private static final List<String> DEFAULT_PROTOCOL =
     list ("tcp", "none", "xdr");
@@ -68,6 +68,12 @@ public final class ElvinURI
    * The original URI string as passed into the constructor.
    */
   public String uriString;
+  
+  /**
+   * The URI scheme (i.e the part before the ":"). This must be 
+   * "elvin" for URI's referring to Elvin routers.
+   */
+  public String scheme;
   
   /**
    * Major protocol version. Default is {@link Common#CLIENT_VERSION_MAJOR}.
@@ -119,6 +125,8 @@ public final class ElvinURI
     
     parseUri ();
     
+    validate ();
+    
     this.hash = computeHash ();
   }
 
@@ -133,6 +141,7 @@ public final class ElvinURI
     init ();
     
     this.uriString = "elvin://" + host + ':' + port;
+    this.scheme = "elvin";
     this.host = host;
     this.port = port;
     this.hash = computeHash ();
@@ -155,6 +164,8 @@ public final class ElvinURI
     
     parseUri ();
     
+    validate ();
+    
     this.hash = computeHash ();
   }
   
@@ -166,11 +177,14 @@ public final class ElvinURI
   public ElvinURI (ElvinURI defaultUri)
   {
     init (defaultUri);
+    
+    validate ();
   }
 
-  private void init (ElvinURI defaultUri)
+  protected void init (ElvinURI defaultUri)
   {
     this.uriString = defaultUri.uriString;
+    this.scheme = defaultUri.scheme;
     this.versionMajor = defaultUri.versionMajor;
     this.versionMinor = defaultUri.versionMinor;
     this.protocol = defaultUri.protocol;
@@ -180,14 +194,29 @@ public final class ElvinURI
     this.hash = defaultUri.hash;
   }
 
-  private void init ()
+  protected void init ()
   {
+    this.scheme = null;
     this.versionMajor = CLIENT_VERSION_MAJOR;
     this.versionMinor = CLIENT_VERSION_MINOR;
     this.protocol = DEFAULT_PROTOCOL;
     this.host = null;
     this.port = DEFAULT_PORT;
     this.options = emptyMap ();
+  }
+  
+  private void validate ()
+  {
+    if (!validScheme (scheme))
+      throw new InvalidURIException (uriString, "Invalid scheme: " + scheme);
+  }
+
+  /**
+   * Check if scheme is valid. May be extended.
+   */
+  protected boolean validScheme (String schemeToCheck)
+  {
+    return schemeToCheck.equals ("elvin");
   }
 
   @Override
@@ -203,7 +232,7 @@ public final class ElvinURI
   {
     StringBuilder str = new StringBuilder ();
     
-    str.append ("elvin:");
+    str.append (scheme).append (':');
     
     str.append (versionMajor).append ('.').append (versionMinor);
     
@@ -238,6 +267,7 @@ public final class ElvinURI
   public boolean equals (ElvinURI uri)
   {
     return hash == uri.hash &&
+           scheme.equals (uri.scheme) &&
            host.equals (uri.host) &&
            port == uri.port &&
            versionMajor == uri.versionMajor &&
@@ -248,7 +278,7 @@ public final class ElvinURI
   
   private int computeHash ()
   {
-    return host.hashCode () ^ port ^ protocol.hashCode ();
+    return scheme.hashCode () ^ host.hashCode () ^ port ^ protocol.hashCode ();
   }
   
   private void parseUri ()
@@ -257,13 +287,9 @@ public final class ElvinURI
     Matcher matcher = URL_PATTERN.matcher (uriString);
     
     if (!matcher.matches ())
-    {
       throw new InvalidURIException (uriString, "Not a valid Elvin URI");
-    } else if (!matcher.group (1).equals ("elvin"))
-    {
-      throw new InvalidURIException (uriString,
-                                    "Elvin URI scheme must be \"elvin:\"");
-    }
+    
+    scheme = matcher.group (1);
     
     // version
     if (matcher.group (2) != null)
