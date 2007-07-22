@@ -20,6 +20,19 @@ public class JUTestFederation
   private static final int PORT2 = 29180;
 
   @Test
+  public void uri () 
+    throws Exception
+  {
+    EwafURI uri = new EwafURI ("ewaf://hostname");
+    
+    assertEquals ("ewaf", uri.scheme);
+    assertEquals ("hostname", uri.host);
+    assertEquals (EwafURI.VERSION_MAJOR, uri.versionMajor);
+    assertEquals (EwafURI.VERSION_MINOR, uri.versionMinor);
+    assertEquals (EwafURI.DEFAULT_EWAF_PORT, uri.port);
+  }
+  
+  @Test
   @Ignore
   public void basic ()
     throws Exception
