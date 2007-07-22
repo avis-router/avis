@@ -33,11 +33,11 @@ public final class IO
    *       opaque_tc = 5
    *   } value_typecode;
    */
-  private static final int TYPE_INT32  = 1;
-  private static final int TYPE_INT64  = 2;
-  private static final int TYPE_REAL64 = 3;
-  private static final int TYPE_STRING = 4;
-  private static final int TYPE_OPAQUE = 5;
+  public static final int TYPE_INT32  = 1;
+  public static final int TYPE_INT64  = 2;
+  public static final int TYPE_REAL64 = 3;
+  public static final int TYPE_STRING = 4;
+  public static final int TYPE_OPAQUE = 5;
 
   private static final byte [] EMPTY_BYTES = new byte [0];
   
