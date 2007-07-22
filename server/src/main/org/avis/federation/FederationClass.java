@@ -1,7 +1,10 @@
 package org.avis.federation;
 
+import java.io.StringReader;
+
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
+import org.avis.subscription.parser.SubscriptionParser;
 
 public class FederationClass
 {
@@ -23,7 +26,7 @@ public class FederationClass
   private static Node parse (String subExpr)
     throws ParseException
   {
-    // todo
-    return null;
+    return new SubscriptionParser 
+      (new StringReader (subExpr)).parseAndValidate ();
   }
 }
