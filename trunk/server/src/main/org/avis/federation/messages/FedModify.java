@@ -6,6 +6,8 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.avis.io.messages.RequestMessage;
 import org.avis.subscription.ast.Node;
 
+import static org.avis.federation.AstIO.encodeAST;
+
 public class FedModify extends RequestMessage<Ack>
 {
   public static final int ID = 194;
@@ -35,19 +37,21 @@ public class FedModify extends RequestMessage<Ack>
   }
   
   @Override
-  public void encode (ByteBuffer out) throws ProtocolCodecException
+  public void encode (ByteBuffer out)
+    throws ProtocolCodecException
   {
     super.encode (out);
     
-    // todo
-    // FederationIO.encodeAST (out, incomingFilter);
+    encodeAST (out, incomingFilter);
   }
   
   @Override
-  public void decode (ByteBuffer in) throws ProtocolCodecException
+  public void decode (ByteBuffer in)
+    throws ProtocolCodecException
   {
     super.decode (in);
     
+    throw new Error ();
     // todo
     // incomingFilter = FederationIO.decodeAST (in);
   }
