@@ -13,13 +13,22 @@ import static org.avis.util.Numbers.upconvert;
 /**
  * Comparison operator that can implement equals, greater than, less
  * than and any combination of those.
+ * <pre>
+ *              inequality      equality
+ *  -------------------------------------
+ *   ==          0              true
+ *   <          -1              false
+ *   <=         -1              true
+ *   >           1              false
+ *   >=          1              true
+ * </pre>
  * 
  * @author Matthew Phillips
  */
 public class Compare extends ParentBiNode
 {
-  private int inequality;
-  private boolean equality;
+  public int inequality;
+  public boolean equality;
   
   /**
    * Create compare node from a list of comparable children (size >=
