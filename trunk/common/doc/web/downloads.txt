@@ -7,29 +7,23 @@ Avis Router
 The Avis router is the core Avis server component that provides
 an Elvin publish/subscribe message router service.
 
-<ul>
+* **[Download the Avis router service from Sourceforge][router]**
 
-<li><b><a
-  href="http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191">Download
-  the Avis router service from Sourceforge</a></b></li>
-
-</ul>
-
-After you've downloaded the router, you may want to look at the <a
-href="installation.html">installation guide</a>.
+After you've downloaded the router, you may want to look at the
+[installation guide][install].
 
 Avis Client Library
 ----------------------------------------------------------------------
 
-The [Avis client library][client] is a Java 5 API for programming
+The [Avis client library][client_info] is a Java 5 API for programming
 clients that use an Elvin router.
 
-<ul>
+* **[Download the Avis Java client library from Sourceforge][client]**
 
-<li><b><a
-href="http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706">Download
-the Avis Java client library from Sourceforge</a></b></li>
+[router]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191
 
-</ul>
+[client]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
 
-[client]: client_library.html
+[install]: installation.html
+
+[client_info]: client_library.html
