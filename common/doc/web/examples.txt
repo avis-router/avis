@@ -9,7 +9,8 @@ the code below every minute:<sup>[1][]</sup>
 The diagram below is an overview of the example scenario. We'll expand
 on what this means in the following sections.
 
-<img src="images/example overview.png" alt="Example overview diagram" border="0" />
+<img src="images/example overview.png"
+     alt="Example overview diagram" border="0" />
 
 Monitor
 ----------------------------------------------------------------------
@@ -146,8 +147,8 @@ Footnotes
 
 [1]: #fn1-examples
 [2]: #fn2-examples
-[about_tickertape]: http://tickertape.org/documents/what_is_tickertape.html
-[ticker_clients]: http://tickertape.org/get_tickertape.html
-[tickertape_downloads]: http://tickertape.org/download
-[sticker]: http://tickertape.org/projects/sticker
+[about_tickertape]: http://tickertape.org/documents/what_is_tickertape.html "More about tickertape"
+[ticker_clients]: http://tickertape.org/get_tickerta "Available tickertape clients"
+[tickertape_downloads]: http://tickertape.org/download "Download a tickertape client"
+[sticker]: http://tickertape.org/projects/sticker "Sticker project page"
 [client_library]: client_library.html
