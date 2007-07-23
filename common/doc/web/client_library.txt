@@ -1,23 +1,26 @@
 Avis Client Library
 ======================================================================
 
-The Avis Client Library is an API to aid Java clients in communicating
-with an Elvin router. It is based on the same foundations as the Avis
-router, but is made available under the terms of the GNU Lesser
-General Public License (LGPL) rather than the GPL used by the router.
+The Avis Client Library provides a high level API for Java clients
+communicating with an Elvin router. It is based on the same
+foundations as the Avis router, but is made available under the terms
+of the GNU Lesser General Public License (LGPL) rather than the GPL
+used by the router.
 
-<ul>
-  <li><a href="https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706">Download the client library</a></li>
+ * [Download the client library][download].
 
-  <li><a href="http://avis.sourceforge.net/client_library/javadoc/">Javadoc API
-      documentation</a> (for the latest version of the library)</li>
-
-</ul>
+ * [View Javadoc API documentation][javadoc] for the latest version of
+   the library.
 
 The client library package contains a number of programming examples
 in `src/examples` and documentation on how to use them in
 `doc/examples.txt`.
 
-You can also see the example code in the <a
-href="examples.html">examples page</a> which uses the client library
-API.
+You can also see examples of the client library in use at the
+[examples page][examples].
+
+[download]: https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
+
+[javadoc]: http://avis.sourceforge.net/client_library/javadoc/
+
+[examples]: examples.html
