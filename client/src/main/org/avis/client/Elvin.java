@@ -160,7 +160,7 @@ public final class Elvin implements Closeable
   int receiveTimeout;
   int livenessTimeout;
   long lastMessageTime;
-  ScheduledFuture livenessFuture;
+  ScheduledFuture<?> livenessFuture;
   
   /**
    * We use a multi-thread I/O pool and a single-thread

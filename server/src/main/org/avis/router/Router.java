@@ -56,12 +56,13 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
-
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
+import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -809,7 +810,7 @@ public class Router implements IoHandler, Closeable
   {
     session.setAttachment (connection);
     
-    ClientFrameCodec.setMaxFrameLengthFor
+    setMaxFrameLengthFor
       (session, connection.options.getInt ("Packet.Max-Length"));
   }
   

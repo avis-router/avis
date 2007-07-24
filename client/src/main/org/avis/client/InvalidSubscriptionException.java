@@ -39,7 +39,7 @@ public class InvalidSubscriptionException extends RouterNackException
    */
   public final int reason;
 
-  InvalidSubscriptionException (RequestMessage request, Nack nack)
+  InvalidSubscriptionException (RequestMessage<?> request, Nack nack)
   {
     super (textForErrorCode (nack.error) + ": " + nack.formattedMessage ());
     

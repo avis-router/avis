@@ -47,6 +47,7 @@ public final class IO
   private static final ThreadLocal<CharsetDecoder> UTF8_DECODER =
     new ThreadLocal<CharsetDecoder> ()
   {
+    @Override
     protected CharsetDecoder initialValue ()
     {
       return Charset.forName ("UTF-8").newDecoder ();
@@ -59,6 +60,7 @@ public final class IO
   private static final ThreadLocal<CharsetEncoder> UTF8_ENCODER =
     new ThreadLocal<CharsetEncoder> ()
   {
+    @Override
     protected CharsetEncoder initialValue ()
     {
       return Charset.forName ("UTF-8").newEncoder ();
