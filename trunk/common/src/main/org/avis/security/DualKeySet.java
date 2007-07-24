@@ -29,6 +29,8 @@ class DualKeySet implements KeySet
  
   /**
    * Create an immutable empty instance.
+   * 
+   * @param immutable Used as a flag.
    */
   DualKeySet (boolean immutable)
   {

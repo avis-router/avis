@@ -31,6 +31,7 @@ public final class Log
   private static final ThreadLocal<DateFormat> DATE_FORMAT =
     new ThreadLocal<DateFormat> ()
   {
+    @Override
     protected DateFormat initialValue ()
     {
       return DateFormat.getTimeInstance ();

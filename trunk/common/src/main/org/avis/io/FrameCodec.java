@@ -74,6 +74,7 @@ public abstract class FrameCodec
     }
   }
 
+  @Override
   protected boolean doDecode (IoSession session, ByteBuffer in,
                               ProtocolDecoderOutput out)
     throws Exception
@@ -187,6 +188,7 @@ public abstract class FrameCodec
     return haveFrame;
   }
 
+  @Override
   public void finishDecode (IoSession session, ProtocolDecoderOutput out)
     throws Exception
   {

@@ -21,6 +21,7 @@ public class IndentingWriter extends PrintWriter
   /**
    * Make it easier for StringWriter users.
    */
+  @Override
   public String toString ()
   {
     return out.toString ();
@@ -99,6 +100,7 @@ public class IndentingWriter extends PrintWriter
     indent -= spaces;
   } 
   
+  @Override
   public void write (int c)
   {
     super.write (c);
@@ -107,6 +109,7 @@ public class IndentingWriter extends PrintWriter
       writeIndent ();
   }
 
+  @Override
   public void write (char buf [], int off, int len)
   {
     int index = off;
@@ -115,11 +118,13 @@ public class IndentingWriter extends PrintWriter
       write (buf [index++]);
   }
   
+  @Override
   public void write (String s, int off, int len)
   {
     write (s.toCharArray (), off, len);
   }
   
+  @Override
   public void println ()
   {
     super.println ();

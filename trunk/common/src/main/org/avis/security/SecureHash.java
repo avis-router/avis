@@ -9,6 +9,7 @@ public enum SecureHash
 {
   SHA1
   {
+    @Override
     public byte [] hash (byte [] input)
     {
       SHA1 sha1 = new SHA1 ();

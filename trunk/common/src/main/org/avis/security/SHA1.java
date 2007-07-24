@@ -124,6 +124,7 @@ public final class SHA1 implements Cloneable
   /**
    * Clones this object.
    */
+  @Override
   public Object clone ()
   {
     SHA1 that = null;
