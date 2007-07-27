@@ -43,8 +43,10 @@ public class JUTestFederation
     Router server1 = new Router (PORT1);
     Router server2 = new Router (PORT2);
 
+//    FederationClass fedClass =
+//      new FederationClass ("require (federation)", "true");
     FederationClass fedClass =
-      new FederationClass ("require (federation)", "true");
+      new FederationClass ("require (federation)", "require (federation)");
     
     FederationClassMap federationMap = new FederationClassMap (fedClass);
     
