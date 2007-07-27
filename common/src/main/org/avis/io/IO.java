@@ -366,4 +366,29 @@ public final class IO
     for (long l : longs)
       out.putLong (l);
   }
+
+  /**
+   * Read a length-demlimited array of strings.
+   */
+  public static String [] getStringArray (ByteBuffer in)
+    throws BufferUnderflowException, ProtocolCodecException
+  {
+    String [] strings = new String [in.getInt ()];
+    
+    for (int i = 0; i < strings.length; i++)
+      strings [i] = getString (in);
+    
+    return strings;
+  }
+
+  /**
+   * Write a length-delimted array of strings.
+   */
+  public static void putStringArray (ByteBuffer out, String [] strings)
+  {
+    out.putInt (strings.length);
+    
+    for (String s : strings)
+      putString (out, s);
+  }
 }
