@@ -10,6 +10,9 @@ import org.avis.router.SimpleClient;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
+import static org.avis.federation.Federation.VERSION_MAJOR;
+import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
@@ -27,9 +30,9 @@ public class JUTestFederation
     
     assertEquals ("ewaf", uri.scheme);
     assertEquals ("hostname", uri.host);
-    assertEquals (EwafURI.VERSION_MAJOR, uri.versionMajor);
-    assertEquals (EwafURI.VERSION_MINOR, uri.versionMinor);
-    assertEquals (EwafURI.DEFAULT_EWAF_PORT, uri.port);
+    assertEquals (VERSION_MAJOR, uri.versionMajor);
+    assertEquals (VERSION_MINOR, uri.versionMinor);
+    assertEquals (DEFAULT_EWAF_PORT, uri.port);
   }
   
   @Test
