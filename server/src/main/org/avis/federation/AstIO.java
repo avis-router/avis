@@ -41,6 +41,7 @@ import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
 import static org.avis.io.IO.putString;
+import static org.avis.util.Text.className;
 
 /**
  * Functions for encoding/decoding Node-based AST's into the Elvin XDR
@@ -214,7 +215,7 @@ public final class AstIO
       out.putDouble ((Double)value);
     } else
     {
-      throw new Error ();
+      throw new Error ("Cannot encode constant type " + className (type));
     }
   }
 }
