@@ -2,13 +2,12 @@ package org.avis.federation;
 
 import org.avis.common.ElvinURI;
 
+import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
+import static org.avis.federation.Federation.VERSION_MAJOR;
+import static org.avis.federation.Federation.VERSION_MINOR;
+
 public class EwafURI extends ElvinURI
 {
-  public static final int VERSION_MAJOR = 1;
-  public static final int VERSION_MINOR = 0;
-  
-  public static final int DEFAULT_EWAF_PORT = 2916;
-
   public EwafURI (String uri)
   {
     super (uri);
