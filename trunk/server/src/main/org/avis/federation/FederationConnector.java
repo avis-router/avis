@@ -9,68 +9,57 @@ import org.apache.mina.common.IoFutureListener;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
-import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
-import org.avis.federation.messages.FedModify;
-import org.avis.federation.messages.FedNotify;
-import org.avis.io.messages.Disconn;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.router.Router;
 
-import static org.apache.mina.common.IoFutureListener.CLOSE;
-
-import static org.avis.federation.EwafURI.VERSION_MAJOR;
-import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
-import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
-import static org.avis.logging.Log.TRACE;
+import static org.avis.federation.Federation.VERSION_MAJOR;
+import static org.avis.federation.Federation.send;
 import static org.avis.logging.Log.alarm;
-import static org.avis.logging.Log.shouldLog;
-import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
 
-public class FederationConnector
-  extends FederationLink implements IoHandler
+/**
+ * The federation connector is responsible for connecting to a remote
+ * host, handshaking with a FedConnRqst, after which it creates and
+ * hands over processing to a FederationLink.
+ * 
+ * @author Matthew Phillips
+ */
+public class FederationConnector implements IoHandler
 {
-  /**
-   * Internal disconnection reason code indicating we're shutting down
-   * on a Disconn request from the remote host.
-   */
-  private static final int REASON_SHUTDOWN_REQUESTED = -1;
-
-  private static final int STATE_HANDSHAKE = 0;
-  private static final int STATE_LINKED = 1;
-  private static final int STATE_CLOSING = 2;
-  
   private EwafURI uri;
-  private IoSession connection;
+  private Router router;
   private SocketConnector connector;
   private SocketConnectorConfig connectorConfig;
   private FederationClass federationClass;
-  private String remoteServerDomain;
+  private String serverDomain;
+  private FederationLink link;
+  private InetSocketAddress remoteAddress;
+  private IoSession linkConnection;
   
-  protected volatile int state;
+  protected volatile boolean closing;
   
   public FederationConnector (Router router, String serverDomain,
                               EwafURI uri, FederationClass federationClass)
   {
-    super (router, serverDomain);
-    
+    this.router = router;
     this.uri = uri;
+    this.serverDomain = serverDomain;
     this.federationClass = federationClass;
     this.connector = new SocketConnector (1, router.executor ());
-    this.state = STATE_HANDSHAKE;
+    this.connectorConfig = new SocketConnectorConfig ();
+    this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
 
     /* Change the worker timeout to make the I/O thread quit soon
      * when there's no connection to manage. */
     connector.setWorkerTimeout (0);
     
-    this.connectorConfig = new SocketConnectorConfig ();
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
     connectorConfig.setConnectTimeout (20);
     
@@ -83,9 +72,7 @@ public class FederationConnector
   void connect ()
   {
     ConnectFuture connectFuture =
-      connector.connect
-        (new InetSocketAddress (uri.host, uri.port),
-         this, connectorConfig);
+      connector.connect (remoteAddress, this, connectorConfig);
 
     connectFuture.addListener (new IoFutureListener ()
     {
@@ -93,151 +80,96 @@ public class FederationConnector
       {
         ConnectFuture future = (ConnectFuture)f;
         
-        if (state != STATE_CLOSING && !future.isConnected ())
+        if (!closing && !future.isConnected ())
           connect ();
       }
     });
   }
   
+  void open (IoSession session)
+  {
+    this.linkConnection = session;
+    
+    send (session, serverDomain,
+          new FedConnRqst (VERSION_MAJOR, VERSION_MAJOR, serverDomain));
+  }
+  
   public void close ()
   {
-    close (REASON_SHUTDOWN, "");
-  }
-  
-  private void close (int reason, String message)
-  {
-    if (state == STATE_CLOSING)
+    if (closing || linkConnection == null)
       return;
     
-    boolean wasLinked = state == STATE_LINKED;
-
-    state = STATE_CLOSING;
+    closing = true;
     
-    if (isConnected ())
+    if (linkConnection.isConnected ())
     {
-      if (wasLinked)
-        send (new Disconn (reason, message)).addListener (CLOSE);
+      if (link != null)
+        link.close ();
       else
-        connection.close ();
+        linkConnection.close ();
+    } else
+    {
+      if (link != null && !link.closedSession ())
+      {
+        warn ("Remote federator at " + uri + " " + 
+              "closed link with no warning", this);
+        
+        link.kill ();
+      }
     }
+    
+    link = null;
+    linkConnection = null;
   }
   
-  public boolean isConnected ()
-  {
-    return connection != null && !connection.isClosing ();
-  }
-
-  private void federationConnect ()
-  {
-    send (new FedConnRqst (VERSION_MAJOR, VERSION_MAJOR, serverDomain));
-  }
-  
-  /**
-   * Handle a message while in handshaking state.
-   */
-  private void handleHandshakeMessage (Message message)
+  private void handleHandshakeMessage (IoSession session, Message message)
   {
     switch (message.typeId ())
     {
       case FedConnRply.ID:
-        handleFedConnRply ((FedConnRply)message);
+        createFederationLink (session, ((FedConnRply)message).serverDomain);
         break;
       case Nack.ID:
-        handleFedConnNack ((Nack)message);
+        handleFedConnNack (session, (Nack)message);
         break;
       default:
         warn ("Unexpected message during handshake from remote federator at " + 
               uri + " (disconnecting): " + message.name (), this);
-        close (REASON_PROTOCOL_VIOLATION, "Unexpected " + message.name ());
+        session.close ();
     }
   }
   
-  /**
-   * Handle a message while in linked state.
-   */
-  private void handleLinkMessage (Message message)
+  private void createFederationLink (IoSession session, 
+                                     String remoteServerDomain)
   {
-    switch (message.typeId ())
-    {
-      case FedModify.ID:
-        handleFedModify ((FedModify)message);
-        break;
-      case FedNotify.ID:
-        handleFedNotify ((FedNotify)message);
-        break;
-      case Disconn.ID:
-        close (REASON_SHUTDOWN_REQUESTED, "");
-      default:
-        warn ("Unexpected message from remote federator at " + uri + " (" +
-              "disconnecting): " + message.name (), this);
-        close (REASON_PROTOCOL_VIOLATION, "Unexpected " + message.name ());
-    }
+    link =
+      new FederationLink (session, router, 
+                          federationClass,
+                          serverDomain, 
+                          remoteAddress.getHostName (),
+                          remoteServerDomain);
   }
   
-  private void handleFedConnRply (FedConnRply reply)
+  private void handleFedConnNack (IoSession session, Nack nack)
   {
-    state = STATE_LINKED;
-    remoteServerDomain = reply.serverDomain;
-    
-    send (new FedModify (federationClass.incomingFilter));
-  }
-  
-  private void handleFedConnNack (Nack nack)
-  {
-    warn ("Remote router at " + uri + 
-          " rejected federation connect request: " + 
+    warn ("Remote router at " + uri + " rejected federation connect request: " + 
           nack.formattedMessage (), this);
     
-    close ();
-  }
-
-  private void handleFedModify (FedModify message)
-  {
-    
-  }
-
-  private void handleFedNotify (FedNotify message)
-  {
-  }
-
-  private WriteFuture send (Message message)
-  {
-    if (shouldLog (TRACE))
-      trace ("Federator " + serverDomain + " sent message: " +  message, this);
-    
-    return connection.write (message);
+    session.close ();
   }
   
   // IoHandler  
   
-  public void messageReceived (IoSession session, Object message)
+  public void sessionOpened (IoSession session)
     throws Exception
   {
-    if (state == STATE_LINKED)
-      handleLinkMessage ((Message)message);
-    else if (state == STATE_HANDSHAKE)
-      handleHandshakeMessage ((Message)message);
-  }
-  
-  public void messageSent (IoSession session, Object message)
-    throws Exception
-  {
-    // zip
+    open (session);
   }
   
   public void sessionClosed (IoSession session)
     throws Exception
   {
-    if (state == STATE_LINKED)
-    {
-      warn ("Router federator at " + uri + " " + 
-            "closed link with no warning", this);
-    } else if (state == STATE_HANDSHAKE)
-    {
-      warn ("Router federator at " + uri + " " + 
-            "closed link during handshake, " +
-            "probably due to protocol violation", this);
-    }
+    close ();
   }
   
   public void sessionCreated (IoSession session)
@@ -246,14 +178,24 @@ public class FederationConnector
     // zip
   }
   
-  public void sessionOpened (IoSession session)
+  public void messageReceived (IoSession session, Object message)
     throws Exception
   {
-    connection = session;
+    if (closing)
+      return;
     
-    federationConnect ();
+    if (link == null)
+      handleHandshakeMessage (session, (Message)message);
+    else
+      link.handleMessage ((Message)message);
   }
   
+  public void messageSent (IoSession session, Object message)
+    throws Exception
+  {
+    // zip
+  }
+
   public void sessionIdle (IoSession session, IdleStatus status)
     throws Exception
   {
