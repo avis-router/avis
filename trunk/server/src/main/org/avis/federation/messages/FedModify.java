@@ -33,7 +33,7 @@ public class FedModify extends RequestMessage<Ack>
   @Override
   public int typeId ()
   {
-    return 194;
+    return ID;
   }
   
   @Override
