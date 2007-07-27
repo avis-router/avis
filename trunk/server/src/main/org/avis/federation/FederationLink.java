@@ -27,7 +27,6 @@ public class FederationLink
   
   private IoSession session;
   private Router router;
-  private IoSession connection;
   private FederationClass federationClass;
   private String serverDomain;
   private String remoteServerDomain;
@@ -147,6 +146,6 @@ public class FederationLink
 
   private WriteFuture send (Message message)
   {
-    return Federation.send (connection, serverDomain, message);
+    return Federation.send (session, serverDomain, message);
   }
 }
