@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.avis.router.Router;
 
-public class FederationListener extends FederationLink
+public class FederationListener //extends FederationLink
 {
   /**
    * todo
@@ -18,6 +18,6 @@ public class FederationListener extends FederationLink
                              FederationClassMap classMap, 
                              Set<EwafURI> listenUris)
   {
-    super (router, federationId);
+//    super (router, federationId);
   }
 }
