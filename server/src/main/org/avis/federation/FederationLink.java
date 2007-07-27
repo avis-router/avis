@@ -3,16 +3,19 @@ package org.avis.federation;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
+import org.avis.federation.messages.Ack;
 import org.avis.federation.messages.FedModify;
 import org.avis.federation.messages.FedNotify;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.Message;
+import org.avis.io.messages.Nack;
 import org.avis.router.Router;
 
 import static org.apache.mina.common.IoFutureListener.CLOSE;
 
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.logging.Log.warn;
+import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 
 public class FederationLink
 {
@@ -43,6 +46,10 @@ public class FederationLink
     this.serverDomain = serverDomain;
     this.remoteServerDomain = remoteServerDomain;
     this.remoteHostName = remoteHostName;
+    
+    // todo how to we subscribe to TRUE?
+    if (federationClass.incomingFilter != CONST_FALSE)
+      send (new FedModify (federationClass.incomingFilter));
   }
   
   /**
@@ -73,11 +80,6 @@ public class FederationLink
     send (new Disconn (reason, message)).addListener (CLOSE);
   }
   
-  public boolean isConnected ()
-  {
-    return connection != null && !connection.isClosing ();
-  }
-  
   /**
    * Handle a message while in linked state.
    */
@@ -93,11 +95,36 @@ public class FederationLink
         break;
       case Disconn.ID:
         close ();
+        break;
+      case Nack.ID:
+        handleNack ((Nack)message);
+        break;
+      case Ack.ID:
+        handleAck ((Ack)message);
+        break;
       default:
         warn ("Unexpected message from remote federator at " + 
               remoteHostName + " (disconnecting): " + message.name (), this);
         close (REASON_PROTOCOL_VIOLATION, "Unexpected " + message.name ());
     }
+  }
+
+  /**
+   * 
+   * @param message
+   */
+  private void handleAck (Ack message)
+  {
+    // todo
+  }
+
+  /**
+   * 
+   * @param message
+   */
+  private void handleNack (Nack message)
+  {
+    // todo
   }
 
   /**
