@@ -115,7 +115,8 @@ public class FederationListener implements IoHandler, Closeable
       String disconnMessage =
         "Incompatible federation protocol version: " + 
          message.versionMajor + "." + message.versionMinor +
-         " not compatible with " + VERSION_MAJOR + "." + VERSION_MINOR;
+         " not compatible with this federator's " + 
+         VERSION_MAJOR + "." + VERSION_MINOR;
       
       warn ("Rejected federation request from " + 
             remoteHost + ": " + disconnMessage, this);
@@ -136,6 +137,10 @@ public class FederationListener implements IoHandler, Closeable
                                      String remoteHost, 
                                      FederationClass federationClass)
   {
+    diagnostic ("Federation incoming link established with " + 
+                remoteHost + ", remote server domain \"" + 
+                remoteServerDomain + "\"", this);
+    
     FederationLink link =
       new FederationLink (session, router, federationClass, serverDomain, 
                           remoteHost, remoteServerDomain);
