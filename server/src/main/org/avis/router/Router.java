@@ -147,7 +147,7 @@ public class Router implements IoHandler, Closeable
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));
     
-    for (InetSocketAddress address : options.bindAddresses ())
+    for (InetSocketAddress address : options.listenAddresses ())
     {
       if (shouldLog (DIAGNOSTIC))
         diagnostic ("Router binding to address: " + address, this);
@@ -228,6 +228,14 @@ public class Router implements IoHandler, Closeable
   public ExecutorService executor ()
   {
     return executor;
+  }
+  
+  /**
+   * The router's MINA socket acceptor. Plugins may share this.
+   */
+  public SocketAcceptor socketAcceptor ()
+  {
+    return acceptor;
   }
   
   /**
