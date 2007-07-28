@@ -1,16 +1,12 @@
 package org.avis.router;
 
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import java.net.InetAddress;
+import java.io.IOException;
+
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
@@ -18,10 +14,9 @@ import org.avis.util.IllegalOptionException;
 import org.avis.util.OptionSet;
 import org.avis.util.Options;
 
-import static java.util.Arrays.asList;
-
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.common.ElvinURI.defaultProtocol;
+import static org.avis.io.Net.addressesFor;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.util.Text.split;
 
@@ -80,10 +75,9 @@ public class RouterOptions extends Options
    * Generate the set of network addresses the server should bind to
    * as specified by the Listen setting.
    */
-  public Set<InetSocketAddress> bindAddresses ()
-    throws SocketException
+  public Set<InetSocketAddress> listenAddresses ()
   {
-    Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
+    Set<ElvinURI> uris = new HashSet<ElvinURI> ();
     ElvinURI defaultUri = new ElvinURI ("0.0.0.0", getInt ("Port"));
     
     for (String listenItem : split (getString ("Listen"), "\\s+"))
@@ -99,20 +93,8 @@ public class RouterOptions extends Options
              listenItem);
         }
         
-        Collection<InetAddress> inetAddresses;
+        uris.add (uri);
         
-        if (uri.host.startsWith ("!"))
-          inetAddresses = addressesForInterface (uri.host.substring (1));
-        else
-          inetAddresses = addressesForHost (uri.host);
-        
-        for (InetAddress address : inetAddresses)
-        {
-          if (address.isAnyLocalAddress ())
-            addresses.add (new InetSocketAddress (uri.port));
-          else if (!address.isLinkLocalAddress ())
-            addresses.add (new InetSocketAddress (address, uri.port));
-        }
       } catch (InvalidURIException ex)
       {
         throw new IllegalOptionException
@@ -121,38 +103,12 @@ public class RouterOptions extends Options
       }
     }
     
-    return addresses;
-  }
-
-  private static Collection<InetAddress> addressesForHost (String host)
-  {
     try
     {
-      return asList (InetAddress.getAllByName (host));
-    } catch (UnknownHostException ex)
+      return addressesFor (uris);
+    } catch (IOException ex)
     {
-      throw new IllegalOptionException
-        ("Unknown host name \"" + host + "\"");
+      throw new IllegalOptionException ("Listen", ex.getMessage ());
     }
-  }
-
-  private static Collection<InetAddress> addressesForInterface (String name)
-      throws SocketException, IllegalOptionException
-  {
-    NetworkInterface netInterface = NetworkInterface.getByName (name);
-    
-    if (netInterface == null)
-      throw new IllegalOptionException
-        ("Unknown interface name \"" + name + "\"");
-    
-    HashSet<InetAddress> addresses = new HashSet<InetAddress> ();
-
-    for (Enumeration<InetAddress> i = netInterface.getInetAddresses ();
-         i.hasMoreElements (); )
-    {
-      addresses.add (i.nextElement ());
-    }
-    
-    return addresses;
   }
 }
