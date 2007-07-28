@@ -4,12 +4,12 @@ import java.io.Closeable;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoFuture;
 import org.apache.mina.common.IoFutureListener;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
@@ -22,8 +22,10 @@ import org.avis.io.messages.Nack;
 import org.avis.router.Router;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
+import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.send;
 import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.warn;
 
 /**
@@ -73,17 +75,25 @@ public class FederationConnector implements IoHandler, Closeable
   
   void connect ()
   {
-    ConnectFuture connectFuture =
-      connector.connect (remoteAddress, this, connectorConfig);
-
-    connectFuture.addListener (new IoFutureListener ()
+    connector.connect 
+      (remoteAddress, this, connectorConfig).addListener (new IoFutureListener ()
     {
-      public void operationComplete (IoFuture f)
+      public void operationComplete (IoFuture future)
       {
-        ConnectFuture future = (ConnectFuture)f;
+        if (closing)
+          return;
         
-        if (!closing && !future.isConnected ())
-          connect ();
+        try
+        {
+          if (!future.isReady ())
+            connect ();
+          else
+            open (future.getSession ());
+        } catch (RuntimeIOException ex)
+        {
+          // todo handle: we get a ConnectException embedded here when refused
+          alarm ("Failed to connect", this, ex);
+        }
       }
     });
   }
@@ -93,7 +103,7 @@ public class FederationConnector implements IoHandler, Closeable
     this.linkConnection = session;
     
     send (session, serverDomain,
-          new FedConnRqst (VERSION_MAJOR, VERSION_MAJOR, serverDomain));
+          new FedConnRqst (VERSION_MAJOR, VERSION_MINOR, serverDomain));
   }
   
   public void close ()
@@ -144,12 +154,15 @@ public class FederationConnector implements IoHandler, Closeable
   private void createFederationLink (IoSession session, 
                                      String remoteServerDomain)
   {
+    String remoteHost = remoteAddress.getHostName ();
+
+    diagnostic ("Federation outgoing link established with " + 
+                remoteHost + ", remote server domain \"" + 
+                remoteServerDomain + "\"", this);
+    
     link =
-      new FederationLink (session, router, 
-                          federationClass,
-                          serverDomain, 
-                          remoteAddress.getHostName (),
-                          remoteServerDomain);
+      new FederationLink (session, router, federationClass, serverDomain, 
+                          remoteHost, remoteServerDomain);
   }
   
   private void handleFedConnNack (IoSession session, Nack nack)
@@ -165,7 +178,7 @@ public class FederationConnector implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    open (session);
+    // zip
   }
   
   public void sessionClosed (IoSession session)
