@@ -8,8 +8,8 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.avis.io.messages.Notify;
 import org.avis.security.Keys;
 
-import static org.avis.io.IO.getStringArray;
-import static org.avis.io.IO.putStringArray;
+import static org.avis.io.XdrCoding.getStringArray;
+import static org.avis.io.XdrCoding.putStringArray;
 
 public class FedNotify extends Notify
 {

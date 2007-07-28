@@ -7,7 +7,7 @@ import java.lang.reflect.Array;
 
 import org.apache.mina.common.ByteBuffer;
 
-import org.avis.io.IO;
+import org.avis.io.XdrCoding;
 
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test the {@link IO} utility class.
+ * Test the {@link XdrCoding} utility class.
  */
 public class JUTestIO
 {
@@ -24,18 +24,18 @@ public class JUTestIO
   {
     ByteBuffer buff = ByteBuffer.allocate (1024);
     
-    IO.putString (buff, "");
+    XdrCoding.putString (buff, "");
     
     assertEquals (4, buff.position ());
     
     buff.position (0);
     
-    IO.putString (buff, "hello");
+    XdrCoding.putString (buff, "hello");
     
     assertEquals (12, buff.position ());
     
     buff.position (0);
-    assertEquals ("hello", IO.getString (buff));
+    assertEquals ("hello", XdrCoding.getString (buff));
   }
   
   @Test public void nameValueIO ()
@@ -44,18 +44,18 @@ public class JUTestIO
     ByteBuffer buff = ByteBuffer.allocate (1024);
     HashMap<String, Object> nameValues = new HashMap<String, Object> ();
     
-    IO.putNameValues (buff, nameValues);
+    XdrCoding.putNameValues (buff, nameValues);
     assertEquals (4, buff.position ());
     
     buff.position (0);
     nameValues.put ("int", 42);
     nameValues.put ("opaque", new byte [] {1, 2, 3});
     
-    IO.putNameValues (buff, nameValues);
+    XdrCoding.putNameValues (buff, nameValues);
     assertEquals (44, buff.position ());
     
     buff.flip ();
-    assertMapsEqual (nameValues, IO.getNameValues (buff));
+    assertMapsEqual (nameValues, XdrCoding.getNameValues (buff));
   }
 
   @Test public void objectsIO ()
@@ -64,11 +64,11 @@ public class JUTestIO
     ByteBuffer buff = ByteBuffer.allocate (1024);
     Object [] objects = new Object [] {"hello", Integer.valueOf (42)};
     
-    IO.putObjects (buff, objects);
+    XdrCoding.putObjects (buff, objects);
     
     buff.flip ();
     
-    Object [] objectsCopy = IO.getObjects (buff);
+    Object [] objectsCopy = XdrCoding.getObjects (buff);
     
     assertArraysEquals (objects, objectsCopy);
   }
@@ -76,14 +76,14 @@ public class JUTestIO
   @Test
   public void padding ()
   {
-    assertEquals (0, IO.paddingFor (0));
-    assertEquals (3, IO.paddingFor (1));
-    assertEquals (2, IO.paddingFor (2));
-    assertEquals (1, IO.paddingFor (3));
-    assertEquals (0, IO.paddingFor (4));
-    assertEquals (3, IO.paddingFor (5));
-    assertEquals (3, IO.paddingFor (25));
-    assertEquals (3, IO.paddingFor (4 * 1234 + 1));
+    assertEquals (0, XdrCoding.paddingFor (0));
+    assertEquals (3, XdrCoding.paddingFor (1));
+    assertEquals (2, XdrCoding.paddingFor (2));
+    assertEquals (1, XdrCoding.paddingFor (3));
+    assertEquals (0, XdrCoding.paddingFor (4));
+    assertEquals (3, XdrCoding.paddingFor (5));
+    assertEquals (3, XdrCoding.paddingFor (25));
+    assertEquals (3, XdrCoding.paddingFor (4 * 1234 + 1));
   }
   
   private void assertArraysEquals (Object [] o1, Object [] o2)
