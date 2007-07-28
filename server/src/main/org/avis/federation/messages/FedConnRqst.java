@@ -5,8 +5,8 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.io.messages.RequestMessage;
 
-import static org.avis.io.IO.getString;
-import static org.avis.io.IO.putString;
+import static org.avis.io.XdrCoding.getString;
+import static org.avis.io.XdrCoding.putString;
 
 public class FedConnRqst extends RequestMessage<FedConnRply>
 {

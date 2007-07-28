@@ -5,8 +5,8 @@ import java.util.Map;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import static org.avis.io.IO.getNameValues;
-import static org.avis.io.IO.putNameValues;
+import static org.avis.io.XdrCoding.getNameValues;
+import static org.avis.io.XdrCoding.putNameValues;
 
 public class ConnRply extends XidMessage
 {

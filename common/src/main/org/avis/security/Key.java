@@ -1,6 +1,6 @@
 package org.avis.security;
 
-import static org.avis.io.IO.toUTF8;
+import static org.avis.io.XdrCoding.toUTF8;
 
 import java.util.Arrays;
 

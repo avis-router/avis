@@ -17,11 +17,11 @@ import static java.nio.CharBuffer.wrap;
 import static java.util.Collections.emptyMap;
 
 /**
- * I/O helpers for the Elvin XDR wire format.
+ * Encoding/decoding helpers for the Elvin XDR wire format.
  * 
  * @author Matthew Phillips
  */
-public final class IO
+public final class XdrCoding
 {
   /**
    * Type codes from client protocol spec.
@@ -67,7 +67,7 @@ public final class IO
     }
   };
  
-  private IO ()
+  private XdrCoding ()
   {
     // zip
   }

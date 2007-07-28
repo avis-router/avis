@@ -5,10 +5,10 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.security.Keys;
 
-import static org.avis.io.IO.getBool;
-import static org.avis.io.IO.getString;
-import static org.avis.io.IO.putBool;
-import static org.avis.io.IO.putString;
+import static org.avis.io.XdrCoding.getBool;
+import static org.avis.io.XdrCoding.getString;
+import static org.avis.io.XdrCoding.putBool;
+import static org.avis.io.XdrCoding.putString;
 import static org.avis.security.Keys.EMPTY_KEYS;
 
 public class SubModRqst extends RequestMessage<SubRply>

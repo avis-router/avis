@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.mina.common.ByteBuffer;
 
-import org.avis.io.IO;
+import org.avis.io.XdrCoding;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.ast.nodes.And;
 import org.avis.subscription.ast.nodes.Compare;
@@ -40,7 +40,7 @@ import org.avis.subscription.ast.nodes.StrWildcard;
 import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
-import static org.avis.io.IO.putString;
+import static org.avis.io.XdrCoding.putString;
 import static org.avis.util.Text.className;
 
 /**
@@ -196,22 +196,22 @@ public final class AstIO
     if (type == String.class)
     {
       out.putInt (TYPE_STRING);
-      out.putInt (IO.TYPE_STRING);
+      out.putInt (XdrCoding.TYPE_STRING);
       putString (out, (String)value);
     } else if (type == Integer.class)
     {
       out.putInt (TYPE_INT32);
-      out.putInt (IO.TYPE_INT32);
+      out.putInt (XdrCoding.TYPE_INT32);
       out.putInt ((Integer)value);
     } else if (type == Long.class)
     {
       out.putInt (TYPE_INT64);
-      out.putInt (IO.TYPE_INT64);
+      out.putInt (XdrCoding.TYPE_INT64);
       out.putLong ((Long)value);
     } else if (type == Double.class)
     {
       out.putInt (TYPE_REAL64);
-      out.putInt (IO.TYPE_REAL64);
+      out.putInt (XdrCoding.TYPE_REAL64);
       out.putDouble ((Double)value);
     } else
     {

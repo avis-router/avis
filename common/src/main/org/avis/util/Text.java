@@ -9,8 +9,8 @@ import java.nio.charset.CharacterCodingException;
 import static java.lang.System.arraycopy;
 import static java.util.Arrays.asList;
 
-import static org.avis.io.IO.fromUTF8;
-import static org.avis.io.IO.toUTF8;
+import static org.avis.io.XdrCoding.fromUTF8;
+import static org.avis.io.XdrCoding.toUTF8;
 
 
 /**
