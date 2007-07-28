@@ -6,14 +6,19 @@ import java.util.Map;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
+import org.avis.util.LogFailTester;
 
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.io.Net.addressesFor;
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.enableLogging;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +27,21 @@ public class JUTestFederation
 {
   private static final int PORT1 = 29170;
   private static final int PORT2 = 29180;
+  
+  private LogFailTester logTester;
 
+  @Before
+  public void setup ()
+  {
+    logTester = new LogFailTester ();
+  }
+  
+  @After
+  public void tearDown ()
+  {
+    logTester.assertOkAndDispose ();
+  }
+  
   @Test
   public void uri () 
     throws Exception
@@ -37,10 +56,12 @@ public class JUTestFederation
   }
   
   @Test
-  @Ignore
   public void basic ()
     throws Exception
   {
+    enableLogging (TRACE, true);
+    enableLogging (DIAGNOSTIC, true);
+    
     Router server1 = new Router (PORT1);
     Router server2 = new Router (PORT2);
 
@@ -51,18 +72,17 @@ public class JUTestFederation
     
     FederationClassMap federationMap = new FederationClassMap (fedClass);
     
+    EwafURI ewafURI = new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1));
+    
     new FederationListener
-      (server2, "server2", federationMap,
-       addressesFor (set (new EwafURI ("ewaf://0.0.0.0:" + (PORT2 + 1)))));
+      (server2, "server2", federationMap, addressesFor (set (ewafURI)));
     
 //    Map<EwafURI, FederationClass> connectMap =
 //      new HashMap<EwafURI, FederationClass> ();
     
 //    connectMap.put (new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1)), fedClass);
     
-    new FederationConnector (server1, "server1",
-                             new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1)),
-                             fedClass);
+    new FederationConnector (server1, "server1", ewafURI, fedClass);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
