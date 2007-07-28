@@ -29,7 +29,7 @@ public class JUTestRouterOptions
     RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://0.0.0.0");
     
-    Set<InetSocketAddress> addresses = options.bindAddresses ();
+    Set<InetSocketAddress> addresses = options.listenAddresses ();
     
     assertEquals (1, addresses.size ());
     
@@ -96,7 +96,7 @@ public class JUTestRouterOptions
     options.set ("Listen",
                  "elvin:/tcp,none,xdr/localhost:1234 \t elvin://localhost");
     
-    Set<InetSocketAddress> addresses = options.bindAddresses ();
+    Set<InetSocketAddress> addresses = options.listenAddresses ();
     
     boolean found1234 = false;
     
@@ -115,7 +115,7 @@ public class JUTestRouterOptions
     RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://" + hostOption);
     
-    Set<InetSocketAddress> addresses = options.bindAddresses ();
+    Set<InetSocketAddress> addresses = options.listenAddresses ();
     
     assertEquals (hostAddresses.size (), addresses.size ());
     
@@ -131,7 +131,7 @@ public class JUTestRouterOptions
     RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://!" + interfaceOption);
     
-    Set<InetSocketAddress> addresses = options.bindAddresses ();
+    Set<InetSocketAddress> addresses = options.listenAddresses ();
     
     assertEquals (interfaceAddresses.size (), addresses.size ());
     
