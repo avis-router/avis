@@ -23,6 +23,8 @@ public class FedConnRqst extends RequestMessage<FedConnRply>
 
   public FedConnRqst (int versionMajor, int versionMinor, String serverDomain)
   {
+    super (nextXid ());
+    
     this.versionMajor = versionMajor;
     this.versionMinor = versionMinor;
     this.serverDomain = serverDomain;

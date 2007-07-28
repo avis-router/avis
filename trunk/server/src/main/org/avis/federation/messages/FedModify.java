@@ -21,6 +21,8 @@ public class FedModify extends RequestMessage<Ack>
   
   public FedModify (Node incomingFilter)
   {
+    super (nextXid ());
+    
     this.incomingFilter = incomingFilter;
   }
 
