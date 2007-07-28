@@ -97,9 +97,7 @@ public class RouterOptions extends Options
         
       } catch (InvalidURIException ex)
       {
-        throw new IllegalOptionException
-          ("Listen",
-           "Invalid URI \"" + listenItem + "\": " + ex.getMessage ());
+        throw new IllegalOptionException ("Listen", ex.getMessage ());
       }
     }
     
