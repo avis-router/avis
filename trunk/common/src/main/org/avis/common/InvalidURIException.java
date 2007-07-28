@@ -12,6 +12,6 @@ public class InvalidURIException extends RuntimeException
 {
   public InvalidURIException (String uri, String message)
   {
-    super ("Invalid URI: " + uri + ": " + message);
+    super ("Invalid URI \"" + uri + "\": " + message);
   }
 }
