@@ -13,6 +13,7 @@ import org.junit.Test;
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
+import static org.avis.io.Net.addressesFor;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
@@ -50,8 +51,9 @@ public class JUTestFederation
     
     FederationClassMap federationMap = new FederationClassMap (fedClass);
     
-    new FederationListener (server2, "server2", federationMap,
-                            set (new EwafURI ("ewaf://0.0.0.0:" + (PORT2 + 1))));
+    new FederationListener
+      (server2, "server2", federationMap,
+       addressesFor (set (new EwafURI ("ewaf://0.0.0.0:" + (PORT2 + 1)))));
     
 //    Map<EwafURI, FederationClass> connectMap =
 //      new HashMap<EwafURI, FederationClass> ();
