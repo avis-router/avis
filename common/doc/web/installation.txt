@@ -50,8 +50,7 @@ Fedora
 The Avis RPM is targeted and tested on Fedora Core 2 and
 later. However the RPM is architecture-independent and not
 particularly dependent on Fedora, so it may work on other RPM-based
-Linux distributions. It has not however been tested outside of Fedora,
-so use at your own risk.
+Linux distributions.
 
 To install:
 
@@ -82,7 +81,7 @@ Mac OS X
 ----------------------------------------------------------------------
 
 To install, open the Avis `.tbz` archive in Finder. This will extract
- the Avis installation package which you can open and install.
+the Avis installation package which you can open and install.
 
 To configure: The Avis configuration is in
 `/usr/local/etc/avis/avisd.config`.
