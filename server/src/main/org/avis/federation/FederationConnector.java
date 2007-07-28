@@ -1,5 +1,7 @@
 package org.avis.federation;
 
+import java.io.Closeable;
+
 import java.net.InetSocketAddress;
 
 import org.apache.mina.common.ConnectFuture;
@@ -31,7 +33,7 @@ import static org.avis.logging.Log.warn;
  * 
  * @author Matthew Phillips
  */
-public class FederationConnector implements IoHandler
+public class FederationConnector implements IoHandler, Closeable
 {
   private EwafURI uri;
   private Router router;
@@ -186,7 +188,7 @@ public class FederationConnector implements IoHandler
     
     if (link == null)
       handleHandshakeMessage (session, (Message)message);
-    else
+    else if (!link.isClosed ())
       link.handleMessage ((Message)message);
   }
   
