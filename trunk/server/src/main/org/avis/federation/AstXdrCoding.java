@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import org.avis.io.XdrCoding;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.ast.nodes.And;
 import org.avis.subscription.ast.nodes.Compare;
@@ -46,6 +45,10 @@ import static org.avis.federation.AstType.AND;
 import static org.avis.federation.AstType.BEGINS_WITH;
 import static org.avis.federation.AstType.BIT_AND;
 import static org.avis.federation.AstType.BIT_NEGATE;
+import static org.avis.federation.AstType.CONST_INT32;
+import static org.avis.federation.AstType.CONST_INT64;
+import static org.avis.federation.AstType.CONST_REAL64;
+import static org.avis.federation.AstType.CONST_STRING;
 import static org.avis.federation.AstType.CONTAINS;
 import static org.avis.federation.AstType.DECOMPOSE;
 import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
@@ -75,13 +78,13 @@ import static org.avis.federation.AstType.SIZE;
 import static org.avis.federation.AstType.STRING;
 import static org.avis.federation.AstType.SUBTRACT;
 import static org.avis.federation.AstType.TO_LOWER;
-import static org.avis.federation.AstType.TYPE_INT32;
-import static org.avis.federation.AstType.TYPE_INT64;
-import static org.avis.federation.AstType.TYPE_REAL64;
-import static org.avis.federation.AstType.TYPE_STRING;
 import static org.avis.federation.AstType.UNARY_MINUS;
 import static org.avis.federation.AstType.WILDCARD;
 import static org.avis.federation.AstType.XOR;
+import static org.avis.io.XdrCoding.TYPE_INT32;
+import static org.avis.io.XdrCoding.TYPE_INT64;
+import static org.avis.io.XdrCoding.TYPE_REAL64;
+import static org.avis.io.XdrCoding.TYPE_STRING;
 import static org.avis.io.XdrCoding.putString;
 import static org.avis.util.Text.className;
 
@@ -93,54 +96,39 @@ import static org.avis.util.Text.className;
  */
 public final class AstXdrCoding
 {
-//  @SuppressWarnings("unused")
-//  private static final int
-//    EMPTY = 0, NAME = 1, TYPE_INT32 = 2, TYPE_INT64 = 3, TYPE_REAL64 = 4, 
-//    TYPE_STRING = 5, REGEXP = 6, EQUALS = 8, NOT_EQUALS = 9, LESS_THAN = 10,
-//    LESS_THAN_EQUALS = 11, GREATER_THAN = 12, GREATER_THAN_EQUALS = 13,
-//    OR = 16, XOR = 17, AND = 18, NOT = 19, UNARY_PLUS = 24, UNARY_MINUS = 25,
-//    MULTIPLY = 26, DIVIDE = 27, MODULO = 28, ADD = 29, SUBTRACT = 30 ,
-//    SHIFT_LEFT = 32, SHIFT_RIGHT = 33, LOGICAL_SHIFT_RIGHT = 34, 
-//    BIT_AND = 35, BIT_XOR = 36, BIT_OR = 37, BIT_NEGATE = 38, INT32 = 40, 
-//    INT64 = 41, REAL64 = 42, STRING = 43, OPAQUE = 44, NAN = 45,
-//    BEGINS_WITH = 48, CONTAINS = 49, ENDS_WITH = 50, WILDCARD = 51, REGEX = 52,
-//    TO_LOWER = 56, TO_UPPER = 57, PRIMARY = 58, SECONDARY = 59, TERTIARY = 60,
-//    DECOMPOSE = 61, DECOMPOSE_COMPAT = 62, REQUIRE = 64, F_EQUALS = 65,
-//    SIZE = 66;
-  
-  private static Map<Class<? extends Node>, AstType> NODE_TO_TYPECODE;
+  private static Map<Class<? extends Node>, AstType> nodeToTypecode;
   
   static
   {
-    NODE_TO_TYPECODE = new HashMap<Class<? extends Node>, AstType> ();
+    nodeToTypecode = new HashMap<Class<? extends Node>, AstType> ();
     
-    mapTypeCode (And.class, AND);
-    mapTypeCode (Field.class, NAME);
-    mapTypeCode (MathBitAnd.class, BIT_AND);
-    mapTypeCode (MathBitInvert.class, BIT_NEGATE);
-    mapTypeCode (MathBitLogShiftRight.class, LOGICAL_SHIFT_RIGHT);
-    mapTypeCode (MathBitOr.class, OR);
-    mapTypeCode (MathBitShiftLeft.class, SHIFT_LEFT);
-    mapTypeCode (MathBitShiftRight.class, SHIFT_RIGHT);
-    mapTypeCode (MathBitXor.class, XOR);
-    mapTypeCode (MathDiv.class, DIVIDE);
-    mapTypeCode (MathMinus.class, SUBTRACT);
-    mapTypeCode (MathMod.class, MODULO);
-    mapTypeCode (MathMult.class, MULTIPLY);
-    mapTypeCode (MathPlus.class, ADD);
-    mapTypeCode (MathUnaryMinus.class, UNARY_MINUS);
-    mapTypeCode (Nan.class, NAN);
-    mapTypeCode (Not.class, NOT);
-    mapTypeCode (Or.class, OR);
-    mapTypeCode (Require.class, REQUIRE);
-    mapTypeCode (Size.class, SIZE);
-    mapTypeCode (StrBeginsWith.class, BEGINS_WITH);
-    mapTypeCode (StrContains.class, CONTAINS);
-    mapTypeCode (StrEndsWith.class, ENDS_WITH);
-    mapTypeCode (StrFoldCase.class, TO_LOWER);
-    mapTypeCode (StrRegex.class, REGEX);
-    mapTypeCode (StrWildcard.class, WILDCARD);
-    mapTypeCode (Xor.class, XOR);
+    nodeToTypecode.put (And.class, AND);
+    nodeToTypecode.put (Field.class, NAME);
+    nodeToTypecode.put (MathBitAnd.class, BIT_AND);
+    nodeToTypecode.put (MathBitInvert.class, BIT_NEGATE);
+    nodeToTypecode.put (MathBitLogShiftRight.class, LOGICAL_SHIFT_RIGHT);
+    nodeToTypecode.put (MathBitOr.class, OR);
+    nodeToTypecode.put (MathBitShiftLeft.class, SHIFT_LEFT);
+    nodeToTypecode.put (MathBitShiftRight.class, SHIFT_RIGHT);
+    nodeToTypecode.put (MathBitXor.class, XOR);
+    nodeToTypecode.put (MathDiv.class, DIVIDE);
+    nodeToTypecode.put (MathMinus.class, SUBTRACT);
+    nodeToTypecode.put (MathMod.class, MODULO);
+    nodeToTypecode.put (MathMult.class, MULTIPLY);
+    nodeToTypecode.put (MathPlus.class, ADD);
+    nodeToTypecode.put (MathUnaryMinus.class, UNARY_MINUS);
+    nodeToTypecode.put (Nan.class, NAN);
+    nodeToTypecode.put (Not.class, NOT);
+    nodeToTypecode.put (Or.class, OR);
+    nodeToTypecode.put (Require.class, REQUIRE);
+    nodeToTypecode.put (Size.class, SIZE);
+    nodeToTypecode.put (StrBeginsWith.class, BEGINS_WITH);
+    nodeToTypecode.put (StrContains.class, CONTAINS);
+    nodeToTypecode.put (StrEndsWith.class, ENDS_WITH);
+    nodeToTypecode.put (StrFoldCase.class, TO_LOWER);
+    nodeToTypecode.put (StrRegex.class, REGEX);
+    nodeToTypecode.put (StrWildcard.class, WILDCARD);
+    nodeToTypecode.put (Xor.class, XOR);
   }
   
   private AstXdrCoding ()
@@ -148,23 +136,27 @@ public final class AstXdrCoding
     // zip
   }
   
-  private static void mapTypeCode (Class<? extends Node> type, AstType code)
-  {
-    NODE_TO_TYPECODE.put (type, code);
-  }
-  
+  /**
+   * Encode an AST in Elvin XDR format.
+   * 
+   * @param out The buffer to encode to.
+   * @param node The root of the AST.
+   * 
+   * @see #decodeAST(ByteBuffer)
+   */
   public static void encodeAST (ByteBuffer out, Node node)
   {
     if (node instanceof Const)
     {
-      encodeValue (out, (Const)node);
+      encodeConst (out, (Const)node);
     } else
     {
       AstType typeCode = typeCodeFor (node);
       
       out.putInt (typeCode.ordinal ());
-      out.putInt (0); // composite node base type
+      out.putInt (0); // composite node base type is 0
       
+      // children
       if (node.hasChildren ())
       {
         Collection<? extends Node> children = node.children ();
@@ -182,7 +174,7 @@ public final class AstXdrCoding
   
   /**
    * Generate the AST type code for a node, taking into account cases
-   * where there is not a 1-1 mapping from Node -> AST node type.
+   * where there is not a 1-1 mapping from Node -> Elvin AST node type.
    */
   private static AstType typeCodeFor (Node node)
   {
@@ -225,38 +217,38 @@ public final class AstXdrCoding
                DECOMPOSE : DECOMPOSE_COMPAT;
     } else
     {
-      // this will NPE on unmapped type
-      return NODE_TO_TYPECODE.get (node.getClass ());
+      // sanity check is that this will NPE on unmapped type
+      return nodeToTypecode.get (node.getClass ());
     }
   }
 
   /**
    * Encode a constant value (leaf) node.
    */
-  private static void encodeValue (ByteBuffer out, Const node)
+  private static void encodeConst (ByteBuffer out, Const node)
   {
     Object value = node.value ();
     Class<?> type = value.getClass ();
 
     if (type == String.class)
     {
-      out.putInt (TYPE_STRING.ordinal ());
-      out.putInt (XdrCoding.TYPE_STRING);
+      out.putInt (CONST_STRING.ordinal ());
+      out.putInt (TYPE_STRING);
       putString (out, (String)value);
     } else if (type == Integer.class)
     {
-      out.putInt (TYPE_INT32.ordinal ());
-      out.putInt (XdrCoding.TYPE_INT32);
+      out.putInt (CONST_INT32.ordinal ());
+      out.putInt (TYPE_INT32);
       out.putInt ((Integer)value);
     } else if (type == Long.class)
     {
-      out.putInt (TYPE_INT64.ordinal ());
-      out.putInt (XdrCoding.TYPE_INT64);
+      out.putInt (CONST_INT64.ordinal ());
+      out.putInt (TYPE_INT64);
       out.putLong ((Long)value);
     } else if (type == Double.class)
     {
-      out.putInt (TYPE_REAL64.ordinal ());
-      out.putInt (XdrCoding.TYPE_REAL64);
+      out.putInt (CONST_REAL64.ordinal ());
+      out.putInt (TYPE_REAL64);
       out.putDouble ((Double)value);
     } else
     {
@@ -264,6 +256,17 @@ public final class AstXdrCoding
     }
   }
 
+  /**
+   * Decode an XDR-encoded AST into a Node-based AST.
+   * 
+   * @param in The buffer to read from.
+   * 
+   * @return The root of the AST.
+   * 
+   * @throws ProtocolCodecException if an error occurred reading the tree.
+   * 
+   * @see #encodeAST(ByteBuffer, Node)
+   */
   public static Node decodeAST (ByteBuffer in)
     throws ProtocolCodecException
   {
