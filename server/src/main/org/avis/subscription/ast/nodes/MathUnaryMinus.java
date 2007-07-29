@@ -82,6 +82,6 @@ public class MathUnaryMinus extends Node
     else if (result instanceof Double)
       return -((Double)result);
     else
-      return null;
+      return BOTTOM;
   }
 }
