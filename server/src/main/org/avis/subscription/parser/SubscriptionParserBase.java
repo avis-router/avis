@@ -2,6 +2,8 @@ package org.avis.subscription.parser;
 
 import java.util.regex.PatternSyntaxException;
 
+import java.io.StringReader;
+
 import org.avis.subscription.ast.IllegalChildException;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.ast.nodes.Const;
@@ -10,6 +12,23 @@ import org.avis.util.Text;
 
 public abstract class SubscriptionParserBase
 {
+  /**
+   * Convenience method to fully parse and validate a subscription
+   * expression.
+   * 
+   * @param subExpr The subscription expression.
+   * 
+   * @return The root of the AST.
+   * 
+   * @throws ParseException if the expression is invalid.
+   */
+  public static Node parse (String subExpr) 
+    throws ParseException
+  {
+    return new SubscriptionParser 
+      (new StringReader (subExpr)).parseAndValidate ();
+  }
+  
   abstract Node doParse ()
     throws ParseException;
   
