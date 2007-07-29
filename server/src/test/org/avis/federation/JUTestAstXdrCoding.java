@@ -14,14 +14,6 @@ import static org.junit.Assert.assertEquals;
 public class JUTestAstXdrCoding
 {
   @Test
-  public void typeCodes () 
-    throws Exception
-  {
-    assertEquals (2, AstType.CONST_INT32.ordinal ());
-    assertEquals (66, AstType.SIZE.ordinal ());
-  }
-  
-  @Test
   public void astIO () 
     throws Exception
   {

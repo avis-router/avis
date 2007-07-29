@@ -96,11 +96,11 @@ import static org.avis.util.Text.className;
  */
 public final class AstXdrCoding
 {
-  private static Map<Class<? extends Node>, AstType> nodeToTypecode;
+  private static Map<Class<? extends Node>, Integer> nodeToTypecode;
   
   static
   {
-    nodeToTypecode = new HashMap<Class<? extends Node>, AstType> ();
+    nodeToTypecode = new HashMap<Class<? extends Node>, Integer> ();
     
     nodeToTypecode.put (And.class, AND);
     nodeToTypecode.put (Field.class, NAME);
@@ -151,9 +151,9 @@ public final class AstXdrCoding
       encodeConst (out, (Const)node);
     } else
     {
-      AstType typeCode = typeCodeFor (node);
+      int typeCode = typeCodeFor (node);
       
-      out.putInt (typeCode.ordinal ());
+      out.putInt (typeCode);
       out.putInt (0); // composite node base type is 0
       
       // children
@@ -176,7 +176,7 @@ public final class AstXdrCoding
    * Generate the AST type code for a node, taking into account cases
    * where there is not a 1-1 mapping from Node -> Elvin AST node type.
    */
-  private static AstType typeCodeFor (Node node)
+  private static int typeCodeFor (Node node)
   {
     if (node instanceof Compare)
     {
@@ -232,22 +232,22 @@ public final class AstXdrCoding
 
     if (type == String.class)
     {
-      out.putInt (CONST_STRING.ordinal ());
+      out.putInt (CONST_STRING);
       out.putInt (TYPE_STRING);
       putString (out, (String)value);
     } else if (type == Integer.class)
     {
-      out.putInt (CONST_INT32.ordinal ());
+      out.putInt (CONST_INT32);
       out.putInt (TYPE_INT32);
       out.putInt ((Integer)value);
     } else if (type == Long.class)
     {
-      out.putInt (CONST_INT64.ordinal ());
+      out.putInt (CONST_INT64);
       out.putInt (TYPE_INT64);
       out.putLong ((Long)value);
     } else if (type == Double.class)
     {
-      out.putInt (CONST_REAL64.ordinal ());
+      out.putInt (CONST_REAL64);
       out.putInt (TYPE_REAL64);
       out.putDouble ((Double)value);
     } else

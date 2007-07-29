@@ -41,6 +41,7 @@ import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
 import static org.avis.util.Text.className;
+import static org.avis.federation.AstType.*;
 
 /**
  * Parser class for translating XDR-encoded AST's into Node-based ones.
@@ -68,11 +69,11 @@ class AstParser
   public Node expr ()
     throws ProtocolCodecException
   {
-    AstType nodeType = nodeTypeFor (in.getInt ());
+    int nodeType = in.getInt ();
     int subType = in.getInt ();
     
     // sanity check subtype for composite nodes
-    if (nodeType.ordinal () > AstType.CONST_STRING.ordinal () && subType != 0)
+    if (nodeType > CONST_STRING && subType != 0)
     {
       throw new ProtocolCodecException ("Invalid subtype for parent node: " + 
                                         subType);
@@ -185,17 +186,6 @@ class AstParser
         throw new Error ();
     }
   }
-  
-  private static AstType nodeTypeFor (int nodeType)
-  {
-    try
-    {
-      return AstType.values () [nodeType];
-    } catch (ArrayIndexOutOfBoundsException ex)
-    {
-      throw new IllegalArgumentException ("Invalid AST node type:" + nodeType);
-    }
-  }
 
   private AstParser single ()
     throws ProtocolCodecException
@@ -235,9 +225,9 @@ class AstParser
   private String string ()
     throws ProtocolCodecException
   {
-    AstType nodeType = nodeTypeFor (in.getInt ());
+    int nodeType = in.getInt ();
     
-    if (nodeType != AstType.CONST_STRING)
+    if (nodeType != CONST_STRING)
       throw new ProtocolCodecException ("String node required, found " + nodeType);
     
     Object value = XdrCoding.getObject (in);
@@ -249,7 +239,7 @@ class AstParser
                                         className (value));
   }
   
-  private Const constant (AstType nodeType, int subType)
+  private Const constant (int nodeType, int subType)
     throws ProtocolCodecException
   {
     switch (subType)
@@ -271,7 +261,7 @@ class AstParser
     }
   }
 
-  private static void assertNodeType (AstType required, AstType actual)
+  private static void assertNodeType (int required, int actual)
     throws ProtocolCodecException
   {
     if (required != actual)
