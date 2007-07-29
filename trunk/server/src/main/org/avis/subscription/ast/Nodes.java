@@ -80,7 +80,9 @@ public final class Nodes
   {
     if (node.hasChildren ())
     {
-      str.append ('(').append (node.expr ());
+      str.append ('(');
+      
+      str.append (node.expr ());
 
       for (Node child : node.children ())
       {
