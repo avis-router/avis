@@ -151,9 +151,7 @@ public final class AstXdrCoding
       encodeConst (out, (Const)node);
     } else
     {
-      int typeCode = typeCodeFor (node);
-      
-      out.putInt (typeCode);
+      out.putInt (typeCodeFor (node));
       out.putInt (0); // composite node base type is 0
       
       // children
