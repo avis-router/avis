@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test the {@link XdrCoding} utility class.
  */
-public class JUTestIO
+public class JUTestXdrCoding
 {
   @Test public void stringIO ()
     throws Exception
