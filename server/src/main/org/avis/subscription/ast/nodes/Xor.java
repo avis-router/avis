@@ -1,5 +1,6 @@
 package org.avis.subscription.ast.nodes;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.avis.subscription.ast.BoolParentNode;
@@ -17,6 +18,17 @@ public class Xor extends BoolParentNode
     super (node1, node2);
   }
   
+  
+  public Xor (Collection<? extends Node> children)
+  {
+    super (children);
+  }
+
+  public Xor (Node... children)
+  {
+    super (children);
+  }
+
   @Override
   public String expr ()
   {

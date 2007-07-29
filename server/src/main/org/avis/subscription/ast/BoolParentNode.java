@@ -1,5 +1,7 @@
 package org.avis.subscription.ast;
 
+import java.util.Collection;
+
 /**
  * Base class for parent nodes that evaludate to boolean from boolean
  * children.
@@ -30,6 +32,11 @@ public abstract class BoolParentNode
     super (children);
   }
   
+  public BoolParentNode (Collection<? extends Node> children)
+  {
+    super (children);
+  }
+
   @Override
   public String presentation ()
   {

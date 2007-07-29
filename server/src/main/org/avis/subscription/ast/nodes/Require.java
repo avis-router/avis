@@ -6,7 +6,7 @@ import org.avis.subscription.ast.Node;
 
 public class Require extends Node
 {
-  private String name;
+  public String name;
 
   public Require (Field field)
   {
