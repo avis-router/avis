@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.io.XdrCoding;
 import org.avis.subscription.ast.Node;
@@ -40,6 +41,47 @@ import org.avis.subscription.ast.nodes.StrWildcard;
 import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
+import static org.avis.federation.AstType.ADD;
+import static org.avis.federation.AstType.AND;
+import static org.avis.federation.AstType.BEGINS_WITH;
+import static org.avis.federation.AstType.BIT_AND;
+import static org.avis.federation.AstType.BIT_NEGATE;
+import static org.avis.federation.AstType.CONTAINS;
+import static org.avis.federation.AstType.DECOMPOSE;
+import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
+import static org.avis.federation.AstType.DIVIDE;
+import static org.avis.federation.AstType.ENDS_WITH;
+import static org.avis.federation.AstType.F_EQUALS;
+import static org.avis.federation.AstType.GREATER_THAN;
+import static org.avis.federation.AstType.GREATER_THAN_EQUALS;
+import static org.avis.federation.AstType.INT32;
+import static org.avis.federation.AstType.INT64;
+import static org.avis.federation.AstType.LESS_THAN;
+import static org.avis.federation.AstType.LESS_THAN_EQUALS;
+import static org.avis.federation.AstType.LOGICAL_SHIFT_RIGHT;
+import static org.avis.federation.AstType.MODULO;
+import static org.avis.federation.AstType.MULTIPLY;
+import static org.avis.federation.AstType.NAME;
+import static org.avis.federation.AstType.NAN;
+import static org.avis.federation.AstType.NOT;
+import static org.avis.federation.AstType.OPAQUE;
+import static org.avis.federation.AstType.OR;
+import static org.avis.federation.AstType.REAL64;
+import static org.avis.federation.AstType.REGEX;
+import static org.avis.federation.AstType.REQUIRE;
+import static org.avis.federation.AstType.SHIFT_LEFT;
+import static org.avis.federation.AstType.SHIFT_RIGHT;
+import static org.avis.federation.AstType.SIZE;
+import static org.avis.federation.AstType.STRING;
+import static org.avis.federation.AstType.SUBTRACT;
+import static org.avis.federation.AstType.TO_LOWER;
+import static org.avis.federation.AstType.TYPE_INT32;
+import static org.avis.federation.AstType.TYPE_INT64;
+import static org.avis.federation.AstType.TYPE_REAL64;
+import static org.avis.federation.AstType.TYPE_STRING;
+import static org.avis.federation.AstType.UNARY_MINUS;
+import static org.avis.federation.AstType.WILDCARD;
+import static org.avis.federation.AstType.XOR;
 import static org.avis.io.XdrCoding.putString;
 import static org.avis.util.Text.className;
 
@@ -49,30 +91,28 @@ import static org.avis.util.Text.className;
  * 
  * @author Matthew Phillips
  */
-public final class AstIO
+public final class AstXdrCoding
 {
-  @SuppressWarnings("unused")
-  private static final int
-    EMPTY = 0, NAME = 1, TYPE_INT32 = 2, TYPE_INT64 = 3, TYPE_REAL64 = 4, 
-    TYPE_STRING = 5, REGEXP = 6, EQUALS = 8, NOT_EQUALS = 9, LESS_THAN = 10,
-    LESS_THAN_EQUALS = 11, GREATER_THAN = 12, GREATER_THAN_EQUALS = 13,
-    OR = 16, XOR = 17, AND = 18, NOT = 19, UNARY_PLUS = 24, UNARY_MINUS = 25,
-    MULTIPLY = 26, DIVIDE = 27, MODULO = 28, ADD = 29, SUBTRACT = 30 ,
-    SHIFT_LEFT = 32, SHIFT_RIGHT = 33, LOGICAL_SHIFT_RIGHT = 34, 
-    BIT_AND = 35, BIT_XOR = 36, BIT_OR = 37, BIT_NEGATE = 38, INT32 = 40, 
-    INT64 = 41, REAL64 = 42, STRING = 43, OPAQUE = 44, NAN = 45,
-    BEGINS_WITH = 48, CONTAINS = 49, ENDS_WITH = 50, WILDCARD = 51, REGEX = 52,
-    TO_LOWER = 56, TO_UPPER = 57, PRIMARY = 58, SECONDARY = 59, TERTIARY = 60,
-    DECOMPOSE = 61, DECOMPOSE_COMPAT = 62, REQUIRE = 64, F_EQUALS = 65,
-    SIZE = 66;
+//  @SuppressWarnings("unused")
+//  private static final int
+//    EMPTY = 0, NAME = 1, TYPE_INT32 = 2, TYPE_INT64 = 3, TYPE_REAL64 = 4, 
+//    TYPE_STRING = 5, REGEXP = 6, EQUALS = 8, NOT_EQUALS = 9, LESS_THAN = 10,
+//    LESS_THAN_EQUALS = 11, GREATER_THAN = 12, GREATER_THAN_EQUALS = 13,
+//    OR = 16, XOR = 17, AND = 18, NOT = 19, UNARY_PLUS = 24, UNARY_MINUS = 25,
+//    MULTIPLY = 26, DIVIDE = 27, MODULO = 28, ADD = 29, SUBTRACT = 30 ,
+//    SHIFT_LEFT = 32, SHIFT_RIGHT = 33, LOGICAL_SHIFT_RIGHT = 34, 
+//    BIT_AND = 35, BIT_XOR = 36, BIT_OR = 37, BIT_NEGATE = 38, INT32 = 40, 
+//    INT64 = 41, REAL64 = 42, STRING = 43, OPAQUE = 44, NAN = 45,
+//    BEGINS_WITH = 48, CONTAINS = 49, ENDS_WITH = 50, WILDCARD = 51, REGEX = 52,
+//    TO_LOWER = 56, TO_UPPER = 57, PRIMARY = 58, SECONDARY = 59, TERTIARY = 60,
+//    DECOMPOSE = 61, DECOMPOSE_COMPAT = 62, REQUIRE = 64, F_EQUALS = 65,
+//    SIZE = 66;
   
-  private static Map<Class<? extends Node>, Integer> NODE_TO_TYPECODE;
-  private static Map<Integer, Class<? extends Node>> TYPECODE_TO_NODE;
+  private static Map<Class<? extends Node>, AstType> NODE_TO_TYPECODE;
   
   static
   {
-    NODE_TO_TYPECODE = new HashMap<Class<? extends Node>, Integer> ();
-    TYPECODE_TO_NODE = new HashMap<Integer, Class<? extends Node>> ();
+    NODE_TO_TYPECODE = new HashMap<Class<? extends Node>, AstType> ();
     
     mapTypeCode (And.class, AND);
     mapTypeCode (Field.class, NAME);
@@ -103,17 +143,14 @@ public final class AstIO
     mapTypeCode (Xor.class, XOR);
   }
   
-  private AstIO ()
+  private AstXdrCoding ()
   {
     // zip
   }
   
-  private static void mapTypeCode (Class<? extends Node> type, int code)
+  private static void mapTypeCode (Class<? extends Node> type, AstType code)
   {
-    Integer typeCode = code; // box once
-    
-    NODE_TO_TYPECODE.put (type, typeCode);
-    TYPECODE_TO_NODE.put (typeCode, type);
+    NODE_TO_TYPECODE.put (type, code);
   }
   
   public static void encodeAST (ByteBuffer out, Node node)
@@ -123,23 +160,46 @@ public final class AstIO
       encodeValue (out, (Const)node);
     } else
     {
-      out.putInt (typeCodeFor (node));
+      AstType typeCode = typeCodeFor (node);
+      
+      out.putInt (typeCode.ordinal ());
       out.putInt (0); // composite node base type
       
-      Collection<? extends Node> children = node.children ();
-      
-      out.putInt (children.size ());
-      
-      for (Node child : children)
-        encodeAST (out, child);
+      switch (typeCode)
+      {
+        case REQUIRE:
+          out.putInt (1);
+          putStringConst (out, ((Require)node).name);
+          break;
+        default:
+          if (node.hasChildren ())
+          {
+            Collection<? extends Node> children = node.children ();
+            
+            out.putInt (children.size ());
+            
+            for (Node child : children)
+              encodeAST (out, child);
+          } else
+          {
+            out.putInt (0);
+          }
+      }
     }
   }
 
+  private static void putStringConst (ByteBuffer out, String value)
+  {
+    out.putInt (TYPE_STRING.ordinal ());
+    out.putInt (XdrCoding.TYPE_STRING);
+    XdrCoding.putString (out, value);
+  }
+  
   /**
    * Generate the AST type code for a node, taking into account cases
    * where there is not a 1-1 mapping from Node -> AST node type.
    */
-  private static int typeCodeFor (Node node)
+  private static AstType typeCodeFor (Node node)
   {
     if (node instanceof Compare)
     {
@@ -195,27 +255,33 @@ public final class AstIO
 
     if (type == String.class)
     {
-      out.putInt (TYPE_STRING);
+      out.putInt (TYPE_STRING.ordinal ());
       out.putInt (XdrCoding.TYPE_STRING);
       putString (out, (String)value);
     } else if (type == Integer.class)
     {
-      out.putInt (TYPE_INT32);
+      out.putInt (TYPE_INT32.ordinal ());
       out.putInt (XdrCoding.TYPE_INT32);
       out.putInt ((Integer)value);
     } else if (type == Long.class)
     {
-      out.putInt (TYPE_INT64);
+      out.putInt (TYPE_INT64.ordinal ());
       out.putInt (XdrCoding.TYPE_INT64);
       out.putLong ((Long)value);
     } else if (type == Double.class)
     {
-      out.putInt (TYPE_REAL64);
+      out.putInt (TYPE_REAL64.ordinal ());
       out.putInt (XdrCoding.TYPE_REAL64);
       out.putDouble ((Double)value);
     } else
     {
       throw new Error ("Cannot encode constant type " + className (type));
     }
+  }
+
+  public static Node decodeAST (ByteBuffer in)
+    throws ProtocolCodecException
+  {
+    return new AstParser (in).expr ();
   }
 }
