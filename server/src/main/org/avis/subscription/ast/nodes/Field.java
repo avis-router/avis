@@ -2,15 +2,13 @@ package org.avis.subscription.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.subscription.ast.Node;
+import org.avis.subscription.ast.NameParentNode;
 
-public class Field extends Node
+public class Field extends NameParentNode
 {
-  public String name;
-  
   public Field (String name)
   {
-    this.name = name;
+    super (name);
   }
   
   public String fieldName ()
@@ -19,27 +17,15 @@ public class Field extends Node
   }
   
   @Override
-  public String presentation ()
-  {
-    return "Field: \"" + name + '\'';
-  }
-  
-  @Override
   public String expr ()
   {
-    return "field '" + name + '\'';
+    return "field";
   }
 
   @Override
   public Class<?> evalType ()
   {
     return Object.class;
-  }
-  
-  @Override
-  public Node inlineConstants ()
-  {
-    return this;
   }
   
   @Override

@@ -1,11 +1,12 @@
 package org.avis.subscription.ast.nodes;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import org.avis.subscription.ast.IllegalChildException;
 import org.avis.subscription.ast.Node;
+
+import static java.util.Collections.singleton;
 
 public class MathUnaryMinus extends Node
 {
@@ -53,7 +54,7 @@ public class MathUnaryMinus extends Node
   @Override
   public Collection<? extends Node> children ()
   {
-    return Collections.singleton (child);
+    return singleton (child);
   }
   
   @Override

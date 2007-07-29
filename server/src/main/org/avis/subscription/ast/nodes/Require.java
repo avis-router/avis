@@ -2,12 +2,10 @@ package org.avis.subscription.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.subscription.ast.Node;
+import org.avis.subscription.ast.NameParentNode;
 
-public class Require extends Node
+public class Require extends NameParentNode
 {
-  public String name;
-
   public Require (Field field)
   {
     this (field.fieldName ());
@@ -15,15 +13,15 @@ public class Require extends Node
 
   public Require (String name)
   {
-    this.name = name;
+    super (name);
   }
   
   @Override
-  public String presentation ()
+  public String expr ()
   {
-    return name ();
+    return "require";
   }
-
+  
   @Override
   public Class<?> evalType ()
   {
@@ -34,17 +32,5 @@ public class Require extends Node
   public Object evaluate (Map<String, Object> attrs)
   {
     return attrs.containsKey (name) ? TRUE : BOTTOM;
-  }
-
-  @Override
-  public String expr ()
-  {
-    return "require '" + name + '\'';
-  }
-
-  @Override
-  public Node inlineConstants ()
-  {
-    return this;
   }
 }
