@@ -3,7 +3,7 @@ package org.avis.subscription.ast;
 import java.util.Collection;
 
 /**
- * Base class for parent nodes that evaludate to boolean from boolean
+ * Base class for parent nodes that evaluate to boolean from boolean
  * children.
  * 
  * @author Matthew Phillips
