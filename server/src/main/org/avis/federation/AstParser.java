@@ -211,7 +211,7 @@ class AstParser
     
     List<Node> children = new ArrayList<Node> (count);
     
-    for ( ; count >= 0; count--)
+    for ( ; count > 0; count--)
       children.add (expr ());
     
     return children;
