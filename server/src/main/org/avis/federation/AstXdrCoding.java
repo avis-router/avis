@@ -165,34 +165,19 @@ public final class AstXdrCoding
       out.putInt (typeCode.ordinal ());
       out.putInt (0); // composite node base type
       
-      switch (typeCode)
+      if (node.hasChildren ())
       {
-        case REQUIRE:
-          out.putInt (1);
-          putStringConst (out, ((Require)node).name);
-          break;
-        default:
-          if (node.hasChildren ())
-          {
-            Collection<? extends Node> children = node.children ();
-            
-            out.putInt (children.size ());
-            
-            for (Node child : children)
-              encodeAST (out, child);
-          } else
-          {
-            out.putInt (0);
-          }
+        Collection<? extends Node> children = node.children ();
+        
+        out.putInt (children.size ());
+        
+        for (Node child : children)
+          encodeAST (out, child);
+      } else
+      {
+        out.putInt (0);
       }
     }
-  }
-
-  private static void putStringConst (ByteBuffer out, String value)
-  {
-    out.putInt (TYPE_STRING.ordinal ());
-    out.putInt (XdrCoding.TYPE_STRING);
-    XdrCoding.putString (out, value);
   }
   
   /**
