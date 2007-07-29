@@ -38,6 +38,6 @@ public class Size extends NameParentNode
     else if (value instanceof String)
       return ((String)value).length ();
     else
-      return null;
+      return BOTTOM;
   }
 }
