@@ -473,7 +473,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     else if (func.equals ("fold-case"))
       node = new StrFoldCase (StringValue ());
     else if (func.equals ("equals"))
-      node = Compare.create (CompareArgs ());
+      node = Compare.createEquals (CompareArgs ());
     else if (func.equals ("require"))
       node = new Require (Name ());
     else if (func.equals ("int32"))
