@@ -10,6 +10,7 @@ import org.avis.util.LogFailTester;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
@@ -56,6 +57,7 @@ public class JUTestFederation
   }
   
   @Test
+  @Ignore
   public void basic ()
     throws Exception
   {
