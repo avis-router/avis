@@ -18,6 +18,14 @@ public class JUTestAstXdrCoding
     throws Exception
   {
     roundtrip ("require (foobar)");
+    roundtrip ("foobar == 2");
+    roundtrip ("int64 (foobar)");
+    roundtrip ("foobar != 'hello'");
+    roundtrip ("~foobar << 2 == 6L");
+    roundtrip ("! (foobar <= 3.14)");
+    roundtrip ("foobar == 'hello' || " +
+    	       "greebo & 1 == 1 && begins-with (greebo, 'frob', 'wibble')");
+    roundtrip ("size (foobar) > 10 && (foobar - 20 >= 100)");
   }
   
   private static void roundtrip (String expr)
