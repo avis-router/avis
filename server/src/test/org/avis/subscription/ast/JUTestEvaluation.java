@@ -302,19 +302,19 @@ public class JUTestEvaluation
     ntfn.put ("opaque", new byte [] {1, 2, 3});
     
     assertEquals (TRUE,
-                  new Type (new Field ("int32"), Integer.class).evaluate (ntfn));
+                  new Type ("int32", Integer.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field ("int64"), Long.class).evaluate (ntfn));
+                 new Type ("int64", Long.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field ("real64"), Double.class).evaluate (ntfn));
+                 new Type ("real64", Double.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field ("string"), String.class).evaluate (ntfn));
+                 new Type ("string", String.class).evaluate (ntfn));
     assertEquals (TRUE,
-                  new Type (new Field ("opaque"), byte [].class).evaluate (ntfn));
+                  new Type ("opaque", byte [].class).evaluate (ntfn));
     assertEquals (FALSE,
-                  new Type (new Field ("string"), Integer.class).evaluate (ntfn));
+                  new Type ("string", Integer.class).evaluate (ntfn));
     assertEquals (BOTTOM,
-                  new Type (new Field ("nonexistent"), String.class).evaluate (ntfn));
+                  new Type ("nonexistent", String.class).evaluate (ntfn));
   }
   
   /**
@@ -487,38 +487,38 @@ public class JUTestEvaluation
     throws ParseException
   {
     // test reduction to constant
-    assertReducesTo ("1 == 1", "(constant 'true')");
-    assertReducesTo ("1 != 1", "(constant 'false')");
-    assertReducesTo ("1 != 1", "(constant 'false')");
-    assertReducesTo ("10 > 9", "(constant 'true')");
-    assertReducesTo ("!(10 > 9)", "(constant 'false')");
-    assertReducesTo ("1 == 1 ^^ 10 > 9", "(constant 'false')");
-    assertReducesTo ("1 != 1 || 2 != 2 || 3 != 3", "(constant 'false')");
-    assertReducesTo ("1 == 1 && 2 == 2 && 3 == 3", "(constant 'true')");
-    assertReducesTo ("! ! (1 == 1)", "(constant 'true')");
+    assertReducesTo ("1 == 1", "true");
+    assertReducesTo ("1 != 1", "false");
+    assertReducesTo ("1 != 1", "false");
+    assertReducesTo ("10 > 9", "true");
+    assertReducesTo ("!(10 > 9)", "false");
+    assertReducesTo ("1 == 1 ^^ 10 > 9", "false");
+    assertReducesTo ("1 != 1 || 2 != 2 || 3 != 3", "false");
+    assertReducesTo ("1 == 1 && 2 == 2 && 3 == 3", "true");
+    assertReducesTo ("! ! (1 == 1)", "true");
     
     // test AND/OR erasure of constant non-contributing subtree
-    assertReducesTo ("field == 5 && 10 > 9", "(== (field 'field') (int32 5))");
-    assertReducesTo ("field == 5 || 10 < 9", "(== (field 'field') (int32 5))");
-    assertReducesTo ("field == 5 || !(10 > 9)", "(== (field 'field') (int32 5))");
+    assertReducesTo ("field == 5 && 10 > 9", "(== (field 'field') 5)");
+    assertReducesTo ("field == 5 || 10 < 9", "(== (field 'field') 5)");
+    assertReducesTo ("field == 5 || !(10 > 9)", "(== (field 'field') 5)");
 
     // test redundant constants are removed from AND/OR
     assertReducesTo ("field == 5 || 9 > 10 || field == 10",
-                     "(|| (== (field 'field') (int32 5)) (== (field 'field') (int32 10)))");
+                     "(|| (== (field 'field') 5) (== (field 'field') 10))");
     assertReducesTo ("field == 5 && 10 > 9 && field == 10",
-                     "(&& (== (field 'field') (int32 5)) (== (field 'field') (int32 10)))");
+                     "(&& (== (field 'field') 5) (== (field 'field') 10))");
     
     // predicate functions
-    assertReducesTo ("fold-case ('HellO')", "(string 'hello')");
-    assertReducesTo ("decompose ('\u00C4\uFB03n')", "(string 'A\u0308\uFB03n')");
-    assertReducesTo ("decompose-compat ('\u00C4\uFB03n')", "(string 'A\u0308ffin')");
+    assertReducesTo ("fold-case ('HellO')", "'hello'");
+    assertReducesTo ("decompose ('\u00C4\uFB03n')", "'A\u0308\uFB03n'");
+    assertReducesTo ("decompose-compat ('\u00C4\uFB03n')", "'A\u0308ffin'");
     
     // some math ops
-    assertReducesTo ("-10", "(int32 -10)");
-    assertReducesTo ("1 + 1", "(int32 2)");
-    assertReducesTo ("2 * 4.5", "(real64 9.0)");
-    assertReducesTo ("0xFF & 0xF0", "(int32 240)");
-    assertReducesTo ("0x0F << 4", "(int32 240)");
+    assertReducesTo ("-10", "-10");
+    assertReducesTo ("1 + 1", "2");
+    assertReducesTo ("2 * 4.5", "9.0");
+    assertReducesTo ("0xFF & 0xF0", "240");
+    assertReducesTo ("0x0F << 4", "240");
   }
   
   /**
