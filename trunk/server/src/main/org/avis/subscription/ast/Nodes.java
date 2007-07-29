@@ -78,19 +78,22 @@ public final class Nodes
 
   private static void unparse (StringBuilder str, Node node)
   {
-    str.append ('(').append (node.expr ());
-    
     if (node.hasChildren ())
     {
+      str.append ('(').append (node.expr ());
+
       for (Node child : node.children ())
       {
         str.append (' ');
        
         unparse (str, child);
       }
+
+      str.append (')');
+    } else
+    {
+      str.append (node.expr ());
     }
-    
-    str.append (')');
   }
 
   /**
