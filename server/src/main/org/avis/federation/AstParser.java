@@ -42,6 +42,13 @@ import org.avis.subscription.ast.nodes.Xor;
 
 import static org.avis.util.Text.className;
 
+/**
+ * Parser class for translating XDR-encoded AST's into Node-based ones.
+ * 
+ * @see AstXdrCoding#decodeAST(ByteBuffer)
+ *
+ * @author Matthew Phillips
+ */
 class AstParser
 {
   private ByteBuffer in;
@@ -51,13 +58,21 @@ class AstParser
     this.in = in;
   }
 
+  /**
+   * Read any AST expression.
+   * 
+   * @return The root node of the expression.
+   * 
+   * @throws ProtocolCodecException
+   */
   public Node expr ()
     throws ProtocolCodecException
   {
-    AstType nodeType = nodeType (in.getInt ());
+    AstType nodeType = nodeTypeFor (in.getInt ());
     int subType = in.getInt ();
     
-    if (nodeType.ordinal () > AstType.TYPE_STRING.ordinal () && subType != 0)
+    // sanity check subtype for composite nodes
+    if (nodeType.ordinal () > AstType.CONST_STRING.ordinal () && subType != 0)
     {
       throw new ProtocolCodecException ("Invalid subtype for parent node: " + 
                                         subType);
@@ -65,10 +80,10 @@ class AstParser
     
     switch (nodeType) 
     {
-      case TYPE_INT32:
-      case TYPE_INT64:
-      case TYPE_REAL64:
-      case TYPE_STRING:
+      case CONST_INT32:
+      case CONST_INT64:
+      case CONST_REAL64:
+      case CONST_STRING:
         return constant (nodeType, subType);
       case NAME:
         return new Field (single ().string ());
@@ -171,7 +186,7 @@ class AstParser
     }
   }
   
-  private static AstType nodeType (int nodeType)
+  private static AstType nodeTypeFor (int nodeType)
   {
     try
     {
@@ -220,9 +235,9 @@ class AstParser
   private String string ()
     throws ProtocolCodecException
   {
-    AstType nodeType = nodeType (in.getInt ());
+    AstType nodeType = nodeTypeFor (in.getInt ());
     
-    if (nodeType != AstType.TYPE_STRING)
+    if (nodeType != AstType.CONST_STRING)
       throw new ProtocolCodecException ("String node required, found " + nodeType);
     
     Object value = XdrCoding.getObject (in);
@@ -240,16 +255,16 @@ class AstParser
     switch (subType)
     {
       case XdrCoding.TYPE_INT32:
-        assertNodeType (nodeType, AstType.TYPE_INT32);
+        assertNodeType (nodeType, AstType.CONST_INT32);
         return new Const (in.getInt ());
       case XdrCoding.TYPE_INT64:
-        assertNodeType (nodeType, AstType.TYPE_INT64);
+        assertNodeType (nodeType, AstType.CONST_INT64);
         return new Const (in.getLong ());
       case XdrCoding.TYPE_REAL64:
-        assertNodeType (nodeType, AstType.TYPE_REAL64);
+        assertNodeType (nodeType, AstType.CONST_REAL64);
         return new Const (in.getDouble ());
       case XdrCoding.TYPE_STRING:
-        assertNodeType (nodeType, AstType.TYPE_STRING);
+        assertNodeType (nodeType, AstType.CONST_STRING);
         return new Const (XdrCoding.getString (in));
       default:
         throw new ProtocolCodecException ("Invalid subtype: " + subType);
