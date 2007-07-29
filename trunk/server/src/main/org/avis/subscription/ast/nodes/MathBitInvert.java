@@ -79,6 +79,6 @@ public class MathBitInvert extends Node
     else if (result instanceof Long)
       return (Long)result ^ 0xFFFFFFFFFFFFFFFFL;
     else
-      return null;
+      return BOTTOM;
   }
 }
