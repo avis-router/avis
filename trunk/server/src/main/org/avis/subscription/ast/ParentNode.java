@@ -1,7 +1,6 @@
 package org.avis.subscription.ast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -35,14 +34,25 @@ public abstract class ParentNode extends Node
   }
 
   /**
-   * Note: this does not check child types.
-   * 
-   * @param children
+   * Add any number of children
    */
   public ParentNode (Node ...children)
   {
-    this.children =
-      new ArrayList<Node> (Arrays.asList (children));
+    this.children = new ArrayList<Node> (children.length);
+    
+    for (Node child : children)
+      addChild (child);
+  }
+  
+  /**
+   * Add any number of children
+   */
+  public ParentNode (Collection<? extends Node> children)
+  {
+    this.children = new ArrayList<Node> (children.size ());
+    
+    for (Node child : children)
+      addChild (child);
   }
 
   /**

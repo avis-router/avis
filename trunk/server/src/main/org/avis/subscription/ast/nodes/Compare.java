@@ -31,10 +31,10 @@ public class Compare extends ParentBiNode
   public boolean equality;
   
   /**
-   * Create compare node from a list of comparable children (size >=
-   * 2). If more than two children, generates an OR wrapper.
+   * Create an "==" compare node from a list of comparable children
+   * (size >= 2). If more than two children, generates an OR wrapper.
    */
-  public static Node create (List<Node> args)
+  public static Node createEquals (List<Node> args)
   {
     if (args.size () < 2)
     {

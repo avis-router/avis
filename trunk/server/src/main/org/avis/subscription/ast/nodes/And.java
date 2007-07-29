@@ -1,5 +1,6 @@
 package org.avis.subscription.ast.nodes;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.avis.subscription.ast.BoolParentNode;
@@ -25,6 +26,11 @@ public class And extends BoolParentNode
     super (children);
   }
   
+  public And (Collection<? extends Node> children)
+  {
+    super (children);
+  }
+
   @Override
   public String expr ()
   {
