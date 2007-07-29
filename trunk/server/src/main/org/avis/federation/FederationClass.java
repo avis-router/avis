@@ -1,10 +1,8 @@
 package org.avis.federation;
 
-import java.io.StringReader;
-
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
-import org.avis.subscription.parser.SubscriptionParser;
+import org.avis.subscription.parser.SubscriptionParserBase;
 
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
@@ -40,8 +38,7 @@ public class FederationClass
       return CONST_FALSE;
     } else
     {
-      return new SubscriptionParser 
-        (new StringReader (subExpr)).parseAndValidate ();
+      return SubscriptionParserBase.parse (subExpr); 
     }
   }
 }

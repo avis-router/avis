@@ -6,7 +6,8 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.avis.io.messages.RequestMessage;
 import org.avis.subscription.ast.Node;
 
-import static org.avis.federation.AstIO.encodeAST;
+import static org.avis.federation.AstXdrCoding.decodeAST;
+import static org.avis.federation.AstXdrCoding.encodeAST;
 
 public class FedModify extends RequestMessage<Ack>
 {
@@ -53,8 +54,6 @@ public class FedModify extends RequestMessage<Ack>
   {
     super.decode (in);
     
-    throw new Error ();
-    // todo
-    // incomingFilter = FederationIO.decodeAST (in);
+    incomingFilter = decodeAST (in);
   }
 }
