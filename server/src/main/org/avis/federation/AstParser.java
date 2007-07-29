@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import org.avis.io.XdrCoding;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.ast.nodes.And;
 import org.avis.subscription.ast.nodes.Compare;
@@ -40,8 +39,64 @@ import org.avis.subscription.ast.nodes.StrWildcard;
 import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
+import static org.avis.federation.AstType.ADD;
+import static org.avis.federation.AstType.AND;
+import static org.avis.federation.AstType.BEGINS_WITH;
+import static org.avis.federation.AstType.BIT_AND;
+import static org.avis.federation.AstType.BIT_NEGATE;
+import static org.avis.federation.AstType.BIT_OR;
+import static org.avis.federation.AstType.BIT_XOR;
+import static org.avis.federation.AstType.CONST_INT32;
+import static org.avis.federation.AstType.CONST_INT64;
+import static org.avis.federation.AstType.CONST_REAL64;
+import static org.avis.federation.AstType.CONST_STRING;
+import static org.avis.federation.AstType.CONTAINS;
+import static org.avis.federation.AstType.DECOMPOSE;
+import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
+import static org.avis.federation.AstType.DIVIDE;
+import static org.avis.federation.AstType.ENDS_WITH;
+import static org.avis.federation.AstType.EQUALS;
+import static org.avis.federation.AstType.F_EQUALS;
+import static org.avis.federation.AstType.GREATER_THAN;
+import static org.avis.federation.AstType.GREATER_THAN_EQUALS;
+import static org.avis.federation.AstType.INT32;
+import static org.avis.federation.AstType.INT64;
+import static org.avis.federation.AstType.LESS_THAN;
+import static org.avis.federation.AstType.LESS_THAN_EQUALS;
+import static org.avis.federation.AstType.LOGICAL_SHIFT_RIGHT;
+import static org.avis.federation.AstType.MODULO;
+import static org.avis.federation.AstType.MULTIPLY;
+import static org.avis.federation.AstType.NAME;
+import static org.avis.federation.AstType.NAN;
+import static org.avis.federation.AstType.NOT;
+import static org.avis.federation.AstType.NOT_EQUALS;
+import static org.avis.federation.AstType.OPAQUE;
+import static org.avis.federation.AstType.OR;
+import static org.avis.federation.AstType.PRIMARY;
+import static org.avis.federation.AstType.REAL64;
+import static org.avis.federation.AstType.REGEX;
+import static org.avis.federation.AstType.REGEXP;
+import static org.avis.federation.AstType.REQUIRE;
+import static org.avis.federation.AstType.SECONDARY;
+import static org.avis.federation.AstType.SHIFT_LEFT;
+import static org.avis.federation.AstType.SHIFT_RIGHT;
+import static org.avis.federation.AstType.SIZE;
+import static org.avis.federation.AstType.STRING;
+import static org.avis.federation.AstType.SUBTRACT;
+import static org.avis.federation.AstType.TERTIARY;
+import static org.avis.federation.AstType.TO_LOWER;
+import static org.avis.federation.AstType.TO_UPPER;
+import static org.avis.federation.AstType.UNARY_MINUS;
+import static org.avis.federation.AstType.UNARY_PLUS;
+import static org.avis.federation.AstType.WILDCARD;
+import static org.avis.federation.AstType.XOR;
+import static org.avis.io.XdrCoding.TYPE_INT32;
+import static org.avis.io.XdrCoding.TYPE_INT64;
+import static org.avis.io.XdrCoding.TYPE_REAL64;
+import static org.avis.io.XdrCoding.TYPE_STRING;
+import static org.avis.io.XdrCoding.getObject;
+import static org.avis.io.XdrCoding.getString;
 import static org.avis.util.Text.className;
-import static org.avis.federation.AstType.*;
 
 /**
  * Parser class for translating XDR-encoded AST's into Node-based ones.
@@ -187,6 +242,10 @@ class AstParser
     }
   }
 
+  /**
+   * Assert that a single child is found and return this, otherwise
+   * throw an exception. Used as a predicate for single-child nodes.
+   */
   private AstParser single ()
     throws ProtocolCodecException
   {
@@ -195,9 +254,13 @@ class AstParser
     if (count == 1)
       return this;
     else
-      throw new ProtocolCodecException ("Expected single child: found " + count);
+      throw new ProtocolCodecException ("Expected single child, found " + count);
   }
   
+  /**
+   * Assert that two children are found and return this, otherwise
+   * throw an exception. Used as a predicate for binary nodes.
+   */
   private AstParser binary ()
     throws ProtocolCodecException
   {
@@ -206,9 +269,12 @@ class AstParser
     if (count == 2)
       return this;
     else
-      throw new ProtocolCodecException ("Expected two children: found " + count);
+      throw new ProtocolCodecException ("Expected two children, found " + count);
   }
   
+  /**
+   * Read a list of child nodes of any length.
+   */
   private List<Node> children ()
     throws ProtocolCodecException
   {
@@ -222,6 +288,14 @@ class AstParser
     return children;
   }
   
+  /**
+   * Read a string constant node or throw an exception.
+   * 
+   * @return The value of the constant node.
+   * 
+   * @throws ProtocolCodecException if a string node was not found or
+   *                 other parse error occurs.
+   */
   private String string ()
     throws ProtocolCodecException
   {
@@ -230,44 +304,63 @@ class AstParser
     if (nodeType != CONST_STRING)
       throw new ProtocolCodecException ("String node required, found " + nodeType);
     
-    Object value = XdrCoding.getObject (in);
+    Object value = getObject (in);
     
     if (value instanceof String)
       return (String)value;
     else
-      throw new ProtocolCodecException ("String expected, found " + 
+      throw new ProtocolCodecException ("String node required, found " + 
                                         className (value));
   }
   
+  /**
+   * Read a constant node of a given type and subtype.
+   * 
+   * @param nodeType The node type (must be one of the CONST_*
+   *                values).
+   * @param subType The node sub type (must be one of the
+   *                XdrCoding.TYPE_* values).
+   * @return The const node.
+   * 
+   * @throws ProtocolCodecException if the node was not valid constant
+   *                 node of the specified type.
+   */
   private Const constant (int nodeType, int subType)
     throws ProtocolCodecException
   {
     switch (subType)
     {
-      case XdrCoding.TYPE_INT32:
-        assertNodeType (nodeType, AstType.CONST_INT32);
+      case TYPE_INT32:
+        assertNodeType (nodeType, CONST_INT32);
+        
         return new Const (in.getInt ());
-      case XdrCoding.TYPE_INT64:
-        assertNodeType (nodeType, AstType.CONST_INT64);
+      case TYPE_INT64:
+        assertNodeType (nodeType, CONST_INT64);
+        
         return new Const (in.getLong ());
-      case XdrCoding.TYPE_REAL64:
-        assertNodeType (nodeType, AstType.CONST_REAL64);
+      case TYPE_REAL64:
+        assertNodeType (nodeType, CONST_REAL64);
+        
         return new Const (in.getDouble ());
-      case XdrCoding.TYPE_STRING:
-        assertNodeType (nodeType, AstType.CONST_STRING);
-        return new Const (XdrCoding.getString (in));
+      case TYPE_STRING:
+        assertNodeType (nodeType, CONST_STRING);
+        
+        return new Const (getString (in));
       default:
         throw new ProtocolCodecException ("Invalid subtype: " + subType);
     }
   }
 
+  /**
+   * Check that a node type matches an actual required value.
+   */
   private static void assertNodeType (int required, int actual)
     throws ProtocolCodecException
   {
     if (required != actual)
     {
       throw new ProtocolCodecException 
-        ("Constant tode " + actual + " has wrong sub type");
+        ("Constant node " + actual + " has wrong sub type ");
     }
   }
 }
