@@ -2,7 +2,7 @@ package org.avis.subscription.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.subscription.ast.Node;
+import org.avis.subscription.ast.NameParentNode;
 
 /**
  * Test whether a field is a given type. Can be used for int32(),
@@ -10,9 +10,8 @@ import org.avis.subscription.ast.Node;
  * 
  * @author Matthew Phillips
  */
-public class Type extends Node
+public class Type extends NameParentNode
 {
-  public String field;
   public Class<?> type;
 
   public Type (Field field, Class<?> type)
@@ -22,7 +21,8 @@ public class Type extends Node
 
   public Type (String field, Class<?> type)
   {
-    this.field = field;
+    super (field);
+    
     this.type = type;
   }
 
@@ -33,21 +33,9 @@ public class Type extends Node
   }
   
   @Override
-  public String presentation ()
-  {
-    return name ();
-  }
-
-  @Override
-  public Node inlineConstants ()
-  {
-    return this;
-  }
-
-  @Override
   public Object evaluate (Map<String, Object> attrs)
   {
-    Object value = attrs.get (field);
+    Object value = attrs.get (name);
     
     if (value == null)
       return BOTTOM;
@@ -58,21 +46,17 @@ public class Type extends Node
   @Override
   public String expr ()
   {
-    String op;
-    
     if (type == Integer.class)
-      op = "int32";
+      return "int32";
     else if (type == Long.class)
-      op = "int64";
+      return "int64";
     else if (type == Double.class)
-      op = "real64";
+      return "real64";
     else if (type == String.class)
-      op = "string";
+      return "string";
     else if (type == byte [].class)
-      op = "opaque";
+      return "opaque";
     else
-      op = type.getClass ().getName ();
-    
-    return op + ' ' + field;
+      return type.getClass ().getName ();
   }
 }

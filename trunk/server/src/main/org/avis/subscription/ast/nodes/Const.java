@@ -82,11 +82,11 @@ public class Const extends Node
   public String expr ()
   {
     if (value instanceof String)
-      return "string '" + value + '\'';
+      return "'" + value + "'";
     else if (value instanceof Number)
       return numExpr ();
     else
-      return "constant '" + value + '\'';
+      return value.toString ();
   }
 
   @Override
@@ -118,14 +118,10 @@ public class Const extends Node
   {
     StringBuilder str = new StringBuilder ();
     
-    if (value instanceof Integer)
-      str.append ("int32");
-    else if (value instanceof Long)
-      str.append ("int64");
-    else
-      str.append ("real64");
-    
-    str.append (' ').append (value);
+    str.append (value);
+
+    if (value instanceof Long)
+      str.append ('L');
     
     return str.toString ();
   }

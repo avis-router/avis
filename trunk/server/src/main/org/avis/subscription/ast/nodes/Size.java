@@ -2,12 +2,10 @@ package org.avis.subscription.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.subscription.ast.Node;
+import org.avis.subscription.ast.NameParentNode;
 
-public class Size extends Node
+public class Size extends NameParentNode
 {
-  private String name;
-
   public Size (Field field)
   {
     this (field.fieldName ());
@@ -15,19 +13,13 @@ public class Size extends Node
 
   public Size (String name)
   {
-    this.name = name;
+    super (name);
   }
   
   @Override
-  public String presentation ()
-  {
-    return name ();
-  }
-
-  @Override
   public String expr ()
   {
-    return "size '" + name + '\'';
+    return "size";
   }
   
   @Override
@@ -47,11 +39,5 @@ public class Size extends Node
       return ((String)value).length ();
     else
       return null;
-  }
-
-  @Override
-  public Node inlineConstants ()
-  {
-    return this;
   }
 }
