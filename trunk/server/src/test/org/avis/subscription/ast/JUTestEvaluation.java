@@ -327,7 +327,7 @@ public class JUTestEvaluation
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("name", "foobar");
     
-    Node node = Compare.create (argsList (field ("name"),
+    Node node = Compare.createEquals (argsList (field ("name"),
                                                    Const.string ("foobar"),
                                                    Const.int32 (42)));
     assertEquals (TRUE, node.evaluate (ntfn));
