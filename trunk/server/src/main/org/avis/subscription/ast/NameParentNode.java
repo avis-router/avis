@@ -47,8 +47,8 @@ public abstract class NameParentNode extends Node
   }
   
   @Override
-  public Collection<? extends Node> children ()
+  public Collection<Node> children ()
   {
-    return singleton (new Const (name));
+    return singleton ((Node)new Const (name));
   }
 }

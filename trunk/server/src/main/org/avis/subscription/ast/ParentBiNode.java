@@ -60,7 +60,7 @@ public abstract class ParentBiNode
   }
 
   @Override
-  public Collection<? extends Node> children ()
+  public Collection<Node> children ()
   {
     ArrayList<Node> children =
       new ArrayList<Node> (2);

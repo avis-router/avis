@@ -84,7 +84,7 @@ public abstract class ParentNode extends Node
   }
   
   @Override
-  public Collection<? extends Node> children ()
+  public Collection<Node> children ()
   {
     return children;
   }

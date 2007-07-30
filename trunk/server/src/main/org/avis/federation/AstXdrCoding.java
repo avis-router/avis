@@ -157,7 +157,7 @@ public final class AstXdrCoding
       // children
       if (node.hasChildren ())
       {
-        Collection<? extends Node> children = node.children ();
+        Collection<Node> children = node.children ();
         
         out.putInt (children.size ());
         
