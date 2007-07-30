@@ -96,7 +96,7 @@ public abstract class Node
    * 
    * @see #hasChildren()
    */
-  public Collection<? extends Node> children ()
+  public Collection<Node> children ()
   {
     return emptySet ();
   }

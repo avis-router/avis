@@ -51,7 +51,7 @@ public class MathBitInvert extends Node
   }
   
   @Override
-  public Collection<? extends Node> children ()
+  public Collection<Node> children ()
   {
     return Collections.singleton (child);
   }
