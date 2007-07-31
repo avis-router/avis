@@ -17,6 +17,7 @@ import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
+import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.Message;
@@ -126,6 +127,12 @@ public class FederationListener implements IoHandler, Closeable
                          disconnMessage)).addListener (CLOSE);
     } else
     {
+      send (session, new FedConnRply (message, serverDomain));
+     
+      diagnostic ("Federation incoming link established with " + 
+                  remoteHost + ", remote server domain \"" + 
+                  message.serverDomain + "\"", this);
+      
       createFederationLink
         (session, message.serverDomain, remoteHost,
          federationClassMap.classFor (remoteHost));
@@ -137,10 +144,6 @@ public class FederationListener implements IoHandler, Closeable
                                      String remoteHost, 
                                      FederationClass federationClass)
   {
-    diagnostic ("Federation incoming link established with " + 
-                remoteHost + ", remote server domain \"" + 
-                remoteServerDomain + "\"", this);
-    
     FederationLink link =
       new FederationLink (session, router, federationClass, serverDomain, 
                           remoteHost, remoteServerDomain);
