@@ -202,7 +202,7 @@ public class Router implements IoHandler, Closeable
     
     try
     {
-      if (!executor.awaitTermination (15000, SECONDS))
+      if (!executor.awaitTermination (15, SECONDS))
         warn ("Failed to cleanly shut down thread pool", this);
     } catch (InterruptedException ex)
     {
