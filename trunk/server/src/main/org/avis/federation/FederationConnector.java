@@ -136,6 +136,7 @@ public class FederationConnector implements IoHandler, Closeable
   
   private void handleHandshakeMessage (IoSession session, Message message)
   {
+    // todo check XID
     switch (message.typeId ())
     {
       case FedConnRply.ID:
