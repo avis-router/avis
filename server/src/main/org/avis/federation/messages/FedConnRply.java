@@ -19,6 +19,13 @@ public class FedConnRply extends XidMessage
     // zip
   }
   
+  public FedConnRply (FedConnRqst request, String serverDomain)
+  {
+    super (request);
+    
+    this.serverDomain = serverDomain;
+  }
+
   @Override
   public int typeId ()
   {
