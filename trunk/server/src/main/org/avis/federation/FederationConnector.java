@@ -17,12 +17,14 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
+import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.router.Router;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
+import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.send;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
@@ -134,7 +136,7 @@ public class FederationConnector implements IoHandler, Closeable
     linkConnection = null;
   }
   
-  private void handleHandshakeMessage (IoSession session, Message message)
+  private void handleMessage (IoSession session, Message message)
   {
     // todo check XID
     switch (message.typeId ())
@@ -144,6 +146,9 @@ public class FederationConnector implements IoHandler, Closeable
         break;
       case Nack.ID:
         handleFedConnNack (session, (Nack)message);
+        break;
+      case ErrorMessage.ID:
+        logError ((ErrorMessage)message, this);
         break;
       default:
         warn ("Unexpected message during handshake from remote federator at " + 
@@ -201,7 +206,7 @@ public class FederationConnector implements IoHandler, Closeable
       return;
     
     if (link == null)
-      handleHandshakeMessage (session, (Message)message);
+      handleMessage (session, (Message)message);
     else if (!link.isClosed ())
       link.handleMessage ((Message)message);
   }
