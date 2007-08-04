@@ -22,9 +22,17 @@ import static org.apache.mina.common.IoFutureListener.CLOSE;
 import static org.avis.federation.Federation.logError;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 
+/**
+ * A link between two federation endpoints.
+ * 
+ * @author Matthew Phillips
+ */
 public class FederationLink implements NotifyListener
 {
   /**
@@ -211,6 +219,14 @@ public class FederationLink implements NotifyListener
 
   private void handleFedNotify (FedNotify message)
   {
+    if (shouldLog (TRACE))
+    {
+      trace ("Federator for domain \"" + serverDomain + "\" " + 
+             "FedNotify: " +
+             "routing=" + asList (message.routing) + " " +
+             "attributes=" + message.attributes, this);
+    }
+    
     if (message.routingContains (remoteServerDomain))
     {
       if (shouldPull (message))
