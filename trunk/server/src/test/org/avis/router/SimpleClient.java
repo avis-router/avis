@@ -26,9 +26,10 @@ import org.avis.io.messages.DisconnRqst;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyEmit;
+import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubRply;
-import org.avis.router.NoConnectionException;
+import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 
 import static java.lang.System.currentTimeMillis;
@@ -39,6 +40,7 @@ import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.trace;
 import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
+import static org.avis.util.Text.className;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -134,7 +136,42 @@ public class SimpleClient implements IoHandler
       throw new NoConnectionException ("Not connected");
   }
   
-  public Message receive (Class<? extends Message> type)
+  public <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
+    throws Exception
+  {
+    send (request);
+   
+    return receiveReply (request);
+  }
+  
+  @SuppressWarnings("unchecked")
+  <R extends XidMessage> R receiveReply (RequestMessage<R> request)
+    throws Exception
+  {
+    XidMessage reply = receive (request.replyType ());
+    
+    if (reply.xid != request.xid)
+    {
+      throw new IOException
+        ("Protocol error: Transaction ID mismatch in reply from router");
+    } else if (request.replyType ().isAssignableFrom (reply.getClass ()))
+    {
+      return (R)reply;
+    } else if (reply instanceof Nack)
+    {
+      Nack nack = (Nack)reply;
+      
+      throw new IOException ("NACK reply:" + nack.formattedMessage ());
+    } else
+    {
+      // todo this indicates a pretty serious fuckup. should close?
+      throw new IOException
+        ("Protocol error: received a " + className (reply) +
+         ": was expecting " + className (request.replyType ()));
+    }
+  }
+  
+  public <T extends Message> T receive (Class<T> type)
     throws MessageTimeoutException, InterruptedException, NoConnectionException
   {
     return receive (type, RECEIVE_TIMEOUT);
@@ -145,7 +182,8 @@ public class SimpleClient implements IoHandler
    * are discarded.
    * @throws NoConnectionException 
    */
-  public synchronized Message receive (Class<? extends Message> type, long timeout)
+  @SuppressWarnings("unchecked")
+  public synchronized <T extends Message> T receive (Class<T> type, long timeout)
     throws MessageTimeoutException, InterruptedException, NoConnectionException
   {
     long start = currentTimeMillis ();
@@ -155,7 +193,7 @@ public class SimpleClient implements IoHandler
       Message message = receive (timeout);
       
       if (type.isAssignableFrom (message.getClass ()))
-        return message;
+        return (T)message;
     }
     
     throw new MessageTimeoutException
@@ -168,10 +206,10 @@ public class SimpleClient implements IoHandler
     send (new NotifyEmit (attributes, true, EMPTY_KEYS));
   }
   
-  public void sendNotify (Map<String, Object> ntfn, Keys attributes)
+  public void sendNotify (Map<String, Object> attributes, Keys keys)
     throws Exception
   {
-    send (new NotifyEmit (ntfn, false, attributes));
+    send (new NotifyEmit (attributes, false, keys));
   }
 
   public SubRply subscribe (String subExpr)
