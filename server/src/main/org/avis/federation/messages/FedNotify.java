@@ -32,6 +32,26 @@ public class FedNotify extends Notify
     this.routing = routing;
   }
   
+  public FedNotify (Notify original, String [] routing)
+  {
+    this (original.attributes, original.deliverInsecure, 
+          original.keys, routing);
+  }
+
+  /**
+   * True if the routing list contains a given server domain.
+   */
+  public boolean routingContains (String serverDomain)
+  {
+    for (String domain : routing)
+    {
+      if (domain.equals (serverDomain))
+        return true;
+    }
+    
+    return false;
+  }
+  
   @Override
   public int typeId ()
   {
