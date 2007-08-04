@@ -10,7 +10,6 @@ import org.avis.util.LogFailTester;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
@@ -57,7 +56,6 @@ public class JUTestFederation
   }
   
   @Test
-  @Ignore
   public void basic ()
     throws Exception
   {
@@ -68,29 +66,28 @@ public class JUTestFederation
     Router server2 = new Router (PORT2);
 
 //    FederationClass fedClass =
-//      new FederationClass ("require (federation)", "true");
+//      new FederationClass ("require (federated)", "true");
     FederationClass fedClass =
-      new FederationClass ("require (federation)", "require (federation)");
+      new FederationClass ("require (federated)", "require (federated)");
     
     FederationClassMap federationMap = new FederationClassMap (fedClass);
     
     EwafURI ewafURI = new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1));
     
-    new FederationListener
-      (server2, "server2", federationMap, addressesFor (set (ewafURI)));
+    FederationListener listener = 
+      new FederationListener (server2, "server2", federationMap, 
+                              addressesFor (set (ewafURI)));
     
-//    Map<EwafURI, FederationClass> connectMap =
-//      new HashMap<EwafURI, FederationClass> ();
-    
-//    connectMap.put (new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1)), fedClass);
-    
-    new FederationConnector (server1, "server1", ewafURI, fedClass);
+    FederationConnector connector = 
+      new FederationConnector (server1, "server1", ewafURI, fedClass);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
     
     client1.connect ();
     client2.connect ();
+    
+    client2.subscribe ("require (federated)");
     
     client1.sendNotify (map ("federated", "client1"));
     
@@ -101,7 +98,10 @@ public class JUTestFederation
     client1.close ();
     client2.close ();
     
-    // todo make sure federators auto close here also
+    // todo make sure federators auto close
+    connector.close ();
+    listener.close ();
+    
     server1.close ();
     server2.close ();
   }
