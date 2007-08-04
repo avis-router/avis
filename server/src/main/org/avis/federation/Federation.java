@@ -3,11 +3,13 @@ package org.avis.federation;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
+import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
+import static org.avis.logging.Log.warn;
 
 /**
  * General federation definitions and methods.
@@ -45,5 +47,15 @@ public final class Federation
     }
     
     return session.write (message);
+  }
+
+  /**
+   * Log info about an error message from the frame codec.
+   * @param message
+   * @param source
+   */
+  public static void logError (ErrorMessage message, Object source)
+  {
+    warn ("Error in federation packet", source, message.error);
   }
 }
