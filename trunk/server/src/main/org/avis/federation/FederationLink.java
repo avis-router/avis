@@ -13,6 +13,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.Notify;
 import org.avis.router.NotifyListener;
 import org.avis.router.Router;
+import org.avis.security.Keys;
 import org.avis.subscription.ast.Node;
 
 import static java.lang.System.arraycopy;
@@ -113,13 +114,20 @@ public class FederationLink implements NotifyListener
   /**
    * Called by router when a notification is delivered.
    */
-  public void notifyReceived (Notify message)
+  public void notifyReceived (Notify message, Keys keys)
   {
     if (closed)
       return;
     
     if (shouldPush (message))
-      send (new FedNotify (message, localDomainAddedTo (routingFor (message))));
+    {
+      FedNotify fedNotify = 
+        new FedNotify (message, localDomainAddedTo (routingFor (message)));
+      
+      fedNotify.keys = fedNotify.keys.addedTo (keys);
+      
+      send (fedNotify);
+    }
   }
 
   /**
@@ -205,7 +213,7 @@ public class FederationLink implements NotifyListener
 
   private void handleFedModify (FedModify message)
   {
-    remotePullFilter = message.incomingFilter;
+    remotePullFilter = message.incomingFilter.inlineConstants ();
     
     send (new Ack (message));
   }
