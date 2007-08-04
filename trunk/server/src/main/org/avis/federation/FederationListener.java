@@ -29,6 +29,7 @@ import static org.apache.mina.common.IoFutureListener.CLOSE;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
+import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
@@ -205,6 +206,8 @@ public class FederationListener implements IoHandler, Closeable
   public void messageReceived (IoSession session, Object message)
     throws Exception
   {
+    logMessageReceived (message, serverDomain, this);
+    
     FederationLink link = linkFor (session);
     
     if (link == null)
