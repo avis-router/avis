@@ -6,18 +6,36 @@ import java.util.List;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import static java.util.Collections.emptyList;
+
 /**
- * A generic event listener list. Not thread safe.
+ * A generic event listener list. The list is thread safe, but does
+ * not guarantee immediate visibility of changes: i.e. if thread1
+ * executes a remove () and thread2 executes a fire () immediately
+ * after, thread2 will not necessarily see the result of the remove ().
  * 
  * @author Matthew Phillips
  */
 public class ListenerList<E>
 {
   private List<E> listeners;
+  private Method listenerMethod;
   
-  public ListenerList ()
+  /**
+   * Create a new instance.
+   * 
+   * @param listenerType The type of the listener interface.
+   * @param method The name of the method to call on the interface.
+   * @param eventType The type of the single event parameter.
+   * 
+   * @throws IllegalArgumentException if the listener method could not
+   *                 be found.
+   */
+  public ListenerList (Class<E> listenerType, String method, Class<?> eventType)
+    throws IllegalArgumentException
   {
-    this.listeners = new ArrayList<E> ();
+    this.listenerMethod = lookupMethod (listenerType, method, eventType);
+    this.listeners = emptyList ();
   }
   
   public void add (E listener)
@@ -25,36 +43,40 @@ public class ListenerList<E>
     if (listener == null)
       throw new IllegalArgumentException ("Listener cannot be null");
     
-    listeners.add (listener);
+    List<E> newListeners = new ArrayList<E> (listeners.size () + 4);
+    
+    newListeners.addAll (listeners);
+    newListeners.add (listener);
+    
+    listeners = newListeners;
   }
   
   public void remove (E listener)
   {
-    listeners.remove (listener);
+    List<E> newListeners = new ArrayList<E> (listeners);
+    
+    newListeners.remove (listener);
+    
+    listeners = newListeners;
   }
 
   /**
    * Fire an event.
    * 
-   * @param method The method to call.
    * @param event The event parameter.
    */
-  public void fire (String method, Object event)
+  public void fire (Object event)
   {
-    Method listenerMethod = null; // lazy init
-    Object [] args = null;        // lazy init
+    Object [] args = null; // lazy init
     
-    for (int i = listeners.size () - 1; i >= 0; i--)
+    List<E> fireList = listeners;
+    
+    for (int i = fireList.size () - 1; i >= 0; i--)
     {
-      E listener = listeners.get (i);
+      E listener = fireList.get (i);
       
-      if (listenerMethod == null)
-      {
-        listenerMethod =
-          lookupMethod (listener.getClass (), method, event.getClass ());
-        
+      if (args == null)
         args = new Object [] {event};
-      }
       
       try
       {
@@ -69,6 +91,14 @@ public class ListenerList<E>
         throw new RuntimeException (ex);
       }
     }
+  }
+  
+  /**
+   * Test if any listeners are in this list.
+   */
+  public boolean hasListeners ()
+  {
+    return !listeners.isEmpty ();
   }
 
   private static Method lookupMethod (Class<?> targetClass,
@@ -86,13 +116,5 @@ public class ListenerList<E>
     {
       throw new IllegalArgumentException ("No method named " + methodName);
     }
-  }
-
-  /**
-   * Test if any listeners are in this list.
-   */
-  public boolean hasListeners ()
-  {
-    return !listeners.isEmpty ();
   }
 }
