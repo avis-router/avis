@@ -87,13 +87,22 @@ public class JUTestFederation
     client1.connect ();
     client2.connect ();
     
-    client2.subscribe ("require (federated)");
+    client2.subscribe ("require (federated) && from == 'client1'");
+    client1.subscribe ("require (federated) && from == 'client2'");
     
-    client1.sendNotify (map ("federated", "client1"));
+    // client 1 -> client 2
+    client1.sendNotify (map ("federated", "server1", "from", "client1"));
     
     NotifyDeliver notification = (NotifyDeliver)client2.receive ();
     
-    assertEquals ("client1", notification.attributes.get ("federated"));
+    assertEquals ("client1", notification.attributes.get ("from"));
+    
+    // client 2 - > client 1
+    client2.sendNotify (map ("federated", "server2", "from", "client2"));
+    
+    notification = (NotifyDeliver)client1.receive ();
+    
+    assertEquals ("client2", notification.attributes.get ("from"));
     
     client1.close ();
     client2.close ();
