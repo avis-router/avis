@@ -40,6 +40,8 @@ public class FederationLink implements NotifyListener
    * on a Disconn request from the remote host.
    */
   private static final int REASON_DISCONN_REQUESTED = -1;
+
+  private static final String [] EMPTY_ROUTING = new String [0];
   
   private IoSession session;
   private Router router;
@@ -108,13 +110,16 @@ public class FederationLink implements NotifyListener
     }
   }
   
+  /**
+   * Called by router when a notification is delivered.
+   */
   public void notifyReceived (Notify message)
   {
     if (closed)
       return;
     
     if (shouldPush (message))
-      send (new FedNotify (message, routingFor (message)));
+      send (new FedNotify (message, localDomainAddedTo (routingFor (message))));
   }
 
   /**
@@ -137,26 +142,13 @@ public class FederationLink implements NotifyListener
   }
   
   /**
-   * Generate the routing list for a given message, taking into
-   * account existing routing if it's a FedNotify.
-   * 
-   * @param message The source message.
-   * 
-   * @return The routing, including our server domain.
+   * Return a routing list with the federator's local server domain added.
    */
-  private String [] routingFor (Notify message)
+  private String [] localDomainAddedTo (String [] routing)
   {
-    if (message instanceof FedNotify)
-      return routingFor ((FedNotify)message);
-    else
-      return new String [] {serverDomain};
+    return addDomain (routing, serverDomain);
   }
   
-  private String [] routingFor (FedNotify message)
-  {
-    return addDomain (message.routing, serverDomain);
-  }
-
   public void handleMessage (Message message)
   {
     switch (message.typeId ())
@@ -228,7 +220,7 @@ public class FederationLink implements NotifyListener
              "attributes=" + message.attributes, this);
     }
     
-    if (message.routingContains (remoteServerDomain))
+    if (containsDomain (message.routing, remoteServerDomain))
     {
       if (shouldPull (message))
         router.injectNotify (message);
@@ -258,22 +250,37 @@ public class FederationLink implements NotifyListener
   }
   
   /**
+   * The routing list for a given notification.
+   */
+  private static String [] routingFor (Notify message)
+  {
+    if (message instanceof FedNotify)
+      return ((FedNotify)message).routing;
+    else
+      return EMPTY_ROUTING;
+  }
+  
+  /**
    * True if message is either not a FedNotify, or if it is but does
    * not contain the given server domain.
    */
-  private static boolean routingDoesNotContain (Notify message,
-                                                String serverDomain)
+  private static boolean routingDoesNotContain (Notify message, String domain)
   {
-    if (message instanceof FedNotify)
-      return routingDoesNotContain ((FedNotify)message, serverDomain);
-    else
-      return true;
+    return !containsDomain (routingFor (message), domain);
   }
   
-  private static boolean routingDoesNotContain (FedNotify message,
-                                                String serverDomain)
+  /**
+   * True if the routing list contains a given server domain.
+   */
+  private static boolean containsDomain (String [] routing, String serverDomain)
   {
-    return !message.routingContains (serverDomain);
+    for (String domain : routing)
+    {
+      if (domain.equals (serverDomain))
+        return true;
+    }
+    
+    return false;
   }
   
   /**
