@@ -20,6 +20,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
 import org.avis.io.messages.Disconn;
+import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.router.Router;
 
@@ -27,6 +28,7 @@ import static org.apache.mina.common.IoFutureListener.CLOSE;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
+import static org.avis.federation.Federation.logError;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
@@ -90,19 +92,22 @@ public class FederationListener implements IoHandler, Closeable
     addresses.clear ();
   }
   
-  private void handleHandshakeMessage (IoSession session,
-                                       Message message)
+  private void handleMessage (IoSession session,
+                              Message message)
   {
-    if (message instanceof FedConnRqst)
+    switch (message.typeId ())
     {
-      handleFedConnRqst (session, (FedConnRqst)message);
-    } else
-    {
-      warn ("Unexpected handshake message from connecting remote " +
-            "federator at " + remoteHostFor (session) + 
-            " (disconnecting): " + message.name (), this);
-      
-      session.close ();
+      case FedConnRqst.ID:
+        handleFedConnRqst (session, (FedConnRqst)message);
+        break;
+      case ErrorMessage.ID:
+        logError ((ErrorMessage)message, this);
+        break;
+      default:
+        warn ("Unexpected handshake message from connecting remote " +
+              "federator at " + remoteHostFor (session) + 
+              " (disconnecting): " + message.name (), this);
+        session.close ();
     }
   }
 
@@ -202,7 +207,7 @@ public class FederationListener implements IoHandler, Closeable
     FederationLink link = linkFor (session);
     
     if (link == null)
-      handleHandshakeMessage (session, (Message)message);
+      handleMessage (session, (Message)message);
     else if (!link.isClosed ())
       link.handleMessage ((Message)message);
   }

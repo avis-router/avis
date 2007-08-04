@@ -18,6 +18,7 @@ import org.avis.subscription.ast.Node;
 import static java.lang.System.arraycopy;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
 
+import static org.avis.federation.Federation.logError;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.logging.Log.warn;
@@ -165,18 +166,13 @@ public class FederationLink implements NotifyListener
         handleAck ((Ack)message);
         break;
       case ErrorMessage.ID:
-        handleError ((ErrorMessage)message);
+        logError ((ErrorMessage)message, this);
         break;
       default:
         warn ("Unexpected message from remote federator at " + 
               remoteHostName + " (disconnecting): " + message.name (), this);
         close (REASON_PROTOCOL_VIOLATION, "Unexpected " + message.name ());
     }
-  }
-
-  private void handleError (ErrorMessage message)
-  {
-    warn ("Error in federation packet", this, message.error);
   }
 
   /**
