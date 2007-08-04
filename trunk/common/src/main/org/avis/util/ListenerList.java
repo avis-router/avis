@@ -38,6 +38,25 @@ public class ListenerList<E>
     this.listeners = emptyList ();
   }
   
+  /**
+   * Create a new instance.
+   * 
+   * @param listenerType The type of the listener interface.
+   * @param method The name of the method to call on the interface.
+   * @param paramTypes The paramter types of the listener method.
+   * 
+   * @throws IllegalArgumentException if the listener method could not
+   *                 be found.
+   */
+  public ListenerList (Class<E> listenerType, 
+                       String method, 
+                       Class<?>... paramTypes)
+    throws IllegalArgumentException
+  {
+    this.listenerMethod = lookupMethod (listenerType, method, paramTypes);
+    this.listeners = emptyList ();
+  }
+  
   public void add (E listener)
   {
     if (listener == null)
@@ -67,16 +86,22 @@ public class ListenerList<E>
    */
   public void fire (Object event)
   {
-    Object [] args = null; // lazy init
-    
+    if (!listeners.isEmpty ())
+      fire (new Object [] {event});
+  }
+  
+  /**
+   * Fire an event.
+   * 
+   * @param args The event parameters.
+   */
+  public void fire (Object... args)
+  {
     List<E> fireList = listeners;
     
     for (int i = fireList.size () - 1; i >= 0; i--)
     {
       E listener = fireList.get (i);
-      
-      if (args == null)
-        args = new Object [] {event};
       
       try
       {
@@ -103,11 +128,11 @@ public class ListenerList<E>
 
   private static Method lookupMethod (Class<?> targetClass,
                                       String methodName,
-                                      Class<?> paramClass)
+                                      Class<?>... paramTypes)
   {
     try
     {
-      Method method = targetClass.getMethod (methodName, paramClass);
+      Method method = targetClass.getMethod (methodName, paramTypes);
       
       method.setAccessible (true);
       
