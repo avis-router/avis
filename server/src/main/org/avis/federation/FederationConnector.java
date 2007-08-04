@@ -25,6 +25,7 @@ import org.avis.router.Router;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
+import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.federation.Federation.send;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
@@ -205,6 +206,8 @@ public class FederationConnector implements IoHandler, Closeable
   {
     if (closing)
       return;
+    
+    logMessageReceived (message, serverDomain, this);
     
     if (link == null)
       handleMessage (session, (Message)message);
