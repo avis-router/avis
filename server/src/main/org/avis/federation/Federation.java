@@ -51,11 +51,22 @@ public final class Federation
 
   /**
    * Log info about an error message from the frame codec.
-   * @param message
-   * @param source
    */
   public static void logError (ErrorMessage message, Object source)
   {
     warn ("Error in federation packet", source, message.error);
+  }
+
+  /**
+   * Log a trace on message receipt.
+   */
+  public static void logMessageReceived (Object message, String serverDomain, 
+                                         Object source)
+  {
+    if (shouldLog (TRACE))
+    {
+      trace ("Federator for domain \"" + serverDomain + "\" " + 
+             "received " + message, source);
+    }
   }
 }
