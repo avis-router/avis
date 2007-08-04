@@ -14,7 +14,7 @@ tasks.
 
 You will need an Elvin router to run any of these examples -- you can
 either install the Avis router (or other compatible Elvin router), or
-use the public Elvin router at public.elvin.org.
+use the public Elvin router at elvin://public.elvin.org.
 
 To run an example from the console:
 
