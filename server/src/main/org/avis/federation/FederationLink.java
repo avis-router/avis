@@ -69,7 +69,8 @@ public class FederationLink implements NotifyListener
     if (federationClass.incomingFilter != CONST_FALSE)
       send (new FedModify (federationClass.incomingFilter));
     
-    router.addNotifyListener (this);
+    if (federationClass.outgoingFilter != CONST_FALSE)
+      router.addNotifyListener (this);
   }
   
   public boolean isClosed ()
