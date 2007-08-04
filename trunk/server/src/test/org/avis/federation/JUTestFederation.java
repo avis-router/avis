@@ -4,8 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.avis.io.messages.NotifyDeliver;
+import org.avis.io.messages.NotifyEmit;
+import org.avis.io.messages.SecRqst;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
+import org.avis.security.Key;
+import org.avis.security.Keys;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
@@ -16,9 +20,8 @@ import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.io.Net.addressesFor;
-import static org.avis.logging.Log.DIAGNOSTIC;
-import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.enableLogging;
+import static org.avis.security.KeyScheme.SHA1_PRODUCER;
+import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
@@ -33,6 +36,9 @@ public class JUTestFederation
   @Before
   public void setup ()
   {
+    // enableLogging (TRACE, true);
+    // enableLogging (DIAGNOSTIC, true);
+
     logTester = new LogFailTester ();
   }
   
@@ -59,60 +65,66 @@ public class JUTestFederation
   public void basic ()
     throws Exception
   {
-    enableLogging (TRACE, true);
-    enableLogging (DIAGNOSTIC, true);
-    
-    Router server1 = new Router (PORT1);
-    Router server2 = new Router (PORT2);
-
-//    FederationClass fedClass =
-//      new FederationClass ("require (federated)", "true");
-    FederationClass fedClass =
-      new FederationClass ("require (federated)", "require (federated)");
-    
-    FederationClassMap federationMap = new FederationClassMap (fedClass);
-    
-    EwafURI ewafURI = new EwafURI ("ewaf://0.0.0.0:" + (PORT1 + 1));
-    
-    FederationListener listener = 
-      new FederationListener (server2, "server2", federationMap, 
-                              addressesFor (set (ewafURI)));
-    
-    FederationConnector connector = 
-      new FederationConnector (server1, "server1", ewafURI, fedClass);
-    
-    SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
-    SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
-    
-    client1.connect ();
-    client2.connect ();
-    
-    client2.subscribe ("require (federated) && from == 'client1'");
-    client1.subscribe ("require (federated) && from == 'client2'");
+    StandardFederatorSetup federation = new StandardFederatorSetup ();
     
     // client 1 -> client 2
-    client1.sendNotify (map ("federated", "server1", "from", "client1"));
+    federation.client1.sendNotify 
+      (map ("federated", "server1", "from", "client1"));
     
-    NotifyDeliver notification = (NotifyDeliver)client2.receive ();
+    NotifyDeliver notification = (NotifyDeliver)federation.client2.receive ();
     
     assertEquals ("client1", notification.attributes.get ("from"));
     
     // client 2 - > client 1
-    client2.sendNotify (map ("federated", "server2", "from", "client2"));
+    federation.client2.sendNotify 
+      (map ("federated", "server2", "from", "client2"));
     
-    notification = (NotifyDeliver)client1.receive ();
+    notification = (NotifyDeliver)federation.client1.receive ();
     
+    assertEquals (0, notification.secureMatches.length);
+    assertEquals (1, notification.insecureMatches.length);
     assertEquals ("client2", notification.attributes.get ("from"));
     
-    client1.close ();
-    client2.close ();
+    federation.close ();
+  }
+  
+  /**
+   * Test secure delivery.
+   */
+  @Test
+  public void security ()
+    throws Exception
+  {
+    StandardFederatorSetup federation = new StandardFederatorSetup ();
     
-    // todo make sure federators auto close
-    connector.close ();
-    listener.close ();
+    Key client1Private = new Key ("client1 private");
+    Key client1Public = client1Private.publicKeyFor (SHA1_PRODUCER);
     
-    server1.close ();
-    server2.close ();
+    Keys client1NtfnKeys = new Keys ();
+    client1NtfnKeys.add (SHA1_PRODUCER, client1Private);
+    
+    Keys client2SubKeys = new Keys ();
+    client2SubKeys.add (SHA1_PRODUCER, client1Public);
+    
+    federation.client1.sendAndReceive
+      (new SecRqst (client1NtfnKeys, EMPTY_KEYS, EMPTY_KEYS, EMPTY_KEYS));
+    
+    federation.client2.sendAndReceive
+      (new SecRqst (EMPTY_KEYS, EMPTY_KEYS, client2SubKeys, EMPTY_KEYS));
+    
+    // client 1 -> client 2
+    federation.client1.send 
+      (new NotifyEmit 
+        (map ("federated", "server1", "from", "client1"), 
+         false, EMPTY_KEYS));
+    
+    NotifyDeliver notification = (NotifyDeliver)federation.client2.receive ();
+    
+    assertEquals (1, notification.secureMatches.length);
+    assertEquals (0, notification.insecureMatches.length);
+    assertEquals ("client1", notification.attributes.get ("from"));
+    
+    federation.close ();
   }
 
   private static Map<String, Object> map (String... nameValues)
@@ -123,5 +135,63 @@ public class JUTestFederation
       map.put (nameValues [i], nameValues [i + 1]);
     
     return map;
+  }
+  
+  static class StandardFederatorSetup
+  {
+    public Router server1;
+    public Router server2;
+    
+    public SimpleClient client1;
+    public SimpleClient client2;
+    
+    public FederationConnector connector;
+    public FederationListener listener;
+    
+    public StandardFederatorSetup ()
+      throws Exception
+    {
+      server1 = new Router (PORT1);
+      server2 = new Router (PORT2);
+
+      // FederationClass fedClass =
+      //   new FederationClass ("require (federated)", "true");
+      FederationClass fedClass =
+        new FederationClass ("require (federated)", "require (federated)");
+      
+      FederationClassMap federationMap = new FederationClassMap (fedClass);
+      
+      EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
+      
+      listener = 
+        new FederationListener (server2, "server2", federationMap, 
+                                addressesFor (set (ewafURI)));
+      
+      connector = 
+        new FederationConnector (server1, "server1", ewafURI, fedClass);
+      
+      client1 = new SimpleClient ("client1", "localhost", PORT1);
+      client2 = new SimpleClient ("client2", "localhost", PORT2);
+      
+      client1.connect ();
+      client2.connect ();
+      
+      client1.subscribe ("require (federated) && from == 'client2'");
+      client2.subscribe ("require (federated) && from == 'client1'");
+    }
+    
+    public void close ()
+      throws Exception
+    {
+      client1.close ();
+      client2.close ();
+      
+      // todo make sure federators auto close
+      connector.close ();
+      listener.close ();
+      
+      server1.close ();
+      server2.close ();
+    }
   }
 }
