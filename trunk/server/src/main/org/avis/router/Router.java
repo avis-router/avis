@@ -125,7 +125,7 @@ public class Router implements IoHandler, Closeable
   {
     notifyListeners = 
       new ListenerList<NotifyListener>
-        (NotifyListener.class, "notifyReceived", Notify.class);
+        (NotifyListener.class, "notifyReceived", Notify.class, Keys.class);
     sessions = new ConcurrentHashSet<IoSession> ();
     executor = newCachedThreadPool ();
     acceptor =
@@ -607,7 +607,8 @@ public class Router implements IoHandler, Closeable
       }
     }
     
-    notifyListeners.fire (message);
+    if (notifyListeners.hasListeners ())
+      notifyListeners.fire (message, notificationKeys);
   }
 
   private static void handleTestConn (IoSession session)
