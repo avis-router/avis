@@ -126,7 +126,7 @@ public class FederationConnector implements IoHandler, Closeable
         warn ("Remote federator at " + uri + " " + 
               "closed link with no warning", this);
         
-        link.kill ();
+        link.close ();
       }
     }
     
