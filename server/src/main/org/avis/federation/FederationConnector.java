@@ -149,6 +149,7 @@ public class FederationConnector implements IoHandler, Closeable
         break;
       case ErrorMessage.ID:
         logError ((ErrorMessage)message, this);
+        session.close ();
         break;
       default:
         warn ("Unexpected message during handshake from remote federator at " + 
