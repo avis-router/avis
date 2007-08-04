@@ -16,6 +16,7 @@ import org.avis.router.Router;
 import org.avis.subscription.ast.Node;
 
 import static java.lang.System.arraycopy;
+import static java.util.Arrays.asList;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
 
 import static org.avis.federation.Federation.logError;
@@ -120,7 +121,7 @@ public class FederationLink implements NotifyListener
   /**
    * Test if we should pull a notification sent by the remote router.
    */
-  private boolean shouldPull (Notify message)
+  private boolean shouldPull (FedNotify message)
   {
     return routingDoesNotContain (message, serverDomain) &&
            matches (federationClass.incomingFilter, message);
@@ -136,14 +137,15 @@ public class FederationLink implements NotifyListener
    */
   private String [] routingFor (Notify message)
   {
-    String [] routing;
-    
     if (message instanceof FedNotify)
-      routing = addDomain (((FedNotify)message).routing, serverDomain);
+      return routingFor ((FedNotify)message);
     else
-      routing = new String [] {serverDomain};
-    
-    return routing;
+      return new String [] {serverDomain};
+  }
+  
+  private String [] routingFor (FedNotify message)
+  {
+    return addDomain (message.routing, serverDomain);
   }
 
   public void handleMessage (Message message)
@@ -166,13 +168,20 @@ public class FederationLink implements NotifyListener
         handleAck ((Ack)message);
         break;
       case ErrorMessage.ID:
-        logError ((ErrorMessage)message, this);
+        handleError ((ErrorMessage)message);
         break;
       default:
         warn ("Unexpected message from remote federator at " + 
               remoteHostName + " (disconnecting): " + message.name (), this);
         close (REASON_PROTOCOL_VIOLATION, "Unexpected " + message.name ());
     }
+  }
+
+  private void handleError (ErrorMessage message)
+  {
+    logError (message, this);
+    
+    close (REASON_PROTOCOL_VIOLATION, message.error.getMessage ());
   }
 
   /**
@@ -202,8 +211,20 @@ public class FederationLink implements NotifyListener
 
   private void handleFedNotify (FedNotify message)
   {
-    if (shouldPull (message))
-      router.injectNotify (message);
+    if (message.routingContains (remoteServerDomain))
+    {
+      if (shouldPull (message))
+        router.injectNotify (message);
+    } else
+    {
+      warn ("Closing federation link on receipt of FedNotify from remote " +
+            "federator that has not added its own domain (" + 
+            remoteServerDomain + ") to the routing list: " + 
+            asList (message.routing), this);
+      
+      close (REASON_PROTOCOL_VIOLATION, 
+             "Remote server domain was not in FedNotify routing list");
+    }
   }
 
   private WriteFuture send (Message message)
@@ -227,9 +248,15 @@ public class FederationLink implements NotifyListener
                                                 String serverDomain)
   {
     if (message instanceof FedNotify)
-      return !((FedNotify)message).routingContains (serverDomain);
+      return routingDoesNotContain ((FedNotify)message, serverDomain);
     else
       return true;
+  }
+  
+  private static boolean routingDoesNotContain (FedNotify message,
+                                                String serverDomain)
+  {
+    return !message.routingContains (serverDomain);
   }
   
   /**
