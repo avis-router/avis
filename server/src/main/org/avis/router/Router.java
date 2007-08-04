@@ -50,6 +50,7 @@ import org.avis.subscription.parser.ConstantExpressionException;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 import org.avis.util.IllegalOptionException;
+import org.avis.util.ListenerList;
 
 import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
@@ -104,6 +105,8 @@ public class Router implements IoHandler, Closeable
    * profile this.
    */
   private ConcurrentHashSet<IoSession> sessions;
+
+  private ListenerList<NotifyListener> notifyListeners;
   
   public Router ()
     throws IOException
@@ -120,6 +123,9 @@ public class Router implements IoHandler, Closeable
   public Router (RouterOptions options)
     throws IOException, IllegalOptionException
   {
+    notifyListeners = 
+      new ListenerList<NotifyListener>
+        (NotifyListener.class, "notifyReceived", Notify.class);
     sessions = new ConcurrentHashSet<IoSession> ();
     executor = newCachedThreadPool ();
     acceptor =
@@ -241,6 +247,8 @@ public class Router implements IoHandler, Closeable
   /**
    * Used for testing to simulate server hanging: server stops
    * responding to messages but keeps connection open.
+   * 
+   * @see #testSimulateUnhang()
    */
   public void testSimulateHang ()
   {
@@ -248,9 +256,32 @@ public class Router implements IoHandler, Closeable
     closing = true;
   }
   
+  /**
+   * Undo the effect of {@link #testSimulateHang()}.
+   */
   public void testSimulateUnhang ()
   {
     closing = false;
+  }
+  
+  /**
+   * Add a listener that will be invoked whenever a Notify message is
+   * handled for delivery.
+   * 
+   * @see #removeNotifyListener(NotifyListener)
+   * @see #injectNotify(Notify)
+   */
+  public void addNotifyListener (NotifyListener listener)
+  {
+    notifyListeners.add (listener);
+  }
+  
+  /**
+   * Undo the effect of {@link #addNotifyListener(NotifyListener)}.
+   */
+  public void removeNotifyListener (NotifyListener listener)
+  {
+    notifyListeners.remove (listener);
   }
   
   // IoHandler interface
@@ -518,6 +549,14 @@ public class Router implements IoHandler, Closeable
   {
     deliverNotification (message, EMPTY_KEYS);
   }
+  
+  /**
+   * Inject a notification from an outside producer.
+   */
+  public void injectNotify (Notify message)
+  {
+    deliverNotification (message, EMPTY_KEYS);
+  }
 
   /**
    * Deliver a notification message to subscribers.
@@ -567,6 +606,8 @@ public class Router implements IoHandler, Closeable
         connection.unlockRead ();
       }
     }
+    
+    notifyListeners.fire (message);
   }
 
   private static void handleTestConn (IoSession session)
