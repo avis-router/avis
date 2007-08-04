@@ -60,13 +60,13 @@ public final class Federation
   /**
    * Log a trace on message receipt.
    */
-  public static void logMessageReceived (Object message, String serverDomain, 
+  public static void logMessageReceived (Message message, String serverDomain, 
                                          Object source)
   {
     if (shouldLog (TRACE))
     {
       trace ("Federator for domain \"" + serverDomain + "\" " + 
-             "received " + message, source);
+             "received " + message.name (), source);
     }
   }
 }

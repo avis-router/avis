@@ -200,18 +200,20 @@ public class FederationConnector implements IoHandler, Closeable
     // zip
   }
   
-  public void messageReceived (IoSession theSession, Object message)
+  public void messageReceived (IoSession theSession, Object theMessage)
     throws Exception
   {
     if (closing)
       return;
+   
+    Message message = (Message)theMessage;
     
     logMessageReceived (message, serverDomain, this);
     
     if (link == null)
-      handleMessage ((Message)message);
+      handleMessage (message);
     else if (!link.isClosed ())
-      link.handleMessage ((Message)message);
+      link.handleMessage (message);
   }
   
   public void messageSent (IoSession theSession, Object message)
