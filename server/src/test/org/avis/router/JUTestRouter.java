@@ -393,12 +393,82 @@ public class JUTestRouter
     
     eve.subscribe ("require (From-Alice)", eveSubKeys);
     
+    checkAliceBobEve (alice, bob, eve, aliceNtfnKeys);
+    
+    alice.close ();
+    bob.close ();
+    eve.close ();
+  }
+  
+  /**
+   * Test that global keys set via SecModify work.
+   */
+  @Test
+  public void securitySecModify ()
+    throws Exception
+  {
+    server = new Router (PORT);
+    
+    SimpleClient alice = new SimpleClient ("alice");
+    SimpleClient bob = new SimpleClient ("bob");
+    SimpleClient eve = new SimpleClient ("eve");
+    
+    alice.connect ();
+    bob.connect ();
+    eve.connect ();
+
+    Key alicePrivate = new Key ("alice private");
+    Key alicePublic = alicePrivate.publicKeyFor (SHA1_PRODUCER);
+    
+    Keys aliceNtfnKeys = new Keys ();
+    aliceNtfnKeys.add (SHA1_PRODUCER, alicePrivate);
+    
+    Keys bobSubKeys = new Keys ();
+    bobSubKeys.add (SHA1_PRODUCER, alicePublic);
+    
+    Keys eveSubKeys = new Keys ();
+    eveSubKeys.add (SHA1_PRODUCER,
+                    new Key ("Not alice's key").publicKeyFor (SHA1_PRODUCER));
+    
+    bob.subscribe ("require (From-Alice)");
+    
+    eve.subscribe ("require (From-Alice)");
+    
+    alice.sendAndReceive
+      (new SecRqst (aliceNtfnKeys, EMPTY_KEYS, EMPTY_KEYS, EMPTY_KEYS));
+    
+    bob.sendAndReceive
+      (new SecRqst (EMPTY_KEYS, EMPTY_KEYS, bobSubKeys, EMPTY_KEYS));
+    
+    eve.sendAndReceive
+      (new SecRqst (EMPTY_KEYS, EMPTY_KEYS, eveSubKeys, EMPTY_KEYS));
+    
+    checkAliceBobEve (alice, bob, eve, EMPTY_KEYS);
+    
+    alice.close ();
+    bob.close ();
+    eve.close ();
+  }
+
+  /**
+   * Check that alice and bob receive securely, eve doesn't.
+   */
+  private static void checkAliceBobEve (SimpleClient alice,
+                                        SimpleClient bob, 
+                                        SimpleClient eve,
+                                        Keys ntfnKeys)
+    throws Exception
+  {
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("From-Alice", 1);
     
-    alice.sendNotify (ntfn, aliceNtfnKeys);
+    alice.sendNotify (ntfn, ntfnKeys);
     
     NotifyDeliver bobNtfn = (NotifyDeliver)bob.receive ();
+    
+    assertEquals (1, bobNtfn.secureMatches.length);
+    assertEquals (0, bobNtfn.insecureMatches.length);
+    
     assertEquals (1, bobNtfn.attributes.get ("From-Alice"));
     
     try
@@ -412,10 +482,6 @@ public class JUTestRouter
     {
       // ok
     }
-    
-    alice.close ();
-    bob.close ();
-    eve.close ();
   }
   
   /**
@@ -446,7 +512,7 @@ public class JUTestRouter
       new SubAddRqst ("require (From-Alice)", bobSubKeys, true);
     
     bob.send (subAddRqst);
-    SubRply subRply = (SubRply)bob.receive (SubRply.class);
+    SubRply subRply = bob.receive (SubRply.class);
     
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("From-Alice", 1);
