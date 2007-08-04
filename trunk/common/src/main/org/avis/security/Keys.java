@@ -78,6 +78,35 @@ public class Keys
   }
   
   /**
+   * Shortcut to efficiently generate a key collection that represents
+   * this key collection's union with another.
+   * 
+   * @param keys The keys to add.
+   * 
+   * @return If keys is empty, this method will simply return this
+   *         collection. If this collection is empty, keys will be
+   *         returned. Otherwise a new collection instance is created
+   *         as the union of both.
+   */
+  public Keys addedTo (Keys keys)
+  {
+    if (keys.isEmpty ())
+    {
+      return this;
+    } else if (isEmpty ())
+    {
+      return keys;
+    } else
+    {
+      Keys newKeys = new Keys (this);
+      
+      newKeys.add (keys);
+      
+      return newKeys;
+    }
+  }
+  
+  /**
    * Add a key for single key scheme.
    *  
    * @param scheme The key scheme.
