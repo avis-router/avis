@@ -168,7 +168,7 @@ public class FederationConnector implements IoHandler, Closeable
     
     link =
       new FederationLink (session, router, federationClass, serverDomain, 
-                          remoteHost, remoteServerDomain);
+                          remoteServerDomain, remoteHost);
   }
   
   private void handleFedConnNack (IoSession session, Nack nack)
