@@ -116,9 +116,6 @@ public class FederationLink implements NotifyListener
    */
   public void notifyReceived (Notify message, Keys keys)
   {
-    if (closed)
-      return;
-    
     if (shouldPush (message))
     {
       FedNotify fedNotify = 
@@ -272,7 +269,8 @@ public class FederationLink implements NotifyListener
    * True if message is either not a FedNotify, or if it is but does
    * not contain the given server domain.
    */
-  private static boolean routingDoesNotContain (Notify message, String domain)
+  private static boolean routingDoesNotContain (Notify message, 
+                                                String domain)
   {
     return !containsDomain (routingFor (message), domain);
   }
@@ -280,7 +278,8 @@ public class FederationLink implements NotifyListener
   /**
    * True if the routing list contains a given server domain.
    */
-  private static boolean containsDomain (String [] routing, String serverDomain)
+  private static boolean containsDomain (String [] routing, 
+                                         String serverDomain)
   {
     for (String domain : routing)
     {

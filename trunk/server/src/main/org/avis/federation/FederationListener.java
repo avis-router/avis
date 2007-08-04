@@ -134,6 +134,7 @@ public class FederationListener implements IoHandler, Closeable
                          disconnMessage)).addListener (CLOSE);
     } else
     {
+      // todo should check that server domain is not already known
       send (session, new FedConnRply (message, serverDomain));
      
       diagnostic ("Federation incoming link established with " + 
@@ -203,17 +204,19 @@ public class FederationListener implements IoHandler, Closeable
     // zip
   }
 
-  public void messageReceived (IoSession session, Object message)
+  public void messageReceived (IoSession session, Object theMessage)
     throws Exception
   {
+    Message message = (Message)theMessage;
+    
     logMessageReceived (message, serverDomain, this);
     
     FederationLink link = linkFor (session);
     
     if (link == null)
-      handleMessage (session, (Message)message);
+      handleMessage (session, message);
     else if (!link.isClosed ())
-      link.handleMessage ((Message)message);
+      link.handleMessage (message);
   }
 
   public void sessionClosed (IoSession session)
