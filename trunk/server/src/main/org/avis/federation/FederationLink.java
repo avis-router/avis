@@ -7,10 +7,15 @@ import org.avis.federation.messages.Ack;
 import org.avis.federation.messages.FedModify;
 import org.avis.federation.messages.FedNotify;
 import org.avis.io.messages.Disconn;
+import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
+import org.avis.io.messages.Notify;
+import org.avis.router.NotifyListener;
 import org.avis.router.Router;
+import org.avis.subscription.ast.Node;
 
+import static java.lang.System.arraycopy;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
 
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
@@ -18,7 +23,7 @@ import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.logging.Log.warn;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 
-public class FederationLink
+public class FederationLink implements NotifyListener
 {
   /**
    * Internal disconnection reason code indicating we're shutting down
@@ -27,15 +32,13 @@ public class FederationLink
   private static final int REASON_DISCONN_REQUESTED = -1;
   
   private IoSession session;
-  @SuppressWarnings("unused")
   private Router router;
-  @SuppressWarnings("unused")
   private FederationClass federationClass;
   private String serverDomain;
-  @SuppressWarnings("unused")
+  private Node remotePullFilter;
   private String remoteServerDomain;
   private String remoteHostName;
-  private boolean closed;
+  private volatile boolean closed;
   
   public FederationLink (IoSession session,
                          Router router, 
@@ -50,24 +53,18 @@ public class FederationLink
     this.serverDomain = serverDomain;
     this.remoteServerDomain = remoteServerDomain;
     this.remoteHostName = remoteHostName;
+    this.remotePullFilter = CONST_FALSE;
     
     // todo how to we subscribe to TRUE?
     if (federationClass.incomingFilter != CONST_FALSE)
       send (new FedModify (federationClass.incomingFilter));
+    
+    router.addNotifyListener (this);
   }
   
   public boolean isClosed ()
   {
     return closed;
-  }
-  
-  /**
-   * Called when the session dies unexpectedly.
-   */
-  public void kill ()
-  {
-    // todo
-    closed = true;
   }
   
   /**
@@ -86,17 +83,68 @@ public class FederationLink
   private void close (int reason, String message)
   {
     closed = true;
-    session.setAttribute ("linkClosed");
     
-    if (reason == REASON_DISCONN_REQUESTED)
-      session.close ();
-    else
-      send (new Disconn (reason, message)).addListener (CLOSE);
+    router.removeNotifyListener (this);
+    
+    if (session.isConnected ())
+    {
+      session.setAttribute ("linkClosed");
+      
+      if (reason == REASON_DISCONN_REQUESTED)
+        session.close ();
+      else
+        send (new Disconn (reason, message)).addListener (CLOSE);
+    }
+  }
+  
+  public void notifyReceived (Notify message)
+  {
+    if (closed)
+      return;
+    
+    if (shouldPush (message))
+      send (new FedNotify (message, routingFor (message)));
+  }
+
+  /**
+   * Test if we should push a given notification to the remote router.
+   */
+  private boolean shouldPush (Notify message)
+  {
+    return routingDoesNotContain (message, remoteServerDomain) &&
+           matches (federationClass.outgoingFilter, message) &&
+           matches (remotePullFilter, message);
+  }
+
+  /**
+   * Test if we should pull a notification sent by the remote router.
+   */
+  private boolean shouldPull (Notify message)
+  {
+    return routingDoesNotContain (message, serverDomain) &&
+           matches (federationClass.incomingFilter, message);
   }
   
   /**
-   * Handle a message while in linked state.
+   * Generate the routing list for a given message, taking into
+   * account existing routing if it's a FedNotify.
+   * 
+   * @param message The source message.
+   * 
+   * @return The routing, including our server domain.
    */
+  private String [] routingFor (Notify message)
+  {
+    String [] routing;
+    
+    if (message instanceof FedNotify)
+      routing = addDomain (((FedNotify)message).routing, serverDomain);
+    else
+      routing = new String [] {serverDomain};
+    
+    return routing;
+  }
+
   public void handleMessage (Message message)
   {
     switch (message.typeId ())
@@ -116,11 +164,19 @@ public class FederationLink
       case Ack.ID:
         handleAck ((Ack)message);
         break;
+      case ErrorMessage.ID:
+        handleError ((ErrorMessage)message);
+        break;
       default:
         warn ("Unexpected message from remote federator at " + 
               remoteHostName + " (disconnecting): " + message.name (), this);
         close (REASON_PROTOCOL_VIOLATION, "Unexpected " + message.name ());
     }
+  }
+
+  private void handleError (ErrorMessage message)
+  {
+    warn ("Error in federation packet", this, message.error);
   }
 
   /**
@@ -141,26 +197,56 @@ public class FederationLink
     // todo
   }
 
-  /**
-   * 
-   * @param message
-   */
   private void handleFedModify (FedModify message)
   {
-    // todo
+    remotePullFilter = message.incomingFilter;
+    
+    send (new Ack (message));
   }
 
-  /**
-   * 
-   * @param message
-   */
   private void handleFedNotify (FedNotify message)
   {
-    // todo
+    if (shouldPull (message))
+      router.injectNotify (message);
   }
 
   private WriteFuture send (Message message)
   {
     return Federation.send (session, serverDomain, message);
+  }
+  
+  /**
+   * Test if a given message matches an AST filter.
+   */
+  private static boolean matches (Node filter, Notify message)
+  {
+    return filter.evaluate (message.attributes) == Node.TRUE;
+  }
+  
+  /**
+   * True if message is either not a FedNotify, or if it is but does
+   * not contain the given server domain.
+   */
+  private static boolean routingDoesNotContain (Notify message,
+                                                String serverDomain)
+  {
+    if (message instanceof FedNotify)
+      return !((FedNotify)message).routingContains (serverDomain);
+    else
+      return true;
+  }
+  
+  /**
+   * Add a server domain to the start of an existing routing list.
+   */
+  private static String [] addDomain (String [] routing, String serverDomain)
+  {
+    String [] newRouting = new String [routing.length + 1];
+    
+    newRouting [0] = serverDomain;
+    
+    arraycopy (routing, 0, newRouting, 1, routing.length);
+    
+    return newRouting;
   }
 }
