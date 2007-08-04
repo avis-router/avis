@@ -102,6 +102,7 @@ public class FederationListener implements IoHandler, Closeable
         break;
       case ErrorMessage.ID:
         logError ((ErrorMessage)message, this);
+        session.close ();
         break;
       default:
         warn ("Unexpected handshake message from connecting remote " +
