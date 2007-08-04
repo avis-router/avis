@@ -151,7 +151,7 @@ public class FederationListener implements IoHandler, Closeable
   {
     FederationLink link =
       new FederationLink (session, router, federationClass, serverDomain, 
-                          remoteHost, remoteServerDomain);
+                          remoteServerDomain, remoteHost);
     
     addLink (session, link);
   }
