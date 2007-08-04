@@ -48,7 +48,9 @@ public final class Log
   {
     stdout = new PrintWriter (System.out);
     stderr = new PrintWriter (System.err);
-    listeners = new ListenerList<LogListener> ();
+    listeners = 
+      new ListenerList<LogListener> (LogListener.class, 
+                                     "messageLogged", LogEvent.class);
     enabledTypes = new boolean [6];
     
     logAll ();
@@ -192,8 +194,7 @@ public final class Log
     {
       if (listeners.hasListeners ())
       {
-        listeners.fire ("messageLogged",
-                        new LogEvent (source, new Date (),
+        listeners.fire (new LogEvent (source, new Date (),
                                       type, message, exception));
       }      
     }

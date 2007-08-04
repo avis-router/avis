@@ -327,9 +327,12 @@ public final class Elvin implements Closeable
     this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
     this.closeListeners =
-      new ListenerList<CloseListener> ();
+      new ListenerList<CloseListener> (CloseListener.class, 
+                                       "connectionClosed", CloseEvent.class);
     this.notificationListeners =
-      new ListenerList<GeneralNotificationListener> ();
+      new ListenerList<GeneralNotificationListener> 
+        (GeneralNotificationListener.class, "notificationReceived", 
+         GeneralNotificationEvent.class);
     this.replyLock = new Object ();
     this.lastMessageTime = currentTimeMillis ();
     this.receiveTimeout = 10000;
@@ -504,9 +507,7 @@ public final class Elvin implements Closeable
         {
           synchronized (mutex ())
           {
-            closeListeners.fire ("connectionClosed",
-                                 new CloseEvent (this, reason, message));
-            
+            closeListeners.fire (new CloseEvent (this, reason, message));
           }
         }
       });
@@ -1339,8 +1340,7 @@ public final class Elvin implements Closeable
             if (notificationListeners.hasListeners ())
             {
               notificationListeners.fire
-                ("notificationReceived",
-                 new GeneralNotificationEvent (Elvin.this, ntfn,
+                (new GeneralNotificationEvent (Elvin.this, ntfn,
                                                message.insecureMatches,
                                                message.secureMatches));
             }

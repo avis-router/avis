@@ -32,7 +32,10 @@ public final class Subscription
     this.subscriptionExpr = checkSubscription (subscriptionExpr);
     this.secureMode = secureMode;
     this.keys = keys;
-    this.notificationListeners = new ListenerList<NotificationListener> ();
+    this.notificationListeners = 
+      new ListenerList<NotificationListener> 
+        (NotificationListener.class, "notificationReceived", 
+         NotificationEvent.class);
     
     checkNotNull (keys, "Keys");
     checkNotNull (secureMode, "Secure mode");
@@ -239,6 +242,6 @@ public final class Subscription
 
   void notifyListeners (NotificationEvent event)
   {
-    notificationListeners.fire ("notificationReceived", event);
+    notificationListeners.fire (event);
   }
 }
