@@ -48,7 +48,7 @@ public class FederationConnector implements IoHandler, Closeable
   private String serverDomain;
   private FederationLink link;
   private InetSocketAddress remoteAddress;
-  private IoSession linkConnection;
+  private IoSession session;
   
   protected volatile boolean closing;
   
@@ -101,9 +101,9 @@ public class FederationConnector implements IoHandler, Closeable
     });
   }
   
-  void open (IoSession session)
+  void open (IoSession newSession)
   {
-    this.linkConnection = session;
+    this.session = newSession;
     
     send (session, serverDomain,
           new FedConnRqst (VERSION_MAJOR, VERSION_MINOR, serverDomain));
@@ -111,17 +111,17 @@ public class FederationConnector implements IoHandler, Closeable
   
   public void close ()
   {
-    if (closing || linkConnection == null)
+    if (closing || session == null)
       return;
     
     closing = true;
     
-    if (linkConnection.isConnected ())
+    if (session.isConnected ())
     {
       if (link != null)
         link.close ();
       else
-        linkConnection.close ();
+        session.close ();
     } else
     {
       if (link != null && !link.closedSession ())
@@ -134,19 +134,19 @@ public class FederationConnector implements IoHandler, Closeable
     }
     
     link = null;
-    linkConnection = null;
+    session = null;
   }
   
-  private void handleMessage (IoSession session, Message message)
+  private void handleMessage (Message message)
   {
     // todo check XID
     switch (message.typeId ())
     {
       case FedConnRply.ID:
-        createFederationLink (session, ((FedConnRply)message).serverDomain);
+        createFederationLink (((FedConnRply)message).serverDomain);
         break;
       case Nack.ID:
-        handleFedConnNack (session, (Nack)message);
+        handleFedConnNack ((Nack)message);
         break;
       case ErrorMessage.ID:
         logError ((ErrorMessage)message, this);
@@ -159,8 +159,7 @@ public class FederationConnector implements IoHandler, Closeable
     }
   }
   
-  private void createFederationLink (IoSession session, 
-                                     String remoteServerDomain)
+  private void createFederationLink (String remoteServerDomain)
   {
     String remoteHost = remoteAddress.getHostName ();
 
@@ -173,7 +172,7 @@ public class FederationConnector implements IoHandler, Closeable
                           remoteServerDomain, remoteHost);
   }
   
-  private void handleFedConnNack (IoSession session, Nack nack)
+  private void handleFedConnNack (Nack nack)
   {
     warn ("Remote router at " + uri + " rejected federation connect request: " + 
           nack.formattedMessage (), this);
@@ -183,25 +182,25 @@ public class FederationConnector implements IoHandler, Closeable
   
   // IoHandler  
   
-  public void sessionOpened (IoSession session)
+  public void sessionOpened (IoSession theSession)
     throws Exception
   {
     // zip
   }
   
-  public void sessionClosed (IoSession session)
+  public void sessionClosed (IoSession theSession)
     throws Exception
   {
     close ();
   }
   
-  public void sessionCreated (IoSession session)
+  public void sessionCreated (IoSession theSession)
     throws Exception
   {
     // zip
   }
   
-  public void messageReceived (IoSession session, Object message)
+  public void messageReceived (IoSession theSession, Object message)
     throws Exception
   {
     if (closing)
@@ -210,24 +209,24 @@ public class FederationConnector implements IoHandler, Closeable
     logMessageReceived (message, serverDomain, this);
     
     if (link == null)
-      handleMessage (session, (Message)message);
+      handleMessage ((Message)message);
     else if (!link.isClosed ())
       link.handleMessage ((Message)message);
   }
   
-  public void messageSent (IoSession session, Object message)
+  public void messageSent (IoSession theSession, Object message)
     throws Exception
   {
     // zip
   }
 
-  public void sessionIdle (IoSession session, IdleStatus status)
+  public void sessionIdle (IoSession theSession, IdleStatus status)
     throws Exception
   {
     // zip
   }
   
-  public void exceptionCaught (IoSession session, Throwable cause)
+  public void exceptionCaught (IoSession theSession, Throwable cause)
     throws Exception
   {
     alarm ("Error in federator", this, cause);
