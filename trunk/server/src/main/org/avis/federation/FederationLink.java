@@ -124,7 +124,7 @@ public class FederationLink implements NotifyListener
       FedNotify fedNotify = 
         new FedNotify (message, localDomainAddedTo (routingFor (message)));
       
-      fedNotify.keys = fedNotify.keys.addedTo (keys);
+      fedNotify.keys = keys.addedTo (message.keys);
       
       send (fedNotify);
     }
