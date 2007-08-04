@@ -9,6 +9,7 @@ import org.avis.federation.messages.Ack;
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
 import org.avis.federation.messages.FedModify;
+import org.avis.federation.messages.FedNotify;
 import org.avis.io.FrameCodec;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.Message;
@@ -50,6 +51,8 @@ public class FederationFrameCodec
         return new FedConnRqst ();
       case FedModify.ID:
         return new FedModify ();
+      case FedNotify.ID:
+        return new FedNotify ();
       default:
         throw new ProtocolCodecException
           ("Unknown message type: ID = " + messageType);
