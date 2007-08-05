@@ -11,6 +11,7 @@ import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.Notify;
+import org.avis.io.messages.RequestMessage;
 import org.avis.router.NotifyListener;
 import org.avis.router.Router;
 import org.avis.security.Keys;
@@ -41,20 +42,40 @@ public class FederationLink implements NotifyListener
    * on a Disconn request from the remote host.
    */
   private static final int REASON_DISCONN_REQUESTED = -1;
+  
+  /**
+   * Internal disconnection reason code indicating we're shutting down
+   * because the remote federator veotoed a request.
+   */
+  private static final int REASON_REQUEST_REJECTED = -2;
 
   private static final String [] EMPTY_ROUTING = new String [0];
   
   private IoSession session;
   private Router router;
+  private RequestTracker requestTracker;
   private FederationClass federationClass;
   private String serverDomain;
   private Node remotePullFilter;
   private String remoteServerDomain;
   private String remoteHostName;
   private volatile boolean closed;
-  
+
+  /**
+   * todo
+   * 
+   * @param session
+   * @param router
+   * @param requestTracker Used to track request/ACK/NACK. Link
+   *                assumes ownership and shuts down on close.
+   * @param federationClass
+   * @param serverDomain
+   * @param remoteServerDomain
+   * @param remoteHostName
+   */
   public FederationLink (IoSession session,
                          Router router, 
+                         RequestTracker requestTracker,
                          FederationClass federationClass, 
                          String serverDomain, 
                          String remoteServerDomain,
@@ -62,20 +83,19 @@ public class FederationLink implements NotifyListener
   {
     this.session = session;
     this.router = router;
+    this.requestTracker = requestTracker;
     this.federationClass = federationClass;
     this.serverDomain = serverDomain;
     this.remoteServerDomain = remoteServerDomain;
     this.remoteHostName = remoteHostName;
     this.remotePullFilter = CONST_FALSE;
     
-    // todo how to we subscribe to TRUE?
-    if (federationClass.incomingFilter != CONST_FALSE)
-      send (new FedModify (federationClass.incomingFilter));
+    subscribe ();
     
     if (federationClass.outgoingFilter != CONST_FALSE)
       router.addNotifyListener (this);
   }
-  
+
   public boolean isClosed ()
   {
     return closed;
@@ -98,6 +118,8 @@ public class FederationLink implements NotifyListener
   {
     closed = true;
     
+    requestTracker.shutdown ();
+    
     router.removeNotifyListener (this);
     
     if (session.isConnected ())
@@ -109,6 +131,13 @@ public class FederationLink implements NotifyListener
       else
         send (new Disconn (reason, message)).addListener (CLOSE);
     }
+  }
+  
+  private void subscribe ()
+  {
+    // todo how to we subscribe to TRUE?
+    if (federationClass.incomingFilter != CONST_FALSE)
+      send (new FedModify (federationClass.incomingFilter));
   }
   
   /**
@@ -173,39 +202,58 @@ public class FederationLink implements NotifyListener
       case Ack.ID:
         handleAck ((Ack)message);
         break;
+      case RequestTracker.TimeoutMessage.ID:
+        handleRequestTimeout (((RequestTracker.TimeoutMessage)message).request);
+        break;
       case ErrorMessage.ID:
         handleError ((ErrorMessage)message);
         break;
       default:
-        warn ("Unexpected message from remote federator at " + 
-              remoteHostName + " (disconnecting): " + message.name (), this);
-        close (REASON_PROTOCOL_VIOLATION, "Unexpected " + message.name ());
+        handleProtocolViolation ("Unexpected " + message.name ());
     }
+  }
+
+  private void handleRequestTimeout (RequestMessage<?> request)
+  {
+    // sanity check
+    if (!(request instanceof FedModify))
+      throw new Error ("Request timeout for illegal message " + request);
+    
+    warn ("Federation modify request to remote federator at " + 
+          remoteHostName + " timed out: retrying", this);
+    
+    subscribe ();
   }
 
   private void handleError (ErrorMessage message)
   {
     logError (message, this);
     
-    close (REASON_PROTOCOL_VIOLATION, message.error.getMessage ());
+    handleProtocolViolation (message.error.getMessage ());
   }
 
-  /**
-   * 
-   * @param message
-   */
-  private void handleAck (Ack message)
+  private void handleAck (Ack ack)
   {
-    // todo
+    RequestMessage<?> request = requestTracker.remove (ack);
+    
+    if (request == null)
+      handleProtocolViolation ("Received an ACK for unknown XID " + ack.xid);
   }
 
-  /**
-   * 
-   * @param message
-   */
-  private void handleNack (Nack message)
+  private void handleNack (Nack nack)
   {
-    // todo
+    RequestMessage<?> request = requestTracker.remove (nack);
+    
+    if (request == null)
+    {
+      handleProtocolViolation ("Received a NACK for unknown XID " + nack.xid);
+    } else
+    {
+      warn ("Disconnecting from remote federator at " + remoteHostName + " " + 
+            "after it rejected a " + request.name (), this);
+      
+      close (REASON_REQUEST_REJECTED, "");
+    }
   }
 
   private void handleFedModify (FedModify message)
@@ -236,13 +284,24 @@ public class FederationLink implements NotifyListener
             remoteServerDomain + ") to the routing list: " + 
             asList (message.routing), this);
       
-      close (REASON_PROTOCOL_VIOLATION, 
-             "Remote server domain was not in FedNotify routing list");
+      handleProtocolViolation 
+        ("Remote server domain was not in FedNotify routing list");
     }
+  }
+  
+  private void handleProtocolViolation (String message)
+  {
+    warn ("Disconnecting remote federator at " + remoteHostName + " " + 
+          " due to protocol violation: " + message, this);
+    
+    close (REASON_PROTOCOL_VIOLATION, message);
   }
 
   private WriteFuture send (Message message)
   {
+    if (message instanceof RequestMessage)
+      requestTracker.add ((RequestMessage<?>)message);
+    
     return Federation.send (session, serverDomain, message);
   }
   
