@@ -228,16 +228,10 @@ public class FederationLink implements NotifyListener
 
   private void handleNack (Nack nack)
   {
-    if (nack.request == null)
-    {
-      handleProtocolViolation ("Received a NACK for unknown XID " + nack.xid);
-    } else
-    {
-      warn ("Disconnecting from remote federator at " + remoteHostName + " " + 
-            "after it rejected a " + nack.request.name (), this);
-      
-      close (REASON_REQUEST_REJECTED, "");
-    }
+    warn ("Disconnecting from remote federator at " + remoteHostName + " " + 
+          "after it rejected a " + nack.request.name (), this);
+    
+    close (REASON_REQUEST_REJECTED, "");
   }
 
   private void handleFedModify (FedModify message)
