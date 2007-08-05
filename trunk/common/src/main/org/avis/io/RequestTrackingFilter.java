@@ -13,7 +13,7 @@ import org.apache.mina.common.IoSession;
 
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.RequestMessage;
-import org.avis.io.messages.TimeoutMessage;
+import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.io.messages.XidMessage;
 
 import static java.lang.Math.min;
@@ -227,7 +227,7 @@ public class RequestTrackingFilter
             session.getFilterChain ().getNextFilter (filterName);
           
           filter.messageReceived 
-            (session, new TimeoutMessage (entry.request));
+            (session, new RequestTimeoutMessage (entry.request));
         } else
         {
           earliest = min (earliest, entry.sentAt);
