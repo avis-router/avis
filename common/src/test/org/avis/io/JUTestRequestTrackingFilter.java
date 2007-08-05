@@ -17,7 +17,7 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.Message;
-import org.avis.io.messages.TimeoutMessage;
+import org.avis.io.messages.RequestTimeoutMessage;
 
 import org.junit.Test;
 
@@ -93,8 +93,8 @@ public class JUTestRequestTrackingFilter
     }
 
     assertNotNull (listener.message);
-    assertEquals (TimeoutMessage.ID, listener.message.typeId ());
-    assertSame (fedConnRqst, ((TimeoutMessage)listener.message).request);
+    assertEquals (RequestTimeoutMessage.ID, listener.message.typeId ());
+    assertSame (fedConnRqst, ((RequestTimeoutMessage)listener.message).request);
     
     // try again, with two in the pipe
     listener.message = null;
@@ -113,7 +113,7 @@ public class JUTestRequestTrackingFilter
     }
 
     assertNotNull (listener.message);
-    assertSame (fedConnRqst, ((TimeoutMessage)listener.message).request);
+    assertSame (fedConnRqst, ((RequestTimeoutMessage)listener.message).request);
     
     session.close ();
     acceptor.unbindAll ();
