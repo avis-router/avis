@@ -4,6 +4,7 @@ import java.io.Closeable;
 
 import java.net.InetSocketAddress;
 
+import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoFuture;
 import org.apache.mina.common.IoFutureListener;
@@ -11,16 +12,17 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
+import org.avis.io.RequestTrackingFilter;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.RequestMessage;
+import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.router.Router;
 
 import static java.lang.Thread.sleep;
@@ -46,7 +48,6 @@ public class FederationConnector implements IoHandler, Closeable
   private Router router;
   private SocketConnector connector;
   private SocketConnectorConfig connectorConfig;
-  private RequestTracker requestTracker;
   private FederationClass federationClass;
   private String serverDomain;
   private FederationLink link;
@@ -72,8 +73,11 @@ public class FederationConnector implements IoHandler, Closeable
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
     connectorConfig.setConnectTimeout (20);
     
-    connectorConfig.getFilterChain ().addLast
-      ("codec", new ProtocolCodecFilter (FederationFrameCodec.INSTANCE));
+    DefaultIoFilterChainBuilder filterChain = connectorConfig.getFilterChain ();
+    
+    filterChain.addLast ("codec", FederationFrameCodec.FILTER);
+    
+    filterChain.addLast ("requestTracker", new RequestTrackingFilter (20));
     
     connect ();
   }
@@ -130,7 +134,6 @@ public class FederationConnector implements IoHandler, Closeable
   void open (IoSession newSession)
   {
     this.session = newSession;
-    this.requestTracker = new RequestTracker (session);
     
     send (new FedConnRqst (VERSION_MAJOR, VERSION_MINOR, serverDomain));
   }
@@ -142,8 +145,6 @@ public class FederationConnector implements IoHandler, Closeable
     
     closing = true;
 
-    requestTracker.shutdown ();
-    
     if (session.isConnected ())
     {
       if (link != null)
@@ -182,8 +183,8 @@ public class FederationConnector implements IoHandler, Closeable
       case Nack.ID:
         handleFedConnNack ((Nack)message);
         break;
-      case RequestTracker.TimeoutMessage.ID:
-        handleRequestTimeout (((RequestTracker.TimeoutMessage)message).request);
+      case RequestTimeoutMessage.ID:
+        handleRequestTimeout (((RequestTimeoutMessage)message).request);
         break;
       case ErrorMessage.ID:
         logError ((ErrorMessage)message, this);
@@ -218,7 +219,7 @@ public class FederationConnector implements IoHandler, Closeable
                 remoteServerDomain + "\"", this);
     
     link =
-      new FederationLink (session, router, requestTracker,
+      new FederationLink (session, router,
                           federationClass, serverDomain, 
                           remoteServerDomain, remoteHost);
   }
@@ -234,9 +235,6 @@ public class FederationConnector implements IoHandler, Closeable
   
   private void send (Message message)
   {
-    if (message instanceof RequestMessage)
-      requestTracker.add ((RequestMessage<?>)message);
-    
     Federation.send (session, serverDomain, message);
   }
   
