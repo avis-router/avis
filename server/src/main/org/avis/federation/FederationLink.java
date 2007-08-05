@@ -12,6 +12,7 @@ import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.Notify;
 import org.avis.io.messages.RequestMessage;
+import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.router.NotifyListener;
 import org.avis.router.Router;
 import org.avis.security.Keys;
@@ -53,7 +54,6 @@ public class FederationLink implements NotifyListener
   
   private IoSession session;
   private Router router;
-  private RequestTracker requestTracker;
   private FederationClass federationClass;
   private String serverDomain;
   private Node remotePullFilter;
@@ -66,8 +66,6 @@ public class FederationLink implements NotifyListener
    * 
    * @param session
    * @param router
-   * @param requestTracker Used to track request/ACK/NACK. Link
-   *                assumes ownership and shuts down on close.
    * @param federationClass
    * @param serverDomain
    * @param remoteServerDomain
@@ -75,7 +73,6 @@ public class FederationLink implements NotifyListener
    */
   public FederationLink (IoSession session,
                          Router router, 
-                         RequestTracker requestTracker,
                          FederationClass federationClass, 
                          String serverDomain, 
                          String remoteServerDomain,
@@ -83,7 +80,6 @@ public class FederationLink implements NotifyListener
   {
     this.session = session;
     this.router = router;
-    this.requestTracker = requestTracker;
     this.federationClass = federationClass;
     this.serverDomain = serverDomain;
     this.remoteServerDomain = remoteServerDomain;
@@ -117,8 +113,6 @@ public class FederationLink implements NotifyListener
   private void close (int reason, String message)
   {
     closed = true;
-    
-    requestTracker.shutdown ();
     
     router.removeNotifyListener (this);
     
@@ -200,10 +194,10 @@ public class FederationLink implements NotifyListener
         handleNack ((Nack)message);
         break;
       case Ack.ID:
-        handleAck ((Ack)message);
+        // zip: handled by request tracking filter
         break;
-      case RequestTracker.TimeoutMessage.ID:
-        handleRequestTimeout (((RequestTracker.TimeoutMessage)message).request);
+      case RequestTimeoutMessage.ID:
+        handleRequestTimeout (((RequestTimeoutMessage)message).request);
         break;
       case ErrorMessage.ID:
         handleError ((ErrorMessage)message);
@@ -232,25 +226,15 @@ public class FederationLink implements NotifyListener
     handleProtocolViolation (message.error.getMessage ());
   }
 
-  private void handleAck (Ack ack)
-  {
-    RequestMessage<?> request = requestTracker.remove (ack);
-    
-    if (request == null)
-      handleProtocolViolation ("Received an ACK for unknown XID " + ack.xid);
-  }
-
   private void handleNack (Nack nack)
   {
-    RequestMessage<?> request = requestTracker.remove (nack);
-    
-    if (request == null)
+    if (nack.request == null)
     {
       handleProtocolViolation ("Received a NACK for unknown XID " + nack.xid);
     } else
     {
       warn ("Disconnecting from remote federator at " + remoteHostName + " " + 
-            "after it rejected a " + request.name (), this);
+            "after it rejected a " + nack.request.name (), this);
       
       close (REASON_REQUEST_REJECTED, "");
     }
@@ -299,9 +283,6 @@ public class FederationLink implements NotifyListener
 
   private WriteFuture send (Message message)
   {
-    if (message instanceof RequestMessage)
-      requestTracker.add ((RequestMessage<?>)message);
-    
     return Federation.send (session, serverDomain, message);
   }
   

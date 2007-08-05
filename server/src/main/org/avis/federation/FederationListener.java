@@ -14,11 +14,11 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
+import org.avis.io.RequestTrackingFilter;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -62,11 +62,10 @@ public class FederationListener implements IoHandler, Closeable
     acceptorConfig.setReuseAddress (true);
     acceptorConfig.setThreadModel (ThreadModel.MANUAL);
     
-    DefaultIoFilterChainBuilder filterChainBuilder =
-      acceptorConfig.getFilterChain ();
+    DefaultIoFilterChainBuilder filterChain = acceptorConfig.getFilterChain ();
 
-    filterChainBuilder.addLast
-      ("codec", new ProtocolCodecFilter (FederationFrameCodec.INSTANCE));
+    filterChain.addLast ("codec", FederationFrameCodec.FILTER);
+    filterChain.addLast ("requestTracker", new RequestTrackingFilter (20));
     
     for (InetSocketAddress address : addresses)
     {
@@ -153,7 +152,7 @@ public class FederationListener implements IoHandler, Closeable
                                      FederationClass federationClass)
   {
     FederationLink link =
-      new FederationLink (session, router, new RequestTracker (session),
+      new FederationLink (session, router,
                           federationClass, serverDomain, 
                           remoteServerDomain, remoteHost);
     
