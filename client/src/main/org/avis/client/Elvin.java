@@ -23,7 +23,6 @@ import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -404,8 +403,8 @@ public final class Elvin implements Closeable
       connectorConfig.setThreadModel (ThreadModel.MANUAL);
       connectorConfig.setConnectTimeout (receiveTimeout);
       
-      connectorConfig.getFilterChain ().addLast
-        ("codec", new ProtocolCodecFilter (ClientFrameCodec.INSTANCE));
+      connectorConfig.getFilterChain ().addLast 
+        ("codec", ClientFrameCodec.FILTER);
       
       ConnectFuture connectFuture =
         connector.connect

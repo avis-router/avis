@@ -14,7 +14,6 @@ import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -91,9 +90,7 @@ public class SimpleClient implements IoHandler
     SocketConnectorConfig cfg = new SocketConnectorConfig ();
     cfg.setConnectTimeout (10);
     
-    cfg.getFilterChain ().addLast
-      ("codec",
-       new ProtocolCodecFilter (ClientFrameCodec.INSTANCE));
+    cfg.getFilterChain ().addLast ("codec", ClientFrameCodec.FILTER);
     ConnectFuture future =
       connector.connect (new InetSocketAddress (hostname, port),
                          this, cfg);

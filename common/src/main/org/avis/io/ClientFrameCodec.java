@@ -1,7 +1,9 @@
 package org.avis.io;
 
+import org.apache.mina.common.IoFilter;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 
@@ -35,6 +37,8 @@ public class ClientFrameCodec
 {
   public static final ClientFrameCodec INSTANCE = new ClientFrameCodec ();
 
+  public static final IoFilter FILTER = new ProtocolCodecFilter (INSTANCE);
+  
   public ProtocolEncoder getEncoder ()
     throws Exception
   {

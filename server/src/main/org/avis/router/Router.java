@@ -16,7 +16,6 @@ import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.ReadThrottleFilterBuilder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
@@ -57,9 +56,9 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
+
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
@@ -147,8 +146,7 @@ public class Router implements IoHandler, Closeable
     DefaultIoFilterChainBuilder filterChainBuilder =
       acceptorConfig.getFilterChain ();
 
-    filterChainBuilder.addLast ("codec",
-                                new ProtocolCodecFilter (ClientFrameCodec.INSTANCE));
+    filterChainBuilder.addLast ("codec", ClientFrameCodec.FILTER);
     
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));
