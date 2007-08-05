@@ -27,7 +27,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * 
  * <ul>
  * <li>Automatically fills in the {@link XidMessage#request} field of
- * XidMessage's</li>
+ * reply XidMessage's</li>
  * <li>Generates ErrorMessage's in place of XID-based replies that
  * have no associated request</li>
  * <li>Generates TimeoutMessage's for requests that do not receive a
@@ -39,21 +39,21 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class RequestTrackingFilter 
   extends IoFilterAdapter implements IoFilter
 {
-  private static int instanceCount;
+  private static int shareCount;
   
-  protected static ScheduledExecutorService executor;
+  protected static ScheduledExecutorService sharedExecutor;
   
-  protected int timeout;
+  protected int replyTimeout;
   protected String filterName;
   
   public RequestTrackingFilter (int timeout)
   {
-    this.timeout = timeout;
+    this.replyTimeout = timeout;
   }
   
   public boolean sharedResourcesDisposed ()
   {
-    return instanceCount == 0;
+    return shareCount == 0;
   }
   
   @Override
@@ -69,7 +69,7 @@ public class RequestTrackingFilter
   public synchronized void filterClose (NextFilter nextFilter, IoSession session)
     throws Exception
   {
-    if (--instanceCount == 0)
+    if (--shareCount == 0)
       destroy ();
     
     nextFilter.filterClose (session);
@@ -79,15 +79,15 @@ public class RequestTrackingFilter
   public void init () 
     throws Exception
   {
-    executor = newScheduledThreadPool (1);
+    sharedExecutor = newScheduledThreadPool (1);
   }
   
   @Override
   public void destroy () 
     throws Exception
   {
-    executor.shutdown ();
-    executor = null;
+    sharedExecutor.shutdown ();
+    sharedExecutor = null;
   }
   
   @Override
@@ -95,7 +95,7 @@ public class RequestTrackingFilter
                                            IoSession session)
     throws Exception
   {
-    if (instanceCount++ == 0)
+    if (shareCount++ == 0)
       init ();
     
     session.setAttribute ("requestTracker", new Tracker (session));
@@ -174,7 +174,7 @@ public class RequestTrackingFilter
     {
       xidToRequest.put (request.xid, new Entry (request));
       
-      scheduleTimeoutCheck (timeout);
+      scheduleTimeoutCheck (replyTimeout);
     }
     
     public synchronized RequestMessage<?> remove (XidMessage reply)
@@ -201,7 +201,7 @@ public class RequestTrackingFilter
     private void scheduleTimeoutCheck (int delay)
     {
       if (timeoutFuture == null)
-        timeoutFuture = executor.schedule (this, delay, SECONDS);
+        timeoutFuture = sharedExecutor.schedule (this, delay, SECONDS);
     }
     
     /**
@@ -219,7 +219,7 @@ public class RequestTrackingFilter
       {
         Entry entry = i.next ().getValue ();
         
-        if ((now - entry.sentAt) / 1000 >= timeout)
+        if ((now - entry.sentTime) / 1000 >= replyTimeout)
         {
           i.remove ();
           
@@ -230,24 +230,24 @@ public class RequestTrackingFilter
             (session, new RequestTimeoutMessage (entry.request));
         } else
         {
-          earliest = min (earliest, entry.sentAt);
+          earliest = min (earliest, entry.sentTime);
         }
       }
       
       if (!xidToRequest.isEmpty ())
-        scheduleTimeoutCheck ((int)((now - earliest) / 1000) + timeout);
+        scheduleTimeoutCheck (replyTimeout - (int)((now - earliest) / 1000));
     }
   }
   
   static class Entry
   {
-    public long sentAt;
+    public long sentTime;
     public RequestMessage<?> request;
 
     public Entry (RequestMessage<?> request)
     {
       this.request = request;
-      this.sentAt = currentTimeMillis ();
+      this.sentTime = currentTimeMillis ();
     }
   }
 }
