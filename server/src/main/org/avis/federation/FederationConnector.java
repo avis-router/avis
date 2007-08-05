@@ -20,13 +20,15 @@ import org.avis.federation.messages.FedConnRqst;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
+import org.avis.io.messages.RequestMessage;
 import org.avis.router.Router;
+
+import static java.lang.Thread.sleep;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
-import static org.avis.federation.Federation.send;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.warn;
@@ -44,13 +46,13 @@ public class FederationConnector implements IoHandler, Closeable
   private Router router;
   private SocketConnector connector;
   private SocketConnectorConfig connectorConfig;
+  private RequestTracker requestTracker;
   private FederationClass federationClass;
   private String serverDomain;
   private FederationLink link;
   private InetSocketAddress remoteAddress;
   private IoSession session;
-  
-  protected volatile boolean closing;
+  private volatile boolean closing;
   
   public FederationConnector (Router router, String serverDomain,
                               EwafURI uri, FederationClass federationClass)
@@ -62,7 +64,7 @@ public class FederationConnector implements IoHandler, Closeable
     this.connector = new SocketConnector (1, router.executor ());
     this.connectorConfig = new SocketConnectorConfig ();
     this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
-
+    
     /* Change the worker timeout to make the I/O thread quit soon
      * when there's no connection to manage. */
     connector.setWorkerTimeout (0);
@@ -78,35 +80,59 @@ public class FederationConnector implements IoHandler, Closeable
   
   void connect ()
   {
+    this.closing = false;
+    
     connector.connect 
       (remoteAddress, this, connectorConfig).addListener (new IoFutureListener ()
     {
       public void operationComplete (IoFuture future)
       {
-        if (closing)
-          return;
-        
-        try
-        {
-          if (!future.isReady ())
-            connect ();
-          else
-            open (future.getSession ());
-        } catch (RuntimeIOException ex)
-        {
-          // todo handle: we get a ConnectException embedded here when refused
-          alarm ("Failed to connect", this, ex);
-        }
+        connectFutureComplete (future);
       }
     });
   }
   
+  protected void connectFutureComplete (IoFuture future)
+  {
+    if (closing)
+      return;
+    
+    try
+    {
+      if (!future.isReady ())
+      {
+        warn ("Connection attempt to federator at " + uri + " timed out: " +
+              "retrying", this);
+        
+        connect ();
+      } else
+      {
+        open (future.getSession ());
+      }
+    } catch (RuntimeIOException ex)
+    {
+      // todo handle: we get a ConnectException embedded here when refused
+      alarm ("Failed to connect to federator at " + uri + ": retrying", 
+             this, ex.getCause ());
+      
+      try
+      {
+        sleep (connectorConfig.getConnectTimeoutMillis ());
+
+        connect ();
+      } catch (InterruptedException ex2)
+      {
+        ex2.printStackTrace ();
+      }
+    }
+  }
+
   void open (IoSession newSession)
   {
     this.session = newSession;
+    this.requestTracker = new RequestTracker (session);
     
-    send (session, serverDomain,
-          new FedConnRqst (VERSION_MAJOR, VERSION_MINOR, serverDomain));
+    send (new FedConnRqst (VERSION_MAJOR, VERSION_MINOR, serverDomain));
   }
   
   public void close ()
@@ -115,6 +141,8 @@ public class FederationConnector implements IoHandler, Closeable
       return;
     
     closing = true;
+
+    requestTracker.shutdown ();
     
     if (session.isConnected ())
     {
@@ -137,6 +165,12 @@ public class FederationConnector implements IoHandler, Closeable
     session = null;
   }
   
+  private void reopen ()
+  {
+    close ();
+    connect ();
+  }
+
   private void handleMessage (Message message)
   {
     // todo check XID
@@ -148,17 +182,33 @@ public class FederationConnector implements IoHandler, Closeable
       case Nack.ID:
         handleFedConnNack ((Nack)message);
         break;
+      case RequestTracker.TimeoutMessage.ID:
+        handleRequestTimeout (((RequestTracker.TimeoutMessage)message).request);
+        break;
       case ErrorMessage.ID:
         logError ((ErrorMessage)message, this);
-        session.close ();
+        close ();
         break;
       default:
-        warn ("Unexpected message during handshake from remote federator at " + 
-              uri + " (disconnecting): " + message.name (), this);
-        session.close ();
+        warn ("Unexpected message during handshake from remote federator at " +  
+              uri + ": " + message.name (), this);
+        // todo add max number of retries
+        reopen ();
     }
   }
   
+  private void handleRequestTimeout (RequestMessage<?> request)
+  {
+    // sanity check
+    if (!(request instanceof FedConnRqst))
+      throw new Error ("Request timeout for illegal message " + request);
+    
+    warn ("Federation connection request to remote federator at " + 
+          uri + " timed out: reconnecting", this);
+    
+    reopen ();
+  }
+
   private void createFederationLink (String remoteServerDomain)
   {
     String remoteHost = remoteAddress.getHostName ();
@@ -168,16 +218,26 @@ public class FederationConnector implements IoHandler, Closeable
                 remoteServerDomain + "\"", this);
     
     link =
-      new FederationLink (session, router, federationClass, serverDomain, 
+      new FederationLink (session, router, requestTracker,
+                          federationClass, serverDomain, 
                           remoteServerDomain, remoteHost);
   }
   
   private void handleFedConnNack (Nack nack)
   {
-    warn ("Remote router at " + uri + " rejected federation connect request: " + 
+    warn ("Closing connection to remote router at " + uri + 
+          " after it rejected federation connect request: " + 
           nack.formattedMessage (), this);
     
-    session.close ();
+    close ();
+  }
+  
+  private void send (Message message)
+  {
+    if (message instanceof RequestMessage)
+      requestTracker.add ((RequestMessage<?>)message);
+    
+    Federation.send (session, serverDomain, message);
   }
   
   // IoHandler  
@@ -191,7 +251,14 @@ public class FederationConnector implements IoHandler, Closeable
   public void sessionClosed (IoSession theSession)
     throws Exception
   {
-    close ();
+    if (!closing)
+    {
+      warn ("Remote federator at " + uri + 
+            " closed connection unexpectedly, reconnecting", this);
+      
+      close ();
+      connect ();
+    }
   }
   
   public void sessionCreated (IoSession theSession)
