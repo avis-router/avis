@@ -46,7 +46,7 @@ public class FederationLink implements NotifyListener
   
   /**
    * Internal disconnection reason code indicating we're shutting down
-   * because the remote federator veotoed a request.
+   * because the remote federator vetoed a request.
    */
   private static final int REASON_REQUEST_REJECTED = -2;
 
