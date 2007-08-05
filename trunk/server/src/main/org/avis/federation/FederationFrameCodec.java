@@ -1,7 +1,9 @@
 package org.avis.federation;
 
+import org.apache.mina.common.IoFilter;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 
@@ -18,8 +20,10 @@ import org.avis.io.messages.Nack;
 public class FederationFrameCodec
   extends FrameCodec implements ProtocolCodecFactory
 {
-  public static final FederationFrameCodec INSTANCE =
+  private static final FederationFrameCodec INSTANCE =
     new FederationFrameCodec ();
+  
+  public static final IoFilter FILTER = new ProtocolCodecFilter (INSTANCE);
 
   public ProtocolEncoder getEncoder ()
     throws Exception
