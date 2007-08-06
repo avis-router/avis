@@ -596,6 +596,12 @@ public class JUTestClient
     client.close ();
   }
   
+  /**
+   * Test close listener support.
+   * 
+   * todo very rarely get a "Shutdown callbacks took too long to
+   * finish" on closing client. suspect deadlock condition possible.
+   */
   @Test
   public void closeListener ()
     throws Exception
