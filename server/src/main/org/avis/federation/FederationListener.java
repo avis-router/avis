@@ -25,7 +25,6 @@ import org.avis.io.messages.Message;
 import org.avis.router.Router;
 
 import static org.apache.mina.common.IoFutureListener.CLOSE;
-
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
@@ -33,7 +32,6 @@ import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
-import static org.avis.logging.Log.internalError;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
 
@@ -228,7 +226,8 @@ public class FederationListener implements IoHandler, Closeable
   public void exceptionCaught (IoSession session, Throwable cause)
     throws Exception
   {
-    internalError ("Error in federator", this, cause);
+    warn ("Unexpected exception while processing federation message", 
+          this, cause);
   }
 
   public void messageSent (IoSession session, Object message)
