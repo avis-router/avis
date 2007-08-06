@@ -295,6 +295,7 @@ public class FederationConnector implements IoHandler, Closeable
   public void exceptionCaught (IoSession theSession, Throwable cause)
     throws Exception
   {
-    alarm ("Error in federator", this, cause);
+    warn ("Unexpected exception while processing federation message", 
+          this, cause);
   }
 }
