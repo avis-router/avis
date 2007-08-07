@@ -56,11 +56,21 @@ public class CloseEvent extends EventObject
    */
   public final String message;
 
-  public CloseEvent (Object source, int reason, String message)
+  /**
+   * The exception that was associated with the reason for closing.
+   * This may be null. It will be set in the case where an exception
+   * occurred during decoding a message from the router and triggered
+   * a close due to protocol violation.
+   */
+  public final Throwable error;
+
+  public CloseEvent (Object source, int reason, 
+                     String message, Throwable error)
   {
     super (source);
     
     this.reason = reason;
     this.message = message;
+    this.error = error;
   }
 }
