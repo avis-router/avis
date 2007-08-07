@@ -33,6 +33,7 @@ import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DisconnRqst;
+import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
@@ -433,12 +434,17 @@ public final class Elvin implements Closeable
     close (REASON_CLIENT_SHUTDOWN, "Client shutting down normally");
   }
   
+  void close (int reason, String message)
+  {
+    close (reason, message, null);
+  }
+  
   /** 
    * Close this connection. May be executed more than once.
    * 
    * @see #isOpen()
    */
-  void close (int reason, String message)
+  void close (int reason, String message, Throwable error)
   {
     /* Use of atomic flag allows close() to be lock-free when already
      * closed, which avoids contention when IoHandler gets a
@@ -471,7 +477,7 @@ public final class Elvin implements Closeable
       for (Subscription subscription : subscriptions.values ())
         subscription.id = 0;
       
-      fireCloseEvent (reason, message);
+      fireCloseEvent (reason, message, error);
       
       ioExecutor.shutdown ();
       callbackExecutor.shutdown ();
@@ -496,7 +502,8 @@ public final class Elvin implements Closeable
     }
   }
   
-  void fireCloseEvent (final int reason, final String message)
+  void fireCloseEvent (final int reason, final String message, 
+                       final Throwable error)
   {
     if (closeListeners.hasListeners ())
     {
@@ -506,7 +513,8 @@ public final class Elvin implements Closeable
         {
           synchronized (mutex ())
           {
-            closeListeners.fire (new CloseEvent (this, reason, message));
+            closeListeners.fire 
+              (new CloseEvent (this, reason, message, error));
           }
         }
       });
@@ -1285,9 +1293,20 @@ public final class Elvin implements Closeable
       case ConfConn.ID:
         // zip: used for liveness checking
         break;
+      case ErrorMessage.ID:
+        handleErrorMessage ((ErrorMessage)message);
+        break;
       default:
         warn ("Unexpected server message: " + message, this);
     }
+  }
+
+  private void handleErrorMessage (ErrorMessage message)
+  {
+    close (REASON_PROTOCOL_VIOLATION, 
+           "Protocol error in communication with router: " + 
+           message.formattedMessage (),
+           message.error);
   }
 
   void handleDisconnect (Disconn disconn)
