@@ -21,6 +21,27 @@ public class ErrorMessage extends Message
     this.cause = cause;
   }
 
+  /**
+   * Generate an error message suitable for presentation as a
+   * debugging aid.
+   */
+  public String formattedMessage ()
+  {
+    StringBuilder message = new StringBuilder ();
+    
+    message.append ("Error decoding ").append (cause.name ());
+    
+    if (error != null)
+    {
+      message.append (": ").append (error.getClass ().getName ());
+      
+      if (error.getMessage () != null)
+        message.append (": ").append (error.getMessage ());
+    }
+    
+    return message.toString (); 
+  }
+  
   @Override
   public int typeId ()
   {
