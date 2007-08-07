@@ -1,3 +1,42 @@
+Release 1.0.2 (August 7, 2007)
+----------------------------------------------------------------------
+
+This release corrects two errors in the router:
+
+ * When encoding multibyte UTF-8 characters in strings, the router was
+   not calculating the length correctly.
+
+ * The router was erroneously expanding C-style escapes in strings
+   (\n, \t, etc) to their equivalvent in a C string (newline, tab,
+   etc).
+
+It also brings the subscription parser more in line with the Elvin
+specification:
+
+  * Field names may now contain a wider range of characters without
+    requiring escapes.
+
+  * Real number acceptance is slightly stricter: in particular, real
+    numbers with no leading digit are no longer accepted, e.g. ".4".
+
+
+Release 1.0.1 (May 20, 2007)
+----------------------------------------------------------------------
+
+This release corrects two bugs in the router. All users of 1.0 are
+advised to upgrade.
+
+Bug fix: the router was ignoring "acceptInsecure" in subscription
+modification (SubModRqst) messages. This meant that a client may
+receive insecure notifications when it had requested only secure
+delivery in the case that the subscription was created with
+acceptInsecure = true, but a subsequent SubModRqst change had set it
+to false.
+
+Bug fix: in subscription expressions size () was not defined for
+strings, only opaque values.
+
+
 Release 1.0 (March 24, 2007)
 ----------------------------------------------------------------------
 
