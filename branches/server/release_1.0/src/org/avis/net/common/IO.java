@@ -17,7 +17,7 @@ import static java.nio.CharBuffer.wrap;
 import static java.util.Collections.emptyMap;
 
 /**
- * I/O helpers for the Elvin XDR wire format.
+ * Encoding/decoding helpers for the Elvin XDR wire format.
  * 
  * @author Matthew Phillips
  */
@@ -33,11 +33,11 @@ public final class IO
    *       opaque_tc = 5
    *   } value_typecode;
    */
-  private static final int TYPE_INT32  = 1;
-  private static final int TYPE_INT64  = 2;
-  private static final int TYPE_REAL64 = 3;
-  private static final int TYPE_STRING = 4;
-  private static final int TYPE_OPAQUE = 5;
+  public static final int TYPE_INT32  = 1;
+  public static final int TYPE_INT64  = 2;
+  public static final int TYPE_REAL64 = 3;
+  public static final int TYPE_STRING = 4;
+  public static final int TYPE_OPAQUE = 5;
 
   private static final byte [] EMPTY_BYTES = new byte [0];
   
@@ -47,6 +47,7 @@ public final class IO
   private static final ThreadLocal<CharsetDecoder> UTF8_DECODER =
     new ThreadLocal<CharsetDecoder> ()
   {
+    @Override
     protected CharsetDecoder initialValue ()
     {
       return Charset.forName ("UTF-8").newDecoder ();
@@ -59,6 +60,7 @@ public final class IO
   private static final ThreadLocal<CharsetEncoder> UTF8_ENCODER =
     new ThreadLocal<CharsetEncoder> ()
   {
+    @Override
     protected CharsetEncoder initialValue ()
     {
       return Charset.forName ("UTF-8").newEncoder ();
@@ -83,6 +85,27 @@ public final class IO
       // shouldn't be possible to get an error encoding from UTF-16 to UTF-8.
       throw new Error ("Internal error", ex);
     }
+  }
+  
+  /**
+   * Turn a UTF-8 byte array into a string.
+   * 
+   * @param utf8Bytes The bytes.
+   * @param offset The offset into bytes.
+   * @param length The number of bytes to use.
+   * @return The string.
+   * 
+   * @throws CharacterCodingException if the bytes do not represent a
+   *           UTF-8 string.
+   */
+  public static String fromUTF8 (byte [] utf8Bytes, int offset, int length)
+    throws CharacterCodingException
+  { 
+    if (utf8Bytes.length == 0)
+      return "";
+    else
+      return UTF8_DECODER.get ().decode
+        (java.nio.ByteBuffer.wrap (utf8Bytes, offset, length)).toString ();
   }
   
   /**
@@ -124,9 +147,19 @@ public final class IO
         out.putInt (0);
       } else
       {
-        out.putInt (string.length ());
+        int start = out.position ();
+        
+        out.skip (4);
+        
         out.putString (string, UTF8_ENCODER.get ());
-        putPadding (out, string.length ());
+        
+        // write length
+        
+        int byteCount = out.position () - start - 4;
+        
+        out.putInt (start, byteCount);
+        
+        putPadding (out, byteCount);
       }
     } catch (CharacterCodingException ex)
     {
@@ -140,20 +173,18 @@ public final class IO
    */
   public static void putPadding (ByteBuffer out, int length)
   {
-    putBytes (out, (byte)0, paddingFor (length));
+    for (int count = paddingFor (length); count > 0; count--)
+      out.put ((byte)0);
   }
 
   /**
-   * Calculate the padding for a block of length bytes to a multiple
-   * of 4.
-   * 
-   * TODO opt: there's probably some funky faster way to do this.
+   * Calculate the padding needed for the size of a block of bytes to
+   * be a multiple of 4.
    */
   public static int paddingFor (int length)
   {
-    int mod = length % 4;
-    
-    return mod == 0 ? 0 : 4 - mod;
+    // tricky eh? this is equivalent to (4 - length % 4) % 4
+    return (4 - (length & 3)) & 3;
   }
 
   /**
@@ -283,19 +314,6 @@ public final class IO
   }
 
   /**
-   * Write a series of bytes.
-   * 
-   * @param out The buffer to write to.
-   * @param value The value to write
-   * @param count The number of times to write value.
-   */
-  public static void putBytes (ByteBuffer out, byte value, int count)
-  {
-    for ( ; count > 0; count--)
-      out.put (value);
-  }
-  
-  /**
    * Read a length-delimited, 4-byte-aligned byte array.
    */
   public static byte [] getBytes (ByteBuffer in)
@@ -357,5 +375,30 @@ public final class IO
     
     for (long l : longs)
       out.putLong (l);
+  }
+
+  /**
+   * Read a length-demlimited array of strings.
+   */
+  public static String [] getStringArray (ByteBuffer in)
+    throws BufferUnderflowException, ProtocolCodecException
+  {
+    String [] strings = new String [in.getInt ()];
+    
+    for (int i = 0; i < strings.length; i++)
+      strings [i] = getString (in);
+    
+    return strings;
+  }
+
+  /**
+   * Write a length-delimted array of strings.
+   */
+  public static void putStringArray (ByteBuffer out, String [] strings)
+  {
+    out.putInt (strings.length);
+    
+    for (String s : strings)
+      putString (out, s);
   }
 }
