@@ -2,7 +2,7 @@ package org.avis.pubsub.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.pubsub.ast.Node;
+import org.avis.pubsub.ast.NameParentNode;
 
 /**
  * Test whether a field is a given type. Can be used for int32(),
@@ -10,44 +10,32 @@ import org.avis.pubsub.ast.Node;
  * 
  * @author Matthew Phillips
  */
-public class Type extends Node<Boolean>
+public class Type extends NameParentNode
 {
-  private String field;
-  private Class type;
+  public Class<?> type;
 
-  public Type (Field field, Class type)
+  public Type (Field field, Class<?> type)
   {
     this (field.fieldName (), type);
   }
 
-  public Type (String field, Class type)
+  public Type (String field, Class<?> type)
   {
-    this.field = field;
+    super (field);
+    
     this.type = type;
   }
 
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
   
   @Override
-  public String presentation ()
+  public Object evaluate (Map<String, Object> attrs)
   {
-    return name ();
-  }
-
-  @Override
-  public Node<Boolean> inlineConstants ()
-  {
-    return this;
-  }
-
-  @Override
-  public Boolean evaluate (Map<String, Object> attrs)
-  {
-    Object value = attrs.get (field);
+    Object value = attrs.get (name);
     
     if (value == null)
       return BOTTOM;
@@ -58,21 +46,17 @@ public class Type extends Node<Boolean>
   @Override
   public String expr ()
   {
-    String op;
-    
     if (type == Integer.class)
-      op = "int32";
+      return "int32";
     else if (type == Long.class)
-      op = "int64";
+      return "int64";
     else if (type == Double.class)
-      op = "real64";
+      return "real64";
     else if (type == String.class)
-      op = "string";
+      return "string";
     else if (type == byte [].class)
-      op = "opaque";
+      return "opaque";
     else
-      op = type.getClass ().getName ();
-    
-    return op + ' ' + field;
+      return type.getClass ().getName ();
   }
 }

@@ -4,61 +4,16 @@ package org.avis.pubsub.parser;
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
-import org.avis.pubsub.ast.*;
+import org.avis.pubsub.ast.Node;
 import org.avis.pubsub.ast.nodes.*;
+
 
 @SuppressWarnings ("all")
 public class SubscriptionParser extends SubscriptionParserBase implements SubscriptionParserConstants {
-  /**
-   * Parse an expression with syntax and basic type checking. Does not check
-   * for boolean result type or const-ness. See {@link #parseAndValidate} if
-   * you want a guaranteed correct subscription expression.
-   */
-  public Node parse ()
+  Node doParse ()
     throws ParseException
   {
-    try
-    {
-      return Start ();
-    } catch (IllegalChildException ex)
-    {
-      throw new ParseException ("Illegal expression: " + ex.getMessage ());
-    } catch (TokenMgrError ex)
-    {
-      throw new ParseException (ex.getMessage ());
-    } catch (PatternSyntaxException ex)
-    {
-      // regex () had an invalid pattern
-      throw new ParseException
-        ("Invalid regex \"" + ex.getPattern () + "\": " + ex.getDescription ());
-    }
-  }
-
-  /**
-   * Execute {@link #parse()} and validate the result is a type-correct, 
-   * non-constant subscription expression.
-   *
-   * @throws ParseExpression if parse () fails or if the resulting expression
-   * is not a valid subscription.
-   */
-  public Node<Boolean> parseAndValidate ()
-    throws ParseException
-  {
-    Node node = parse ();
-
-    if (node.evalType () == Boolean.class)
-    {
-      node = node.inlineConstants ();
-
-      if (!(node instanceof Const))
-        return node;
-      else
-        throw new ParseException ("Expression is " + node.expr ());
-    } else
-    {
-      throw new ParseException
-        ("Expression does not evaluate to boolean true/false: " + node.expr ());
-    }
+    return Start ();
   }
 
   final public Node Start() throws ParseException {
@@ -473,7 +428,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
       case 30:
         jj_consume_token(30);
         node = ValueExp();
-                            {if (true) return new MathMinus (Const.CONST_ZERO, node);}
+                            {if (true) return new MathUnaryMinus (node);}
         break;
       case 31:
         jj_consume_token(31);
@@ -519,7 +474,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     else if (func.equals ("fold-case"))
       node = new StrFoldCase (StringValue ());
     else if (func.equals ("equals"))
-      node = Compare.create (CompareArgs ());
+      node = Compare.createEquals (CompareArgs ());
     else if (func.equals ("require"))
       node = new Require (Name ());
     else if (func.equals ("int32"))
@@ -702,7 +657,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
   Token t;
     t = jj_consume_token(STRING_LITERAL);
     {if (true) return new Const
-      (expandBackslashes (t.image.substring (1, t.image.length () - 1)));}
+      (stripBackslashes (t.image.substring (1, t.image.length () - 1)));}
     throw new Error("Missing return statement in function");
   }
 

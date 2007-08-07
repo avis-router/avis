@@ -9,14 +9,14 @@ import static org.avis.util.Format.className;
  */
 public abstract class MathIntParentNode extends MathParentNode
 {
-  public MathIntParentNode (Node<? extends Number> child1,
-                            Node<? extends Number> child2)
+  public MathIntParentNode (Node child1,
+                            Node child2)
   {
     super (child1, child2);
   }
   
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Integer.class;
   }
@@ -24,7 +24,7 @@ public abstract class MathIntParentNode extends MathParentNode
   @Override
   protected String validateChild (Node child)
   {
-    Class childType = child.evalType ();
+    Class<?> childType = child.evalType ();
     
     if (childType == Object.class)
     {
@@ -33,8 +33,8 @@ public abstract class MathIntParentNode extends MathParentNode
     } else if (!(Integer.class.isAssignableFrom (childType) ||
                  Long.class.isAssignableFrom (childType)))
     {
-      return expr () + " needs an integer as an argument (was " +
-             className (child.evalType ()) + ")";
+      return "\"" + expr () + "\" needs an integer as an argument (was " +
+             className (child.evalType ()).toLowerCase () + ")";
     } else 
     {
       return null;

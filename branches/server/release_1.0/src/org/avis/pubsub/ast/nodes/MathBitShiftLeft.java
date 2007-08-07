@@ -5,8 +5,8 @@ import org.avis.pubsub.ast.Node;
 
 public class MathBitShiftLeft extends MathIntParentNode
 {
-  public MathBitShiftLeft (Node<? extends Number> child1,
-                           Node<? extends Number> child2)
+  public MathBitShiftLeft (Node child1,
+                           Node child2)
   {
     super (child1, child2);
   }

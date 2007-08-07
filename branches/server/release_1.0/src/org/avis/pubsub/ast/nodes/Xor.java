@@ -1,5 +1,6 @@
 package org.avis.pubsub.ast.nodes;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.avis.pubsub.ast.BoolParentNode;
@@ -7,16 +8,27 @@ import org.avis.pubsub.ast.Node;
 
 public class Xor extends BoolParentNode
 {
-  public Xor (Node<Boolean> node1)
+  public Xor (Node node1)
   {
     super (node1);
   }
   
-  public Xor (Node<Boolean> node1, Node<Boolean> node2)
+  public Xor (Node node1, Node node2)
   {
     super (node1, node2);
   }
   
+  
+  public Xor (Collection<? extends Node> children)
+  {
+    super (children);
+  }
+
+  public Xor (Node... children)
+  {
+    super (children);
+  }
+
   @Override
   public String expr ()
   {
@@ -24,18 +36,18 @@ public class Xor extends BoolParentNode
   }
   
   @Override
-  public Node<Boolean> inlineConstants ()
+  public Node inlineConstants ()
   {
     for (int i = children.size () - 1; i >= 0; i--)
     {
-      Node<Boolean> child = children.get (i);
-      Node<Boolean> newChild = child.inlineConstants ();
+      Node child = children.get (i);
+      Node newChild = child.inlineConstants ();
       
       if (child != newChild)
         children.set (i, newChild);
     }
     
-    Boolean result = evaluate (EMPTY_NOTIFICATION);
+    Boolean result = (Boolean)evaluate (EMPTY_NOTIFICATION);
     
     if (result != BOTTOM)
       return Const.bool (result);
@@ -44,13 +56,13 @@ public class Xor extends BoolParentNode
   }
   
   @Override
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Boolean value = FALSE;
     
     for (int i = 0; i < children.size (); i++)
     {
-      Boolean result = children.get (i).evaluate (attrs);
+      Object result = children.get (i).evaluate (attrs);
       
       if (result == BOTTOM)
       {

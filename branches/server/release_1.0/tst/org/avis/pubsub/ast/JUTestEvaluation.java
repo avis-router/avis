@@ -1,15 +1,14 @@
 package org.avis.pubsub.ast;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import java.io.StringReader;
 
 import java.lang.reflect.Constructor;
 
-import org.junit.Test;
-
-import org.avis.common.Notification;
 import org.avis.pubsub.ast.nodes.And;
 import org.avis.pubsub.ast.nodes.Compare;
 import org.avis.pubsub.ast.nodes.Const;
@@ -26,6 +25,7 @@ import org.avis.pubsub.ast.nodes.MathMinus;
 import org.avis.pubsub.ast.nodes.MathMod;
 import org.avis.pubsub.ast.nodes.MathMult;
 import org.avis.pubsub.ast.nodes.MathPlus;
+import org.avis.pubsub.ast.nodes.MathUnaryMinus;
 import org.avis.pubsub.ast.nodes.Nan;
 import org.avis.pubsub.ast.nodes.Not;
 import org.avis.pubsub.ast.nodes.Or;
@@ -43,13 +43,17 @@ import org.avis.pubsub.ast.nodes.Xor;
 import org.avis.pubsub.parser.ParseException;
 import org.avis.pubsub.parser.SubscriptionParser;
 
+import org.junit.Test;
+
 import static java.lang.Double.NaN;
+
 import static org.avis.pubsub.ast.Node.BOTTOM;
 import static org.avis.pubsub.ast.Node.EMPTY_NOTIFICATION;
 import static org.avis.pubsub.ast.Node.FALSE;
 import static org.avis.pubsub.ast.Node.TRUE;
 import static org.avis.pubsub.ast.nodes.StrUnicodeDecompose.DECOMPOSE;
 import static org.avis.pubsub.ast.nodes.StrUnicodeDecompose.DECOMPOSE_COMPAT;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -92,7 +96,7 @@ public class JUTestEvaluation
     for (Boolean state : LOGIC_STATES)
     {
       assertEquals (NOT_TRUTH_TABLE [index],
-                    new Not (new Const<Boolean> (state)).evaluate (EMPTY_NOTIFICATION));
+                    new Not (new Const (state)).evaluate (EMPTY_NOTIFICATION));
       
       index++;
     }
@@ -148,58 +152,58 @@ public class JUTestEvaluation
   @Test
   public void logicOpExprs ()
   {
-    Node<Boolean> expr1 = logicOpExpr1 ();
+    Node expr1 = logicOpExpr1 ();
     
-    Notification n1 = new Notification ();
+    Map<String, Object> n1 = new HashMap<String, Object> ();
     n1.put ("name", "Matt");
     n1.put ("age", 19);
     n1.put ("blah", "blah");
     
-    assertTrue (expr1.evaluate (n1));
+    assertTrue (expr1.evaluate (n1) == TRUE);
     
-    Notification n2 = new Notification ();
+    Map<String, Object> n2 = new HashMap<String, Object> ();
     n2.put ("name", "Matt");
     n2.put ("age", 30);
     n2.put ("blah", "blah");
     
-    assertFalse (expr1.evaluate (n2));
+    assertFalse (expr1.evaluate (n2) == TRUE);
     
-    Notification n3 = new Notification ();
+    Map<String, Object> n3 = new HashMap<String, Object> ();
     n3.put ("name", "Matt");
     n3.put ("blah", "blah");
     
     assertEquals (BOTTOM, expr1.evaluate (n3));
     
-    Notification n4 = new Notification ();
+    Map<String, Object> n4 = new HashMap<String, Object> ();
     n4.put ("name", "Matt");
     n4.put ("age", 19);
     n4.put ("blah", "frob");
     
-    assertFalse (expr1.evaluate (n4));
+    assertFalse (expr1.evaluate (n4) == TRUE);
     
     // XOR tests
     
-    Node<Boolean> expr2 = logicOpExpr2 ();
+    Node expr2 = logicOpExpr2 ();
     
-    Notification n5 = new Notification ();
+    Map<String, Object> n5 = new HashMap<String, Object> ();
     n5.put ("name", "Matt");
     n5.put ("age", 5);
     
-    assertTrue (expr2.evaluate (n5));
+    assertTrue (expr2.evaluate (n5) == TRUE);
     
-    Notification n6 = new Notification ();
+    Map<String, Object> n6 = new HashMap<String, Object> ();
     n6.put ("name", "Matt");
     n6.put ("age", 30);
     
-    assertFalse (expr2.evaluate (n6));
+    assertFalse (expr2.evaluate (n6) == TRUE);
     
-    Notification n7 = new Notification ();
+    Map<String, Object> n7 = new HashMap<String, Object> ();
     n7.put ("hello", "there");
     
     assertEquals (BOTTOM, expr2.evaluate (n7));
     
     // opaque data
-    Notification n8 = new Notification ();
+    Map<String, Object> n8 = new HashMap<String, Object> ();
     n8.put ("name", new byte [] {1, 2, 3});
     n8.put ("age", 30);
     
@@ -210,7 +214,7 @@ public class JUTestEvaluation
   public void functions ()
     throws Exception
   {
-    Notification ntfn;
+    Map<String, Object> ntfn;
     
     // basic string comparison predicates
     testPred (StrBeginsWith.class, "foobar", "foo", TRUE);
@@ -232,15 +236,19 @@ public class JUTestEvaluation
     testPred (StrWildcard.class, "foobar", "fo*a?", TRUE);
     testPred (StrWildcard.class, "foobar", "fo*a", FALSE);
     testPred (StrWildcard.class, null, "fo*a?", BOTTOM);
+    testPred (StrWildcard.class, "fo*a", "fo\\*a", TRUE);
+    testPred (StrWildcard.class, "foxa", "fo\\*a", FALSE);
+    testPred (StrWildcard.class, "fo\\", "fo\\\\", TRUE);
+    testPred (StrWildcard.class, "fo\\", "fo\\", TRUE);
     
     // require
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("exists", "true");
     assertEquals (TRUE, new Require ("exists").evaluate (ntfn));
     assertEquals (BOTTOM, new Require ("not_exists").evaluate (ntfn));
     
     // size
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("opaque", new byte [10]);
     ntfn.put ("string", "1234");
     ntfn.put ("int32", 1234);
@@ -251,42 +259,42 @@ public class JUTestEvaluation
     
     // fold-case
     assertEquals ("hello",
-                  new StrFoldCase (new Const<String> ("HellO")).evaluate (EMPTY_NOTIFICATION));
+                  new StrFoldCase (new Const ("HellO")).evaluate (EMPTY_NOTIFICATION));
     assertEquals (BOTTOM,
-                  new StrFoldCase (new Const<String> (null)).evaluate (EMPTY_NOTIFICATION));
+                  new StrFoldCase (new Const (null)).evaluate (EMPTY_NOTIFICATION));
     
     // decompose
     // see examples at http://unicode.org/reports/tr15/#Canonical_Composition_Examples
     assertEquals ("\u0041\u0301",
                   new StrUnicodeDecompose
-                    (new Const<String> ("\u00C1"),
+                    (new Const ("\u00C1"),
                      DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
     assertEquals ("A\u0308\uFB03n",
                   new StrUnicodeDecompose
-                    (new Const<String> ("\u00C4\uFB03n"),
+                    (new Const ("\u00C4\uFB03n"),
                      DECOMPOSE).evaluate (EMPTY_NOTIFICATION));
     assertEquals ("A\u0308ffin",
                   new StrUnicodeDecompose
-                    (new Const<String> ("\u00C4\uFB03n"),
+                    (new Const ("\u00C4\uFB03n"),
                      DECOMPOSE_COMPAT).evaluate (EMPTY_NOTIFICATION));
     
     // nan
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("nan", NaN);
     ntfn.put ("notnan", 42.0);
     ntfn.put ("notnan_int", 42);
     
     assertEquals (TRUE,
-                  new Nan (new Field<Double> ("nan")).evaluate (ntfn));
+                  new Nan (new Field ("nan")).evaluate (ntfn));
     assertEquals (FALSE,
-                  new Nan (new Field<Double> ("notnan")).evaluate (ntfn));
+                  new Nan (new Field ("notnan")).evaluate (ntfn));
     assertEquals (BOTTOM,
-                  new Nan (new Field<Double> ("notnan_int")).evaluate (ntfn));
+                  new Nan (new Field ("notnan_int")).evaluate (ntfn));
     assertEquals (BOTTOM,
-                  new Nan (new Field<Double> ("nonexistent")).evaluate (ntfn));
+                  new Nan (new Field ("nonexistent")).evaluate (ntfn));
     
     // type checks
-    ntfn = new Notification ();
+    ntfn = new HashMap<String, Object> ();
     ntfn.put ("int32", 1);
     ntfn.put ("int64", 2L);
     ntfn.put ("real64", 42.0);
@@ -294,33 +302,32 @@ public class JUTestEvaluation
     ntfn.put ("opaque", new byte [] {1, 2, 3});
     
     assertEquals (TRUE,
-                  new Type (new Field<Integer> ("int32"), Integer.class).evaluate (ntfn));
+                  new Type ("int32", Integer.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field<Long> ("int64"), Long.class).evaluate (ntfn));
+                 new Type ("int64", Long.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field<Double> ("real64"), Double.class).evaluate (ntfn));
+                 new Type ("real64", Double.class).evaluate (ntfn));
     assertEquals (TRUE,
-                 new Type (new Field<String> ("string"), String.class).evaluate (ntfn));
+                 new Type ("string", String.class).evaluate (ntfn));
     assertEquals (TRUE,
-                  new Type (new Field<byte []> ("opaque"), byte [].class).evaluate (ntfn));
+                  new Type ("opaque", byte [].class).evaluate (ntfn));
     assertEquals (FALSE,
-                  new Type (new Field<String> ("string"), Integer.class).evaluate (ntfn));
+                  new Type ("string", Integer.class).evaluate (ntfn));
     assertEquals (BOTTOM,
-                  new Type (new Field<String> ("nonexistent"), String.class).evaluate (ntfn));
+                  new Type ("nonexistent", String.class).evaluate (ntfn));
   }
   
   /**
    * Check that variable-type expressions like equals (name, "foobar",
    * 42) work.
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void compareMultitype ()
   {
-    Notification ntfn = new Notification ();
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("name", "foobar");
     
-    Node<Boolean> node = Compare.create (argsList (new Field<String> ("name"),
+    Node node = Compare.createEquals (argsList (field ("name"),
                                                    Const.string ("foobar"),
                                                    Const.int32 (42)));
     assertEquals (TRUE, node.evaluate (ntfn));
@@ -340,8 +347,8 @@ public class JUTestEvaluation
     testMathOp (MathMinus.class, 20L - 30L, Const.int64 (20), Const.int64 (30));
     testMathOp (MathMinus.class, 10.5 - 20.25, Const.real64 (10.5), Const.real64 (20.25));
     testMathOp (MathMinus.class, 10 - 20.25, Const.int32 (10), Const.real64 (20.25));
-    testMathOp (MathMinus.class, null, new Field<String> ("string"), Const.real64 (20.25));
-    testMathOp (MathMinus.class, null, Const.int32 (10), new Field<Number> (""));
+    testMathOp (MathMinus.class, null, new Field ("string"), Const.real64 (20.25));
+    testMathOp (MathMinus.class, null, Const.int32 (10), new Field (""));
     
     testMathOp (MathPlus.class, 20 + 30, Const.int32 (20), Const.int32 (30));
     testMathOp (MathPlus.class, 20L + 30L, Const.int64 (20), Const.int64 (30));
@@ -398,7 +405,7 @@ public class JUTestEvaluation
     testMathOp (MathBitLogShiftRight.class, 20L >>> 30, Const.int64 (20), Const.int32 (30));
     
     // bitwise complement ~
-    Notification ntfn = new Notification ();
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("string", "string");
     
     MathBitInvert invert;
@@ -409,8 +416,27 @@ public class JUTestEvaluation
     invert = new MathBitInvert (Const.int64 (1234567890L));
     assertEquals (~1234567890L, invert.evaluate (ntfn));
     
-    invert = new MathBitInvert (new Field<Integer> ("string"));
+    invert = new MathBitInvert (new Field ("string"));
     assertEquals (null, invert.evaluate (ntfn));
+    
+    // unary minus
+    MathUnaryMinus unaryMinus = new MathUnaryMinus (Const.int32 (42));
+    assertEquals (-42, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.int32 (-42));
+    assertEquals (42, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.int32 (0));
+    assertEquals (0, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.int64 (123));
+    assertEquals (-123l, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (Const.real64 (3.14));
+    assertEquals (-3.14, unaryMinus.evaluate (ntfn));
+    
+    unaryMinus = new MathUnaryMinus (new Field ("string"));
+    assertEquals (null, unaryMinus.evaluate (ntfn));
   }
   
   /**
@@ -419,37 +445,37 @@ public class JUTestEvaluation
   @Test
   public void numericPromotion ()
   {
-    Const<Long> thirtyTwoLong = new Const<Long> (32L);
-    Const<Integer> thirtyTwoInt = new Const<Integer> (32);
-    Const<Integer> tenInt = new Const<Integer> (10);
-    Const<Double> piDouble = new Const<Double> (3.1415);
+    Const thirtyTwoLong = new Const (32L);
+    Const thirtyTwoInt = new Const (32);
+    Const tenInt = new Const (10);
+    Const piDouble = new Const (3.1415);
     
     Compare compare;
    
     // 32L < 10
     compare = new Compare (thirtyTwoLong, tenInt, -1, false);
     
-    assertEquals (FALSE, compare.evaluate (new Notification ()));
+    assertEquals (FALSE, compare.evaluate (new HashMap<String, Object> ()));
     
     // 10 > 32L
     compare = new Compare (tenInt, thirtyTwoLong, -1, false);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
     
     // 10 > pi
     compare = new Compare (tenInt, piDouble, 1, false);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
     
     // 32 > pi
     compare = new Compare (thirtyTwoLong, piDouble, 1, false);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
     
     //  32 == 32L
     compare = new Compare (thirtyTwoInt, thirtyTwoLong, 0, true);
     
-    assertEquals (TRUE, compare.evaluate (new Notification ()));
+    assertEquals (TRUE, compare.evaluate (new HashMap<String, Object> ()));
   }
   
   /**
@@ -461,37 +487,38 @@ public class JUTestEvaluation
     throws ParseException
   {
     // test reduction to constant
-    assertReducesTo ("1 == 1", "(constant 'true')");
-    assertReducesTo ("1 != 1", "(constant 'false')");
-    assertReducesTo ("1 != 1", "(constant 'false')");
-    assertReducesTo ("10 > 9", "(constant 'true')");
-    assertReducesTo ("!(10 > 9)", "(constant 'false')");
-    assertReducesTo ("1 == 1 ^^ 10 > 9", "(constant 'false')");
-    assertReducesTo ("1 != 1 || 2 != 2 || 3 != 3", "(constant 'false')");
-    assertReducesTo ("1 == 1 && 2 == 2 && 3 == 3", "(constant 'true')");
-
+    assertReducesTo ("1 == 1", "true");
+    assertReducesTo ("1 != 1", "false");
+    assertReducesTo ("1 != 1", "false");
+    assertReducesTo ("10 > 9", "true");
+    assertReducesTo ("!(10 > 9)", "false");
+    assertReducesTo ("1 == 1 ^^ 10 > 9", "false");
+    assertReducesTo ("1 != 1 || 2 != 2 || 3 != 3", "false");
+    assertReducesTo ("1 == 1 && 2 == 2 && 3 == 3", "true");
+    assertReducesTo ("! ! (1 == 1)", "true");
+    
     // test AND/OR erasure of constant non-contributing subtree
-    assertReducesTo ("field == 5 && 10 > 9", "(== (field 'field') (int32 5))");
-    assertReducesTo ("field == 5 || 10 < 9", "(== (field 'field') (int32 5))");
-    assertReducesTo ("field == 5 || !(10 > 9)", "(== (field 'field') (int32 5))");
+    assertReducesTo ("field == 5 && 10 > 9", "(== (field 'field') 5)");
+    assertReducesTo ("field == 5 || 10 < 9", "(== (field 'field') 5)");
+    assertReducesTo ("field == 5 || !(10 > 9)", "(== (field 'field') 5)");
 
     // test redundant constants are removed from AND/OR
     assertReducesTo ("field == 5 || 9 > 10 || field == 10",
-                     "(|| (== (field 'field') (int32 5)) (== (field 'field') (int32 10)))");
+                     "(|| (== (field 'field') 5) (== (field 'field') 10))");
     assertReducesTo ("field == 5 && 10 > 9 && field == 10",
-                     "(&& (== (field 'field') (int32 5)) (== (field 'field') (int32 10)))");
+                     "(&& (== (field 'field') 5) (== (field 'field') 10))");
     
     // predicate functions
-    assertReducesTo ("fold-case ('HellO')", "(string 'hello')");
-    assertReducesTo ("decompose ('\u00C4\uFB03n')", "(string 'A\u0308\uFB03n')");
-    assertReducesTo ("decompose-compat ('\u00C4\uFB03n')", "(string 'A\u0308ffin')");
+    assertReducesTo ("fold-case ('HellO')", "'hello'");
+    assertReducesTo ("decompose ('\u00C4\uFB03n')", "'A\u0308\uFB03n'");
+    assertReducesTo ("decompose-compat ('\u00C4\uFB03n')", "'A\u0308ffin'");
     
     // some math ops
-    assertReducesTo ("-10", "(int32 -10)");
-    assertReducesTo ("1 + 1", "(int32 2)");
-    assertReducesTo ("2 * 4.5", "(real64 9.0)");
-    assertReducesTo ("0xFF & 0xF0", "(int32 240)");
-    assertReducesTo ("0x0F << 4", "(int32 240)");
+    assertReducesTo ("-10", "-10");
+    assertReducesTo ("1 + 1", "2");
+    assertReducesTo ("2 * 4.5", "9.0");
+    assertReducesTo ("0xFF & 0xF0", "240");
+    assertReducesTo ("0x0F << 4", "240");
   }
   
   /**
@@ -502,14 +529,16 @@ public class JUTestEvaluation
    * @param number1 Number parameter 1
    * @param number2 Number parameter 1
    */
-  private static void testMathOp (Class<? extends Node> opType, Object correct,
+  private static void testMathOp (Class<? extends Node> opType,
+                                  Object correct,
                                   Node number1, Node number2)
     throws Exception
   {
-    Node<?> op =
-      opType.getConstructor (Node.class, Node.class).newInstance (number1, number2);
+    Node op =
+      opType.getConstructor (Node.class, Node.class).newInstance (number1,
+                                                                  number2);
     
-    Notification ntfn = new Notification ();
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("string", "string");
     
     assertEquals (correct, op.evaluate (ntfn));
@@ -518,10 +547,15 @@ public class JUTestEvaluation
   /**
    * Create a list from an array of nodes.
    */
-  private static List<Node<? extends Comparable>>
-    argsList (Node<? extends Comparable>... args)
+  private static List<Node> argsList (Node... args)
   {
-    return Arrays.asList (args);
+    ArrayList<Node> argArray =
+      new ArrayList<Node> (args.length);
+    
+    for (Node node : args)
+      argArray.add (node);
+
+    return argArray;
   }
 
   /**
@@ -536,9 +570,9 @@ public class JUTestEvaluation
                                 String arg1, String arg2, Boolean answer)
     throws Exception
   {
-    Node<Boolean> node =
+    Node node =
       type.getConstructor (Node.class, Const.class).newInstance
-        (new Const<String> (arg1), new Const<String> (arg2));
+        (new Const (arg1), new Const (arg2));
     
     assertEquals (answer, node.evaluate (EMPTY_NOTIFICATION));
   }
@@ -566,14 +600,14 @@ public class JUTestEvaluation
    * @param b Right value
    * @param correct Correct result
    */
-  private static <NODE extends Node<Boolean>>
+  private static <NODE extends Node>
     void checkTruthTable (Class<NODE> opType,
                           Boolean a, Boolean b,
                           Boolean correct)
     throws Exception
   {
     NODE node = newLogicNodeInstance (opType, a, b);
-    Boolean result = node.evaluate (EMPTY_NOTIFICATION);
+    Object result = node.evaluate (EMPTY_NOTIFICATION);
     
     assertEquals (String.format
                     ("Truth table check failed: " +
@@ -587,14 +621,14 @@ public class JUTestEvaluation
    * Create a new node instance for nodes taking two fixed value
    * boolean children.
    */
-  private static <NODE extends Node<Boolean>>
+  private static <NODE extends Node>
     NODE newLogicNodeInstance (Class<NODE> nodeType, Boolean a, Boolean b)
     throws Exception
   {
     Constructor<NODE> c =
       nodeType.getConstructor (Node.class, Node.class);
     
-    return c.newInstance (new Const<Boolean> (a), new Const<Boolean> (b));
+    return c.newInstance (new Const (a), new Const (b));
   }
 
   /**
@@ -602,9 +636,9 @@ public class JUTestEvaluation
    */
   private Boolean compare (int n1, int n2, int inequality, boolean equality)
   {
-    return new Compare
-      (new Const<Integer> (n1),
-       new Const<Integer> (n2),
+    return (Boolean)new Compare
+      (new Const (n1),
+       new Const (n2),
        inequality, equality).evaluate (EMPTY_NOTIFICATION);
   }
   
@@ -613,19 +647,18 @@ public class JUTestEvaluation
   * 
   * name == "Matt" && (age < 20 || age >= 50) && ! blah == "frob"
   */
-  @SuppressWarnings("unchecked")
-  private static Node<Boolean> logicOpExpr1 ()
+  private static Node logicOpExpr1 ()
   {
     return new And
       (new Compare
-        (new Field<String> ("name"), new Const<String> ("Matt"), 0, true),
+        (field ("name"), new Const ("Matt"), 0, true),
        new Or
          (new Compare
-           (new Field<Integer> ("age"), new Const<Integer> (20), -1, false),
+           (field ("age"), new Const (20), -1, false),
           new Compare
-           (new Field<Integer> ("age"), new Const<Integer> (50), 1, true)),
+           (field ("age"), new Const (50), 1, true)),
        new Not
-         (new Compare (new Field<String> ("blah"), new Const<String> ("frob"), 0, true)));
+         (new Compare (field ("blah"), new Const ("frob"), 0, true)));
   }
 
  /**
@@ -633,12 +666,17 @@ public class JUTestEvaluation
   *
   * name == "Matt" ^^ age == 30";
   */
-  private static Node<Boolean> logicOpExpr2 ()
+  private static Node logicOpExpr2 ()
   {
     return new Xor
       (new Compare
-        (new Field<String> ("name"), new Const<String> ("Matt"), 0, true),
+        (field ("name"), new Const ("Matt"), 0, true),
        new Compare
-        (new Field<Integer> ("age"), new Const<Integer> (30), 0, true));
+        (field ("age"), new Const (30), 0, true));
+  }
+  
+  private static Node field (String name)
+  {
+    return new Field (name);
   }
 }

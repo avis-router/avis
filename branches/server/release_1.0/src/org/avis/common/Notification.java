@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.avis.util.Format.appendEscaped;
-import static org.avis.util.Format.appendBytes;
+import static org.avis.util.Format.appendHexBytes;
 
 public class Notification implements Map<String, Object>, Cloneable
 {
@@ -78,7 +78,7 @@ public class Notification implements Map<String, Object>, Cloneable
     } else
     {
       str.append ('[');
-      appendBytes (str, (byte [])value);
+      appendHexBytes (str, (byte [])value);
       str.append (']');
     }
   }

@@ -7,14 +7,14 @@ import java.util.Map;
 import org.avis.pubsub.ast.IllegalChildException;
 import org.avis.pubsub.ast.Node;
 
-public class MathBitInvert extends Node<Number>
+public class MathBitInvert extends Node
 {
-  private Node<? extends Number> child;
+  private Node child;
 
-  public MathBitInvert (Node<? extends Number> child)
+  public MathBitInvert (Node child)
     throws IllegalChildException
   {
-    Class childType = child.evalType ();
+    Class<?> childType = child.evalType ();
     
     if (childType != Object.class &&
         !(childType == Integer.class || child.evalType () == Long.class))
@@ -39,7 +39,7 @@ public class MathBitInvert extends Node<Number>
   }
   
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return child.evalType ();
   }
@@ -51,26 +51,26 @@ public class MathBitInvert extends Node<Number>
   }
   
   @Override
-  public Collection<? extends Node<?>> children ()
+  public Collection<Node> children ()
   {
     return Collections.singleton (child);
   }
   
   @Override
-  public Node<Number> inlineConstants ()
+  public Node inlineConstants ()
   {
     child = child.inlineConstants ();
     
-    Number result = evaluate (EMPTY_NOTIFICATION);
+    Object result = evaluate (EMPTY_NOTIFICATION);
     
     if (result != null)
-      return new Const<Number> (result);
+      return new Const (result);
     else
       return this;
   }
   
   @Override
-  public Number evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Object result = child.evaluate (attrs);
     
@@ -79,6 +79,6 @@ public class MathBitInvert extends Node<Number>
     else if (result instanceof Long)
       return (Long)result ^ 0xFFFFFFFFFFFFFFFFL;
     else
-      return null;
+      return BOTTOM;
   }
 }

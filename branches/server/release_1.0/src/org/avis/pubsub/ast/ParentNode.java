@@ -1,36 +1,30 @@
 package org.avis.pubsub.ast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Base class for nodes with an arbitrary number of children. This
- * class requires that all children have the same evaluation type.
- * 
- * @param E The type of value that this node evaluates to.
- * @param CHILD_E The type that children of this node evaluate to.
+ * Base class for nodes with an arbitrary number of children.
  * 
  * @author Matthew Phillips
  */
-public abstract class ParentNode<E, CHILD_E> extends Node<E>
+public abstract class ParentNode extends Node
 {
-  protected ArrayList<Node<CHILD_E>> children;
+  protected ArrayList<Node> children;
   
   public ParentNode ()
   {
-    this.children = new ArrayList<Node<CHILD_E>> (2);
+    this.children = new ArrayList<Node> (2);
   }
 
-  public ParentNode (Node<? extends CHILD_E> node1)
+  public ParentNode (Node node1)
   {
     this ();
     
     addChild (node1);
   }
   
-  public ParentNode (Node<? extends CHILD_E> node1,
-                     Node<? extends CHILD_E> node2)
+  public ParentNode (Node node1, Node node2)
     throws IllegalChildException
   {
     this ();
@@ -40,14 +34,25 @@ public abstract class ParentNode<E, CHILD_E> extends Node<E>
   }
 
   /**
-   * Note: this does not check child types.
-   * 
-   * @param children
+   * Add any number of children
    */
-  public ParentNode (Node<CHILD_E> ...children)
+  public ParentNode (Node ...children)
   {
-    this.children =
-      new ArrayList<Node<CHILD_E>> (Arrays.asList (children));
+    this.children = new ArrayList<Node> (children.length);
+    
+    for (Node child : children)
+      addChild (child);
+  }
+  
+  /**
+   * Add any number of children
+   */
+  public ParentNode (Collection<? extends Node> children)
+  {
+    this.children = new ArrayList<Node> (children.size ());
+    
+    for (Node child : children)
+      addChild (child);
   }
 
   /**
@@ -61,7 +66,6 @@ public abstract class ParentNode<E, CHILD_E> extends Node<E>
    */
   protected abstract String validateChild (Node child);
   
-  @SuppressWarnings("unchecked")
   public void addChild (Node child)
     throws IllegalChildException
   {
@@ -80,7 +84,7 @@ public abstract class ParentNode<E, CHILD_E> extends Node<E>
   }
   
   @Override
-  public Collection<? extends Node<?>> children ()
+  public Collection<Node> children ()
   {
     return children;
   }

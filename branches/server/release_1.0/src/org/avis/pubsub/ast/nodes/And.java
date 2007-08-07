@@ -1,5 +1,6 @@
 package org.avis.pubsub.ast.nodes;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.avis.pubsub.ast.BoolParentNode;
@@ -10,21 +11,26 @@ import static org.avis.pubsub.ast.nodes.Const.CONST_TRUE;
 
 public class And extends BoolParentNode
 {
-  public And (Node<Boolean> node1)
+  public And (Node node1)
   {
     super (node1);
   }
   
-  public And (Node<Boolean> node1, Node<Boolean> node2)
+  public And (Node node1, Node node2)
   {
     super (node1, node2);
   }
   
-  public And (Node<Boolean> ...children)
+  public And (Node ...children)
   {
     super (children);
   }
   
+  public And (Collection<? extends Node> children)
+  {
+    super (children);
+  }
+
   @Override
   public String expr ()
   {
@@ -32,14 +38,14 @@ public class And extends BoolParentNode
   }
   
   @Override
-  public Node<Boolean> inlineConstants ()
+  public Node inlineConstants ()
   {
     for (int i = children.size () - 1; i >= 0; i--)
     {
-      Node<Boolean> child = children.get (i);
-      Node<Boolean> newChild = child.inlineConstants ();
+      Node child = children.get (i);
+      Node newChild = child.inlineConstants ();
       
-      Boolean result = newChild.evaluate (EMPTY_NOTIFICATION);
+      Boolean result = (Boolean)newChild.evaluate (EMPTY_NOTIFICATION);
       
       if (result == FALSE)
         return CONST_FALSE;
@@ -58,13 +64,13 @@ public class And extends BoolParentNode
   }
   
   @Override
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Boolean value = TRUE;
     
     for (int i = 0; i < children.size (); i++)
     {
-      Boolean result = children.get (i).evaluate (attrs);
+      Object result = children.get (i).evaluate (attrs);
       
       if (result == FALSE)
         return result;

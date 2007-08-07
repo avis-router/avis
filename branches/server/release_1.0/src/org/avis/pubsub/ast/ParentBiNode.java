@@ -10,25 +10,25 @@ import org.avis.pubsub.ast.nodes.Const;
  * 
  * @author Matthew Phillips
  */
-public abstract class ParentBiNode<E, E_CHILD>
-  extends Node<E>
+public abstract class ParentBiNode
+  extends Node
 {
-  protected Node<? extends E_CHILD> child1;
-  protected Node<? extends E_CHILD> child2;
+  protected Node child1;
+  protected Node child2;
 
   public ParentBiNode ()
   {
     // zip
   }
   
-  public ParentBiNode (Node<? extends E_CHILD> child1,
-                       Node<? extends E_CHILD> child2)
+  public ParentBiNode (Node child1,
+                       Node child2)
   {
     init (child1, child2);
   }
 
-  protected void init (Node<? extends E_CHILD> newChild1,
-                       Node<? extends E_CHILD> newChild2)
+  protected void init (Node newChild1,
+                       Node newChild2)
   {
     checkChild (newChild1);
     this.child1 = newChild1;
@@ -37,7 +37,7 @@ public abstract class ParentBiNode<E, E_CHILD>
     this.child2 = newChild2;
   }
   
-  private void checkChild (Node<? extends E_CHILD> child)
+  private void checkChild (Node child)
   {
     String error = validateChild (child);
 
@@ -60,10 +60,10 @@ public abstract class ParentBiNode<E, E_CHILD>
   }
 
   @Override
-  public Collection<? extends Node<? extends E_CHILD>> children ()
+  public Collection<Node> children ()
   {
-    ArrayList<Node<? extends E_CHILD>> children =
-      new ArrayList<Node<? extends E_CHILD>> (2);
+    ArrayList<Node> children =
+      new ArrayList<Node> (2);
     
     children.add (child1);
     children.add (child2);
@@ -72,15 +72,15 @@ public abstract class ParentBiNode<E, E_CHILD>
   }
   
   @Override
-  public Node<E> inlineConstants ()
+  public Node inlineConstants ()
   {
     child1 = child1.inlineConstants ();
     child2 = child2.inlineConstants ();
     
-    E result = evaluate (EMPTY_NOTIFICATION);
+    Object result = evaluate (EMPTY_NOTIFICATION);
     
     if (result != null)
-      return new Const<E> (result);
+      return new Const (result);
     else
       return this;
   }

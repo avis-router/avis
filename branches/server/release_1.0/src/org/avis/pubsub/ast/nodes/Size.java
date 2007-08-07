@@ -2,42 +2,34 @@ package org.avis.pubsub.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.pubsub.ast.Node;
+import org.avis.pubsub.ast.NameParentNode;
 
-public class Size extends Node<Integer>
+public class Size extends NameParentNode
 {
-  private String name;
-
-  public Size (Field<?> field)
+  public Size (Field field)
   {
     this (field.fieldName ());
   }
 
   public Size (String name)
   {
-    this.name = name;
+    super (name);
   }
   
-  @Override
-  public String presentation ()
-  {
-    return name ();
-  }
-
   @Override
   public String expr ()
   {
-    return "size '" + name + '\'';
+    return "size";
   }
   
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Integer.class;
   }
 
   @Override
-  public Integer evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Object value = attrs.get (name);
     
@@ -46,12 +38,6 @@ public class Size extends Node<Integer>
     else if (value instanceof String)
       return ((String)value).length ();
     else
-      return null;
-  }
-
-  @Override
-  public Node<Integer> inlineConstants ()
-  {
-    return this;
+      return BOTTOM;
   }
 }

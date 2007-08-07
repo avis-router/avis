@@ -6,7 +6,7 @@ public interface SubscriptionParserConstants {
   int EOF = 0;
   int IDENTIFIER = 5;
   int LETTER = 6;
-  int DIGIT = 7;
+  int ID_CHAR = 7;
   int BACKSLASH = 8;
   int INTEGER_LITERAL = 9;
   int DECIMAL_LITERAL = 10;
@@ -30,7 +30,7 @@ public interface SubscriptionParserConstants {
     "\"\\r\"",
     "<IDENTIFIER>",
     "<LETTER>",
-    "<DIGIT>",
+    "<ID_CHAR>",
     "<BACKSLASH>",
     "<INTEGER_LITERAL>",
     "<DECIMAL_LITERAL>",
