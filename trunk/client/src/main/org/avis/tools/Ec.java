@@ -53,6 +53,13 @@ public class Ec
         public void connectionClosed (CloseEvent e)
         {
           System.err.println ("ec: Connection closed: " + e.message);
+          
+          if (e.error != null)
+          {
+            System.err.println ("ec: Trace for exception that triggered close:");
+            
+            e.error.printStackTrace ();
+          }
         }
       });
       
