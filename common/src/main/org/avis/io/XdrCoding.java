@@ -147,9 +147,19 @@ public final class XdrCoding
         out.putInt (0);
       } else
       {
-        out.putInt (string.length ());
+        int start = out.position ();
+        
+        out.skip (4);
+        
         out.putString (string, UTF8_ENCODER.get ());
-        putPadding (out, string.length ());
+        
+        // write length
+        
+        int byteCount = out.position () - start - 4;
+        
+        out.putInt (start, byteCount);
+        
+        putPadding (out, byteCount);
       }
     } catch (CharacterCodingException ex)
     {
