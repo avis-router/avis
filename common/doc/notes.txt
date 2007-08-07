@@ -1,3 +1,15 @@
+Bugs
+----------------------------------------------------------------------
+
+* require(e) vs. require (e). Mantara accepts both, we don't do first one
+  any more.
+  
+* ec requires elvin:4.0//...
+
+* Avis: Warning: Failed to cleanly shut down thread pool. avisd during testing
+  for Alain. Not due to connected clients. Perhaps due to waiting for Disconn
+  to be sent?
+  
 Federation
 ----------------------------------------------------------------------
 
