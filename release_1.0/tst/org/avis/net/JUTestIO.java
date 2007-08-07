@@ -6,20 +6,21 @@ import java.util.Map;
 import java.lang.reflect.Array;
 
 import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.filter.codec.ProtocolCodecException;
+import org.junit.Test;
 
 import org.avis.net.common.IO;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test the {@link IO} utility class.
+ * Test the {@link XdrCoding} utility class.
  */
 public class JUTestIO
 {
-  @Test public void stringIO ()
+  @Test 
+  public void stringIO ()
     throws Exception
   {
     ByteBuffer buff = ByteBuffer.allocate (1024);
@@ -38,7 +39,35 @@ public class JUTestIO
     assertEquals ("hello", IO.getString (buff));
   }
   
-  @Test public void nameValueIO ()
+  @Test
+  public void utf8 ()
+    throws Exception
+  {
+    roundtrip ("Hello A\u0308\uFB03ns this is some bogus text");
+    roundtrip ("Hi there \u00C4\uFB03ns more bogus text");
+    
+    // some UTF-8 data seen in the wild that caused problems...
+    roundtrip
+      (new String 
+        (new byte [] {(byte)0xc3, (byte)0x94, (byte)0xc3, (byte)0xb8, 
+                      (byte)0xce, (byte)0xa9, 0x73, 0x20, 0x73, 0x75, 0x70,
+                      0x70, 0x6f, 0x73, 0x65, 0x20}, "UTF-8"));
+  }
+
+  private void roundtrip (String str)
+    throws ProtocolCodecException
+  {
+    ByteBuffer buff = ByteBuffer.allocate (1024);
+    
+    IO.putString (buff, str);
+    
+    buff.flip ();
+    
+    assertEquals (str, IO.getString (buff));
+  }
+  
+  @Test 
+  public void nameValueIO ()
     throws Exception
   {
     ByteBuffer buff = ByteBuffer.allocate (1024);
@@ -58,7 +87,8 @@ public class JUTestIO
     assertMapsEqual (nameValues, IO.getNameValues (buff));
   }
 
-  @Test public void objectsIO ()
+  @Test 
+  public void objectsIO ()
     throws Exception
   {
     ByteBuffer buff = ByteBuffer.allocate (1024);
@@ -71,6 +101,19 @@ public class JUTestIO
     Object [] objectsCopy = IO.getObjects (buff);
     
     assertArraysEquals (objects, objectsCopy);
+  }
+  
+  @Test
+  public void padding ()
+  {
+    assertEquals (0, IO.paddingFor (0));
+    assertEquals (3, IO.paddingFor (1));
+    assertEquals (2, IO.paddingFor (2));
+    assertEquals (1, IO.paddingFor (3));
+    assertEquals (0, IO.paddingFor (4));
+    assertEquals (3, IO.paddingFor (5));
+    assertEquals (3, IO.paddingFor (25));
+    assertEquals (3, IO.paddingFor (4 * 1234 + 1));
   }
   
   private void assertArraysEquals (Object [] o1, Object [] o2)
@@ -101,7 +144,7 @@ public class JUTestIO
     } else if (o1 != null && o2 != null)
     {
       // deep test for array equality
-      Class cls = o1.getClass ();
+      Class<?> cls = o1.getClass ();
       
       if (cls == o2.getClass () && cls.isArray ())
       {
