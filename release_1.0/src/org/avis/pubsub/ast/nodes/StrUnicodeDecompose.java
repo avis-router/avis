@@ -18,30 +18,30 @@ import static sun.text.Normalizer.normalize;
  * @author Matthew Phillips
  */
 @SuppressWarnings("restriction")
-public class StrUnicodeDecompose extends Node<String>
+public class StrUnicodeDecompose extends Node
 {
   public static final Mode DECOMPOSE = Normalizer.DECOMP;
   public static final Mode DECOMPOSE_COMPAT = Normalizer.DECOMP_COMPAT;
   
-  private Node<String> stringExpr;
-  private Mode mode;
+  public Node stringExpr;
+  public Mode mode;
 
-  public StrUnicodeDecompose (Node<String> stringExpr, Mode mode)
+  public StrUnicodeDecompose (Node stringExpr, Mode mode)
   {
     this.stringExpr = stringExpr;
     this.mode = mode;
   }
   
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return String.class;
   }
 
   @Override
-  public String evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
-    String result = stringExpr.evaluate (attrs);
+    String result = (String)stringExpr.evaluate (attrs);
     
     return result == null ? null : normalize (result, mode, 0);
   }
@@ -53,11 +53,11 @@ public class StrUnicodeDecompose extends Node<String>
   }
 
   @Override
-  public Node<String> inlineConstants ()
+  public Node inlineConstants ()
   {
-    String result = evaluate (EMPTY_NOTIFICATION);
+    Object result = evaluate (EMPTY_NOTIFICATION);
     
-    return result == null ? this : new Const<String> (result);
+    return result == null ? this : new Const (result);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class StrUnicodeDecompose extends Node<String>
   }
   
   @Override
-  public Collection<? extends Node<?>> children ()
+  public Collection<Node> children ()
   {
     return singleton (stringExpr);
   }

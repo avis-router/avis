@@ -11,67 +11,21 @@ options
 
 PARSER_BEGIN (SubscriptionParser)
 
-package org.avis.pubsub.parser;
+package org.avis.subscription.parser;
 
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
-import org.avis.pubsub.ast.*;
-import org.avis.pubsub.ast.nodes.*;
+import org.avis.subscription.ast.*;
+import org.avis.subscription.ast.nodes.*;
 
 @SuppressWarnings ("all")
 public class SubscriptionParser extends SubscriptionParserBase
 {
-  /**
-   * Parse an expression with syntax and basic type checking. Does not check
-   * for boolean result type or const-ness. See {@link #parseAndValidate} if
-   * you want a guaranteed correct subscription expression.
-   */
-  public Node parse ()
+  Node doParse ()
     throws ParseException
   {
-    try
-    {
-      return Start ();
-    } catch (IllegalChildException ex)
-    {
-      throw new ParseException ("Illegal expression: " + ex.getMessage ());
-    } catch (TokenMgrError ex)
-    {
-      throw new ParseException (ex.getMessage ());
-    } catch (PatternSyntaxException ex)
-    {
-      // regex () had an invalid pattern
-      throw new ParseException
-        ("Invalid regex \"" + ex.getPattern () + "\": " + ex.getDescription ());
-    }
-  }
-  
-  /**
-   * Execute {@link #parse()} and validate the result is a type-correct, 
-   * non-constant subscription expression.
-   *
-   * @throws ParseExpression if parse () fails or if the resulting expression
-   * is not a valid subscription.
-   */
-  public Node<Boolean> parseAndValidate ()
-    throws ParseException
-  {
-    Node node = parse ();
-    
-    if (node.evalType () == Boolean.class)
-    {
-      node = node.inlineConstants ();
-        
-      if (!(node instanceof Const))
-        return node;
-      else
-        throw new ParseException ("Expression is " + node.expr ());
-    } else
-    {
-      throw new ParseException
-        ("Expression does not evaluate to boolean true/false: " + node.expr ());
-    }
+    return Start ();
   }
 }
 
@@ -87,11 +41,12 @@ SKIP :
 
 TOKEN : /* IDENTIFIERS */
 {
-  < IDENTIFIER:  (<LETTER>|<BACKSLASH>) (<LETTER>|<DIGIT>|<BACKSLASH>)* >
+  < IDENTIFIER:  (<LETTER>|<BACKSLASH>) (<LETTER>|<BACKSLASH>|<ID_CHAR>)* >
 |
-  < #LETTER: [ "a"-"z", "A"-"Z", "_"] >
-|
-  < #DIGIT: [ "0"-"9", "-", ":", "."] >
+  < #LETTER:  [ "a"-"z", "A"-"Z", "_"] >
+
+| < #ID_CHAR: [ "\u0021", "\u0023"-"\u0026", "\u0028", "\u002a"-"\u002b",
+                "\u002d"-"\u005a", "\u005e"-"\u00ff" ] >
 |
   < #BACKSLASH: "\\" ~[] >
 }
@@ -112,12 +67,7 @@ TOKEN : /* LITERALS */
 |
   < #OCTAL_LITERAL: "0" (["0"-"7"])* >
 |
-  < REAL_LITERAL:
-        (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
-      | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
-      | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
-      | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
-  >
+  < REAL_LITERAL: (["0"-"9"])+ "." (["0"-"9"])+ (<EXPONENT>)? >
 |
   < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 |
@@ -127,15 +77,7 @@ TOKEN : /* LITERALS */
 |
   < #SQUOTE_STRING_LITERAL: "'"  (~["'", "\\"] | <BACKSLASH_EXPR>)* "'" >
 |
-  < #BACKSLASH_EXPR:
-    ("\\"
-       ( [ "n","t","b","r","f","v","a","\\","'","\""]
-         | ["0"-"7"] ( ["0"-"7"] )?
-         | ["0"-"3"] ["0"-"7"] ["0"-"7"]
-         | "x" <HEX_DIGIT> ( <HEX_DIGIT> )? 
-       )
-    )
-  >
+  < #BACKSLASH_EXPR: "\\" ~[] >
 }
 
 Node Start () :
@@ -370,7 +312,7 @@ Node ValueExp () :
   node = Name ()           {return node;} |
   node = NumLiteral ()     {return node;} |
   node = StringLiteral ()  {return node;} |
-  "-" node = ValueExp ()   {return new MathMinus (Const.CONST_ZERO, node);} |
+  "-" node = ValueExp ()   {return new MathUnaryMinus (node);} |
   "+" node = ValueExp ()   {return node;} | 
   "~" node = ValueExp ()   {return new MathBitInvert (node);} |
   "(" node = SubExp () ")" {return node;}
@@ -399,7 +341,7 @@ Node Function () :
     else if (func.equals ("fold-case"))
       node = new StrFoldCase (StringValue ());
     else if (func.equals ("equals"))
-      node = Compare.create (CompareArgs ());
+      node = Compare.createEquals (CompareArgs ());
     else if (func.equals ("require"))
       node = new Require (Name ());
     else if (func.equals ("int32"))
@@ -532,6 +474,6 @@ Const StringLiteral () :
   t=<STRING_LITERAL>
   {
     return new Const
-      (expandBackslashes (t.image.substring (1, t.image.length () - 1)));
+      (stripBackslashes (t.image.substring (1, t.image.length () - 1)));
   }  
 }

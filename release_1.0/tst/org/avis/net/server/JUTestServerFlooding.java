@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static dsto.dfc.logging.Log.DIAGNOSTIC;
@@ -57,6 +58,7 @@ public class JUTestServerFlooding
    * while being flooded.
    */
   @Test
+  @Ignore
   public void floodingFairness ()
     throws Exception
   {
@@ -105,6 +107,7 @@ public class JUTestServerFlooding
    * all spamming large messages at server.
    */
   @Test
+  @Ignore
   public void floodingHeap ()
     throws Exception
   {

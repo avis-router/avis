@@ -2,15 +2,13 @@ package org.avis.pubsub.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.pubsub.ast.Node;
+import org.avis.pubsub.ast.NameParentNode;
 
-public class Field<T> extends Node<T>
+public class Field extends NameParentNode
 {
-  public String name;
-  
   public Field (String name)
   {
-    this.name = name;
+    super (name);
   }
   
   public String fieldName ()
@@ -19,33 +17,20 @@ public class Field<T> extends Node<T>
   }
   
   @Override
-  public String presentation ()
-  {
-    return "Field: \"" + name + '\'';
-  }
-  
-  @Override
   public String expr ()
   {
-    return "field '" + name + '\'';
+    return "field";
   }
 
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Object.class;
   }
   
   @Override
-  public Node<T> inlineConstants ()
+  public Object evaluate (Map<String, Object> attrs)
   {
-    return this;
-  }
-  
-  @Override
-  @SuppressWarnings("unchecked")
-  public T evaluate (Map<String, Object> attrs)
-  {
-    return (T)attrs.get (name);
+    return attrs.get (name);
   }
 }

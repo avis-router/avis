@@ -2,49 +2,35 @@ package org.avis.pubsub.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.pubsub.ast.Node;
+import org.avis.pubsub.ast.NameParentNode;
 
-public class Require extends Node<Boolean>
+public class Require extends NameParentNode
 {
-  private String name;
-
-  public Require (Field<?> field)
+  public Require (Field field)
   {
     this (field.fieldName ());
   }
 
   public Require (String name)
   {
-    this.name = name;
+    super (name);
   }
   
   @Override
-  public String presentation ()
+  public String expr ()
   {
-    return name ();
+    return "require";
   }
-
+  
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
 
   @Override
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     return attrs.containsKey (name) ? TRUE : BOTTOM;
-  }
-
-  @Override
-  public String expr ()
-  {
-    return "require '" + name + '\'';
-  }
-
-  @Override
-  public Node<Boolean> inlineConstants ()
-  {
-    return this;
   }
 }

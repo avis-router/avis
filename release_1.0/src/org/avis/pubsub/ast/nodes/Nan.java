@@ -2,12 +2,10 @@ package org.avis.pubsub.ast.nodes;
 
 import java.util.Map;
 
-import org.avis.pubsub.ast.Node;
+import org.avis.pubsub.ast.NameParentNode;
 
-public class Nan extends Node<Boolean>
+public class Nan extends NameParentNode
 {
-  private String field;
-  
   public Nan (Field field)
   {
     this (field.fieldName ());
@@ -15,41 +13,29 @@ public class Nan extends Node<Boolean>
 
   public Nan (String field)
   {
-    this.field = field;
+    super (field);
   }
 
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
   
   @Override
-  public String presentation ()
+  public String expr ()
   {
-    return name ();
+    return "nan";
   }
   
   @Override
-  public Node<Boolean> inlineConstants ()
+  public Object evaluate (Map<String, Object> attrs)
   {
-    return this;
-  }
-
-  @Override
-  public Boolean evaluate (Map<String, Object> attrs)
-  {
-    Object value = attrs.get (field);
+    Object value = attrs.get (name);
     
     if (!(value instanceof Double))
       return BOTTOM;
     else
       return ((Double)value).isNaN ();
-  }
-
-  @Override
-  public String expr ()
-  {
-    return "nan '" + field + '\'';
   }
 }

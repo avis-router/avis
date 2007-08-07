@@ -1,132 +1,131 @@
 package org.avis.pubsub.parser;
 
+import java.util.regex.PatternSyntaxException;
+
+import java.io.StringReader;
+
+import org.avis.pubsub.ast.IllegalChildException;
+import org.avis.pubsub.ast.Node;
+import org.avis.pubsub.ast.nodes.Const;
+import org.avis.util.Format;
+import org.avis.util.InvalidFormatException;
+
 public abstract class SubscriptionParserBase
 {
+  /**
+   * Convenience method to fully parse and validate a subscription
+   * expression.
+   * 
+   * @param subExpr The subscription expression.
+   * 
+   * @return The root of the AST.
+   * 
+   * @throws ParseException if the expression is invalid.
+   */
+  public static Node parse (String subExpr) 
+    throws ParseException
+  {
+    return new SubscriptionParser 
+      (new StringReader (subExpr)).parseAndValidate ();
+  }
+  
+  abstract Node doParse ()
+    throws ParseException;
+  
+  /**
+   * Parse an expression with syntax and basic type checking. Does not check
+   * for boolean result type or const-ness. See {@link #parseAndValidate} if
+   * you want a guaranteed correct subscription expression.
+   */
+  public Node parse ()
+    throws ParseException
+  {
+    try
+    {
+      return doParse ();
+    } catch (IllegalChildException ex)
+    {
+      throw new ParseException ("Illegal expression: " + ex.getMessage ());
+    } catch (TokenMgrError ex)
+    {
+      throw new ParseException (ex.getMessage ());
+    } catch (PatternSyntaxException ex)
+    {
+      // regex () had an invalid pattern
+      throw new ParseException
+        ("Invalid regex \"" + ex.getPattern () + "\": " + ex.getDescription ());
+    }
+  }
+  
+  /**
+   * Execute {@link #parse()} and validate the result is a
+   * type-correct, non-constant subscription expression.
+   * 
+   * @throws ParseException if parse () fails or if the resulting
+   *           expression is not a valid subscription.
+   * @throws ConstantExpressionException if the expression is contant.
+   */
+  public Node parseAndValidate ()
+    throws ParseException, ConstantExpressionException
+  {
+    Node node = parse ();
+    
+    if (node.evalType () == Boolean.class)
+    {
+      node = node.inlineConstants ();
+        
+      if (!(node instanceof Const))
+        return node;
+      else
+        throw new ConstantExpressionException ("Expression is " + node.expr ());
+    } else
+    {
+      throw new ParseException
+        ("Expression does not evaluate to boolean: " + node.expr ());
+    }
+  }
+  
   /**
    * Strip backslashed codes from a string.
    */
   protected static String stripBackslashes (String text)
+    throws ParseException
   {
-    if (text.indexOf ('\\') != -1)
+    try
     {
-      StringBuilder buff = new StringBuilder (text.length ());
-      
-      for (int i = 0; i < text.length (); i++)
-      {
-        char c = text.charAt (i);
-        
-        if (c != '\\')
-          buff.append (c);
-      }
-      
-      text = buff.toString ();
+      return Format.stripBackslashes (text);
+    } catch (InvalidFormatException ex)
+    {
+      throw new ParseException ("Error in string: " + ex.getMessage ());
     }
-    
-    return text;
+  }
+
+  protected static String className (Class<?> type)
+  {
+    return Format.className (type);
   }
   
   /**
-   * Expand backslash codes such as \n \x90 etc into their literal values.
+   * Generate a string describing the expected tokens from token info
+   * in a parse exception. Cribbed from the ParseException.getMessage ()
+   * method.
    */
-  protected static String expandBackslashes (String text)
+  public static String expectedTokensFor (ParseException ex)
   {
-    if (text.indexOf ('\\') != -1)
+    StringBuilder expected = new StringBuilder ();
+    boolean first = true;
+    
+    for (int i = 0; i < ex.expectedTokenSequences.length; i++)
     {
-      StringBuilder buff = new StringBuilder (text.length ());
+      if (!first)
+        expected.append (", ");
       
-      for (int i = 0; i < text.length (); i++)
-      {
-        char c = text.charAt (i);
-        
-        if (c == '\\')
-        {
-          c = text.charAt (++i);
-          
-          switch (c)
-          {
-            case 'n':
-              c = '\n'; break;
-            case 't':
-              c = '\t'; break;
-            case 'b':
-              c = '\b'; break;
-            case 'r':
-              c = '\r'; break;
-            case 'f':
-              c = '\f'; break;
-            case 'a':
-              c = 7; break;
-            case 'v':
-              c = 11; break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-              int value = c - '0';
-              int end = Math.min (text.length (), i + 3);
-              
-              while (i + 1 < end && octDigit (text.charAt (i + 1)))
-              {
-                c = text.charAt (++i);
-                value = value * 8 + (c - '0');                
-              }
-              
-              c = (char)value;
-              break;
-            case 'x':
-              value = 0;
-              end = Math.min (text.length (), i + 3);
-              
-              do
-              {
-                c = text.charAt (++i);
-                value = value * 16 + hexValue (c);
-              } while (i + 1 < end && hexDigit (text.charAt (i + 1)));
-              
-              c = (char)value;
-              break;
-          }
-        }
-
-        buff.append (c);
-      }
+      first = false;
       
-      text = buff.toString ();
+      for (int j = 0; j < ex.expectedTokenSequences [i].length; j++)
+        expected.append (ex.tokenImage [ex.expectedTokenSequences [i] [j]]);
     }
-    
-    return text;
-  }
-  
-  private static boolean octDigit (char c)
-  {
-    return c >= '0' && c <= '7';
-  }
-  
-  private static boolean hexDigit (char c)
-  {
-    return (c >= '0' && c <= '9') ||
-           (c >= 'a' && c <= 'f') ||
-           (c >= 'A' && c <= 'F');
-  }
 
-  private static int hexValue (char c)
-  {
-    if (c >= '0' && c <= '9')
-      return c - '0';
-    else if (c >= 'a' && c <= 'f')
-      return c - 'a' + 10;
-    else
-      return c - 'A' + 10;
-  }
-
-  protected static String className (Class type)
-  {
-    String name = type.getName ();
-    
-    return name.substring (name.lastIndexOf ('.') + 1);
+    return expected.toString ();
   }
 }

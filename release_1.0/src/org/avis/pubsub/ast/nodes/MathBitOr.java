@@ -5,8 +5,8 @@ import org.avis.pubsub.ast.Node;
 
 public class MathBitOr extends MathIntParentNode
 {
-  public MathBitOr (Node<? extends Number> child1,
-                    Node<? extends Number> child2)
+  public MathBitOr (Node child1,
+                    Node child2)
   {
     super (child1, child2);
   }

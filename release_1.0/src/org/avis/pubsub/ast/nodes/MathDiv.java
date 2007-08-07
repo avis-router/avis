@@ -5,8 +5,8 @@ import org.avis.pubsub.ast.Node;
 
 public class MathDiv extends MathParentNode
 {
-  public MathDiv (Node<? extends Number> child1,
-                  Node<? extends Number> child2)
+  public MathDiv (Node child1,
+                  Node child2)
   {
     super (child1, child2);
   }

@@ -1,35 +1,42 @@
 package org.avis.pubsub.ast;
 
+import java.util.Collection;
+
 /**
- * Base class for parent nodes that evaludate to boolean from boolean
+ * Base class for parent nodes that evaluate to boolean from boolean
  * children.
  * 
  * @author Matthew Phillips
  */
 public abstract class BoolParentNode
-  extends ParentNode<Boolean, Boolean>
+  extends ParentNode
 {
   public BoolParentNode ()
   {
     // zip
   }
 
-  public BoolParentNode (Node<Boolean> node1)
+  public BoolParentNode (Node node1)
   {
     super (node1);
   }
 
-  public BoolParentNode (Node<Boolean> node1,
-                         Node<Boolean> node2)
+  public BoolParentNode (Node node1,
+                         Node node2)
   {
     super (node1, node2);
   }
 
-  public BoolParentNode (Node<Boolean>... children)
+  public BoolParentNode (Node... children)
   {
     super (children);
   }
   
+  public BoolParentNode (Collection<? extends Node> children)
+  {
+    super (children);
+  }
+
   @Override
   public String presentation ()
   {
@@ -37,7 +44,7 @@ public abstract class BoolParentNode
   }
 
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }

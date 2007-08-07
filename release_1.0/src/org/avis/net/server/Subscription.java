@@ -26,7 +26,7 @@ class Subscription
   public boolean acceptInsecure;
   public Keys keys;
 
-  private Node<Boolean> ast;
+  private Node ast;
 
   public Subscription (String expr, Keys keys, boolean acceptInsecure)
     throws ParseException
@@ -50,7 +50,7 @@ class Subscription
     return ast.evaluate (attributes) == TRUE;
   }
   
-  private static Node<Boolean> parse (String expr)
+  private static Node parse (String expr)
     throws ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parseAndValidate ();

@@ -5,19 +5,19 @@ import java.util.List;
 import org.avis.pubsub.ast.Node;
 import org.avis.pubsub.ast.StringCompareNode;
 
-import static org.avis.pubsub.ast.Nodes.createNary;
+import static org.avis.pubsub.ast.Nodes.createConjunction;
 
 public class StrEndsWith extends StringCompareNode
 {
   /**
    * Create from a list of arguments.
    */
-  public static Node<Boolean> create (List<Node<String>> args)
+  public static Node create (List<Node> args)
   {
-    return createNary (StrEndsWith.class, Node.class, Const.class, args);
+    return createConjunction (StrEndsWith.class, Node.class, Const.class, args);
   }
   
-  public StrEndsWith (Node<String> stringExpr, Const<String> stringConst)
+  public StrEndsWith (Node stringExpr, Const stringConst)
   {
     super (stringExpr, stringConst);
   }

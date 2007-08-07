@@ -13,19 +13,28 @@ import static org.avis.util.Numbers.upconvert;
 /**
  * Comparison operator that can implement equals, greater than, less
  * than and any combination of those.
+ * <pre>
+ *              inequality      equality
+ *  -------------------------------------
+ *   ==          0              true
+ *   <          -1              false
+ *   <=         -1              true
+ *   >           1              false
+ *   >=          1              true
+ * </pre>
  * 
  * @author Matthew Phillips
  */
-public class Compare extends ParentBiNode<Boolean, Comparable>
+public class Compare extends ParentBiNode
 {
-  private int inequality;
-  private boolean equality;
+  public int inequality;
+  public boolean equality;
   
   /**
-   * Create compare node from a list of comparable children (size >=
-   * 2). If more than two children, generates an OR wrapper.
+   * Create an "==" compare node from a list of comparable children
+   * (size >= 2). If more than two children, generates an OR wrapper.
    */
-  public static Node<Boolean> create (List<Node<? extends Comparable>> args)
+  public static Node createEquals (List<Node> args)
   {
     if (args.size () < 2)
     {
@@ -35,7 +44,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
       return new Compare (args.get (0), args.get (1), 0, true);
     } else
     {
-      Node<? extends Comparable> arg0 = args.get (0);
+      Node arg0 = args.get (0);
       
       Or or = new Or ();
       
@@ -57,8 +66,8 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
    *          &lt; right.
    * @param equality True => true if equal.
    */
-  public Compare (Node<? extends Comparable> child1,
-                  Node<? extends Comparable> child2,
+  public Compare (Node child1,
+                  Node child2,
                   int inequality, boolean equality)
   {
     this.inequality = inequality;
@@ -70,7 +79,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
   @Override
   protected String validateChild (Node child)
   {
-    Class childType = child.evalType ();
+    Class<?> childType = child.evalType ();
     
     if (childType == Object.class)
     {
@@ -84,7 +93,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
              className (childType) + " as an argument";
     } else if (child1 != null)
     {
-      Class evalType = child1.evalType ();
+      Class<?> evalType = child1.evalType ();
     
       if (evalType != Object.class &&
           evalType != childType)
@@ -103,7 +112,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
   }
   
   @Override
-  public Class evalType ()
+  public Class<?> evalType ()
   {
     return Boolean.class;
   }
@@ -137,7 +146,7 @@ public class Compare extends ParentBiNode<Boolean, Comparable>
 
   @Override
   @SuppressWarnings("unchecked")
-  public Boolean evaluate (Map<String, Object> attrs)
+  public Object evaluate (Map<String, Object> attrs)
   {
     Object result1 = child1.evaluate (attrs);
     
