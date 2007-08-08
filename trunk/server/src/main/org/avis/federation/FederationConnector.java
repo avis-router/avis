@@ -199,10 +199,7 @@ public class FederationConnector implements IoHandler, Closeable
   
   private void handleRequestTimeout (RequestMessage<?> request)
   {
-    // sanity check
-    if (!(request instanceof FedConnRqst))
-      throw new Error ("Request timeout for illegal message " + request);
-    
+    // FedConnRqst timed out
     warn ("Federation connection request to remote federator at " + 
           uri + " timed out: reconnecting", this);
     
