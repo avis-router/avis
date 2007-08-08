@@ -209,10 +209,7 @@ public class FederationLink implements NotifyListener
 
   private void handleRequestTimeout (RequestMessage<?> request)
   {
-    // sanity check
-    if (!(request instanceof FedModify))
-      throw new Error ("Request timeout for illegal message " + request);
-    
+    // FedModify timed out
     warn ("Federation modify request to remote federator at " + 
           remoteHostName + " timed out: retrying", this);
     
