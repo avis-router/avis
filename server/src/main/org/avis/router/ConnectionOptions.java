@@ -23,12 +23,30 @@ public class ConnectionOptions extends Options
 
   public ConnectionOptions ()
   {
-    this (EMPTY_OPTIONS);
+    this (null, EMPTY_OPTIONS);
   }
   
   public ConnectionOptions (Map<String, Object> requested)
   {
+    this (null, requested);
+  }
+  
+  /**
+   * Create a new instance from a set of requested values.
+   * 
+   * @param defaultOptions The default option values for options that
+   *                are not set, usually set by the router. May be
+   *                null for standard defaults.
+   * @param requested The requested set of values, usually from the
+   *                client creating the connection.
+   */
+  public ConnectionOptions (Options defaultOptions, 
+                            Map<String, Object> requested)
+  {
     super (CONNECTION_OPTION_SET);
+    
+    if (defaultOptions != null)
+      addDefaults (defaultOptions);
     
     this.requested = requested;
     
