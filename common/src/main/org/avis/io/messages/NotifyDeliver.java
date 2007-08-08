@@ -1,6 +1,5 @@
 package org.avis.io.messages;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.apache.mina.common.ByteBuffer;
@@ -21,7 +20,7 @@ public class NotifyDeliver extends Message
   
   public NotifyDeliver ()
   {
-    this.attributes = Collections.emptyMap ();
+    // zip
   }
   
   public NotifyDeliver (Map<String, Object> attributes,
