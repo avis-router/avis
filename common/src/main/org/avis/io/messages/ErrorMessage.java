@@ -29,7 +29,10 @@ public class ErrorMessage extends Message
   {
     StringBuilder message = new StringBuilder ();
     
-    message.append ("Error decoding ").append (cause.name ());
+    if (cause == null)
+      message.append ("Error decoding XDR frame");
+    else
+      message.append ("Error decoding ").append (cause.name ());
     
     if (error != null)
     {
