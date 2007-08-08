@@ -22,6 +22,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.io.ClientFrameCodec;
+import org.avis.io.FrameTooLargeException;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -35,6 +36,7 @@ import org.avis.io.messages.Notify;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.QuenchPlaceHolder;
+import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.SecRply;
 import org.avis.io.messages.SecRqst;
 import org.avis.io.messages.SubAddRqst;
@@ -44,6 +46,7 @@ import org.avis.io.messages.SubRply;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
 import org.avis.io.messages.XidMessage;
+import org.avis.logging.Log;
 import org.avis.security.Keys;
 import org.avis.subscription.parser.ConstantExpressionException;
 import org.avis.subscription.parser.ParseException;
@@ -56,9 +59,9 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
-
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
@@ -83,13 +86,13 @@ import static org.avis.logging.Log.warn;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
-import static org.avis.util.Text.shortException;
 
 public class Router implements IoHandler, Closeable
 {
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
   
+  private RouterOptions routerOptions;
   private ExecutorService executor;
   private SocketAcceptor acceptor;
   private volatile boolean closing;
@@ -122,12 +125,13 @@ public class Router implements IoHandler, Closeable
   public Router (RouterOptions options)
     throws IOException, IllegalOptionException
   {
-    notifyListeners = 
+    this.notifyListeners = 
       new ListenerList<NotifyListener>
         (NotifyListener.class, "notifyReceived", Notify.class, Keys.class);
-    sessions = new ConcurrentHashSet<IoSession> ();
-    executor = newCachedThreadPool ();
-    acceptor =
+    this.routerOptions = options;
+    this.sessions = new ConcurrentHashSet<IoSession> ();
+    this.executor = newCachedThreadPool ();
+    this.acceptor =
       new SocketAcceptor (getRuntime ().availableProcessors () + 1,
                           executor);
     
@@ -343,7 +347,7 @@ public class Router implements IoHandler, Closeable
        * A message processing method detected a protocol violation
        * e.g. attempt to remove non existent subscription.
        */
-      handleProtocolViolation (session, message, ex.getMessage ());
+      handleProtocolViolation (session, message, ex.getMessage (), ex);
     }
   }
 
@@ -354,7 +358,7 @@ public class Router implements IoHandler, Closeable
       throw new ProtocolCodecException ("Already connected");
     
     Connection connection =
-      new Connection (message.options,
+      new Connection (routerOptions, message.options,
                       message.subscriptionKeys, message.notificationKeys);
     
     int maxKeys = connection.options.getInt ("Connection.Max-Keys");
@@ -628,8 +632,32 @@ public class Router implements IoHandler, Closeable
 
   private static void handleError (IoSession session, ErrorMessage message)
   {
-    handleProtocolViolation (session, message.cause,
-                             shortException (message.error));
+    /*
+     * When a frame is too large: for requests we can send a NACK for,
+     * simply reject and keep on truckin. For frames that cannot be
+     * NACK'd (e.g. NotifyEmit), we treat this as a protocol error and
+     * Disconn with a descriptive message rather than silently (from
+     * the client's POV) dropping them.
+     */
+    if (message.error instanceof FrameTooLargeException)
+    {
+      if (message.cause instanceof RequestMessage<?>)
+      {
+        // codec will have suspended input on error, restart
+        session.resumeRead ();
+        
+        nackLimit (session, (XidMessage)message.cause, 
+                   message.error.getMessage ());
+      } else
+      {
+        handleProtocolViolation (session, message.cause, 
+                                 message.error.getMessage (), null);
+      }
+    } else
+    {
+      handleProtocolViolation (session, message.cause, 
+                               message.formattedMessage (), message.error);
+    }
   }
 
   /**
@@ -643,10 +671,17 @@ public class Router implements IoHandler, Closeable
    */
   private static void handleProtocolViolation (IoSession session,
                                                Message cause,
-                                               String diagnosticMessage)
+                                               String diagnosticMessage,
+                                               Throwable error)
   {
-    diagnostic ("Disconnecting client due to protocol violation: " +
-                diagnosticMessage, Router.class);
+    if (Log.shouldLog (Log.DIAGNOSTIC))
+    {
+      diagnostic ("Disconnecting client due to protocol violation: " +
+                  diagnosticMessage, Router.class);
+      
+      if (error != null)
+        diagnostic ("Decode stack trace", Router.class, error);
+    }
     
     session.suspendRead ();
 
@@ -655,7 +690,7 @@ public class Router implements IoHandler, Closeable
     if (connection != null)
       connection.close ();
     
-    if (cause instanceof XidMessage)
+    if (cause instanceof RequestMessage<?>)
     {
       send (session,
             new Nack ((XidMessage)cause, PROT_ERROR, diagnosticMessage));
@@ -829,6 +864,11 @@ public class Router implements IoHandler, Closeable
     readThrottle.attach (session.getFilterChain ());
     
     session.setAttribute ("readThrottle", readThrottle);
+    
+    // set default max length for connectionless sessions
+    setMaxFrameLengthFor
+      (session,
+       CONNECTION_OPTION_SET.defaults.getInt ("Packet.Max-Length"));
     
     sessions.add (session);
   }
