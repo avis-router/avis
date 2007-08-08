@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import org.avis.security.Keys;
+import org.avis.util.Options;
 
 /**
  * Stores the state needed for a client's connection to the router.
@@ -43,13 +44,25 @@ class Connection
    */
   private ReentrantReadWriteLock lock;
 
-  public Connection (Map<String, Object> options,
+  /**
+   * Create a new connection instance.
+   * 
+   * @param defaultOptions The default connection options.
+   * 
+   * @param requestedOptions The client's requested option values.
+   * @param subscriptionKeys The client's initial global subscription
+   *                key collection.
+   * @param notificationKeys The client's initial global notification
+   *                key collection.
+   */
+  public Connection (Options defaultOptions,
+                     Map<String, Object> requestedOptions,
                      Keys subscriptionKeys, Keys notificationKeys)
   {
     this.subscriptions = new Long2ObjectOpenHashMap<Subscription> ();
     this.subscriptionKeys = subscriptionKeys;
     this.notificationKeys = notificationKeys;
-    this.options = new ConnectionOptions (options);
+    this.options = new ConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
   }
 
