@@ -46,7 +46,6 @@ import org.avis.io.messages.SubRply;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
 import org.avis.io.messages.XidMessage;
-import org.avis.logging.Log;
 import org.avis.security.Keys;
 import org.avis.subscription.parser.ConstantExpressionException;
 import org.avis.subscription.parser.ParseException;
@@ -674,14 +673,11 @@ public class Router implements IoHandler, Closeable
                                                String diagnosticMessage,
                                                Throwable error)
   {
-    if (Log.shouldLog (Log.DIAGNOSTIC))
-    {
-      diagnostic ("Disconnecting client due to protocol violation: " +
-                  diagnosticMessage, Router.class);
-      
-      if (error != null)
-        diagnostic ("Decode stack trace", Router.class, error);
-    }
+    warn ("Disconnecting client due to protocol violation: " +
+          diagnosticMessage, Router.class);
+
+    if (error != null)
+      diagnostic ("Decode stack trace", Router.class, error);
     
     session.suspendRead ();
 
