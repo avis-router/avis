@@ -99,13 +99,10 @@ public abstract class FrameCodec
       message = newMessage (messageType, frameSize);
     
       if (frameSize % 4 != 0)
-        throw new ProtocolCodecException
-          ("Frame length not 4 byte aligned");
+        throw new ProtocolCodecException ("Frame length not 4 byte aligned");
       
       if (frameSize > maxLength)
-        throw new ProtocolCodecException
-          ("Frame size of " + frameSize + " bytes is larger than maximum " + 
-           maxLength);
+        throw new FrameTooLargeException (maxLength, frameSize);
       
       message.decode (in);
       
@@ -122,7 +119,8 @@ public abstract class FrameCodec
     {
       // handle client protocol violations by generating an ErrorMessage
       if (ex instanceof ProtocolCodecException ||
-          ex instanceof BufferUnderflowException)
+          ex instanceof BufferUnderflowException ||
+          ex instanceof FrameTooLargeException)
       {
         ErrorMessage error = new ErrorMessage (ex, message);
         
@@ -132,6 +130,8 @@ public abstract class FrameCodec
         
         in.skip (in.remaining ());
         
+        session.suspendRead ();
+
         message = error;
       } else
       {
@@ -153,7 +153,8 @@ public abstract class FrameCodec
   
   private static boolean haveFullFrame (IoSession session, ByteBuffer in)
   {
-    if (in.remaining () < 4)
+    // need frame size and type before we do anything
+    if (in.remaining () < 8)
       return false;
     
     boolean haveFrame;
@@ -163,7 +164,7 @@ public abstract class FrameCodec
     
     if (frameSize > maxFrameLengthFor (session))
     {
-      // when frame too big, OK it and let decode () generate error
+      // when frame too big, OK it and let doDecode () generate error
       haveFrame = true;
     } else if (in.remaining () < frameSize)
     {
