@@ -130,7 +130,7 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
   public MessageDecoderResult decodable (IoSession session,
                                          ByteBuffer in)
   {
-    if (in.remaining () < 4)
+    if (in.remaining () < 8)
       return NEED_DATA;
     
     int frameSize = in.getInt ();
@@ -179,9 +179,8 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
           ("Frame length not 4 byte aligned");
       
       if (frameSize > options.getInt ("Packet.Max-Length"))
-        throw new ProtocolCodecException
-          ("Frame size of " + frameSize + " bytes is larger than maximum " + 
-           options.getInt ("Packet.Max-Length"));
+        throw new FrameTooLargeException 
+          (options.getInt ("Packet.Max-Length"), frameSize);
       
       message.decode (in);
       
@@ -198,7 +197,8 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
     {
       // handle client protocol violations by generating an ErrorMessage
       if (ex instanceof ProtocolCodecException ||
-          ex instanceof BufferUnderflowException)
+          ex instanceof BufferUnderflowException ||
+          ex instanceof FrameTooLargeException)
       {
         ErrorMessage error = new ErrorMessage (ex, message);
         
@@ -207,6 +207,8 @@ public class FrameCodec implements MessageDecoder, MessageEncoder
           ((XidMessage)message).xid = in.getInt ();
         
         in.skip (in.remaining ());
+        
+        session.suspendRead ();
         
         message = error;
       } else

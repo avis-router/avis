@@ -6,13 +6,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.avis.net.common.ConnectionOptions;
 import org.avis.net.security.Keys;
+import org.avis.util.Options;
 
 /**
  * Stores the state needed for a client's connection to the router.
- * The operations that support the client's subscriptions are
- * thread-safe, allowing one session to modify the subscription (e.g.
- * SubModify) while another is testing for notification matches (e.g.
- * as a result of a NotifyEmit).
+ * Thread access is managed via a single writer/multiple reader lock.
  * 
  * @author Matthew Phillips
  */
@@ -25,41 +23,46 @@ class Connection
 
   /**
    * Connection-wide subscription keys that apply to all
-   * subscriptions. Not thread safe: treat instances as immutable once
-   * assigned.
+   * subscriptions. Treat as immutable once assigned.
    */
   public Keys subscriptionKeys;
 
   /**
    * Connection-wide notification keys that apply to all
-   * notifications. Not thread safe: treat instances as immutable once
-   * assigned.
+   * notifications. Treat as immutable once assigned.
    */
   public Keys notificationKeys;
   
   /**
    * The client's subscription set. Maps subscription ID's to their
-   * {@link Subscription} instance. Thread safe: may be safely
-   * accessed and modified across sessions.
+   * Subscription instance.
    */
   private Map<Long, Subscription> subscriptions;
 
   /**
-   * TODO opt: could look at using the concept of a SeqLock for this
-   * instead of a traditional lock. For our situation where we mainly
-   * read, SeqLock's greatly reduce cache invalidation due to repeatedly
-   * modifying the lock.
-   * See http://blogs.sun.com/dave/entry/seqlocks_in_java.
+   * Single writer/multiple reader lock.
    */
   private ReentrantReadWriteLock lock;
 
-  public Connection (Map<String, Object> options,
+  /**
+   * Create a new connection instance.
+   * 
+   * @param defaultOptions The default connection options.
+   * 
+   * @param requestedOptions The client's requested option values.
+   * @param subscriptionKeys The client's initial global subscription
+   *                key collection.
+   * @param notificationKeys The client's initial global notification
+   *                key collection.
+   */
+  public Connection (Options defaultOptions,
+                     Map<String, Object> requestedOptions,
                      Keys subscriptionKeys, Keys notificationKeys)
   {
     this.subscriptions = new ConcurrentHashMap<Long, Subscription> ();
     this.subscriptionKeys = subscriptionKeys;
     this.notificationKeys = notificationKeys;
-    this.options = new ConnectionOptions (options);
+    this.options = new ConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
   }
 

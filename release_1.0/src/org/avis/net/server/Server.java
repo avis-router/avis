@@ -22,6 +22,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.net.common.FrameCodec;
+import org.avis.net.common.FrameTooLargeException;
 import org.avis.net.messages.ConfConn;
 import org.avis.net.messages.ConnRply;
 import org.avis.net.messages.ConnRqst;
@@ -48,19 +49,16 @@ import org.avis.net.security.Keys;
 import org.avis.pubsub.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
 
-import static dsto.dfc.logging.Log.TRACE;
-import static dsto.dfc.logging.Log.alarm;
-import static dsto.dfc.logging.Log.diagnostic;
-import static dsto.dfc.logging.Log.isEnabled;
-import static dsto.dfc.logging.Log.trace;
-import static dsto.dfc.logging.Log.warn;
+import dsto.dfc.logging.Log;
 
 import static java.lang.Runtime.getRuntime;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static org.apache.mina.common.IdleStatus.READER_IDLE;
 
+import static org.apache.mina.common.IdleStatus.READER_IDLE;
+import static org.apache.mina.common.IoFutureListener.CLOSE;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.net.common.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.net.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.net.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.net.messages.Nack.IMPL_LIMIT;
 import static org.avis.net.messages.Nack.NOT_IMPL;
@@ -68,13 +66,20 @@ import static org.avis.net.messages.Nack.NO_SUCH_SUB;
 import static org.avis.net.messages.Nack.PARSE_ERROR;
 import static org.avis.net.messages.Nack.PROT_ERROR;
 import static org.avis.net.security.Keys.EMPTY_KEYS;
-import static org.avis.util.Format.shortException;
+
+import static dsto.dfc.logging.Log.TRACE;
+import static dsto.dfc.logging.Log.alarm;
+import static dsto.dfc.logging.Log.diagnostic;
+import static dsto.dfc.logging.Log.isEnabled;
+import static dsto.dfc.logging.Log.trace;
+import static dsto.dfc.logging.Log.warn;
 
 public class Server implements IoHandler
 {
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
   
+  private ServerOptions routerOptions;
   private ExecutorService executor;
   private SocketAcceptor acceptor;
   
@@ -104,9 +109,10 @@ public class Server implements IoHandler
   public Server (ServerOptions options)
     throws IOException
   {
-    sessions = new ConcurrentHashSet<IoSession> ();
-    executor = newCachedThreadPool ();
-    acceptor =
+    this.routerOptions = options;
+    this.sessions = new ConcurrentHashSet<IoSession> ();
+    this.executor = newCachedThreadPool ();
+    this.acceptor =
       new SocketAcceptor (getRuntime ().availableProcessors () + 1,
                           executor);
     
@@ -244,16 +250,7 @@ public class Server implements IoHandler
        * A message processing method detected a protocol violation
        * e.g. attempt to remove non existent subscription.
        */
-      diagnostic ("Client protocol violation for " + message + ": " + 
-                  ex.getMessage (), this);
-      
-      if (message instanceof XidMessage)
-      {
-        session.write
-          (new Nack ((XidMessage)message, PROT_ERROR, ex.getMessage ()));
-      }
-      
-      session.close ().join ();
+      handleProtocolViolation (session, message, ex.getMessage (), ex);
     }
   }
 
@@ -264,7 +261,7 @@ public class Server implements IoHandler
       throw new ProtocolCodecException ("Already connected");
     
     Connection connection =
-      new Connection (message.options,
+      new Connection (routerOptions, message.options,
                       message.subscriptionKeys, message.notificationKeys);
     
     int maxKeys = connection.options.getInt ("Connection.Max-Keys");
@@ -522,18 +519,74 @@ public class Server implements IoHandler
 
   private static void handleError (IoSession session, ErrorMessage message)
   {
-    diagnostic ("Disconnecting client due to protocol violation: " +
-                shortException (message.error), Server.class);
-    
-    if (message.cause instanceof XidMessage)
+    /*
+     * When a frame is too large: for requests we can send a NACK for,
+     * simply reject and keep on truckin. For frames that cannot be
+     * NACK'd (e.g. NotifyEmit), we treat this as a protocol error and
+     * Disconn with a descriptive message rather than silently (from
+     * the client's POV) dropping them.
+     */
+    if (message.error instanceof FrameTooLargeException)
     {
-      session.write
-        (new Nack ((XidMessage)message.cause, PROT_ERROR,
-                   message.error.getMessage ()));
+      if (message.cause instanceof XidMessage)
+      {
+        // codec will have suspended input on error, restart
+        session.resumeRead ();
+        
+        nackLimit (session, (XidMessage)message.cause, 
+                   message.error.getMessage ());
+      } else
+      {
+        handleProtocolViolation (session, message.cause, 
+                                 message.error.getMessage (), null);
+      }
+    } else
+    {
+      handleProtocolViolation (session, message.cause, 
+                               message.formattedMessage (), message.error);
+    }
+  }
+
+  /**
+   * Handle a protocol violation by a client by sending a NACK (if
+   * appropriate) and disconnecting with the REASON_PROTOCOL_VIOLATION code.
+   * 
+   * @param session The client session.
+   * @param cause The message that caused the violation.
+   * @param diagnosticMessage The diagnostic sent back to the client.
+   * @throws NoConnectionException 
+   */
+  private static void handleProtocolViolation (IoSession session,
+                                               Message cause,
+                                               String diagnosticMessage,
+                                               Throwable error)
+  {
+    if (isEnabled (Log.DIAGNOSTIC))
+    {
+      diagnostic ("Disconnecting client due to protocol violation: " +
+                  diagnosticMessage, Server.class);
+      
+      if (error != null)
+        diagnostic ("Decode stack trace", Server.class, error);
     }
     
-    // close and wait to avoid reading any further bogus data left in stream
-    session.close ().join ();
+    session.suspendRead ();
+
+    Connection connection = peekConnectionFor (session);
+    
+    if (connection != null)
+      connection.close ();
+    
+    if (cause instanceof XidMessage)
+    {
+      session.write
+        (new Nack ((XidMessage)cause, PROT_ERROR, diagnosticMessage));
+    }
+    
+    // send Disconn and close
+    session.write
+     (new Disconn (REASON_PROTOCOL_VIOLATION,
+                   diagnosticMessage)).addListener (CLOSE);
   }
 
   /**

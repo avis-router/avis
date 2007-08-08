@@ -24,6 +24,30 @@ public class ErrorMessage extends Message
     this.cause = cause;
   }
 
+  /**
+   * Generate an error message suitable for presentation as a
+   * debugging aid.
+   */
+  public String formattedMessage ()
+  {
+    StringBuilder message = new StringBuilder ();
+    
+    if (cause == null)
+      message.append ("Error decoding XDR frame");
+    else
+      message.append ("Error decoding ").append (cause);
+    
+    if (error != null)
+    {
+      message.append (": ").append (error.getClass ().getName ());
+      
+      if (error.getMessage () != null)
+        message.append (": ").append (error.getMessage ());
+    }
+    
+    return message.toString (); 
+  }
+  
   @Override
   public int typeId ()
   {

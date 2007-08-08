@@ -20,6 +20,7 @@ import org.avis.net.messages.SubModRqst;
 import org.avis.net.messages.SubRply;
 import org.avis.net.messages.TestConn;
 import org.avis.net.messages.UNotify;
+import org.avis.net.messages.XidMessage;
 import org.avis.net.security.Key;
 import org.avis.net.security.KeyScheme;
 import org.avis.net.security.Keys;
@@ -188,6 +189,39 @@ public class JUTestServer
     client.close ();
     
     server.close ();
+  }
+  
+    /**
+   * Test connection options specified in router config.
+   */
+  @Test
+  public void routerOptions ()
+    throws Exception
+  {
+    ServerOptions options = new ServerOptions (PORT);
+ 
+    options.set ("Packet.Max-Length", 1024);
+    options.set ("Subscription.Max-Count", 16);
+    options.set ("Subscription.Max-Length", 1024);
+    //options.set ("Attribute.Opaque.Max-Length", 2048 * 1024);
+    
+    server = new Server (options);
+    SimpleClient client = new SimpleClient ("localhost", PORT);
+
+    client.connect ();
+    
+    // try to send a frame bigger than 1K, check server rejects
+    SecRqst secRqst = new SecRqst ();
+    secRqst.addNtfnKeys = new Keys ();
+    secRqst.addNtfnKeys.add (SHA1_PRODUCER, new Key (new byte [1025]));
+    
+    client.send (secRqst);
+    XidMessage reply = (XidMessage)client.receive ();
+    
+    assertTrue ("Expected a NACK", reply instanceof Nack);
+    assertEquals (secRqst.xid, reply.xid);
+    
+    client.closeImmediately ();
   }
   
   /**
