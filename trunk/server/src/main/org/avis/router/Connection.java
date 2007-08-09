@@ -141,9 +141,7 @@ class Connection
   
   public boolean subscriptionKeysFull (Keys keys)
   {
-    int maxKeys = options.getInt ("Subscription.Max-Keys");
-    
-    return keys.size () > maxKeys;
+    return keys.size () > options.getInt ("Subscription.Max-Keys");
   }
 
   /**
