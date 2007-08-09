@@ -50,9 +50,12 @@ public class RequestTrackingFilter
     this.replyTimeout = timeout;
   }
   
-  public synchronized boolean sharedResourcesDisposed ()
+  public boolean sharedResourcesDisposed ()
   {
-    return shareCount == 0;
+    synchronized (RequestTrackingFilter.class)
+    {
+      return shareCount == 0;
+    }
   }
   
   @Override
