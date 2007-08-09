@@ -51,43 +51,34 @@ public class RequestTrackingFilter
     this.replyTimeout = timeout;
   }
   
-  public boolean sharedResourcesDisposed ()
+  public synchronized boolean sharedResourcesDisposed ()
   {
     return shareCount == 0;
   }
   
   @Override
-  public synchronized void onPreAdd (IoFilterChain parent, 
-                                     String name,
-                                     NextFilter nextFilter) 
+  public void onPreAdd (IoFilterChain parent,  String name,
+                        NextFilter nextFilter) 
     throws Exception
   {
     this.filterName = name;
   }
   
   @Override
-  public synchronized void filterClose (NextFilter nextFilter, IoSession session)
+  public void filterClose (NextFilter nextFilter, 
+                           IoSession session)
     throws Exception
   {
-    if (--shareCount == 0)
-      destroy ();
-    
+    synchronized (this)
+    {
+      if (--shareCount == 0)
+      {
+        sharedExecutor.shutdown ();
+        sharedExecutor = null;
+      }
+    }
+
     nextFilter.filterClose (session);
-  }
-  
-  @Override
-  public void init () 
-    throws Exception
-  {
-    sharedExecutor = newScheduledThreadPool (1);
-  }
-  
-  @Override
-  public void destroy () 
-    throws Exception
-  {
-    sharedExecutor.shutdown ();
-    sharedExecutor = null;
   }
   
   @Override
@@ -95,8 +86,11 @@ public class RequestTrackingFilter
                                            IoSession session)
     throws Exception
   {
-    if (shareCount++ == 0)
-      init ();
+    synchronized (this)
+    {
+      if (shareCount++ == 0)
+        sharedExecutor = newScheduledThreadPool (1);
+    }
     
     session.setAttribute ("requestTracker", new Tracker (session));
   }
