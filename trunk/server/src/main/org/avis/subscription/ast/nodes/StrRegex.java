@@ -19,7 +19,7 @@ public class StrRegex extends StringCompareNode
   /**
    * Create from a list of arguments.
    */
-  public static Node create (List<? extends Node> args)
+  public static Node create (List<Node> args)
   {
     return createConjunction (StrRegex.class, Node.class, Const.class, args);
   }
