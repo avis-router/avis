@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -20,22 +24,19 @@ import org.avis.io.messages.SubRply;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
 import org.avis.io.messages.XidMessage;
-import org.avis.router.Router;
 import org.avis.security.Key;
 import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
 import org.avis.util.LogFailTester;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
+import static org.avis.logging.Log.ALARM;
+import static org.avis.logging.Log.WARNING;
+import static org.avis.logging.Log.enableLogging;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -57,6 +58,9 @@ public class JUTestRouter
   @Before
   public void setup ()
   {
+    enableLogging (WARNING, true);
+    enableLogging (ALARM, true);
+    
     random = new Random ();
     logTester = new LogFailTester ();
   }
@@ -642,6 +646,11 @@ public class JUTestRouter
   public void badClient ()
     throws Exception
   {
+    // this test generates warnings by design: turn off checking
+    logTester.assertOkAndDispose ();
+    
+    enableLogging (WARNING, false);
+    
     server = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     SimpleClient badClient = new SimpleClient ();
