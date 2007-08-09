@@ -68,9 +68,7 @@ public abstract class FrameCodec
       out.write (buffer);
     } else
     {
-      throw new ProtocolCodecException
-        ("Frame size of " + frameSize + " bytes is larger than maximum " + 
-         maxLength);
+      throw new FrameTooLargeException (maxLength, frameSize);
     }
   }
 
