@@ -3,6 +3,8 @@ package org.avis.io.messages;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import static org.avis.util.Text.shortException;
+
 /**
  * Synthetic message used to signal protocol errors.
  * 
@@ -36,7 +38,7 @@ public class ErrorMessage extends Message
     
     if (error != null)
     {
-      message.append (": ").append (error.getClass ().getName ());
+        message.append (": ").append (shortException (error));
       
       if (error.getMessage () != null)
         message.append (": ").append (error.getMessage ());
