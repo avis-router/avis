@@ -39,8 +39,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class RequestTrackingFilter 
   extends IoFilterAdapter implements IoFilter
 {
-  private static int shareCount;
-  
+  protected static int shareCount;
   protected static ScheduledExecutorService sharedExecutor;
   
   protected int replyTimeout;
@@ -69,7 +68,7 @@ public class RequestTrackingFilter
                            IoSession session)
     throws Exception
   {
-    synchronized (this)
+    synchronized (RequestTrackingFilter.class)
     {
       if (--shareCount == 0)
       {
@@ -82,11 +81,11 @@ public class RequestTrackingFilter
   }
   
   @Override
-  public synchronized void sessionCreated (NextFilter nextFilter, 
+  public void sessionCreated (NextFilter nextFilter, 
                                            IoSession session)
     throws Exception
   {
-    synchronized (this)
+    synchronized (RequestTrackingFilter.class)
     {
       if (shareCount++ == 0)
         sharedExecutor = newScheduledThreadPool (1);
@@ -96,8 +95,7 @@ public class RequestTrackingFilter
   }
   
   @Override
-  public synchronized void sessionClosed (NextFilter nextFilter, 
-                                          IoSession session)
+  public void sessionClosed (NextFilter nextFilter, IoSession session)
     throws Exception
   {
     trackerFor (session).dispose ();
