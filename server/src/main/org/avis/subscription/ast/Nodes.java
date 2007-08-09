@@ -100,33 +100,33 @@ public final class Nodes
 
   /**
    * Allow a node that usually operates on two arguments to optionally
-   * operate on any number with an OR conjunction. e.g. can be used to
-   * turn <tt>begins-with (name, 'value1', 'value2')</tt> into
-   * <tt>begins-with (name, 'value') || begins-with (name, 'value2')</tt>.
+   * operate on any number with an OR conjunction. For example, could
+   * be used to turn <tt>begins-with (name, 'value1', 'value2')</tt>
+   * into
+   * <tt>begins-with (name, 'value1') || begins-with (name, 'value2')</tt>.
    * 
-   * @param <T> The node type to generate.
-   * @param type The node type to generate.
-   * @param constParam1 The constructor's first parameter type.
-   * @param constParam2 The constructor's second parameter type.
+   * @param nodeType The node type to generate.
+   * @param param1 The constructor's first parameter type.
+   * @param param2 The constructor's second parameter type.
    * @param args A list of arguments for the node (must be >= 2). If
-   *          these are longer than 2, then arg0 is paired with
-   *          arg1... as children to an OR parent node.
-   * @return Either an instance of T or Or with T children.
+   *                these are longer than 2, then arg0 is paired with
+   *                arg1..argN as children to an OR node.
+   * @return Either an instance of T or an Or with T's as children.
    */
   public static <T extends Node> 
-    Node createConjunction (Class<T> type,
-                            Class<?> constParam1,
-                            Class<?> constParam2,
-                            List<? extends Node> args)
+    Node createConjunction (Class<T> nodeType,
+                            Class<?> param1,
+                            Class<?> param2,
+                            List<Node> args)
   {
     try
     {
-      Constructor<T> cons =
-        type.getConstructor (constParam1, constParam2);
+      Constructor<T> nodeConstructor = 
+        nodeType.getConstructor (param1, param2);
       
       if (args.size () == 2)
       {
-        return cons.newInstance (args.get (0), args.get (1));
+        return nodeConstructor.newInstance (args.get (0), args.get (1));
       } else
       {
         Node arg0 = args.get (0);
@@ -134,7 +134,7 @@ public final class Nodes
         Or or = new Or ();
         
         for (int i = 1; i < args.size (); i++)
-          or.addChild (cons.newInstance (arg0, args.get (i)));
+          or.addChild (nodeConstructor.newInstance (arg0, args.get (i)));
         
         return or;
       }
