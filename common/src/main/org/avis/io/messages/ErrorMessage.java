@@ -37,12 +37,7 @@ public class ErrorMessage extends Message
       message.append ("Error decoding ").append (cause.name ());
     
     if (error != null)
-    {
-        message.append (": ").append (shortException (error));
-      
-      if (error.getMessage () != null)
-        message.append (": ").append (error.getMessage ());
-    }
+      message.append (": ").append (shortException (error));
     
     return message.toString (); 
   }
