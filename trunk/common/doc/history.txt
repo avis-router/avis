@@ -1,7 +1,9 @@
 Release 1.0.2 (August 9, 2007)
 ----------------------------------------------------------------------
 
-This release corrects four errors in the router:
+This release corrects a number of errors in the router and brings the
+subscription language parser in closer compliance with the
+specification. All users are advised to upgrade.
 
  * When encoding multibyte UTF-8 characters in strings, the router was
    not calculating the length correctly. This would lead to protocol
@@ -20,14 +22,11 @@ This release corrects four errors in the router:
    message rather than notifying the reason in the log and in the
    reply to the client.
 
-It also brings the subscription parser more in line with the Elvin
-specification:
+ * Field names may now contain a wider range of characters without
+   requiring escapes.
 
-  * Field names may now contain a wider range of characters without
-    requiring escapes.
-
-  * Real number acceptance is slightly stricter: in particular, real
-    numbers with no leading digit are no longer accepted, e.g. ".4".
+ * Real number acceptance is slightly stricter: in particular, real
+   numbers with no leading digit are no longer accepted, e.g. ".4".
 
 
 Release 1.0.1 (May 20, 2007)
