@@ -102,7 +102,7 @@ public class FederationLink implements NotifyListener
    */
   public boolean closedSession ()
   {
-    return !session.containsAttribute ("linkClosed");
+    return session.containsAttribute ("linkClosed");
   }
   
   public void close ()
@@ -112,14 +112,17 @@ public class FederationLink implements NotifyListener
   
   private void close (int reason, String message)
   {
+    if (closed)
+      return;
+    
     closed = true;
     
     router.removeNotifyListener (this);
-    
+
     if (session.isConnected ())
     {
       session.setAttribute ("linkClosed");
-      
+
       if (reason == REASON_DISCONN_REQUESTED)
         session.close ();
       else
