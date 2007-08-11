@@ -42,6 +42,7 @@ public class FederationListener implements IoHandler, Closeable
   private Set<InetSocketAddress> addresses;
   private String serverDomain;
   private FederationClassMap federationClassMap;
+  private volatile boolean closing;
 
   public FederationListener (Router router,
                              String serverDomain,
@@ -78,16 +79,21 @@ public class FederationListener implements IoHandler, Closeable
   {
     synchronized (this)
     {
+      if (closing)
+        return;
+      
+      closing = true;
+      
       for (FederationLink link : links)
         link.close ();
       
       links.clear ();
+
+      for (InetSocketAddress address : addresses)
+        router.socketAcceptor ().unbind (address);
+      
+      addresses.clear ();
     }
-    
-    for (InetSocketAddress address : addresses)
-      router.socketAcceptor ().unbind (address);
-    
-    addresses.clear ();
   }
   
   private void handleMessage (IoSession session,
@@ -199,12 +205,16 @@ public class FederationListener implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    // zip
+    if (closing)
+      session.close ();
   }
 
   public void messageReceived (IoSession session, Object theMessage)
     throws Exception
   {
+    if (closing)
+      return;
+    
     Message message = (Message)theMessage;
     
     logMessageReceived (message, serverDomain, this);
