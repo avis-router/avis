@@ -328,7 +328,8 @@ public final class Notification
   }
   
   /**
-   * The set of values in the notification. This is a live, unmodifiable set.
+   * The set of values in the notification. This is a live,
+   * unmodifiable collection.
    */
   public Collection<Object> values ()
   {
