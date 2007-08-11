@@ -6,7 +6,6 @@ import java.util.Map;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
-import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -17,6 +16,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.lang.Thread.sleep;
+
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
@@ -26,7 +27,6 @@ import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class JUTestFederation
@@ -130,11 +130,14 @@ public class JUTestFederation
     federation.close ();
   }
 
+  /**
+   * Test that connector will keep trying to connect on initial failure.
+   */
   @Test
   public void connectTimeout ()
     throws Exception
   {
-    Log.enableLogging (Log.DIAGNOSTIC, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
     
     Router server1 = new Router (PORT1);
     Router server2 = new Router (PORT2);
@@ -146,6 +149,7 @@ public class JUTestFederation
     
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
+    // set connect timeout to 1 second
     FederationOptions options = new FederationOptions ();
     options.set ("Federation.Connection-Timeout", 1);
     
@@ -153,17 +157,18 @@ public class JUTestFederation
       new FederationConnector (server1, "server1", ewafURI, 
                                fedClass, options);
     
-    Thread.sleep (2000);
+    sleep (2000);
     
-    assertTrue (connector.isWaitingForConnection ());
+    // check we're waiting
+    assertTrue (connector.isWaitingForAsyncConnection ());
     
     FederationListener listener = 
       new FederationListener (server2, "server2", federationMap, 
                               addressesFor (set (ewafURI)));
 
-    Thread.sleep (2000);
+    sleep (2000);
     
-    assertFalse (connector.isWaitingForConnection ());
+    // check we've connected
     assertTrue (connector.isConnected ());
     
     connector.close ();
