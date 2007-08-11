@@ -6,6 +6,7 @@ import java.util.Map;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
+import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -169,6 +170,66 @@ public class JUTestFederation
     sleep (2000);
     
     // check we've connected
+    assertTrue (connector.isConnected ());
+    
+    connector.close ();
+    listener.close ();
+    
+    server1.close ();
+    server2.close ();
+  }
+  
+  /**
+   * Test that connector will reconnect on disconnect.
+   */
+  @Test
+  public void reconnect ()
+    throws Exception
+  {    
+    Router server1 = new Router (PORT1);
+    Router server2 = new Router (PORT2);
+
+    FederationClass fedClass =
+      new FederationClass ("require (federated)", "require (federated)");
+    
+    FederationClassMap federationMap = new FederationClassMap (fedClass);
+    
+    EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
+        
+    // set connect timeout to 1 second
+    FederationOptions options = new FederationOptions ();
+    options.set ("Federation.Connection-Timeout", 1);
+   
+    Log.enableLogging (Log.DIAGNOSTIC, true);
+    Log.enableLogging (Log.TRACE, true);
+
+    FederationListener listener = 
+      new FederationListener (server2, "server2", federationMap, 
+                              addressesFor (set (ewafURI)));
+
+    FederationConnector connector = 
+      new FederationConnector (server1, "server1", ewafURI, 
+                               fedClass, options);
+
+    sleep (1000);
+    
+    // check we've connected
+    assertTrue (connector.isConnected ());
+
+    listener.close ();
+    
+    sleep (3000);
+
+    // check we're waiting
+    assertTrue (connector.isWaitingForAsyncConnection ());
+    
+    listener = 
+      new FederationListener (server2, "server2", federationMap, 
+                              addressesFor (set (ewafURI)));
+    
+    sleep (2000);
+    
+    // check we've reconnected
     assertTrue (connector.isConnected ());
     
     connector.close ();
