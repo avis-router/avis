@@ -58,9 +58,9 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
+
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
@@ -75,7 +75,6 @@ import static org.avis.io.messages.Nack.NO_SUCH_SUB;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.io.messages.Nack.PROT_ERROR;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
-import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
@@ -156,8 +155,7 @@ public class Router implements IoHandler, Closeable
     
     for (InetSocketAddress address : options.listenAddresses ())
     {
-      if (shouldLog (DIAGNOSTIC))
-        diagnostic ("Router binding to address: " + address, this);
+      diagnostic ("Router binding to address: " + address, this);
 
       acceptor.bind (address, this, acceptorConfig);
     }
