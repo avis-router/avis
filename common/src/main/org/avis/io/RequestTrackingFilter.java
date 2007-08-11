@@ -85,7 +85,7 @@ public class RequestTrackingFilter
   
   @Override
   public void sessionCreated (NextFilter nextFilter, 
-                                           IoSession session)
+                              IoSession session)
     throws Exception
   {
     synchronized (RequestTrackingFilter.class)
@@ -95,6 +95,8 @@ public class RequestTrackingFilter
     }
     
     session.setAttribute ("requestTracker", new Tracker (session));
+    
+    nextFilter.sessionCreated (session);
   }
   
   @Override
@@ -102,6 +104,8 @@ public class RequestTrackingFilter
     throws Exception
   {
     trackerFor (session).dispose ();
+    
+    nextFilter.sessionClosed (session);
   }
   
   @Override
