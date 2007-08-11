@@ -101,7 +101,7 @@ import static org.avis.util.Util.checkNotNull;
  * Notification notification = new Notification ();
  * notification.set (&quot;Foo&quot;, 42);
  * notification.set (&quot;Bar&quot;, &quot;bar&quot;);
- * notification.set (&quot;Data&quot;, new byte []{0x00, 0xff});
+ * notification.set (&quot;Data&quot;, new byte [] {0x00, 0xff});
  * 
  * elvin.send (notification);
  * 
