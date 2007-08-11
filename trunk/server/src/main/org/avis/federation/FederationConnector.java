@@ -1,5 +1,8 @@
 package org.avis.federation;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import java.io.Closeable;
 
 import java.net.InetSocketAddress;
@@ -25,8 +28,6 @@ import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.router.Router;
 
-import static java.lang.Thread.sleep;
-
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
@@ -45,6 +46,7 @@ import static org.avis.util.Text.shortException;
 public class FederationConnector implements IoHandler, Closeable
 {
   private EwafURI uri;
+  private FederationOptions options;
   private Router router;
   private SocketConnector connector;
   private SocketConnectorConfig connectorConfig;
@@ -54,6 +56,7 @@ public class FederationConnector implements IoHandler, Closeable
   private InetSocketAddress remoteAddress;
   private IoSession session;
   private volatile boolean closing;
+  private Timer asyncConnectTimer;
   
   public FederationConnector (Router router, String serverDomain,
                               EwafURI uri, FederationClass federationClass,
@@ -63,6 +66,7 @@ public class FederationConnector implements IoHandler, Closeable
     this.uri = uri;
     this.serverDomain = serverDomain;
     this.federationClass = federationClass;
+    this.options = options;
     this.connector = new SocketConnector (1, router.executor ());
     this.connectorConfig = new SocketConnectorConfig ();
     this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
@@ -86,6 +90,9 @@ public class FederationConnector implements IoHandler, Closeable
     connect ();
   }
   
+  /**
+   * Kick off a connection attempt.
+   */
   void connect ()
   {
     this.closing = false;
@@ -100,6 +107,9 @@ public class FederationConnector implements IoHandler, Closeable
     });
   }
   
+  /**
+   * Called by future created by connect () when complete.
+   */
   protected void connectFutureComplete (IoFuture future)
   {
     if (closing)
@@ -109,10 +119,10 @@ public class FederationConnector implements IoHandler, Closeable
     {
       if (!future.isReady ())
       {
-        warn ("Connection attempt to federator at " + uri + " timed out: " +
-              "retrying", this);
+        diagnostic ("Connection attempt to federator at " + uri + 
+                    " timed out, retrying", this);
         
-        connect ();
+        asyncConnect ();
       } else
       {
         open (future.getSession ());
@@ -122,21 +132,58 @@ public class FederationConnector implements IoHandler, Closeable
       diagnostic ("Failed to connect to federator at " + uri + ", retrying: " + 
                   shortException (ex.getCause ()), this);
       
-      try
-      {
-        sleep (connectorConfig.getConnectTimeoutMillis ());
-
-        connect ();
-      } catch (InterruptedException ex2)
-      {
-        ex2.printStackTrace ();
-      }
+      asyncConnect ();
     }
   }
 
+  /**
+   * Schedule a delayed connect () in Federation.Connection-Timeout
+   * seconds from now.
+   * 
+   * @see #cancelAsyncConnect()
+   */
+  private void asyncConnect ()
+  {
+    if (asyncConnectTimer == null)
+      asyncConnectTimer = new Timer ("Federation connector");
+    
+    TimerTask connectTask = new TimerTask ()
+    {
+      @Override
+      public void run ()
+      {
+        connect ();
+      }
+    };
+    
+    asyncConnectTimer.schedule 
+      (connectTask, options.getInt ("Federation.Connection-Timeout") * 1000);
+  }
+  
+  /**
+   * Canncel an async connect and its associated timer.
+   * 
+   * @see #asyncConnect()
+   */
+  private void cancelAsyncConnect ()
+  {
+    if (asyncConnectTimer != null)
+    {
+      asyncConnectTimer.cancel ();
+      
+      asyncConnectTimer = null;
+    }
+  }
+
+  /**
+   * Called to open a federation connection when a connection and
+   * session has been established.
+   */
   void open (IoSession newSession)
   {
     this.session = newSession;
+    
+    cancelAsyncConnect ();
     
     send (new FedConnRqst (VERSION_MAJOR, VERSION_MINOR, serverDomain));
   }
@@ -147,7 +194,9 @@ public class FederationConnector implements IoHandler, Closeable
       return;
     
     closing = true;
-
+    
+    cancelAsyncConnect ();
+    
     if (session.isConnected ())
     {
       if (link != null)
@@ -175,14 +224,14 @@ public class FederationConnector implements IoHandler, Closeable
     connect ();
   }
   
-  public boolean isWaitingForConnection ()
+  public boolean isWaitingForAsyncConnection ()
   {
-    return !closing && !isConnected ();
+    return asyncConnectTimer != null;
   }
   
   public boolean isConnected ()
   {
-    return session != null;
+    return link != null;
   }
 
   private void handleMessage (Message message)
