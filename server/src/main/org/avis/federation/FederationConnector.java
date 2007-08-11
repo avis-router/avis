@@ -31,9 +31,9 @@ import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
-import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.warn;
+import static org.avis.util.Text.shortException;
 
 /**
  * The federation connector is responsible for connecting to a remote
@@ -56,7 +56,8 @@ public class FederationConnector implements IoHandler, Closeable
   private volatile boolean closing;
   
   public FederationConnector (Router router, String serverDomain,
-                              EwafURI uri, FederationClass federationClass)
+                              EwafURI uri, FederationClass federationClass,
+                              FederationOptions options)
   {
     this.router = router;
     this.uri = uri;
@@ -66,19 +67,22 @@ public class FederationConnector implements IoHandler, Closeable
     this.connectorConfig = new SocketConnectorConfig ();
     this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
     
+    int connectTimeout = options.getInt ("Federation.Connection-Timeout");
+
     /* Change the worker timeout to make the I/O thread quit soon
      * when there's no connection to manage. */
     connector.setWorkerTimeout (0);
     
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (20);
+    connectorConfig.setConnectTimeout (connectTimeout);
     
     DefaultIoFilterChainBuilder filterChain = connectorConfig.getFilterChain ();
     
     filterChain.addLast ("codec", FederationFrameCodec.FILTER);
     
-    filterChain.addLast ("requestTracker", new RequestTrackingFilter (20));
-    
+    filterChain.addLast ("requestTracker", 
+                         new RequestTrackingFilter (connectTimeout));
+
     connect ();
   }
   
@@ -115,9 +119,8 @@ public class FederationConnector implements IoHandler, Closeable
       }
     } catch (RuntimeIOException ex)
     {
-      // todo handle: we get a ConnectException embedded here when refused
-      alarm ("Failed to connect to federator at " + uri + ": retrying", 
-             this, ex.getCause ());
+      diagnostic ("Failed to connect to federator at " + uri + ", retrying: " + 
+                  shortException (ex.getCause ()), this);
       
       try
       {
@@ -170,6 +173,16 @@ public class FederationConnector implements IoHandler, Closeable
   {
     close ();
     connect ();
+  }
+  
+  public boolean isWaitingForConnection ()
+  {
+    return !closing && !isConnected ();
+  }
+  
+  public boolean isConnected ()
+  {
+    return session != null;
   }
 
   private void handleMessage (Message message)
