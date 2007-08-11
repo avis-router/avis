@@ -6,6 +6,7 @@ import java.util.Map;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
+import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -25,6 +26,8 @@ import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class JUTestFederation
 {
@@ -127,6 +130,49 @@ public class JUTestFederation
     federation.close ();
   }
 
+  @Test
+  public void connectTimeout ()
+    throws Exception
+  {
+    Log.enableLogging (Log.DIAGNOSTIC, true);
+    
+    Router server1 = new Router (PORT1);
+    Router server2 = new Router (PORT2);
+
+    FederationClass fedClass =
+      new FederationClass ("require (federated)", "require (federated)");
+    
+    FederationClassMap federationMap = new FederationClassMap (fedClass);
+    
+    EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
+        
+    FederationOptions options = new FederationOptions ();
+    options.set ("Federation.Connection-Timeout", 1);
+    
+    FederationConnector connector = 
+      new FederationConnector (server1, "server1", ewafURI, 
+                               fedClass, options);
+    
+    Thread.sleep (2000);
+    
+    assertTrue (connector.isWaitingForConnection ());
+    
+    FederationListener listener = 
+      new FederationListener (server2, "server2", federationMap, 
+                              addressesFor (set (ewafURI)));
+
+    Thread.sleep (2000);
+    
+    assertFalse (connector.isWaitingForConnection ());
+    assertTrue (connector.isConnected ());
+    
+    connector.close ();
+    listener.close ();
+    
+    server1.close ();
+    server2.close ();
+  }
+  
   private static Map<String, Object> map (String... nameValues)
   {
     HashMap<String, Object> map = new HashMap<String, Object> ();
@@ -151,6 +197,12 @@ public class JUTestFederation
     public StandardFederatorSetup ()
       throws Exception
     {
+      this (new FederationOptions ());
+    }
+    
+    public StandardFederatorSetup (FederationOptions options)
+      throws Exception
+    {
       server1 = new Router (PORT1);
       server2 = new Router (PORT2);
 
@@ -168,7 +220,8 @@ public class JUTestFederation
                                 addressesFor (set (ewafURI)));
       
       connector = 
-        new FederationConnector (server1, "server1", ewafURI, fedClass);
+        new FederationConnector (server1, "server1", ewafURI, 
+                                 fedClass, options);
       
       client1 = new SimpleClient ("client1", "localhost", PORT1);
       client2 = new SimpleClient ("client2", "localhost", PORT2);
