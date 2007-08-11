@@ -93,9 +93,11 @@ public class FederationConnector implements IoHandler, Closeable
   /**
    * Kick off a connection attempt.
    */
-  void connect ()
+  synchronized void connect ()
   {
-    this.closing = false;
+    closing = false;
+    
+    cancelAsyncConnect ();
     
     connector.connect 
       (remoteAddress, this, connectorConfig).addListener (new IoFutureListener ()
@@ -142,11 +144,13 @@ public class FederationConnector implements IoHandler, Closeable
    * 
    * @see #cancelAsyncConnect()
    */
-  private void asyncConnect ()
+  synchronized void asyncConnect ()
   {
-    if (asyncConnectTimer == null)
-      asyncConnectTimer = new Timer ("Federation connector");
+    if (asyncConnectTimer != null)
+      throw new Error ();
     
+    asyncConnectTimer = new Timer ("Federation connector");
+      
     TimerTask connectTask = new TimerTask ()
     {
       @Override
@@ -179,7 +183,7 @@ public class FederationConnector implements IoHandler, Closeable
    * Called to open a federation connection when a connection and
    * session has been established.
    */
-  void open (IoSession newSession)
+  synchronized void open (IoSession newSession)
   {
     this.session = newSession;
     
@@ -190,36 +194,44 @@ public class FederationConnector implements IoHandler, Closeable
   
   public void close ()
   {
-    if (closing || session == null)
-      return;
-    
-    closing = true;
-    
-    cancelAsyncConnect ();
-    
-    if (session.isConnected ())
+    synchronized (this)
     {
-      if (link != null)
-        link.close ();
-      else
-        session.close ();
-    } else
-    {
-      if (link != null && !link.closedSession ())
+      if (closing || session == null)
+        return;
+      
+      closing = true;
+      
+      cancelAsyncConnect ();
+      
+      if (session.isConnected ())
       {
-        warn ("Remote federator at " + uri + " " + 
-              "closed link with no warning", this);
-        
-        link.close ();
+        if (link != null)
+          link.close ();
+        else
+          session.close ();
+      } else
+      {
+        if (link != null && !link.closedSession ())
+        {
+          warn ("Remote federator at " + uri + " " + 
+                "closed link with no warning", this);
+          
+          link.close ();
+        }        
       }
+      
+      link = null;
+      session = null;
     }
-    
-    link = null;
-    session = null;
   }
   
   private void reopen ()
   {
+    if (closing)
+      return;
+    
+    diagnostic ("Reconnecting outgoing federation link to " + uri, this);
+    
     close ();
     connect ();
   }
@@ -294,7 +306,7 @@ public class FederationConnector implements IoHandler, Closeable
           " after it rejected federation connect request: " + 
           nack.formattedMessage (), this);
     
-    close ();
+    reopen ();
   }
   
   private void send (Message message)
@@ -307,20 +319,16 @@ public class FederationConnector implements IoHandler, Closeable
   public void sessionOpened (IoSession theSession)
     throws Exception
   {
-    // zip
+    diagnostic ("Federator " + serverDomain + 
+                " connected to remote federator at " + uri, this);
   }
   
   public void sessionClosed (IoSession theSession)
     throws Exception
   {
-    if (!closing)
-    {
-      warn ("Remote federator at " + uri + 
-            " closed connection unexpectedly, reconnecting", this);
-      
-      close ();
-      connect ();
-    }
+    diagnostic ("Connection to federator at " + uri + " closed", this);
+    
+    reopen ();
   }
   
   public void sessionCreated (IoSession theSession)
