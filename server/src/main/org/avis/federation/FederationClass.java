@@ -9,9 +9,17 @@ import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
 
 public class FederationClass
 {
-  public final Node incomingFilter;
-  public final Node outgoingFilter;
+  public Node incomingFilter;
+  public Node outgoingFilter;
 
+  /**
+   * Create a new instance with both filters set to false.
+   */
+  public FederationClass ()
+  {
+    this (CONST_FALSE, CONST_FALSE);
+  }
+  
   public FederationClass (String incomingFilterExpr, String outgoingFilterExpr)
     throws ParseException
   {
@@ -23,8 +31,16 @@ public class FederationClass
     this.incomingFilter = incomingFilter;
     this.outgoingFilter = outgoingFilter;
   }
+  
+  /**
+   * True if this class neither exports nor imports anything.
+   */
+  public boolean isNull ()
+  {
+    return incomingFilter == CONST_FALSE && outgoingFilter == CONST_FALSE;
+  }
 
-  private static Node parse (String subExpr)
+  public static Node parse (String subExpr)
     throws ParseException
   {
     subExpr = subExpr.trim ();
