@@ -21,10 +21,11 @@ public class FederationOptions extends Options
       add ("Federation.Activated", false);
       add ("Federation.Router-Name", "");
       add ("Federation.Listen", "ewaf://0.0.0.0:2916");
-      add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);
+      add ("Federation.Listen:", "");
       add ("Federation.Subscribe:", "");
       add ("Federation.Provide:", "");
       add ("Federation.Connect:", "");
+      add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);
     }
     
     /**
