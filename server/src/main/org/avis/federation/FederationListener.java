@@ -6,6 +6,7 @@ import java.util.Set;
 import java.io.Closeable;
 import java.io.IOException;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
@@ -118,7 +119,7 @@ public class FederationListener implements IoHandler, Closeable
 
   private void handleFedConnRqst (IoSession session, FedConnRqst message)
   {
-    String remoteHost = remoteHostFor (session);
+    InetAddress remoteHost = remoteHostFor (session);
     
     if (message.versionMajor != VERSION_MAJOR || 
         message.versionMinor > VERSION_MINOR)
@@ -130,7 +131,7 @@ public class FederationListener implements IoHandler, Closeable
          VERSION_MAJOR + "." + VERSION_MINOR;
       
       warn ("Rejected federation request from " + 
-            remoteHost + ": " + disconnMessage, this);
+            remoteHost.getHostName () + ": " + disconnMessage, this);
       
       send (session,
             new Disconn (REASON_PROTOCOL_VIOLATION, 
@@ -141,12 +142,13 @@ public class FederationListener implements IoHandler, Closeable
       send (session, new FedConnRply (message, serverDomain));
      
       diagnostic ("Federation incoming link established with " + 
-                  remoteHost + ", remote server domain \"" + 
+                  remoteHost.getHostName () + ", remote server domain \"" + 
                   message.serverDomain + "\"", this);
       
       createFederationLink
-        (session, message.serverDomain, remoteHost,
-         federationClassMap.classFor (remoteHost));
+        (session, message.serverDomain,
+         remoteHost.getCanonicalHostName (),
+         federationClassMap.classFor (remoteHost, serverDomain));
     }
   }
   
@@ -174,14 +176,11 @@ public class FederationListener implements IoHandler, Closeable
     return (FederationLink)session.getAttribute ("federationLink");
   }
 
-  private static String remoteHostFor (IoSession session)
+  private static InetAddress remoteHostFor (IoSession session)
   {
     if (session.getRemoteAddress () instanceof InetSocketAddress)
     {
-      InetSocketAddress address = 
-        (InetSocketAddress)session.getRemoteAddress ();
-      
-      return address.getHostName (); 
+      return ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
     } else
     {
       throw new Error ("Can't get host name for address type " + 
