@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import org.apache.mina.common.ByteBuffer;
 
+import org.avis.federation.FederationManager;
+import org.avis.federation.FederationOptions;
 import org.avis.logging.Log;
 import org.avis.util.IllegalOptionException;
 
@@ -45,14 +47,7 @@ public class Main
     enableLogging (TRACE, false);
     enableLogging (DIAGNOSTIC, false);
     
-    /*
-     * todo opt: consider heap or direct buffer setting. Some
-     * anecdotal evidence on the MINA mailing list indicates heap
-     * buffers are faster than direct ones, but basic multi-client
-     * profiling seems to indicate heap buffers are actually slightly
-     * slower, at least on a G4 with 1.5.0_06.
-     */
-    ByteBuffer.setUseDirectBuffers (true);
+    ByteBuffer.setUseDirectBuffers (false);
     
     Properties avisProperties = readAvisProperties ();
     System.getProperties ().putAll (avisProperties);
@@ -60,8 +55,13 @@ public class Main
     info ("Avis event router version " +
           avisProperties.getProperty ("avis.router.version"), Main.class);
     
-    RouterOptions config = new RouterOptions ();
-
+    RouterOptionSet routerOptionSet = new RouterOptionSet ();
+    
+    // add federation options to router's option set
+    routerOptionSet.inheritFrom (FederationOptions.OPTION_SET);
+    
+    RouterOptions config = new RouterOptions (routerOptionSet);
+    
     try
     {
       for (int i = 0; i < args.length; i++)
@@ -105,6 +105,9 @@ public class Main
     try
     {
       final Router router = new Router (config);
+
+      if (config.getBoolean ("Federation.Activated"))
+        new FederationManager (router, config);
       
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
