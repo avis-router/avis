@@ -276,7 +276,7 @@ public class FederationConnector implements IoHandler, Closeable
     if (request instanceof FedConnRqst)
     {
       warn ("Federation connection request to remote federator at " + 
-            uri + " timed out: reconnecting", this);
+            uri + " timed out, reconnecting", this);
       
       reopen ();
     } else
@@ -284,6 +284,15 @@ public class FederationConnector implements IoHandler, Closeable
      // NB: this shouldn't happen, FedConnRqst is the only request we send
       warn ("Request to remote federator timed out: " + request.name (), this);
     }
+  }
+  
+  private void handleFedConnNack (Nack nack)
+  {
+    warn ("Closing connection to remote router at " + uri + 
+          " after it rejected federation connect request: " + 
+          nack.formattedMessage (), this);
+    
+    reopen ();
   }
 
   private void createFederationLink (String remoteServerDomain)
@@ -298,15 +307,6 @@ public class FederationConnector implements IoHandler, Closeable
       new FederationLink (session, router,
                           federationClass, serverDomain, 
                           remoteServerDomain, remoteHost);
-  }
-  
-  private void handleFedConnNack (Nack nack)
-  {
-    warn ("Closing connection to remote router at " + uri + 
-          " after it rejected federation connect request: " + 
-          nack.formattedMessage (), this);
-    
-    reopen ();
   }
   
   private void send (Message message)
@@ -326,7 +326,8 @@ public class FederationConnector implements IoHandler, Closeable
   public void sessionClosed (IoSession theSession)
     throws Exception
   {
-    diagnostic ("Connection to federator at " + uri + " closed", this);
+    diagnostic ("Federator " + serverDomain + " connected to federator at " + 
+                uri + " closed", this);
     
     reopen ();
   }

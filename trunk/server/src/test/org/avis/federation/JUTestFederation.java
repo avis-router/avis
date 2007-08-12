@@ -6,7 +6,6 @@ import java.util.Map;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
-import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -200,8 +199,8 @@ public class JUTestFederation
     FederationOptions options = new FederationOptions ();
     options.set ("Federation.Connection-Timeout", 1);
    
-    Log.enableLogging (Log.DIAGNOSTIC, true);
-    Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
+    // Log.enableLogging (Log.TRACE, true);
 
     FederationListener listener = 
       new FederationListener (server2, "server2", federationMap, 
