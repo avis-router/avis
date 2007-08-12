@@ -107,6 +107,7 @@ public class Router implements IoHandler, Closeable
   private ConcurrentHashSet<IoSession> sessions;
 
   private ListenerList<NotifyListener> notifyListeners;
+  private ListenerList<CloseListener> closeListeners;
   
   public Router ()
     throws IOException
@@ -126,6 +127,10 @@ public class Router implements IoHandler, Closeable
     this.notifyListeners = 
       new ListenerList<NotifyListener>
         (NotifyListener.class, "notifyReceived", Notify.class, Keys.class);
+    this.closeListeners = 
+      new ListenerList<CloseListener>
+        (CloseListener.class, "routerClosing", Router.class);
+    
     this.routerOptions = options;
     this.sessions = new ConcurrentHashSet<IoSession> ();
     this.executor = newCachedThreadPool ();
@@ -162,7 +167,9 @@ public class Router implements IoHandler, Closeable
   }
 
   /**
-   * Close all connections synchronously. May be called more than once.
+   * Close all connections synchronously. Close listeners are notified
+   * before shutdown commences. May be called more than once with no
+   * effect.
    */
   public void close ()
   {
@@ -173,6 +180,9 @@ public class Router implements IoHandler, Closeable
       
       closing = true; 
     }
+    
+    closeListeners.fire (this);
+    closeListeners = null;
     
     Disconn disconnMessage = new Disconn (REASON_SHUTDOWN);
     
@@ -261,6 +271,25 @@ public class Router implements IoHandler, Closeable
   public void testSimulateUnhang ()
   {
     closing = false;
+  }
+  
+  /**
+   * Add a listener that will be invoked when the router is about to
+   * close down.
+   * 
+   * @see #removeCloseListener(CloseListener)
+   */
+  public void addCloseListener (CloseListener listener)
+  {
+    closeListeners.add (listener);
+  }
+  
+  /**
+   * Undo the effect of {@link #addCloseListener(CloseListener)}.
+   */
+  public void removeCloseListener (CloseListener listener)
+  {
+    closeListeners.remove (listener);
   }
   
   /**
