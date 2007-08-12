@@ -77,7 +77,8 @@ public class RouterOptions extends Options
         if (!uri.protocol.equals (defaultProtocol ()))
         {
           throw new IllegalOptionException
-            ("Avis only supports " + defaultProtocol () +" protocol: " + 
+            ("Listen",
+             "Avis only supports " + defaultProtocol () +" protocol: " + 
              listenItem);
         }
         
