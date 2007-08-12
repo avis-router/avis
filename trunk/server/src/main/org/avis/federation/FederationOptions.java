@@ -37,7 +37,7 @@ public class FederationOptions extends Options
                                    Object value)
       throws IllegalOptionException
     {
-      String baseOption = splitParam (option) [0];
+      String baseOption = splitOptionParam (option) [0];
       
       value = convert (baseOption, value);
       
@@ -58,7 +58,7 @@ public class FederationOptions extends Options
   /**
    * Split a parameterised option into a (base option, param) pair.
    */
-  public static String [] splitParam (String option)
+  public static String [] splitOptionParam (String option)
   {
     Matcher matcher = CUSTOM_OPTION_PATTERN.matcher (option);
     

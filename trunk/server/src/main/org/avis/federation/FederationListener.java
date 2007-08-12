@@ -38,6 +38,14 @@ import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
 
+/**
+ * Listens for incoming federation connections and establishes
+ * FederationLink's for them.
+ * 
+ * @see FederationConnector
+ * 
+ * @author Matthew Phillips
+ */
 public class FederationListener implements IoHandler, Closeable
 {
   protected Router router;
