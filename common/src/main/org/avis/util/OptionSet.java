@@ -57,6 +57,32 @@ public class OptionSet
   }
   
   /**
+   * Look for the default value specified by this option set or any of
+   * its inherited sets.
+   * 
+   * @param option The option to find a value for.
+   * 
+   * @return The value, or null if none found.
+   */
+  public Object peekDefaultValue (String option)
+  {
+    Object value = defaults.values.get (option);
+    
+    if (value == null)
+    {
+      for (OptionSet superSet : inherited)
+      {
+        value = superSet.defaults.values.get (option);
+        
+        if (value != null)
+          break;
+      }
+    }
+    
+    return value;
+  }
+  
+  /**
    * Define an int-valued option.
    * 
    * @param option The option name.
