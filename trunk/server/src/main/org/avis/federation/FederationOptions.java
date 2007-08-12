@@ -9,13 +9,13 @@ import org.avis.util.Options;
 
 public class FederationOptions extends Options
 {
-  public static OptionSet OPTION_SET = new FederationOptionSet ();
+  private static final Pattern CUSTOM_OPTION_PATTERN = 
+    Pattern.compile ("([^:]+:?)([^:]+)?$");
   
+  public static OptionSet OPTION_SET = new FederationOptionSet ();
+
   static class FederationOptionSet extends OptionSet
   {
-    protected static final Pattern CUSTOM_OPTION_PATTERN = 
-      Pattern.compile ("([^:]+:?)([^:]+)?$");
-    
     public FederationOptionSet ()
     {
       add ("Federation.Activated", false);
@@ -37,10 +37,7 @@ public class FederationOptions extends Options
                                    Object value)
       throws IllegalOptionException
     {
-      Matcher matcher = CUSTOM_OPTION_PATTERN.matcher (option);
-      matcher.find ();
-      
-      String baseOption = matcher.group (1);
+      String baseOption = splitParam (option) [0];
       
       value = convert (baseOption, value);
       
@@ -56,5 +53,17 @@ public class FederationOptions extends Options
   public FederationOptions ()
   {
     super (OPTION_SET);
+  }
+
+  /**
+   * Split a parameterised option into a (base option, param) pair.
+   */
+  public static String [] splitParam (String option)
+  {
+    Matcher matcher = CUSTOM_OPTION_PATTERN.matcher (option);
+    
+    matcher.find ();
+    
+    return new String [] {matcher.group (1), matcher.group (2)};
   }
 }
