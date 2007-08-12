@@ -23,6 +23,7 @@ public class JUTestOptions
     routerOptionSet.add ("Port", 1, 2917, 65535);
     routerOptionSet.add ("Interfaces", "*");
     routerOptionSet.add ("Vendor-Identification", "Foobar");
+    routerOptionSet.add ("Federation.Activated", false);
     
     Options routerOptions = new Options (routerOptionSet);
     
@@ -30,6 +31,7 @@ public class JUTestOptions
     loadedProperties.setProperty ("Port", "29170");
     loadedProperties.setProperty ("Keys.Max-Count", "42");
     loadedProperties.setProperty ("Interfaces", "en1");
+    loadedProperties.setProperty ("Federation.Activated", "yes");
     
     routerOptions.setAll (loadedProperties);
     
@@ -46,6 +48,7 @@ public class JUTestOptions
     
     assertEquals (29170, routerOptions.getInt ("Port"));
     assertEquals ("en1", routerOptions.getString ("Interfaces"));
+    assertEquals (true, routerOptions.getBoolean ("Federation.Activated"));
     assertEquals (20*K, connectionOptions.getInt ("Packet.Max-Length"));
     assertEquals (42, connectionOptions.getInt ("Keys.Max-Count"));
     assertEquals (1234, connectionOptions.getInt ("Subscription.Max-Count"));

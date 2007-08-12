@@ -121,6 +121,28 @@ public class Options
     else
       throw new IllegalOptionException (option, "Not a string");
   }
+  
+  /**
+   * Get a boolean option.
+   * 
+   * @param option The option name.
+   * @return The value.
+   * 
+   * @throws IllegalOptionException if the option is not defined or is
+   *           not a boolean.
+   * 
+   * @see #get(String)
+   */
+  public boolean getBoolean (String option)
+    throws IllegalOptionException
+  {
+    Object value = get (option);
+    
+    if (value instanceof Boolean)
+      return (Boolean)value;
+    else
+      throw new IllegalOptionException (option, "Not a boolean");
+  }
 
   /**
    * Get the value of an option, searching defaults if needed.
