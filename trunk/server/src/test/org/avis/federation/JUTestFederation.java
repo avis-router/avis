@@ -151,7 +151,7 @@ public class JUTestFederation
         
     // set connect timeout to 1 second
     FederationOptions options = new FederationOptions ();
-    options.set ("Federation.Connection-Timeout", 1);
+    options.set ("Federation.Connect-Timeout", 1);
     
     FederationConnector connector = 
       new FederationConnector (server1, "server1", ewafURI, 
@@ -197,7 +197,7 @@ public class JUTestFederation
         
     // set connect timeout to 1 second
     FederationOptions options = new FederationOptions ();
-    options.set ("Federation.Connection-Timeout", 1);
+    options.set ("Federation.Connect-Timeout", 1);
    
     // Log.enableLogging (Log.DIAGNOSTIC, true);
     // Log.enableLogging (Log.TRACE, true);
