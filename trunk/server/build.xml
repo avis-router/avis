@@ -153,6 +153,20 @@
       <include name="it/unimi/dsi/fastutil/longs/LongArrayList.class" />
     </jarx>    
   </target>
+  
+  <!-- Build the dump-host-addresses.jar utility -->
+  <target name="jar-dumphostaddresses">
+      
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/jarx.jar" />
+
+    <mkdir dir="bin" />
+      
+    <jarx archive="bin/dump-host-addresses.jar"
+          classpathref="classpath" 
+          mainclass="org.avis.tools.DumpHostAddresses">
+    </jarx>    
+  </target>
 
   <target name="dist-source" depends="jar-server"
           description="Build the source distro">
