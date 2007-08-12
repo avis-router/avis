@@ -1,6 +1,7 @@
 package org.avis.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -22,7 +23,7 @@ import static org.avis.util.OptionSet.EMPTY_OPTION_SET;
  * 
  * @author Matthew Phillips
  */
-public class Options
+public class Options implements Iterable<Map.Entry<String, Object>>
 {
   protected Map<String, Object> values;
   protected List<Options> defaults;
@@ -38,6 +39,11 @@ public class Options
     this.values = new TreeMap<String, Object> (CASE_INSENSITIVE_ORDER);
     this.defaults = new ArrayList<Options> ();
     this.optionSet = optionSet;
+  }
+  
+  public Iterator<Entry<String, Object>> iterator ()
+  {
+    return values.entrySet ().iterator ();
   }
   
   /**
