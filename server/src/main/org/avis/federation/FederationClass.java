@@ -7,6 +7,14 @@ import org.avis.subscription.parser.SubscriptionParserBase;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
 
+/**
+ * Defines a federation class which controls which notifications to
+ * export and import from a router.
+ * 
+ * @see FederationClassMap
+ * 
+ * @author Matthew Phillips
+ */
 public class FederationClass
 {
   public Node incomingFilter;

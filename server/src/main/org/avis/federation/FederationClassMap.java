@@ -5,6 +5,14 @@ import java.util.Map;
 
 import java.net.InetAddress;
 
+/**
+ * Defines the mapping from a remote federator to the FederationClass
+ * that should be applied to it.
+ * 
+ * @see FederationClass
+ * 
+ * @author Matthew Phillips
+ */
 public class FederationClassMap
 {
   private FederationClass defaultClass;

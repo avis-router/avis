@@ -32,7 +32,9 @@ import static org.avis.logging.Log.warn;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 
 /**
- * A link between two federation endpoints.
+ * Manages link between two federation endpoints. This link is
+ * typically established by either a {@link FederationListener} or
+ * {@link FederationConnector}.
  * 
  * @author Matthew Phillips
  */

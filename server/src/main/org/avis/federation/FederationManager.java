@@ -18,7 +18,7 @@ import org.avis.util.Pair;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.federation.FederationClass.parse;
-import static org.avis.federation.FederationOptions.splitParam;
+import static org.avis.federation.FederationOptions.splitOptionParam;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
@@ -26,9 +26,9 @@ import static org.avis.util.Text.shortException;
 import static org.avis.util.Text.split;
 
 /**
- * Constructs the federation setup by reading the Federation.*
- * configuration items and setting up federation classes, listeners
- * and connectors.
+ * Constructs the federation setup by reading Federation.*
+ * configuration items from a config and setting up federation
+ * classes, listeners and connectors to match.
  * 
  * @author Matthew Phillips
  */
@@ -92,15 +92,15 @@ public class FederationManager implements CloseListener
      * Generate (class, URI) pairs first avoid having to dispose of
      * partially-created connectors on exception.
      */
-    List<Pair<FederationClass,EwafURI>> items = 
-      new ArrayList<Pair<FederationClass,EwafURI>> ();
+    List<Pair<EwafURI, FederationClass>> items = 
+      new ArrayList<Pair<EwafURI, FederationClass>> ();
     
     for (Map.Entry<String, Object> entry : config)
     {
       if (!entry.getKey ().startsWith ("Federation.Connect:"))
         continue;
       
-      String [] optionParam = splitParam (entry.getKey ());
+      String [] optionParam = splitOptionParam (entry.getKey ());
       
       FederationClass fedClass = classMap.findOrCreate (optionParam [1]);
       EwafURI uri = uri (entry.getKey (), (String)entry.getValue ());
@@ -113,17 +113,17 @@ public class FederationManager implements CloseListener
             "this connection cannot import or export any notifications");
       }
       
-      items.add (new Pair<FederationClass, EwafURI> (fedClass, uri));
+      items.add (new Pair<EwafURI, FederationClass> (uri, fedClass));
     }
     
     List<FederationConnector> connectors = 
       new ArrayList<FederationConnector> (items.size ());
     
-    for (Pair<FederationClass, EwafURI> item : items)
+    for (Pair<EwafURI, FederationClass> item : items)
     {
       connectors.add
         (new FederationConnector 
-          (router, serverDomain, item.item2, item.item1, config));
+          (router, serverDomain, item.item1, item.item2, config));
     }
     
     return connectors;
@@ -182,7 +182,7 @@ public class FederationManager implements CloseListener
       if (!entry.getKey ().startsWith ("Federation."))
         continue;
       
-      String [] optionParam = splitParam (entry.getKey ());
+      String [] optionParam = splitOptionParam (entry.getKey ());
       
       if (optionParam [1] == null)
         continue;

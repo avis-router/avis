@@ -38,9 +38,11 @@ import static org.avis.logging.Log.warn;
 import static org.avis.util.Text.shortException;
 
 /**
- * The federation connector is responsible for connecting to a remote
- * host, handshaking with a FedConnRqst, after which it creates and
- * hands over processing to a FederationLink.
+ * Initiates a federation connectin to a remote host. Responsible for
+ * handshaking with a FedConnRqst, after which it creates and hands
+ * over processing to a FederationLink.
+ * 
+ * @see FederationListener
  * 
  * @author Matthew Phillips
  */
