@@ -334,8 +334,7 @@ public class OptionSet
       } else
       {
         throw new IllegalOptionException
-          (option, "Cannot convert " + value + " to a " +
-                    className (type));
+          (option, "Cannot convert " + value + " to a " + className (type));
       }
     }
     
