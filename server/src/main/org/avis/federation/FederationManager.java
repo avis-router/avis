@@ -34,10 +34,10 @@ import static org.avis.util.Text.split;
  */
 public class FederationManager implements CloseListener
 {
-  private Router router;
-  private FederationClassMap classMap;
-  private FederationListener listener;
-  private List<FederationConnector> connectors;
+  protected Router router;
+  protected FederationClassMap classMap;
+  protected FederationListener listener;
+  protected List<FederationConnector> connectors;
 
   public FederationManager (Router router, Options federationConfig) 
     throws IllegalOptionException
