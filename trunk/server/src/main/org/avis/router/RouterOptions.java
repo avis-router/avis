@@ -11,39 +11,27 @@ import java.net.InetSocketAddress;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.util.IllegalOptionException;
-import org.avis.util.OptionSet;
 import org.avis.util.Options;
 
-import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.io.Net.addressesFor;
-import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.util.Text.split;
 
 /**
- * Options used to configure the Avis server.
+ * Options used to configure the Avis router.
  * 
  * @author Matthew Phillips
  */
 public class RouterOptions extends Options
 {
-  private static final OptionSet OPTION_SET = new ServerOptionSet ();
-
-  static class ServerOptionSet extends OptionSet
-  {
-    public ServerOptionSet ()
-    {
-      add ("Port", 1, DEFAULT_PORT, 65535);
-      add ("Listen", "elvin://0.0.0.0");
-    }
-  }
-  
   public RouterOptions ()
   {
-    super (OPTION_SET);
-    
-    // allow default connection options to be specified also
-    optionSet.inheritFrom (CONNECTION_OPTION_SET);
+    this (new RouterOptionSet ());
+  }
+  
+  public RouterOptions (RouterOptionSet optionSet)
+  {
+    super (optionSet);
   }
 
   /**
