@@ -97,6 +97,31 @@ public class JUTestOptions
     assertEquals (1*1024*1024, options.get ("Attribute.Max-Count"));
   }
   
+  @Test
+  public void multipleInherit () 
+    throws Exception
+  {
+    OptionSet optionSet1 = new OptionSet ();
+    optionSet1.add ("Packet.Max-Length", 0, 100, 10000);
+    optionSet1.add ("Attribute.Max-Count", 0, 100, 5000000);
+    
+    OptionSet optionSet2 = new OptionSet ();
+    optionSet2.add ("Federation.Active", true);
+    optionSet2.add ("Federation.Name", "");
+    
+    OptionSet rootOptionSet = new OptionSet ();
+    rootOptionSet.add ("Root1", true);
+    
+    rootOptionSet.inheritFrom (optionSet1);
+    rootOptionSet.inheritFrom (optionSet2);
+    
+    Options options = new Options (rootOptionSet);
+    
+    options.set ("Packet.Max-Length", 200);
+    options.set ("Federation.Active", false);
+    options.set ("Root1", false);
+  }
+  
   static class ConnectionOptionSet extends OptionSet
   {
     private Map<String, String> legacyToNew;
