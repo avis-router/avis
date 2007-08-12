@@ -71,7 +71,7 @@ public class FederationConnector implements IoHandler, Closeable
     this.connectorConfig = new SocketConnectorConfig ();
     this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
     
-    int connectTimeout = options.getInt ("Federation.Connection-Timeout");
+    int connectTimeout = options.getInt ("Federation.Connect-Timeout");
 
     /* Change the worker timeout to make the I/O thread quit soon
      * when there's no connection to manage. */
@@ -139,7 +139,7 @@ public class FederationConnector implements IoHandler, Closeable
   }
 
   /**
-   * Schedule a delayed connect () in Federation.Connection-Timeout
+   * Schedule a delayed connect () in Federation.Connect-Timeout
    * seconds from now.
    * 
    * @see #cancelAsyncConnect()
@@ -161,7 +161,7 @@ public class FederationConnector implements IoHandler, Closeable
     };
     
     asyncConnectTimer.schedule 
-      (connectTask, options.getInt ("Federation.Connection-Timeout") * 1000);
+      (connectTask, options.getInt ("Federation.Connect-Timeout") * 1000);
   }
   
   /**
