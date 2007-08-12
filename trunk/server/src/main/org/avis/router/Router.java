@@ -707,7 +707,7 @@ public class Router implements IoHandler, Closeable
       SocketSessionConfig config = (SocketSessionConfig)session.getConfig ();
 
       config.setTcpNoDelay 
-        (connection.options.getBoolean ("TCP.Send-Immediately"));
+        (connection.options.getInt ("TCP.Send-Immediately") == 1);
     } else
     {
       connection.options.remove ("TCP.Send-Immediately"); 
