@@ -23,6 +23,7 @@ import org.avis.io.RequestTrackingFilter;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
+import org.avis.io.messages.Nack;
 import org.avis.router.Router;
 
 import static org.apache.mina.common.IoFutureListener.CLOSE;
@@ -31,6 +32,7 @@ import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
+import static org.avis.io.messages.Nack.IMPL_LIMIT;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
@@ -38,12 +40,12 @@ import static org.avis.logging.Log.warn;
 
 public class FederationListener implements IoHandler, Closeable
 {
-  private Router router;
-  private Set<FederationLink> links;
-  private Set<InetSocketAddress> addresses;
-  private String serverDomain;
-  private FederationClassMap federationClassMap;
-  private volatile boolean closing;
+  protected Router router;
+  protected Set<FederationLink> links;
+  protected Set<InetSocketAddress> addresses;
+  protected String serverDomain;
+  protected FederationClassMap federationClassMap;
+  protected volatile boolean closing;
 
   public FederationListener (Router router,
                              String serverDomain,
@@ -139,16 +141,33 @@ public class FederationListener implements IoHandler, Closeable
     } else
     {
       // todo should check that server domain is not already known
-      send (session, new FedConnRply (message, serverDomain));
-     
-      diagnostic ("Federation incoming link established with " + 
-                  remoteHost.getHostName () + ", remote server domain \"" + 
-                  message.serverDomain + "\"", this);
+      FederationClass fedClass = 
+        federationClassMap.classFor (remoteHost, message.serverDomain);
+
+      if (!fedClass.isNull ())
+      {
+        send (session, new FedConnRply (message, serverDomain));
+       
+        diagnostic ("Federation incoming link established with " + 
+                    remoteHost.getHostName () + ", remote server domain \"" + 
+                    message.serverDomain + "\"", this);
       
-      createFederationLink
-        (session, message.serverDomain,
-         remoteHost.getCanonicalHostName (),
-         federationClassMap.classFor (remoteHost, serverDomain));
+        createFederationLink
+          (session, message.serverDomain,
+           remoteHost.getCanonicalHostName (), fedClass);
+      } else
+      {
+        warn ("Remote federator denied connection due to no defined " +
+              "provide/subscribe: " +
+              "host = " + remoteHost.getCanonicalHostName () +
+              ", server domain = " + message.serverDomain, this);
+        
+        // todo what NACK code to use here?
+        send 
+          (session, 
+           new Nack (message, IMPL_LIMIT,
+                     "No federation import/export allowed")).addListener (CLOSE);
+      }
     }
   }
   
