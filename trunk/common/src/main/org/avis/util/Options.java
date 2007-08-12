@@ -38,9 +38,6 @@ public class Options
     this.values = new TreeMap<String, Object> (CASE_INSENSITIVE_ORDER);
     this.defaults = new ArrayList<Options> ();
     this.optionSet = optionSet;
-    
-    if (optionSet.defaults != null)
-      defaults.add (optionSet.defaults);
   }
   
   /**
@@ -177,6 +174,7 @@ public class Options
   {
     Object value = values.get (option);
     
+    // look in defaults on this option set
     if (value == null)
     {
       for (Options options : defaults)
@@ -187,6 +185,10 @@ public class Options
           break;
       }
     }
+    
+    // look in option set for defaults
+    if (value == null)
+      value = optionSet.peekDefaultValue (option);
     
     return value;
   }

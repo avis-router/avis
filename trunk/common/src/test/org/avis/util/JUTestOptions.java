@@ -112,14 +112,23 @@ public class JUTestOptions
     OptionSet rootOptionSet = new OptionSet ();
     rootOptionSet.add ("Root1", true);
     
+    Options options = new Options (rootOptionSet);
+
+    // add inherited afterwards to be tricky
     rootOptionSet.inheritFrom (optionSet1);
     rootOptionSet.inheritFrom (optionSet2);
     
-    Options options = new Options (rootOptionSet);
+    assertEquals (true, options.get ("Federation.Active"));
+    assertEquals (100, options.get ("Packet.Max-Length"));
+    assertEquals (true, options.get ("Root1"));
     
     options.set ("Packet.Max-Length", 200);
     options.set ("Federation.Active", false);
     options.set ("Root1", false);
+    
+    assertEquals (false, options.get ("Federation.Active"));
+    assertEquals (200, options.get ("Packet.Max-Length"));
+    assertEquals (false, options.get ("Root1"));
   }
   
   static class ConnectionOptionSet extends OptionSet
