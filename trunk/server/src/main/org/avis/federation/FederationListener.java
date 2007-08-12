@@ -122,6 +122,7 @@ public class FederationListener implements IoHandler, Closeable
   private void handleFedConnRqst (IoSession session, FedConnRqst message)
   {
     InetAddress remoteHost = remoteHostFor (session);
+    String hostName = remoteHost.getCanonicalHostName ();
     
     if (message.versionMajor != VERSION_MAJOR || 
         message.versionMinor > VERSION_MINOR)
@@ -132,8 +133,8 @@ public class FederationListener implements IoHandler, Closeable
          " not compatible with this federator's " + 
          VERSION_MAJOR + "." + VERSION_MINOR;
       
-      warn ("Rejected federation request from " + 
-            remoteHost.getHostName () + ": " + disconnMessage, this);
+      warn ("Rejected federation request from " + hostName + ": " + 
+            disconnMessage, this);
       
       send (session,
             new Disconn (REASON_PROTOCOL_VIOLATION, 
@@ -149,24 +150,23 @@ public class FederationListener implements IoHandler, Closeable
         send (session, new FedConnRply (message, serverDomain));
        
         diagnostic ("Federation incoming link established with " + 
-                    remoteHost.getHostName () + ", remote server domain \"" + 
+                    hostName + ", remote server domain \"" + 
                     message.serverDomain + "\"", this);
       
         createFederationLink
-          (session, message.serverDomain,
-           remoteHost.getCanonicalHostName (), fedClass);
+          (session, message.serverDomain, hostName, fedClass);
       } else
       {
-        warn ("Remote federator denied connection due to no defined " +
-              "provide/subscribe: " +
-              "host = " + remoteHost.getCanonicalHostName () +
-              ", server domain = " + message.serverDomain, this);
+        warn ("Remote federator has been denied connection due to no " +
+              "provide/subscribe defined for its hostname/server domain: " +
+              "host = " + hostName + ", " + 
+              "server domain = " + message.serverDomain, this);
         
         // todo what NACK code to use here?
-        send 
-          (session, 
-           new Nack (message, IMPL_LIMIT,
-                     "No federation import/export allowed")).addListener (CLOSE);
+        send (session, 
+              new Nack
+                (message, IMPL_LIMIT,
+                 "No federation import/export allowed")).addListener (CLOSE);
       }
     }
   }
