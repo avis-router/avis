@@ -40,8 +40,11 @@ import static org.avis.logging.Log.warn;
 
 /**
  * Listens for incoming federation connections and establishes
- * FederationLink's for them.
+ * FederationLink's for them. After accepting a connection and
+ * successfully handshaking with a FedConnRqst/FedConnRply, it creates
+ * and hands over processing to a FederationLink.
  * 
+ * @see FederationLink
  * @see FederationConnector
  * 
  * @author Matthew Phillips
