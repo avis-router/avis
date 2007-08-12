@@ -704,11 +704,10 @@ public class Router implements IoHandler, Closeable
   {
     if (session.getConfig () instanceof SocketSessionConfig)
     {
-      int sendImmediately =
-        connection.options.getInt ("TCP.Send-Immediately");
-      
-      ((SocketSessionConfig)session.getConfig ()).setTcpNoDelay
-        (sendImmediately == 1);
+      SocketSessionConfig config = (SocketSessionConfig)session.getConfig ();
+
+      config.setTcpNoDelay 
+        (connection.options.getBoolean ("TCP.Send-Immediately"));
     } else
     {
       connection.options.remove ("TCP.Send-Immediately"); 

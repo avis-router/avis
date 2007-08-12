@@ -108,7 +108,7 @@ public class ConnectionOptionSet extends OptionSet
 
     add ("Supported-Key-Schemes", "SHA-1");    
     
-    add ("TCP.Send-Immediately", 0, 0, 1);
+    add ("TCP.Send-Immediately", false);
 
     // ------------ Avis-specific options
     
