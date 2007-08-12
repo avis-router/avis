@@ -30,6 +30,35 @@ public final class Net
   }
   
   /**
+   * Try to discover local host name by scanning network interfaces
+   * for non site-local, non-loopback addresses.
+   * 
+   * @return The canonical host name.
+   * 
+   * @throws IOException if no host name can be found.
+   */
+  public static String localHostName () 
+    throws IOException
+  {
+    for (Enumeration<NetworkInterface> i = 
+        NetworkInterface.getNetworkInterfaces (); i.hasMoreElements (); )
+    {
+      NetworkInterface ni = i.nextElement ();
+      
+      for (Enumeration<InetAddress> j = ni.getInetAddresses ();
+           j.hasMoreElements (); )
+      {
+        InetAddress address = j.nextElement ();
+        
+        if (!address.isLoopbackAddress () && !address.isSiteLocalAddress ())
+          return address.getCanonicalHostName ();
+      }
+    }
+    
+    throw new IOException ("Cannot determine a valid local host name");
+  }
+  
+  /**
    * Generate a set of socket addresses for a given set of URI's. This
    * method allows interface names to be used rather than host names
    * by prefixing the host name with "!".
