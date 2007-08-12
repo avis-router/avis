@@ -27,6 +27,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.router.Router;
+import org.avis.util.Options;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
@@ -46,7 +47,7 @@ import static org.avis.util.Text.shortException;
 public class FederationConnector implements IoHandler, Closeable
 {
   private EwafURI uri;
-  private FederationOptions options;
+  private Options options;
   private Router router;
   private SocketConnector connector;
   private SocketConnectorConfig connectorConfig;
@@ -60,7 +61,7 @@ public class FederationConnector implements IoHandler, Closeable
   
   public FederationConnector (Router router, String serverDomain,
                               EwafURI uri, FederationClass federationClass,
-                              FederationOptions options)
+                              Options options)
   {
     this.router = router;
     this.uri = uri;
