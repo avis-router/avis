@@ -172,7 +172,8 @@ public class OptionSet
       {
         message = inheritedSet.testValid (option, value);
         
-        if (message != null)
+        // if one inherited set accepts the option, we're done
+        if (message == null)
           break;
       }
     }
@@ -229,7 +230,6 @@ public class OptionSet
    * @see #validate(String, Object)
    */
   protected String testValid (String option, Object value)
-    throws IllegalOptionException
   {
     Object validationInfo = validation.get (option);
     String message = null;
