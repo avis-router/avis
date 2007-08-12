@@ -70,6 +70,12 @@ public class OptionSet
     defaults.set (option, defaultValue);
   }
   
+  public void add (String option, boolean defaultValue)
+  {
+    validation.put (option, Boolean.class);
+    defaults.set (option, defaultValue);
+  }
+  
   /**
    * Define a string-valued option that can take any value.
    * 
@@ -248,6 +254,9 @@ public class OptionSet
         
         if (!values.isEmpty () && !values.contains (value))
           message = "Value must be one of: " + values.toString ();
+      } else if (value instanceof Boolean)
+      {
+        return null;
       } else
       {
         // should not be able to get here if options defined correctly
@@ -264,15 +273,16 @@ public class OptionSet
   /**
    * Try to auto-convert a value to be the valid type for a given
    * option. Currently tries to convert String -> int (using
-   * Integer.valueOf()) and [anything] -> String (using toString()).
+   * Integer.valueOf()), [anything] -> String (using toString()), and
+   * true/false/yes/no to boolean.
    * 
    * @param option The option.
    * @param value The value.
    * @return The converted value, or the original value if no
    *         conversion needed.
-   *         
+   * 
    * @throws IllegalOptionException if the value needed conversion but
-   *           was not compatible.
+   *                 was not compatible.
    */
   protected final Object convert (String option, Object value)
     throws IllegalOptionException
@@ -310,6 +320,17 @@ public class OptionSet
           throw new IllegalOptionException
             (option, "\"" + value + "\" is not a valid 32-bit integer");
         }
+      } else if (type == Boolean.class)
+      {
+        String v = value.toString ().trim ().toLowerCase ();
+        
+        if (v.equals ("1") || v.equals ("true") || v.equals ("yes"))
+          value = true;
+        else if (v.equals ("0") || v.equals ("false") || v.equals ("no"))
+          value = false;
+        else
+          throw new IllegalOptionException
+            (option, "\"" + value + "\" is not a valid true/false boolean");
       } else
       {
         throw new IllegalOptionException
@@ -349,6 +370,8 @@ public class OptionSet
   {
     if (validationInfo instanceof int [])
       return Integer.class;
+    else if (validationInfo == Boolean.class)
+      return Boolean.class;
     else if (validationInfo != null)
       return String.class;
     else
