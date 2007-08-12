@@ -231,10 +231,12 @@ public class FederationConnector implements IoHandler, Closeable
     if (closing)
       return;
     
-    diagnostic ("Reconnecting outgoing federation link to " + uri, this);
-    
     close ();
-    connect ();
+
+    diagnostic ("Scheduling reconnection for outgoing federation link to " + 
+                uri, this);
+    
+    asyncConnect ();
   }
   
   public boolean isWaitingForAsyncConnection ()
