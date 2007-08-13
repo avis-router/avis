@@ -279,7 +279,7 @@ public class FederationConnector implements IoHandler, Closeable
   
   private void handleRequestTimeout (RequestMessage<?> request)
   {
-    if (request instanceof FedConnRqst)
+    if (request.getClass () == FedConnRqst.class)
     {
       warn ("Federation connection request to remote federator at " + 
             uri + " timed out, reconnecting", this);
