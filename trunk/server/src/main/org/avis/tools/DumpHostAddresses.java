@@ -17,6 +17,8 @@ public class DumpHostAddresses
   public static void main (String [] args)
     throws IOException
   {
+    System.out.println ("local host name: " + InetAddress.getLocalHost ());
+    
     for (Enumeration<NetworkInterface> i = 
         NetworkInterface.getNetworkInterfaces (); i.hasMoreElements (); )
     {
