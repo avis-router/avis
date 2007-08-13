@@ -214,7 +214,7 @@ public class FederationLink implements NotifyListener
 
   private void handleRequestTimeout (RequestMessage<?> request)
   {
-    if (request instanceof FedModify)
+    if (request.getClass () == FedModify.class)
     {
       warn ("Federation modify request to remote federator at " + 
             remoteHostName + " timed out: retrying", this);
