@@ -106,6 +106,8 @@ public class Main
     {
       final Router router = new Router (config);
 
+      info ("Router listening on port " + config.get ("Port"), Main.class);
+
       if (config.getBoolean ("Federation.Activated"))
         new FederationManager (router, config);
       
@@ -119,7 +121,6 @@ public class Main
         }
       });
       
-      info ("Router listening on port " + config.get ("Port"), Main.class);
     } catch (Throwable ex)
     {
       if (ex instanceof IllegalOptionException)
@@ -137,6 +138,7 @@ public class Main
   private static void exit (int errorCode)
   {
     info ("Exiting on error", Main.class);
+    
     System.exit (errorCode);
   }
 
