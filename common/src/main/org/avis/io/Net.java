@@ -30,8 +30,7 @@ public final class Net
   }
   
   /**
-   * Try to discover local host name by scanning network interfaces
-   * for non site-local, non-loopback addresses.
+   * Get local host name.
    * 
    * @return The canonical host name.
    * 
@@ -40,22 +39,40 @@ public final class Net
   public static String localHostName () 
     throws IOException
   {
-    for (Enumeration<NetworkInterface> i = 
-        NetworkInterface.getNetworkInterfaces (); i.hasMoreElements (); )
-    {
-      NetworkInterface ni = i.nextElement ();
-      
-      for (Enumeration<InetAddress> j = ni.getInetAddresses ();
-           j.hasMoreElements (); )
-      {
-        InetAddress address = j.nextElement ();
-        
-        if (!address.isLoopbackAddress () && !address.isSiteLocalAddress ())
-          return address.getCanonicalHostName ();
-      }
-    }
-    
-    throw new IOException ("Cannot determine a valid local host name");
+    return InetAddress.getLocalHost ().getCanonicalHostName ();
+    /*
+     * todo select "best" host name here if InetAddress.localHostName ()
+     * doesn't produce anything useful. maybe choose address with most
+     * "false" values from output from DumpHostAddresses.
+     * 
+     * host name: hex.dsto.defence.gov.au
+     * loopback: false
+     * link local: false
+     * multicast: false
+     * site local: false
+     * -------
+     * host name: hex.local
+     * loopback: falselink local: true
+     * multicast: false
+     * site local: false
+     * -------
+     */
+//    for (Enumeration<NetworkInterface> i = 
+//        NetworkInterface.getNetworkInterfaces (); i.hasMoreElements (); )
+//    {
+//      NetworkInterface ni = i.nextElement ();
+//      
+//      for (Enumeration<InetAddress> j = ni.getInetAddresses ();
+//           j.hasMoreElements (); )
+//      {
+//        InetAddress address = j.nextElement ();
+//        
+//        if (!address.isLoopbackAddress () && !address.isSiteLocalAddress ())
+//          return address.getCanonicalHostName ();
+//      }
+//    }
+//    
+//    throw new IOException ("Cannot determine a valid local host name");
   }
   
   /**
