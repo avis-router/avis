@@ -33,6 +33,7 @@ import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Nack.IMPL_LIMIT;
+import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
@@ -148,8 +149,8 @@ public class FederationListener implements IoHandler, Closeable
             disconnMessage, this);
       
       send (session,
-            new Disconn (REASON_PROTOCOL_VIOLATION, 
-                         disconnMessage)).addListener (CLOSE);
+            new Nack (message,
+                      PROT_INCOMPAT, disconnMessage)).addListener (CLOSE);
     } else
     {
       // todo should check that server domain is not already known
