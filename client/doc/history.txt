@@ -1,3 +1,20 @@
+Release 1.0.1 (August 14, 2007)
+----------------------------------------------------------------------
+
+This release corrects an error in the client's communications with the
+router and adds a number of smaller improvements.
+
+ * The client was not calculating the length of strings with
+   multi-byte UTF-8 characters correctly, which would cause a protocol
+   violation and disconnection.
+
+ * The client's handling protocol violations and other errors has been
+   improved.
+
+ * A bug in the client's handling of a close () call from a callback
+   has been corrected.
+
+
 Release 1.0 (June 24, 2007)
 ----------------------------------------------------------------------
 
