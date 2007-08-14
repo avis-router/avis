@@ -82,7 +82,7 @@ public class IndentingWriter extends PrintWriter
   }
   
   /**
-   * Reverse the effect of an {@link #indent}.
+   * Reverse the effect of an {@link #indent()}.
    */
   public void unindent ()
   {
