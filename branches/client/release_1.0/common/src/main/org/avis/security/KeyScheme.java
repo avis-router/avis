@@ -150,15 +150,17 @@ public abstract class KeyScheme
       DualKeySet keys1 = (DualKeySet)producerKeys;
       DualKeySet keys2 = (DualKeySet)consumerKeys;
       
-      return match (keys1.producerKeys, keys2.producerKeys) &&
-             match (keys2.consumerKeys, keys1.consumerKeys);
+      return matchKeys (keys1.producerKeys, keys2.producerKeys) &&
+             matchKeys (keys2.consumerKeys, keys1.consumerKeys);
       
     } else if (producer)
     {
-      return match ((Set<Key>)producerKeys, (Set<Key>)consumerKeys);
+      return matchKeys ((SingleKeySet)producerKeys,
+                        (SingleKeySet)consumerKeys);
     } else
     {
-      return match ((Set<Key>)consumerKeys, (Set<Key>)producerKeys);
+      return matchKeys ((SingleKeySet)consumerKeys,
+                        (SingleKeySet)producerKeys);
     }
   }
   
@@ -171,7 +173,7 @@ public abstract class KeyScheme
    *         version (using this scheme's hash) was in the given
    *         public key set.
    */
-  private boolean match (Set<Key> privateKeys, Set<Key> publicKeys)
+  private boolean matchKeys (Set<Key> privateKeys, Set<Key> publicKeys)
   {
     for (Key privateKey : privateKeys)
     {
