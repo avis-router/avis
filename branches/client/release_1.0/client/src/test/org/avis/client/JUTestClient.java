@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.avis.common.ElvinURI;
 import org.avis.logging.Log;
+import org.avis.server.Server;
 import org.avis.security.Key;
 import org.avis.security.Keys;
-import org.avis.server.Server;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.sleep;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
@@ -37,6 +38,8 @@ import static org.junit.Assert.fail;
 public class JUTestClient
 {
   private static final String ELVIN_URI = "elvin://localhost:29170";
+
+  private static final long WAIT_TIMEOUT = 10000;
   
   private Server server;
   private LogFailTester logTester;
@@ -67,7 +70,7 @@ public class JUTestClient
    * Test that client handles changing subs in a notification callback.
    */
   @Test
-  public void modifySubInNotifyEvent ()
+  public void modifySubInNotify ()
     throws Exception
   {
     createServer ();
@@ -107,7 +110,7 @@ public class JUTestClient
     {
       client.send (ntfn);
       
-      wait (sub);
+      waitOn (sub);
     }
     
     assertFalse (client.hasSubscription (sub));
@@ -117,34 +120,32 @@ public class JUTestClient
   }
   
   /**
-   * Test that client handles sending a notificaion in a notification
-   * callback.
+   * Test that client handles notifying in a notification callback.
    */
   @Test
-  public void notifyInNotifyEvent ()
+  public void notifyInNotify ()
     throws Exception
   {
     createServer ();
     
-    final Elvin client = new Elvin (ELVIN_URI);
-    final Subscription sub = client.subscribe ("require (test)");
+    Elvin client = new Elvin (ELVIN_URI);
+    
+    final Subscription sub = client.subscribe ("require (Test)");
     
     sub.addListener (new NotificationListener ()
     {
       public void notificationReceived (NotificationEvent e)
       {
-        assertFalse (e.secure);
-        
         try
         {
-          if (e.notification.get ("payload").equals ("test 1"))
+          if (e.notification.getInt ("Message-Number") == 1)
           {
             Notification ntfn = new Notification ();
-            ntfn.set ("test", 1);
-            ntfn.set ("payload", "test 2");
+            ntfn.set ("Test", 1);
+            ntfn.set ("Message-Number", 2);
             
-            client.send (ntfn);
-          } else
+            e.subscription.elvin ().send (ntfn);
+          } else if (e.notification.getInt ("Message-Number") == 2)
           {
             synchronized (sub)
             {
@@ -159,14 +160,14 @@ public class JUTestClient
     });
     
     Notification ntfn = new Notification ();
-    ntfn.set ("test", 1);
-    ntfn.set ("payload", "test 1");
+    ntfn.set ("Test", 1);
+    ntfn.set ("Message-Number", 1);
     
     synchronized (sub)
     {
       client.send (ntfn);
       
-      wait (sub);
+      waitOn (sub);
     }
     
     client.close ();
@@ -180,7 +181,6 @@ public class JUTestClient
     createServer ();
     
     ElvinURI uri = new ElvinURI (ELVIN_URI);
-    ConnectionOptions options = new ConnectionOptions ();
     
     Key alicePrivate = new Key ("alice private");
 
@@ -191,9 +191,9 @@ public class JUTestClient
     bobSubKeys.add (SHA1_PRODUCER, alicePrivate.publicKeyFor (SHA1_PRODUCER));
     
     // subscribe with global keys
-    Elvin aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
-    Elvin bobClient = new Elvin (uri, options, EMPTY_KEYS, bobSubKeys);
-    Elvin eveClient = new Elvin (uri, options);
+    Elvin aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
+    Elvin bobClient = new Elvin (uri, EMPTY_KEYS, bobSubKeys);
+    Elvin eveClient = new Elvin (uri);
     
     Subscription bobSub =
       bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
@@ -226,7 +226,7 @@ public class JUTestClient
     eveClient.close ();
     
     // check we can add subscription keys for same result
-    aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
+    aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     eveClient = new Elvin (uri);
     
@@ -244,7 +244,7 @@ public class JUTestClient
     eveClient.close ();
     
     // check we can subscribe securely in one step
-    aliceClient = new Elvin (uri, options, aliceNtfnKeys, EMPTY_KEYS);
+    aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
     bobClient = new Elvin (uri);
     eveClient = new Elvin (uri);
     
@@ -340,7 +340,7 @@ public class JUTestClient
     {
       client.send (ntfn);
       
-      wait (sub);
+      waitOn (sub);
     }
   }
 
@@ -557,7 +557,7 @@ public class JUTestClient
     {
       System.out.println ("***** " + i);
       
-      modifySubInNotifyEvent ();
+      modifySubInNotify ();
     }
   }
   
@@ -596,6 +596,12 @@ public class JUTestClient
     client.close ();
   }
   
+  /**
+   * Test close listener support.
+   * 
+   * todo very rarely get a "Shutdown callbacks took too long to
+   * finish" on closing client. suspect deadlock condition possible.
+   */
   @Test
   public void closeListener ()
     throws Exception
@@ -624,7 +630,7 @@ public class JUTestClient
     {
       server.close ();
       
-      listener.wait (5000);
+      waitOn (listener, 4000);
     }
     
     assertNotNull ("No event fired", listener.event);
@@ -634,8 +640,6 @@ public class JUTestClient
     listener.event = null;
     client.close ();
     assertNull (listener.event);
-    
-    // todo test close () in callback
     
     // simulate server crash
     createServer ();
@@ -649,10 +653,7 @@ public class JUTestClient
     client.addCloseListener (listener);
     
     // check liveness check keeps connection open
-    synchronized (listener)
-    {
-      listener.wait (3000);
-    }
+    sleep (3000);
     
     assertNull (listener.event);
     assertTrue (client.isOpen ());
@@ -660,15 +661,16 @@ public class JUTestClient
     // hang server
     server.testSimulateHang ();
     
-    // check liveness detects within 6 seconds
+    // check liveness detects and closes connection
     synchronized (listener)
     {
-      listener.wait (6000);
+      waitOn (listener, 4000);
     }
     
     assertNotNull (listener.event);
     assertEquals (REASON_ROUTER_STOPPED_RESPONDING,
                   listener.event.reason);
+    assertFalse (client.isOpen ());
     
     server.testSimulateUnhang ();
   }
@@ -701,24 +703,27 @@ public class JUTestClient
     
     ntfn.set ("test", 1);
     
-    synchronized (closeListener)
-    {
-      client.send (ntfn);
+    client.send (ntfn);
       
-      wait (closeListener);
-    }
+    closeListener.waitForEvent ();
     
     assertFalse (client.isOpen ());
   }
   
-  private static void wait (Object sem)
+  static void waitOn (Object lock)
+    throws InterruptedException
+  {
+    waitOn (lock, WAIT_TIMEOUT);
+  }
+  
+  static void waitOn (Object lock, long timeout)
     throws InterruptedException
   {
     long waitStart = currentTimeMillis ();
     
-    sem.wait (10000);
+    lock.wait (timeout);
     
-    if (currentTimeMillis () - waitStart >= 10000)
+    if (currentTimeMillis () - waitStart >= timeout)
       fail ("Timed out waiting for response");
   }
   
@@ -731,6 +736,13 @@ public class JUTestClient
       event = e;
       
       notifyAll ();
+    }
+    
+    public synchronized void waitForEvent ()
+      throws InterruptedException
+    {
+      if (event == null)
+        waitOn (this);
     }
   }
   
