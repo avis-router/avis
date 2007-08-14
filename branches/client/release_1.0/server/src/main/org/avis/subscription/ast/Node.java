@@ -14,9 +14,6 @@ import static org.avis.util.Text.className;
  * The base class for all nodes in a subscription expression abstract
  * syntax tree.
  * 
- * @param E The type of value that the node's {@link #evaluate()}
- *          method returns.
- * 
  * @author Matthew Phillips
  */
 public abstract class Node<E>

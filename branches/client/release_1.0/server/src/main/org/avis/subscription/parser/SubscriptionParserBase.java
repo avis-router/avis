@@ -42,7 +42,7 @@ public abstract class SubscriptionParserBase
    * Execute {@link #parse()} and validate the result is a
    * type-correct, non-constant subscription expression.
    * 
-   * @throws ParseExpression if parse () fails or if the resulting
+   * @throws ParseException if parse () fails or if the resulting
    *           expression is not a valid subscription.
    * @throws ConstantExpressionException if the expression is contant.
    */
