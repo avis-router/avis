@@ -1,0 +1,507 @@
+
+
+
+
+
+
+Elvin Project                                                  D. Arnold
+Preliminary INTERNET-DRAFT                                     I. Lister
+                                                        Mantara Software
+Expires: aa bbb cccc                                         dd mmm yyyy
+
+                    Elvin Router Federation Protocol
+              draft-arnold-elvin-federation-prelim-00.txt
+
+
+[1m1.  Status of this Memo[0m
+
+   This document is an Internet-Draft and is NOT offered in accordance
+   with Section 10 of RFC2026, and the author does not provide the IETF
+   with any rights other than to publish as an Internet-Draft.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet- Drafts as reference mate-
+   rial or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/1id-abstracts.html
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html
+
+
+[1m2.  Abstract[0m
+
+   This document describes a protocol for forwarding message traffic
+   between Elvin servers.  It provides administrative filtering of both
+   incoming and outgoing traffic.
+
+   It has no effect on the protocol used for Elvin client to server com-
+   munications, or between server nodes in an Elvin cluster.
+
+
+[1m3.  Introduction[0m
+
+   The Elvin protocol provides undirected, content-routed messaging
+   between any number of clients connected to a single cluster of
+   servers. The Elvin cluster protocol allows these clients to be con-
+   nected to any of a group of cooperating, typically co-located
+
+
+
+Arnold                     Expires in 6 months                 [Page 1]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+   servers, by tightly joining these servers into a single logical
+   entity.
+
+   The purpose of this document is to define a new protocol in the Elvin
+   suite that allows loose joining of servers, each potentially located
+   anywhere on the Internet, into a federated Elvin service.
+
+   This protocol allows for administrative control over each autonomous
+   system and its connections to other parts of the Elvin federation,
+   including control over what notifications are permitted to travel in
+   and out of each server.
+
+
+[1m4.  Terminology[0m
+
+   This document discusses Elvin clients, client libraries and routers.
+
+   An Elvin router is a daemon process that runs on a single machine.
+   It acts as a distribution mechanism for Elvin messages. A client is a
+   program that uses an Elvin router, via a client library for a partic-
+   ular programming language.  A client library implements the Elvin
+   protocols and manages clients' connections to an Elvin router.
+
+   Further details of the Elvin protocol, its entities and their roles
+   is available in [EP].
+
+
+[1m4.1.  Notation Conventions[0m
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119.
+
+
+[1m5.  Basic Operation[0m
+
+   Elvin servers, in addition to whatever client/server protocols they
+   support, use a separate server federation protocol.  This protocol
+   has several purposes:
+
+1. management of the server(s)
+
+3. clustering of local servers for scaling or reliability
+
+3. linking servers to form wide-area routing networks
+
+
+
+
+
+
+Arnold                     Expires in 6 months                 [Page 2]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+[1m5.1.  Wide-area Federation[0m
+
+   Wide-area federation (in future referred to simply as federation) is
+   used to link islands of Elvin address spaces together into a single
+   routing network.
+
+
+[1m6.  Abstract Protocol[0m
+
+
+[1m6.1.  Protocol Overview[0m
+
+   An Elvin server may be statically configured with an initial state.
+   This state may include directions to initiate federation relation-
+   ships with other routers or to accept federation relationships with
+   other routers.
+
+   Federation relationships consist of a reliable one-to-one connection
+   between two routers and may optionally include administrative filters
+   at each end.  Two federated routers share information about their own
+   registered subscriptions in order to forward matching Elvin notifica-
+   tion traffic to each other.  The subscription information is shared
+   in the form of an abstract syntax tree of a single aggregate Elvin
+   subscription expression representing the union of all subscriptions
+   registered at a router (excluding that registered by the other router
+   in the federation relationship).
+
+   Incoming notifications are evaluated for forwarding to connected
+   routers in addition to any connected clients.  Handling of a notifi-
+   cation received from a federated router is largely the same as han-
+   dling a notification received from a client, with the exception that
+   the notification is not sent back to the router from which it was
+   received.
+
+                                     +--------------+ Elvin
+      +----------+                   | +----------+ | Federation
+      | Producer | ---NotifyEmit------>| Router 1 | |
+      +----------+                   | +----------+ |
+                                     |      |       |
+                                     |      |       |
+                                     |      V       |
+      +----------+                   | +----------+ |
+      | Consumer | <--NotifyDeliver--- | Router 2 | |
+      +----------+                   | +----------+ |
+                                     +--------------+
+                                                      NOTIFICATION PATH
+
+
+
+
+
+Arnold                     Expires in 6 months                 [Page 3]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+[1m6.2.  Packet Types[0m
+
+   The protocol is defined in terms of individual packet specifications.
+   Each packet has two unique identifiers: a string name and a number.
+   In a concrete protocol implementation, if packets are identified
+   using a number or string, these values SHOULD be used.
+
+   The numeric identifiers for new kinds of packets have been chosen
+   such that they do not overlap with the identifiers used for the Elvin
+   client protocol, and both sets of identifiers can be encoded using a
+   single byte. Some packets share the same semantics as in the Elvin
+   client protocol, so the same identifiers are used.
+
+     ----------------------------------------------------------------
+     Packet Type                     Abbreviation         Identifier
+     ----------------------------------------------------------------
+     Federation Connection Request   FedConnRqst             192
+     Federation Connection Reply     FedConnRply             193
+     Federation Subscription Modify  FedModify               194
+     Federation Notify               FedNotify               195
+
+     Disconnect                      Disconn                  53
+     Acknowledge                     Ack                      65
+     Negative Acknowledge            Nack                     48
+
+     ----------------------------------------------------------------
+
+
+
+[1m6.2.1.  Federation Connection Request[0m
+
+   A server, configured with filters and addressing information for a
+   remote server, initiates a connection using this request.
+
+     struct FedConnRqst {
+       id32 xid;
+       uint32 major_version;
+       uint32 minor_version;
+       string server_domain;
+     };
+
+   The xid field is a number identifying this request.  It must be
+   unique among all outstanding requests on any one connection at any
+   one time.  Successive requests SHOULD use an xid that increments by
+   one for each request.
+
+   The server_domain parameter is a unique UTF-8 string identifying the
+   local server or cluster.  It is used to prevent importation of
+
+
+
+Arnold                     Expires in 6 months                 [Page 4]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+   traffic which has previously been exported from the local domain.
+   This means that it MUST be globally unique for each single server or
+   cluster, but it MUST be identical for each server within a single
+   cluster.  It is RECOMMENDED that this name be based on the DNS domain
+   name or IP address of the server's host machine(s).
+
+   A server receiving a FedConnRqst MUST check that it is compatible
+   with the protocol version specified in the packet. To be compatible,
+   the server must be able to use a version of the protocol with the
+   major component being equal to the version requested, and the minor
+   component being greater than or equal to the version requested. If a
+   server cannot meet this requirement it MUST immediately close the
+   connection, as for a protocol violation.
+
+   The version of the protocol specified in this document has a major
+   component of one (1) and a minor component of zero (0). This can be
+   represented in text form as 1.0.
+
+
+[1m6.2.2.  Federation Connection Reply[0m
+
+   A server, having received a FedConnRqst, responds with either a Nack
+   (if the request was unsuccessful) or a FedConnRply (if the request
+   was successful).  If the local_domain in the received FedConnRqst is
+   the same as the local_domain of any other known directly connected
+   server or the same as the receiving server's own local_domain, the
+   server must respond with a Nack.
+
+     struct FedConnRply {
+       id32 xid;
+       string server_domain;
+     };
+
+   The xid field MUST be set to the same value as that in the FedCon-
+   nRqst being responded to.  A FedConnRply MUST NOT be sent other than
+   in response to a FedConnRqst.
+
+   The server_domain field contains a unique identifier for the local
+   server or cluster, equivalent to the local_domain sent in a FedCon-
+   nRqst.
+
+
+[1m6.2.3.  Federation Subscription Modify[0m
+
+   Each of the linked servers may optionally provide a compiled Elvin
+   subscription expression, known as the pull_filter, describing the
+   traffic requested by clients of the local server. Either of the
+   linked servers may request a modification of their registered
+
+
+
+Arnold                     Expires in 6 months                 [Page 5]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+   pull_filter at any time during the life of the connection, by sending
+   a FedModify.
+
+     struct FedModify {
+       id32 xid;
+       SubAST pull_filter;
+     };
+
+   The pull_filter MAY be different from the subscription database of
+   the sender; for example it MAY be made more general to minimise
+   updates caused by minor changes to the local subscription database,
+   and/or it MAY be made more specific to prevent importation of notifi-
+   cations known to be unwanted (despite matching local subscriptions).
+
+   The receiving server MUST process the request, and return either an
+   Ack or a Nack, depending on the validity of the SubAST.
+
+
+
+[1m6.2.4.  Federation Notify[0m
+
+   Notification traffic is sent between the servers using the FedNotify
+   packet.
+
+     struct FedNotify {
+       NameValue attributes[];
+       boolean deliver_insecure;
+       Keys keys;
+       string routing[];
+     };
+
+   The routing list consists of the unique signatures of domains that
+   have previously seen this packet.  For those servers with multiple
+   federation links, packets MUST NOT be forwarded through links whose
+   registered signature is already present in the routing hash.
+
+   Before forwarding a FedNotify, a server MUST insert its own signature
+   into the routing list to prevent it being delivered again.  However,
+   if a notification is received where the routing list contains the
+   signature of the receiving server, it MUST be silently dropped.
+
+   A server SHOULD NOT forward a FedNotify to a server that has not
+   requested it i.e. a notification that does not match the server's
+   most recently positively acknowledged pull_filter.
+
+   A server MAY choose to not forward a FedNotify to a server that has
+   requested it (i.e. a notification that matches the server's most
+   recently positively acknowledged pull_filter). Some cases in which a
+
+
+
+Arnold                     Expires in 6 months                 [Page 6]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+   server might choose to do this are if the server or its network con-
+   nections are overloaded, or if it has been configured not to send
+   this type of notification.
+
+
+
+[1m6.3.  Configuration[0m
+
+   It is beyond the scope of this document to describe how implementa-
+   tions may be configured to control the flow of notifications between
+   servers, but there are some important points for implementers and
+   administrators to consider.
+
+   The Elvin federation protocol assumes a that federation links are
+   configured to form a spanning tree. This means that for any given
+   pair of servers there is only one possible route for any given noti-
+   fication to travel from one server to the other.
+
+   Future revisions of the protocol may provide for automatic detection
+   or configuration.
+
+
+[1m7.  Security Considerations[0m
+
+   Multiple concrete implementations of the abstract protocol mean that
+   the federation links can have many different properties, depending
+   upon the protocol stack(s) used.
+
+   The Elvin federation protocol relies on any necessary authentication
+   being performed by the underlying transport protocols, for example by
+   verification of SSL certificates.
+
+   Administrators of Elvin routers should be careful to ensure that only
+   appropriate combinations of protocols are offered by their routers.
+
+
+[1m8.  IANA Considerations[0m
+
+   The TCP port 2916 has been reserved by the IANA for the Elvin federa-
+   tion protocol using the concrete XDR marshalling protocol.
+
+
+
+
+
+
+
+
+
+
+
+Arnold                     Expires in 6 months                 [Page 7]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+[1m1.[0m
+
+
+   Author's Address
+
+   David Arnold
+   Ian Lister
+
+   Mantara Software
+   PO Box 1820
+   Toowong QLD 4066
+   Australia
+
+   Phone:  +61 7 3876 8844
+   Fax:    +61 7 3876 8843
+   Email:  support@mantara.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold                     Expires in 6 months                 [Page 8]
+
+Internet Draft                    Elvin                     dd mmmm 2000
+
+
+[1m2.  Full Copyright Statement[0m
+
+   Copyright (C) 2000, __yr Mantara Software All Rights Reserved.
+
+   This specification may be reproduced or transmitted in any form or by
+   any means, electronic or mechanical, including photocopying, record-
+   ing, or by any information storage or retrieval system, providing
+   that the content remains unaltered, and that such distribution is
+   under the terms of this licence.
+
+   While every precaution has been taken in the preparation of this
+   specification, Mantara Software assumes no responsibility for errors
+   or omissions, or for damages resulting from the use of the informa-
+   tion herein.
+
+   Mantara Software welcomes comments on this specification.  Please
+   address any queries, comments or fixes (please include the name and
+   version of the specification) to the address below:
+
+       Mantara Software
+       PO Box 1820
+       Toowong QLD 4066
+       Australia
+       Tel: +61 7 3876 8844
+       Fax: +61 7 3876 8843
+       Email: support@mantara.com
+
+   Elvin is a trademark of Mantara Software.  All other trademarks and
+   registered marks belong to their respective owners.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold                     Expires in 6 months                 [Page 9]
+
