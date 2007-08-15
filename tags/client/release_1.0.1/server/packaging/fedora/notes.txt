@@ -1,0 +1,5 @@
+Useful links:
+http://genetikayos.com/code/repos/rpm-tutorial/trunk/rpm-tutorial.html
+http://www-128.ibm.com/developerworks/library/l-rpm1/
+http://freemind.cvs.sourceforge.net/*checkout*/freemind/admin/installer/rpm/SPECS/freemind.spec?revision=1.1
+http://jpackage.org/
