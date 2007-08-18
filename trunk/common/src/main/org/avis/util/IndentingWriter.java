@@ -1,4 +1,7 @@
 package org.avis.util;
+
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 
@@ -9,6 +12,11 @@ public class IndentingWriter extends PrintWriter
 {
   private int indent;
   private int indentIncr;
+  
+  public IndentingWriter (OutputStream str)
+  {
+    this (new OutputStreamWriter (str));
+  }
   
   public IndentingWriter (Writer writer)
   {
@@ -130,6 +138,8 @@ public class IndentingWriter extends PrintWriter
     super.println ();
     
     writeIndent ();
+    
+    flush ();
   }  
   
   private void writeIndent ()
