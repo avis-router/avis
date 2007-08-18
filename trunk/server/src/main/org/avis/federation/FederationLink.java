@@ -4,7 +4,7 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
 import org.avis.federation.messages.Ack;
-import org.avis.federation.messages.FedModify;
+import org.avis.federation.messages.FedSubReplace;
 import org.avis.federation.messages.FedNotify;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.ErrorMessage;
@@ -136,7 +136,7 @@ public class FederationLink implements NotifyListener
   {
     // todo how to we subscribe to TRUE?
     if (federationClass.incomingFilter != CONST_FALSE)
-      send (new FedModify (federationClass.incomingFilter));
+      send (new FedSubReplace (federationClass.incomingFilter));
   }
   
   /**
@@ -186,8 +186,8 @@ public class FederationLink implements NotifyListener
   {
     switch (message.typeId ())
     {
-      case FedModify.ID:
-        handleFedModify ((FedModify)message);
+      case FedSubReplace.ID:
+        handleFedModify ((FedSubReplace)message);
         break;
       case FedNotify.ID:
         handleFedNotify ((FedNotify)message);
@@ -214,7 +214,7 @@ public class FederationLink implements NotifyListener
 
   private void handleRequestTimeout (RequestMessage<?> request)
   {
-    if (request.getClass () == FedModify.class)
+    if (request.getClass () == FedSubReplace.class)
     {
       warn ("Federation modify request to remote federator at " + 
             remoteHostName + " timed out: retrying", this);
@@ -242,7 +242,7 @@ public class FederationLink implements NotifyListener
     close (REASON_REQUEST_REJECTED, "");
   }
 
-  private void handleFedModify (FedModify message)
+  private void handleFedModify (FedSubReplace message)
   {
     remotePullFilter = message.incomingFilter.inlineConstants ();
     
