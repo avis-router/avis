@@ -1,37 +1,36 @@
 About Avis
 ======================================================================
 
-Avis provides a fast publish/subscribe event router service compatible
-with the commercial Elvin implementation developed by [Mantara
+Avis is an internet-scale multicast event bus. It provides a fast,
+Elvin-compatible publish/subscribe event routing service compatible
+with the commercial implementation developed by [Mantara
 Software][mantara].
 
-Elvin event routers allow arbitrary messages, known as
-*notifications*, to be exchanged via a publish/subscribe model &mdash;
-Elvin clients subscribe to messages published by other clients using
-pattern-matching expressions that select messages based on their
-content. Multiple Elvin routers can be federated together to form
-wide-area event notification networks.
+Elvin routers can be federated together to form wide-area event
+notification networks. Federated networks of Elvin routers enable
+arbitrary messages to be exchanged between clients anywhere on the
+bus, enabling Elvin clients to subscribe to messages published by
+other clients using pattern-matching expressions that select messages
+based on their content.
 
 The name "Avis" derives from the French word *avis*, meaning *advice*
-or *notification*. Alternatively, the name could be taken from the
-Latin meaning <em>bird</em>, which makes less sense, but sounds nice
-and classical.
+or *notification*.
 
 Applications
 ----------------------------------------------------------------------
 
-Current uses for Elvin include providing a wide-area message bus for
+Current uses for Elvin routers include providing a message bus for
 [instant messaging and presence][tickertape.org], device discovery and
 coordination for smart meeting rooms, and as a carrier of [distributed
 speech transcription for meetings][AuTM]. The commercial
 implementation developed by Mantara has been used extensively for
 high-volume financial transaction routing.
 
-Elvin has been used in a wide variety of applications mainly due to
-its lightweight nature and ability to be federated to form
-internet-scale messaging networks. See [this page][why_avis] for more
-discussion on why you might want to use it. The [examples][] page also
-demonstrates in more detail a scenario in which it can be employed.
+Elvin has been useful in a wide variety of applications due to its
+robust, lightweight nature and ability to be federated to form
+wide-area messaging networks. See [this page][why_avis] for more
+discussion on why you might want to use Elvin. The [examples][] page
+also demonstrates a simple scenario that illustrates its use.
 
 
 Current Status
@@ -64,7 +63,7 @@ Phillips implemented the Elvin open specifications published at
 [elvin.org][] as free software in the form of the Avis project.
 
 The Avis project aims to support developing systems using the proven
-Elvin message router approach. It is intended that Avis will track
+Elvin message bus approach. It is intended that Avis will track
 developments in the Elvin specifications in order to remain a
 compatible long-term option.
 
@@ -72,8 +71,9 @@ compatible long-term option.
 Contacts
 ----------------------------------------------------------------------
 
-The author can be contacted at `avis at mattp.name` or `phillipsm at
-users.sourceforge.net` (replace "at" with "@").
+The lead developer of the Avis project can be contacted at `avis at
+mattp.name` or `phillipsm at users.sourceforge.net` (replace "at" with
+"@").
 
 
 [DSTC_wikipedia]: http://en.wikipedia.org/wiki/Distributed_Systems_Technology_Centre "More about DSTC on wikipedia" 
