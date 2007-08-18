@@ -11,7 +11,6 @@ import java.io.Writer;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
-import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -20,6 +19,7 @@ import org.avis.util.LogFailTester;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.lang.Thread.sleep;
@@ -40,7 +40,6 @@ public class JUTestFederation
   private static final int PORT1 = 29170;
   private static final int PORT2 = 29180;
   
-  private static boolean RUN_MANTARA = false;
   private static final String MANTARA_ELVIN = "/usr/local/sbin/elvind";
   
   private LogFailTester logTester;
@@ -257,22 +256,26 @@ public class JUTestFederation
     server2.close ();
   }
   
+  private static boolean runElvind = true;
+  
   /**
    * Test against Mantara elvind.
    */
   @Test
+  @Ignore
   public void mantara () 
     throws Exception
   {
-    Log.enableLogging (Log.TRACE, true);
-    Log.enableLogging (Log.DIAGNOSTIC, true);
+    // Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
     
     EwafURI ewafURI = new EwafURI ("ewaf:1.0//localhost:" + (PORT1 + 1));
 
     Process elvind = null;
     
-    if (RUN_MANTARA)
-      elvind = runMantaraElvind (ewafURI);
+    if (runElvind)
+      elvind = runMantaraElvind (ewafURI, 
+                                 "require (federated)", "require (federated)");
     
     Router server = new Router (PORT2);
 
@@ -294,11 +297,7 @@ public class JUTestFederation
     client1.subscribe ("require (federated) && from == 'client2'");
     client2.subscribe ("require (federated) && from == 'client1'");
 
-    System.out.println ("start two way");
-    
     testTwoWayClientSendReceive (client1, client2);
-    
-    System.out.println ("two way passed");
     
     client1.close ();
     client2.close ();
@@ -311,7 +310,66 @@ public class JUTestFederation
       elvind.destroy ();
   }
   
-  private static Process runMantaraElvind (EwafURI ewafURI)
+  /**
+   * Ad hoc test of AST IO against Mantara elvind.
+   */
+  @Test
+  @Ignore
+  public void mantaraAST () 
+    throws Exception
+  {
+    // Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
+    
+    EwafURI ewafURI = new EwafURI ("ewaf:1.0//localhost:" + (PORT1 + 1));
+
+    Process elvind = null;
+    
+    String require =
+      "require (federated) && size (from) > 2 && " +
+      "(equals (from, 'client1', 'client2') || " +
+      " begins-with (from, 'c') || (fred + 1 > 42))";
+    
+    if (runElvind)
+      elvind = runMantaraElvind (ewafURI, require, "TRUE");
+    
+    Router server = new Router (PORT2);
+
+    FederationOptions options = new FederationOptions ();
+    
+    FederationClass fedClass =
+      new FederationClass (require, 
+                           "require (federated)");
+    
+    FederationConnector connector = 
+      new FederationConnector (server, "avis", ewafURI, 
+                               fedClass, options);
+    
+    SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
+    SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
+    
+    client1.connect ();
+    client2.connect ();
+    
+    client1.subscribe ("require (federated) && from == 'client2'");
+    client2.subscribe ("require (federated) && from == 'client1'");
+
+    testTwoWayClientSendReceive (client1, client2);
+    
+    client1.close ();
+    client2.close ();
+    
+    connector.close ();
+    
+    server.close ();
+    
+    if (elvind != null)
+      elvind.destroy ();
+  }
+  
+  private static Process runMantaraElvind (EwafURI ewafURI, 
+                                           String require, 
+                                           String provide)
     throws Exception
   {
     File mantaraConfig = File.createTempFile ("elvin", "conf");
@@ -323,10 +381,8 @@ public class JUTestFederation
       "federation.name mantara\n" +
       "federation.protocol " + ewafURI + "\n" +
       "federation.class test\n" +
-//      "federation.identify.address test 0.0.0.0\n" +
-//      "federation.identify.id test avis\n" +
-      "federation.subscribe test require (federated)\n" +
-      "federation.provide test require (federated)\n";
+      "federation.subscribe test " + require + "\n" +
+      "federation.provide test " + provide + "\n";
     
     Writer configStream = 
       new OutputStreamWriter (new FileOutputStream (mantaraConfig));
@@ -376,8 +432,6 @@ public class JUTestFederation
       server1 = new Router (PORT1);
       server2 = new Router (PORT2);
 
-      // FederationClass fedClass =
-      //   new FederationClass ("require (federated)", "true");
       FederationClass fedClass =
         new FederationClass ("require (federated)", "require (federated)");
       
@@ -409,7 +463,6 @@ public class JUTestFederation
       client1.close ();
       client2.close ();
       
-      // todo make sure federators auto close
       connector.close ();
       listener.close ();
       
