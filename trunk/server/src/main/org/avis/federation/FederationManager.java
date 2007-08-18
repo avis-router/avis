@@ -22,6 +22,7 @@ import static org.avis.federation.FederationOptions.splitOptionParam;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
+import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
 import static org.avis.util.Text.shortException;
 import static org.avis.util.Text.split;
 
@@ -199,6 +200,18 @@ public class FederationManager implements CloseListener
         } else if (option.equals ("Federation.Subscribe:"))
         {
           fedClass.incomingFilter = parse (value);
+          
+          /*
+           * Cannot sub TRUE right now. When we support 1.1-level
+           * federation this will be possible as CONST_TRUE will be
+           * &&'d with the current consolidated subscription.
+           */ 
+          if (fedClass.incomingFilter == CONST_TRUE)
+          {
+            throw new IllegalOptionException 
+              (entry.getKey (), 
+               "Federation with \"TRUE\" is not currently supported");
+          }
         } else if (option.equals ("Federation.Listen:"))
         {
           if (value.startsWith ("@"))
