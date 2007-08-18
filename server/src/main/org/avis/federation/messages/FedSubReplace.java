@@ -9,18 +9,18 @@ import org.avis.subscription.ast.Node;
 import static org.avis.federation.AstXdrCoding.decodeAST;
 import static org.avis.federation.AstXdrCoding.encodeAST;
 
-public class FedModify extends RequestMessage<Ack>
+public class FedSubReplace extends RequestMessage<Ack>
 {
   public static final int ID = 194;
   
   public Node incomingFilter;
   
-  public FedModify ()
+  public FedSubReplace ()
   {
     // zip
   }
   
-  public FedModify (Node incomingFilter)
+  public FedSubReplace (Node incomingFilter)
   {
     super (nextXid ());
     

@@ -10,7 +10,7 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.avis.federation.messages.Ack;
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
-import org.avis.federation.messages.FedModify;
+import org.avis.federation.messages.FedSubReplace;
 import org.avis.federation.messages.FedNotify;
 import org.avis.io.FrameCodec;
 import org.avis.io.messages.Disconn;
@@ -53,8 +53,8 @@ public class FederationFrameCodec
         return new FedConnRply ();
       case FedConnRqst.ID:
         return new FedConnRqst ();
-      case FedModify.ID:
-        return new FedModify ();
+      case FedSubReplace.ID:
+        return new FedSubReplace ();
       case FedNotify.ID:
         return new FedNotify ();
       default:
