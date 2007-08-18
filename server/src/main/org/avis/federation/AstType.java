@@ -9,7 +9,7 @@ package org.avis.federation;
 final class AstType
 {
   public static final int
-    NAME = 1, CONST_INT32 = 2, CONST_INT64 = 3, CONST_REAL64 = 4, 
+    EMPTY = 0, NAME = 1, CONST_INT32 = 2, CONST_INT64 = 3, CONST_REAL64 = 4, 
     CONST_STRING = 5, REGEXP = 6, EQUALS = 8, NOT_EQUALS = 9, LESS_THAN = 10,
     LESS_THAN_EQUALS = 11, GREATER_THAN = 12, GREATER_THAN_EQUALS = 13,
     OR = 16, XOR = 17, AND = 18, NOT = 19, UNARY_PLUS = 24, UNARY_MINUS = 25,
