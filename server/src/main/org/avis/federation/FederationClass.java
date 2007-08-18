@@ -55,7 +55,6 @@ public class FederationClass
     
     if (subExpr.equalsIgnoreCase ("true"))
     {
-      // todo is this the correct way to subscribe to all? can you sub all?
       return CONST_TRUE;
     } else if (subExpr.equalsIgnoreCase ("false"))
     {
