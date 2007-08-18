@@ -109,12 +109,12 @@ public class JUTestParser
   public void functions () 
     throws Exception
   {
-    assertParsesTo ("size (name)", "(size 'name')");
-    assertParsesTo ("require (name)", "(require 'name')");
-    assertParsesTo ("int32 (name)", "(int32 'name')");
-    assertParsesTo ("int64 (name)", "(int64 'name')");
-    assertParsesTo ("real64 (name)", "(real64 'name')");
-    assertParsesTo ("string (name)", "(string 'name')");
+    assertParsesTo ("size (name)", "(size (field 'name'))");
+    assertParsesTo ("require (name)", "(require (field 'name'))");
+    assertParsesTo ("int32 (name)", "(int32 (field 'name'))");
+    assertParsesTo ("int64 (name)", "(int64 (field 'name'))");
+    assertParsesTo ("real64 (name)", "(real64 (field 'name'))");
+    assertParsesTo ("string (name)", "(string (field 'name'))");
     assertParsesTo ("begins-with (name, 'hello')", "(begins-with (field 'name') 'hello')");
     assertParsesTo ("ends-with (name, 'hello')", "(ends-with (field 'name') 'hello')");
     assertParsesTo ("contains (name, 'hello')", "(contains (field 'name') 'hello')");
