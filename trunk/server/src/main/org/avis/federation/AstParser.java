@@ -141,11 +141,11 @@ class AstParser
     
     switch (nodeType) 
     {
+      case NAME:
       case CONST_INT32:
       case CONST_INT64:
       case CONST_REAL64:
       case CONST_STRING:
-      case NAME:
         return leaf (nodeType, subType);
       case REGEXP:
         return StrRegex.create (children ());
