@@ -215,7 +215,7 @@ public class FederationConnector implements IoHandler, Closeable
           session.close ();
       } else
       {
-        if (link != null && !link.closedSession ())
+        if (link != null && !link.initiatedSessionClose ())
         {
           warn ("Remote federator at " + uri + " " + 
                 "closed link with no warning", this);
@@ -325,15 +325,15 @@ public class FederationConnector implements IoHandler, Closeable
   public void sessionOpened (IoSession theSession)
     throws Exception
   {
-    diagnostic ("Federator " + serverDomain + 
-                " connected to remote federator at " + uri, this);
+    diagnostic ("Federator \"" + serverDomain + 
+                "\" connected to remote federator at " + uri, this);
   }
   
   public void sessionClosed (IoSession theSession)
     throws Exception
   {
-    diagnostic ("Federator " + serverDomain + " connected to federator at " + 
-                uri + " closed", this);
+    diagnostic ("Federator \"" + serverDomain + "\" disconnected from remote " +
+    		"federator at " + uri, this);
     
     reopen ();
   }

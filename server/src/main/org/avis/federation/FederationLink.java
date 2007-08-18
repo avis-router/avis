@@ -102,7 +102,7 @@ public class FederationLink implements NotifyListener
   /**
    * True if this link closed the session rather than the remote host.
    */
-  public boolean closedSession ()
+  public boolean initiatedSessionClose ()
   {
     return session.containsAttribute ("linkClosed");
   }
