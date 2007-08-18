@@ -55,6 +55,7 @@ import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
 import static org.avis.federation.AstType.DIVIDE;
 import static org.avis.federation.AstType.EMPTY;
 import static org.avis.federation.AstType.ENDS_WITH;
+import static org.avis.federation.AstType.FOLD_CASE;
 import static org.avis.federation.AstType.F_EQUALS;
 import static org.avis.federation.AstType.GREATER_THAN;
 import static org.avis.federation.AstType.GREATER_THAN_EQUALS;
@@ -78,7 +79,6 @@ import static org.avis.federation.AstType.SHIFT_RIGHT;
 import static org.avis.federation.AstType.SIZE;
 import static org.avis.federation.AstType.STRING;
 import static org.avis.federation.AstType.SUBTRACT;
-import static org.avis.federation.AstType.TO_LOWER;
 import static org.avis.federation.AstType.UNARY_MINUS;
 import static org.avis.federation.AstType.WILDCARD;
 import static org.avis.federation.AstType.XOR;
@@ -126,7 +126,7 @@ public final class AstXdrCoding
     nodeToTypecode.put (StrBeginsWith.class, BEGINS_WITH);
     nodeToTypecode.put (StrContains.class, CONTAINS);
     nodeToTypecode.put (StrEndsWith.class, ENDS_WITH);
-    nodeToTypecode.put (StrFoldCase.class, TO_LOWER);
+    nodeToTypecode.put (StrFoldCase.class, FOLD_CASE);
     nodeToTypecode.put (StrRegex.class, REGEX);
     nodeToTypecode.put (StrWildcard.class, WILDCARD);
     nodeToTypecode.put (Xor.class, XOR);
@@ -151,6 +151,11 @@ public final class AstXdrCoding
     if (node instanceof Const)
     {
       encodeConst (out, (Const)node);
+    } else if (node instanceof Field)
+    {
+      out.putInt (NAME);
+      out.putInt (TYPE_STRING);
+      putString (out, ((Field)node).fieldName ());
     } else
     {
       out.putInt (typeCodeFor (node));

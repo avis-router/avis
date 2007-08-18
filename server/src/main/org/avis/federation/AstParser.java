@@ -57,6 +57,7 @@ import static org.avis.federation.AstType.DIVIDE;
 import static org.avis.federation.AstType.EMPTY;
 import static org.avis.federation.AstType.ENDS_WITH;
 import static org.avis.federation.AstType.EQUALS;
+import static org.avis.federation.AstType.FOLD_CASE;
 import static org.avis.federation.AstType.F_EQUALS;
 import static org.avis.federation.AstType.GREATER_THAN;
 import static org.avis.federation.AstType.GREATER_THAN_EQUALS;
@@ -85,7 +86,6 @@ import static org.avis.federation.AstType.SIZE;
 import static org.avis.federation.AstType.STRING;
 import static org.avis.federation.AstType.SUBTRACT;
 import static org.avis.federation.AstType.TERTIARY;
-import static org.avis.federation.AstType.TO_LOWER;
 import static org.avis.federation.AstType.TO_UPPER;
 import static org.avis.federation.AstType.UNARY_MINUS;
 import static org.avis.federation.AstType.UNARY_PLUS;
@@ -95,7 +95,6 @@ import static org.avis.io.XdrCoding.TYPE_INT32;
 import static org.avis.io.XdrCoding.TYPE_INT64;
 import static org.avis.io.XdrCoding.TYPE_REAL64;
 import static org.avis.io.XdrCoding.TYPE_STRING;
-import static org.avis.io.XdrCoding.getObject;
 import static org.avis.io.XdrCoding.getString;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.util.Text.className;
@@ -146,9 +145,8 @@ class AstParser
       case CONST_INT64:
       case CONST_REAL64:
       case CONST_STRING:
-        return constant (nodeType, subType);
       case NAME:
-        return new Field (single ().string ());
+        return leaf (nodeType, subType);
       case REGEXP:
         return StrRegex.create (children ());
       case EQUALS:
@@ -200,17 +198,17 @@ class AstParser
       case BIT_NEGATE:
         return new MathBitInvert (single ().expr ());
       case INT32:
-        return new Type (single ().string (), Integer.class);
+        return new Type (single ().field (), Integer.class);
       case INT64:
-        return new Type (single ().string (), Long.class);
+        return new Type (single ().field (), Long.class);
       case REAL64:
-        return new Type (single ().string (), Double.class);
+        return new Type (single ().field (), Double.class);
       case STRING:
-        return new Type (single ().string (), String.class);
+        return new Type (single ().field (), String.class);
       case OPAQUE:
-        return new Type (single ().string (), byte [].class);
+        return new Type (single ().field (), byte [].class);
       case NAN:
-        return new Nan (single ().string ());
+        return new Nan (single ().field ());
       case BEGINS_WITH:
         return StrBeginsWith.create (children ());
       case CONTAINS:
@@ -221,7 +219,7 @@ class AstParser
         return StrWildcard.create (children ());
       case REGEX:
         return StrRegex.create (children ());
-      case TO_LOWER:
+      case FOLD_CASE:
         return new StrFoldCase (single ().expr ());
       case TO_UPPER:
         throw new ProtocolCodecException ("toupper () is not supported");
@@ -238,11 +236,11 @@ class AstParser
         return new StrUnicodeDecompose (single ().expr (), 
                                         StrUnicodeDecompose.DECOMPOSE_COMPAT);
       case REQUIRE:
-        return new Require (single ().string ());
+        return new Require (single ().field ());
       case F_EQUALS:
         return Compare.createEquals (children ());
       case SIZE:
-        return new Size (single ().string ());
+        return new Size (single ().field ());
       default:
         throw new Error ();
     }
@@ -294,79 +292,64 @@ class AstParser
     return children;
   }
   
-  /**
-   * Read a string constant node or throw an exception.
-   * 
-   * @return The value of the constant node.
-   * 
-   * @throws ProtocolCodecException if a string node was not found or
-   *                 other parse error occurs.
-   */
-  private String string ()
+  private Field field ()
     throws ProtocolCodecException
   {
-    int nodeType = in.getInt ();
+    Node node = expr ();
     
-    if (nodeType != CONST_STRING)
-      throw new ProtocolCodecException ("String node required, found " + nodeType);
-    
-    Object value = getObject (in);
-    
-    if (value instanceof String)
-      return (String)value;
+    if (node instanceof Field)
+      return (Field)node;
     else
-      throw new ProtocolCodecException ("String node required, found " + 
-                                        className (value));
+      throw new ProtocolCodecException ("Field node required, found " + 
+                                        className (node));
   }
   
   /**
-   * Read a constant node of a given type and subtype.
+   * Read a leaf node of a given type and subtype.
    * 
-   * @param nodeType The node type (must be one of the CONST_*
-   *                values).
+   * @param nodeType The node type.
    * @param subType The node sub type (must be one of the
    *                XdrCoding.TYPE_* values).
-   * @return The const node.
+   * @return The node.
    * 
    * @throws ProtocolCodecException if the node was not valid constant
    *                 node of the specified type.
    */
-  private Const constant (int nodeType, int subType)
+  private Node leaf (int nodeType, int subType)
     throws ProtocolCodecException
   {
-    switch (subType)
+    switch (nodeType)
     {
-      case TYPE_INT32:
-        assertNodeType (nodeType, CONST_INT32);
-        
-        return new Const (in.getInt ());
-      case TYPE_INT64:
-        assertNodeType (nodeType, CONST_INT64);
-        
-        return new Const (in.getLong ());
-      case TYPE_REAL64:
-        assertNodeType (nodeType, CONST_REAL64);
-        
-        return new Const (in.getDouble ());
-      case TYPE_STRING:
-        assertNodeType (nodeType, CONST_STRING);
-        
+      case NAME:
+        assertSubtype (subType, TYPE_STRING);
+        return new Field (getString (in));
+      case CONST_STRING:
+        assertSubtype (subType, TYPE_STRING);
         return new Const (getString (in));
+      case CONST_INT32:
+        assertSubtype (subType, TYPE_INT32);
+        return new Const (in.getInt ());
+      case CONST_INT64:
+        assertSubtype (subType, TYPE_INT64);
+        return new Const (in.getLong ());
+      case CONST_REAL64:
+        assertSubtype (subType, TYPE_REAL64);
+        return new Const (in.getDouble ());
       default:
-        throw new ProtocolCodecException ("Invalid subtype: " + subType);
+        throw new Error ();
     }
   }
 
   /**
    * Check that a node type matches an actual required value.
    */
-  private static void assertNodeType (int required, int actual)
+  private static void assertSubtype (int required, int actual)
     throws ProtocolCodecException
   {
     if (required != actual)
     {
       throw new ProtocolCodecException 
-        ("Constant node " + actual + " has wrong sub type ");
+        ("Leaf node " + actual + " has wrong sub type");
     }
   }
 }
