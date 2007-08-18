@@ -53,6 +53,7 @@ import static org.avis.federation.AstType.CONTAINS;
 import static org.avis.federation.AstType.DECOMPOSE;
 import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
 import static org.avis.federation.AstType.DIVIDE;
+import static org.avis.federation.AstType.EMPTY;
 import static org.avis.federation.AstType.ENDS_WITH;
 import static org.avis.federation.AstType.F_EQUALS;
 import static org.avis.federation.AstType.GREATER_THAN;
@@ -145,6 +146,7 @@ public final class AstXdrCoding
    * @see #decodeAST(ByteBuffer)
    */
   public static void encodeAST (ByteBuffer out, Node node)
+    throws ProtocolCodecException
   {
     if (node instanceof Const)
     {
@@ -224,6 +226,7 @@ public final class AstXdrCoding
    * Encode a constant value (leaf) node.
    */
   private static void encodeConst (ByteBuffer out, Const node)
+    throws ProtocolCodecException
   {
     Object value = node.value ();
     Class<?> type = value.getClass ();
@@ -248,9 +251,16 @@ public final class AstXdrCoding
       out.putInt (CONST_REAL64);
       out.putInt (TYPE_REAL64);
       out.putDouble ((Double)value);
+    } else if (type == Boolean.class)
+    {
+      if ((Boolean)node.value () == false)
+        out.putInt (EMPTY);
+      else
+        throw new ProtocolCodecException ("Cannot encode TRUE in AST");
     } else
     {
-      throw new Error ("Cannot encode constant type " + className (type));
+      throw new ProtocolCodecException ("Cannot encode constant type " + 
+                                        className (type));
     }
   }
 

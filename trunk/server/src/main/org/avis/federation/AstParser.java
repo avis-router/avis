@@ -54,6 +54,7 @@ import static org.avis.federation.AstType.CONTAINS;
 import static org.avis.federation.AstType.DECOMPOSE;
 import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
 import static org.avis.federation.AstType.DIVIDE;
+import static org.avis.federation.AstType.EMPTY;
 import static org.avis.federation.AstType.ENDS_WITH;
 import static org.avis.federation.AstType.EQUALS;
 import static org.avis.federation.AstType.F_EQUALS;
@@ -96,6 +97,7 @@ import static org.avis.io.XdrCoding.TYPE_REAL64;
 import static org.avis.io.XdrCoding.TYPE_STRING;
 import static org.avis.io.XdrCoding.getObject;
 import static org.avis.io.XdrCoding.getString;
+import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.util.Text.className;
 
 /**
@@ -125,6 +127,10 @@ class AstParser
     throws ProtocolCodecException
   {
     int nodeType = in.getInt ();
+    
+    if (nodeType == EMPTY)
+      return CONST_FALSE;
+    
     int subType = in.getInt ();
     
     // sanity check subtype for composite nodes
