@@ -326,7 +326,7 @@ public class JUTestFederation
     Process elvind = null;
     
     String require =
-      "require (federated) && size (from) > 2 && " +
+      "require (federated) && size (from) > 2 && string (from) && " +
       "(equals (from, 'client1', 'client2') || " +
       " begins-with (from, 'c') || (fred + 1 > 42))";
     
