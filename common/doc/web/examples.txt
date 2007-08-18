@@ -1,6 +1,9 @@
 Avis Example
 ======================================================================
 
+This page contains a simple example scenario using Avis to illustrate
+how it operates.
+
 In this example we imagine a scenario where we have a large number of
 servers in several company departments that we wish to monitor. We
 install a small Elvin client on each host we want to monitor that runs
