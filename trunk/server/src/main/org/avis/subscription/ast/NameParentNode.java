@@ -2,7 +2,6 @@ package org.avis.subscription.ast;
 
 import java.util.Collection;
 
-import org.avis.subscription.ast.nodes.Const;
 import org.avis.subscription.ast.nodes.Field;
 
 import static java.util.Collections.singleton;
@@ -49,6 +48,6 @@ public abstract class NameParentNode extends Node
   @Override
   public Collection<Node> children ()
   {
-    return singleton ((Node)new Const (name));
+    return singleton ((Node)new Field (name));
   }
 }
