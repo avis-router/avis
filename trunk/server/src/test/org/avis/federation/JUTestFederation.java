@@ -3,9 +3,15 @@ package org.avis.federation;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
+import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -33,6 +39,9 @@ public class JUTestFederation
 {
   private static final int PORT1 = 29170;
   private static final int PORT2 = 29180;
+  
+  private static boolean RUN_MANTARA = false;
+  private static final String MANTARA_ELVIN = "/usr/local/sbin/elvind";
   
   private LogFailTester logTester;
 
@@ -70,27 +79,37 @@ public class JUTestFederation
   {
     StandardFederatorSetup federation = new StandardFederatorSetup ();
     
-    // client 1 -> client 2
-    federation.client1.sendNotify 
-      (map ("federated", "server1", "from", "client1"));
-    
-    NotifyDeliver notification = (NotifyDeliver)federation.client2.receive ();
-    
-    assertEquals ("client1", notification.attributes.get ("from"));
-    
-    // client 2 - > client 1
-    federation.client2.sendNotify 
-      (map ("federated", "server2", "from", "client2"));
-    
-    notification = (NotifyDeliver)federation.client1.receive ();
-    
-    assertEquals (0, notification.secureMatches.length);
-    assertEquals (1, notification.insecureMatches.length);
-    assertEquals ("client2", notification.attributes.get ("from"));
+    testTwoWayClientSendReceive (federation.client1, federation.client2);
     
     federation.close ();
   }
   
+  /**
+   * Test client1 can see message from client2 and vice-versa.
+   */
+  private static void testTwoWayClientSendReceive (SimpleClient client1,
+                                                   SimpleClient client2)
+    throws Exception
+  {
+    // client 1 -> client 2
+    client1.sendNotify 
+      (map ("federated", "server1", "from", "client1"));
+    
+    NotifyDeliver notification = (NotifyDeliver)client2.receive ();
+    
+    assertEquals ("client1", notification.attributes.get ("from"));
+    
+    // client 2 - > client 1
+    client2.sendNotify 
+      (map ("federated", "server2", "from", "client2"));
+    
+    notification = (NotifyDeliver)client1.receive ();
+    
+    assertEquals (0, notification.secureMatches.length);
+    assertEquals (1, notification.insecureMatches.length);
+    assertEquals ("client2", notification.attributes.get ("from"));
+  }
+
   /**
    * Test secure delivery.
    */
@@ -238,6 +257,92 @@ public class JUTestFederation
     server2.close ();
   }
   
+  /**
+   * Test against Mantara elvind.
+   */
+  @Test
+  public void mantara () 
+    throws Exception
+  {
+    Log.enableLogging (Log.TRACE, true);
+    Log.enableLogging (Log.DIAGNOSTIC, true);
+    
+    EwafURI ewafURI = new EwafURI ("ewaf:1.0//localhost:" + (PORT1 + 1));
+
+    Process elvind = null;
+    
+    if (RUN_MANTARA)
+      elvind = runMantaraElvind (ewafURI);
+    
+    Router server = new Router (PORT2);
+
+    FederationOptions options = new FederationOptions ();
+    
+    FederationClass fedClass =
+      new FederationClass ("require (federated)", "require (federated)");
+    
+    FederationConnector connector = 
+      new FederationConnector (server, "avis", ewafURI, 
+                               fedClass, options);
+    
+    SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
+    SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
+    
+    client1.connect ();
+    client2.connect ();
+    
+    client1.subscribe ("require (federated) && from == 'client2'");
+    client2.subscribe ("require (federated) && from == 'client1'");
+
+    System.out.println ("start two way");
+    
+    testTwoWayClientSendReceive (client1, client2);
+    
+    System.out.println ("two way passed");
+    
+    client1.close ();
+    client2.close ();
+    
+    connector.close ();
+    
+    server.close ();
+    
+    if (elvind != null)
+      elvind.destroy ();
+  }
+  
+  private static Process runMantaraElvind (EwafURI ewafURI)
+    throws Exception
+  {
+    File mantaraConfig = File.createTempFile ("elvin", "conf");
+    mantaraConfig.deleteOnExit ();
+    
+    String config =
+      "protocol elvin:4.0/tcp,none,xdr/0.0.0.0:" + PORT1 + "\n" +
+      "federation yes\n" +
+      "federation.name mantara\n" +
+      "federation.protocol " + ewafURI + "\n" +
+      "federation.class test\n" +
+//      "federation.identify.address test 0.0.0.0\n" +
+//      "federation.identify.id test avis\n" +
+      "federation.subscribe test require (federated)\n" +
+      "federation.provide test require (federated)\n";
+    
+    Writer configStream = 
+      new OutputStreamWriter (new FileOutputStream (mantaraConfig));
+    configStream.append (config);
+    configStream.close ();
+    
+    Process elvind = 
+      new ProcessBuilder ().command 
+        (MANTARA_ELVIN, "-l", 
+         "-f", mantaraConfig.getAbsolutePath ()).start ();
+    
+    sleep (2000); // give elvind time to start
+    
+    return elvind;
+  }
+
   private static Map<String, Object> map (String... nameValues)
   {
     HashMap<String, Object> map = new HashMap<String, Object> ();
