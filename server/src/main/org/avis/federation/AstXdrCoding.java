@@ -104,7 +104,6 @@ public final class AstXdrCoding
     nodeToTypecode = new HashMap<Class<? extends Node>, Integer> ();
     
     nodeToTypecode.put (And.class, AND);
-    nodeToTypecode.put (Field.class, NAME);
     nodeToTypecode.put (MathBitAnd.class, BIT_AND);
     nodeToTypecode.put (MathBitInvert.class, BIT_NEGATE);
     nodeToTypecode.put (MathBitLogShiftRight.class, LOGICAL_SHIFT_RIGHT);
