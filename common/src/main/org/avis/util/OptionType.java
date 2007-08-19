@@ -41,7 +41,7 @@ public abstract class OptionType
    */
   protected String validateType (Object value, Class<?> type)
   {
-    return validateType (value, type, Text.className (type));
+    return validateType (value, type, className (type));
   }
   
   /**
@@ -56,7 +56,7 @@ public abstract class OptionType
   protected String validateType (Object value, Class<?> type,
                                   String typeName)
   {
-    return type == value.getClass () ? null : 
+    return type.isAssignableFrom (value.getClass ()) ? null : 
              "Value must be a " + typeName + ": " + className (value);
   }
 }
