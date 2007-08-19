@@ -1,30 +1,26 @@
 package org.avis.federation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import java.io.IOException;
 
-import org.avis.common.InvalidURIException;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
-import org.avis.subscription.parser.ParseException;
+import org.avis.subscription.ast.Node;
 import org.avis.util.IllegalOptionException;
 import org.avis.util.Options;
-import org.avis.util.Pair;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
-import static org.avis.federation.FederationClass.parse;
-import static org.avis.federation.FederationOptions.splitOptionParam;
+import static org.avis.federation.FederationOptions.getParamOption;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
 import static org.avis.util.Text.shortException;
-import static org.avis.util.Text.split;
 
 /**
  * Constructs the federation setup by reading Federation.*
@@ -69,7 +65,8 @@ public class FederationManager implements CloseListener
   {
     router.removeCloseListener (this);
     
-    listener.close ();
+    if (listener != null)
+      listener.close ();
     
     for (FederationConnector connector : connectors)
       connector.close ();
@@ -89,42 +86,36 @@ public class FederationManager implements CloseListener
      FederationClassMap classMap, 
      Options config)
   {
-    /*
-     * Generate (class, URI) pairs first avoid having to dispose of
-     * partially-created connectors on exception.
-     */
-    List<Pair<EwafURI, FederationClass>> items = 
-      new ArrayList<Pair<EwafURI, FederationClass>> ();
-    
-    for (Map.Entry<String, Object> entry : config)
+    Map<String, Object> connect = 
+      getParamOption (config, "Federation.Connect");
+   
+    // check federation classes make sense
+    for (Entry<String, Object> entry : connect.entrySet ())
     {
-      if (!entry.getKey ().startsWith ("Federation.Connect:"))
-        continue;
+      FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
       
-      String [] optionParam = splitOptionParam (entry.getKey ());
-      
-      FederationClass fedClass = classMap.findOrCreate (optionParam [1]);
-      EwafURI uri = uri (entry.getKey (), (String)entry.getValue ());
-
       if (fedClass.isNull ())
       {
         throw new IllegalOptionException
-          (entry.getKey (),
+          ("Federation.Connect[" + entry.getKey () + "]",
            "No federation subscribe/provide defined: " +
             "this connection cannot import or export any notifications");
       }
       
-      items.add (new Pair<EwafURI, FederationClass> (uri, fedClass));
+      checkUri ("Federation.Connect[" + entry.getKey () + "]",
+                (EwafURI)entry.getValue ());
     }
     
     List<FederationConnector> connectors = 
-      new ArrayList<FederationConnector> (items.size ());
+      new ArrayList<FederationConnector> (connect.size ());
     
-    for (Pair<EwafURI, FederationClass> item : items)
+    for (Entry<String, Object> entry : connect.entrySet ())
     {
+      FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
+      
       connectors.add
         (new FederationConnector 
-          (router, serverDomain, item.item1, item.item2, config));
+          (router, serverDomain, (EwafURI)entry.getValue (), fedClass, config));
     }
     
     return connectors;
@@ -151,24 +142,31 @@ public class FederationManager implements CloseListener
     return domain;
   }
 
+  @SuppressWarnings("unchecked")
   private static FederationListener initListener (Router router, 
                                                   String serverDomain,
                                                   FederationClassMap classMap,
                                                   Options config)
   {
-    Set<EwafURI> uris = new HashSet<EwafURI> ();
+    Set<EwafURI> uris = (Set<EwafURI>)config.get ("Federation.Listen");
     
-    for (String item : split (config.getString ("Federation.Listen"), "\\s+"))
-      uris.add (uri ("Federation.Listen", item));
-    
-    try
+    if (uris.isEmpty ())
     {
-      return new FederationListener (router, serverDomain, classMap, 
-                                     addressesFor (uris));
-    } catch (IOException ex)
+      return null;
+    } else
     {
-      throw new IllegalOptionException ("Federation.Listen", 
-                                        shortException (ex));
+      try
+      {
+        for (EwafURI uri : uris)
+          checkUri ("Federation.Listen", uri);
+        
+        return new FederationListener (router, serverDomain, classMap, 
+                                       addressesFor (uris));
+      } catch (IOException ex)
+      {
+        throw new IllegalOptionException ("Federation.Listen", 
+                                          shortException (ex));
+      }
     }
   }
 
@@ -177,86 +175,72 @@ public class FederationManager implements CloseListener
     FederationClassMap classMap = 
       new FederationClassMap (new FederationClass (CONST_FALSE, CONST_FALSE));
     
-    // federation classes
-    for (Map.Entry<String, Object> entry : federationConfig)
+    Map<String, Object> provide = 
+      getParamOption (federationConfig, "Federation.Provide");
+    
+    for (Entry<String, Object> entry : provide.entrySet ())
     {
-      if (!entry.getKey ().startsWith ("Federation."))
-        continue;
+      FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
       
-      String [] optionParam = splitOptionParam (entry.getKey ());
+      fedClass.outgoingFilter = (Node)entry.getValue ();
+    }
+    
+    Map<String, Object> subscribe = 
+      getParamOption (federationConfig, "Federation.Subscribe");
+    
+    for (Entry<String, Object> entry : subscribe.entrySet ())
+    {
+      Node node = (Node)entry.getValue ();
+
+      /*
+       * Cannot sub TRUE right now. When we support 1.1-level
+       * federation this will be possible as CONST_TRUE will be
+       * &&'d with the current consolidated subscription.
+       */ 
+      if (node == CONST_TRUE)
+      {
+        throw new IllegalOptionException 
+          ("Federation.Subscribe[" + entry.getKey () + "]", 
+           "Federation with \"TRUE\" is not currently supported");
+      }
       
-      if (optionParam [1] == null)
-        continue;
+      FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
       
+      fedClass.incomingFilter = node;
+    }
+    
+    Map<String, Object> listen = 
+      getParamOption (federationConfig, "Federation.Apply-Class");
+    
+    for (Entry<String, Object> entry : listen.entrySet ())
+    {
+      FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
       String value = (String)entry.getValue ();
-      String option = optionParam [0];
-      FederationClass fedClass = classMap.findOrCreate (optionParam [1]);
       
-      try
+      if (value.startsWith ("@"))
       {
-        if (option.equals ("Federation.Provide:"))
-        {
-          fedClass.outgoingFilter = parse (value);
-        } else if (option.equals ("Federation.Subscribe:"))
-        {
-          fedClass.incomingFilter = parse (value);
-          
-          /*
-           * Cannot sub TRUE right now. When we support 1.1-level
-           * federation this will be possible as CONST_TRUE will be
-           * &&'d with the current consolidated subscription.
-           */ 
-          if (fedClass.incomingFilter == CONST_TRUE)
-          {
-            throw new IllegalOptionException 
-              (entry.getKey (), 
-               "Federation with \"TRUE\" is not currently supported");
-          }
-        } else if (option.equals ("Federation.Listen:"))
-        {
-          if (value.startsWith ("@"))
-          {
-            value = value.substring (1);
-            
-            if (value.startsWith ("."))
-              classMap.mapDnsDomain (value.substring (1), fedClass);
-            else
-              classMap.mapHost (value, fedClass);
-          } else
-          {
-            classMap.mapServerDomain (value, fedClass);
-          }
-        }
-      } catch (ParseException ex)
+        value = value.substring (1);
+        
+        if (value.startsWith ("."))
+          classMap.mapDnsDomain (value.substring (1), fedClass);
+        else
+          classMap.mapHost (value, fedClass);
+      } else
       {
-        throw new IllegalOptionException
-          (entry.getKey (), "Parse error: " + ex.getMessage ());
+        classMap.mapServerDomain (value, fedClass);
       }
     }
     
     return classMap;
   }
   
-  private static EwafURI uri (String option, String uriString)
-    throws IllegalOptionException
+  private static void checkUri (String option, EwafURI uri)
   {
-    EwafURI uri;
-    
-    try
-    {
-      uri = new EwafURI (uriString);
-    } catch (InvalidURIException ex)
-    {
-      throw new IllegalOptionException (option, ex.getMessage ());
-    }
-    
     if (!uri.protocol.equals (defaultProtocol ()))
     {
       throw new IllegalOptionException
         (option, "Avis only supports " + defaultProtocol () +" protocol: " + 
-         uriString);
+         uri);
     }
-    
-    return uri;
   }
 }
