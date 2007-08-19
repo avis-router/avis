@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 
+import org.avis.federation.FederationOptions;
 import org.avis.router.RouterOptions;
 
 import org.junit.Test;
@@ -110,6 +111,23 @@ public class JUTestRouterOptions
     assertTrue (found1234);
   }
   
+  /**
+   * Test that adding federator options (as router's Main does) to
+   * router's works
+   */
+  @Test
+  public void federationOptions ()
+    throws Exception
+  {
+    RouterOptionSet routerOptionSet = new RouterOptionSet ();
+    
+    routerOptionSet.inheritFrom (FederationOptions.OPTION_SET);
+    
+    RouterOptions config = new RouterOptions (routerOptionSet);
+    
+    config.set ("Federation.Subscribe[Test]", "require (federated)");
+  }
+
   private void testHost (Set<InetAddress> hostAddresses, String hostOption, int port)
     throws SocketException
   {
