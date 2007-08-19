@@ -33,7 +33,7 @@ public class FederationOptions extends Options
      * "Federation.Subscribe:Public".
      */
     @Override
-    protected void validateAndPut (Options options, String option,
+    protected void validateAndSet (Options options, String option,
                                    Object value)
       throws IllegalOptionException
     {
