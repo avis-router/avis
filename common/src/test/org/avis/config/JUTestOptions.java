@@ -1,8 +1,11 @@
-package org.avis.util;
+package org.avis.config;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.avis.config.OptionSet;
+import org.avis.config.Options;
 
 import org.junit.Test;
 

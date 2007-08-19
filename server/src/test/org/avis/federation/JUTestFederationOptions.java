@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.avis.config.IllegalOptionException;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
-import org.avis.util.IllegalOptionException;
 import org.avis.util.Pair;
 
 import org.junit.Test;

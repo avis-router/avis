@@ -1,4 +1,5 @@
-package org.avis.util;
+package org.avis.config;
+
 
 /**
  * Thrown when an illegal option name or value is used with

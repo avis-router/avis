@@ -4,8 +4,8 @@ import java.util.Queue;
 
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
+import org.avis.config.IllegalOptionException;
 import org.avis.util.CommandLineOptions;
-import org.avis.util.IllegalOptionException;
 
 import static java.lang.System.getProperty;
 

@@ -1,6 +1,6 @@
 package org.avis.router;
 
-import org.avis.util.OptionSet;
+import org.avis.config.OptionSet;
 
 import static org.avis.common.Common.DEFAULT_PORT;
 

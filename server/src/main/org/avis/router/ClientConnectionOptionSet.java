@@ -3,8 +3,8 @@ package org.avis.router;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.avis.util.IllegalOptionException;
-import org.avis.util.Options;
+import org.avis.config.IllegalOptionException;
+import org.avis.config.Options;
 
 /**
  * Extends the Avis connection option set to be used against the

@@ -2,7 +2,7 @@ package org.avis.tools;
 
 import java.util.Queue;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.config.IllegalOptionException;
 
 /**
  * Options for the ec command.
