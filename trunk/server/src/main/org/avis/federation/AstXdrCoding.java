@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import org.avis.subscription.ast.IllegalChildException;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.ast.nodes.And;
 import org.avis.subscription.ast.nodes.Compare;
@@ -282,6 +283,12 @@ public final class AstXdrCoding
   public static Node decodeAST (ByteBuffer in)
     throws ProtocolCodecException
   {
-    return new AstParser (in).expr ();
+    try
+    {
+      return new AstParser (in).expr ();
+    } catch (IllegalChildException ex)
+    {
+      throw new ProtocolCodecException ("Invalid AST: " + ex.getMessage ());
+    }
   }
 }
