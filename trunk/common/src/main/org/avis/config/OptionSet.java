@@ -1,15 +1,12 @@
 package org.avis.config;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static java.util.Arrays.asList;
 
 /**
  * Defines the set of valid options for an {@link Options} instance.
@@ -90,12 +87,12 @@ public class OptionSet
    */
   public void add (String option, int min, int defaultValue, int max)
   {
-    add (option, new IntOption (min, max), defaultValue);
+    add (option, new OptionTypeInt (min, max), defaultValue);
   }
   
   public void add (String option, boolean defaultValue)
   {
-    add (option, BooleanOption.INSTANCE, defaultValue);
+    add (option, OptionTypeBoolean.INSTANCE, defaultValue);
   }
   
   /**
@@ -106,7 +103,7 @@ public class OptionSet
    */
   public void add (String option, String defaultValue)
   {
-    add (option, new StringOption (), defaultValue);
+    add (option, new OptionTypeString (), defaultValue);
   }
   
   /**
@@ -119,7 +116,7 @@ public class OptionSet
   public void add (String option, String defaultValue,
                    String... values)
   {
-    add (option, new StringOption (defaultValue, values), defaultValue);
+    add (option, new OptionTypeString (defaultValue, values), defaultValue);
   }
   
   /**
@@ -167,13 +164,13 @@ public class OptionSet
     return intOption (name).min;
   }
   
-  private IntOption intOption (String name)
+  private OptionTypeInt intOption (String name)
     throws IllegalOptionException
   {
     OptionType info = findOptionType (name);
     
-    if (info instanceof IntOption)
-      return (IntOption)info;
+    if (info instanceof OptionTypeInt)
+      return (OptionTypeInt)info;
     else
       throw new IllegalOptionException (name, "Not an integer value");  
   }
@@ -309,138 +306,5 @@ public class OptionSet
     }
     
     return optionType;
-  }
-  
-  public static class IntOption extends OptionType
-  {
-    protected int min;
-    protected int max;
-
-    public IntOption (int min, int max)
-    {
-      this.min = min;
-      this.max = max;
-    }
-    
-    @Override
-    public Object convert (String option, Object value)
-    {
-      if (value instanceof Integer)
-        return value;
-      
-      try
-      {
-        String text = value.toString ().toLowerCase ();
-        int unit = 1;
-        
-        if (text.endsWith ("m"))
-        {
-          unit = 1024*1024;
-          text = text.substring (0, text.length () - 1);
-        } else if (text.endsWith ("k"))
-        {
-          unit = 1024;
-          text = text.substring (0, text.length () - 1);
-        }
-        
-        return Integer.parseInt (text) * unit;
-      } catch (NumberFormatException ex)
-      {
-        throw new IllegalOptionException
-          (option, "\"" + value + "\" is not a valid integer");
-      }
-    }
-    
-    @Override
-    public String validate (String option, Object value)
-    {
-      if (value instanceof Integer)
-      {
-        int intValue = (Integer)value;
-        
-        if (intValue >= min && intValue <= max)
-          return null;
-        else
-          return "Value must be in range " + min + ".." + max;
-      } else
-      {
-        return "Value is not an integer";
-      }
-    }
-  }
-  
-  public static class BooleanOption extends OptionType
-  {
-    public static final BooleanOption INSTANCE = new BooleanOption ();
-
-    @Override
-    public Object convert (String option, Object value)
-      throws IllegalOptionException
-    {
-      if (value instanceof Boolean)
-        return value;
-      
-      String v = value.toString ().trim ().toLowerCase ();
-      
-      if (v.equals ("1") || v.equals ("true") || v.equals ("yes"))
-        return true;
-      else if (v.equals ("0") || v.equals ("false") || v.equals ("no"))
-        return false;
-      else
-        throw new IllegalOptionException
-          (option, "\"" + value + "\" is not a valid true/false boolean");
-    }
-    
-    @Override
-    public String validate (String option, Object value)
-    {
-      return value instanceof Boolean ? null : "Value must be true/false";
-    }
-  }
-
-  public static class StringOption extends OptionType
-  {
-    public static final StringOption ANY_STRING_OPTION = new StringOption ();
-    
-    protected Set<String> validValues;
-
-    public StringOption ()
-    {
-      this (null);
-    }
-
-    public StringOption (String defaultValue, String... validValues)
-    {
-      this.validValues = new HashSet<String> (asList (validValues));
-      
-      this.validValues.add (defaultValue);
-    }
-    
-    public StringOption (Set<String> validValues)
-    {
-      this.validValues = validValues;
-    }
-    
-    @Override
-    public Object convert (String option, Object value)
-      throws IllegalOptionException
-    {
-      return value.toString ();
-    }
-    
-    @Override
-    public String validate (String option, Object value)
-    {
-      if (value instanceof String)
-      {
-        if (validValues != null && !validValues.contains (value))
-          return "Value must be one of: " + validValues.toString ();
-        else
-          return null;
-      } else
-      {
-        return "Value must be a string";
-      }
-    }
   }
 }
