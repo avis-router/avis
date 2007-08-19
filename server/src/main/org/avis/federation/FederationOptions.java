@@ -114,6 +114,14 @@ public class FederationOptions extends Options
       add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);
     }
     
+    @Override
+    protected OptionType peekOptionTypeFor (String option)
+    {
+      Pair<String, List<String>> optionItems = splitOptionParam (option);
+      
+      return optionTypes.get (optionItems.item1);
+    }
+    
     /**
      * Override validation to allow parameterised options like
      * "Federation.Subscribe[Public]".
