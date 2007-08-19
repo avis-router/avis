@@ -19,7 +19,7 @@ class Connection
   /**
    * Connection options established on construction (immutable).
    */
-  public ConnectionOptions options;
+  public ClientConnectionOptions options;
 
   /**
    * Connection-wide subscription keys that apply to all
@@ -62,7 +62,7 @@ class Connection
     this.subscriptions = new Long2ObjectOpenHashMap<Subscription> ();
     this.subscriptionKeys = subscriptionKeys;
     this.notificationKeys = notificationKeys;
-    this.options = new ConnectionOptions (defaultOptions, requestedOptions);
+    this.options = new ClientConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
   }
 

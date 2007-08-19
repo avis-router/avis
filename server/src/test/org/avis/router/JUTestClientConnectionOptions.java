@@ -3,21 +3,21 @@ package org.avis.router;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.avis.router.ConnectionOptions;
+import org.avis.router.ClientConnectionOptions;
 
 import org.junit.Test;
 
-import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Test the {@link ConnectionOptions} class.
+ * Test the {@link ClientConnectionOptions} class.
  * 
  * @author Matthew Phillips
  */
-public class JUTestConnectionOptions
+public class JUTestClientConnectionOptions
 {
   @Test
   public void validation ()
@@ -32,16 +32,23 @@ public class JUTestConnectionOptions
     requested.put ("Receive-Queue.Drop-Policy", "oldest"); // valid, default
     requested.put ("Send-Queue.Max-Length", "bogus"); // bogus
     
-    ConnectionOptions options = new ConnectionOptions (requested);
-    Map<String, Object> valid = options.accepted ();
-    
-    assertRequested (requested, valid, "Packet.Max-Length");
-    assertDefault (valid, "Attribute.Max-Count");
-    assertNull (valid.get ("Bogus"));
-    assertDefault (valid, "Receive-Queue.Drop-Policy");
-    assertRequested (requested, valid, "Send-Queue.Drop-Policy");
-    assertRequested (requested, valid, "Receive-Queue.Drop-Policy");
-    assertDefault (valid, "Send-Queue.Max-Length");
+    ClientConnectionOptions options;
+    try
+    {
+      options = new ClientConnectionOptions (requested);
+      Map<String, Object> valid = options.accepted ();
+      
+      assertRequested (requested, valid, "Packet.Max-Length");
+      assertDefault (valid, "Attribute.Max-Count");
+      assertNull (valid.get ("Bogus"));
+      assertDefault (valid, "Receive-Queue.Drop-Policy");
+      assertRequested (requested, valid, "Send-Queue.Drop-Policy");
+      assertRequested (requested, valid, "Receive-Queue.Drop-Policy");
+      assertDefault (valid, "Send-Queue.Max-Length");
+    } catch (ExceptionInInitializerError ex)
+    {
+      ex.getCause ().printStackTrace ();
+    }
   }
   
   @Test
@@ -54,7 +61,7 @@ public class JUTestConnectionOptions
     requested.put ("router.attribute.max-count", 63); // bogus
     requested.put ("router.coalesce-delay", 0); // valid
     
-    ConnectionOptions options = new ConnectionOptions (requested);
+    ClientConnectionOptions options = new ClientConnectionOptions (requested);
     Map<String, Object> accepted = options.accepted ();
     
     // todo: when Attribute.String.Max-Length supported, switch lines below
@@ -69,8 +76,8 @@ public class JUTestConnectionOptions
                                      String name)
   {
     assertEquals
-      (CONNECTION_OPTION_SET.defaults.get
-        (CONNECTION_OPTION_SET.legacyToNew (name)), accepted.get (name));
+      (CLIENT_CONNECTION_OPTION_SET.defaults.get
+        (CLIENT_CONNECTION_OPTION_SET.legacyToNew (name)), accepted.get (name));
   }
 
   private static void assertRequested (Map<String, Object> requested,

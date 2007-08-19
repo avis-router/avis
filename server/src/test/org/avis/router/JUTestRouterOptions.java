@@ -27,6 +27,7 @@ public class JUTestRouterOptions
     throws Exception
   {
     RouterOptions options = new RouterOptions ();
+    options.set ("Port", "29170");
     options.set ("Listen", "elvin://0.0.0.0");
     
     Set<InetSocketAddress> addresses = options.listenAddresses ();

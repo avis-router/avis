@@ -101,7 +101,7 @@ public class JUTestRouter
   /**
    * Test connection options.
    * 
-   * @see JUTestConnectionOptions
+   * @see JUTestClientConnectionOptions
    */
   @Test
   public void connectionOptions ()
