@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import org.avis.subscription.ast.IllegalChildException;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.ast.nodes.And;
 import org.avis.subscription.ast.nodes.Compare;
@@ -120,10 +121,13 @@ class AstParser
    * 
    * @return The root node of the expression.
    * 
-   * @throws ProtocolCodecException
+   * @throws ProtocolCodecException if an error occurs in decoding the
+   *                 AST.
+   * @throws IllegalChildException if a child in the AST is not a
+   *                 valid type, i.e. AST is syntactically invalid.
    */
   public Node expr ()
-    throws ProtocolCodecException
+    throws ProtocolCodecException, IllegalChildException
   {
     int nodeType = in.getInt ();
     
@@ -242,7 +246,8 @@ class AstParser
       case SIZE:
         return new Size (single ().field ());
       default:
-        throw new Error ();
+        throw new ProtocolCodecException 
+          ("Unknown AST node type " + nodeType);
     }
   }
 
@@ -258,7 +263,8 @@ class AstParser
     if (count == 1)
       return this;
     else
-      throw new ProtocolCodecException ("Expected single child, found " + count);
+      throw new ProtocolCodecException 
+        ("Expected single child, found " + count);
   }
   
   /**
@@ -273,7 +279,8 @@ class AstParser
     if (count == 2)
       return this;
     else
-      throw new ProtocolCodecException ("Expected two children, found " + count);
+      throw new ProtocolCodecException 
+        ("Expected two children, found " + count);
   }
   
   /**
@@ -349,7 +356,7 @@ class AstParser
     if (required != actual)
     {
       throw new ProtocolCodecException 
-        ("Leaf node " + actual + " has wrong sub type");
+        ("Leaf node has wrong sub type: " + actual);
     }
   }
 }
