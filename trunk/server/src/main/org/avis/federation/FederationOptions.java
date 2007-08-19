@@ -2,12 +2,18 @@ package org.avis.federation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.avis.common.InvalidURIException;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
+import org.avis.util.Collections;
 import org.avis.util.IllegalOptionException;
 import org.avis.util.OptionSet;
 import org.avis.util.OptionType;
@@ -19,6 +25,7 @@ import static java.util.Collections.emptyMap;
 
 import static org.avis.federation.FederationClass.parse;
 import static org.avis.util.OptionSet.StringOption.ANY_STRING_OPTION;
+import static org.avis.util.Text.split;
 
 public class FederationOptions extends Options
 {
@@ -39,17 +46,23 @@ public class FederationOptions extends Options
    * 
    * @return The value of the option, mapping parameters to values.
    */
-  @SuppressWarnings("unchecked")
   public Map<String, Object> getParamOption (String option)
   {
-    OptionType type = optionSet.optionTypeFor (option);
+    return getParamOption (this, option);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static Map<String, Object> getParamOption (Options options, 
+                                                    String option)
+  {
+    OptionType type = options.optionSet ().optionTypeFor (option);
     
     if (type instanceof ParamOption)
-      return (Map<String, Object>)get (option);
+      return (Map<String, Object>)options.get (option);
     else
       throw new IllegalOptionException (option, "Not a parameterised option");
   }
-  
+
   /**
    * Split a parameterised option into a (base option, param) pair.
    */
@@ -95,8 +108,8 @@ public class FederationOptions extends Options
       
       add ("Federation.Activated", false);
       add ("Federation.Router-Name", "");
-      add ("Federation.Listen", ewafUriOption, 
-           new EwafURI ("ewaf://0.0.0.0:2916"));
+      add ("Federation.Listen", new SetOption (EwafURI.class), 
+           Collections.set (new EwafURI ("ewaf://0.0.0.0:2916")));
       add ("Federation.Subscribe", fedClassOption, emptyMap ());
       add ("Federation.Provide", fedClassOption, emptyMap ());
       add ("Federation.Apply-Class", 
@@ -194,6 +207,53 @@ public class FederationOptions extends Options
     public String validate (String option, Object value)
     {
       return validateType (value, EwafURI.class);
+    }
+  }
+  
+  /**
+   * An option that turns space-separated items in string values into
+   * a set of values by using a string constructor of a type.
+   */
+  static class SetOption extends OptionType
+  {
+    private Constructor<?> constructor;
+
+    public SetOption (Class<?> setValueType)
+    {
+      try
+      {
+        this.constructor = setValueType.getConstructor (String.class);
+      } catch (Exception ex)
+      {
+        throw new IllegalArgumentException ("No constructor taking a string");
+      }
+    }
+    
+    @Override
+    public String validate (String option, Object value)
+    {
+      return validateType (value, Set.class);
+    }
+    
+    @Override
+    public Object convert (String option, Object value)
+      throws IllegalOptionException
+    {
+      try
+      {
+        Set<Object> values = new HashSet<Object> ();
+        
+        for (String item : split (value.toString (), "\\s+"))
+          values.add (constructor.newInstance (item));
+        
+        return values;
+      } catch (InvocationTargetException ex)
+      {
+        throw new IllegalOptionException (option, ex.getCause ().getMessage ());
+      } catch (Exception ex)
+      {
+        throw new IllegalOptionException (option, ex.toString ());
+      }
     }
   }
   
