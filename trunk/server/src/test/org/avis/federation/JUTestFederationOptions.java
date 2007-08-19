@@ -15,6 +15,7 @@ import static org.avis.federation.FederationClass.parse;
 import static org.avis.federation.FederationOptions.splitOptionParam;
 import static org.avis.subscription.ast.Nodes.unparse;
 import static org.avis.util.Collections.list;
+import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -36,12 +37,14 @@ public class JUTestFederationOptions
     props.setProperty ("Federation.Connect[Internal]", "ewaf://localhost");
     props.setProperty ("Federation.Connect[External]", "ewaf://public.elvin.org");
     props.setProperty ("Federation.Apply-Class[External]", ".elvin.org");
-    props.setProperty ("Federation.Listen", "ewaf://0.0.0.0");
+    props.setProperty ("Federation.Listen", "ewaf://0.0.0.0 ewaf://hello:7778");
     
     options.setAll (props);
     
     assertEquals (true, options.getBoolean ("Federation.Activated"));
-    assertEquals (new EwafURI ("ewaf://0.0.0.0"), options.get ("Federation.Listen"));
+    assertEquals (set (new EwafURI ("ewaf://0.0.0.0"), 
+                       new EwafURI ("ewaf://hello:7778")), 
+                  options.get ("Federation.Listen"));
     
     Map<String, Object> subscribe = 
       options.getParamOption ("Federation.Subscribe");
