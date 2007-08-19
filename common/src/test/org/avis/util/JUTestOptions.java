@@ -169,7 +169,7 @@ public class JUTestOptions
       
       return accepted;
     }
-
+    
     private void addLegacy (String oldOption, String newOption)
     {
       legacyToNew.put (oldOption, newOption);
@@ -177,15 +177,14 @@ public class JUTestOptions
     }
     
     @Override
-    protected void validateAndPut (Options options,
+    protected void validateAndSet (Options options,
                                    String option, Object value)
       throws IllegalOptionException
     {
       if (legacyToNew.containsKey (option))
         option = legacyToNew.get (option);
       
-      if (validate (option, value) == null)
-        set (options, option, value);
+      super.validateAndSet (options, option, value);
     }
   }
 }
