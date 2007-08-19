@@ -25,15 +25,15 @@ public class OptionSet
   public final Options defaults;
   
   /** The inherited sets. */
-  private List<OptionSet> inherited;
+  protected List<OptionSet> inherited;
   /** Maps option names to validation info. */
-  private Map<String, OptionType> validation;
+  protected Map<String, OptionType> optionTypes;
   
   public OptionSet ()
   {
     this.defaults = new Options (this);
     this.inherited = new ArrayList<OptionSet> ();
-    this.validation = new TreeMap<String, OptionType> (CASE_INSENSITIVE_ORDER);
+    this.optionTypes = new TreeMap<String, OptionType> (CASE_INSENSITIVE_ORDER);
   }
   
   public OptionSet (OptionSet inheritedOptions)
@@ -124,7 +124,7 @@ public class OptionSet
    */
   protected void add (String option, OptionType type, Object defaultValue)
   {
-    validation.put (option, type);
+    optionTypes.put (option, type);
     set (defaults, option, defaultValue);
   }
 
@@ -186,7 +186,7 @@ public class OptionSet
   {
     String message = null;
     
-    if (validation.containsKey (option))
+    if (optionTypes.containsKey (option))
     {
       message = testValid (option, value);
     } else
@@ -271,6 +271,39 @@ public class OptionSet
   }
   
   /**
+   * Recursively look for the first option set that has a mapping for
+   * a given option.
+   */
+  protected OptionSet findOptionSetFor (String option)
+  {
+    if (peekOptionTypeFor (option) != null)
+    {
+      return this;
+    } else
+    {
+      for (OptionSet superset : inherited)
+      {
+        OptionSet set = superset.findOptionSetFor (option);
+        
+        if (set != null)
+          return set;
+      }
+      
+      return null;
+    }
+  }
+
+  /**
+   * Lookup the option type for a given option in this set only (no
+   * recursion). This defaults to optionTypes.get (option), but can be
+   * overridden to extend how options map to types. 
+   */
+  protected OptionType peekOptionTypeFor (String option)
+  {
+    return optionTypes.get (option);
+  }
+  
+  /**
    * Get the option type for a given option.
    * 
    * @throws IllegalOptionException if option is not defined.
@@ -285,6 +318,7 @@ public class OptionSet
     
     return type;
   }
+  
   /**
    * Recursively search this set and subsets for an option's type.
    * 
@@ -292,7 +326,7 @@ public class OptionSet
    */
   private OptionType findOptionType (String option)
   {
-    OptionType optionType = validation.get (option);
+    OptionType optionType = optionTypes.get (option);
     
     if (optionType == null)
     {
