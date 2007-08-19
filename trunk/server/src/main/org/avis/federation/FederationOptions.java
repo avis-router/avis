@@ -13,11 +13,11 @@ import org.avis.config.OptionTypeSet;
 import org.avis.config.Options;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
-import org.avis.util.Collections;
 import org.avis.util.Pair;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 
 import static org.avis.config.OptionTypeString.ANY_STRING_OPTION;
 import static org.avis.federation.FederationClass.parse;
@@ -103,8 +103,7 @@ public class FederationOptions extends Options
       
       add ("Federation.Activated", false);
       add ("Federation.Router-Name", "");
-      add ("Federation.Listen", new OptionTypeSet (EwafURI.class), 
-           Collections.set (new EwafURI ("ewaf://0.0.0.0:2916")));
+      add ("Federation.Listen", new OptionTypeSet (EwafURI.class), emptySet ());
       add ("Federation.Subscribe", fedClassOption, emptyMap ());
       add ("Federation.Provide", fedClassOption, emptyMap ());
       add ("Federation.Apply-Class", 
@@ -201,8 +200,7 @@ public class FederationOptions extends Options
         return value;
       } catch (InvalidURIException ex)
       {
-        throw new IllegalOptionException 
-          (option, "Invalid URI: " + ex.getMessage ());
+        throw new IllegalOptionException (option, ex.getMessage ());
       }
     }
 
