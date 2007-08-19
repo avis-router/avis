@@ -10,8 +10,8 @@ import java.net.InetSocketAddress;
 
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
-import org.avis.util.IllegalOptionException;
-import org.avis.util.Options;
+import org.avis.config.IllegalOptionException;
+import org.avis.config.Options;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.io.Net.addressesFor;

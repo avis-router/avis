@@ -2,7 +2,7 @@ package org.avis.router;
 
 import java.util.Map;
 
-import org.avis.util.Options;
+import org.avis.config.Options;
 
 import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
 

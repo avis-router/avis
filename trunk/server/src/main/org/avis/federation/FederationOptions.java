@@ -11,20 +11,20 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.avis.common.InvalidURIException;
+import org.avis.config.IllegalOptionException;
+import org.avis.config.OptionSet;
+import org.avis.config.OptionType;
+import org.avis.config.Options;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.Collections;
-import org.avis.util.IllegalOptionException;
-import org.avis.util.OptionSet;
-import org.avis.util.OptionType;
-import org.avis.util.Options;
 import org.avis.util.Pair;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
+import static org.avis.config.OptionSet.StringOption.ANY_STRING_OPTION;
 import static org.avis.federation.FederationClass.parse;
-import static org.avis.util.OptionSet.StringOption.ANY_STRING_OPTION;
 import static org.avis.util.Text.split;
 
 public class FederationOptions extends Options

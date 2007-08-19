@@ -3,6 +3,7 @@ package org.avis.util;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.avis.config.IllegalOptionException;
 import org.avis.logging.Log;
 
 import static java.lang.Integer.parseInt;

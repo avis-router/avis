@@ -1,6 +1,7 @@
-package org.avis.util;
+package org.avis.config;
 
 import static org.avis.util.Text.className;
+
 
 /**
  * Defines a type of option in an OptionSet.

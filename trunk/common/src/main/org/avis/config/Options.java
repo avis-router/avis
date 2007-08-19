@@ -1,4 +1,4 @@
-package org.avis.util;
+package org.avis.config;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,11 +9,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 
-import static org.avis.util.OptionSet.EMPTY_OPTION_SET;
+import static org.avis.config.OptionSet.EMPTY_OPTION_SET;
 
 /**
  * Defines a set of configuration options. The options are validated

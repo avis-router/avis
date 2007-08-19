@@ -5,8 +5,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
+import org.avis.config.Options;
 import org.avis.security.Keys;
-import org.avis.util.Options;
 
 /**
  * Stores the state needed for a client's connection to the router.

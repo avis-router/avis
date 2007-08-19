@@ -18,6 +18,7 @@ import org.apache.mina.common.ThreadModel;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
+import org.avis.config.Options;
 import org.avis.federation.messages.FedConnRply;
 import org.avis.federation.messages.FedConnRqst;
 import org.avis.io.RequestTrackingFilter;
@@ -27,7 +28,6 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.router.Router;
-import org.avis.util.Options;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
