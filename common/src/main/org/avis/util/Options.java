@@ -210,7 +210,7 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    *           
    * @see #get(String)
    * @see #remove(String)
-   * @see OptionSet#validateAndPut(Options, String, Object)
+   * @see OptionSet#validateAndSet(Options, String, Object)
    */
   public void set (String option, Object value)
     throws IllegalOptionException
@@ -218,7 +218,7 @@ public class Options implements Iterable<Map.Entry<String, Object>>
     if (value == null)
       throw new IllegalOptionException (option, "Value cannot be null");
     
-    optionSet.validateAndPut (this, option, value);
+    optionSet.validateAndSet (this, option, value);
   }
   
   /**
