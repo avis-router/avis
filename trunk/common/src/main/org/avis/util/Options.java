@@ -41,6 +41,11 @@ public class Options implements Iterable<Map.Entry<String, Object>>
     this.optionSet = optionSet;
   }
   
+  public OptionSet optionSet ()
+  {
+    return optionSet;
+  }
+
   public Iterator<Entry<String, Object>> iterator ()
   {
     return values.entrySet ().iterator ();
