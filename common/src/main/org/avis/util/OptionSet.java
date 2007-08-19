@@ -399,6 +399,8 @@ public class OptionSet
 
   public static class StringOption extends OptionType
   {
+    public static final StringOption ANY_STRING_OPTION = new StringOption ();
+    
     protected Set<String> validValues;
 
     public StringOption ()
