@@ -9,11 +9,17 @@ Bugs
 * Avis: Warning: Failed to cleanly shut down thread pool. avisd during testing
   for Alain. Not due to connected clients. Perhaps due to waiting for Disconn
   to be sent?
+
+* ep doesn't do ^D properly: needs to handle empty lines
   
 Federation
 ----------------------------------------------------------------------
 
-* Do we want to use better config file parser? Need to resolve use if ":"
+* Apply-Class can only affect one router
+* Clean up log messages
+* Default federation class
+* Add-Attribute
+* DONE: Do we want to use better config file parser? Need to resolve use if ":"
 * Enforce connection options frame size on federated notifications
 * DONE: Will probably encounter FedSubDiff from 4.4: may need to rev-engineer
 * How insecure is it to allow anyone to federate with no SSL? Do we
