@@ -4,9 +4,9 @@ import java.util.Map;
 
 import org.avis.util.Options;
 
-import static java.util.Collections.emptyMap;
+import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
 
-import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static java.util.Collections.emptyMap;
 
 /**
  * Avis router connection options.
@@ -15,18 +15,18 @@ import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
  * 
  * @see ConnectionOptionSet
  */
-public class ConnectionOptions extends Options
+public class ClientConnectionOptions extends Options
 {
   private static final Map<String, Object> EMPTY_OPTIONS = emptyMap ();
   
   private Map<String, Object> requested;
 
-  public ConnectionOptions ()
+  public ClientConnectionOptions ()
   {
     this (null, EMPTY_OPTIONS);
   }
   
-  public ConnectionOptions (Map<String, Object> requested)
+  public ClientConnectionOptions (Map<String, Object> requested)
   {
     this (null, requested);
   }
@@ -40,10 +40,10 @@ public class ConnectionOptions extends Options
    * @param requested The requested set of values, usually from the
    *                client creating the connection.
    */
-  public ConnectionOptions (Options defaultOptions, 
-                            Map<String, Object> requested)
+  public ClientConnectionOptions (Options defaultOptions, 
+                                  Map<String, Object> requested)
   {
-    super (CONNECTION_OPTION_SET);
+    super (CLIENT_CONNECTION_OPTION_SET);
     
     if (defaultOptions != null)
       addDefaults (defaultOptions);
@@ -56,11 +56,11 @@ public class ConnectionOptions extends Options
   /**
    * Generate the set of accepted client options.
    *
-   * @see ConnectionOptionSet#accepted(Options, Map)
+   * @see ClientConnectionOptionSet#accepted(Options, Map)
    */
   public Map<String, Object> accepted ()
   {
-    return CONNECTION_OPTION_SET.accepted (this, requested);
+    return CLIENT_CONNECTION_OPTION_SET.accepted (this, requested);
   }
 
   /**
@@ -69,6 +69,6 @@ public class ConnectionOptions extends Options
   public void setWithLegacy (String option, Object value)
   {
     set (option, value);
-    set (CONNECTION_OPTION_SET.newToLegacy (option), value);
+    set (CLIENT_CONNECTION_OPTION_SET.newToLegacy (option), value);
   }
 }
