@@ -7,11 +7,11 @@
 Elvin.Org                                              D. Arnold, Editor
 Preliminary INTERNET-DRAFT                                  Mantara, Inc
 
-Expires: 20 Oct 2007                                         20 Apr 2007
+Expires: 13 Feb 2008                                         13 Aug 2007
 
 
                        Elvin Client Protocol 4.0
-                      draft-elvin-client-40-06.txt
+                      draft-elvin-client-40-07.txt
 
 
    1.  Status of this Memo
@@ -63,7 +63,7 @@ Expires: 20 Oct 2007                                         20 Apr 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 1]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    delivery of notifications from the service.  Consumers normally sub-
@@ -125,7 +125,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 2]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    4.1.  Notation Conventions
@@ -187,7 +187,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 3]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    5.1.2.  Messages
@@ -249,7 +249,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 4]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    and maintain that session as long as required.
@@ -311,7 +311,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 5]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    subscription exists, thus quenching the flow of published informa-
@@ -373,7 +373,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 6]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
       +----------+                   +--------+
@@ -435,7 +435,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 7]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    for the registered request.
@@ -497,7 +497,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 8]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    5.4.7.  Ending a Session
@@ -559,7 +559,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                 [Page 9]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
           ---------------------------------------------------------
@@ -621,7 +621,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 10]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    6.1.3.  Logical Operators
@@ -683,7 +683,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 11]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    Character Strings
@@ -745,7 +745,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 12]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
        say, an empty string or a zero-length opaque value).
@@ -807,7 +807,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 13]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
         !(A == B)
@@ -869,7 +869,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 14]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
        Note that the size in bytes of a UTF-8 string value does not nec-
@@ -931,7 +931,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 15]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    6.1.10.2.  Comparison Strength
@@ -993,7 +993,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 16]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
       Consider an expression referring to two int32 attributes
@@ -1055,7 +1055,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 17]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    6.2.  Numeric type promotion
@@ -1117,7 +1117,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 18]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    OVERFLOW
@@ -1179,7 +1179,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 19]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
         <FIXME>
@@ -1241,7 +1241,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 20]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    7.1.  Packet Types
@@ -1270,6 +1270,8 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
    Dropped Packet Warning        DropWarn        S -> C     B
    Test Connection               TestConn        C -> S     B
    Confirm Connection            ConfConn        S -> C     B
+   QoS Request                   QosRqst         C -> S     C
+   QoS Reply                     QosRply         S -> C     C
    Quench Add Request            QnchAddRqst     C -> S     C
    Quench Modify Request         QnchModRqst     C -> S     C
    Quench Delete Request         QnchDelRqst     C -> S     C
@@ -1296,15 +1298,15 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
    B.
 
    <FIXME>
-   i'd like the ability to have quenching only clients. jb
-
 
 
 
 Arnold, ed.                Expires in 6 months                [Page 21]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
+
+   i'd like the ability to have quenching only clients. jb
 
    to do that,we'd have to separate the ConnRqst/Rply,SecRqst/Rply,Disconn*,DropWarn and Test/ConfConn packets from Notif/Sub packets.
    it's possible,and maybe nice? da
@@ -1358,16 +1360,16 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
    A protocol error occurs when a message is received whose values are
    inconsistent with the state of the receiving entity or otherwise
-   incorrect, but is not a protocol violation.  Examples include
-   attempts to modify or delete a non-existent subscription, or sending
 
 
 
 Arnold, ed.                Expires in 6 months                [Page 22]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
+   incorrect, but is not a protocol violation.  Examples include
+   attempts to modify or delete a non-existent subscription, or sending
    a notification whose attributes exceed the negotiated connection lim-
    its.
 
@@ -1423,11 +1425,9 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
 
-
-
 Arnold, ed.                Expires in 6 months                [Page 23]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      typedef byte[] opaque;
@@ -1489,7 +1489,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 24]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      struct SubASTNode {
@@ -1551,7 +1551,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 25]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
          SubASTNode decompose;
@@ -1613,7 +1613,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 26]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      struct Nack {
@@ -1675,7 +1675,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 27]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
           |                    | index, int32     |
@@ -1737,7 +1737,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 28]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
     2500  |                    |                  | Implementation-specific
@@ -1799,7 +1799,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 29]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      struct ConnRply {
@@ -1861,7 +1861,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 30]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    7.4.7.  Disconnect
@@ -1923,7 +1923,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 31]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      struct SecRqst {
@@ -1985,7 +1985,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 32]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    7.4.11.  QoS Reply
@@ -2047,7 +2047,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 33]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    A TestConn MAY be sent if no packets have been received within a con-
@@ -2109,7 +2109,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 34]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      struct NotifyDeliver {
@@ -2171,7 +2171,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 35]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    are empty, the modification SHALL be considered successful.
@@ -2233,7 +2233,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 36]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    7.4.22.  Quench Modify Request
@@ -2295,7 +2295,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 37]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      struct SubAddNotify {
@@ -2357,7 +2357,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 38]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    each option requested, the router MUST either
@@ -2419,7 +2419,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 39]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    7.5.1.  Option Semantics
@@ -2481,7 +2481,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 40]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    property describes the desired behaviour of this packet queue if it
@@ -2543,7 +2543,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 41]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      Standard Name               | Compatibility Name
@@ -2605,7 +2605,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 42]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    Additional protocol layers must be proposed and registered via the
@@ -2667,7 +2667,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 43]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    The value should be set to zero to enable Nagle's algorithm, and non-
@@ -2729,7 +2729,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 44]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    sign at the 4 corners and vertical bars and dashes) depicts a 4 byte
@@ -2764,7 +2764,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
          SubDelRqst     = 60,   SubRply        = 61,
          DropWarn       = 62,   TestConn       = 63,
          ConfConn       = 64,
-
+         QosRqst        = 70,   QosRply        = 71,
          QnchAddRqst    = 80,   QnchModRqst    = 81,
          QnchDelRqst    = 82,   QnchRply       = 83,
          SubAddNotify   = 84,   SubModNotify   = 85,
@@ -2791,7 +2791,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 45]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    contains the length of data in the packet.
@@ -2835,11 +2835,11 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
    from the following enumeration:
 
      enum {
-         int32_tc  = 1,
-         int64_tc  = 2,
-         real64_tc = 3,
-         string_tc = 4,
-         opaque_tc = 5
+         xdr_int32  = 1,
+         xdr_int64  = 2,
+         xdr_real64 = 3,
+         xdr_string = 4,
+         xdr_opaque = 5
      } value_typecode;
 
 
@@ -2853,7 +2853,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 46]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
           0  1  2  3
@@ -2863,7 +2863,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
         |<--enum--->|<--format depends on enum-->
 
    For illustration, if an int64 of value 1024L is preceded by its type
-   for marshalling, it would be sent as four bytes for the type id of 1
+   for marshalling, it would be sent as four bytes for the type id of 2
    and eight bytes for the value.
 
           0  1  2  3  4  5  6  7  8  9 10 11
@@ -2880,12 +2880,12 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
    int32 - the items are in the array are then each encoded in sequence
    starting at item 0.  The 32bit length places a theoretical limit of
    (2**32) - 1 items per list.  In practice, implementations are
-   expected to have much lower maximums for the number of items in a
-   list transmitted per packet.  For example, an implemenation may
-   restrict the number of fields in a notification to 1024.  Such limi-
-   tations SHOULD be documented for each implemenation.  Service offers
-   and connection replys SHOULD also provide such limitations.  See the
-   section X on Connection Establishment.
+   expected to have much lower maxima for the number of items in a list
+   transmitted per packet.  For example, an implemenation may restrict
+   the number of fields in a notification to 1024.  Such limitations
+   SHOULD be documented for each implemenation.  Service offers and con-
+   nection replys SHOULD also provide such limitations.  See the section
+   X on Connection Establishment.
 
           0  1  2  3
         +--+--+--+--+--+--+--+--+--+--+--+--+...+--+--+--+--+
@@ -2915,69 +2915,76 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 47]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      enum {
-         name_tc   = 0,
-         int32_tc  = 1,
-         int64_tc  = 2,
-         real64_tc = 3,
-         string_tc = 4,
-         regular_expression_tc = 5,
+         empty_tc  = 0,
+
+         name_tc   = 1,
+         int32_tc  = 2,
+         int64_tc  = 3,
+         real64_tc = 4,
+         string_tc = 5,
 
          equals_tc = 8,
          not_equals_tc = 9,
          less_than_tc = 10,
          less_than_equals_tc = 11,
          greater_than_tc = 12,
-         greater_than_equals = 13,
+         greater_than_equals_tc = 13,
 
          or_tc = 16,
          xor_tc = 17,
          and_tc = 18,
          not_tc = 19,
 
-         unary_plus_tc = 24,
-         unary_minus_tc = 25,
-         multiply_tc = 26,
-         divide_tc = 27,
-         modulo_tc = 28,
-         add_tc = 29,
-         subtract_tc = 30,
+         unary_plus_tc = 20,
+         unary_minus_tc = 21,
+         multiply_tc = 22,
+         divide_tc = 23,
+         modulo_tc = 24,
+         add_tc = 25,
+         subtract_tc = 26,
 
-         shift_left_tc = 32,
-         shift_right_tc = 33,
-         logical_shift_right_tc = 34,
-         bit_and_tc = 35,
-         bit_xor_tc = 36,
-         bit_or_tc = 37,
-         bit_negate_tc = 38,
+         shift_left_tc = 27,
+         shift_right_tc = 28,
+         logical_shift_right_tc = 29,
+         bit_and_tc = 30,
+         bit_xor_tc = 31,
+         bit_or_tc = 32,
+         bit_negate_tc = 33,
 
-         is_int32_tc = 40,
-         is_int64_tc = 41,
-         is_real64_tc = 42,
-         is_string_tc = 43,
-         is_opaque_tc = 44,
-         is_nan_tc = 45,
+         func_int32_tc = 40,
+         func_int64_tc = 41,
+         func_real64_tc = 42,
+         func_string_tc = 43,
+         func_opaque_tc = 44,
+         func_nan_tc = 45,
 
-         begins_with_tc = 48,
-         contains_tc = 49,
-         ends_with_tc = 50,
-         wildcard_tc = 51,
-         regex_tc = 52,
+         func_begins_with_tc = 48,
+         func_contains_tc = 49,
+         func_ends_with_tc = 50,
+         func_wildcard_tc = 51,
+         func_regex_tc = 52,
 
-         exists_tc = 56,
-         equals_tc = 57,
-         size_tc = 58
-     } subast_typecode;
+         func_fold_case_tc = 56,
+         func_decompose_tc = 57,
+         func_decompose_compat_tc = 58,
 
 
 
 
 Arnold, ed.                Expires in 6 months                [Page 48]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
+
+
+         func_require_tc = 64,
+         func_equals_tc = 65,
+         func_size_tc = 66
+     } subast_typecode;
+
 
 
    8.2.3.5.  Packet Encoding Example
@@ -3018,6 +3025,23 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
               +------+------+...+------+...+------+...+------+
                      |<----------------m keys--------------->|
                                                            NOTIFICATION
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold, ed.                Expires in 6 months                [Page 49]
+
+Internet Draft          Elvin Client Protocol 4.0            August 2007
+
+
       pkt id        (enum)   packet type for NotifyEmit
       len n         (int32)  number of name-type-value triples in the
                              notification. n MUST be greater than zero.
@@ -3034,14 +3058,6 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
    ports
    location
    service names
-
-
-
-Arnold, ed.                Expires in 6 months                [Page 49]
-
-Internet Draft          Elvin Client Protocol 4.0             April 2007
-
-
    environment variables
    file usage
    - /etc/elvind.conf
@@ -3083,25 +3099,9 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Arnold, ed.                Expires in 6 months                [Page 50]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    11.  APPENDIX A - ELVIN SUBSCRIPTION LANGUAGE
@@ -3163,7 +3163,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 51]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      bool-function-exp   = bool-pred "(" name ")"
@@ -3225,7 +3225,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 52]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
      num-literal         = int32-literal / int64-literal / real64-literal
@@ -3287,7 +3287,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 53]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    12.  REFERENCES
@@ -3349,7 +3349,7 @@ Internet Draft          Elvin Client Protocol 4.0             April 2007
 
 Arnold, ed.                Expires in 6 months                [Page 54]
 
-Internet Draft          Elvin Client Protocol 4.0             April 2007
+Internet Draft          Elvin Client Protocol 4.0            August 2007
 
 
    14.  FULL COPYRIGHT STATEMENT
