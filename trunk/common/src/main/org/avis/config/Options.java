@@ -224,7 +224,16 @@ public class Options implements Iterable<Map.Entry<String, Object>>
     if (value == null)
       throw new IllegalOptionException (option, "Value cannot be null");
     
-    optionSet.validateAndSet (this, option, value);
+    OptionSet set = optionSet.findOptionSetFor (option);
+    
+    /*
+     * If no option set found, fall back on this one in case
+     * validateAndSet () can do something clever
+     */
+    if (set == null)
+      set = optionSet;
+    
+    set.validateAndSet (this, option, value);
   }
   
   /**
