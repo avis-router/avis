@@ -45,11 +45,9 @@ public class FederationManager implements CloseListener
     
     classMap = initClassMap (federationConfig);
       
-    // connectors
     connectors = initConnectors (router, serverDomain, classMap, 
                                  federationConfig);
 
-    // listener
     listener =
       initListener (router, serverDomain, classMap, federationConfig);
     
@@ -89,7 +87,7 @@ public class FederationManager implements CloseListener
     Map<String, Object> connect = 
       getParamOption (config, "Federation.Connect");
    
-    // check federation classes make sense
+    // check federation classes and URI's make sense
     for (Entry<String, Object> entry : connect.entrySet ())
     {
       FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
@@ -170,6 +168,7 @@ public class FederationManager implements CloseListener
     }
   }
 
+  @SuppressWarnings("unchecked")
   private static FederationClassMap initClassMap (Options federationConfig)
   {
     FederationClassMap classMap = 
@@ -209,25 +208,28 @@ public class FederationManager implements CloseListener
       fedClass.incomingFilter = node;
     }
     
-    Map<String, Object> listen = 
+    Map<String, Object> applyClass = 
       getParamOption (federationConfig, "Federation.Apply-Class");
     
-    for (Entry<String, Object> entry : listen.entrySet ())
+    for (Entry<String, Object> entry : applyClass.entrySet ())
     {
       FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
-      String value = (String)entry.getValue ();
+      Set<String> values = (Set<String>)entry.getValue ();
       
-      if (value.startsWith ("@"))
+      for (String value : values)
       {
-        value = value.substring (1);
-        
-        if (value.startsWith ("."))
-          classMap.mapDnsDomain (value.substring (1), fedClass);
-        else
-          classMap.mapHost (value, fedClass);
-      } else
-      {
-        classMap.mapServerDomain (value, fedClass);
+        if (value.startsWith ("@"))
+        {
+          value = value.substring (1);
+          
+          if (value.startsWith ("."))
+            classMap.mapDnsDomain (value.substring (1), fedClass);
+          else
+            classMap.mapHost (value, fedClass);
+        } else
+        {
+          classMap.mapServerDomain (value, fedClass);
+        }
       }
     }
     
