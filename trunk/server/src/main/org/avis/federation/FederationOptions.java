@@ -19,7 +19,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
-import static org.avis.config.OptionTypeString.ANY_STRING_OPTION;
 import static org.avis.federation.FederationClass.parse;
 
 public class FederationOptions extends Options
@@ -59,7 +58,7 @@ public class FederationOptions extends Options
   }
 
   /**
-   * Split a parameterised option into a (base option, param) pair.
+   * Split a parameterised option into a (base option, params) pair.
    */
   protected static Pair<String,List<String>> splitOptionParam (String option)
   {
@@ -107,7 +106,7 @@ public class FederationOptions extends Options
       add ("Federation.Subscribe", fedClassOption, emptyMap ());
       add ("Federation.Provide", fedClassOption, emptyMap ());
       add ("Federation.Apply-Class", 
-           new ParamOption (ANY_STRING_OPTION), emptyMap ());
+           new ParamOption (new OptionTypeSet (String.class)), emptyMap ());
       add ("Federation.Connect", 
            new ParamOption (ewafUriOption), emptyMap ());
       add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);

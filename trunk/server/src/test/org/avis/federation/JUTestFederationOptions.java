@@ -36,7 +36,7 @@ public class JUTestFederationOptions
     props.setProperty ("Federation.Provide[Internal]", "TRUE");
     props.setProperty ("Federation.Connect[Internal]", "ewaf://localhost");
     props.setProperty ("Federation.Connect[External]", "ewaf://public.elvin.org");
-    props.setProperty ("Federation.Apply-Class[External]", ".elvin.org");
+    props.setProperty ("Federation.Apply-Class[External]", "@.elvin.org domain");
     props.setProperty ("Federation.Listen", "ewaf://0.0.0.0 ewaf://hello:7778");
     
     options.setAll (props);
@@ -67,7 +67,7 @@ public class JUTestFederationOptions
     Map<String, Object> applyClass = 
       options.getParamOption ("Federation.Apply-Class");
     
-    assertEquals (".elvin.org",  applyClass.get ("External"));
+    assertEquals (set ("@.elvin.org", "domain"),  applyClass.get ("External"));
     
     assertEquals (new EwafURI ("ewaf://public.elvin.org"), 
                   connect.get ("External"));
