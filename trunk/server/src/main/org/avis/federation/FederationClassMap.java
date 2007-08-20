@@ -35,6 +35,10 @@ public class FederationClassMap
     this.federatorDomains = new HashMap<String, FederationClass> ();
   }
 
+  /**
+   * Find an existing federation class with the given name or create a
+   * new one.
+   */
   public FederationClass findOrCreate (String name)
   {
     FederationClass fedClass = classes.get (name);
