@@ -1,6 +1,7 @@
 package org.avis.subscription.ast;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Map;
 import java.io.StringReader;
 
 import java.lang.reflect.Constructor;
+
+import org.junit.Test;
 
 import org.avis.subscription.ast.nodes.And;
 import org.avis.subscription.ast.nodes.Compare;
@@ -43,8 +46,6 @@ import org.avis.subscription.ast.nodes.Xor;
 import org.avis.subscription.parser.ParseException;
 import org.avis.subscription.parser.SubscriptionParser;
 
-import org.junit.Test;
-
 import static java.lang.Double.NaN;
 
 import static org.avis.subscription.ast.Node.BOTTOM;
@@ -53,7 +54,6 @@ import static org.avis.subscription.ast.Node.FALSE;
 import static org.avis.subscription.ast.Node.TRUE;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.DECOMPOSE;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.DECOMPOSE_COMPAT;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -73,13 +73,16 @@ public class JUTestEvaluation
     new Boolean [] {FALSE, BOTTOM, TRUE};
   
   private static final Boolean [] OR_TRUTH_TABLE =
-    new Boolean [] {TRUE, TRUE, TRUE, TRUE, BOTTOM, BOTTOM, TRUE, BOTTOM, FALSE};
+    new Boolean [] {TRUE, TRUE, TRUE, TRUE, BOTTOM, 
+                   BOTTOM, TRUE, BOTTOM, FALSE};
   
   private static final Boolean [] AND_TRUTH_TABLE =
-    new Boolean [] {TRUE, BOTTOM, FALSE, BOTTOM, BOTTOM, FALSE, FALSE, FALSE, FALSE};
+    new Boolean [] {TRUE, BOTTOM, FALSE, BOTTOM, BOTTOM,
+                    FALSE, FALSE, FALSE, FALSE};
 
   private static final Boolean [] XOR_TRUTH_TABLE =
-    new Boolean [] {FALSE, BOTTOM, TRUE, BOTTOM, BOTTOM, BOTTOM, TRUE, BOTTOM, FALSE};
+    new Boolean [] {FALSE, BOTTOM, TRUE, BOTTOM, BOTTOM, 
+                    BOTTOM, TRUE, BOTTOM, FALSE};
   
   /**
    * Test NOT, AND, OR and XOR logic operators against their tri-state
@@ -89,31 +92,75 @@ public class JUTestEvaluation
   public void logicOps ()
     throws Exception
   {
-    int index;
-    
     // NOT
-    index = 0;
     for (Boolean state : LOGIC_STATES)
     {
-      assertEquals (NOT_TRUTH_TABLE [index],
+      assertEquals (NOT_TRUTH_TABLE [toIndex (state)],
                     new Not (new Const (state)).evaluate (EMPTY_NOTIFICATION));
-      
-      index++;
     }
     
     // OR, AND, XOR
-    index = 0;
     for (Boolean a : LOGIC_STATES)
     {
       for (Boolean b : LOGIC_STATES)
       {
-        checkTruthTable (And.class, a, b, AND_TRUTH_TABLE [index]);
-        checkTruthTable (Or.class, a, b, OR_TRUTH_TABLE [index]);
-        checkTruthTable (Xor.class, a, b, XOR_TRUTH_TABLE [index]);
-      
-        index++;
+        checkBooleanOp (And.class, a, b, and (a, b));
+        checkBooleanOp (Or.class, a, b, or (a, b));
+        checkBooleanOp (Xor.class, a, b, xor (a, b));
       }
     }
+
+    // check that triple children work also
+    for (Boolean a : LOGIC_STATES)
+    {
+      for (Boolean b : LOGIC_STATES)
+      {
+        for (Boolean c : LOGIC_STATES)
+        {
+          checkBooleanOp (And.class, a, b, c, and (and (a, b), c));
+          checkBooleanOp (Or.class, a, b, c, or (or (a, b), c));
+          checkBooleanOp (Xor.class, a, b, c, xor (xor (a, b), c));
+        }
+      }
+    }
+
+  }
+  
+  /**
+   * Lookup result for AND in truth table.
+   */
+  private static Boolean and (Boolean a, Boolean b)
+  {
+    return AND_TRUTH_TABLE [toIndex (a) * 3 + toIndex (b)];
+  }
+
+  /**
+   * Lookup result for OR in truth table.
+   */
+  private static Boolean or (Boolean a, Boolean b)
+  {
+    return OR_TRUTH_TABLE [toIndex (a) * 3 + toIndex (b)];
+  }
+  
+  /**
+   * Lookup result for XOR in truth table.
+   */
+  private static Boolean xor (Boolean a, Boolean b)
+  {
+    return XOR_TRUTH_TABLE [toIndex (a) * 3 + toIndex (b)];
+  }
+
+  /**
+   * Truth table index for tri-state value.
+   */
+  private static int toIndex (Boolean b)
+  {
+    if (b == TRUE)
+      return 0;
+    else if (b == BOTTOM)
+      return 1;
+    else
+      return 2;
   }
 
   /**
@@ -601,19 +648,34 @@ public class JUTestEvaluation
    * @param correct Correct result
    */
   private static <NODE extends Node>
-    void checkTruthTable (Class<NODE> opType,
-                          Boolean a, Boolean b,
-                          Boolean correct)
+    void checkBooleanOp (Class<NODE> opType,
+                         Boolean a, Boolean b,
+                         Boolean correct)
     throws Exception
   {
     NODE node = newLogicNodeInstance (opType, a, b);
     Object result = node.evaluate (EMPTY_NOTIFICATION);
     
-    assertEquals (String.format
-                    ("Truth table check failed: " +
-                     "%1$s (\"%2$s\", \"%3$s\") == \"%4$s\" " +
-                     "(should be \"%5$s\")",
-                     node.name (), a, b, result, correct),
+    assertEquals ("Truth table check failed:" + node.name () + 
+                  " (" + a + ", " + b + ") == " + correct + 
+                  ": was " + result,
+                  correct, result);
+  }
+  
+  private static <NODE extends Node>
+    void checkBooleanOp (Class<NODE> opType,
+                         Boolean a, 
+                         Boolean b,
+                         Boolean c,
+                         Boolean correct)
+    throws Exception
+  {
+    NODE node = newLogicNodeInstance (opType, a, b, c);
+    Object result = node.evaluate (EMPTY_NOTIFICATION);
+    
+    assertEquals ("Truth table check failed:" + node.name () + 
+                  " (" + a + ", " + b + ", " + c + ") == " + correct + 
+                  ": was " + result,
                   correct, result);
   }
   
@@ -629,6 +691,22 @@ public class JUTestEvaluation
       nodeType.getConstructor (Node.class, Node.class);
     
     return c.newInstance (new Const (a), new Const (b));
+  }
+  
+  private static <NODE extends Node>
+    NODE newLogicNodeInstance (Class<NODE> nodeType,
+                               Boolean a, Boolean b, Boolean c)
+    throws Exception
+  {
+    Constructor<NODE> constructor =
+      nodeType.getConstructor (Collection.class);
+    
+    ArrayList<Node> children = new ArrayList<Node> (3);
+    children.add (new Const (a));
+    children.add (new Const (b));
+    children.add (new Const (c));
+    
+    return constructor.newInstance (children);
   }
 
   /**
