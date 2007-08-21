@@ -42,8 +42,8 @@ public final class Federation
   {
     if (shouldLog (TRACE))
     {
-      trace ("Federator " + serverDomain + " sent message: " +  message, 
-             Federation.class);
+      trace ("Federator for domain \"" + serverDomain + "\" sent: " +  
+             message, Federation.class);
     }
     
     return session.write (message);

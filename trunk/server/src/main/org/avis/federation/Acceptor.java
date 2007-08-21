@@ -17,8 +17,9 @@ import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
-import org.avis.federation.messages.FedConnRply;
-import org.avis.federation.messages.FedConnRqst;
+import org.avis.federation.io.FederationFrameCodec;
+import org.avis.federation.io.messages.FedConnRply;
+import org.avis.federation.io.messages.FedConnRqst;
 import org.avis.io.RequestTrackingFilter;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -43,31 +44,31 @@ import static org.avis.logging.Log.warn;
  * successfully handshaking with a FedConnRqst/FedConnRply, it creates
  * and hands over processing to a FederationLink.
  * 
- * @see FederationLink
- * @see FederationConnector
+ * @see Link
+ * @see Connector
  * 
  * @author Matthew Phillips
  */
-public class FederationListener implements IoHandler, Closeable
+public class Acceptor implements IoHandler, Closeable
 {
   protected Router router;
-  protected Set<FederationLink> links;
+  protected Set<Link> links;
   protected Set<InetSocketAddress> addresses;
   protected String serverDomain;
   protected FederationClasses federationClassMap;
   protected volatile boolean closing;
 
-  public FederationListener (Router router,
-                             String serverDomain,
-                             FederationClasses federationClassMap, 
-                             Set<InetSocketAddress> addresses)
+  public Acceptor (Router router,
+                   String serverDomain,
+                   FederationClasses federationClassMap, 
+                   Set<InetSocketAddress> addresses)
     throws IOException
   {
     this.router = router;
     this.serverDomain = serverDomain;
     this.federationClassMap = federationClassMap;
     this.addresses = addresses;
-    this.links = new HashSet<FederationLink> ();
+    this.links = new HashSet<Link> ();
     
     SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
     
@@ -97,7 +98,7 @@ public class FederationListener implements IoHandler, Closeable
       
       closing = true;
       
-      for (FederationLink link : links)
+      for (Link link : links)
         link.close ();
       
       links.clear ();
@@ -186,23 +187,23 @@ public class FederationListener implements IoHandler, Closeable
                                      String remoteHost, 
                                      FederationClass federationClass)
   {
-    FederationLink link =
-      new FederationLink (session, router,
+    Link link =
+      new Link (session, router,
                           federationClass, serverDomain, 
                           remoteServerDomain, remoteHost);
     
     addLink (session, link);
   }
 
-  private synchronized void addLink (IoSession session, FederationLink link)
+  private synchronized void addLink (IoSession session, Link link)
   {
     session.setAttribute ("federationLink", link);
     links.add (link);
   }
   
-  private static FederationLink linkFor (IoSession session)
+  private static Link linkFor (IoSession session)
   {
-    return (FederationLink)session.getAttribute ("federationLink");
+    return (Link)session.getAttribute ("federationLink");
   }
 
   private static InetAddress remoteHostFor (IoSession session)
@@ -247,7 +248,7 @@ public class FederationListener implements IoHandler, Closeable
     
     logMessageReceived (message, serverDomain, this);
     
-    FederationLink link = linkFor (session);
+    Link link = linkFor (session);
     
     if (link == null)
       handleMessage (session, message);

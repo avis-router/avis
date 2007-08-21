@@ -69,22 +69,22 @@ public class JUTestFederationManager
     assertFalse (testClass.allowsNothing ());
     
     assertEquals (addressesFor (set (federationUri)),
-                  manager.listener.addresses);
+                  manager.acceptor.addresses);
     
     Router router2 = new Router (PORT2);
     
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
-    FederationConnector connector =
-      new FederationConnector (router2, "router2", federationUri, fedClass,
+    Connector connector =
+      new Connector (router2, "router2", federationUri, fedClass,
                                new FederationOptions ());
     
     sleep (1000);
     
     assertTrue (connector.isConnected ());
     
-    assertEquals (1, manager.listener.links.size ());
+    assertEquals (1, manager.acceptor.links.size ());
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);

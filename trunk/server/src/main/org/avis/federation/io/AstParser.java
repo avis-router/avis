@@ -1,4 +1,4 @@
-package org.avis.federation;
+package org.avis.federation.io;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,58 +40,58 @@ import org.avis.subscription.ast.nodes.StrWildcard;
 import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
-import static org.avis.federation.AstType.ADD;
-import static org.avis.federation.AstType.AND;
-import static org.avis.federation.AstType.BEGINS_WITH;
-import static org.avis.federation.AstType.BIT_AND;
-import static org.avis.federation.AstType.BIT_NEGATE;
-import static org.avis.federation.AstType.BIT_OR;
-import static org.avis.federation.AstType.BIT_XOR;
-import static org.avis.federation.AstType.CONST_INT32;
-import static org.avis.federation.AstType.CONST_INT64;
-import static org.avis.federation.AstType.CONST_REAL64;
-import static org.avis.federation.AstType.CONST_STRING;
-import static org.avis.federation.AstType.CONTAINS;
-import static org.avis.federation.AstType.DECOMPOSE;
-import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
-import static org.avis.federation.AstType.DIVIDE;
-import static org.avis.federation.AstType.EMPTY;
-import static org.avis.federation.AstType.ENDS_WITH;
-import static org.avis.federation.AstType.EQUALS;
-import static org.avis.federation.AstType.FOLD_CASE;
-import static org.avis.federation.AstType.F_EQUALS;
-import static org.avis.federation.AstType.GREATER_THAN;
-import static org.avis.federation.AstType.GREATER_THAN_EQUALS;
-import static org.avis.federation.AstType.INT32;
-import static org.avis.federation.AstType.INT64;
-import static org.avis.federation.AstType.LESS_THAN;
-import static org.avis.federation.AstType.LESS_THAN_EQUALS;
-import static org.avis.federation.AstType.LOGICAL_SHIFT_RIGHT;
-import static org.avis.federation.AstType.MODULO;
-import static org.avis.federation.AstType.MULTIPLY;
-import static org.avis.federation.AstType.NAME;
-import static org.avis.federation.AstType.NAN;
-import static org.avis.federation.AstType.NOT;
-import static org.avis.federation.AstType.NOT_EQUALS;
-import static org.avis.federation.AstType.OPAQUE;
-import static org.avis.federation.AstType.OR;
-import static org.avis.federation.AstType.PRIMARY;
-import static org.avis.federation.AstType.REAL64;
-import static org.avis.federation.AstType.REGEX;
-import static org.avis.federation.AstType.REGEXP;
-import static org.avis.federation.AstType.REQUIRE;
-import static org.avis.federation.AstType.SECONDARY;
-import static org.avis.federation.AstType.SHIFT_LEFT;
-import static org.avis.federation.AstType.SHIFT_RIGHT;
-import static org.avis.federation.AstType.SIZE;
-import static org.avis.federation.AstType.STRING;
-import static org.avis.federation.AstType.SUBTRACT;
-import static org.avis.federation.AstType.TERTIARY;
-import static org.avis.federation.AstType.TO_UPPER;
-import static org.avis.federation.AstType.UNARY_MINUS;
-import static org.avis.federation.AstType.UNARY_PLUS;
-import static org.avis.federation.AstType.WILDCARD;
-import static org.avis.federation.AstType.XOR;
+import static org.avis.federation.io.AstType.ADD;
+import static org.avis.federation.io.AstType.AND;
+import static org.avis.federation.io.AstType.BEGINS_WITH;
+import static org.avis.federation.io.AstType.BIT_AND;
+import static org.avis.federation.io.AstType.BIT_NEGATE;
+import static org.avis.federation.io.AstType.BIT_OR;
+import static org.avis.federation.io.AstType.BIT_XOR;
+import static org.avis.federation.io.AstType.CONST_INT32;
+import static org.avis.federation.io.AstType.CONST_INT64;
+import static org.avis.federation.io.AstType.CONST_REAL64;
+import static org.avis.federation.io.AstType.CONST_STRING;
+import static org.avis.federation.io.AstType.CONTAINS;
+import static org.avis.federation.io.AstType.DECOMPOSE;
+import static org.avis.federation.io.AstType.DECOMPOSE_COMPAT;
+import static org.avis.federation.io.AstType.DIVIDE;
+import static org.avis.federation.io.AstType.EMPTY;
+import static org.avis.federation.io.AstType.ENDS_WITH;
+import static org.avis.federation.io.AstType.EQUALS;
+import static org.avis.federation.io.AstType.FOLD_CASE;
+import static org.avis.federation.io.AstType.F_EQUALS;
+import static org.avis.federation.io.AstType.GREATER_THAN;
+import static org.avis.federation.io.AstType.GREATER_THAN_EQUALS;
+import static org.avis.federation.io.AstType.INT32;
+import static org.avis.federation.io.AstType.INT64;
+import static org.avis.federation.io.AstType.LESS_THAN;
+import static org.avis.federation.io.AstType.LESS_THAN_EQUALS;
+import static org.avis.federation.io.AstType.LOGICAL_SHIFT_RIGHT;
+import static org.avis.federation.io.AstType.MODULO;
+import static org.avis.federation.io.AstType.MULTIPLY;
+import static org.avis.federation.io.AstType.NAME;
+import static org.avis.federation.io.AstType.NAN;
+import static org.avis.federation.io.AstType.NOT;
+import static org.avis.federation.io.AstType.NOT_EQUALS;
+import static org.avis.federation.io.AstType.OPAQUE;
+import static org.avis.federation.io.AstType.OR;
+import static org.avis.federation.io.AstType.PRIMARY;
+import static org.avis.federation.io.AstType.REAL64;
+import static org.avis.federation.io.AstType.REGEX;
+import static org.avis.federation.io.AstType.REGEXP;
+import static org.avis.federation.io.AstType.REQUIRE;
+import static org.avis.federation.io.AstType.SECONDARY;
+import static org.avis.federation.io.AstType.SHIFT_LEFT;
+import static org.avis.federation.io.AstType.SHIFT_RIGHT;
+import static org.avis.federation.io.AstType.SIZE;
+import static org.avis.federation.io.AstType.STRING;
+import static org.avis.federation.io.AstType.SUBTRACT;
+import static org.avis.federation.io.AstType.TERTIARY;
+import static org.avis.federation.io.AstType.TO_UPPER;
+import static org.avis.federation.io.AstType.UNARY_MINUS;
+import static org.avis.federation.io.AstType.UNARY_PLUS;
+import static org.avis.federation.io.AstType.WILDCARD;
+import static org.avis.federation.io.AstType.XOR;
 import static org.avis.io.XdrCoding.TYPE_INT32;
 import static org.avis.io.XdrCoding.TYPE_INT64;
 import static org.avis.io.XdrCoding.TYPE_REAL64;
@@ -101,7 +101,7 @@ import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.util.Text.className;
 
 /**
- * Parser class for translating XDR-encoded AST's into Node-based ones.
+ * Parser class for translating XDR-encoded AST's into Node-based AST's.
  * 
  * @see AstXdrCoding#decodeAST(ByteBuffer)
  *
@@ -129,28 +129,28 @@ class AstParser
   public Node expr ()
     throws ProtocolCodecException, IllegalChildException
   {
-    int nodeType = in.getInt ();
+    int type = in.getInt ();
     
-    if (nodeType == EMPTY)
+    if (type == EMPTY)
       return CONST_FALSE;
     
-    int subType = in.getInt ();
+    int leafType = in.getInt ();
     
-    // sanity check subtype for composite nodes
-    if (nodeType > CONST_STRING && subType != 0)
+    // sanity check leaf type for parent nodes
+    if (type > CONST_STRING && leafType != 0)
     {
       throw new ProtocolCodecException ("Invalid subtype for parent node: " + 
-                                        subType);
+                                        leafType);
     }
     
-    switch (nodeType) 
+    switch (type) 
     {
       case NAME:
       case CONST_INT32:
       case CONST_INT64:
       case CONST_REAL64:
       case CONST_STRING:
-        return leaf (nodeType, subType);
+        return leaf (type, leafType);
       case REGEXP:
         return StrRegex.create (children ());
       case EQUALS:
@@ -247,7 +247,7 @@ class AstParser
         return new Size (single ().field ());
       default:
         throw new ProtocolCodecException 
-          ("Unknown AST node type " + nodeType);
+          ("Unknown AST node type " + type);
     }
   }
 
@@ -312,35 +312,35 @@ class AstParser
   }
   
   /**
-   * Read a leaf node of a given type and subtype.
+   * Read a leaf node of a given type and leaf type.
    * 
-   * @param nodeType The node type.
-   * @param subType The node sub type (must be one of the
-   *                XdrCoding.TYPE_* values).
+   * @param type The node type.
+   * @param leafType The type of value contained in the leaf: must be
+   *                one of the XdrCoding.TYPE_* values.
    * @return The node.
    * 
    * @throws ProtocolCodecException if the node was not valid constant
    *                 node of the specified type.
    */
-  private Node leaf (int nodeType, int subType)
+  private Node leaf (int type, int leafType)
     throws ProtocolCodecException
   {
-    switch (nodeType)
+    switch (type)
     {
       case NAME:
-        assertSubtype (subType, TYPE_STRING);
+        assertLeafType (leafType, TYPE_STRING);
         return new Field (getString (in));
       case CONST_STRING:
-        assertSubtype (subType, TYPE_STRING);
+        assertLeafType (leafType, TYPE_STRING);
         return new Const (getString (in));
       case CONST_INT32:
-        assertSubtype (subType, TYPE_INT32);
+        assertLeafType (leafType, TYPE_INT32);
         return new Const (in.getInt ());
       case CONST_INT64:
-        assertSubtype (subType, TYPE_INT64);
+        assertLeafType (leafType, TYPE_INT64);
         return new Const (in.getLong ());
       case CONST_REAL64:
-        assertSubtype (subType, TYPE_REAL64);
+        assertLeafType (leafType, TYPE_REAL64);
         return new Const (in.getDouble ());
       default:
         throw new Error ();
@@ -350,13 +350,13 @@ class AstParser
   /**
    * Check that a node type matches an actual required value.
    */
-  private static void assertSubtype (int required, int actual)
+  private static void assertLeafType (int required, int actual)
     throws ProtocolCodecException
   {
     if (required != actual)
     {
       throw new ProtocolCodecException 
-        ("Leaf node has wrong sub type: " + actual);
+        ("Leaf node has incorrect value type: " + actual);
     }
   }
 }

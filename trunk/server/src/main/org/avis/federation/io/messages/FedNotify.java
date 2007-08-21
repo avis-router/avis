@@ -1,4 +1,4 @@
-package org.avis.federation.messages;
+package org.avis.federation.io.messages;
 
 import java.util.Map;
 
