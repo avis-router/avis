@@ -78,7 +78,7 @@ public class JUTestFederationManager
     
     Connector connector =
       new Connector (router2, "router2", federationUri, fedClass,
-                               new FederationOptions ());
+                     new FederationOptions ());
     
     sleep (1000);
     
