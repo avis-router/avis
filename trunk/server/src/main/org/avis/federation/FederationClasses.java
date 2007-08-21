@@ -13,7 +13,7 @@ import java.net.InetAddress;
  * 
  * @author Matthew Phillips
  */
-public class FederationClassMap
+public class FederationClasses
 {
   private FederationClass defaultClass;
   private Map<String, FederationClass> classes;
@@ -21,12 +21,17 @@ public class FederationClassMap
   private Map<String, FederationClass> federatorDomains;
   private Map<String, FederationClass> hosts;
 
+  public FederationClasses ()
+  {
+    this (new FederationClass ());
+  }
+  
   /**
    * Create a new instance.
    * 
    * @param defaultClass The default federation class.
    */
-  public FederationClassMap (FederationClass defaultClass)
+  public FederationClasses (FederationClass defaultClass)
   {
     this.defaultClass = defaultClass;
     this.classes = new HashMap<String, FederationClass> ();
@@ -39,7 +44,7 @@ public class FederationClassMap
    * Find an existing federation class with the given name or create a
    * new one.
    */
-  public FederationClass findOrCreate (String name)
+  public FederationClass define (String name)
   {
     FederationClass fedClass = classes.get (name);
     

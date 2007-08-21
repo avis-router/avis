@@ -163,7 +163,7 @@ public class JUTestFederation
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
-    FederationClassMap federationMap = new FederationClassMap (fedClass);
+    FederationClasses federationMap = new FederationClasses (fedClass);
     
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
@@ -209,7 +209,7 @@ public class JUTestFederation
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
-    FederationClassMap federationMap = new FederationClassMap (fedClass);
+    FederationClasses federationMap = new FederationClasses (fedClass);
     
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
@@ -435,7 +435,7 @@ public class JUTestFederation
       FederationClass fedClass =
         new FederationClass ("require (federated)", "require (federated)");
       
-      FederationClassMap federationMap = new FederationClassMap (fedClass);
+      FederationClasses federationMap = new FederationClasses (fedClass);
       
       EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
       
