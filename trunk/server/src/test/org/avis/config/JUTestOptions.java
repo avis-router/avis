@@ -4,14 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.avis.config.OptionSet;
-import org.avis.config.Options;
-
 import org.junit.Test;
 
 import static org.avis.common.Common.K;
 import static org.avis.common.Common.MB;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

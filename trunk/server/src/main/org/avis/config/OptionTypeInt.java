@@ -1,5 +1,6 @@
 package org.avis.config;
 
+
 public class OptionTypeInt extends OptionType
 {
   protected int min;

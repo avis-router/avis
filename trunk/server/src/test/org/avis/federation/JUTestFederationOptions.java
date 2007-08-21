@@ -4,19 +4,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.Test;
+
 import org.avis.config.IllegalOptionException;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.Pair;
-
-import org.junit.Test;
 
 import static org.avis.federation.FederationClass.parse;
 import static org.avis.federation.FederationOptions.splitOptionParam;
 import static org.avis.subscription.ast.Nodes.unparse;
 import static org.avis.util.Collections.list;
 import static org.avis.util.Collections.set;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 

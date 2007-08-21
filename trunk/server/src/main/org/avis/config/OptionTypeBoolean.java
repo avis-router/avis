@@ -1,5 +1,6 @@
 package org.avis.config;
 
+
 public class OptionTypeBoolean extends OptionType
 {
   public static final OptionTypeBoolean INSTANCE = new OptionTypeBoolean ();
