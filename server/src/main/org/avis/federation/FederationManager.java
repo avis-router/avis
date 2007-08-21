@@ -31,7 +31,7 @@ import static org.avis.util.Text.shortException;
 public class FederationManager implements CloseListener
 {
   protected Router router;
-  protected FederationClasses classMap;
+  protected FederationClasses classes;
   protected Acceptor acceptor;
   protected List<Connector> connectors;
 
@@ -42,13 +42,13 @@ public class FederationManager implements CloseListener
     
     String serverDomain = initServerDomain (federationConfig);
     
-    classMap = initClasses (federationConfig);
+    classes = initClasses (federationConfig);
       
-    connectors = initConnectors (router, serverDomain, classMap, 
+    connectors = initConnectors (router, serverDomain, classes, 
                                  federationConfig);
 
     acceptor =
-      initAcceptor (router, serverDomain, classMap, federationConfig);
+      initAcceptor (router, serverDomain, classes, federationConfig);
     
     router.addCloseListener (this);
   }
@@ -80,7 +80,7 @@ public class FederationManager implements CloseListener
   private static List<Connector> initConnectors
     (Router router,
      String serverDomain,
-     FederationClasses classMap, 
+     FederationClasses classes, 
      Options config)
   {
     Map<String, Object> connect = 
@@ -89,7 +89,7 @@ public class FederationManager implements CloseListener
     // check federation classes and URI's make sense
     for (Entry<String, Object> entry : connect.entrySet ())
     {
-      FederationClass fedClass = classMap.define (entry.getKey ());
+      FederationClass fedClass = classes.define (entry.getKey ());
       
       if (fedClass.allowsNothing ())
       {
@@ -108,11 +108,12 @@ public class FederationManager implements CloseListener
     
     for (Entry<String, Object> entry : connect.entrySet ())
     {
-      FederationClass fedClass = classMap.define (entry.getKey ());
+      FederationClass fedClass = classes.define (entry.getKey ());
       
       connectors.add
         (new Connector 
-          (router, serverDomain, (EwafURI)entry.getValue (), fedClass, config));
+          (router, serverDomain, (EwafURI)entry.getValue (), 
+           fedClass, config));
     }
     
     return connectors;
@@ -142,7 +143,7 @@ public class FederationManager implements CloseListener
   @SuppressWarnings("unchecked")
   private static Acceptor initAcceptor (Router router, 
                                         String serverDomain,
-                                        FederationClasses classMap,
+                                        FederationClasses classes,
                                         Options config)
   {
     Set<EwafURI> uris = (Set<EwafURI>)config.get ("Federation.Listen");
@@ -157,8 +158,8 @@ public class FederationManager implements CloseListener
         for (EwafURI uri : uris)
           checkUri ("Federation.Listen", uri);
         
-        return new Acceptor (router, serverDomain, classMap, 
-                                       addressesFor (uris));
+        return new Acceptor (router, serverDomain, classes, 
+                             addressesFor (uris));
       } catch (IOException ex)
       {
         throw new IllegalOptionException ("Federation.Listen", 

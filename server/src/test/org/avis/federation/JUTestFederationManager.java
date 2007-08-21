@@ -64,7 +64,7 @@ public class JUTestFederationManager
     FederationManager manager = new FederationManager (router1, options);
     
     FederationClass testClass = 
-      manager.classMap.classFor (InetAddress.getLocalHost (), "router2");
+      manager.classes.classFor (InetAddress.getLocalHost (), "router2");
     
     assertFalse (testClass.allowsNothing ());
     
