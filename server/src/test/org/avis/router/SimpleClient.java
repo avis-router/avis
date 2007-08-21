@@ -115,6 +115,8 @@ public class SimpleClient implements IoHandler
   public Message receive (long timeout)
     throws MessageTimeoutException, NoConnectionException, InterruptedException
   {
+    checkConnected ();
+    
     Message message = incomingMessages.poll (timeout, MILLISECONDS);
     
     if (message == null)
@@ -272,13 +274,17 @@ public class SimpleClient implements IoHandler
   public synchronized void close (long timeout)
     throws Exception
   {
+    if (clientSession == null)
+      return;
+    
     if (connected && clientSession.isConnected ())
     {
       send (new DisconnRqst ());
       receive (DisconnRply.class, timeout);
     }
-    
+
     clientSession.close ().join ();
+    
     clientSession = null;
   }
   
