@@ -214,9 +214,8 @@ public class FederationManager implements CloseListener
     for (Entry<String, Object> entry : applyClass.entrySet ())
     {
       FederationClass fedClass = classMap.findOrCreate (entry.getKey ());
-      Set<String> values = (Set<String>)entry.getValue ();
       
-      for (String value : values)
+      for (String value : (Set<String>)entry.getValue ())
       {
         if (value.startsWith ("@"))
         {
