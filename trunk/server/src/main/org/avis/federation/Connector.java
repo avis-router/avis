@@ -41,7 +41,7 @@ import static org.avis.util.Text.shortException;
 /**
  * Initiates a federation connection to a remote host. After
  * connection and successfully handshaking with a FedConnRqst, it
- * creates and hands over processing to a FederationLink.
+ * creates and hands over processing to a Link.
  * 
  * @see Link
  * @see Acceptor
