@@ -65,15 +65,9 @@ public class Xor extends BoolParentNode
       Object result = children.get (i).evaluate (attrs);
       
       if (result == BOTTOM)
-      {
         return BOTTOM;
-      } else if (result == TRUE)
-      {
-        if (value == TRUE)
-          return FALSE;
-        else
-          value = TRUE;
-      }
+      else if (result == TRUE)
+        value = value == TRUE ? FALSE : TRUE;
     }
     
     return value;
