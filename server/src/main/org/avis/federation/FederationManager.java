@@ -24,7 +24,7 @@ import static org.avis.util.Text.shortException;
 /**
  * Constructs the federation setup by reading Federation.*
  * configuration items from a config and setting up federation
- * classes, listeners and connectors to match.
+ * classes, listeners and acceptors to match.
  * 
  * @author Matthew Phillips
  */
