@@ -54,12 +54,12 @@ public class FederationListener implements IoHandler, Closeable
   protected Set<FederationLink> links;
   protected Set<InetSocketAddress> addresses;
   protected String serverDomain;
-  protected FederationClassMap federationClassMap;
+  protected FederationClasses federationClassMap;
   protected volatile boolean closing;
 
   public FederationListener (Router router,
                              String serverDomain,
-                             FederationClassMap federationClassMap, 
+                             FederationClasses federationClassMap, 
                              Set<InetSocketAddress> addresses)
     throws IOException
   {
@@ -155,7 +155,7 @@ public class FederationListener implements IoHandler, Closeable
       FederationClass fedClass = 
         federationClassMap.classFor (remoteHost, message.serverDomain);
 
-      if (!fedClass.isNull ())
+      if (!fedClass.allowsNothing ())
       {
         send (session, new FedConnRply (message, serverDomain));
        

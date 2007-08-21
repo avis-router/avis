@@ -11,7 +11,7 @@ import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
  * Defines a federation class which controls which notifications to
  * export and import from a router.
  * 
- * @see FederationClassMap
+ * @see FederationClasses
  * 
  * @author Matthew Phillips
  */
@@ -43,11 +43,15 @@ public class FederationClass
   /**
    * True if this class neither exports nor imports anything.
    */
-  public boolean isNull ()
+  public boolean allowsNothing ()
   {
     return incomingFilter == CONST_FALSE && outgoingFilter == CONST_FALSE;
   }
 
+  /**
+   * Parse a subscription expression, allowing TRUE and FALSE to stand for
+   * CONST_TRUE and CONST_FALSE.
+   */
   public static Node parse (String subExpr)
     throws ParseException
   {

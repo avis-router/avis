@@ -66,7 +66,7 @@ public class JUTestFederationManager
     FederationClass testClass = 
       manager.classMap.classFor (InetAddress.getLocalHost (), "router2");
     
-    assertFalse (testClass.isNull ());
+    assertFalse (testClass.allowsNothing ());
     
     assertEquals (addressesFor (set (federationUri)),
                   manager.listener.addresses);
