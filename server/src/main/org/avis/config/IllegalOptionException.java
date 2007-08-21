@@ -1,5 +1,8 @@
 package org.avis.config;
 
+import org.avis.config.OptionSet;
+import org.avis.config.Options;
+
 
 /**
  * Thrown when an illegal option name or value is used with
