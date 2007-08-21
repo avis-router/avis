@@ -6,6 +6,8 @@ import java.util.Set;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.avis.util.IllegalOptionException;
+
 import static org.avis.util.Text.split;
 
 /**

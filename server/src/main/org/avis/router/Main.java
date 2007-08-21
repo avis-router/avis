@@ -6,10 +6,10 @@ import java.io.IOException;
 
 import org.apache.mina.common.ByteBuffer;
 
-import org.avis.config.IllegalOptionException;
 import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptions;
 import org.avis.logging.Log;
+import org.avis.util.IllegalOptionException;
 
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.TRACE;

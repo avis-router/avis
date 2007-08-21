@@ -5,11 +5,11 @@ import java.util.Queue;
 import org.avis.client.SecureMode;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
-import org.avis.config.IllegalOptionException;
 import org.avis.security.DualKeyScheme;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.util.CommandLineOptions;
+import org.avis.util.IllegalOptionException;
 
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;

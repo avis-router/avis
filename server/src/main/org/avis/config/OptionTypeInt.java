@@ -1,5 +1,7 @@
 package org.avis.config;
 
+import org.avis.util.IllegalOptionException;
+
 
 public class OptionTypeInt extends OptionType
 {

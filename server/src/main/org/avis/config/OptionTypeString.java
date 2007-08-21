@@ -3,6 +3,8 @@ package org.avis.config;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.avis.util.IllegalOptionException;
+
 import static java.util.Arrays.asList;
 
 public class OptionTypeString extends OptionType

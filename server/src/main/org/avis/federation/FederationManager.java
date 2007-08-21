@@ -8,11 +8,11 @@ import java.util.Map.Entry;
 
 import java.io.IOException;
 
-import org.avis.config.IllegalOptionException;
 import org.avis.config.Options;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 import org.avis.subscription.ast.Node;
+import org.avis.util.IllegalOptionException;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.federation.FederationOptions.getParamOption;
