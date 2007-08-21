@@ -43,6 +43,7 @@ public class JUTestFederation
   private static final String MANTARA_ELVIN = "/usr/local/sbin/elvind";
   
   private LogFailTester logTester;
+  private StandardFederatorSetup federation;
 
   @Before
   public void setup ()
@@ -55,8 +56,15 @@ public class JUTestFederation
   
   @After
   public void tearDown ()
+    throws Exception
   {
     logTester.assertOkAndDispose ();
+    
+    if (federation != null)
+    {
+      federation.close ();
+      federation = null;
+    }
   }
   
   @Test
@@ -76,7 +84,7 @@ public class JUTestFederation
   public void basic ()
     throws Exception
   {
-    StandardFederatorSetup federation = new StandardFederatorSetup ();
+    federation = new StandardFederatorSetup ();
     
     testTwoWayClientSendReceive (federation.client1, federation.client2);
     
@@ -116,7 +124,7 @@ public class JUTestFederation
   public void security ()
     throws Exception
   {
-    StandardFederatorSetup federation = new StandardFederatorSetup ();
+    federation = new StandardFederatorSetup ();
     
     Key client1Private = new Key ("client1 private");
     Key client1Public = client1Private.publicKeyFor (SHA1_PRODUCER);
