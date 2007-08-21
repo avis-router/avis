@@ -32,8 +32,8 @@ public class FederationManager implements CloseListener
 {
   protected Router router;
   protected FederationClasses classMap;
-  protected FederationListener listener;
-  protected List<FederationConnector> connectors;
+  protected Acceptor acceptor;
+  protected List<Connector> connectors;
 
   public FederationManager (Router router, Options federationConfig) 
     throws IllegalOptionException
@@ -47,8 +47,8 @@ public class FederationManager implements CloseListener
     connectors = initConnectors (router, serverDomain, classMap, 
                                  federationConfig);
 
-    listener =
-      initListener (router, serverDomain, classMap, federationConfig);
+    acceptor =
+      initAcceptor (router, serverDomain, classMap, federationConfig);
     
     router.addCloseListener (this);
   }
@@ -62,13 +62,13 @@ public class FederationManager implements CloseListener
   {
     router.removeCloseListener (this);
     
-    if (listener != null)
-      listener.close ();
+    if (acceptor != null)
+      acceptor.close ();
     
-    for (FederationConnector connector : connectors)
+    for (Connector connector : connectors)
       connector.close ();
     
-    listener = null;
+    acceptor = null;
     connectors = null;
   }
   
@@ -77,7 +77,7 @@ public class FederationManager implements CloseListener
     return connectors == null;
   }
   
-  private static List<FederationConnector> initConnectors
+  private static List<Connector> initConnectors
     (Router router,
      String serverDomain,
      FederationClasses classMap, 
@@ -103,15 +103,15 @@ public class FederationManager implements CloseListener
                 (EwafURI)entry.getValue ());
     }
     
-    List<FederationConnector> connectors = 
-      new ArrayList<FederationConnector> (connect.size ());
+    List<Connector> connectors = 
+      new ArrayList<Connector> (connect.size ());
     
     for (Entry<String, Object> entry : connect.entrySet ())
     {
       FederationClass fedClass = classMap.define (entry.getKey ());
       
       connectors.add
-        (new FederationConnector 
+        (new Connector 
           (router, serverDomain, (EwafURI)entry.getValue (), fedClass, config));
     }
     
@@ -140,10 +140,10 @@ public class FederationManager implements CloseListener
   }
 
   @SuppressWarnings("unchecked")
-  private static FederationListener initListener (Router router, 
-                                                  String serverDomain,
-                                                  FederationClasses classMap,
-                                                  Options config)
+  private static Acceptor initAcceptor (Router router, 
+                                        String serverDomain,
+                                        FederationClasses classMap,
+                                        Options config)
   {
     Set<EwafURI> uris = (Set<EwafURI>)config.get ("Federation.Listen");
     
@@ -157,7 +157,7 @@ public class FederationManager implements CloseListener
         for (EwafURI uri : uris)
           checkUri ("Federation.Listen", uri);
         
-        return new FederationListener (router, serverDomain, classMap, 
+        return new Acceptor (router, serverDomain, classMap, 
                                        addressesFor (uris));
       } catch (IOException ex)
       {

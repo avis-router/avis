@@ -171,8 +171,8 @@ public class JUTestFederation
     FederationOptions options = new FederationOptions ();
     options.set ("Federation.Connect-Timeout", 1);
     
-    FederationConnector connector = 
-      new FederationConnector (server1, "server1", ewafURI, 
+    Connector connector = 
+      new Connector (server1, "server1", ewafURI, 
                                fedClass, options);
     
     sleep (2000);
@@ -180,8 +180,8 @@ public class JUTestFederation
     // check we're waiting
     assertTrue (connector.isWaitingForAsyncConnection ());
     
-    FederationListener listener = 
-      new FederationListener (server2, "server2", federationMap, 
+    Acceptor acceptor = 
+      new Acceptor (server2, "server2", federationMap, 
                               addressesFor (set (ewafURI)));
 
     sleep (2000);
@@ -190,7 +190,7 @@ public class JUTestFederation
     assertTrue (connector.isConnected ());
     
     connector.close ();
-    listener.close ();
+    acceptor.close ();
     
     server1.close ();
     server2.close ();
@@ -220,12 +220,12 @@ public class JUTestFederation
     // Log.enableLogging (Log.DIAGNOSTIC, true);
     // Log.enableLogging (Log.TRACE, true);
 
-    FederationListener listener = 
-      new FederationListener (server2, "server2", federationMap, 
+    Acceptor acceptor = 
+      new Acceptor (server2, "server2", federationMap, 
                               addressesFor (set (ewafURI)));
 
-    FederationConnector connector = 
-      new FederationConnector (server1, "server1", ewafURI, 
+    Connector connector = 
+      new Connector (server1, "server1", ewafURI, 
                                fedClass, options);
 
     sleep (1000);
@@ -233,15 +233,15 @@ public class JUTestFederation
     // check we've connected
     assertTrue (connector.isConnected ());
 
-    listener.close ();
+    acceptor.close ();
     
     sleep (3000);
 
     // check we're waiting
     assertTrue (connector.isWaitingForAsyncConnection ());
     
-    listener = 
-      new FederationListener (server2, "server2", federationMap, 
+    acceptor = 
+      new Acceptor (server2, "server2", federationMap, 
                               addressesFor (set (ewafURI)));
     
     sleep (2000);
@@ -250,7 +250,7 @@ public class JUTestFederation
     assertTrue (connector.isConnected ());
     
     connector.close ();
-    listener.close ();
+    acceptor.close ();
     
     server1.close ();
     server2.close ();
@@ -284,8 +284,8 @@ public class JUTestFederation
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
-    FederationConnector connector = 
-      new FederationConnector (server, "avis", ewafURI, 
+    Connector connector = 
+      new Connector (server, "avis", ewafURI, 
                                fedClass, options);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
@@ -341,8 +341,8 @@ public class JUTestFederation
       new FederationClass (require, 
                            "require (federated)");
     
-    FederationConnector connector = 
-      new FederationConnector (server, "avis", ewafURI, 
+    Connector connector = 
+      new Connector (server, "avis", ewafURI, 
                                fedClass, options);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
@@ -417,8 +417,8 @@ public class JUTestFederation
     public SimpleClient client1;
     public SimpleClient client2;
     
-    public FederationConnector connector;
-    public FederationListener listener;
+    public Connector connector;
+    public Acceptor acceptor;
     
     public StandardFederatorSetup ()
       throws Exception
@@ -439,12 +439,12 @@ public class JUTestFederation
       
       EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
       
-      listener = 
-        new FederationListener (server2, "server2", federationMap, 
+      acceptor = 
+        new Acceptor (server2, "server2", federationMap, 
                                 addressesFor (set (ewafURI)));
       
       connector = 
-        new FederationConnector (server1, "server1", ewafURI, 
+        new Connector (server1, "server1", ewafURI, 
                                  fedClass, options);
       
       client1 = new SimpleClient ("client1", "localhost", PORT1);
@@ -464,7 +464,7 @@ public class JUTestFederation
       client2.close ();
       
       connector.close ();
-      listener.close ();
+      acceptor.close ();
       
       server1.close ();
       server2.close ();

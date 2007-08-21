@@ -3,6 +3,7 @@ package org.avis.federation;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import org.avis.federation.io.AstXdrCoding;
 import org.avis.subscription.ast.Node;
 
 import org.junit.Test;

@@ -19,8 +19,9 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.config.Options;
-import org.avis.federation.messages.FedConnRply;
-import org.avis.federation.messages.FedConnRqst;
+import org.avis.federation.io.FederationFrameCodec;
+import org.avis.federation.io.messages.FedConnRply;
+import org.avis.federation.io.messages.FedConnRqst;
 import org.avis.io.RequestTrackingFilter;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -42,12 +43,12 @@ import static org.avis.util.Text.shortException;
  * connection and successfully handshaking with a FedConnRqst, it
  * creates and hands over processing to a FederationLink.
  * 
- * @see FederationLink
- * @see FederationListener
+ * @see Link
+ * @see Acceptor
  * 
  * @author Matthew Phillips
  */
-public class FederationConnector implements IoHandler, Closeable
+public class Connector implements IoHandler, Closeable
 {
   private EwafURI uri;
   private Options options;
@@ -56,15 +57,15 @@ public class FederationConnector implements IoHandler, Closeable
   private SocketConnectorConfig connectorConfig;
   private FederationClass federationClass;
   private String serverDomain;
-  private FederationLink link;
+  private Link link;
   private InetSocketAddress remoteAddress;
   private IoSession session;
   private volatile boolean closing;
   private Timer asyncConnectTimer;
   
-  public FederationConnector (Router router, String serverDomain,
-                              EwafURI uri, FederationClass federationClass,
-                              Options options)
+  public Connector (Router router, String serverDomain,
+                    EwafURI uri, FederationClass federationClass,
+                    Options options)
   {
     this.router = router;
     this.uri = uri;
@@ -310,7 +311,7 @@ public class FederationConnector implements IoHandler, Closeable
                 remoteServerDomain + "\"", this);
     
     link =
-      new FederationLink (session, router,
+      new Link (session, router,
                           federationClass, serverDomain, 
                           remoteServerDomain, remoteHost);
   }

@@ -3,9 +3,9 @@ package org.avis.federation;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
-import org.avis.federation.messages.Ack;
-import org.avis.federation.messages.FedSubReplace;
-import org.avis.federation.messages.FedNotify;
+import org.avis.federation.io.messages.Ack;
+import org.avis.federation.io.messages.FedNotify;
+import org.avis.federation.io.messages.FedSubReplace;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -33,12 +33,12 @@ import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 
 /**
  * Manages link between two federation endpoints. This link is
- * typically established by either a {@link FederationListener} or
- * {@link FederationConnector}.
+ * typically established by either a {@link Acceptor} or
+ * {@link Connector}.
  * 
  * @author Matthew Phillips
  */
-public class FederationLink implements NotifyListener
+public class Link implements NotifyListener
 {
   /**
    * Internal disconnection reason code indicating we're shutting down
@@ -73,12 +73,12 @@ public class FederationLink implements NotifyListener
    * @param remoteServerDomain
    * @param remoteHostName
    */
-  public FederationLink (IoSession session,
-                         Router router, 
-                         FederationClass federationClass, 
-                         String serverDomain, 
-                         String remoteServerDomain,
-                         String remoteHostName)
+  public Link (IoSession session,
+               Router router, 
+               FederationClass federationClass, 
+               String serverDomain, 
+               String remoteServerDomain,
+               String remoteHostName)
   {
     this.session = session;
     this.router = router;

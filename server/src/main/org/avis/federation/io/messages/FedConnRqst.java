@@ -1,4 +1,4 @@
-package org.avis.federation.messages;
+package org.avis.federation.io.messages;
 
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;

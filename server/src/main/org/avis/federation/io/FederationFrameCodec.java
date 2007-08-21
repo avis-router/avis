@@ -1,4 +1,4 @@
-package org.avis.federation;
+package org.avis.federation.io;
 
 import org.apache.mina.common.IoFilter;
 import org.apache.mina.filter.codec.ProtocolCodecException;
@@ -7,11 +7,11 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 
-import org.avis.federation.messages.Ack;
-import org.avis.federation.messages.FedConnRply;
-import org.avis.federation.messages.FedConnRqst;
-import org.avis.federation.messages.FedSubReplace;
-import org.avis.federation.messages.FedNotify;
+import org.avis.federation.io.messages.Ack;
+import org.avis.federation.io.messages.FedConnRply;
+import org.avis.federation.io.messages.FedConnRqst;
+import org.avis.federation.io.messages.FedNotify;
+import org.avis.federation.io.messages.FedSubReplace;
 import org.avis.io.FrameCodec;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.Message;

@@ -1,4 +1,4 @@
-package org.avis.federation.messages;
+package org.avis.federation.io.messages;
 
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
@@ -6,8 +6,8 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.avis.io.messages.RequestMessage;
 import org.avis.subscription.ast.Node;
 
-import static org.avis.federation.AstXdrCoding.decodeAST;
-import static org.avis.federation.AstXdrCoding.encodeAST;
+import static org.avis.federation.io.AstXdrCoding.decodeAST;
+import static org.avis.federation.io.AstXdrCoding.encodeAST;
 
 public class FedSubReplace extends RequestMessage<Ack>
 {

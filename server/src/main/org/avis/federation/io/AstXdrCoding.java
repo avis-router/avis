@@ -1,4 +1,4 @@
-package org.avis.federation;
+package org.avis.federation.io;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,48 +41,48 @@ import org.avis.subscription.ast.nodes.StrWildcard;
 import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
-import static org.avis.federation.AstType.ADD;
-import static org.avis.federation.AstType.AND;
-import static org.avis.federation.AstType.BEGINS_WITH;
-import static org.avis.federation.AstType.BIT_AND;
-import static org.avis.federation.AstType.BIT_NEGATE;
-import static org.avis.federation.AstType.CONST_INT32;
-import static org.avis.federation.AstType.CONST_INT64;
-import static org.avis.federation.AstType.CONST_REAL64;
-import static org.avis.federation.AstType.CONST_STRING;
-import static org.avis.federation.AstType.CONTAINS;
-import static org.avis.federation.AstType.DECOMPOSE;
-import static org.avis.federation.AstType.DECOMPOSE_COMPAT;
-import static org.avis.federation.AstType.DIVIDE;
-import static org.avis.federation.AstType.EMPTY;
-import static org.avis.federation.AstType.ENDS_WITH;
-import static org.avis.federation.AstType.FOLD_CASE;
-import static org.avis.federation.AstType.F_EQUALS;
-import static org.avis.federation.AstType.GREATER_THAN;
-import static org.avis.federation.AstType.GREATER_THAN_EQUALS;
-import static org.avis.federation.AstType.INT32;
-import static org.avis.federation.AstType.INT64;
-import static org.avis.federation.AstType.LESS_THAN;
-import static org.avis.federation.AstType.LESS_THAN_EQUALS;
-import static org.avis.federation.AstType.LOGICAL_SHIFT_RIGHT;
-import static org.avis.federation.AstType.MODULO;
-import static org.avis.federation.AstType.MULTIPLY;
-import static org.avis.federation.AstType.NAME;
-import static org.avis.federation.AstType.NAN;
-import static org.avis.federation.AstType.NOT;
-import static org.avis.federation.AstType.OPAQUE;
-import static org.avis.federation.AstType.OR;
-import static org.avis.federation.AstType.REAL64;
-import static org.avis.federation.AstType.REGEX;
-import static org.avis.federation.AstType.REQUIRE;
-import static org.avis.federation.AstType.SHIFT_LEFT;
-import static org.avis.federation.AstType.SHIFT_RIGHT;
-import static org.avis.federation.AstType.SIZE;
-import static org.avis.federation.AstType.STRING;
-import static org.avis.federation.AstType.SUBTRACT;
-import static org.avis.federation.AstType.UNARY_MINUS;
-import static org.avis.federation.AstType.WILDCARD;
-import static org.avis.federation.AstType.XOR;
+import static org.avis.federation.io.AstType.ADD;
+import static org.avis.federation.io.AstType.AND;
+import static org.avis.federation.io.AstType.BEGINS_WITH;
+import static org.avis.federation.io.AstType.BIT_AND;
+import static org.avis.federation.io.AstType.BIT_NEGATE;
+import static org.avis.federation.io.AstType.CONST_INT32;
+import static org.avis.federation.io.AstType.CONST_INT64;
+import static org.avis.federation.io.AstType.CONST_REAL64;
+import static org.avis.federation.io.AstType.CONST_STRING;
+import static org.avis.federation.io.AstType.CONTAINS;
+import static org.avis.federation.io.AstType.DECOMPOSE;
+import static org.avis.federation.io.AstType.DECOMPOSE_COMPAT;
+import static org.avis.federation.io.AstType.DIVIDE;
+import static org.avis.federation.io.AstType.EMPTY;
+import static org.avis.federation.io.AstType.ENDS_WITH;
+import static org.avis.federation.io.AstType.FOLD_CASE;
+import static org.avis.federation.io.AstType.F_EQUALS;
+import static org.avis.federation.io.AstType.GREATER_THAN;
+import static org.avis.federation.io.AstType.GREATER_THAN_EQUALS;
+import static org.avis.federation.io.AstType.INT32;
+import static org.avis.federation.io.AstType.INT64;
+import static org.avis.federation.io.AstType.LESS_THAN;
+import static org.avis.federation.io.AstType.LESS_THAN_EQUALS;
+import static org.avis.federation.io.AstType.LOGICAL_SHIFT_RIGHT;
+import static org.avis.federation.io.AstType.MODULO;
+import static org.avis.federation.io.AstType.MULTIPLY;
+import static org.avis.federation.io.AstType.NAME;
+import static org.avis.federation.io.AstType.NAN;
+import static org.avis.federation.io.AstType.NOT;
+import static org.avis.federation.io.AstType.OPAQUE;
+import static org.avis.federation.io.AstType.OR;
+import static org.avis.federation.io.AstType.REAL64;
+import static org.avis.federation.io.AstType.REGEX;
+import static org.avis.federation.io.AstType.REQUIRE;
+import static org.avis.federation.io.AstType.SHIFT_LEFT;
+import static org.avis.federation.io.AstType.SHIFT_RIGHT;
+import static org.avis.federation.io.AstType.SIZE;
+import static org.avis.federation.io.AstType.STRING;
+import static org.avis.federation.io.AstType.SUBTRACT;
+import static org.avis.federation.io.AstType.UNARY_MINUS;
+import static org.avis.federation.io.AstType.WILDCARD;
+import static org.avis.federation.io.AstType.XOR;
 import static org.avis.io.XdrCoding.TYPE_INT32;
 import static org.avis.io.XdrCoding.TYPE_INT64;
 import static org.avis.io.XdrCoding.TYPE_REAL64;
@@ -98,38 +98,38 @@ import static org.avis.util.Text.className;
  */
 public final class AstXdrCoding
 {
-  private static Map<Class<? extends Node>, Integer> nodeToTypecode;
+  private static Map<Class<? extends Node>, Integer> typeCodes;
   
   static
   {
-    nodeToTypecode = new HashMap<Class<? extends Node>, Integer> ();
+    typeCodes = new HashMap<Class<? extends Node>, Integer> ();
     
-    nodeToTypecode.put (And.class, AND);
-    nodeToTypecode.put (MathBitAnd.class, BIT_AND);
-    nodeToTypecode.put (MathBitInvert.class, BIT_NEGATE);
-    nodeToTypecode.put (MathBitLogShiftRight.class, LOGICAL_SHIFT_RIGHT);
-    nodeToTypecode.put (MathBitOr.class, OR);
-    nodeToTypecode.put (MathBitShiftLeft.class, SHIFT_LEFT);
-    nodeToTypecode.put (MathBitShiftRight.class, SHIFT_RIGHT);
-    nodeToTypecode.put (MathBitXor.class, XOR);
-    nodeToTypecode.put (MathDiv.class, DIVIDE);
-    nodeToTypecode.put (MathMinus.class, SUBTRACT);
-    nodeToTypecode.put (MathMod.class, MODULO);
-    nodeToTypecode.put (MathMult.class, MULTIPLY);
-    nodeToTypecode.put (MathPlus.class, ADD);
-    nodeToTypecode.put (MathUnaryMinus.class, UNARY_MINUS);
-    nodeToTypecode.put (Nan.class, NAN);
-    nodeToTypecode.put (Not.class, NOT);
-    nodeToTypecode.put (Or.class, OR);
-    nodeToTypecode.put (Require.class, REQUIRE);
-    nodeToTypecode.put (Size.class, SIZE);
-    nodeToTypecode.put (StrBeginsWith.class, BEGINS_WITH);
-    nodeToTypecode.put (StrContains.class, CONTAINS);
-    nodeToTypecode.put (StrEndsWith.class, ENDS_WITH);
-    nodeToTypecode.put (StrFoldCase.class, FOLD_CASE);
-    nodeToTypecode.put (StrRegex.class, REGEX);
-    nodeToTypecode.put (StrWildcard.class, WILDCARD);
-    nodeToTypecode.put (Xor.class, XOR);
+    typeCodes.put (And.class, AND);
+    typeCodes.put (MathBitAnd.class, BIT_AND);
+    typeCodes.put (MathBitInvert.class, BIT_NEGATE);
+    typeCodes.put (MathBitLogShiftRight.class, LOGICAL_SHIFT_RIGHT);
+    typeCodes.put (MathBitOr.class, OR);
+    typeCodes.put (MathBitShiftLeft.class, SHIFT_LEFT);
+    typeCodes.put (MathBitShiftRight.class, SHIFT_RIGHT);
+    typeCodes.put (MathBitXor.class, XOR);
+    typeCodes.put (MathDiv.class, DIVIDE);
+    typeCodes.put (MathMinus.class, SUBTRACT);
+    typeCodes.put (MathMod.class, MODULO);
+    typeCodes.put (MathMult.class, MULTIPLY);
+    typeCodes.put (MathPlus.class, ADD);
+    typeCodes.put (MathUnaryMinus.class, UNARY_MINUS);
+    typeCodes.put (Nan.class, NAN);
+    typeCodes.put (Not.class, NOT);
+    typeCodes.put (Or.class, OR);
+    typeCodes.put (Require.class, REQUIRE);
+    typeCodes.put (Size.class, SIZE);
+    typeCodes.put (StrBeginsWith.class, BEGINS_WITH);
+    typeCodes.put (StrContains.class, CONTAINS);
+    typeCodes.put (StrEndsWith.class, ENDS_WITH);
+    typeCodes.put (StrFoldCase.class, FOLD_CASE);
+    typeCodes.put (StrRegex.class, REGEX);
+    typeCodes.put (StrWildcard.class, WILDCARD);
+    typeCodes.put (Xor.class, XOR);
   }
   
   private AstXdrCoding ()
@@ -223,7 +223,7 @@ public final class AstXdrCoding
     } else
     {
       // sanity check is that this will NPE on unmapped type
-      return nodeToTypecode.get (node.getClass ());
+      return typeCodes.get (node.getClass ());
     }
   }
 
