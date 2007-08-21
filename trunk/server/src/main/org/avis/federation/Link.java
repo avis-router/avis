@@ -134,7 +134,6 @@ public class Link implements NotifyListener
   
   private void subscribe ()
   {
-    // todo how to we subscribe to TRUE?
     if (federationClass.incomingFilter != CONST_FALSE)
       send (new FedSubReplace (federationClass.incomingFilter));
   }
@@ -147,7 +146,7 @@ public class Link implements NotifyListener
     if (shouldPush (message))
     {
       FedNotify fedNotify = 
-        new FedNotify (message, localDomainAddedTo (routingFor (message)));
+        new FedNotify (message, serverDomainAddedTo (routingFor (message)));
       
       fedNotify.keys = keys.addedTo (message.keys);
       
@@ -177,7 +176,7 @@ public class Link implements NotifyListener
   /**
    * Return a routing list with the federator's local server domain added.
    */
-  private String [] localDomainAddedTo (String [] routing)
+  private String [] serverDomainAddedTo (String [] routing)
   {
     return addDomain (routing, serverDomain);
   }
@@ -187,7 +186,7 @@ public class Link implements NotifyListener
     switch (message.typeId ())
     {
       case FedSubReplace.ID:
-        handleFedModify ((FedSubReplace)message);
+        handleFedSubReplace ((FedSubReplace)message);
         break;
       case FedNotify.ID:
         handleFedNotify ((FedNotify)message);
@@ -216,13 +215,13 @@ public class Link implements NotifyListener
   {
     if (request.getClass () == FedSubReplace.class)
     {
-      warn ("Federation modify request to remote federator at " + 
+      warn ("Federation subscription request to remote federator at " + 
             remoteHostName + " timed out: retrying", this);
       
       subscribe ();
     } else
     {
-      // NB: this shouldn't happen, FedModify is the only request we send
+      // NB: this shouldn't happen, FedSubReplace is the only request we send
       warn ("Request to remote federator timed out: " + request.name (), this);
     }
   }
@@ -242,7 +241,7 @@ public class Link implements NotifyListener
     close (REASON_REQUEST_REJECTED, "");
   }
 
-  private void handleFedModify (FedSubReplace message)
+  private void handleFedSubReplace (FedSubReplace message)
   {
     remotePullFilter = message.incomingFilter.inlineConstants ();
     
