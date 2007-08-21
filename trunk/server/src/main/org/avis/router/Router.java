@@ -21,7 +21,6 @@ import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
-import org.avis.config.IllegalOptionException;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.FrameTooLargeException;
 import org.avis.io.messages.ConfConn;
@@ -51,6 +50,7 @@ import org.avis.security.Keys;
 import org.avis.subscription.parser.ConstantExpressionException;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
+import org.avis.util.IllegalOptionException;
 import org.avis.util.ListenerList;
 
 import static java.lang.Integer.toHexString;

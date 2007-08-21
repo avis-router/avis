@@ -6,9 +6,9 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import org.avis.config.IllegalOptionException;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
+import org.avis.util.IllegalOptionException;
 import org.avis.util.Pair;
 
 import static org.avis.federation.FederationClass.parse;

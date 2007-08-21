@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.avis.common.InvalidURIException;
-import org.avis.config.IllegalOptionException;
 import org.avis.config.OptionSet;
 import org.avis.config.OptionType;
 import org.avis.config.OptionTypeSet;
 import org.avis.config.Options;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
+import org.avis.util.IllegalOptionException;
 import org.avis.util.Pair;
 
 import static java.util.Collections.emptyList;

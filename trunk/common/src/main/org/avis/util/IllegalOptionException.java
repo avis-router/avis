@@ -1,12 +1,8 @@
-package org.avis.config;
-
-import org.avis.config.OptionSet;
-import org.avis.config.Options;
-
+package org.avis.util;
 
 /**
- * Thrown when an illegal option name or value is used with
- * {@link Options} or {@link OptionSet}.
+ * Thrown when an illegal option name or value is used in a
+ * configuration or command line setup.
  * 
  * @author Matthew Phillips
  */

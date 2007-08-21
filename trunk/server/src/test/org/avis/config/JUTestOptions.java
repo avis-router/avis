@@ -6,6 +6,8 @@ import java.util.Properties;
 
 import org.junit.Test;
 
+import org.avis.util.IllegalOptionException;
+
 import static org.avis.common.Common.K;
 import static org.avis.common.Common.MB;
 import static org.junit.Assert.assertEquals;
