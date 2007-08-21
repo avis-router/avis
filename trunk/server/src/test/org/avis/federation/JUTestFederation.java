@@ -163,7 +163,7 @@ public class JUTestFederation
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
-    FederationClasses federationMap = new FederationClasses (fedClass);
+    FederationClasses classes = new FederationClasses (fedClass);
     
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
@@ -173,7 +173,7 @@ public class JUTestFederation
     
     Connector connector = 
       new Connector (server1, "server1", ewafURI, 
-                               fedClass, options);
+                     fedClass, options);
     
     sleep (2000);
     
@@ -181,9 +181,9 @@ public class JUTestFederation
     assertTrue (connector.isWaitingForAsyncConnection ());
     
     Acceptor acceptor = 
-      new Acceptor (server2, "server2", federationMap, 
-                              addressesFor (set (ewafURI)));
-
+      new Acceptor (server2, "server2", classes, 
+                    addressesFor (set (ewafURI)));
+    
     sleep (2000);
     
     // check we've connected
@@ -209,7 +209,7 @@ public class JUTestFederation
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
-    FederationClasses federationMap = new FederationClasses (fedClass);
+    FederationClasses classes = new FederationClasses (fedClass);
     
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
@@ -221,12 +221,12 @@ public class JUTestFederation
     // Log.enableLogging (Log.TRACE, true);
 
     Acceptor acceptor = 
-      new Acceptor (server2, "server2", federationMap, 
-                              addressesFor (set (ewafURI)));
+      new Acceptor (server2, "server2", classes, 
+                    addressesFor (set (ewafURI)));
 
     Connector connector = 
       new Connector (server1, "server1", ewafURI, 
-                               fedClass, options);
+                     fedClass, options);
 
     sleep (1000);
     
@@ -241,8 +241,8 @@ public class JUTestFederation
     assertTrue (connector.isWaitingForAsyncConnection ());
     
     acceptor = 
-      new Acceptor (server2, "server2", federationMap, 
-                              addressesFor (set (ewafURI)));
+      new Acceptor (server2, "server2", classes, 
+                    addressesFor (set (ewafURI)));
     
     sleep (2000);
     
@@ -435,17 +435,17 @@ public class JUTestFederation
       FederationClass fedClass =
         new FederationClass ("require (federated)", "require (federated)");
       
-      FederationClasses federationMap = new FederationClasses (fedClass);
+      FederationClasses classes = new FederationClasses (fedClass);
       
       EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
       
       acceptor = 
-        new Acceptor (server2, "server2", federationMap, 
-                                addressesFor (set (ewafURI)));
+        new Acceptor (server2, "server2", classes, 
+                      addressesFor (set (ewafURI)));
       
       connector = 
         new Connector (server1, "server1", ewafURI, 
-                                 fedClass, options);
+                       fedClass, options);
       
       client1 = new SimpleClient ("client1", "localhost", PORT1);
       client2 = new SimpleClient ("client2", "localhost", PORT2);
