@@ -139,8 +139,8 @@ class AstParser
     // sanity check leaf type for parent nodes
     if (type > CONST_STRING && leafType != 0)
     {
-      throw new ProtocolCodecException ("Invalid subtype for parent node: " + 
-                                        leafType);
+      throw new ProtocolCodecException
+        ("Invalid leaf type for parent node: " + leafType);
     }
     
     switch (type) 
@@ -225,14 +225,6 @@ class AstParser
         return StrRegex.create (children ());
       case FOLD_CASE:
         return new StrFoldCase (single ().expr ());
-      case TO_UPPER:
-        throw new ProtocolCodecException ("toupper () is not supported");
-      case PRIMARY:
-        throw new ProtocolCodecException ("primary is not supported");
-      case SECONDARY:
-        throw new ProtocolCodecException ("secondary is not supported");
-      case TERTIARY:
-        throw new ProtocolCodecException ("tertiary is not supported");
       case DECOMPOSE:
         return new StrUnicodeDecompose (single ().expr (), 
                                         StrUnicodeDecompose.DECOMPOSE);
@@ -247,7 +239,7 @@ class AstParser
         return new Size (single ().field ());
       default:
         throw new ProtocolCodecException 
-          ("Unknown AST node type " + type);
+          ("Unknown AST node type: " + type);
     }
   }
 
