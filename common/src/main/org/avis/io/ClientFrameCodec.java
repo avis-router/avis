@@ -13,6 +13,7 @@ import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DisconnRply;
 import org.avis.io.messages.DisconnRqst;
+import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
@@ -91,6 +92,8 @@ public class ClientFrameCodec
         return new SecRply ();
       case UNotify.ID:
         return new UNotify ();
+      case DropWarn.ID:
+        return new DropWarn ();
       case QuenchPlaceHolder.ADD:
       case QuenchPlaceHolder.MODIFY:
       case QuenchPlaceHolder.DELETE:
