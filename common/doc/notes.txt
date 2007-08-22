@@ -12,6 +12,8 @@ Bugs
 
 * ep doesn't do ^D properly: needs to handle empty lines
   
+* client should probably not log messages: events instead, esp DropWarn
+
 Federation
 ----------------------------------------------------------------------
 
