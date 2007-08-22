@@ -33,6 +33,7 @@ import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DisconnRqst;
+import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
@@ -1293,10 +1294,16 @@ public final class Elvin implements Closeable
       case ConfConn.ID:
         // zip: used for liveness checking
         break;
+      case DropWarn.ID:
+        // todo should probably fire an event for this
+        warn ("Router sent a dropped packet warning: " +
+              "a message may have been discarded due to congestion", this);
+        break;
       case ErrorMessage.ID:
         handleErrorMessage ((ErrorMessage)message);
         break;
       default:
+        // todo should probably fire an event for this
         warn ("Unexpected server message: " + message, this);
     }
   }

@@ -8,6 +8,7 @@ import org.avis.federation.io.messages.FedNotify;
 import org.avis.federation.io.messages.FedSubReplace;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.Disconn;
+import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
@@ -204,6 +205,10 @@ public class Link implements NotifyListener
         break;
       case Ack.ID:
         // zip: handled by request tracking filter
+        break;
+      case DropWarn.ID:
+        warn ("Remote federator sent a dropped packet warning: " +
+              "a message may have been discarded due to congestion", this);
         break;
       case RequestTimeoutMessage.ID:
         handleRequestTimeout (((RequestTimeoutMessage)message).request);
