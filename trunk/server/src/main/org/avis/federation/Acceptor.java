@@ -15,6 +15,7 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
+import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
 import org.avis.federation.io.FederationFrameCodec;
@@ -103,8 +104,17 @@ public class Acceptor implements IoHandler, Closeable
       
       links.clear ();
 
+      SocketAcceptor socketAcceptor = router.socketAcceptor ();
+
       for (InetSocketAddress address : addresses)
-        router.socketAcceptor ().unbind (address);
+      {
+        // wait for pending messages to be written
+        // todo check that this really flushes messages
+        for (IoSession session : socketAcceptor.getManagedSessions (address))
+          session.close ().join (10000);
+        
+        socketAcceptor.unbind (address);
+      }
       
       addresses.clear ();
     }

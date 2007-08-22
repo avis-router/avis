@@ -225,6 +225,10 @@ public class Connector implements IoHandler, Closeable
         }        
       }
       
+      // wait for session to be flushed
+      // todo check that this really flushes messages
+      session.close ().join (10000);
+      
       link = null;
       session = null;
     }
