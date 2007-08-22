@@ -8,11 +8,16 @@ import java.util.Map.Entry;
 
 import java.io.IOException;
 
+import java.lang.management.ManagementFactory;
+
 import org.avis.config.Options;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 import org.avis.subscription.ast.Node;
 import org.avis.util.IllegalOptionException;
+
+import static java.lang.Integer.toHexString;
+import static java.lang.System.identityHashCode;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.federation.FederationOptions.getParamOption;
@@ -127,7 +132,7 @@ public class FederationManager implements CloseListener
     {
       try
       {
-        domain = localHostName ();
+        domain = discoverLocalDomain ();
       } catch (IOException ex)
       {
         throw new IllegalOptionException
@@ -138,6 +143,30 @@ public class FederationManager implements CloseListener
     }
     
     return domain;
+  }
+
+  /**
+   * Do the best we can to guess a good server domain based on PID and
+   * hostname
+   */
+  private static String discoverLocalDomain ()
+    throws IOException
+  {
+    String runtimeName = ManagementFactory.getRuntimeMXBean ().getName ();
+ 
+    /*
+     * RuntimeMXBean.getName () returns pid@hostname on many VM's: if
+     * it looks like this is the case, use it otherwise fall back on
+     * hashcode + hostname.
+     */
+    if (runtimeName.matches ("\\d+@.+"))
+    {
+      return runtimeName;
+    } else
+    {
+      return toHexString (identityHashCode (FederationManager.class)) +
+             "@" + localHostName ();
+    }
   }
 
   @SuppressWarnings("unchecked")
