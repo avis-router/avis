@@ -13,9 +13,11 @@ import org.avis.federation.io.messages.FedConnRqst;
 import org.avis.federation.io.messages.FedNotify;
 import org.avis.federation.io.messages.FedSubReplace;
 import org.avis.io.FrameCodec;
+import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
+import org.avis.io.messages.TestConn;
 
 public class FederationFrameCodec
   extends FrameCodec implements ProtocolCodecFactory
@@ -57,6 +59,10 @@ public class FederationFrameCodec
         return new FedSubReplace ();
       case FedNotify.ID:
         return new FedNotify ();
+      case TestConn.ID:
+        return new TestConn ();
+      case ConfConn.ID:
+        return new ConfConn ();
       default:
         throw new ProtocolCodecException
           ("Unknown message type: ID = " + messageType);

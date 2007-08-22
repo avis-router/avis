@@ -6,6 +6,7 @@ import org.apache.mina.common.WriteFuture;
 import org.avis.federation.io.messages.Ack;
 import org.avis.federation.io.messages.FedNotify;
 import org.avis.federation.io.messages.FedSubReplace;
+import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -13,6 +14,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.Notify;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
+import org.avis.io.messages.TestConn;
 import org.avis.router.NotifyListener;
 import org.avis.router.Router;
 import org.avis.security.Keys;
@@ -197,6 +199,9 @@ public class Link implements NotifyListener
       case Nack.ID:
         handleNack ((Nack)message);
         break;
+      case TestConn.ID:
+        send (new ConfConn ());
+        break;
       case Ack.ID:
         // zip: handled by request tracking filter
         break;
@@ -253,9 +258,7 @@ public class Link implements NotifyListener
     if (shouldLog (TRACE))
     {
       trace ("Federator for domain \"" + serverDomain + "\" " + 
-             "FedNotify: " +
-             "routing=" + asList (message.routing) + " " +
-             "attributes=" + message.attributes, this);
+             "FedNotify: routing=" + asList (message.routing), this);
     }
     
     if (containsDomain (message.routing, remoteServerDomain))
