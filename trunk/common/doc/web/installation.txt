@@ -9,11 +9,11 @@ Requirements
 
 Before installing Avis, you will need a Java 5 (or later) runtime or
 development kit installed. Windows and Unix users can get Java from
-[Sun's Java download site][sun_java]. Mac OS X 10.4 users can get Java
-5 from [Apple's download site][apple_java].
+[Sun's Java download site][sun_java]. Mac OS X users can get Java 5
+from [Apple's download site][apple_java] (Mac OS X 10.4 or later).
 
 You can run Avis with a minimal Java Runtime Environment (JRE) but if
-you wish to get optimal performance, it is recommended you install the
+you wish to get optimal performance it is recommended you install the
 full JDK to gain access to the "server" optimizing VM.
 
 Configuration
@@ -23,7 +23,8 @@ The Avis router will install and run with no configuration
 required. If you do wish to change any of the router's default
 parameters, these are specified in a file called `avisd.config`. See
 the installation instructions for your platform below for information
-on where this file can be found.
+on where this file can be found. Documentation and templates for the
+config options can be found in file itself.
 
 Windows
 ----------------------------------------------------------------------
@@ -54,7 +55,7 @@ Linux distributions.
 
 To install:
 
-      > sudo rpm -ivh avis-1.0.rpm
+      > sudo rpm -ivh avis-1.1.rpm
 
 Configuration options are in the file `/etc/avis/avisd.config`.
 

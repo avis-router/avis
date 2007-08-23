@@ -9,15 +9,13 @@ Avis by the end of October 2007.
 Release Schedule
 ----------------------------------------------------------------------
 
-Router Release 1.1 (August 2007)
-
- * Federation.
+Router Release 1.2 (October 2007)
 
  * SSL/TLS encryption.
 
  * Benchmarking suite and performance optimisation work.
 
-Client Library Release 1.1 (Sep 2007)
+Client Library Release 1.1 (October 2007)
 
  * Auto-reconnect support: subscribe/notify calls to disconnected
    client block until re-connect or timeout.
@@ -31,6 +29,10 @@ Router Release 1.2 (December 2007)
 
 Completed
 ----------------------------------------------------------------------
+
+Router Release 1.1 (August 2007)
+
+ * Wide-area federation.
 
 Client Library Release 1.0 (June 2007)
 
