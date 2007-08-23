@@ -470,6 +470,12 @@ a.footnoteBackLink:hover {
   /* font-lock-comment-delimiter-face */
   color: #0000ff;
 }
+
+.constant {
+  /* font-lock-constant-face */
+  color: #5f9ea0;
+}
+
 .function-name {
   /* font-lock-function-name-face */
   color: #0000ff;
