@@ -15,8 +15,9 @@
   <!-- svn2cl: only needed to generate changelog -->
   <property name="svn2cl" value="/usr/local/bin/svn2cl" />
  
-  <!-- Markdown 1.0.1: only needed to build web page -->
-  <property name="markdown" value="/Users/matt/bin/Markdown.pl" />
+  <!-- Markdown 1.0.1: needed to build web page -->
+  <property name="markdown" 
+            value="${common}/packages/markdown-1.0.1/Markdown.pl" />
   
   <path id="classpath">
     <fileset dir="lib">
@@ -106,6 +107,12 @@
       <param name="src" value="installation.txt" />
       <param name="dest" value="installation.html" />
       <param name="web.title" value="Installation" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="federation.txt" />
+      <param name="dest" value="federation.html" />
+      <param name="web.title" value="Federation" />
     </antcall>
 
     <antcall target="fn:make-html">
