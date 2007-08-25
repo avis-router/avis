@@ -115,14 +115,19 @@ public class SimpleClient implements IoHandler
   public Message receive (long timeout)
     throws MessageTimeoutException, NoConnectionException, InterruptedException
   {
-    checkConnected ();
-    
     Message message = incomingMessages.poll (timeout, MILLISECONDS);
     
     if (message == null)
     {
-      throw new MessageTimeoutException
-        (clientName + " did not receive a reply");
+      if (!clientSession.isConnected ())
+      {
+        throw new MessageTimeoutException
+          (clientName + " did not receive a reply: connection is closed");
+      } else
+      {
+        throw new MessageTimeoutException
+          (clientName + " did not receive a reply");
+      }
     }
     
     return message;
