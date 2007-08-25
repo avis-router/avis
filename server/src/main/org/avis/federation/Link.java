@@ -1,5 +1,7 @@
 package org.avis.federation;
 
+import java.util.Map;
+
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
@@ -33,6 +35,7 @@ import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
+import static org.avis.util.Collections.union;
 
 /**
  * Manages link between two federation endpoints. This link is
@@ -66,16 +69,6 @@ public class Link implements NotifyListener
   private String remoteHostName;
   private volatile boolean closed;
 
-  /**
-   * todo
-   * 
-   * @param session
-   * @param router
-   * @param federationClass
-   * @param serverDomain
-   * @param remoteServerDomain
-   * @param remoteHostName
-   */
   public Link (IoSession session,
                Router router, 
                FederationClass federationClass, 
@@ -146,25 +139,27 @@ public class Link implements NotifyListener
    */
   public void notifyReceived (Notify message, Keys keys)
   {
-    if (shouldPush (message))
+    String [] routing = routingFor (message);
+    Map<String, Object> attributes = 
+      union (message.attributes, federationClass.outgoingAttributes);
+    
+    if (shouldPush (routing, attributes))
     {
-      FedNotify fedNotify = 
-        new FedNotify (message, serverDomainAddedTo (routingFor (message)));
-      
-      fedNotify.keys = keys.addedTo (message.keys);
-      
-      send (fedNotify);
+      send (new FedNotify (message, attributes, 
+                           keys.addedTo (message.keys), 
+                           serverDomainAddedTo (routing)));
     }
   }
 
   /**
    * Test if we should push a given notification to the remote router.
    */
-  private boolean shouldPush (Notify message)
+  private boolean shouldPush (String [] routing, 
+                              Map<String, Object> attributes)
   {
-    return routingDoesNotContain (message, remoteServerDomain) &&
-           matches (federationClass.outgoingFilter, message) &&
-           matches (remotePullFilter, message);
+    return !containsDomain (routing, remoteServerDomain) &&
+           matches (federationClass.outgoingFilter, attributes) &&
+           matches (remotePullFilter, attributes);
   }
 
   /**
@@ -172,8 +167,8 @@ public class Link implements NotifyListener
    */
   private boolean shouldPull (FedNotify message)
   {
-    return routingDoesNotContain (message, serverDomain) &&
-           matches (federationClass.incomingFilter, message);
+    return !containsDomain (message.routing, serverDomain) &&
+           matches (federationClass.incomingFilter, message.attributes);
   }
   
   /**
@@ -268,6 +263,9 @@ public class Link implements NotifyListener
     
     if (containsDomain (message.routing, remoteServerDomain))
     {
+      message.attributes =
+        union (message.attributes, federationClass.incomingAttributes);
+      
       if (shouldPull (message))
         router.injectNotify (message);
     } else
@@ -298,9 +296,9 @@ public class Link implements NotifyListener
   /**
    * Test if a given message matches an AST filter.
    */
-  private static boolean matches (Node filter, Notify message)
+  private static boolean matches (Node filter, Map<String, Object> attributes)
   {
-    return filter.evaluate (message.attributes) == Node.TRUE;
+    return filter.evaluate (attributes) == Node.TRUE;
   }
   
   /**
@@ -312,16 +310,6 @@ public class Link implements NotifyListener
       return ((FedNotify)message).routing;
     else
       return EMPTY_ROUTING;
-  }
-  
-  /**
-   * True if message is either not a FedNotify, or if it is but does
-   * not contain the given server domain.
-   */
-  private static boolean routingDoesNotContain (Notify message, 
-                                                String domain)
-  {
-    return !containsDomain (routingFor (message), domain);
   }
   
   /**
