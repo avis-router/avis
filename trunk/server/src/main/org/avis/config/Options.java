@@ -153,7 +153,20 @@ public class Options implements Iterable<Map.Entry<String, Object>>
     else
       throw new IllegalOptionException (option, "Not a boolean");
   }
-
+  
+  /**
+   * Get a value for a parameterised option. e.g.
+   * "Federation.Subscribe[Internal]".
+   * 
+   * @param option The option, minus the parameters.
+   * 
+   * @return The value of the option, mapping parameters to values.
+   */
+  public Map<String, Object> getParamOption (String option)
+  {
+    return OptionTypeParam.getParamOption (this, option);
+  }
+  
   /**
    * Get the value of an option, searching defaults if needed.
    * 

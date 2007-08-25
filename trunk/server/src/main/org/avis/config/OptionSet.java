@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.avis.util.IllegalOptionException;
+import org.avis.util.Pair;
+
+import static org.avis.config.OptionTypeParam.splitOptionParam;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
@@ -226,14 +229,32 @@ public class OptionSet
    */
   protected void validateAndSet (Options options, String option, Object value)
   {
-    OptionType type = optionTypeFor (option);
+    Pair<String, List<String>> optionItems = splitOptionParam (option);
+    
+    OptionType type = optionTypeFor (optionItems.item1);
+    
+    if (type instanceof OptionTypeParam)
+    {
+      // allow param option to create/update param values
+      value = 
+        ((OptionTypeParam)type).updateValue (options, option, 
+                                             optionItems.item1,
+                                             optionItems.item2, value);
+    } else
+    {
+      if (!optionItems.item2.isEmpty ())
+      {
+        throw new IllegalOptionException
+          (option, "Cannot specify parameters for option");
+      }
+    }
     
     value = type.convert (option, value);
     
     String message = type.validate (option, value);
     
     if (message == null)
-      set (options, option, value);
+      set (options, optionItems.item1, value);
     else
       throw new IllegalOptionException (option, message);
   }
@@ -301,7 +322,9 @@ public class OptionSet
    */
   protected OptionType peekOptionTypeFor (String option)
   {
-    return optionTypes.get (option);
+    Pair<String, List<String>> optionItems = splitOptionParam (option);
+    
+    return optionTypes.get (optionItems.item1);
   }
   
   /**
