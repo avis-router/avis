@@ -40,6 +40,11 @@ public class FederationClasses
     this.federatorDomains = new HashMap<String, FederationClass> ();
   }
 
+  public FederationClass defaultClass ()
+  {
+    return defaultClass;
+  }
+  
   /**
    * Find an existing federation class with the given name or create a
    * new one.
@@ -86,7 +91,12 @@ public class FederationClasses
     }
     
     // match server domain
-    fedClass = federatorDomains.get (serverDomain);
+    return classFor (serverDomain);
+  }
+  
+  public FederationClass classFor (String serverDomain)
+  {
+    FederationClass fedClass = federatorDomains.get (serverDomain);
     
     if (fedClass != null)
       return fedClass;
