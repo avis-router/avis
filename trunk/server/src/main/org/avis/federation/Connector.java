@@ -60,8 +60,8 @@ public class Connector implements IoHandler, Closeable
   private Link link;
   private InetSocketAddress remoteAddress;
   private IoSession session;
-  private volatile boolean closing;
   private Timer asyncConnectTimer;
+  protected volatile boolean closing;
   
   public Connector (Router router, String serverDomain,
                     EwafURI uri, FederationClass federationClass,
@@ -76,23 +76,30 @@ public class Connector implements IoHandler, Closeable
     this.connectorConfig = new SocketConnectorConfig ();
     this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
     
-    int connectTimeout = options.getInt ("Federation.Connect-Timeout");
+    int requestTimeout = options.getInt ("Federation.Request-Timeout");
+    int keepaliveInterval = options.getInt ("Federation.Keepalive-Interval");
 
     /* Change the worker timeout to make the I/O thread quit soon
      * when there's no connection to manage. */
     connector.setWorkerTimeout (0);
     
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (connectTimeout);
+    connectorConfig.setConnectTimeout (requestTimeout);
     
     DefaultIoFilterChainBuilder filterChain = connectorConfig.getFilterChain ();
     
     filterChain.addLast ("codec", FederationFrameCodec.FILTER);
     
-    filterChain.addLast ("requestTracker", 
-                         new RequestTrackingFilter (connectTimeout));
+    filterChain.addLast
+      ("requestTracker", 
+       new RequestTrackingFilter (requestTimeout, keepaliveInterval));
 
     connect ();
+  }
+  
+  public Link link ()
+  {
+    return link;
   }
   
   /**
@@ -144,7 +151,7 @@ public class Connector implements IoHandler, Closeable
   }
 
   /**
-   * Schedule a delayed connect () in Federation.Connect-Timeout
+   * Schedule a delayed connect () in Federation.Request-Timeout
    * seconds from now.
    * 
    * @see #cancelAsyncConnect()
@@ -161,12 +168,13 @@ public class Connector implements IoHandler, Closeable
       @Override
       public void run ()
       {
-        connect ();
+        if (!closing)
+          connect ();
       }
     };
     
     asyncConnectTimer.schedule 
-      (connectTask, options.getInt ("Federation.Connect-Timeout") * 1000);
+      (connectTask, options.getInt ("Federation.Request-Timeout") * 1000);
   }
   
   /**
@@ -201,36 +209,36 @@ public class Connector implements IoHandler, Closeable
   {
     synchronized (this)
     {
-      if (closing || session == null)
-        return;
-      
       closing = true;
       
       cancelAsyncConnect ();
       
-      if (session.isConnected ())
+      if (session != null)
       {
-        if (link != null)
-          link.close ();
-        else
-          session.close ();
-      } else
-      {
-        if (link != null && !link.initiatedSessionClose ())
+        if (session.isConnected ())
         {
-          warn ("Remote federator at " + uri + " " + 
-                "closed link with no warning", this);
-          
-          link.close ();
-        }        
+          if (link != null)
+            link.close ();
+          else
+            session.close ();
+        } else
+        {
+          if (link != null && !link.initiatedSessionClose ())
+          {
+            warn ("Remote federator at " + uri + " " + 
+                  "closed link with no warning", this);
+            
+            link.close ();
+          }        
+        }
+        
+        // wait for session to be flushed
+        // todo check that this really flushes messages
+        session.close ().join (10000);
+        session = null;
       }
       
-      // wait for session to be flushed
-      // todo check that this really flushes messages
-      session.close ().join (10000);
-      
       link = null;
-      session = null;
     }
   }
   
@@ -243,6 +251,8 @@ public class Connector implements IoHandler, Closeable
 
     diagnostic ("Scheduling reconnection for outgoing federation link to " + 
                 uri, this);
+
+    closing = false;
     
     asyncConnect ();
   }
