@@ -9,8 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 
-import org.avis.federation.FederationOptions;
-import org.avis.router.RouterOptions;
+import org.avis.federation.FederationOptionSet;
 
 import org.junit.Test;
 
@@ -121,7 +120,7 @@ public class JUTestRouterOptions
   {
     RouterOptionSet routerOptionSet = new RouterOptionSet ();
     
-    routerOptionSet.inheritFrom (FederationOptions.OPTION_SET);
+    routerOptionSet.inheritFrom (FederationOptionSet.OPTION_SET);
     
     RouterOptions config = new RouterOptions (routerOptionSet);
     

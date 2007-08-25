@@ -20,7 +20,6 @@ import static java.lang.Integer.toHexString;
 import static java.lang.System.identityHashCode;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
-import static org.avis.federation.FederationOptions.getParamOption;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
@@ -89,7 +88,7 @@ public class FederationManager implements CloseListener
      Options config)
   {
     Map<String, Object> connect = 
-      getParamOption (config, "Federation.Connect");
+      config.getParamOption ("Federation.Connect");
    
     // check federation classes and URI's make sense
     for (Entry<String, Object> entry : connect.entrySet ())
@@ -203,7 +202,7 @@ public class FederationManager implements CloseListener
     FederationClasses classes = new FederationClasses ();
     
     Map<String, Object> provide = 
-      getParamOption (federationConfig, "Federation.Provide");
+      federationConfig.getParamOption ("Federation.Provide");
     
     for (Entry<String, Object> entry : provide.entrySet ())
     {
@@ -213,7 +212,7 @@ public class FederationManager implements CloseListener
     }
     
     Map<String, Object> subscribe = 
-      getParamOption (federationConfig, "Federation.Subscribe");
+      federationConfig.getParamOption ("Federation.Subscribe");
     
     for (Entry<String, Object> entry : subscribe.entrySet ())
     {
@@ -235,7 +234,7 @@ public class FederationManager implements CloseListener
     }
     
     Map<String, Object> applyClass = 
-      getParamOption (federationConfig, "Federation.Apply-Class");
+      federationConfig.getParamOption ("Federation.Apply-Class");
     
     for (Entry<String, Object> entry : applyClass.entrySet ())
     {

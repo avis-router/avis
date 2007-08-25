@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.apache.mina.common.ByteBuffer;
 
 import org.avis.federation.FederationManager;
-import org.avis.federation.FederationOptions;
+import org.avis.federation.FederationOptionSet;
 import org.avis.logging.Log;
 import org.avis.util.IllegalOptionException;
 
@@ -58,7 +58,7 @@ public class Main
     RouterOptionSet routerOptionSet = new RouterOptionSet ();
     
     // add federation options to router's option set
-    routerOptionSet.inheritFrom (FederationOptions.OPTION_SET);
+    routerOptionSet.inheritFrom (FederationOptionSet.OPTION_SET);
     
     RouterOptions config = new RouterOptions (routerOptionSet);
     

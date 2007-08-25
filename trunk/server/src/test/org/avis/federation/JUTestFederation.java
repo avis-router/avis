@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.avis.config.Options;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
@@ -176,7 +177,7 @@ public class JUTestFederation
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
     // set connect timeout to 1 second
-    FederationOptions options = new FederationOptions ();
+    Options options = new Options (FederationOptionSet.OPTION_SET);
     options.set ("Federation.Connect-Timeout", 1);
     
     Connector connector = 
@@ -222,7 +223,7 @@ public class JUTestFederation
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
     // set connect timeout to 1 second
-    FederationOptions options = new FederationOptions ();
+    Options options = new Options (FederationOptionSet.OPTION_SET);
     options.set ("Federation.Connect-Timeout", 1);
    
     // Log.enableLogging (Log.DIAGNOSTIC, true);
@@ -287,7 +288,7 @@ public class JUTestFederation
     
     Router server = new Router (PORT2);
 
-    FederationOptions options = new FederationOptions ();
+    Options options = new Options (FederationOptionSet.OPTION_SET);
     
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
@@ -343,7 +344,7 @@ public class JUTestFederation
     
     Router server = new Router (PORT2);
 
-    FederationOptions options = new FederationOptions ();
+    Options options = new Options (FederationOptionSet.OPTION_SET);
     
     FederationClass fedClass =
       new FederationClass (require, 
@@ -431,10 +432,10 @@ public class JUTestFederation
     public StandardFederatorSetup ()
       throws Exception
     {
-      this (new FederationOptions ());
+      this (new Options (FederationOptionSet.OPTION_SET));
     }
     
-    public StandardFederatorSetup (FederationOptions options)
+    public StandardFederatorSetup (Options options)
       throws Exception
     {
       server1 = new Router (PORT1);
