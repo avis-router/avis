@@ -116,4 +116,29 @@ public final class Collections
     
     return union;
   }
+
+  /**
+   * Compute the union of map1 and map2. This is not guaranteed to
+   * generate a new map instance: it will return map1 or map2 directly
+   * if the other map is empty. If there is a key/value overlap, map2
+   * wins.
+   */
+  public static <K, V> Map<K, V> union (Map<K, V> map1, Map<K, V> map2)
+  {
+    if (map1.isEmpty ())
+    {
+      return map2;
+    } else if (map2.isEmpty ())
+    {
+      return map1;
+    } else
+    {
+      HashMap<K, V> union = new HashMap<K, V> ();
+      
+      union.putAll (map1);
+      union.putAll (map2);
+      
+      return union;
+    }
+  }
 }
