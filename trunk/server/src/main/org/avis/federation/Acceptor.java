@@ -18,6 +18,7 @@ import org.apache.mina.common.WriteFuture;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
+import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
 import org.avis.federation.io.messages.FedConnRply;
 import org.avis.federation.io.messages.FedConnRqst;
@@ -62,7 +63,7 @@ public class Acceptor implements IoHandler, Closeable
   public Acceptor (Router router,
                    String serverDomain,
                    FederationClasses federationClasses, 
-                   Set<InetSocketAddress> addresses)
+                   Set<InetSocketAddress> addresses, Options options)
     throws IOException
   {
     this.router = router;
@@ -70,6 +71,9 @@ public class Acceptor implements IoHandler, Closeable
     this.federationClasses = federationClasses;
     this.addresses = addresses;
     this.links = new HashSet<Link> ();
+    
+    int requestTimeout = options.getInt ("Federation.Request-Timeout");
+    int keepaliveInterval = options.getInt ("Federation.Keepalive-Interval");
     
     SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
     
@@ -79,7 +83,9 @@ public class Acceptor implements IoHandler, Closeable
     DefaultIoFilterChainBuilder filterChain = acceptorConfig.getFilterChain ();
 
     filterChain.addLast ("codec", FederationFrameCodec.FILTER);
-    filterChain.addLast ("requestTracker", new RequestTrackingFilter (20));
+    filterChain.addLast
+      ("requestTracker", 
+       new RequestTrackingFilter (requestTimeout, keepaliveInterval));
     
     for (InetSocketAddress address : addresses)
     {
@@ -118,6 +124,14 @@ public class Acceptor implements IoHandler, Closeable
       
       addresses.clear ();
     }
+  }
+  
+  /**
+   * Simulate a hang by stopping all responses to messages.
+   */
+  public void hang ()
+  {
+    closing = true;
   }
   
   private void handleMessage (IoSession session,
