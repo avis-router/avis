@@ -62,6 +62,44 @@ public class Main
     
     RouterOptions config = new RouterOptions (routerOptionSet);
     
+    parseCommandLine (args, config);
+    
+    try
+    {
+      final Router router = new Router (config);
+
+      info ("Router listening on port " + config.get ("Port"), Main.class);
+
+      if (config.getBoolean ("Federation.Activated"))
+        new FederationManager (router, config);
+      
+      Runtime.getRuntime ().addShutdownHook (new Thread ()
+      {
+        public void run ()
+        {
+          info ("Shutting down...", Main.class);
+          
+          router.close ();
+        }
+      });
+      
+    } catch (Throwable ex)
+    {
+      if (ex instanceof IllegalOptionException)
+        alarm ("Error in server configuration: " + ex.getMessage (), Main.class);
+      else
+        alarm ("Error starting router: " + ex.getMessage (), Main.class);
+        
+      if (shouldLog (DIAGNOSTIC))
+        ex.printStackTrace ();
+      
+      exit (2);
+    }
+  }
+
+  private static void parseCommandLine (String [] args,
+                                        RouterOptions config)
+  {
     try
     {
       for (int i = 0; i < args.length; i++)
@@ -96,38 +134,6 @@ public class Main
     {
       alarm ("Error configuring router: " + ex.getMessage (), Main.class);
       
-      if (shouldLog (DIAGNOSTIC))
-        ex.printStackTrace ();
-      
-      exit (2);
-    }
-    
-    try
-    {
-      final Router router = new Router (config);
-
-      info ("Router listening on port " + config.get ("Port"), Main.class);
-
-      if (config.getBoolean ("Federation.Activated"))
-        new FederationManager (router, config);
-      
-      Runtime.getRuntime ().addShutdownHook (new Thread ()
-      {
-        public void run ()
-        {
-          info ("Shutting down...", Main.class);
-          
-          router.close ();
-        }
-      });
-      
-    } catch (Throwable ex)
-    {
-      if (ex instanceof IllegalOptionException)
-        alarm ("Error in server configuration: " + ex.getMessage (), Main.class);
-      else
-        alarm ("Error starting router: " + ex.getMessage (), Main.class);
-        
       if (shouldLog (DIAGNOSTIC))
         ex.printStackTrace ();
       
