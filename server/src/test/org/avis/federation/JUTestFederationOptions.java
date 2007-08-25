@@ -39,14 +39,24 @@ public class JUTestFederationOptions
     props.setProperty ("Federation.Subscribe[External]", "require (Message)");
     props.setProperty ("Federation.Provide[Internal]", "TRUE");
     props.setProperty ("Federation.Connect[Internal]", "ewaf://localhost");
-    props.setProperty ("Federation.Connect[External]", "ewaf://public.elvin.org");
-    props.setProperty ("Federation.Apply-Class[External]", "@.elvin.org domain");
-    props.setProperty ("Federation.Listen", "ewaf://0.0.0.0 ewaf://hello:7778");
-    props.setProperty ("Federation.Add-Attribute[External][String]", "'hello'");
-    props.setProperty ("Federation.Add-Attribute[External][Int32]", "42");
-    props.setProperty ("Federation.Add-Attribute[External][Int64]", "12L");
-    props.setProperty ("Federation.Add-Attribute[External][Real64]", "0.1");
-    props.setProperty ("Federation.Add-Attribute[External][Opaque]", "[de ad]");
+    props.setProperty ("Federation.Connect[External]", 
+                       "ewaf://public.elvin.org");
+    props.setProperty ("Federation.Apply-Class[External]", 
+                       "@.elvin.org domain");
+    props.setProperty ("Federation.Listen", 
+                       "ewaf://0.0.0.0 ewaf://hello:7778");
+    props.setProperty ("Federation.Add-Incoming-Attribute[External][String]", 
+                       "'hello'");
+    props.setProperty ("Federation.Add-Incoming-Attribute[External][Int32]", 
+                       "42");
+    props.setProperty ("Federation.Add-Incoming-Attribute[External][Int64]",
+                       "12L");
+    props.setProperty ("Federation.Add-Incoming-Attribute[External][Real64]", 
+                       "0.1");
+    props.setProperty ("Federation.Add-Incoming-Attribute[External][Opaque]", 
+                       "[de ad]");
+    props.setProperty ("Federation.Add-Outgoing-Attribute[External][String]", 
+                      "'hello world'");
     
     options.setAll (props);
     
@@ -81,18 +91,26 @@ public class JUTestFederationOptions
     assertEquals (new EwafURI ("ewaf://public.elvin.org"), 
                   connect.get ("External"));
     
-    Map<String, Object> addAttribute = 
-      options.getParamOption ("Federation.Add-Attribute");
+    Map<String, Object> addIncomingAttribute = 
+      options.getParamOption ("Federation.Add-Incoming-Attribute");
     
-    Map<String, Object> externalAttrs =
-      (Map<String, Object>)addAttribute.get ("External");
+    Map<String, Object> incomingAttrs =
+      (Map<String, Object>)addIncomingAttribute.get ("External");
     
-    assertEquals ("hello", externalAttrs.get ("String"));
-    assertEquals (42, externalAttrs.get ("Int32"));
-    assertEquals (12L, externalAttrs.get ("Int64"));
-    assertEquals (0.1, externalAttrs.get ("Real64"));
+    assertEquals ("hello", incomingAttrs.get ("String"));
+    assertEquals (42, incomingAttrs.get ("Int32"));
+    assertEquals (12L, incomingAttrs.get ("Int64"));
+    assertEquals (0.1, incomingAttrs.get ("Real64"));
     assertTrue (Arrays.equals (new byte [] {(byte)0xde, (byte)0xad}, 
-                               (byte [])externalAttrs.get ("Opaque")));
+                               (byte [])incomingAttrs.get ("Opaque")));
+    
+    Map<String, Object> addOutgoingAttribute = 
+      options.getParamOption ("Federation.Add-Outgoing-Attribute");
+    
+    Map<String, Object> outgoingAttrs =
+      (Map<String, Object>)addOutgoingAttribute.get ("External");
+    
+    assertEquals ("hello world", outgoingAttrs.get ("String"));
   }
 
   private static String astExpr (String expr) 

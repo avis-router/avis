@@ -28,6 +28,8 @@ public class FederationOptionSet extends OptionSet
   {
     OptionTypeParam fedClassOption = new OptionTypeParam (new SubExpOption ());
     EwafUriOption ewafUriOption = new EwafUriOption ();
+    OptionTypeParam attrOption = 
+      new OptionTypeParam (new OptionTypeValueExpr (), 2);
     
     add ("Federation.Activated", false);
     add ("Federation.Router-Name", "");
@@ -38,8 +40,8 @@ public class FederationOptionSet extends OptionSet
          new OptionTypeParam (new OptionTypeSet (String.class)), emptyMap ());
     add ("Federation.Connect", 
          new OptionTypeParam (ewafUriOption), emptyMap ());
-    add ("Federation.Add-Attribute", 
-         new OptionTypeParam (new OptionTypeValueExpr (), 2), emptyMap ());
+    add ("Federation.Add-Incoming-Attribute", attrOption, emptyMap ());
+    add ("Federation.Add-Outgoing-Attribute", attrOption, emptyMap ());
     add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);
   }
   
