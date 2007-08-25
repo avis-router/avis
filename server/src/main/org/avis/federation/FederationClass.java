@@ -1,8 +1,12 @@
 package org.avis.federation;
 
+import java.util.Map;
+
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.subscription.parser.SubscriptionParserBase;
+
+import static java.util.Collections.emptyMap;
 
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
@@ -19,7 +23,9 @@ public class FederationClass
 {
   public Node incomingFilter;
   public Node outgoingFilter;
-
+  public Map<String, Object> incomingAttributes;
+  public Map<String, Object> outgoingAttributes;
+  
   /**
    * Create a new instance with both filters set to false.
    */
@@ -38,6 +44,8 @@ public class FederationClass
   {
     this.incomingFilter = incomingFilter;
     this.outgoingFilter = outgoingFilter;
+    this.incomingAttributes = emptyMap ();
+    this.outgoingAttributes = emptyMap ();
   }
   
   /**

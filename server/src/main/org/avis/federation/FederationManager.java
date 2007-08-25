@@ -47,6 +47,8 @@ public class FederationManager implements CloseListener
     String serverDomain = initServerDomain (federationConfig);
     
     classes = initClasses (federationConfig);
+    
+    initAddAttributes (federationConfig, classes);
       
     connectors = initConnectors (router, serverDomain, classes, 
                                  federationConfig);
@@ -258,6 +260,31 @@ public class FederationManager implements CloseListener
     }
     
     return classes;
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static void initAddAttributes (Options config,
+                                         FederationClasses classes)
+  {
+    Map<String, Object> incoming = 
+      config.getParamOption ("Federation.Add-Incoming-Attribute");
+    
+    for (Entry<String, Object> entry : incoming.entrySet ())
+    {
+      FederationClass fedClass = classes.define (entry.getKey ());
+      
+      fedClass.incomingAttributes = (Map<String, Object>)entry.getValue ();
+    }
+    
+    Map<String, Object> outgoing = 
+      config.getParamOption ("Federation.Add-Outgoing-Attribute");
+    
+    for (Entry<String, Object> entry : outgoing.entrySet ())
+    {
+      FederationClass fedClass = classes.define (entry.getKey ());
+      
+      fedClass.outgoingAttributes = (Map<String, Object>)entry.getValue ();
+    }
   }
   
   private static void checkUri (String option, EwafURI uri)

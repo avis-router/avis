@@ -59,6 +59,10 @@ public class JUTestFederationManager
     options.set ("Federation.Apply-Class[Test]", "router2 bogus");
     options.set ("Federation.Subscribe[Test]", "require (federated)");
     options.set ("Federation.Provide[Test]", "require (federated)");
+    options.set ("Federation.Add-Incoming-Attribute[Test][Added-Incoming]", 
+                 "'incoming'");
+    options.set ("Federation.Add-Outgoing-Attribute[Test][Added-Outgoing]", 
+                 "'outgoing'");
     
     Router router1 = new Router (PORT1);
     
@@ -71,6 +75,11 @@ public class JUTestFederationManager
     
     assertEquals (addressesFor (set (federationUri)),
                   manager.acceptor.addresses);
+    
+    assertEquals ("incoming", 
+                  testClass.incomingAttributes.get ("Added-Incoming"));
+    assertEquals ("outgoing", 
+                  testClass.outgoingAttributes.get ("Added-Outgoing"));
     
     Router router2 = new Router (PORT2);
     
