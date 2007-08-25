@@ -17,18 +17,25 @@ Bugs
 Federation
 ----------------------------------------------------------------------
 
-* DONE: Apply-Class can only affect one router
 * check TODO's
+* Liveness checking with TestConn. Federation.Keepalive-Interval=60
 * Clean up log messages
-* Default federation class
-* Add-Attribute
-* Liveness checking with TestConn
-* Stricter sanity checking for domain 
-* DONE: Do we want to use better config file parser? Need to resolve use if ":"
+* test @.elvin.org
 * Enforce connection options frame size on federated notifications
-* DONE: Will probably encounter FedSubDiff from 4.4: may need to rev-engineer
-* How insecure is it to allow anyone to federate with no SSL? Do we
+
+--
+
+* ?Federation.Classes.Require=internal
+* Stricter sanity checking for domain 
+* Update MINA
+* for 1.2: How insecure is it to allow anyone to federate with no SSL? Do we
   need SSL?
+
+* DONE: Apply-Class can only affect one router
+* DONE: Default federation class? not
+* DONE: Add-Attribute
+* DONE: Do we want to use better config file parser? Need to resolve use if ":"
+* DONE: Will probably encounter FedSubDiff from 4.4: may need to rev-engineer
 
 ################################################################
 # federation
