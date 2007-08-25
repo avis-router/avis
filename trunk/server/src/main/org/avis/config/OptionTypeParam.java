@@ -53,8 +53,10 @@ public class OptionTypeParam extends OptionType
                              List<String> params, Object value)
   {
     if (params.size () != paramCount)
-      throw new IllegalOptionException (option, 
-                                        "Parameters required " + paramCount);
+    {
+      throw new IllegalOptionException 
+        (option, "Parameters required: " + paramCount);
+    }
     
     value = subOption.convert (option, value);
 
