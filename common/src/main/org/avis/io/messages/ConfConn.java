@@ -7,6 +7,13 @@ public class ConfConn extends Message
 {
   public static final int ID = 64;
   
+  public static final ConfConn INSTANCE = new ConfConn ();
+  
+  private ConfConn ()
+  {
+    // zip
+  }
+  
   @Override
   public int typeId ()
   {

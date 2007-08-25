@@ -7,12 +7,19 @@ public class TestConn extends Message
 {
   public static final int ID = 63;
   
+  public static final TestConn INSTANCE = new TestConn ();
+  
+  private TestConn ()
+  {
+    // zip
+  }
+  
   @Override
   public int typeId ()
   {
     return ID;
   }
-
+  
   @Override
   public void decode (ByteBuffer in)
     throws ProtocolCodecException
