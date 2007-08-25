@@ -3,7 +3,6 @@ package org.avis.util;
 import java.util.List;
 import java.util.Map;
 
-
 import java.nio.charset.CharacterCodingException;
 
 import static java.lang.System.arraycopy;
@@ -148,6 +147,37 @@ public final class Text
   
     return (byte)value;
   }
+  
+  /**
+   * Parse a string expression as a value. Values may be quoted
+   * strings ("string"), numbers (0.1, 3, 123456789L), or byte arrays
+   * ([0a ff de ad]).
+   * 
+   * @param expr The string expression.
+   * 
+   * @return The value.
+   * 
+   * @throws InvalidFormatException if expr is not parseable.
+   * 
+   * @see #stringToNumber(String)
+   * @see #stringToOpaque(String)
+   * @see #quotedStringToString(String)
+   */
+  public static Object stringToValue (String expr)
+    throws InvalidFormatException
+  {
+    char firstChar = expr.charAt (0);
+    
+    if (firstChar == '"' || firstChar == '\'')
+      return quotedStringToString (expr);
+    else if (firstChar >= '0' && firstChar <= '9')
+      return stringToNumber (expr);
+    else if (firstChar == '[')
+      return stringToOpaque (expr);
+    else
+      throw new InvalidFormatException
+        ("Unrecognised value expression: \"" + expr + "\"");
+  }
 
   /**
    * Parse a numeric int, long or double value. e.g. 32L, 3.14, 42.
@@ -179,7 +209,10 @@ public final class Text
     int last = findFirstNonEscaped (valueExpr, 1, '"');
     
     if (last == -1)
-      throw new InvalidFormatException ("Missing terminating \" in string");
+      last = findFirstNonEscaped (valueExpr, 1, '\'');
+    
+    if (last == -1)
+      throw new InvalidFormatException ("Missing terminating quote in string");
     else if (last != valueExpr.length () - 1)
       throw new InvalidFormatException ("Extra characters following string");
     
