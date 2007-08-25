@@ -5,7 +5,7 @@ import org.avis.config.OptionSet;
 import org.avis.config.OptionType;
 import org.avis.config.OptionTypeParam;
 import org.avis.config.OptionTypeSet;
-import org.avis.config.ValueOption;
+import org.avis.config.OptionTypeValueExpr;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.IllegalOptionException;
@@ -15,11 +15,16 @@ import static java.util.Collections.emptySet;
 
 import static org.avis.federation.FederationClass.parse;
 
+/**
+ * Configuration option set for Avis federation.
+ * 
+ * @author Matthew Phillips
+ */
 public class FederationOptionSet extends OptionSet
 {
   public static final OptionSet OPTION_SET = new FederationOptionSet ();
   
-  public FederationOptionSet ()
+  protected FederationOptionSet ()
   {
     OptionTypeParam fedClassOption = new OptionTypeParam (new SubExpOption ());
     EwafUriOption ewafUriOption = new EwafUriOption ();
@@ -34,7 +39,7 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Connect", 
          new OptionTypeParam (ewafUriOption), emptyMap ());
     add ("Federation.Add-Attribute", 
-         new OptionTypeParam (new ValueOption (), 2), emptyMap ());
+         new OptionTypeParam (new OptionTypeValueExpr (), 2), emptyMap ());
     add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);
   }
   
