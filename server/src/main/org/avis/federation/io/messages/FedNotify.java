@@ -37,6 +37,12 @@ public class FedNotify extends Notify
     this (original.attributes, original.deliverInsecure, 
           original.keys, routing);
   }
+  
+  public FedNotify (Notify original, Map<String, Object> attributes, 
+                    Keys keys, String [] routing)
+  {
+    this (attributes, original.deliverInsecure, keys, routing);
+  }
 
   @Override
   public int typeId ()
