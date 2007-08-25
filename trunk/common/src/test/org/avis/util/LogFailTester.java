@@ -6,9 +6,13 @@ import java.util.List;
 import org.avis.logging.LogEvent;
 import org.avis.logging.LogListener;
 
+import static org.avis.logging.Log.ALARM;
+import static org.avis.logging.Log.INTERNAL_ERROR;
 import static org.avis.logging.Log.WARNING;
 import static org.avis.logging.Log.addLogListener;
+import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.removeLogListener;
+import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.toLogString;
 
 import static org.junit.Assert.fail;
@@ -21,12 +25,40 @@ import static org.junit.Assert.fail;
 public class LogFailTester implements LogListener
 {
   private List<LogEvent> errors;
+  private volatile boolean paused;
+  private boolean wasLoggingErrors;
   
   public LogFailTester ()
   {
     this.errors = new ArrayList<LogEvent> ();
     
     addLogListener (this);
+  }
+  
+  /**
+   * Pause logging and detecting errors/warnings.
+   */
+  public void pause ()
+  {
+    paused = true;
+    
+    wasLoggingErrors = shouldLog (ALARM);
+    
+    enableLogging (ALARM, false);
+    enableLogging (WARNING, false);
+    enableLogging (INTERNAL_ERROR, false);
+  }
+  
+  /**
+   * Reverse the effect of pause.
+   */
+  public void unpause ()
+  {
+    paused = false;
+    
+    enableLogging (ALARM, wasLoggingErrors);
+    enableLogging (WARNING, wasLoggingErrors);
+    enableLogging (INTERNAL_ERROR, wasLoggingErrors);
   }
   
   /**
@@ -49,7 +81,7 @@ public class LogFailTester implements LogListener
   
   public void messageLogged (LogEvent e)
   {
-    if (e.type >= WARNING)
+    if (!paused && e.type >= WARNING)
       errors.add (e);
   }
 }
