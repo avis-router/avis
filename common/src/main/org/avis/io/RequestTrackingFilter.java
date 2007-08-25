@@ -12,8 +12,11 @@ import org.apache.mina.common.IoFilterChain;
 import org.apache.mina.common.IoSession;
 
 import org.avis.io.messages.ErrorMessage;
+import org.avis.io.messages.LivenessTimeoutMessage;
+import org.avis.io.messages.Message;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
+import org.avis.io.messages.TestConn;
 import org.avis.io.messages.XidMessage;
 
 import static java.lang.Math.min;
@@ -21,9 +24,11 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import static org.avis.logging.Log.trace;
+
 /**
- * A MINA I/O filter that adds tracking for XID-based
- * RequestMessage's.
+ * A MINA I/O filter that adds tracking for XID-based RequestMessage's
+ * and does session liveness checking using TestConn/ConfConn.
  * 
  * <ul>
  * <li>Automatically fills in the {@link XidMessage#request} field of
@@ -32,6 +37,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * have no associated request</li>
  * <li>Generates TimeoutMessage's for requests that do not receive a
  * reply within a given timeout.</li>
+ * <li>Generates LivenessTimeoutMessage's when livenessTimeout passes
+ * and no response to a TestConn is seen within replyTimeout seconds.</li>
  * <ul>
  * 
  * @author Matthew Phillips
@@ -43,11 +50,13 @@ public class RequestTrackingFilter
   protected static ScheduledExecutorService sharedExecutor;
   
   protected int replyTimeout;
+  protected int livenessTimeout;
   protected String filterName;
   
-  public RequestTrackingFilter (int timeout)
+  public RequestTrackingFilter (int replyTimeout, int livenessTimeout)
   {
-    this.replyTimeout = timeout;
+    this.replyTimeout = replyTimeout;
+    this.livenessTimeout = livenessTimeout;
   }
   
   public boolean sharedResourcesDisposed ()
@@ -59,7 +68,7 @@ public class RequestTrackingFilter
   }
   
   @Override
-  public void onPreAdd (IoFilterChain parent,  String name,
+  public void onPreAdd (IoFilterChain parent, String name,
                         NextFilter nextFilter) 
     throws Exception
   {
@@ -94,9 +103,16 @@ public class RequestTrackingFilter
         sharedExecutor = newScheduledThreadPool (1);
     }
     
+    nextFilter.sessionCreated (session);
+  }
+  
+  @Override
+  public void sessionOpened (NextFilter nextFilter, IoSession session)
+    throws Exception
+  {
     session.setAttribute ("requestTracker", new Tracker (session));
     
-    nextFilter.sessionCreated (session);
+    nextFilter.sessionOpened (session);
   }
   
   @Override
@@ -127,6 +143,10 @@ public class RequestTrackingFilter
                                IoSession session, Object message)
     throws Exception
   {
+    Tracker tracker = trackerFor (session);
+    
+    tracker.connectionIsLive ();
+    
     if (message instanceof XidMessage && 
         !(message instanceof RequestMessage<?>))
     {
@@ -134,7 +154,7 @@ public class RequestTrackingFilter
       
       try
       {
-        reply.request = trackerFor (session).remove (reply);
+        reply.request = tracker.remove (reply);
       } catch (IllegalArgumentException ex)
       {
         message = new ErrorMessage (ex, reply);
@@ -157,16 +177,105 @@ public class RequestTrackingFilter
     private IoSession session;
     private Map<Integer, Entry> xidToRequest;
     private ScheduledFuture<?> timeoutFuture;
+    private ScheduledFuture<?> livenessFuture;
+    private long lastLive;
     
     public Tracker (IoSession session)
     {
       this.session = session;
       this.xidToRequest = new HashMap<Integer, Entry> ();
+      this.lastLive = currentTimeMillis ();
+      
+      scheduleLivenessCheck ();
     }
     
     public synchronized void dispose ()
     {
       cancelTimeoutCheck ();
+      cancelLivenessCheck ();
+    }
+    
+    /**
+     * Call to reset liveness timeout.
+     */
+    public synchronized void connectionIsLive ()
+    {
+      lastLive = currentTimeMillis ();
+
+      scheduleLivenessCheck ();
+    }
+
+    private void scheduleLivenessCheck ()
+    {
+      if (livenessFuture == null)
+      {
+        livenessFuture = sharedExecutor.schedule 
+          (new Runnable ()
+          {
+            public void run ()
+            {
+              checkLiveness ();
+            }
+          }, 
+          livenessTimeout - (currentTimeMillis () - lastLive) / 1000, SECONDS);
+      }
+    }
+    
+    /**
+     * Check if liveness timeout has expired: if so send TestConn and
+     * schedule checkConnReply ().
+     */
+    protected synchronized void checkLiveness ()
+    {
+      livenessFuture = null;
+      
+      if ((currentTimeMillis () - lastLive) / 1000 >= livenessTimeout)
+      {
+        trace ("Liveness timeout: sending TestConn", this);
+        
+        session.write (TestConn.INSTANCE);
+        
+        livenessFuture = sharedExecutor.schedule 
+          (new Runnable ()
+          {
+            public void run ()
+            {
+              checkConnReply ();
+            }
+          }, replyTimeout, SECONDS);
+      } else
+      {
+        scheduleLivenessCheck ();
+      }
+    }
+
+    /**
+     * If no response seen to TestConn within replyTimeout, send
+     * LivenessTimeoutMessage.
+     */
+    protected synchronized void checkConnReply ()
+    {
+      livenessFuture = null;
+      
+      if ((currentTimeMillis () - lastLive) / 1000 >= replyTimeout)
+      {
+        trace ("No reply to TestConn: sending liveness timeout message", this);
+        
+        injectMessage (new LivenessTimeoutMessage ());
+      } else
+      {
+        scheduleLivenessCheck ();
+      }
+    }
+
+    private void cancelLivenessCheck ()
+    {
+      if (livenessFuture != null)
+      {
+        livenessFuture.cancel (false);
+        
+        livenessFuture = null;
+      }
     }
 
     public synchronized void add (RequestMessage<?> request)
@@ -222,11 +331,7 @@ public class RequestTrackingFilter
         {
           i.remove ();
           
-          NextFilter filter = 
-            session.getFilterChain ().getNextFilter (filterName);
-          
-          filter.messageReceived 
-            (session, new RequestTimeoutMessage (entry.request));
+          injectMessage (new RequestTimeoutMessage (entry.request));
         } else
         {
           earliest = min (earliest, entry.sentTime);
@@ -235,6 +340,14 @@ public class RequestTrackingFilter
       
       if (!xidToRequest.isEmpty ())
         scheduleTimeoutCheck (replyTimeout - (int)((now - earliest) / 1000));
+    }
+
+    private void injectMessage (Message message)
+    {
+      NextFilter filter = 
+        session.getFilterChain ().getNextFilter (filterName);
+      
+      filter.messageReceived (session, message);
     }
   }
   
