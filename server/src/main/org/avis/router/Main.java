@@ -94,7 +94,7 @@ public class Main
       }
     } catch (Exception ex)
     {
-      alarm ("Error configuring server: " + ex.getMessage (), Main.class);
+      alarm ("Error configuring router: " + ex.getMessage (), Main.class);
       
       if (shouldLog (DIAGNOSTIC))
         ex.printStackTrace ();
