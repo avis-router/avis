@@ -6,8 +6,8 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.avis.io.messages.RequestMessage;
 import org.avis.subscription.ast.Node;
 
-import static org.avis.federation.io.AstXdrCoding.decodeAST;
-import static org.avis.federation.io.AstXdrCoding.encodeAST;
+import static org.avis.federation.io.XdrAstCoding.decodeAST;
+import static org.avis.federation.io.XdrAstCoding.encodeAST;
 
 public class FedSubReplace extends RequestMessage<Ack>
 {

@@ -3,7 +3,7 @@ package org.avis.federation;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
-import org.avis.federation.io.AstXdrCoding;
+import org.avis.federation.io.XdrAstCoding;
 import org.avis.subscription.ast.Node;
 
 import org.junit.Test;
@@ -58,11 +58,11 @@ public class JUTestAstXdrCoding
   {
     ByteBuffer in = ByteBuffer.allocate (1024);
     
-    AstXdrCoding.encodeAST (in, ast);
+    XdrAstCoding.encodeAST (in, ast);
     
     in.flip ();
     
-    Node copy = AstXdrCoding.decodeAST (in);
+    Node copy = XdrAstCoding.decodeAST (in);
     
     assertEquals (0, in.remaining ());
     

@@ -6,7 +6,7 @@ package org.avis.federation.io;
  * 
  * @author Matthew Phillips
  */
-final class AstType
+final class XdrAstType
 {
   public static final int
     EMPTY = 0, NAME = 1, CONST_INT32 = 2, CONST_INT64 = 3, CONST_REAL64 = 4, 

@@ -40,54 +40,54 @@ import org.avis.subscription.ast.nodes.StrWildcard;
 import org.avis.subscription.ast.nodes.Type;
 import org.avis.subscription.ast.nodes.Xor;
 
-import static org.avis.federation.io.AstType.ADD;
-import static org.avis.federation.io.AstType.AND;
-import static org.avis.federation.io.AstType.BEGINS_WITH;
-import static org.avis.federation.io.AstType.BIT_AND;
-import static org.avis.federation.io.AstType.BIT_NEGATE;
-import static org.avis.federation.io.AstType.BIT_OR;
-import static org.avis.federation.io.AstType.BIT_XOR;
-import static org.avis.federation.io.AstType.CONST_INT32;
-import static org.avis.federation.io.AstType.CONST_INT64;
-import static org.avis.federation.io.AstType.CONST_REAL64;
-import static org.avis.federation.io.AstType.CONST_STRING;
-import static org.avis.federation.io.AstType.CONTAINS;
-import static org.avis.federation.io.AstType.DECOMPOSE;
-import static org.avis.federation.io.AstType.DECOMPOSE_COMPAT;
-import static org.avis.federation.io.AstType.DIVIDE;
-import static org.avis.federation.io.AstType.EMPTY;
-import static org.avis.federation.io.AstType.ENDS_WITH;
-import static org.avis.federation.io.AstType.EQUALS;
-import static org.avis.federation.io.AstType.FOLD_CASE;
-import static org.avis.federation.io.AstType.F_EQUALS;
-import static org.avis.federation.io.AstType.GREATER_THAN;
-import static org.avis.federation.io.AstType.GREATER_THAN_EQUALS;
-import static org.avis.federation.io.AstType.INT32;
-import static org.avis.federation.io.AstType.INT64;
-import static org.avis.federation.io.AstType.LESS_THAN;
-import static org.avis.federation.io.AstType.LESS_THAN_EQUALS;
-import static org.avis.federation.io.AstType.LOGICAL_SHIFT_RIGHT;
-import static org.avis.federation.io.AstType.MODULO;
-import static org.avis.federation.io.AstType.MULTIPLY;
-import static org.avis.federation.io.AstType.NAME;
-import static org.avis.federation.io.AstType.NAN;
-import static org.avis.federation.io.AstType.NOT;
-import static org.avis.federation.io.AstType.NOT_EQUALS;
-import static org.avis.federation.io.AstType.OPAQUE;
-import static org.avis.federation.io.AstType.OR;
-import static org.avis.federation.io.AstType.REAL64;
-import static org.avis.federation.io.AstType.REGEX;
-import static org.avis.federation.io.AstType.REGEXP;
-import static org.avis.federation.io.AstType.REQUIRE;
-import static org.avis.federation.io.AstType.SHIFT_LEFT;
-import static org.avis.federation.io.AstType.SHIFT_RIGHT;
-import static org.avis.federation.io.AstType.SIZE;
-import static org.avis.federation.io.AstType.STRING;
-import static org.avis.federation.io.AstType.SUBTRACT;
-import static org.avis.federation.io.AstType.UNARY_MINUS;
-import static org.avis.federation.io.AstType.UNARY_PLUS;
-import static org.avis.federation.io.AstType.WILDCARD;
-import static org.avis.federation.io.AstType.XOR;
+import static org.avis.federation.io.XdrAstType.ADD;
+import static org.avis.federation.io.XdrAstType.AND;
+import static org.avis.federation.io.XdrAstType.BEGINS_WITH;
+import static org.avis.federation.io.XdrAstType.BIT_AND;
+import static org.avis.federation.io.XdrAstType.BIT_NEGATE;
+import static org.avis.federation.io.XdrAstType.BIT_OR;
+import static org.avis.federation.io.XdrAstType.BIT_XOR;
+import static org.avis.federation.io.XdrAstType.CONST_INT32;
+import static org.avis.federation.io.XdrAstType.CONST_INT64;
+import static org.avis.federation.io.XdrAstType.CONST_REAL64;
+import static org.avis.federation.io.XdrAstType.CONST_STRING;
+import static org.avis.federation.io.XdrAstType.CONTAINS;
+import static org.avis.federation.io.XdrAstType.DECOMPOSE;
+import static org.avis.federation.io.XdrAstType.DECOMPOSE_COMPAT;
+import static org.avis.federation.io.XdrAstType.DIVIDE;
+import static org.avis.federation.io.XdrAstType.EMPTY;
+import static org.avis.federation.io.XdrAstType.ENDS_WITH;
+import static org.avis.federation.io.XdrAstType.EQUALS;
+import static org.avis.federation.io.XdrAstType.FOLD_CASE;
+import static org.avis.federation.io.XdrAstType.F_EQUALS;
+import static org.avis.federation.io.XdrAstType.GREATER_THAN;
+import static org.avis.federation.io.XdrAstType.GREATER_THAN_EQUALS;
+import static org.avis.federation.io.XdrAstType.INT32;
+import static org.avis.federation.io.XdrAstType.INT64;
+import static org.avis.federation.io.XdrAstType.LESS_THAN;
+import static org.avis.federation.io.XdrAstType.LESS_THAN_EQUALS;
+import static org.avis.federation.io.XdrAstType.LOGICAL_SHIFT_RIGHT;
+import static org.avis.federation.io.XdrAstType.MODULO;
+import static org.avis.federation.io.XdrAstType.MULTIPLY;
+import static org.avis.federation.io.XdrAstType.NAME;
+import static org.avis.federation.io.XdrAstType.NAN;
+import static org.avis.federation.io.XdrAstType.NOT;
+import static org.avis.federation.io.XdrAstType.NOT_EQUALS;
+import static org.avis.federation.io.XdrAstType.OPAQUE;
+import static org.avis.federation.io.XdrAstType.OR;
+import static org.avis.federation.io.XdrAstType.REAL64;
+import static org.avis.federation.io.XdrAstType.REGEX;
+import static org.avis.federation.io.XdrAstType.REGEXP;
+import static org.avis.federation.io.XdrAstType.REQUIRE;
+import static org.avis.federation.io.XdrAstType.SHIFT_LEFT;
+import static org.avis.federation.io.XdrAstType.SHIFT_RIGHT;
+import static org.avis.federation.io.XdrAstType.SIZE;
+import static org.avis.federation.io.XdrAstType.STRING;
+import static org.avis.federation.io.XdrAstType.SUBTRACT;
+import static org.avis.federation.io.XdrAstType.UNARY_MINUS;
+import static org.avis.federation.io.XdrAstType.UNARY_PLUS;
+import static org.avis.federation.io.XdrAstType.WILDCARD;
+import static org.avis.federation.io.XdrAstType.XOR;
 import static org.avis.io.XdrCoding.TYPE_INT32;
 import static org.avis.io.XdrCoding.TYPE_INT64;
 import static org.avis.io.XdrCoding.TYPE_REAL64;
@@ -99,15 +99,15 @@ import static org.avis.util.Text.className;
 /**
  * Parser class for translating XDR-encoded AST's into Node-based AST's.
  * 
- * @see AstXdrCoding#decodeAST(ByteBuffer)
+ * @see XdrAstCoding#decodeAST(ByteBuffer)
  *
  * @author Matthew Phillips
  */
-class AstParser
+class XdrAstParser
 {
   private ByteBuffer in;
 
-  public AstParser (ByteBuffer in)
+  public XdrAstParser (ByteBuffer in)
   {
     this.in = in;
   }
@@ -243,7 +243,7 @@ class AstParser
    * Assert that a single child is found and return this, otherwise
    * throw an exception. Used as a predicate for single-child nodes.
    */
-  private AstParser single ()
+  private XdrAstParser single ()
     throws ProtocolCodecException
   {
     int count = in.getInt ();
@@ -259,7 +259,7 @@ class AstParser
    * Assert that two children are found and return this, otherwise
    * throw an exception. Used as a predicate for binary nodes.
    */
-  private AstParser binary ()
+  private XdrAstParser binary ()
     throws ProtocolCodecException
   {
     int count = in.getInt ();
