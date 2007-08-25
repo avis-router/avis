@@ -204,7 +204,7 @@ public class Link implements NotifyListener
         handleNack ((Nack)message);
         break;
       case TestConn.ID:
-        send (ConfConn.INSTANCE);
+        handleTestConn ();
         break;
       case Ack.ID:
         // zip: handled by request tracking filter
@@ -225,6 +225,12 @@ public class Link implements NotifyListener
       default:
         handleProtocolViolation ("Unexpected " + message.name ());
     }
+  }
+
+  private void handleTestConn ()
+  {
+    if (session.getScheduledWriteRequests () == 0)
+      send (ConfConn.INSTANCE);
   }
 
   private void handleRequestTimeout (RequestMessage<?> request)
