@@ -10,6 +10,7 @@ import org.avis.config.OptionSet;
 import org.avis.config.OptionType;
 import org.avis.config.OptionTypeSet;
 import org.avis.config.Options;
+import org.avis.config.ValueOption;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.IllegalOptionException;
@@ -109,6 +110,8 @@ public class FederationOptions extends Options
            new ParamOption (new OptionTypeSet (String.class)), emptyMap ());
       add ("Federation.Connect", 
            new ParamOption (ewafUriOption), emptyMap ());
+      add ("Federation.Add-Attribute", 
+           new ParamOption (new ValueOption (), 2), emptyMap ());
       add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);
     }
     
@@ -271,7 +274,7 @@ public class FederationOptions extends Options
       // create/lookup any sub-map's
       Map<String, Object> map = baseValue;
       
-      for (int i = paramCount; i > 1; i--)
+      for (int i = 0; i < paramCount - 1; i++)
         map = createEntry (map, params.get (i));
       
       // store value

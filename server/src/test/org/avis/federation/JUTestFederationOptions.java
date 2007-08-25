@@ -1,5 +1,6 @@
 package org.avis.federation;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -17,10 +18,12 @@ import static org.avis.subscription.ast.Nodes.unparse;
 import static org.avis.util.Collections.list;
 import static org.avis.util.Collections.set;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class JUTestFederationOptions
 {
+  @SuppressWarnings("unchecked")
   @Test
   public void basic () 
     throws Exception
@@ -37,6 +40,11 @@ public class JUTestFederationOptions
     props.setProperty ("Federation.Connect[External]", "ewaf://public.elvin.org");
     props.setProperty ("Federation.Apply-Class[External]", "@.elvin.org domain");
     props.setProperty ("Federation.Listen", "ewaf://0.0.0.0 ewaf://hello:7778");
+    props.setProperty ("Federation.Add-Attribute[External][String]", "'hello'");
+    props.setProperty ("Federation.Add-Attribute[External][Int32]", "42");
+    props.setProperty ("Federation.Add-Attribute[External][Int64]", "12L");
+    props.setProperty ("Federation.Add-Attribute[External][Real64]", "0.1");
+    props.setProperty ("Federation.Add-Attribute[External][Opaque]", "[de ad]");
     
     options.setAll (props);
     
@@ -70,6 +78,19 @@ public class JUTestFederationOptions
     
     assertEquals (new EwafURI ("ewaf://public.elvin.org"), 
                   connect.get ("External"));
+    
+    Map<String, Object> addAttribute = 
+      options.getParamOption ("Federation.Add-Attribute");
+    
+    Map<String, Object> externalAttrs =
+      (Map<String, Object>)addAttribute.get ("External");
+    
+    assertEquals ("hello", externalAttrs.get ("String"));
+    assertEquals (42, externalAttrs.get ("Int32"));
+    assertEquals (12L, externalAttrs.get ("Int64"));
+    assertEquals (0.1, externalAttrs.get ("Real64"));
+    assertTrue (Arrays.equals (new byte [] {(byte)0xde, (byte)0xad}, 
+                               (byte [])externalAttrs.get ("Opaque")));
   }
 
   private static String astExpr (String expr) 
