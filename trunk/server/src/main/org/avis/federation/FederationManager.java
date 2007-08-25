@@ -189,7 +189,7 @@ public class FederationManager implements CloseListener
           checkUri ("Federation.Listen", uri);
         
         return new Acceptor (router, serverDomain, classes, 
-                             addressesFor (uris));
+                             addressesFor (uris), config);
       } catch (IOException ex)
       {
         throw new IllegalOptionException ("Federation.Listen", 
