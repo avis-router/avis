@@ -16,6 +16,7 @@ import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
 import org.avis.security.Keys;
+import org.avis.subscription.parser.ParseException;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
@@ -34,6 +35,7 @@ import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class JUTestFederation
@@ -92,32 +94,49 @@ public class JUTestFederation
     federation.close ();
   }
   
-  /**
-   * Test client1 can see message from client2 and vice-versa.
-   */
-  private static void testTwoWayClientSendReceive (SimpleClient client1,
-                                                   SimpleClient client2)
+  @Test
+  public void addAttributes ()
     throws Exception
   {
+    FederationClass fedClass1 = StandardFederatorSetup.defaultClass ();
+    FederationClass fedClass2 = StandardFederatorSetup.defaultClass ();
+    
+    FederationClasses classes = new FederationClasses ();
+    
+    classes.mapServerDomain ("server2", fedClass1);
+    classes.mapServerDomain ("server1", fedClass2);
+    
+    fedClass1.incomingAttributes = new HashMap<String, Object> ();
+    fedClass1.outgoingAttributes = new HashMap<String, Object> ();
+    
+    fedClass1.incomingAttributes.put ("Incoming", "incoming");
+    fedClass1.outgoingAttributes.put ("Outgoing", "outgoing");
+    
+    federation = new StandardFederatorSetup (classes);
+    
     // client 1 -> client 2
-    client1.sendNotify 
+    federation.client1.sendNotify 
       (map ("federated", "server1", "from", "client1"));
     
-    NotifyDeliver notification = (NotifyDeliver)client2.receive ();
+    NotifyDeliver notification = (NotifyDeliver)federation.client2.receive ();
     
     assertEquals ("client1", notification.attributes.get ("from"));
+    assertEquals ("outgoing", notification.attributes.get ("Outgoing"));
+    assertNull (notification.attributes.get ("Incoming"));
     
     // client 2 - > client 1
-    client2.sendNotify 
+    federation.client2.sendNotify 
       (map ("federated", "server2", "from", "client2"));
     
-    notification = (NotifyDeliver)client1.receive ();
+    notification = (NotifyDeliver)federation.client1.receive ();
     
-    assertEquals (0, notification.secureMatches.length);
-    assertEquals (1, notification.insecureMatches.length);
     assertEquals ("client2", notification.attributes.get ("from"));
+    assertEquals ("incoming", notification.attributes.get ("Incoming"));
+    assertNull (notification.attributes.get ("Outgoing"));
+    
+    federation.close ();
   }
-
+  
   /**
    * Test secure delivery.
    */
@@ -407,6 +426,32 @@ public class JUTestFederation
     
     return elvind;
   }
+  
+  /**
+   * Test client1 can see message from client2 and vice-versa.
+   */
+  private static void testTwoWayClientSendReceive (SimpleClient client1,
+                                                   SimpleClient client2)
+    throws Exception
+  {
+    // client 1 -> client 2
+    client1.sendNotify 
+      (map ("federated", "server1", "from", "client1"));
+    
+    NotifyDeliver notification = (NotifyDeliver)client2.receive ();
+    
+    assertEquals ("client1", notification.attributes.get ("from"));
+    
+    // client 2 - > client 1
+    client2.sendNotify 
+      (map ("federated", "server2", "from", "client2"));
+    
+    notification = (NotifyDeliver)client1.receive ();
+    
+    assertEquals (0, notification.secureMatches.length);
+    assertEquals (1, notification.insecureMatches.length);
+    assertEquals ("client2", notification.attributes.get ("from"));
+  }
 
   private static Map<String, Object> map (String... nameValues)
   {
@@ -435,17 +480,32 @@ public class JUTestFederation
       this (new Options (FederationOptionSet.OPTION_SET));
     }
     
+    public StandardFederatorSetup (FederationClasses classes)
+      throws Exception
+    {
+      this (classes, new Options (FederationOptionSet.OPTION_SET));
+    }
+    
     public StandardFederatorSetup (Options options)
+      throws Exception
+    {
+      this (new FederationClasses (defaultClass ()), options);
+    }
+
+    public static FederationClass defaultClass ()
+      throws ParseException
+    {
+      return new FederationClass ("require (federated)",
+                                  "require (federated)");
+    }
+    
+    public StandardFederatorSetup (FederationClasses classes,
+                                   Options options)
       throws Exception
     {
       server1 = new Router (PORT1);
       server2 = new Router (PORT2);
 
-      FederationClass fedClass =
-        new FederationClass ("require (federated)", "require (federated)");
-      
-      FederationClasses classes = new FederationClasses (fedClass);
-      
       EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
       
       acceptor = 
@@ -454,7 +514,7 @@ public class JUTestFederation
       
       connector = 
         new Connector (server1, "server1", ewafURI, 
-                       fedClass, options);
+                       classes.classFor ("server2"), options);
       
       client1 = new SimpleClient ("client1", "localhost", PORT1);
       client2 = new SimpleClient ("client2", "localhost", PORT2);
