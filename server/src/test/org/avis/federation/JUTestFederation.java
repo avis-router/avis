@@ -195,9 +195,9 @@ public class JUTestFederation
     
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
         
-    // set connect timeout to 1 second
+    // set connect/request timeout to 1 second
     Options options = new Options (FederationOptionSet.OPTION_SET);
-    options.set ("Federation.Connect-Timeout", 1);
+    options.set ("Federation.Request-Timeout", 1);
     
     Connector connector = 
       new Connector (server1, "server1", ewafURI, 
@@ -210,7 +210,7 @@ public class JUTestFederation
     
     Acceptor acceptor = 
       new Acceptor (server2, "server2", classes, 
-                    addressesFor (set (ewafURI)));
+                    addressesFor (set (ewafURI)), options);
     
     sleep (2000);
     
@@ -243,14 +243,14 @@ public class JUTestFederation
         
     // set connect timeout to 1 second
     Options options = new Options (FederationOptionSet.OPTION_SET);
-    options.set ("Federation.Connect-Timeout", 1);
+    options.set ("Federation.Request-Timeout", 1);
    
     // Log.enableLogging (Log.DIAGNOSTIC, true);
     // Log.enableLogging (Log.TRACE, true);
 
     Acceptor acceptor = 
       new Acceptor (server2, "server2", classes, 
-                    addressesFor (set (ewafURI)));
+                    addressesFor (set (ewafURI)), options);
 
     Connector connector = 
       new Connector (server1, "server1", ewafURI, 
@@ -270,12 +270,67 @@ public class JUTestFederation
     
     acceptor = 
       new Acceptor (server2, "server2", classes, 
-                    addressesFor (set (ewafURI)));
+                    addressesFor (set (ewafURI)), options);
     
     sleep (2000);
     
     // check we've reconnected
     assertTrue (connector.isConnected ());
+    
+    connector.close ();
+    acceptor.close ();
+    
+    server1.close ();
+    server2.close ();
+  }
+  
+  @Test
+  public void liveness ()
+    throws Exception
+  {    
+    Router server1 = new Router (PORT1);
+    Router server2 = new Router (PORT2);
+
+    FederationClass fedClass =
+      new FederationClass ("require (federated)", "require (federated)");
+    
+    FederationClasses classes = new FederationClasses (fedClass);
+    
+    EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
+        
+    // set connect timeout to 1 second
+    Options options = new Options (FederationOptionSet.OPTION_SET);
+    options.set ("Federation.Request-Timeout", 1);
+    options.set ("Federation.Keepalive-Interval", 1);
+   
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
+    // Log.enableLogging (Log.TRACE, true);
+
+    Acceptor acceptor = 
+      new Acceptor (server2, "server2", classes, 
+                    addressesFor (set (ewafURI)), options);
+
+    Connector connector = 
+      new Connector (server1, "server1", ewafURI, 
+                     fedClass, options);
+
+    sleep (1000);
+    
+    // check we've connected
+    assertTrue (connector.isConnected ());
+
+    // "crash" link at acceptor end
+    acceptor.hang ();
+    
+    // liveness check will generate a warning: ignore
+    logTester.pause ();
+    
+    // wait for other end to notice
+    sleep (8000);
+    
+    logTester.unpause ();
+    
+    assertTrue (connector.isWaitingForAsyncConnection ());
     
     connector.close ();
     acceptor.close ();
@@ -510,7 +565,7 @@ public class JUTestFederation
       
       acceptor = 
         new Acceptor (server2, "server2", classes, 
-                      addressesFor (set (ewafURI)));
+                      addressesFor (set (ewafURI)), options);
       
       connector = 
         new Connector (server1, "server1", ewafURI, 
