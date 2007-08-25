@@ -68,12 +68,10 @@ public abstract class SubscriptionParserBase
   public Node parseAndValidate ()
     throws ParseException, ConstantExpressionException
   {
-    Node node = parse ();
+    Node node = parse ().inlineConstants ();
     
     if (node.evalType () == Boolean.class)
     {
-      node = node.inlineConstants ();
-        
       if (!(node instanceof Const))
         return node;
       else
