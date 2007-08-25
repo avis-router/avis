@@ -56,18 +56,18 @@ public class Acceptor implements IoHandler, Closeable
   protected Set<Link> links;
   protected Set<InetSocketAddress> addresses;
   protected String serverDomain;
-  protected FederationClasses federationClassMap;
+  protected FederationClasses federationClasses;
   protected volatile boolean closing;
 
   public Acceptor (Router router,
                    String serverDomain,
-                   FederationClasses federationClassMap, 
+                   FederationClasses federationClasses, 
                    Set<InetSocketAddress> addresses)
     throws IOException
   {
     this.router = router;
     this.serverDomain = serverDomain;
-    this.federationClassMap = federationClassMap;
+    this.federationClasses = federationClasses;
     this.addresses = addresses;
     this.links = new HashSet<Link> ();
     
@@ -164,7 +164,7 @@ public class Acceptor implements IoHandler, Closeable
     {
       // todo should check that server domain is not already known
       FederationClass fedClass = 
-        federationClassMap.classFor (remoteHost, message.serverDomain);
+        federationClasses.classFor (remoteHost, message.serverDomain);
 
       if (!fedClass.allowsNothing ())
       {
@@ -198,9 +198,8 @@ public class Acceptor implements IoHandler, Closeable
                                      FederationClass federationClass)
   {
     Link link =
-      new Link (session, router,
-                          federationClass, serverDomain, 
-                          remoteServerDomain, remoteHost);
+      new Link (session, router, federationClass,
+                serverDomain, remoteServerDomain, remoteHost);
     
     addLink (session, link);
   }
