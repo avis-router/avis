@@ -5,18 +5,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Test;
-
+import org.avis.config.OptionTypeParam;
+import org.avis.config.Options;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.IllegalOptionException;
 import org.avis.util.Pair;
 
+import org.junit.Test;
+
 import static org.avis.federation.FederationClass.parse;
-import static org.avis.federation.FederationOptions.splitOptionParam;
 import static org.avis.subscription.ast.Nodes.unparse;
 import static org.avis.util.Collections.list;
 import static org.avis.util.Collections.set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -28,7 +30,7 @@ public class JUTestFederationOptions
   public void basic () 
     throws Exception
   {
-    FederationOptions options = new FederationOptions ();
+    Options options = new Options (FederationOptionSet.OPTION_SET);
     
     Properties props = new Properties ();
     
@@ -104,17 +106,17 @@ public class JUTestFederationOptions
     throws Exception
   {
     Pair<String,List<String>> result = 
-      splitOptionParam ("Base[Param1][Param2]");
+      OptionTypeParam.splitOptionParam ("Base[Param1][Param2]");
     
     assertEquals ("Base", result.item1);
     assertEquals (list ("Param1", "Param2"), result.item2);
     
-    result = splitOptionParam ("Base[Param1]");
+    result = OptionTypeParam.splitOptionParam ("Base[Param1]");
     
     assertEquals ("Base", result.item1);
     assertEquals (list ("Param1"), result.item2);
     
-    result = splitOptionParam ("Base");
+    result = OptionTypeParam.splitOptionParam ("Base");
     
     assertEquals ("Base", result.item1);
     assertEquals (0, result.item2.size ());
@@ -133,7 +135,7 @@ public class JUTestFederationOptions
   {
     try
     {
-      splitOptionParam (expr);
+      OptionTypeParam.splitOptionParam (expr);
       
       fail ();
     } catch (IllegalOptionException ex)

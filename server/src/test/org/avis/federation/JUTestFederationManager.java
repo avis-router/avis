@@ -5,6 +5,7 @@ import java.util.Map;
 
 import java.net.InetAddress;
 
+import org.avis.config.Options;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
@@ -51,7 +52,7 @@ public class JUTestFederationManager
   {
     EwafURI federationUri = new EwafURI ("ewaf://0.0.0.0:" + (PORT1 - 1));
 
-    FederationOptions options = new FederationOptions ();
+    Options options = new Options (FederationOptionSet.OPTION_SET);
     
     options.set ("Federation.Router-Name", "router1");
     options.set ("Federation.Listen", federationUri);
@@ -78,7 +79,7 @@ public class JUTestFederationManager
     
     Connector connector =
       new Connector (router2, "router2", federationUri, fedClass,
-                     new FederationOptions ());
+                     new Options (FederationOptionSet.OPTION_SET));
     
     sleep (1000);
     
