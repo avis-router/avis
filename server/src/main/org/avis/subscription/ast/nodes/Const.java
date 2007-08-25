@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.avis.subscription.ast.Node;
 
+import static org.avis.util.Util.valuesEqual;
+
 public class Const extends Node
 {
   public static final Const CONST_FALSE = new Const (FALSE);
@@ -26,7 +28,7 @@ public class Const extends Node
   
   public static Const string (String string)
   {
-    return new Const(string);
+    return new Const (string);
   }
   
   public static Const int32 (int value)
@@ -50,6 +52,19 @@ public class Const extends Node
   public Const (Object value)
   {
     this.value = value;
+  }
+  
+  @Override
+  public boolean equals (Object obj)
+  {
+    return obj.getClass () == Const.class && 
+           valuesEqual (((Const)obj).value, value);
+  }
+  
+  @Override
+  public int hashCode ()
+  {
+    return value == null ? 0 : value.hashCode ();
   }
   
   public Object value ()
