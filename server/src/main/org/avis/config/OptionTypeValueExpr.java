@@ -12,7 +12,7 @@ import static org.avis.util.Text.stringToValue;
  * 
  * @author Matthew Phillips
  */
-public class ValueOption extends OptionType
+public class OptionTypeValueExpr extends OptionType
 {
   @Override
   public String validate (String option, Object value)
