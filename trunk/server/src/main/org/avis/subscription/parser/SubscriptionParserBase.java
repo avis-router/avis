@@ -77,7 +77,8 @@ public abstract class SubscriptionParserBase
       if (!(node instanceof Const))
         return node;
       else
-        throw new ConstantExpressionException ("Expression is " + node.expr ());
+        throw new ConstantExpressionException ("Expression is constant: " + 
+                                               node.expr ());
     } else
     {
       throw new ParseException
