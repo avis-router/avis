@@ -1,8 +1,5 @@
 package org.avis.io.messages;
 
-import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.filter.codec.ProtocolCodecException;
-
 import static org.avis.util.Text.shortException;
 
 /**
@@ -10,7 +7,7 @@ import static org.avis.util.Text.shortException;
  * 
  * @author Matthew Phillips
  */
-public class ErrorMessage extends Message
+public class ErrorMessage extends SyntheticMessage
 {
   public static final int ID = -1;
   
@@ -46,19 +43,5 @@ public class ErrorMessage extends Message
   public int typeId ()
   {
     return ID;
-  }
-  
-  @Override
-  public void decode (ByteBuffer in)
-    throws ProtocolCodecException
-  {
-    throw new UnsupportedOperationException ();
-  }
-
-  @Override
-  public void encode (ByteBuffer out)
-    throws ProtocolCodecException
-  {
-    throw new UnsupportedOperationException ();
-  }
+  }  
 }

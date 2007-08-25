@@ -1,14 +1,12 @@
 package org.avis.io.messages;
 
-import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.filter.codec.ProtocolCodecException;
 
 /**
  * Synthetic message generated when a request timeout has elapsed.
  * 
  * @author Matthew Phillips
  */
-public class RequestTimeoutMessage extends Message
+public class RequestTimeoutMessage extends SyntheticMessage
 {
   public static final int ID = -2;
   
@@ -20,20 +18,6 @@ public class RequestTimeoutMessage extends Message
   public RequestTimeoutMessage (RequestMessage<?> request)
   {
     this.request = request;
-  }
-
-  @Override
-  public void decode (ByteBuffer in) 
-    throws ProtocolCodecException
-  {
-    throw new UnsupportedOperationException ("Synthetic message");
-  }
-
-  @Override
-  public void encode (ByteBuffer out) 
-    throws ProtocolCodecException
-  {
-    throw new UnsupportedOperationException ("Synthetic message");
   }
 
   @Override
