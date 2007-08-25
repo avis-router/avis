@@ -42,7 +42,8 @@ public class FederationOptionSet extends OptionSet
          new OptionTypeParam (ewafUriOption), emptyMap ());
     add ("Federation.Add-Incoming-Attribute", attrOption, emptyMap ());
     add ("Federation.Add-Outgoing-Attribute", attrOption, emptyMap ());
-    add ("Federation.Connect-Timeout", 1, 20, Integer.MAX_VALUE);
+    add ("Federation.Request-Timeout", 1, 20, Integer.MAX_VALUE);
+    add ("Federation.Keepalive-Interval", 1, 60, Integer.MAX_VALUE);
   }
   
   /**
