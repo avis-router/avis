@@ -161,19 +161,12 @@ public final class XdrAstCoding
       out.putInt (typeCodeFor (node));
       out.putInt (0); // composite node base type is 0
       
-      // children
-      if (node.hasChildren ())
-      {
-        Collection<Node> children = node.children ();
-        
-        out.putInt (children.size ());
-        
-        for (Node child : children)
-          encodeAST (out, child);
-      } else
-      {
-        out.putInt (0);
-      }
+      Collection<Node> children = node.children ();
+      
+      out.putInt (children.size ());
+      
+      for (Node child : children)
+        encodeAST (out, child);
     }
   }
   
@@ -222,7 +215,7 @@ public final class XdrAstCoding
                DECOMPOSE : DECOMPOSE_COMPAT;
     } else
     {
-      // sanity check is that this will NPE on unmapped type
+      // this will NPE if we hit an unmapped type
       return typeCodes.get (node.getClass ());
     }
   }
