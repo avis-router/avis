@@ -12,6 +12,7 @@ import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.ErrorMessage;
+import org.avis.io.messages.LivenessTimeoutMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.Notify;
@@ -57,6 +58,12 @@ public class Link implements NotifyListener
    * because the remote federator vetoed a request.
    */
   private static final int REASON_REQUEST_REJECTED = -2;
+  
+  /**
+   * Internal disconnection reason code indicating remote federator failed
+   * a liveness check.
+   */
+  private static final int REASON_FEDERATOR_STOPPED_RESPONDING = -3;
 
   private static final String [] EMPTY_ROUTING = new String [0];
   
@@ -121,7 +128,8 @@ public class Link implements NotifyListener
     {
       session.setAttribute ("linkClosed");
 
-      if (reason == REASON_DISCONN_REQUESTED)
+      // just close session for internal codes
+      if (reason < 0)
         session.close ();
       else
         send (new Disconn (reason, message)).addListener (CLOSE);
@@ -196,7 +204,7 @@ public class Link implements NotifyListener
         handleNack ((Nack)message);
         break;
       case TestConn.ID:
-        send (new ConfConn ());
+        send (ConfConn.INSTANCE);
         break;
       case Ack.ID:
         // zip: handled by request tracking filter
@@ -207,6 +215,9 @@ public class Link implements NotifyListener
         break;
       case RequestTimeoutMessage.ID:
         handleRequestTimeout (((RequestTimeoutMessage)message).request);
+        break;
+      case LivenessTimeoutMessage.ID:
+        handleLivenessTimeout ();
         break;
       case ErrorMessage.ID:
         handleError ((ErrorMessage)message);
@@ -231,6 +242,14 @@ public class Link implements NotifyListener
     }
   }
 
+  private void handleLivenessTimeout ()
+  {
+    warn ("Remote federator at " + remoteHostName + 
+          " has stopped responding", this);
+    
+    close (REASON_FEDERATOR_STOPPED_RESPONDING, "");
+  }
+  
   private void handleError (ErrorMessage message)
   {
     logError (message, this);
