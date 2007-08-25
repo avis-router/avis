@@ -200,15 +200,14 @@ public class Link implements NotifyListener
       case Disconn.ID:
         close (REASON_DISCONN_REQUESTED, "");
         break;
-      case Nack.ID:
-        handleNack ((Nack)message);
-        break;
       case TestConn.ID:
         handleTestConn ();
         break;
       case DropWarn.ID:
-        warn ("Remote federator sent a dropped packet warning: " +
-              "a message may have been discarded due to congestion", this);
+        handleDropWarn ();
+        break;
+      case Nack.ID:
+        handleNack ((Nack)message);
         break;
       case Ack.ID:
         // zip
@@ -225,6 +224,12 @@ public class Link implements NotifyListener
       default:
         handleProtocolViolation ("Unexpected " + message.name ());
     }
+  }
+
+  private void handleDropWarn ()
+  {
+    warn ("Remote federator sent a dropped packet warning: " +
+          "a message may have been discarded due to congestion", this);
   }
 
   private void handleTestConn ()
