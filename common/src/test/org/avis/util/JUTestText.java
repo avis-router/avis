@@ -16,6 +16,19 @@ import static org.junit.Assert.fail;
 public class JUTestText
 {
   @Test
+  public void stringToValue () 
+    throws Exception
+  {
+    assertEquals ("hello", Text.stringToValue ("'hello'"));
+    assertEquals ("hello", Text.stringToValue ("\"hello\""));
+    assertEquals (32, Text.stringToValue ("32"));
+    assertEquals (42L, Text.stringToValue ("42L"));
+    assertEquals (0.12, Text.stringToValue ("0.12"));
+    assertEquals ("0e ff de", 
+                  Text.bytesToHex ((byte [])Text.stringToValue ("[0e ff de]")));
+  }
+  
+  @Test
   public void parseHexBytes ()
      throws Exception
   {

@@ -27,9 +27,7 @@ import static org.avis.util.Text.appendEscaped;
 import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.className;
 import static org.avis.util.Text.findFirstNonEscaped;
-import static org.avis.util.Text.quotedStringToString;
-import static org.avis.util.Text.stringToNumber;
-import static org.avis.util.Text.stringToOpaque;
+import static org.avis.util.Text.stringToValue;
 import static org.avis.util.Text.stripBackslashes;
 
 /**
@@ -222,21 +220,8 @@ public final class Notification
     
     String name = stripBackslashes (line.substring (0, colon).trim ());
     String valueExpr = line.substring (colon + 1).trim ();
-    Object value;
     
-    char firstChar = valueExpr.charAt (0);
-    
-    if (firstChar == '"')
-      value = quotedStringToString (valueExpr);
-    else if (firstChar >= '0' && firstChar <= '9')
-      value = stringToNumber (valueExpr);
-    else if (firstChar == '[')
-      value = stringToOpaque (valueExpr);
-    else
-      throw new InvalidFormatException
-        ("Unrecognised value expression: \"" + valueExpr + "\"");
-    
-    ntfn.attributes.put (name, value);
+    ntfn.attributes.put (name, stringToValue (valueExpr));
   }
 
   /**
