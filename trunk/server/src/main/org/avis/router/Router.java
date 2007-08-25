@@ -643,7 +643,7 @@ public class Router implements IoHandler, Closeable
   {
     // if no other outgoing messages are waiting, send a confirm message
     if (session.getScheduledWriteRequests () == 0)
-      send (session, new ConfConn ());
+      send (session, ConfConn.INSTANCE);
   }
   
   private static void handleQuench (IoSession session,

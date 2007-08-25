@@ -314,7 +314,7 @@ public class JUTestRouter
     assertEquals (Nack.NO_SUCH_SUB, nackReply.error);
     
     // send a connection test
-    client.send (new TestConn ());
+    client.send (TestConn.INSTANCE);
     assertTrue (client.receive () instanceof ConfConn);
     
     client.close ();

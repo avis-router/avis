@@ -61,9 +61,9 @@ public class FederationFrameCodec
       case FedNotify.ID:
         return new FedNotify ();
       case TestConn.ID:
-        return new TestConn ();
+        return TestConn.INSTANCE;
       case ConfConn.ID:
-        return new ConfConn ();
+        return ConfConn.INSTANCE;
       case DropWarn.ID:
         return new DropWarn ();
       default:
