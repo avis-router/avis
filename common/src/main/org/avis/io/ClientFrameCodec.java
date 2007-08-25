@@ -83,9 +83,9 @@ public class ClientFrameCodec
       case NotifyEmit.ID:
         return new NotifyEmit ();
       case TestConn.ID:
-        return new TestConn ();
+        return TestConn.INSTANCE;
       case ConfConn.ID:
-        return new ConfConn ();
+        return ConfConn.INSTANCE;
       case SecRqst.ID:
         return new SecRqst ();
       case SecRply.ID:

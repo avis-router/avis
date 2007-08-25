@@ -680,7 +680,7 @@ public final class Elvin implements Closeable
   {
     try
     {
-      send (new TestConn ());
+      send (TestConn.INSTANCE);
       
       Runnable connCheck = new Runnable ()
       {
@@ -1291,9 +1291,6 @@ public final class Elvin implements Closeable
       case Disconn.ID:
         handleDisconnect ((Disconn)message);
         break;
-      case ConfConn.ID:
-        // zip: used for liveness checking
-        break;
       case DropWarn.ID:
         // todo should probably fire an event for this
         warn ("Router sent a dropped packet warning: " +
@@ -1446,6 +1443,9 @@ public final class Elvin implements Closeable
         trace ("Client got message: " + message, this);
      
       lastMessageTime = currentTimeMillis ();
+      
+      if (message == ConfConn.INSTANCE)
+        return;
       
       if (message instanceof XidMessage)
         handleReply ((XidMessage)message);
