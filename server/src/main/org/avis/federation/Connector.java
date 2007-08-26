@@ -289,7 +289,6 @@ public class Connector implements IoHandler, Closeable
       default:
         warn ("Unexpected message during handshake from remote federator at " +  
               uri + ": " + message.name (), this);
-        // todo add max number of retries
         reopen ();
     }
   }
