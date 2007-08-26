@@ -54,7 +54,13 @@ public class FederationClasses
     FederationClass fedClass = classes.get (name);
     
     if (fedClass == null)
-      classes.put (name, fedClass = new FederationClass ());
+    {
+      fedClass = new FederationClass ();
+      
+      fedClass.name = name;
+      
+      classes.put (name, fedClass);
+    }
     
     return fedClass;
   }

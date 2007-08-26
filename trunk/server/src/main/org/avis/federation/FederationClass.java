@@ -21,6 +21,7 @@ import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
  */
 public class FederationClass
 {
+  public String name;
   public Node incomingFilter;
   public Node outgoingFilter;
   public Map<String, Object> incomingAttributes;
