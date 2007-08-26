@@ -28,7 +28,9 @@ import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.router.Router;
 
+import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
+
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
@@ -37,6 +39,7 @@ import static org.avis.io.messages.Nack.IMPL_LIMIT;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
 
@@ -184,9 +187,9 @@ public class Acceptor implements IoHandler, Closeable
       {
         send (session, new FedConnRply (message, serverDomain));
        
-        diagnostic ("Federation incoming link established with " + 
-                    hostName + ", remote server domain \"" + 
-                    message.serverDomain + "\"", this);
+        info ("Federation incoming link established with " + 
+              hostName + ", remote server domain \"" + 
+              message.serverDomain + "\"", this);
       
         createFederationLink
           (session, message.serverDomain, hostName, fedClass);
@@ -251,7 +254,8 @@ public class Acceptor implements IoHandler, Closeable
   public void sessionCreated (IoSession session)
     throws Exception
   {
-    // zip
+    // federators have 20 seconds to send a FedConnRqst
+    session.setIdleTime (READER_IDLE, 20);
   }
 
   public void sessionOpened (IoSession session)
@@ -301,6 +305,13 @@ public class Acceptor implements IoHandler, Closeable
   public void sessionIdle (IoSession session, IdleStatus status)
     throws Exception
   {
-    // todo
+    if (status == READER_IDLE && linkFor (session) == null)
+    {
+      warn ("Disconnecting incoming federation connection from " + 
+            remoteHostFor (session) + 
+            " due to failure to send connect request", this);
+      
+      session.close ();
+    }
   }
 }
