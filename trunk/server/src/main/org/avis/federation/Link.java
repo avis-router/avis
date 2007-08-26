@@ -96,6 +96,16 @@ public class Link implements NotifyListener
     if (federationClass.outgoingFilter != CONST_FALSE)
       router.addNotifyListener (this);
   }
+  
+  public IoSession session ()
+  {
+    return session;
+  }
+  
+  public String remoteServerDomain ()
+  {
+    return remoteServerDomain;
+  }
 
   public boolean isClosed ()
   {
