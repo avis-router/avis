@@ -34,6 +34,7 @@ import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
+import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.info;
@@ -357,7 +358,7 @@ public class Connector implements IoHandler, Closeable
   public void sessionCreated (IoSession theSession)
     throws Exception
   {
-    // zip
+    setMaxFrameLengthFor (session, options.getInt ("Packet.Max-Length"));
   }
   
   public void messageReceived (IoSession theSession, Object theMessage)

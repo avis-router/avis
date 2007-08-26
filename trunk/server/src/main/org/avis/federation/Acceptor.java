@@ -35,6 +35,7 @@ import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
+import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.hostAddressFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.io.messages.Nack.IMPL_LIMIT;
@@ -59,6 +60,7 @@ import static org.avis.logging.Log.warn;
 public class Acceptor implements IoHandler, Closeable
 {
   protected Router router;
+  protected Options options;
   protected Set<Link> links;
   protected Set<InetSocketAddress> addresses;
   protected String serverDomain;
@@ -68,13 +70,15 @@ public class Acceptor implements IoHandler, Closeable
   public Acceptor (Router router,
                    String serverDomain,
                    FederationClasses federationClasses, 
-                   Set<InetSocketAddress> addresses, Options options)
+                   Set<InetSocketAddress> addresses, 
+                   Options options)
     throws IOException
   {
     this.router = router;
     this.serverDomain = serverDomain;
     this.federationClasses = federationClasses;
     this.addresses = addresses;
+    this.options = options;
     this.links = new HashSet<Link> ();
     
     int requestTimeout = options.getInt ("Federation.Request-Timeout");
@@ -283,6 +287,8 @@ public class Acceptor implements IoHandler, Closeable
   {
     // federators have 20 seconds to send a FedConnRqst
     session.setIdleTime (READER_IDLE, 20);
+    
+    setMaxFrameLengthFor (session, options.getInt ("Packet.Max-Length"));
   }
 
   public void sessionOpened (IoSession session)
