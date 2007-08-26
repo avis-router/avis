@@ -168,7 +168,6 @@ public class SimpleClient implements IoHandler
       throw new IOException ("NACK reply:" + nack.formattedMessage ());
     } else
     {
-      // todo this indicates a pretty serious fuckup. should close?
       throw new IOException
         ("Protocol error: received a " + className (reply) +
          ": was expecting " + className (request.replyType ()));
