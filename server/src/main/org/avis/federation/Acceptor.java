@@ -35,6 +35,8 @@ import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
+import static org.avis.io.Net.hostAddressFor;
+import static org.avis.io.Net.hostIdFor;
 import static org.avis.io.messages.Nack.IMPL_LIMIT;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.DIAGNOSTIC;
@@ -151,7 +153,7 @@ public class Acceptor implements IoHandler, Closeable
         break;
       default:
         warn ("Unexpected handshake message from connecting remote " +
-              "federator at " + remoteHostFor (session) + 
+              "federator at " + hostIdFor (session) + 
               " (disconnecting): " + message.name (), this);
         session.close ();
     }
@@ -159,7 +161,7 @@ public class Acceptor implements IoHandler, Closeable
 
   private void handleFedConnRqst (IoSession session, FedConnRqst message)
   {
-    InetAddress remoteHost = remoteHostFor (session);
+    InetAddress remoteHost = hostAddressFor (session);
     String hostName = remoteHost.getCanonicalHostName ();
     
     if (message.versionMajor != VERSION_MAJOR || 
@@ -187,8 +189,8 @@ public class Acceptor implements IoHandler, Closeable
       {
         send (session, new FedConnRply (message, serverDomain));
        
-        info ("Federation incoming link established with " + 
-              hostName + ", remote server domain \"" + 
+        info ("Federation incoming link established with \"" + 
+              hostIdFor (session) + "\", remote server domain \"" + 
               message.serverDomain + "\"", this);
       
         createFederationLink
@@ -230,18 +232,6 @@ public class Acceptor implements IoHandler, Closeable
   private static Link linkFor (IoSession session)
   {
     return (Link)session.getAttribute ("federationLink");
-  }
-
-  private static InetAddress remoteHostFor (IoSession session)
-  {
-    if (session.getRemoteAddress () instanceof InetSocketAddress)
-    {
-      return ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
-    } else
-    {
-      throw new Error ("Can't get host name for address type " + 
-                       session.getRemoteAddress ().getClass ());
-    }
   }
 
   private WriteFuture send (IoSession session, Message message)
@@ -286,7 +276,22 @@ public class Acceptor implements IoHandler, Closeable
   public void sessionClosed (IoSession session)
     throws Exception
   {
-    // todo
+    Link link = linkFor (session);
+    
+    if (link != null)
+    {
+      if (!link.isClosed ())
+      {
+        warn ("Remote host \"" + hostIdFor (session) + 
+              "\" closed federation link with no warning", this);
+
+        link.close ();
+      } else
+      {
+        info ("Federation link with \"" + hostIdFor (session) + 
+              "\" disconnected", this);
+      }
+    }
   }
   
   public void exceptionCaught (IoSession session, Throwable cause)
@@ -308,7 +313,7 @@ public class Acceptor implements IoHandler, Closeable
     if (status == READER_IDLE && linkFor (session) == null)
     {
       warn ("Disconnecting incoming federation connection from " + 
-            remoteHostFor (session) + 
+            hostIdFor (session) + 
             " due to failure to send connect request", this);
       
       session.close ();
