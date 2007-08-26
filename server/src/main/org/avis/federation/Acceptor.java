@@ -191,7 +191,8 @@ public class Acceptor implements IoHandler, Closeable
        
         info ("Federation incoming link established with \"" + 
               hostIdFor (session) + "\", remote server domain \"" + 
-              message.serverDomain + "\"", this);
+              message.serverDomain + "\", federation class \"" + 
+              fedClass.name + "\"", this);
       
         createFederationLink
           (session, message.serverDomain, hostName, fedClass);
