@@ -14,6 +14,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
 import static org.avis.federation.FederationClass.parse;
+import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 /**
  * Configuration option set for Avis federation.
@@ -44,6 +45,8 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Add-Outgoing-Attribute", attrOption, emptyMap ());
     add ("Federation.Request-Timeout", 1, 20, Integer.MAX_VALUE);
     add ("Federation.Keepalive-Interval", 1, 60, Integer.MAX_VALUE);
+    
+    inheritFrom (CONNECTION_OPTION_SET);
   }
   
   /**
