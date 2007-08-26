@@ -13,6 +13,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import org.apache.mina.common.IoSession;
+
 import org.avis.common.ElvinURI;
 
 import static java.util.Arrays.asList;
@@ -141,5 +143,30 @@ public final class Net
     }
     
     return addresses;
+  }
+
+  /**
+   * Find the host address for an InetSocketAddress session.
+   */
+  public static InetAddress hostAddressFor (IoSession session)
+  {
+    if (session.getRemoteAddress () instanceof InetSocketAddress)
+    {
+      return ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
+    } else
+    {
+      throw new Error ("Can't get host name for address type " + 
+                       session.getRemoteAddress ().getClass ());
+    }
+  }
+  
+  /**
+   * Generate a standard host ID for a session using host name and IP.
+   */
+  public static String hostIdFor (IoSession session)
+  {
+    InetAddress address = hostAddressFor (session);
+    
+    return address.getCanonicalHostName () + '/' + address.getHostAddress ();
   }
 }
