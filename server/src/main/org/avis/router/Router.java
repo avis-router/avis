@@ -21,6 +21,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
+import org.avis.config.Options;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.FrameTooLargeException;
 import org.avis.io.messages.ConfConn;
@@ -251,6 +252,11 @@ public class Router implements IoHandler, Closeable
   public SocketAcceptor socketAcceptor ()
   {
     return acceptor;
+  }
+  
+  public Options options ()
+  {
+    return routerOptions;
   }
   
   /**
