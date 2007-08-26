@@ -35,6 +35,7 @@ import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.warn;
 import static org.avis.util.Text.shortException;
 
@@ -320,9 +321,9 @@ public class Connector implements IoHandler, Closeable
   {
     String remoteHost = remoteAddress.getHostName ();
 
-    diagnostic ("Federation outgoing link established with " + 
-                remoteHost + ", remote server domain \"" + 
-                remoteServerDomain + "\"", this);
+    info ("Federation outgoing link established with " + 
+          remoteHost + ", remote server domain \"" + 
+          remoteServerDomain + "\"", this);
     
     link =
       new Link (session, router,
