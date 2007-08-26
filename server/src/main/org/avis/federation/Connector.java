@@ -34,6 +34,7 @@ import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
+import static org.avis.io.Net.hostIdFor;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.warn;
@@ -321,8 +322,8 @@ public class Connector implements IoHandler, Closeable
   {
     String remoteHost = remoteAddress.getHostName ();
 
-    info ("Federation outgoing link established with " + 
-          remoteHost + ", remote server domain \"" + 
+    info ("Federation outgoing link for " + uri + " established with \"" + 
+          hostIdFor (session) + "\", remote server domain \"" + 
           remoteServerDomain + "\"", this);
     
     link =
@@ -348,8 +349,8 @@ public class Connector implements IoHandler, Closeable
   public void sessionClosed (IoSession theSession)
     throws Exception
   {
-    diagnostic ("Federator \"" + serverDomain + "\" disconnected from remote " +
-    		"federator at " + uri, this);
+    info ("Federation link for " + uri + " with \"" + hostIdFor (theSession) + 
+          "\" disconnected", this);
     
     reopen ();
   }
