@@ -17,20 +17,20 @@ Bugs
 Federation
 ----------------------------------------------------------------------
 
-* check TODO's
-* Liveness checking with TestConn. Federation.Keepalive-Interval=60
-* Clean up log messages
 * test @.elvin.org
 * Enforce connection options frame size on federated notifications
+* Stricter sanity checking for domain 
+* check TODO's
+* Update MINA
+* Clean up log messages
 
 --
 
 * ?Federation.Classes.Require=internal
-* Stricter sanity checking for domain 
-* Update MINA
 * for 1.2: How insecure is it to allow anyone to federate with no SSL? Do we
   need SSL?
 
+* DONE: Liveness checking with TestConn. Federation.Keepalive-Interval=60
 * DONE: Apply-Class can only affect one router
 * DONE: Default federation class? not
 * DONE: Add-Attribute
