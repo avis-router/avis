@@ -181,53 +181,89 @@ public class Acceptor implements IoHandler, Closeable
                       PROT_INCOMPAT, disconnMessage)).addListener (CLOSE);
     } else
     {
-      // todo should check that server domain is not already known
+      Link existingLink = linkForDomain (message.serverDomain);
       FederationClass fedClass = 
         federationClasses.classFor (remoteHost, message.serverDomain);
 
-      if (!fedClass.allowsNothing ())
+      if (existingLink != null)
+      {
+        nackInvalidDomain 
+          (session, message, 
+           "using a federation domain already in use by \"" + 
+           hostIdFor (existingLink.session ()),
+           "Server domain " + message.serverDomain + " already in use");
+      } else if (fedClass.allowsNothing ())
+      {
+        nackInvalidDomain 
+          (session, message, 
+           "no provide/subscribe defined for its hostname/server " +
+           "domain", "No federation import/export allowed");
+      } else if (message.serverDomain.equalsIgnoreCase (serverDomain))
+      {
+        nackInvalidDomain 
+          (session, message, 
+           "using the same server domain the remote router", 
+           "Server domain is the same as the remote router's");
+      } else
       {
         send (session, new FedConnRply (message, serverDomain));
-       
+        
         info ("Federation incoming link established with \"" + 
               hostIdFor (session) + "\", remote server domain \"" + 
               message.serverDomain + "\", federation class \"" + 
               fedClass.name + "\"", this);
-      
-        createFederationLink
-          (session, message.serverDomain, hostName, fedClass);
-      } else
-      {
-        warn ("Remote federator has been denied connection due to no " +
-              "provide/subscribe defined for its hostname/server domain: " +
-              "host = " + hostName + ", " + 
-              "server domain = " + message.serverDomain, this);
         
-        // todo what NACK code to use here?
-        send (session, 
-              new Nack
-                (message, IMPL_LIMIT,
-                 "No federation import/export allowed")).addListener (CLOSE);
+        createLink
+          (session, message.serverDomain, hostName, fedClass);
       }
     }
   }
   
-  private void createFederationLink (IoSession session,
-                                     String remoteServerDomain,
-                                     String remoteHost, 
-                                     FederationClass federationClass)
+  /**
+   * Send a NACK for invalid server domain.
+   */
+  private void nackInvalidDomain (IoSession session,
+                                  FedConnRqst message, String logMessage,
+                                  String nackMessage)
+  {
+    warn ("Remote federator has been denied connection due to " + logMessage + 
+          ", host = " + hostIdFor (session) + 
+          ", server domain = " + message.serverDomain, this);
+  
+  // todo what NACK code to use here?
+  send (session, 
+        new Nack
+          (message, IMPL_LIMIT, nackMessage)).addListener (CLOSE);
+  }
+
+  private synchronized void createLink (IoSession session,
+                                        String remoteServerDomain,
+                                        String remoteHost, 
+                                        FederationClass federationClass)
   {
     Link link =
       new Link (session, router, federationClass,
                 serverDomain, remoteServerDomain, remoteHost);
     
-    addLink (session, link);
+    session.setAttribute ("federationLink", link);
+    
+    links.add (link);
   }
 
-  private synchronized void addLink (IoSession session, Link link)
+  private synchronized void removeLink (Link link)
   {
-    session.setAttribute ("federationLink", link);
-    links.add (link);
+    links.remove (link);
+  }
+  
+  private synchronized Link linkForDomain (String domain)
+  {
+    for (Link link : links)
+    {
+      if (link.remoteServerDomain ().equalsIgnoreCase (domain))
+        return link;
+    }
+    
+    return null;
   }
   
   private static Link linkFor (IoSession session)
@@ -292,6 +328,8 @@ public class Acceptor implements IoHandler, Closeable
         info ("Federation link with \"" + hostIdFor (session) + 
               "\" disconnected", this);
       }
+      
+      removeLink (link);
     }
   }
   
