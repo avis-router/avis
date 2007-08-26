@@ -313,7 +313,7 @@ public class Link implements NotifyListener
   private void handleProtocolViolation (String message)
   {
     warn ("Disconnecting remote federator at " + remoteHostName + " " + 
-          " due to protocol violation: " + message, this);
+          "due to protocol violation: " + message, this);
     
     close (REASON_PROTOCOL_VIOLATION, message);
   }
