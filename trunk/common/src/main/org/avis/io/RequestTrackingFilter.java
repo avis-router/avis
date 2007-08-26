@@ -11,6 +11,7 @@ import org.apache.mina.common.IoFilterAdapter;
 import org.apache.mina.common.IoFilterChain;
 import org.apache.mina.common.IoSession;
 
+import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.LivenessTimeoutMessage;
 import org.avis.io.messages.Message;
@@ -146,6 +147,10 @@ public class RequestTrackingFilter
     Tracker tracker = trackerFor (session);
     
     tracker.connectionIsLive ();
+    
+    // do not forward ConfConn liveness replies
+    if (message == ConfConn.INSTANCE)
+      return;
     
     if (message instanceof XidMessage && 
         !(message instanceof RequestMessage<?>))
