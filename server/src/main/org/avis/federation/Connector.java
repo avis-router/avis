@@ -358,7 +358,7 @@ public class Connector implements IoHandler, Closeable
   public void sessionCreated (IoSession theSession)
     throws Exception
   {
-    setMaxFrameLengthFor (session, options.getInt ("Packet.Max-Length"));
+    setMaxFrameLengthFor (theSession, options.getInt ("Packet.Max-Length"));
   }
   
   public void messageReceived (IoSession theSession, Object theMessage)
