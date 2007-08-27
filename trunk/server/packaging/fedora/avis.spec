@@ -24,21 +24,22 @@ content-based subscriptions.
 
 %build
 unset CLASSPATH
+cd server
 ant
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -Dp -m 0755 -o root -g root \
-  bin/avisd.sh $RPM_BUILD_ROOT/%{_sbindir}/avisd
+  server/bin/avisd $RPM_BUILD_ROOT/%{_sbindir}/avisd
 install -Dp -m 0644 -o root -g root \
-  lib/avisd.jar $RPM_BUILD_ROOT/%{_libdir}/avisd.jar
+  server/lib/avisd.jar $RPM_BUILD_ROOT/%{_libdir}/avisd.jar
 install -Dp -m 0644 -o root -g root \
-  etc/avisd.config $RPM_BUILD_ROOT/%{_sysconfdir}/avis/avisd.config
+  server/etc/avisd.config $RPM_BUILD_ROOT/%{_sysconfdir}/avis/avisd.config
 
 # service
 sed -e "s|__CONFDIR__|%{_sysconfdir}|g" \
     -e "s|__BINDIR__|%{_sbindir}|g" \
-  < packaging/fedora/init_script.in > %{_tmppath}/avisd.tmp
+  < server/packaging/fedora/init_script.in > %{_tmppath}/avisd.tmp
 install -Dp -m 0755 -o root -g root \
   %{_tmppath}/avisd.tmp $RPM_BUILD_ROOT/etc/init.d/avisd
 rm %{_tmppath}/avisd.tmp
