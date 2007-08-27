@@ -113,10 +113,12 @@ The Elvin bus has three key features that make it different:
    performance, allowing it to be used for applications that send lots
    of messages and need them delivered fast.
 
- * Its design incorporates support for efficient federation of
+ * Its design incorporates support for efficient [federation][] of
    multiple routers into wide-area event routing networks.
 
 Elvin is also an open standard and available as Free Software.
+
+[federation]: federation.html
 
 Current Uses
 ----------------------------------------------------------------------
