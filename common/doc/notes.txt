@@ -21,11 +21,11 @@ Federation
 * DONE: Enforce connection options frame size on federated notifications
 * DONE: Stricter sanity checking for domain 
 * DONE: check TODO's
-* Update MINA
 * DONE: Clean up log messages
 
 --
 
+* Update MINA: some tests fail 1.1.2
 * ?Federation.Classes.Require=internal
 * for 1.2: How insecure is it to allow anyone to federate with no SSL? Do we
   need SSL?
