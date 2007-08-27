@@ -17,12 +17,12 @@ Bugs
 Federation
 ----------------------------------------------------------------------
 
-* test @.elvin.org
-* Enforce connection options frame size on federated notifications
-* Stricter sanity checking for domain 
-* check TODO's
+* DONE: test @.elvin.org
+* DONE: Enforce connection options frame size on federated notifications
+* DONE: Stricter sanity checking for domain 
+* DONE: check TODO's
 * Update MINA
-* Clean up log messages
+* DONE: Clean up log messages
 
 --
 
