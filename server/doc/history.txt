@@ -1,3 +1,29 @@
+Release 1.1.0 (August 27, 2007)
+----------------------------------------------------------------------
+
+This release adds support for multi-router federation. The license for
+Avis has been changed from GPL version 2 to GPL version 3.
+
+ * Added full support for version 1.0 of the Elvin federation
+   protocol. Avis 1.1 can now form federation networks with other Avis
+   routers and Mantara elvind 4.4.
+
+ * The router now supports the "Listen" configuration option to allow
+   listening on multiple network addresses.
+
+ * Improved invalid subscription reporting. The router now responds
+   with EXP_IS_TRIVIAL for constant subscriptions.
+
+ * The source code has been broken out into server, client and common
+   packages to better support the client and server side packages.
+
+ * The router now enforces stricter compliance on subscription
+   expressions. In regard to identifiers this means that expressions
+   with no space betwen identifier and punctuation like "size(name)"
+   are no longer valid. This is not optimal, and may change in a
+   future release: it is recommended to use spaces to avoid ambiguity.
+
+
 Release 1.0.2 (August 9, 2007)
 ----------------------------------------------------------------------
 
