@@ -6,8 +6,8 @@ import java.util.Map;
 import java.net.InetAddress;
 
 /**
- * Defines the mapping from a remote host to the FederationClass that
- * should be applied to it.
+ * Defines a mapping from remote hosts to the FederationClass that
+ * should be applied to them.
  * 
  * @see FederationClass
  * 
@@ -76,10 +76,10 @@ public class FederationClasses
    */
   public FederationClass classFor (InetAddress address, String serverDomain)
   {
-    String canonicalHostName = address.getCanonicalHostName ();
+    String hostName = address.getCanonicalHostName ();
 
     // match host name/IP
-    FederationClass fedClass = hosts.get (canonicalHostName);
+    FederationClass fedClass = hosts.get (hostName);
     
     if (fedClass != null)
       return fedClass;
@@ -92,14 +92,16 @@ public class FederationClasses
     // match domain
     for (Map.Entry<String, FederationClass> entry : dnsDomains.entrySet ())
     {
-      if (canonicalHostName.endsWith (entry.getKey ()))
+      if (hostName.endsWith (entry.getKey ()))
         return entry.getValue ();
     }
     
-    // match server domain
     return classFor (serverDomain);
   }
-  
+
+  /**
+   * Match a federation class for the given server domain.
+   */
   public FederationClass classFor (String serverDomain)
   {
     FederationClass fedClass = federatorDomains.get (serverDomain);

@@ -46,11 +46,12 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Request-Timeout", 1, 20, Integer.MAX_VALUE);
     add ("Federation.Keepalive-Interval", 1, 60, Integer.MAX_VALUE);
     
+    // allow connection options such as Packet.Max-Length
     inheritFrom (CONNECTION_OPTION_SET);
   }
   
   /**
-   * An subscription expression option.
+   * A subscription expression option.
    */
   static class SubExpOption extends OptionType
   {

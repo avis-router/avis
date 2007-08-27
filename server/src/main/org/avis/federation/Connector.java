@@ -58,11 +58,11 @@ public class Connector implements IoHandler, Closeable
   private Router router;
   private SocketConnector connector;
   private SocketConnectorConfig connectorConfig;
-  private FederationClass federationClass;
-  private String serverDomain;
-  private Link link;
   private InetSocketAddress remoteAddress;
   private IoSession session;
+  private String serverDomain;
+  private FederationClass federationClass;
+  private Link link;
   private Timer asyncConnectTimer;
   protected volatile boolean closing;
   
@@ -89,7 +89,8 @@ public class Connector implements IoHandler, Closeable
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
     connectorConfig.setConnectTimeout (requestTimeout);
     
-    DefaultIoFilterChainBuilder filterChain = connectorConfig.getFilterChain ();
+    DefaultIoFilterChainBuilder filterChain = 
+      connectorConfig.getFilterChain ();
     
     filterChain.addLast ("codec", FederationFrameCodec.FILTER);
     
@@ -104,6 +105,16 @@ public class Connector implements IoHandler, Closeable
   {
     return link;
   }
+
+  public boolean isWaitingForAsyncConnection ()
+  {
+    return asyncConnectTimer != null;
+  }
+  
+  public boolean isConnected ()
+  {
+    return link != null;
+  }
   
   /**
    * Kick off a connection attempt.
@@ -115,13 +126,14 @@ public class Connector implements IoHandler, Closeable
     cancelAsyncConnect ();
     
     connector.connect 
-      (remoteAddress, this, connectorConfig).addListener (new IoFutureListener ()
-    {
-      public void operationComplete (IoFuture future)
-      {
-        connectFutureComplete (future);
-      }
-    });
+      (remoteAddress, this, connectorConfig).addListener 
+        (new IoFutureListener ()
+        {
+          public void operationComplete (IoFuture future)
+          {
+            connectFutureComplete (future);
+          }
+        });
   }
   
   /**
@@ -171,8 +183,11 @@ public class Connector implements IoHandler, Closeable
       @Override
       public void run ()
       {
-        if (!closing)
-          connect ();
+        synchronized (Connector.this)
+        {
+          if (!closing)
+            connect ();
+        }
       }
     };
     
@@ -260,16 +275,6 @@ public class Connector implements IoHandler, Closeable
     asyncConnect ();
   }
   
-  public boolean isWaitingForAsyncConnection ()
-  {
-    return asyncConnectTimer != null;
-  }
-  
-  public boolean isConnected ()
-  {
-    return link != null;
-  }
-
   private void handleMessage (Message message)
   {
     switch (message.typeId ())
@@ -320,16 +325,15 @@ public class Connector implements IoHandler, Closeable
 
   private void createFederationLink (String remoteServerDomain)
   {
-    String remoteHost = remoteAddress.getHostName ();
-
     info ("Federation outgoing link for " + uri + " established with \"" + 
           hostIdFor (session) + "\", remote server domain \"" + 
           remoteServerDomain + "\"", this);
     
     link =
       new Link (session, router,
-                          federationClass, serverDomain, 
-                          remoteServerDomain, remoteHost);
+                federationClass, serverDomain, 
+                remoteServerDomain, 
+                remoteAddress.getAddress ().getCanonicalHostName ());
   }
   
   private void send (Message message)
