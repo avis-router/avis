@@ -50,14 +50,6 @@ public final class Federation
   }
 
   /**
-   * Log info about an error message from the frame codec.
-   */
-  public static void logError (ErrorMessage message, Object source)
-  {
-    warn ("Error in federation packet", source, message.error);
-  }
-
-  /**
    * Log a trace on message receipt.
    */
   public static void logMessageReceived (Message message, String serverDomain, 
@@ -68,5 +60,13 @@ public final class Federation
       trace ("Federator for domain \"" + serverDomain + "\" " + 
              "received " + message.name (), source);
     }
+  }
+  
+  /**
+   * Log info about an error message from the frame codec.
+   */
+  public static void logError (ErrorMessage message, Object source)
+  {
+    warn ("Error in federation packet", source, message.error);
   }
 }

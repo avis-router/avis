@@ -229,7 +229,7 @@ public class FederationManager implements CloseListener
       {
         throw new IllegalOptionException 
           ("Federation.Subscribe[" + entry.getKey () + "]", 
-           "Federation with \"TRUE\" is not currently supported");
+           "Federation with TRUE is not currently supported");
       }
       
       classes.define (entry.getKey ()).incomingFilter = incomingFilter;

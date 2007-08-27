@@ -39,9 +39,8 @@ import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.util.Collections.union;
 
 /**
- * Manages link between two federation endpoints. This link is
- * typically established by either a {@link Acceptor} or
- * {@link Connector}.
+ * A bi-directional federation link between two endpoints, typically
+ * established by either a {@link Acceptor} or {@link Connector}.
  * 
  * @author Matthew Phillips
  */
@@ -63,17 +62,17 @@ public class Link implements NotifyListener
    * Internal disconnection reason code indicating remote federator failed
    * a liveness check.
    */
-  private static final int REASON_FEDERATOR_STOPPED_RESPONDING = -3;
+  private static final int REASON_FEDERATOR_NOT_RESPONDING = -3;
 
   private static final String [] EMPTY_ROUTING = new String [0];
   
-  private IoSession session;
   private Router router;
+  private IoSession session;
   private FederationClass federationClass;
   private String serverDomain;
-  private Node remotePullFilter;
   private String remoteServerDomain;
   private String remoteHostName;
+  private Node remotePullFilter;
   private volatile boolean closed;
 
   public Link (IoSession session,
@@ -122,7 +121,12 @@ public class Link implements NotifyListener
   
   public void close ()
   {
-    close (REASON_SHUTDOWN, "");
+    close (REASON_SHUTDOWN);
+  }
+  
+  private void close (int reason)
+  {
+    close (reason, "");
   }
   
   private void close (int reason, String message)
@@ -170,7 +174,8 @@ public class Link implements NotifyListener
   }
 
   /**
-   * Test if we should push a given notification to the remote router.
+   * Test if we should push a notification to the remote router given
+   * its routing and attributes.
    */
   private boolean shouldPush (String [] routing, 
                               Map<String, Object> attributes)
@@ -189,14 +194,6 @@ public class Link implements NotifyListener
            matches (federationClass.incomingFilter, message.attributes);
   }
   
-  /**
-   * Return a routing list with the federator's local server domain added.
-   */
-  private String [] serverDomainAddedTo (String [] routing)
-  {
-    return addDomain (routing, serverDomain);
-  }
-  
   public void handleMessage (Message message)
   {
     switch (message.typeId ())
@@ -208,7 +205,7 @@ public class Link implements NotifyListener
         handleFedNotify ((FedNotify)message);
         break;
       case Disconn.ID:
-        close (REASON_DISCONN_REQUESTED, "");
+        close (REASON_DISCONN_REQUESTED);
         break;
       case TestConn.ID:
         handleTestConn ();
@@ -268,7 +265,7 @@ public class Link implements NotifyListener
     warn ("Remote federator at " + remoteHostName + 
           " has stopped responding", this);
     
-    close (REASON_FEDERATOR_STOPPED_RESPONDING, "");
+    close (REASON_FEDERATOR_NOT_RESPONDING);
   }
   
   private void handleError (ErrorMessage message)
@@ -283,7 +280,7 @@ public class Link implements NotifyListener
     warn ("Disconnecting from remote federator at " + remoteHostName + " " + 
           "after it rejected a " + nack.request.name (), this);
     
-    close (REASON_REQUEST_REJECTED, "");
+    close (REASON_REQUEST_REJECTED);
   }
 
   private void handleFedSubReplace (FedSubReplace message)
@@ -368,9 +365,9 @@ public class Link implements NotifyListener
   }
   
   /**
-   * Add a server domain to the start of an existing routing list.
+   * Return a routing list with the federator's local server domain added.
    */
-  private static String [] addDomain (String [] routing, String serverDomain)
+  private String [] serverDomainAddedTo (String [] routing)
   {
     String [] newRouting = new String [routing.length + 1];
     
