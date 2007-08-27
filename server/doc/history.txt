@@ -1,12 +1,14 @@
 Release 1.1.0 (August 27, 2007)
 ----------------------------------------------------------------------
 
-This release adds support for multi-router federation. The license for
-Avis has been changed from GPL version 2 to GPL version 3.
+This release adds support for multi-router federation.
 
  * Added full support for version 1.0 of the Elvin federation
    protocol. Avis 1.1 can now form federation networks with other Avis
    routers and Mantara elvind 4.4.
+
+ * The license for Avis has been changed from GPL version 2 to GPL
+   version 3.
 
  * The router now supports the "Listen" configuration option to allow
    listening on multiple network addresses.
