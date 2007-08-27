@@ -3,6 +3,9 @@
 
   <property name="debug" value="true" />
   
+  <!-- svn2cl: only needed to generate changelog -->
+  <property name="svn2cl" value="/opt/local/bin/svn2cl" />
+      
   <target name="compile" depends="compile-main,compile-tests" />
 
   <target name="compile-main">
@@ -24,6 +27,13 @@
 
     <javac debug="${debug}" classpathref="classpath"
            srcdir="src/${module}" destdir="classes/${module}" />
+  </target>
+  
+  <target name="changelog">
+    <exec executable="${svn2cl}" searchpath="true">
+      <env key="PATH" path="/bin:/usr/bin:/usr/local/bin:/opt/local/bin" />
+      <arg line="-r ${release_rev}:HEAD https://avis.svn.sourceforge.net/svnroot/avis/trunk/${component}" />
+    </exec>
   </target>
  
   <target name="clean">
