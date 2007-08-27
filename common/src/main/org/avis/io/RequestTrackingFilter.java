@@ -175,13 +175,14 @@ public class RequestTrackingFilter
   }
   
   /**
-   * An instance of this is attached to each session.
+   * An instance of this is attached to each session to track requests
+   * and liveness.
    */
   class Tracker implements Runnable
   {
     private IoSession session;
     private Map<Integer, Entry> xidToRequest;
-    private ScheduledFuture<?> timeoutFuture;
+    private ScheduledFuture<?> replyFuture;
     private ScheduledFuture<?> livenessFuture;
     private long lastLive;
     
@@ -196,7 +197,7 @@ public class RequestTrackingFilter
     
     public synchronized void dispose ()
     {
-      cancelTimeoutCheck ();
+      cancelReplyCheck ();
       cancelLivenessCheck ();
     }
     
@@ -287,7 +288,7 @@ public class RequestTrackingFilter
     {
       xidToRequest.put (request.xid, new Entry (request));
       
-      scheduleTimeoutCheck (replyTimeout);
+      scheduleReplyCheck (replyTimeout);
     }
     
     public synchronized RequestMessage<?> remove (XidMessage reply)
@@ -301,20 +302,20 @@ public class RequestTrackingFilter
         return entry.request;
     }
     
-    private void cancelTimeoutCheck ()
+    private void cancelReplyCheck ()
     {
-      if (timeoutFuture != null)
+      if (replyFuture != null)
       {
-        timeoutFuture.cancel (false);
+        replyFuture.cancel (false);
         
-        timeoutFuture = null;
+        replyFuture = null;
       }
     }
     
-    private void scheduleTimeoutCheck (int delay)
+    private void scheduleReplyCheck (int delay)
     {
-      if (timeoutFuture == null)
-        timeoutFuture = sharedExecutor.schedule (this, delay, SECONDS);
+      if (replyFuture == null)
+        replyFuture = sharedExecutor.schedule (this, delay, SECONDS);
     }
     
     /**
@@ -322,29 +323,32 @@ public class RequestTrackingFilter
      */
     public synchronized void run ()
     {
-      timeoutFuture = null;
+      replyFuture = null;
       
       long now = currentTimeMillis ();
-      long earliest = now;
+      long earliestTimeout = now;
       
       for (Iterator<Map.Entry<Integer, Entry>> i = 
              xidToRequest.entrySet ().iterator (); i.hasNext (); )
       {
         Entry entry = i.next ().getValue ();
         
-        if ((now - entry.sentTime) / 1000 >= replyTimeout)
+        if ((now - entry.sentAt) / 1000 >= replyTimeout)
         {
           i.remove ();
           
           injectMessage (new RequestTimeoutMessage (entry.request));
         } else
         {
-          earliest = min (earliest, entry.sentTime);
+          earliestTimeout = min (earliestTimeout, entry.sentAt);
         }
       }
       
       if (!xidToRequest.isEmpty ())
-        scheduleTimeoutCheck (replyTimeout - (int)((now - earliest) / 1000));
+      {
+        scheduleReplyCheck 
+          (replyTimeout - (int)((now - earliestTimeout) / 1000));
+      }
     }
 
     private void injectMessage (Message message)
@@ -358,13 +362,13 @@ public class RequestTrackingFilter
   
   static class Entry
   {
-    public long sentTime;
     public RequestMessage<?> request;
+    public long sentAt;
 
     public Entry (RequestMessage<?> request)
     {
       this.request = request;
-      this.sentTime = currentTimeMillis ();
+      this.sentAt = currentTimeMillis ();
     }
   }
 }
