@@ -38,7 +38,6 @@ import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.hostAddressFor;
 import static org.avis.io.Net.hostIdFor;
-import static org.avis.io.messages.Nack.IMPL_LIMIT;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
@@ -59,25 +58,32 @@ import static org.avis.logging.Log.warn;
  */
 public class Acceptor implements IoHandler, Closeable
 {
+  /**
+   * Avis-specific NACK code used when an invalid server domain is
+   * detected (NACK codes in range 2500-2599 are allocated for
+   * implementation-specific use).
+   */
+  private static final int INVALID_DOMAIN = 2500;
+  
   protected Router router;
   protected Options options;
-  protected Set<Link> links;
-  protected Set<InetSocketAddress> addresses;
   protected String serverDomain;
   protected FederationClasses federationClasses;
+  protected Set<Link> links;
+  protected Set<InetSocketAddress> listenAddresses;
   protected volatile boolean closing;
 
   public Acceptor (Router router,
                    String serverDomain,
                    FederationClasses federationClasses, 
-                   Set<InetSocketAddress> addresses, 
+                   Set<InetSocketAddress> listenAddresses, 
                    Options options)
     throws IOException
   {
     this.router = router;
     this.serverDomain = serverDomain;
     this.federationClasses = federationClasses;
-    this.addresses = addresses;
+    this.listenAddresses = listenAddresses;
     this.options = options;
     this.links = new HashSet<Link> ();
     
@@ -89,49 +95,47 @@ public class Acceptor implements IoHandler, Closeable
     acceptorConfig.setReuseAddress (true);
     acceptorConfig.setThreadModel (ThreadModel.MANUAL);
     
-    DefaultIoFilterChainBuilder filterChain = acceptorConfig.getFilterChain ();
+    DefaultIoFilterChainBuilder filterChain = 
+      acceptorConfig.getFilterChain ();
 
     filterChain.addLast ("codec", FederationFrameCodec.FILTER);
     filterChain.addLast
       ("requestTracker", 
        new RequestTrackingFilter (requestTimeout, keepaliveInterval));
     
-    for (InetSocketAddress address : addresses)
+    SocketAcceptor acceptor = router.socketAcceptor ();
+
+    for (InetSocketAddress address : listenAddresses)
     {
       if (shouldLog (DIAGNOSTIC))
         diagnostic ("Federator listening on address: " + address, this);
 
-      router.socketAcceptor ().bind (address, this, acceptorConfig);
+      acceptor.bind (address, this, acceptorConfig);
     }
   }
 
-  public void close ()
+  public synchronized void close ()
   {
-    synchronized (this)
+    if (closing)
+      return;
+    
+    closing = true;
+    
+    for (Link link : links)
+      link.close ();
+    
+    links.clear ();
+
+    SocketAcceptor socketAcceptor = router.socketAcceptor ();
+
+    for (InetSocketAddress address : listenAddresses)
     {
-      if (closing)
-        return;
+      // wait for pending messages to be written
+      // todo check that this really flushes messages
+      for (IoSession session : socketAcceptor.getManagedSessions (address))
+        session.close ().join (10000);
       
-      closing = true;
-      
-      for (Link link : links)
-        link.close ();
-      
-      links.clear ();
-
-      SocketAcceptor socketAcceptor = router.socketAcceptor ();
-
-      for (InetSocketAddress address : addresses)
-      {
-        // wait for pending messages to be written
-        // todo check that this really flushes messages
-        for (IoSession session : socketAcceptor.getManagedSessions (address))
-          session.close ().join (10000);
-        
-        socketAcceptor.unbind (address);
-      }
-      
-      addresses.clear ();
+      socketAcceptor.unbind (address);
     }
   }
   
@@ -201,7 +205,7 @@ public class Acceptor implements IoHandler, Closeable
         nackInvalidDomain 
           (session, message, 
            "no provide/subscribe defined for its hostname/server " +
-           "domain", "No federation import/export allowed");
+           "domain", "No federation import/export allowed for host");
       } else if (message.serverDomain.equalsIgnoreCase (serverDomain))
       {
         nackInvalidDomain 
@@ -234,10 +238,9 @@ public class Acceptor implements IoHandler, Closeable
           ", host = " + hostIdFor (session) + 
           ", server domain = " + message.serverDomain, this);
   
-  // todo what NACK code to use here?
   send (session, 
         new Nack
-          (message, IMPL_LIMIT, nackMessage)).addListener (CLOSE);
+          (message, INVALID_DOMAIN, nackMessage)).addListener (CLOSE);
   }
 
   private synchronized void createLink (IoSession session,
