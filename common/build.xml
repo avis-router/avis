@@ -12,9 +12,6 @@
   
   <property name="common" value="${basedir}/../common" />
 	
-  <!-- svn2cl: only needed to generate changelog -->
-  <property name="svn2cl" value="/usr/local/bin/svn2cl" />
- 
   <!-- Markdown 1.0.1: needed to build web page -->
   <property name="markdown" 
             value="${common}/packages/markdown-1.0.1/Markdown.pl" />
@@ -153,11 +150,10 @@
     <!-- Use command below to get previous release rev #
          svn log -stop-on-copy https://avis.svn.sourceforge.net/svnroot/avis/tags/release_0.7 -->
     <input addproperty="release_rev" message="Enter rev # of last release" />
+    <property name="component" value="common" />
     
-    <exec executable="${svn2cl}" searchpath="true">
-      <env key="PATH" path="/bin:/usr/bin:/usr/local/bin:/opt/local/bin" />
-      <arg line="-r ${release_rev}:HEAD https://svn.sourceforge.net/svnroot/avis/trunk" />
-    </exec>
+    <ant antfile="${common}/build-common.xml" target="changelog" 
+         inheritrefs="true" />
   </target>
 
   <target name="backup-sourceforge"

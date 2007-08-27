@@ -223,6 +223,7 @@
         <include name="build.xml" />
         <include name="lib/*.jar" />
         <include name="etc/avisd.config" />
+        <include name="doc/history.txt" />
         <include name="doc/README.txt" />
         <include name="doc/LICENSE.txt" />
         <include name="src/avis_java_header.txt" />
@@ -470,6 +471,17 @@
       <arg line="chown -R root:wheel" />
       <arg value="${root}" />
     </exec>
+  </target>
+  
+  <target name="changelog"
+          description="Generate a change log (needs previous rev #)">
+    <!-- Use command below to get previous release rev #
+         svn log -stop-on-copy https://avis.svn.sourceforge.net/svnroot/avis/tags/release_0.7 -->
+    <input addproperty="release_rev" message="Enter rev # of last release" />
+    <property name="component" value="server" />
+    
+    <ant antfile="${common}/build-common.xml" target="changelog" 
+         inheritrefs="true" />
   </target>
 
 </project>
