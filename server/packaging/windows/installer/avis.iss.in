@@ -28,7 +28,7 @@ Source: "service\config\wrapper.conf"; DestDir: "{app}\config"
 Source: "service\logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"; Flags: onlyifdoesntexist
 Source: "..\..\lib\avisd.jar"; DestDir: "{app}\lib"
 Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
-Source: "..\..\LICENSE.txt"; DestDir: "{app}"
+Source: "..\..\doc\LICENSE.txt"; DestDir: "{app}"
 
 ; JRE Files
 ; Source: "@jre_installer@"; DestDir: "{app}"; DestName: "jre.exe"; Flags: deleteafterinstall
