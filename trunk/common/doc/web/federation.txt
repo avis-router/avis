@@ -23,7 +23,7 @@ presence][tickertape] events in and out using:
       Presence-Protocol == 1000 || string (Message)
 
    <span class="variable-name">Federation.Provide</span>[<span class="constant">Public</span>] = \
-      Distribution == "world" && \
+      Distribution == "world" &amp;&amp; \
       (Presence-Protocol == 1000 || string (Message))
 </pre>
 
