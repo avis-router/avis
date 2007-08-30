@@ -51,7 +51,7 @@ Incoming Connections
 The host that listens for incoming connections needs to have a mapping
 for the remote host's federation ID or host name to a federation
 class. For example, to specify that connections from the host
-`host.somedomain.org` should use the `Public` federation class:
+`public.elvin.org` should use the `Public` federation class:
 
 <pre>
     <span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Public</span>] = @public.elvin.org
