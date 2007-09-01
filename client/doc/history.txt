@@ -1,3 +1,24 @@
+Release 1.0.2 (September 1, 2007)
+----------------------------------------------------------------------
+
+This release corrects a packaging error in the previous release that
+resulted in two required classes not being included in the pre-built
+JAR. It also synchronises the client library's common shared
+components with those of Avis 1.1.
+
+  * Fixed creation of avis-client.jar: was missing listener classes
+    such as NotificationListener.
+
+  * avis-tools.jar no longer includes all classes: now uses
+    avis-client.jar.
+
+  * avis.common code library is now updated to be the same as released
+    in Avis 1.1. This introduces minor changes the API of some
+    packages in avis.common, however clients using this package should
+    not be relying on these classes in any case: only classes included
+    in the javadoc API are considered part of the client API.
+
+
 Release 1.0.1 (August 14, 2007)
 ----------------------------------------------------------------------
 
