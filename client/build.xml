@@ -275,6 +275,12 @@
       <include name="org/avis/tools/Ec.class" />
       <include name="org/avis/tools/Ep.class" />
       <include name="org/avis/tools/Hash.class" />
+        
+      <exclude name="org/avis/client/*" />
+      <exclude name="org/avis/io/*" />
+      <exclude name="org/avis/security/*" />
+      <exclude name="org/avis/logging/*" />
+      <exclude name="org/apache/*" />
     </jarx>
 
     <mkdir dir="lib" />
