@@ -1,1 +1,0 @@
-Welcome to the Avis installer. This will install Avis as service on your computer.
