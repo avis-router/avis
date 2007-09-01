@@ -1,5 +1,6 @@
 #!/bin/sh
 
+client_jar=$(dirname "$0")/../lib/avis-client.jar
 tools_jar=$(dirname "$0")/../lib/avis-tools.jar
 java_opts="-Xverify:none"
 
@@ -8,4 +9,9 @@ if [ ! -f "$tools_jar" ]; then
   exit 1
 fi
 
-exec java -cp "$tools_jar" $java_opts org.avis.tools.Ep "$@"
+if [ ! -f "$client_jar" ]; then
+  echo "Cannot find avis-client.jar"
+  exit 1
+fi
+
+exec java -cp "$tools_jar:$client_jar" $java_opts org.avis.tools.Ep "$@"
