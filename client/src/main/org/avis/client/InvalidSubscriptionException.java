@@ -1,7 +1,7 @@
 package org.avis.client;
 
+import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
-import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubModRqst;
 
@@ -39,17 +39,22 @@ public class InvalidSubscriptionException extends RouterNackException
    */
   public final int reason;
 
-  InvalidSubscriptionException (RequestMessage<?> request, Nack nack)
+  InvalidSubscriptionException (Message request, Nack nack)
   {
     super (textForErrorCode (nack.error) + ": " + nack.formattedMessage ());
     
-    if (request instanceof SubAddRqst)
-      expression = ((SubAddRqst)request).subscriptionExpr;
-    else if (request instanceof SubModRqst)
-      expression = ((SubModRqst)request).subscriptionExpr;
-    else
-      expression = null;
-    
+    switch (request.typeId ())
+    {
+      case SubAddRqst.ID:
+        expression = ((SubAddRqst)request).subscriptionExpr;
+        break;
+      case SubModRqst.ID:
+        expression = ((SubModRqst)request).subscriptionExpr;
+        break;
+      default:
+        expression = null;
+    }
+
     reason = nack.error == EXP_IS_TRIVIAL ? TRIVIAL_EXPRESSION : SYNTAX_ERROR;
   }
 
