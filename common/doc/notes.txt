@@ -1,6 +1,11 @@
 Bugs
 ----------------------------------------------------------------------
 
+* Java 1.6 doesn't have DECOMPOSE.
+
+* client source won't build in Eclipse without server. Need to add it ot
+  deal with it otherwise.  
+ 
 * require(e) vs. require (e). Mantara accepts both, we don't do first one
   any more.
   
