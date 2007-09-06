@@ -211,7 +211,7 @@ public final class XdrAstCoding
     {
       StrUnicodeDecompose decompose = (StrUnicodeDecompose)node;
       
-      return decompose.mode == StrUnicodeDecompose.DECOMPOSE ?
+      return decompose.mode == StrUnicodeDecompose.Mode.DECOMPOSE ?
                DECOMPOSE : DECOMPOSE_COMPAT;
     } else
     {

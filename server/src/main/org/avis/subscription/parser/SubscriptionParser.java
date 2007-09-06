@@ -495,8 +495,8 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     else if (func.equals ("decompose") || func.equals ("decompose-compat"))
       node = new StrUnicodeDecompose
         (StringValue (),
-         func.equals ("decompose") ? StrUnicodeDecompose.DECOMPOSE :
-                                     StrUnicodeDecompose.DECOMPOSE_COMPAT);
+         func.equals ("decompose") ? StrUnicodeDecompose.Mode.DECOMPOSE :
+                                     StrUnicodeDecompose.Mode.DECOMPOSE_COMPAT);
     else
     {
       node = null;

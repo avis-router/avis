@@ -222,11 +222,11 @@ class XdrAstParser
       case FOLD_CASE:
         return new StrFoldCase (single ().expr ());
       case DECOMPOSE:
-        return new StrUnicodeDecompose (single ().expr (), 
-                                        StrUnicodeDecompose.DECOMPOSE);
+        return new StrUnicodeDecompose
+          (single ().expr (), StrUnicodeDecompose.Mode.DECOMPOSE);
       case DECOMPOSE_COMPAT:
-        return new StrUnicodeDecompose (single ().expr (), 
-                                        StrUnicodeDecompose.DECOMPOSE_COMPAT);
+        return new StrUnicodeDecompose
+          (single ().expr (), StrUnicodeDecompose.Mode.DECOMPOSE_COMPAT);
       case REQUIRE:
         return new Require (single ().field ());
       case F_EQUALS:
