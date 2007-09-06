@@ -3,33 +3,90 @@ package org.avis.subscription.ast.nodes;
 import java.util.Collection;
 import java.util.Map;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.avis.subscription.ast.Node;
 
-import sun.text.Normalizer;
-import sun.text.Normalizer.Mode;
+//import sun.text.Normalizer;
+//import sun.text.Normalizer.Mode;
 
 import static java.util.Collections.singleton;
-import static sun.text.Normalizer.normalize;
+//import static sun.text.Normalizer.normalize;
 
 /**
- * TODO remove use of non-portable sun.text.Normalizer. Java 6 has new
- * java.text.Normalizer class.
- * 
  * @author Matthew Phillips
  */
-@SuppressWarnings("restriction")
 public class StrUnicodeDecompose extends Node
 {
-  public static final Mode DECOMPOSE = Normalizer.DECOMP;
-  public static final Mode DECOMPOSE_COMPAT = Normalizer.DECOMP_COMPAT;
+  /*
+   * Java 5 does not have a public Unicode normalisation API. Rather
+   * than ship a huge Unicode library, we use reflection to use the
+   * non-public sun.text.Normalizer on 1.5, or the public
+   * java.text.Normalizer API in 1.6 onwards.
+   */
+  private static Method normalizeMethod;
+  private static boolean java5Compat;
+  private static Object modeDecompose;
+  private static Object modeDecomposeCompat;
   
-  public Node stringExpr;
-  public Mode mode;
+  static
+  {
+    try
+    {
+      Class<?> java6Normalizer = Class.forName ("java.text.Normalizer");
+      Class<?> formClass = Class.forName ("java.text.Normalizer$Form");
+      java5Compat = false;
+      
+      normalizeMethod = 
+        java6Normalizer.getMethod ("normalize", CharSequence.class, formClass);
+      
+      modeDecompose = formClass.getEnumConstants () [0]; // NFD
+      modeDecomposeCompat = formClass.getEnumConstants () [2]; // NFKD
+      
+    } catch (ClassNotFoundException ex)
+    {
+      // no Normalizer API, fall back on Java 5 workaround
+      java5Compat = true;
+      
+      try
+      {
+        Class<?> java5Normalizer = Class.forName ("sun.text.Normalizer");
+        Class<?> modeClass = Class.forName ("sun.text.Normalizer$Mode");
+        
+        normalizeMethod = 
+          java5Normalizer.getMethod ("normalize", 
+                                     String.class, modeClass, Integer.TYPE);
+        
+        modeDecompose = java5Normalizer.getField ("DECOMP");
+        modeDecomposeCompat = java5Normalizer.getField ("DECOMP_COMPAT");
+      } catch (Exception ex2)
+      {
+        throw new ExceptionInInitializerError (ex2);
+      }
+    } catch (Exception ex)
+    {
+      throw new ExceptionInInitializerError (ex);
+    }
+  }
+  
+  public static enum Mode
+  {
+    DECOMPOSE, DECOMPOSE_COMPAT;
+  }
+  
+  public final Node stringExpr;
+  public final Mode mode;
+  
+  private final Object normMode;
 
   public StrUnicodeDecompose (Node stringExpr, Mode mode)
   {
     this.stringExpr = stringExpr;
     this.mode = mode;
+    
+    this.normMode = 
+      mode == Mode.DECOMPOSE ? modeDecompose : modeDecomposeCompat;
   }
   
   @Override
@@ -43,13 +100,28 @@ public class StrUnicodeDecompose extends Node
   {
     String result = (String)stringExpr.evaluate (attrs);
     
-    return result == null ? null : normalize (result, mode, 0);
+    if (result == null)
+      return BOTTOM;
+    
+    try
+    {
+      if (java5Compat)
+        return normalizeMethod.invoke (null, result, normMode, 0);
+      else
+        return normalizeMethod.invoke (null, result, normMode);
+    } catch (InvocationTargetException ex)
+    {
+      throw new Error (ex.getCause ());
+    } catch (Exception ex)
+    {
+      throw new Error (ex);
+    }
   }
 
   @Override
   public String expr ()
   {
-    return mode == DECOMPOSE ? "decompose" : "decompose-compat";
+    return mode == Mode.DECOMPOSE ? "decompose" : "decompose-compat";
   }
 
   @Override
