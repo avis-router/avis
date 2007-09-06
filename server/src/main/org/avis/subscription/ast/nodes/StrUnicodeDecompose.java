@@ -12,7 +12,6 @@ import org.avis.subscription.ast.Node;
 //import sun.text.Normalizer.Mode;
 
 import static java.util.Collections.singleton;
-//import static sun.text.Normalizer.normalize;
 
 /**
  * @author Matthew Phillips
@@ -21,7 +20,7 @@ public class StrUnicodeDecompose extends Node
 {
   /*
    * Java 5 does not have a public Unicode normalisation API. Rather
-   * than ship a huge Unicode library, we use reflection to use the
+   * than ship a huge Unicode library, we use reflection to access the
    * non-public sun.text.Normalizer on 1.5, or the public
    * java.text.Normalizer API in 1.6 onwards.
    */
