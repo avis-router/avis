@@ -58,8 +58,10 @@ public class StrUnicodeDecompose extends Node
           java5Normalizer.getMethod ("normalize", 
                                      String.class, modeClass, Integer.TYPE);
         
-        modeDecompose = java5Normalizer.getField ("DECOMP");
-        modeDecomposeCompat = java5Normalizer.getField ("DECOMP_COMPAT");
+        modeDecompose = 
+          java5Normalizer.getField ("DECOMP").get (null);
+        modeDecomposeCompat = 
+          java5Normalizer.getField ("DECOMP_COMPAT").get (null);
       } catch (Exception ex2)
       {
         throw new ExceptionInInitializerError (ex2);
