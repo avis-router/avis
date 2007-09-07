@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
@@ -28,6 +29,7 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.ElvinURI;
 import org.avis.io.ClientFrameCodec;
+import org.avis.io.ExceptionMonitorLogger;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -407,6 +409,9 @@ public final class Elvin implements Closeable
       
       connectorConfig.getFilterChain ().addLast 
         ("codec", ClientFrameCodec.FILTER);
+      
+      // route MINA exceptions to log
+      ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
       
       ConnectFuture connectFuture =
         connector.connect
