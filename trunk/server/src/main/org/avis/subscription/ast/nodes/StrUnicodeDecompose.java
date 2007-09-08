@@ -22,7 +22,7 @@ public class StrUnicodeDecompose extends Node
    * java.text.Normalizer API in 1.6 onwards.
    */
   private static Method normalizeMethod;
-  private static boolean java5Compat;
+  private static boolean java5;
   private static Object modeDecompose;
   private static Object modeDecomposeCompat;
   
@@ -30,9 +30,10 @@ public class StrUnicodeDecompose extends Node
   {
     try
     {
+      java5 = false;
+
       Class<?> java6Normalizer = Class.forName ("java.text.Normalizer");
       Class<?> formClass = Class.forName ("java.text.Normalizer$Form");
-      java5Compat = false;
       
       normalizeMethod = 
         java6Normalizer.getMethod ("normalize", CharSequence.class, formClass);
@@ -43,7 +44,7 @@ public class StrUnicodeDecompose extends Node
     } catch (ClassNotFoundException ex)
     {
       // no Normalizer API, fall back on Java 5 workaround
-      java5Compat = true;
+      java5 = true;
       
       try
       {
@@ -103,7 +104,7 @@ public class StrUnicodeDecompose extends Node
     
     try
     {
-      if (java5Compat)
+      if (java5)
         return normalizeMethod.invoke (null, result, normMode, 0);
       else
         return normalizeMethod.invoke (null, result, normMode);
