@@ -578,29 +578,9 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
   final public void AnyArgs() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
-    case STRING_LITERAL:
-      StringValue();
-      break;
     case INTEGER_LITERAL:
     case REAL_LITERAL:
-      NumLiteral();
-      break;
-    default:
-      jj_la1[21] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
-    label_17:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 44:
-        ;
-        break;
-      default:
-        jj_la1[22] = jj_gen;
-        break label_17;
-      }
-      jj_consume_token(44);
+    case STRING_LITERAL:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDENTIFIER:
       case STRING_LITERAL:
@@ -611,10 +591,40 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
         NumLiteral();
         break;
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[21] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
+      label_17:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 44:
+          ;
+          break;
+        default:
+          jj_la1[22] = jj_gen;
+          break label_17;
+        }
+        jj_consume_token(44);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case IDENTIFIER:
+        case STRING_LITERAL:
+          StringValue();
+          break;
+        case INTEGER_LITERAL:
+        case REAL_LITERAL:
+          NumLiteral();
+          break;
+        default:
+          jj_la1[23] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      }
+      break;
+    default:
+      jj_la1[24] = jj_gen;
+      ;
     }
   }
 
@@ -638,7 +648,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     {if (true) return new Const (new Double (t.image));}
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[25] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -674,6 +684,11 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     finally { jj_save(1, xla); }
   }
 
+  final private boolean jj_3_2() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
   final private boolean jj_3_1() {
     if (jj_3R_18()) return true;
     return false;
@@ -682,11 +697,6 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
   final private boolean jj_3R_18() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(42)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -699,7 +709,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
   public boolean lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[25];
+  final private int[] jj_la1 = new int[26];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -707,10 +717,10 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
       jj_la1_1();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x100000,0x200000,0x400000,0x3f000000,0x3f000000,0xc0814220,0x40000000,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0014220,0x10020,0x0,0x0,0x14220,0x0,0x14220,0x4200,};
+      jj_la1_0 = new int[] {0x100000,0x200000,0x400000,0x3f000000,0x3f000000,0xc0814220,0x40000000,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0014220,0x10020,0x0,0x0,0x14220,0x0,0x14220,0x14220,0x4200,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x600,0x0,0x0,0x1,0x2,0x4,0x8,0x10,0x20,0x40,0x80,0x100,0x600,0x0,0x1000,0x1000,0x0,0x1000,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x600,0x0,0x0,0x1,0x2,0x4,0x8,0x10,0x20,0x40,0x80,0x100,0x600,0x0,0x1000,0x1000,0x0,0x1000,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[2];
   private boolean jj_rescan = false;
@@ -725,7 +735,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 26; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -738,7 +748,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 26; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -748,7 +758,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 26; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -758,7 +768,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 26; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -767,7 +777,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 26; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -776,7 +786,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 26; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -895,7 +905,7 @@ public class SubscriptionParser extends SubscriptionParserBase implements Subscr
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 26; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

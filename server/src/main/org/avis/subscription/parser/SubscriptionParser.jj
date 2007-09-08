@@ -4,7 +4,6 @@
 options
 {
   JDK_VERSION = "1.5";
-  IGNORE_CASE = true;
   STATIC = false;
   UNICODE_INPUT = true;
 }
@@ -45,7 +44,7 @@ TOKEN : /* IDENTIFIERS */
 |
   < #LETTER:  [ "a"-"z", "A"-"Z", "_"] >
 
-| < #ID_CHAR: [ "\u0021", "\u0023"-"\u0026", "\u0028", "\u002a"-"\u002b",
+| < #ID_CHAR: [ "\u0021", "\u0023"-"\u0026", "\u002a"-"\u002b",
                 "\u002d"-"\u005a", "\u005e"-"\u00ff" ] >
 |
   < #BACKSLASH: "\\" ~[] >
@@ -428,7 +427,8 @@ List StringCompareArgs () :
 // Match any arguments. Used for error recovery
 void AnyArgs () : {}
 {
-  ( StringValue () | NumLiteral () ) ( "," (StringValue () | NumLiteral ()) )*
+  ( ( StringValue () | NumLiteral () ) 
+    ( "," (StringValue () | NumLiteral ()) )* )?
 }
 
 Const NumLiteral () :
