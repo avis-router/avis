@@ -8,9 +8,6 @@ import java.lang.reflect.Method;
 
 import org.avis.subscription.ast.Node;
 
-//import sun.text.Normalizer;
-//import sun.text.Normalizer.Mode;
-
 import static java.util.Collections.singleton;
 
 /**
