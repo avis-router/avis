@@ -4,10 +4,7 @@ Bugs
 * client source won't build in Eclipse without server. Need to add it
   ot deal with it otherwise.
  
-* require(e) vs. require (e). Mantara accepts both, we don't do first
-  one any more.
-  
-* ec requires elvin:4.0//...
+* Mantara ec requires elvin:4.0//...
 
 * Avis: Warning: Failed to cleanly shut down thread pool. avisd during
   testing for Alain. Not due to connected clients. Perhaps due to
@@ -30,6 +27,10 @@ Releases
 Server 1.1.1
 
  * DONE: Unicode decompose on 1.6
+
+ * require(e) vs. require (e). Mantara accepts both, we don't do first
+   one any more.
+ 
  * Update MINA: some tests fail 1.1.2
 
 Server 1.2
