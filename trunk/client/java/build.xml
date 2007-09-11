@@ -13,8 +13,9 @@
   <property name="release-name"
             value="${avis.version.major}.${avis.version.minor}.${avis.release}" />
   
-  <property name="common" value="${basedir}/../common" />
-  <property name="server" value="${basedir}/../server" />
+  <property name="common_root" value="${basedir}/../../common" />
+  <property name="common" value="${common_root}/java" />
+  <property name="server" value="${basedir}/../server/java" />
 
   <path id="classpath">
     <fileset dir="${common}/lib">
@@ -137,7 +138,7 @@
     <!-- create copy of source with license headers -->
     <property name="header" value="src/avis_java_header.txt" />
 
-    <copy todir="${src_tmp}/client">
+    <copy todir="${src_tmp}/client/java">
       <fileset dir=".">
         <include name="src/**/*.java"/>
       </fileset>
@@ -147,7 +148,7 @@
       </filterchain>
     </copy>
 
-    <copy todir="${src_tmp}/common">
+    <copy todir="${src_tmp}/common/java">
       <fileset dir="${common}">
         <include name="src/**/*.java"/>
       </fileset>
@@ -165,11 +166,8 @@
       </zipfileset>
       
       <!-- others -->
-      <zipfileset dir="doc" prefix="${ziproot}">
-        <include name="README.txt" />
-      </zipfileset>
-        
-      <zipfileset dir="." prefix="${ziproot}/client">
+      
+      <zipfileset dir="." prefix="${ziproot}/client/java">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -179,24 +177,31 @@
         <include name="bin/ec.cmd" />
         <include name="bin/ep.cmd" />
         <include name="bin/sha1.cmd" />
-        <include name="doc/examples.txt" />
-        <include name="doc/history.txt" />
-        <include name="doc/java5-package-list/**" />
         <include name="src/avis_java_header.txt" />
         <include name="avis-client.properties" />
       </zipfileset>
+      
+      <zipfileset dir="${common_root}/doc" prefix="${ziproot}">
+       <include name="README.txt" />
+      </zipfileset>
+
+      <zipfileset dir="${common_root}/doc" prefix="${ziproot}/client/java">
+        <include name="doc/examples.txt" />
+        <include name="doc/history.txt" />
+        <include name="doc/java5-package-list/**" />
+      </zipfileset>
      
-      <zipfileset dir="." prefix="${ziproot}/client" filemode="755">
+      <zipfileset dir="." prefix="${ziproot}/client/java" filemode="755">
         <include name="bin/ec" />
         <include name="bin/ep" />
         <include name="bin/sha1" />
       </zipfileset> 
      
-      <zipfileset dir="build" prefix="${ziproot}/client">
+      <zipfileset dir="build" prefix="${ziproot}/client/java">
          <include name="javadoc/**" />
       </zipfileset> 
       
-      <zipfileset dir="${common}" prefix="${ziproot}/common">
+      <zipfileset dir="${common}" prefix="${ziproot}/common/java">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
