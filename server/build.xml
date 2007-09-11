@@ -20,10 +20,11 @@
        release tag e.g. 1.0.2dev or 1.1.dev. -->
   <property name="release-name" value="${version}.${release}" />
 
-  <property name="common" value="${basedir}/../common" />
+  <property name="common_root" value="${basedir}/../common" />
+  <property name="common" value="${common_root}/java" />
 
   <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
-  <property name="javacc" value="../../javacc-4.0" />
+  <property name="javacc" value="../../../javacc-4.0" />
 
   <!-- InnoSetup installation (5.1.9 or later): only needed if building the
        Windows self-installer. -->
@@ -197,7 +198,7 @@
       </filterchain>
     </copy>
 
-    <copy todir="${src_tmp}/common">
+    <copy todir="${src_tmp}/common/java">
       <fileset dir="${common}">
         <include name="src/main/**/*.java"/>
         <include name="src/test/**/*.java"/>
@@ -235,7 +236,7 @@
         <include name="bin/avisd" />
       </zipfileset>
       
-      <zipfileset dir="${common}" prefix="${ziproot}/common">
+      <zipfileset dir="${common}" prefix="${ziproot}/common/java">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />

@@ -10,11 +10,12 @@
   
   <property file="avis.properties" />
   
-  <property name="common" value="${basedir}/../common" />
+  <property name="common_root" value="${basedir}/.." />
+  <property name="common" value="${common_root}/java" />
 	
   <!-- Markdown 1.0.1: needed to build web page -->
   <property name="markdown" 
-            value="${common}/packages/markdown-1.0.1/Markdown.pl" />
+            value="${common_root}/packages/markdown-1.0.1/Markdown.pl" />
   
   <path id="classpath">
     <fileset dir="lib">
@@ -159,7 +160,7 @@
   <target name="backup-sourceforge"
           description="Backup SVN repository from Sourceforge">
     <exec executable="rsync">
-      <arg line="-av avis.svn.sourceforge.net::svn/avis/* ../../avis_backup/svn/" />
+      <arg line="-av avis.svn.sourceforge.net::svn/avis/* ../../../avis_backup/svn/" />
     </exec>
   </target>
 
