@@ -355,15 +355,8 @@ public final class Elvin implements Closeable
     this.ioExecutor = newCachedThreadPool ();
     
     // create callbackExecutor that uses a single CallbackThread
-    this.callbackExecutor =
-      newScheduledThreadPool
-        (1, new ThreadFactory ()
-            {
-              public Thread newThread (Runnable target)
-              {
-                return new CallbackThread (target);
-              }
-            });
+    this.callbackExecutor = 
+      newScheduledThreadPool (1, CALLBACK_THREAD_FACTORY);
     
     try
     {
@@ -1467,6 +1460,15 @@ public final class Elvin implements Closeable
     }
   }
 
+  private static final ThreadFactory CALLBACK_THREAD_FACTORY =
+    new ThreadFactory ()
+    {
+      public Thread newThread (Runnable target)
+      {
+        return new CallbackThread (target);
+      }
+    };
+    
   /**
    * The thread used for all callbacks in the callbackExecutor.
    */
