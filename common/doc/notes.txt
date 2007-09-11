@@ -50,6 +50,7 @@ Not allocated
 
 Client
 
+* web-based management: may need to be in context of OSGi
 * add subscription string escape utilities
 * allow connection options in URI
 * synchronous reconnect/redirect? block for up to x secs before closing
