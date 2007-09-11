@@ -1472,7 +1472,7 @@ public final class Elvin implements Closeable
   /**
    * The thread used for all callbacks in the callbackExecutor.
    */
-  static class CallbackThread
+  private static class CallbackThread
     extends Thread implements UncaughtExceptionHandler
   {
     private static final AtomicInteger counter = new AtomicInteger ();
