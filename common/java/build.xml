@@ -12,6 +12,7 @@
   
   <property name="common_root" value="${basedir}/.." />
   <property name="common" value="${common_root}/java" />
+  <property name="web" value="${common_root}/web" />
 	
   <!-- Markdown 1.0.1: needed to build web page -->
   <property name="markdown" 
@@ -40,7 +41,7 @@
   <target name="clean-web" depends="clean"
   	      description="Clean generated website files">
     <delete>
-      <fileset dir="doc/web">
+      <fileset dir="${web}">
         <include name="index.html" />
         <include name="examples.html" />
         <include name="installation.html" />
@@ -76,7 +77,7 @@
   
   <!-- Use arcane Ant-isms to build web page from text using Markdown -->
   <target name="website"
-          description="Build HTML files in doc/web from sources">  
+          description="Build HTML files in web from sources">  
     <antcall target="fn:make-html">
       <param name="src" value="avis.txt" />
       <param name="dest" value="index.html" />
@@ -129,7 +130,7 @@
   
   <target name="deploy-website" depends="website"
           description="Rsync web site to sourceforge">
-    <exec executable="rsync" dir="doc/web">
+    <exec executable="rsync" dir="${web}">
       <arg value="-rlgoDv" />
       <arg value="--delete" />
       <arg line="--include *.html" />
@@ -166,10 +167,8 @@
 
   <!-- Build a web page from text template using Markdown -->
   <target name="fn:make-html">
-    <property name="root" value="doc/web" />
-    
-    <concat destfile="${root}/${dest}" append="false">
-      <filelist dir="${root}" files="header.htmli" />
+    <concat destfile="${web}/${dest}" append="false">
+      <filelist dir="${web}" files="header.htmli" />
     	
       <filterchain>
         <expandproperties />
@@ -178,15 +177,15 @@
     
     <exec executable="perl">
       <arg value="${markdown}" />
-      <arg value="${root}/${src}" />
+      <arg value="${web}/${src}" />
       
       <redirector append="true">
-        <outputmapper type="merge" to="${root}/${dest}" />
+        <outputmapper type="merge" to="${web}/${dest}" />
       </redirector>
     </exec>
     
-    <concat destfile="${root}/${dest}" append="true">
-      <filelist dir="${root}" files="footer.htmli" />
+    <concat destfile="${web}/${dest}" append="true">
+      <filelist dir="${web}" files="footer.htmli" />
     </concat>
   </target>
 

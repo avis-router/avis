@@ -132,9 +132,6 @@
     
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
-    <mkdir dir="${src_tmp}/common/src" />
-    <mkdir dir="${src_tmp}/client/src" />
-      
     <!-- create copy of source with license headers -->
     <property name="header" value="src/avis_java_header.txt" />
 
@@ -181,11 +178,11 @@
         <include name="avis-client.properties" />
       </zipfileset>
       
-      <zipfileset dir="${common_root}/doc" prefix="${ziproot}">
+      <zipfileset dir="doc" prefix="${ziproot}">
        <include name="README.txt" />
       </zipfileset>
 
-      <zipfileset dir="${common_root}/doc" prefix="${ziproot}/client/java">
+      <zipfileset dir="." prefix="${ziproot}/client/java">
         <include name="doc/examples.txt" />
         <include name="doc/history.txt" />
         <include name="doc/java5-package-list/**" />
