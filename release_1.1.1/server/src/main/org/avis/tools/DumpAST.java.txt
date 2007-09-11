@@ -1,0 +1,106 @@
+package org.avis.tools;
+
+import org.elvin.je4.Connection;
+import org.elvin.je4.Consumer;
+import org.elvin.je4.ElvinURL;
+import org.elvin.je4.Quench;
+import org.elvin.je4.QuenchEvent;
+import org.elvin.je4.QuenchListener;
+import org.elvin.je4.Quencher;
+import org.elvin.je4.Subscription;
+import org.elvin.je4.quench.AST;
+
+import org.avis.util.IndentingWriter;
+
+import static java.lang.Thread.sleep;
+
+public class DumpAST
+{
+  public static void main (String [] args)
+   throws Exception
+  {
+    Connection elvin = new Connection (new ElvinURL ("elvin://localhost:29170"));
+    
+    Quench quench = new Quench ("federation");
+    Quencher quencher = new Quencher (elvin);
+    
+    quench.addQuenchListener (new QuenchListener ()
+    {
+      public void quenchAdd (QuenchEvent event)
+      {
+        System.out.println ("add");
+        dumpAST (event.getAST ());
+      }
+      
+      public void quenchDelete (QuenchEvent event)
+      {
+        System.out.println ("delete");
+        dumpAST (event.getAST ());
+      }
+      
+      public void quenchModify (QuenchEvent event)
+      {
+        System.out.println ("modify");
+        dumpAST (event.getAST ());
+      }
+    });
+    
+    quencher.addQuench (quench);
+    
+    Consumer consumer = new Consumer (elvin);
+    
+    consumer.addSubscription (new Subscription ("require (federation)"));
+    
+    sleep (2000);
+    
+    elvin.close ();
+  }
+
+  protected static void dumpAST (AST ast)
+  {
+    IndentingWriter out = new IndentingWriter (System.out);
+    
+    dumpAST (out, ast);
+    
+    out.flush ();
+  }
+
+  private static void dumpAST (IndentingWriter out, AST ast)
+  {
+    if (ast.getBaseType () == 0)
+    {
+      out.print ("node " + ast.getType () + " (" + 
+                 ast.getChildren ().size () + " children)");
+      
+      out.indentln ();
+      
+      for (Object child : ast.getChildren ())
+        dumpAST (out, (AST)child);
+      
+      out.unindent ();
+    } else
+    {
+      out.print ("constant ");
+      
+      switch (ast.getType ())
+      {
+        case AST.STRING:
+          out.println ("string " + ast.getString ());
+          break;
+        case AST.INT32:
+          out.println ("int32 " + ast.getInt32 ());
+          break;
+        case AST.INT64:
+          out.println ("int64 " + ast.getInt64 ());
+          break;
+        case AST.REAL64:
+          out.println ("real64 " + ast.getReal64 ());
+          break;
+        default:
+          out.println ("unknown nodeType = " + ast.getType () + 
+                       " baseType = " + ast.getBaseType ());
+        break;
+      }
+    }
+  }
+}
