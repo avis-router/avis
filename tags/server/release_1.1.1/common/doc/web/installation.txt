@@ -1,0 +1,121 @@
+Installing Avis
+======================================================================
+
+Avis install packages are available from [the sourceforge download
+area][downloads]. See the relevant section below for more information.
+
+Requirements
+----------------------------------------------------------------------
+
+Before installing Avis, you will need a Java 5 (or later) runtime or
+development kit installed. Windows and Unix users can get Java from
+[Sun's Java download site][sun_java]. Mac OS X users can get Java 5
+from [Apple's download site][apple_java] (Mac OS X 10.4 or later).
+
+You can run Avis with a minimal Java Runtime Environment (JRE) but if
+you wish to get optimal performance it is recommended you install the
+full JDK to gain access to the "server" optimizing VM.
+
+Configuration
+----------------------------------------------------------------------
+
+The Avis router will install and run with no configuration
+required. If you do wish to change any of the router's default
+parameters, these are specified in a file called `avisd.config`. See
+the installation instructions for your platform below for information
+on where this file can be found. Documentation and templates for the
+config options can be found in file itself.
+
+Windows
+----------------------------------------------------------------------
+
+To install, run the self-installer package. By default this will
+install Avis in `C:\Program Files\Avis`.
+
+You may also elect to add Avis as a system service, which will run
+Avis in the background as a startup service. If you don't wish to add
+Avis as a service at install time, you can add it later by running
+`bin\install_avis_service.cmd`.
+
+Once installed, Avis will either already be running (if you installed
+it as a service), or you may start it from the command line using
+`bin\start_avis_service.cmd`.
+
+Configuration options for Avis can be found in the
+`config\avisd.config` file.
+
+
+Fedora
+----------------------------------------------------------------------
+
+The Avis RPM is targeted and tested on Fedora Core 2 and
+later. However the RPM is architecture-independent and not
+particularly dependent on Fedora, so it may work on other RPM-based
+Linux distributions.
+
+To install:
+
+      > sudo rpm -ivh avis-1.1.rpm
+
+Configuration options are in the file `/etc/avis/avisd.config`.
+
+To run from the command line as a test:
+
+      > /usr/sbin/avisd -c /etc/avis/avisd.config
+
+To install as a startup service:
+
+      > sudo /sbin/chkconfig --add avisd
+      > sudo /sbin/chkconfig avisd on
+      > sudo /sbin/service avisd start
+
+To uninstall as a system service:
+
+      > sudo /sbin/service avisd stop
+      > sudo /sbin/chkconfig avisd --del
+
+To uninstall:
+
+      > sudo rpm -e avis
+
+Mac OS X
+----------------------------------------------------------------------
+
+To install, open the Avis `.tbz` archive in Finder. This will extract
+the Avis installation package which you can open and install.
+
+To configure: The Avis configuration is in
+`/usr/local/etc/avis/avisd.config`.
+
+To start Avis, open a Terminal window and, as an admin user, run the
+command:
+
+      > sudo SystemStarter start Avis
+
+To stop Avis:
+
+      > sudo SystemStarter stop Avis
+
+To uninstall: Mac OS X unfortunately does not have a standard way to
+uninstall installer package (`.pkg`) files. You can however use a
+third party utility called [DesInstaller][desinstaller] to selectively
+delete installed packages.
+
+
+Other
+----------------------------------------------------------------------
+
+The Avis source distribution comes with precompiled binaries ready to
+run on any platform. Simply unzip the source distribution and run Avis
+from a bash command shell:
+
+       > cd avis-1.1.0/server
+       > ./bin/avisd
+
+See `etc/avisd.config` for configuration options.
+
+
+[downloads]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191
+[sun_java]: http://java.sun.com/javase/downloads
+[apple_java]: http://developer.apple.com/java/download
+[desinstaller]: http://krugazor.free.fr/software/desinstaller/DesInstaller.php
