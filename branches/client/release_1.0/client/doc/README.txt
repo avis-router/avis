@@ -13,7 +13,7 @@ The Avis web site is http://avis.sourceforge.net.
 
 
 Distribution Layout
-----------------------------------------------------------------------
+======================================================================
 
 common                          Avis common packages
 
@@ -38,6 +38,53 @@ client                          Avis client library packages
   javadoc/                      API documentation
 
 
+Using In Eclipse
+======================================================================
+
+To add the Avis client library to your project:
+ 
+ * Right click your project -> choose Properties.
+
+ * Select "Java Build Path".
+
+ * Select the "Libraries" tab at the top.
+
+ * Choose "Add Jars..." and select client/lib/avis-client.jar from the
+   Avis client distribution. Or copy the JAR file beforehand into your
+   project and select that.
+
+ * Expand the new avis-client.jar entry, select "Source attachment" ->
+   "Edit..."
+
+ * Select "External folder..." and choose
+   avis-client-1.0.2/client/src/main.
+
+This will add the JAR file and connect the source code to it for
+browsing purposes.
+
+
+Building Avis
+================================================================================
+
+NOTE: The client library distribution does not include the avis.server
+component which is needed to build and run the tests. You can modify
+and build the avis-client.jar from source with Ant using this
+distribution, but you will not be able to run tests or build a full
+distribution.
+
+If you want to change anything significant in the Avis client library
+it is recommended that you get the source code via Subversion from
+either a release branch, e.g.
+
+ * https://avis.svn.sourceforge.net/svnroot/avis/branches/client/release_1.0
+
+or the development branch at
+
+ * https://avis.svn.sourceforge.net/svnroot/avis/trunk
+
+Patches are welcome, and should be sent to the project maintainer.
+
+
 Building (Ant 1.6 or later)
 ----------------------------------------------------------------------
 
@@ -55,6 +102,9 @@ To see all build targets:
 
 Building (Eclipse 3.2 or later)
 ----------------------------------------------------------------------
+
+[this will only work with the full source tree from Subversion: see
+note above]
 
 From Eclipse:
 
