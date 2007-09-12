@@ -109,10 +109,13 @@ note above]
 From Eclipse:
 
   * Select File -> Import...
+
   * Select "Existing Projects Into Workspace..."
+
   * Select the root of the Avis client library e.g. avis-client-1.0.0.
-  * The projects avis.common and avis.client should be found: select
-    both.
+
+  * The projects avis.common, avis.client and avis.server should be
+    found: select all three.
 
 You can add the client/build.xml file to the Eclipse Ant view to
 access Ant build targets from the IDE.
