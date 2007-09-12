@@ -13,14 +13,14 @@ The Avis web site is http://avis.sourceforge.net.
 
 
 Distribution Layout
-----------------------------------------------------------------------
+======================================================================
 
-common                          Avis common packages
+common/java                     Avis common packages
 
   src/main                      Source for common packages
   src/test                      Test cases for common packages
 
-client                          Avis client library packages
+client/java                     Avis client library packages
 
   build.xml                     Ant build targets
 
@@ -38,6 +38,53 @@ client                          Avis client library packages
   javadoc/                      API documentation
 
 
+Using In Eclipse
+======================================================================
+
+To add the Avis client library to your project:
+ 
+ * Right click your project -> choose Properties.
+
+ * Select "Java Build Path".
+
+ * Select the "Libraries" tab at the top.
+
+ * Choose "Add Jars..." and select "client/java/lib/avis-client.jar"
+   from the Avis client distribution. Or copy the JAR file beforehand
+   into your project and select that.
+
+ * Expand the new avis-client.jar entry, select "Source attachment" ->
+   "Edit..."
+
+ * Select "External folder..." and choose "client/java/src/main" from
+   the Avis distribution.
+
+This will add the JAR file and connect the source code to it for
+browsing purposes.
+
+
+Building Avis
+================================================================================
+
+NOTE: The client library distribution does not include the avis.server
+component which is needed to build and run the tests. You can modify
+and build the avis-client.jar from source with Ant using this
+distribution, but you will not be able to run tests or build a full
+distribution.
+
+If you want to change anything significant in the Avis client library
+it is recommended that you get the source code via Subversion from
+either a release branch, e.g.
+
+ * https://avis.svn.sourceforge.net/svnroot/avis/branches/client/release_1.0
+
+or the development branch at
+
+ * https://avis.svn.sourceforge.net/svnroot/avis/trunk
+
+Patches are welcome, and should be sent to the project maintainer.
+
+
 Building (Ant 1.6 or later)
 ----------------------------------------------------------------------
 
@@ -45,7 +92,7 @@ The Avis client library comes pre-built in the client/lib directory of
 this distribution. If you wish to modify the library, you may re-build
 it as below:
 
-  > cd avis-client-1.0.0/client
+  > cd avis-client-1.0.0/client/java
   > ant
 
 To see all build targets:
@@ -56,13 +103,19 @@ To see all build targets:
 Building (Eclipse 3.2 or later)
 ----------------------------------------------------------------------
 
+[this will only work with the full source tree from Subversion: see
+note above]
+
 From Eclipse:
 
   * Select File -> Import...
+
   * Select "Existing Projects Into Workspace..."
+
   * Select the root of the Avis client library e.g. avis-client-1.0.0.
-  * The projects avis.common and avis.client should be found: select
-    both.
+
+  * The projects avis.common, avis.client and avis.server should be
+    found: select all three.
 
 You can add the client/build.xml file to the Eclipse Ant view to
 access Ant build targets from the IDE.
