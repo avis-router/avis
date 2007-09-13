@@ -6,8 +6,8 @@ routers. This includes the Avis event router and the Mantara Elvin
 product.
 
 If you're not sure where to get started, have a look at the example
-code in client/examples and the associated documentation in
-doc/examples.txt. The API documentation is in client/javadoc.
+code in client/src/examples and the associated documentation in
+client/doc/examples.txt. The API documentation is in client/javadoc.
 
 The Avis web site is http://avis.sourceforge.net.
 
@@ -15,12 +15,12 @@ The Avis web site is http://avis.sourceforge.net.
 Distribution Layout
 ======================================================================
 
-common/java                     Avis common packages
+common                          Avis common packages
 
   src/main                      Source for common packages
   src/test                      Test cases for common packages
 
-client/java                     Avis client library packages
+client                          Avis client library packages
 
   build.xml                     Ant build targets
 
@@ -49,15 +49,15 @@ To add the Avis client library to your project:
 
  * Select the "Libraries" tab at the top.
 
- * Choose "Add Jars..." and select "client/java/lib/avis-client.jar"
-   from the Avis client distribution. Or copy the JAR file beforehand
-   into your project and select that.
+ * Choose "Add Jars..." and select "client/lib/avis-client.jar" from
+   the Avis client distribution. Or copy the JAR file beforehand into
+   your project and select that.
 
  * Expand the new avis-client.jar entry, select "Source attachment" ->
    "Edit..."
 
- * Select "External folder..." and choose "client/java/src/main" from
-   the Avis distribution.
+ * Select "External folder..." and choose "client/src/main" from the
+   Avis distribution.
 
 This will add the JAR file and connect the source code to it for
 browsing purposes.
@@ -67,8 +67,8 @@ Building Avis
 ================================================================================
 
 NOTE: The client library distribution does not include the avis.server
-component which is needed to build and run the tests. You can modify
-and build the avis-client.jar from source with Ant using this
+component which is needed to run the test suite. You can modify and
+build the avis-client.jar from source with Ant using this
 distribution, but you will not be able to run tests or build a full
 distribution.
 
@@ -92,7 +92,7 @@ The Avis client library comes pre-built in the client/lib directory of
 this distribution. If you wish to modify the library, you may re-build
 it as below:
 
-  > cd avis-client-1.0.0/client/java
+  > cd avis-client-1.0.0/client
   > ant
 
 To see all build targets:
