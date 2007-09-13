@@ -13,10 +13,14 @@
   <property name="release-name"
             value="${avis.version.major}.${avis.version.minor}.${avis.release}" />
   
-  <property name="common_root" value="${basedir}/../../common" />
-  <property name="common" value="${common_root}/java" />
-  <property name="server" value="${basedir}/../server/java" />
+  <property name="client" value="${basedir}" />
+  <property name="common" value="${client}/../common" />
+  <property name="server" value="${client}/../server" />
+  <property name="avis-root" value="${client}/../.." />
 
+  <property name="src-zip" value="build/avis-client-${release-name}.zip" />
+  <property name="src-zip-root" value="avis-client-${release-name}" />
+  
   <path id="classpath">
     <fileset dir="${common}/lib">
       <include name="*.jar" />
@@ -45,8 +49,8 @@
   </target>
 
   <target name="compile" description="Compile source">
-    <ant antfile="${common}/build.xml" target="compile"
-         inheritall="false" />
+    <ant dir="${common}" target="compile"
+         inheritall="false" inheritrefs="false" />
     <ant antfile="${common}/build-common.xml" target="compile-main"
          inheritrefs="true" />
   </target>
@@ -127,15 +131,12 @@
   <target name="dist-client" depends="jar-client,jar-tools,javadoc"
           description="Build the client library distribution package">
     
-    <property name="ziproot" value="avis-client-${release-name}" />
-    <property name="src_zip" value="build/avis-client-${release-name}.zip" />
-    
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
     <!-- create copy of source with license headers -->
     <property name="header" value="src/avis_java_header.txt" />
 
-    <copy todir="${src_tmp}/client/java">
+    <copy todir="${src_tmp}/client">
       <fileset dir=".">
         <include name="src/**/*.java"/>
       </fileset>
@@ -145,7 +146,7 @@
       </filterchain>
     </copy>
 
-    <copy todir="${src_tmp}/common/java">
+    <copy todir="${src_tmp}/common">
       <fileset dir="${common}">
         <include name="src/**/*.java"/>
       </fileset>
@@ -155,16 +156,16 @@
       </filterchain>
     </copy>
 
-    <zip destfile="${src_zip}">
+    <zip destfile="${src-zip}">
       
       <!-- source -->
-      <zipfileset dir="${src_tmp}" prefix="${ziproot}">
+      <zipfileset dir="${src_tmp}" prefix="${src-zip-root}">
         <include name="**/*" />
       </zipfileset>
       
       <!-- others -->
       
-      <zipfileset dir="." prefix="${ziproot}/client/java">
+      <zipfileset dir="." prefix="${src-zip-root}/client">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -178,27 +179,27 @@
         <include name="avis-client.properties" />
       </zipfileset>
       
-      <zipfileset dir="doc" prefix="${ziproot}">
+      <zipfileset dir="doc" prefix="${src-zip-root}">
        <include name="README.txt" />
       </zipfileset>
 
-      <zipfileset dir="." prefix="${ziproot}/client/java">
+      <zipfileset dir="." prefix="${src-zip-root}/client">
         <include name="doc/examples.txt" />
         <include name="doc/history.txt" />
         <include name="doc/java5-package-list/**" />
       </zipfileset>
      
-      <zipfileset dir="." prefix="${ziproot}/client/java" filemode="755">
+      <zipfileset dir="." prefix="${src-zip-root}/client" filemode="755">
         <include name="bin/ec" />
         <include name="bin/ep" />
         <include name="bin/sha1" />
       </zipfileset> 
      
-      <zipfileset dir="build" prefix="${ziproot}/client/java">
+      <zipfileset dir="build" prefix="${src-zip-root}/client">
          <include name="javadoc/**" />
       </zipfileset> 
       
-      <zipfileset dir="${common}" prefix="${ziproot}/common/java">
+      <zipfileset dir="${common}" prefix="${src-zip-root}/common">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -212,7 +213,25 @@
     <!-- blow away temporary files -->
     <delete dir="${src_tmp}" /> 
   </target>
-
+  
+  <!-- unzip client distro and check it can build a new distro -->
+  <target name="test-client-dist" depends="dist-client"
+          description="Test the client library distribution package">
+    <tempfile property="tmp" prefix="dist_tmp" destdir="build" />
+    
+    <unzip dest="${tmp}" src="${src-zip}" />
+    
+    <ant dir="${tmp}/${src-zip-root}/client" target="clean" inheritall="false">
+      <property name="common" value="${common}" />
+    </ant>
+    
+    <ant dir="${tmp}/${src-zip-root}/client" target="dist-client" inheritall="false" inheritrefs="false">
+      <property name="common" value="${common}" />
+    </ant>
+    
+    <delete dir="${tmp}" />
+  </target>
+    
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean"
          inheritall="true" />
