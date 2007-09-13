@@ -10,7 +10,7 @@ Federation Classes
 
 To federate two routers you first need to decide which events to
 exchange. For trusted routers this may be simply be all events,
-however you will usually want to be specific as to what sorts of
+however you will usually want to be more specific as to what sorts of
 events you want to accept and provide.
 
 In Avis, a _federation class_ is used to specify events to import and
