@@ -6,8 +6,8 @@ routers. This includes the Avis event router and the Mantara Elvin
 product.
 
 If you're not sure where to get started, have a look at the example
-code in client/examples and the associated documentation in
-doc/examples.txt. The API documentation is in client/javadoc.
+code in client/src/examples and the associated documentation in
+client/doc/examples.txt. The API documentation is in client/javadoc.
 
 The Avis web site is http://avis.sourceforge.net.
 
@@ -49,15 +49,15 @@ To add the Avis client library to your project:
 
  * Select the "Libraries" tab at the top.
 
- * Choose "Add Jars..." and select client/lib/avis-client.jar from the
-   Avis client distribution. Or copy the JAR file beforehand into your
-   project and select that.
+ * Choose "Add Jars..." and select "client/lib/avis-client.jar" from
+   the Avis client distribution. Or copy the JAR file beforehand into
+   your project and select that.
 
  * Expand the new avis-client.jar entry, select "Source attachment" ->
    "Edit..."
 
- * Select "External folder..." and choose
-   avis-client-1.0.2/client/src/main.
+ * Select "External folder..." and choose "client/src/main" from the
+   Avis distribution.
 
 This will add the JAR file and connect the source code to it for
 browsing purposes.
@@ -67,14 +67,16 @@ Building Avis
 ================================================================================
 
 NOTE: The client library distribution does not include the avis.server
-component which is needed to build and run the tests. You can modify
-and build the avis-client.jar from source with Ant using this
-distribution, but you will not be able to run tests or build a full
-distribution.
+component which is needed to run the test suite and to build Avis
+inside Eclipse.
 
-If you want to change anything significant in the Avis client library
-it is recommended that you get the source code via Subversion from
-either a release branch, e.g.
+You can modify and build the avis-client.jar from source with Ant
+using this distribution, but you will not be able to run tests, which
+is recommended if you make changes.
+
+It is therefore recommended that, if you want to change anything
+significant in the Avis client library, you get the source via
+Subversion from either a release branch, e.g.
 
  * https://avis.svn.sourceforge.net/svnroot/avis/branches/client/release_1.0
 
@@ -103,8 +105,7 @@ To see all build targets:
 Building (Eclipse 3.2 or later)
 ----------------------------------------------------------------------
 
-[this will only work with the full source tree from Subversion: see
-note above]
+[this requires the full source tree from Subversion: see note above]
 
 From Eclipse:
 
