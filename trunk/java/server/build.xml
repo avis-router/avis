@@ -20,11 +20,15 @@
        release tag e.g. 1.0.2dev or 1.1.dev. -->
   <property name="release-name" value="${version}.${release}" />
 
-  <property name="common_root" value="${basedir}/../common" />
-  <property name="common" value="${common_root}/java" />
+  <property name="server" value="${basedir}" />
+  <property name="common" value="${server}/../common" />
+  <property name="avis-root" value="${server}/../.." />
+
+  <property name="src-zip" value="build/avis-src-${release-name}.zip" />
+  <property name="src-zip-root" value="avis-${release-name}" />
 
   <!-- JavaCC 4.0 or later: only needed if you need to change parser -->
-  <property name="javacc" value="../../../javacc-4.0" />
+  <property name="javacc" value="${avis-root}/../javacc-4.0" />
 
   <!-- InnoSetup installation (5.1.9 or later): only needed if building the
        Windows self-installer. -->
@@ -65,7 +69,8 @@
   </target>
 
   <target name="compile" description="Compile source and tests">
-    <ant antfile="${common}/build.xml" target="compile" inheritall="false"/>
+    <ant dir="${common}" target="compile" inheritall="false"/>
+    
     <ant antfile="${common}/build-common.xml" target="compile"
          inheritrefs="true" inheritall="true"/>
   </target>
@@ -172,9 +177,6 @@
   <target name="dist-source" depends="jar-server"
           description="Build the source distro">
     
-    <property name="ziproot" value="avis-${release-name}" />
-    <property name="src_zip" value="build/avis-src-${release-name}.zip" />
-    
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
     <mkdir dir="${src_tmp}/common/src/main" />
@@ -209,15 +211,15 @@
       </filterchain>
     </copy>
 
-    <zip destfile="${src_zip}">
+    <zip destfile="${src-zip}">
       
       <!-- source -->
-      <zipfileset dir="${src_tmp}" prefix="${ziproot}">
+      <zipfileset dir="${src_tmp}" prefix="${src-zip-root}">
         <include name="**/*" />
       </zipfileset>
       
       <!-- others -->
-      <zipfileset dir="." prefix="${ziproot}/server">
+      <zipfileset dir="." prefix="${src-zip-root}/server">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -232,11 +234,11 @@
         <include name="avis-server.properties" />
       </zipfileset>
       
-      <zipfileset dir="." prefix="${ziproot}/server" filemode="755">
+      <zipfileset dir="." prefix="${src-zip-root}/server" filemode="755">
         <include name="bin/avisd" />
       </zipfileset>
       
-      <zipfileset dir="${common}" prefix="${ziproot}/common/java">
+      <zipfileset dir="${common}" prefix="${src-zip-root}/common/java">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -249,6 +251,26 @@
     
     <!-- blow away temporary files -->
     <delete dir="${src_tmp}" />
+  </target>
+  
+  <!-- unzip router distro and check it can build a new distro -->
+  <target name="test-source-dist" depends="dist-source"
+          description="Test the router source distribution package">
+    <tempfile property="tmp" prefix="dist_tmp" destdir="build" />
+    
+    <unzip dest="${tmp}" src="${src-zip}" />
+    
+    <ant dir="${tmp}/${src-zip-root}/server" target="clean"
+         inheritall="false">
+      <property name="common" value="${common}" />
+    </ant>
+    
+    <ant dir="${tmp}/${src-zip-root}/server" target="dist-source"
+         inheritall="false">
+      <property name="common" value="${common}" />
+    </ant>
+    
+    <delete dir="${tmp}" />
   </target>
 
   <target name="dist-osx" depends="jar-server"
