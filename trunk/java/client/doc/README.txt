@@ -64,18 +64,16 @@ browsing purposes.
 
 
 Building Avis
-================================================================================
+======================================================================
 
 NOTE: The client library distribution does not include the avis.server
 component which is needed to run the test suite and to build Avis
-inside Eclipse.
-
-You can modify and build the avis-client.jar from source with Ant
-using this distribution, but you will not be able to run tests, which
-is recommended if you make changes.
+inside Eclipse. You *can* modify and build avis-client.jar from source
+with Ant using the source distribution, but you will not be able to
+run tests, which is recommended if you make significant changes.
 
 It is therefore recommended that, if you want to change anything
-significant in the Avis client library, you get the source via
+significant in the Avis client library, you get the full source via
 Subversion from either a release branch, e.g.
 
  * https://avis.svn.sourceforge.net/svnroot/avis/branches/client/release_1.0
