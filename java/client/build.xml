@@ -18,8 +18,8 @@
   <property name="server" value="${client}/../server" />
   <property name="avis-root" value="${client}/../.." />
 
-  <property name="src-zip" value="build/avis-client-${release-name}.zip" />
   <property name="src-zip-root" value="avis-client-${release-name}" />
+  <property name="src-zip" value="build/${src-zip-root}.zip" />
   
   <path id="classpath">
     <fileset dir="${common}/lib">
@@ -180,7 +180,7 @@
       </zipfileset>
       
       <zipfileset dir="doc" prefix="${src-zip-root}">
-       <include name="README.txt" />
+        <include name="README.txt" />
       </zipfileset>
 
       <zipfileset dir="." prefix="${src-zip-root}/client">
