@@ -813,6 +813,11 @@ public final class Elvin implements Closeable
    * and unsubscribe.
    * <p>
    * 
+   * See <a href="http://avis.sourceforge.net/subscription_language.html">the 
+   * Elvin Subscription Language page</a> for information on how
+   * subscription expressions work.
+   * <p>
+   *
    * There exists the possibility that, between creating a
    * subscription and adding a listener to it, the client could miss a
    * notification. If needed, the client may ensure this will not
