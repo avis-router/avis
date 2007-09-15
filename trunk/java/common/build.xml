@@ -127,6 +127,18 @@
       <param name="web.title" value="Downloads" />
     </antcall>
 
+    <antcall target="fn:make-html">
+      <param name="src" value="subscription_language.txt" />
+      <param name="dest" value="subscription_language.html" />
+      <param name="web.title" value="Elvin Subscription Language" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="documentation.txt" />
+      <param name="dest" value="documentation.html" />
+      <param name="web.title" value="Documentation" />
+    </antcall>
+
   </target>
   
   <target name="deploy-website" depends="website"
