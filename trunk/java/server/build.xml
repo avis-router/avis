@@ -79,6 +79,14 @@
     <ant antfile="${common}/build-common.xml" target="tests" inheritrefs="true" />
   </target>
 
+  <target name="test-federation" depends="compile">
+    <junit printsummary="yes" fork="yes" haltonfailure="yes">
+      <classpath refid="classpath" />
+      <formatter type="plain" usefile="false" />
+      <test name="org.avis.federation.JUTestFederation" />
+    </junit>
+  </target>
+
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" inheritall="true" />
     
