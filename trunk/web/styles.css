@@ -59,11 +59,11 @@ h2 .faint {
 	background:none;
 }
 h3 {
-	font-size:1.55em;
+	font-size:1.2em;
 	margin:1em 0 0 0;
 	padding-bottom:.2em;
 	border-bottom:1px solid #fec;
-	color:#b52;
+	color:#e60;
 }
 h3 strong {
 	color:#930;
@@ -114,12 +114,7 @@ cite {
 li, dd {
 	margin-bottom:.5em;
 }
-dt {
-	clear:left;
-}
 dd {
-	color:#444;
-	font-size:.95;
 	padding:.1em 0 .2em 2em;
 }
 a img {
@@ -358,26 +353,6 @@ ul.sections, .cross-links {
 	color:#620;
 }
 
-dl.alongside dt {
-	display:block;
-	float:left;
-	clear:left;
-	width:15%;
-	padding:.3em;
-	margin:.2em .5em .2em 2em;
-	background-color:#fe9;
-	border-left:3px solid #f93;
-}
-dl.alongside dd {
-	display:block;
-	float:left;
-	clear:none;
-	width:70%;
-	margin:.2em;
-	padding:.3em .3em .3em 1em;
-	background-color:#ffc;
-}
-
 .term {
 	font-style:italic;
 	color:#080;
@@ -495,4 +470,39 @@ a.footnoteBackLink:hover {
 .variable-name {
   /* font-lock-variable-name-face */
   color: #b8860b;
+}
+
+table
+{ 
+  text-align: left
+}
+
+pre
+{ 
+  margin-left: 2em;
+}
+
+dt
+{
+  margin-left: 1em;
+}
+
+dl.function-definition dt
+{
+  font-family: monospace;
+}
+
+.bool-true
+{ 
+  background-color: rgb(126,255,20);
+}
+
+.bool-false
+{ 
+  background-color: rgb(255,72,61);
+}
+
+.bool-bottom
+{ 
+  background-color: rgb(204,204,204);
 }
