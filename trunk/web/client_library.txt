@@ -12,6 +12,8 @@ used by the router.
  * [View Javadoc API documentation][javadoc] for the latest version of
    the library.
 
+ * A description of the [Elvin subscription language][subscription].
+
 The client library package contains a number of programming examples
 in `src/examples` and documentation on how to use them in
 `doc/examples.txt`.
@@ -24,3 +26,5 @@ You can also see examples of the client library in use at the
 [javadoc]: http://avis.sourceforge.net/client_library/javadoc/
 
 [examples]: examples.html
+
+[subscription]: subscription_language.html
