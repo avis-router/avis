@@ -24,17 +24,17 @@ version.<sup>[2][]</sup> The messages describe the host's name,
 department and percentage of free disk space.
 
 <pre class="java">
-  <span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
-  <span class="type">Notification</span> <span class="variable-name">ntfn</span> = <span class="keyword">new</span> <span class="type">Notification</span> ();
+<span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
+<span class="type">Notification</span> <span class="variable-name">ntfn</span> = <span class="keyword">new</span> <span class="type">Notification</span> ();
   
-  ntfn.set (<span class="string">"Status-Message"</span>, 1000);
-  ntfn.set (<span class="string">"Host-Name"</span>, hostName ());
-  ntfn.set (<span class="string">"Department"</span>,  lookupDepartment ());
-  ntfn.set (<span class="string">"Percent-Disk-Free"</span>, diskFreePercentage ());
+ntfn.set (<span class="string">"Status-Message"</span>, 1000);
+ntfn.set (<span class="string">"Host-Name"</span>, hostName ());
+ntfn.set (<span class="string">"Department"</span>,  lookupDepartment ());
+ntfn.set (<span class="string">"Percent-Disk-Free"</span>, diskFreePercentage ());
   
-  elvin.send (ntfn);
+elvin.send (ntfn);
   
-  elvin.close ();
+elvin.close ();
 </pre>
 
 Logger
@@ -46,22 +46,22 @@ rotating log file. The code below does this by listening for any
 status message.
 
 <pre class="java">
-  <span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
+<span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
 
-  <span class="comment-delimiter">// </span><span class="comment">Listen for any version 1.x status message 
-</span>  <span class="type">Subscription</span> <span class="variable-name">statusSub</span> =
-    elvin.subscribe (<span class="string">"Status-Message &lt; 2000"</span>);
+<span class="comment-delimiter">// </span><span class="comment">Listen for any version 1.x status message 
+</span><span class="type">Subscription</span> <span class="variable-name">statusSub</span> =
+  elvin.subscribe (<span class="string">"Status-Message &lt; 2000"</span>);
 
-  statusSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
+statusSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
+{
+  <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
   {
-    <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
-    {
-      addLog (e.notification.getString (<span class="string">"Host-Name"</span>),
-              e.notification.getInt (<span class="string">"Percent-Disk-Free"</span>));
-    }
-  });
+    addLog (e.notification.getString (<span class="string">"Host-Name"</span>),
+            e.notification.getInt (<span class="string">"Percent-Disk-Free"</span>));
+  }
+});
 
-  ...
+...
 </pre>
 
 Alerter
@@ -71,25 +71,26 @@ Perhaps later on we decide we need to be alerted if any of the servers
 in in the "IT" department get too low on disk space.
 
 <pre>
-  <span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
+<span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
 
-  <span class="comment-delimiter">// </span><span class="comment">Listen status messages in the IT
-</span>  <span class="comment-delimiter">// </span><span class="comment">department where disk space is 10% or less
-</span>  <span class="type">Subscription</span> <span class="variable-name">alertSub</span> =
-    elvin.subscribe
-      (<span class="string">"Status-Message &lt; 2000 &amp;&amp; "</span> +
-       <span class="string">"Department == 'IT' &amp;&amp; "</span> +
-       <span class="string">"Percent-Disk-Free &lt;= 10"</span>);
+<span class="comment-delimiter">// </span><span class="comment">Listen for status messages in the IT
+</span><span class="comment-delimiter">// </span><span class="comment">department where disk space is 10% or less
+</span>
+<span class="type">Subscription</span> <span class="variable-name">alertSub</span> =
+  elvin.subscribe
+    (<span class="string">"Status-Message &lt; 2000 &amp;&amp; "</span> +
+     <span class="string">"Department == 'IT' &amp;&amp; "</span> +
+     <span class="string">"Percent-Disk-Free &lt;= 10"</span>);
 
-  alertSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
+alertSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
+{
+  <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
   {
-    <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
-    {
-      alert (<span class="string">"Host %s has low disk space (%i percent)"</span>,
-             e.notification.get (<span class="string">"Host-Name"</span>),
-             e.notification.get (<span class="string">"Percent-Disk-Free"</span>));
-    }
-  });
+    alert (<span class="string">"Host %s has low disk space (%i percent)"</span>,
+           e.notification.get (<span class="string">"Host-Name"</span>),
+           e.notification.get (<span class="string">"Percent-Disk-Free"</span>));
+  }
+});
 </pre>
 
 The `alert ()` routine called by the subscription handler above might

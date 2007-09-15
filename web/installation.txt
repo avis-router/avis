@@ -55,28 +55,28 @@ Linux distributions.
 
 To install:
 
-      > sudo rpm -ivh avis-1.1.rpm
+    > sudo rpm -ivh avis-1.1.rpm
 
 Configuration options are in the file `/etc/avis/avisd.config`.
 
 To run from the command line as a test:
 
-      > /usr/sbin/avisd -c /etc/avis/avisd.config
+    > /usr/sbin/avisd -c /etc/avis/avisd.config
 
 To install as a startup service:
 
-      > sudo /sbin/chkconfig --add avisd
-      > sudo /sbin/chkconfig avisd on
-      > sudo /sbin/service avisd start
+    > sudo /sbin/chkconfig --add avisd
+    > sudo /sbin/chkconfig avisd on
+    > sudo /sbin/service avisd start
 
 To uninstall as a system service:
 
-      > sudo /sbin/service avisd stop
-      > sudo /sbin/chkconfig avisd --del
+    > sudo /sbin/service avisd stop
+    > sudo /sbin/chkconfig avisd --del
 
 To uninstall:
 
-      > sudo rpm -e avis
+    > sudo rpm -e avis
 
 Mac OS X
 ----------------------------------------------------------------------
@@ -90,11 +90,11 @@ To configure: The Avis configuration is in
 To start Avis, open a Terminal window and, as an admin user, run the
 command:
 
-      > sudo SystemStarter start Avis
+    > sudo SystemStarter start Avis
 
 To stop Avis:
 
-      > sudo SystemStarter stop Avis
+    > sudo SystemStarter stop Avis
 
 To uninstall: Mac OS X unfortunately does not have a standard way to
 uninstall installer package (`.pkg`) files. You can however use a
@@ -109,8 +109,8 @@ The Avis source distribution comes with precompiled binaries ready to
 run on any platform. Simply unzip the source distribution and run Avis
 from a bash command shell:
 
-       > cd avis-1.1.0/server
-       > ./bin/avisd
+     > cd avis-1.1.0/server
+     > ./bin/avisd
 
 See `etc/avisd.config` for configuration options.
 
