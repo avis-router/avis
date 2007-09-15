@@ -393,13 +393,17 @@ case).</dd>
 
 <dt>decompose (string)</dt>
 
-<dd>Performs canonical decomposition of string and returns the
-resulting string value.</dd>
+<dd>Performs <a
+href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">canonical
+decomposition</a> (NFD) of the string and returns the resulting string
+value.</dd>
 
 <dt>decompose-compat (value)</dt>
 
-<dd>Performs compatible (and canonical) decomposition of string and
-returns the resulting string value.</dd>
+<dd>Performs <a
+href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">compatible
+(and canonical) decomposition</a> (NFKD) of the string and returns the
+resulting string value.</dd>
 
 </dl>
 
