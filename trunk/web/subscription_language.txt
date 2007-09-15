@@ -16,7 +16,7 @@ notification it receives and, if the result is true, delivers it to
 the client which registered that subscription. Here is an example of a
 subscription expression:
 
-    (Group == "elvin" || Group == "Chat") &amp;&amp; 
+    (Group == "elvin" || Group == "Chat") && 
       ! regex (User, "[Ss]egall?")
 
 This subscription expression will match any notification whose `Group`
