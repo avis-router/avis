@@ -303,11 +303,11 @@ they evaluate to false.
 
 <dl class="function-definition">
 
-<dt>int32&nbsp;(name)</code></dt>
+<dt>int32&nbsp;(name)</dt>
 
 <dd>True if name is an int32 value.</dd>
 
-<dt>int64&nbsp;(name)</dt
+<dt>int64&nbsp;(name)</dt>
 
 <dd>True if name is an int64 value.</dd>
 
