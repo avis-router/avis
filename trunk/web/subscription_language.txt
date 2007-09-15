@@ -299,14 +299,36 @@ the values on either side of the operator.</dd>
 The following functions take one argument and return a logic value. If
 the value of name is of the given type, they evaluate to true, if name
 is not present in the notification, they evaluate to bottom, otherwise
-the evaluate to false.
+they evaluate to false.
 
-    int32 (name)
-    int64 (name)
-    real64 (name)
-    string (name)
-    opaque (name)
-    nan (name)
+<dl class="function-definition">
+
+<dt>int32&nbsp;(name)</code></dt>
+
+<dd>True if name is an int32 value.</dd>
+
+<dt>int64&nbsp;(name)</dt
+
+<dd>True if name is an int64 value.</dd>
+
+<dt>real64&nbsp;(name)</dt>
+
+<dd>True if name is an real64 value.</dd>
+
+<dt>string&nbsp;(name)</dt>
+
+<dd>True if name is a string value.</dd>
+
+<dt>opaque&nbsp;(name)</dt>
+
+<dd>True if name is an opaque value.</dd>
+
+<dt>nan&nbsp;(name)</dt>
+
+<dd>True if name equals the special real64 NaN (not a number)
+value.</dd>
+
+</dl>
 
 ### String Comparisons
 
@@ -314,6 +336,14 @@ The string comparison functions test strings in various ways. They
 test the first argument, which must either name a value in the
 notification or be a string-type function such as `fold-case (name)`,
 to see if it matches any of the subsequent arguments.
+
+To perform case-insensitive string matching, use the `fold-case ()`
+function, for example:
+
+    begins-with (fold-case (name), "foo")
+
+would match when the `name` field is "Foobar", "FOOBAR", "fOoBaR",
+etc.
 
 <dl class="function-definition">
 
