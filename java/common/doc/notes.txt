@@ -58,6 +58,7 @@ Client
 * UDP unotify
 * auto connect/reconnect
 * lots of ec/ep options
+* incorporate better RPM .spec and .rc files from OpenPKG http://cvs.openpkg.org/rlog?f=openpkg-src/avis/avis.spec http://cvs.openpkg.org/rlog?f=openpkg-src/avis/rc.avis
 * MAYBE: replace IOException witn RuntimeIOException? relates/affected
   by async idea
 * discovery
