@@ -91,6 +91,10 @@ public class JUTestClient
         {
           sub.remove ();
           
+          // check is not active and can be removed again with no effect
+          assertFalse (sub.isActive ());
+          sub.remove ();
+          
           synchronized (sub)
           {
             sub.notifyAll ();
