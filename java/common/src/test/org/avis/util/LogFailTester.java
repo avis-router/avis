@@ -40,6 +40,9 @@ public class LogFailTester implements LogListener
    */
   public void pause ()
   {
+    if (paused)
+      return;
+    
     paused = true;
     
     wasLoggingErrors = shouldLog (ALARM);
@@ -54,6 +57,9 @@ public class LogFailTester implements LogListener
    */
   public void unpause ()
   {
+    if (!paused)
+      return;
+    
     paused = false;
     
     enableLogging (ALARM, wasLoggingErrors);
