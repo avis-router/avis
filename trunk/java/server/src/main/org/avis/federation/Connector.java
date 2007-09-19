@@ -236,7 +236,7 @@ public class Connector implements IoHandler, Closeable
         if (session.isConnected ())
         {
           if (link != null)
-            link.close ();
+            link.close ();  // closes session after disconn
           else
             session.close ();
         } else
@@ -244,15 +244,12 @@ public class Connector implements IoHandler, Closeable
           if (link != null && !link.initiatedSessionClose ())
           {
             warn ("Remote federator at " + uri + " " + 
-                  "closed link with no warning", this);
+                  "closed outgoing link with no warning", this);
             
             link.close ();
           }        
         }
         
-        // wait for session to be flushed
-        // todo check that this really flushes messages
-        session.close ().join (10000);
         session = null;
       }
       
