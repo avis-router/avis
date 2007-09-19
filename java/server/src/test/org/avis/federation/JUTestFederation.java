@@ -12,6 +12,7 @@ import org.avis.config.Options;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
+import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -24,12 +25,15 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.io.Net.addressesFor;
+import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.enableLogging;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
@@ -37,6 +41,7 @@ import static org.avis.util.Collections.set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class JUTestFederation
 {
@@ -47,13 +52,18 @@ public class JUTestFederation
   
   private LogFailTester logTester;
   private StandardFederatorSetup federation;
-
+  private boolean oldLogInfoState;
+  
   @Before
   public void setup ()
   {
     // enableLogging (TRACE, true);
     // enableLogging (DIAGNOSTIC, true);
 
+    oldLogInfoState = Log.shouldLog (INFO);
+    
+    enableLogging (INFO, false);
+    
     logTester = new LogFailTester ();
   }
   
@@ -61,6 +71,8 @@ public class JUTestFederation
   public void tearDown ()
     throws Exception
   {
+    enableLogging (INFO, oldLogInfoState);
+    
     logTester.assertOkAndDispose ();
     
     if (federation != null)
@@ -256,11 +268,8 @@ public class JUTestFederation
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
 
-    sleep (1000);
+    waitForConnect (connector);
     
-    // check we've connected
-    assertTrue (connector.isConnected ());
-
     acceptor.close ();
     
     sleep (3000);
@@ -314,11 +323,8 @@ public class JUTestFederation
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
 
-    sleep (1000);
+    waitForConnect (connector);
     
-    // check we've connected
-    assertTrue (connector.isConnected ());
-
     // "crash" link at acceptor end
     acceptor.hang ();
     
@@ -338,7 +344,7 @@ public class JUTestFederation
     server1.close ();
     server2.close ();
   }
-  
+
   private static boolean runElvind = true;
   
   /**
@@ -370,6 +376,8 @@ public class JUTestFederation
     Connector connector = 
       new Connector (server, "avis", ewafURI, 
                                fedClass, options);
+    
+    waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
@@ -427,6 +435,8 @@ public class JUTestFederation
     Connector connector = 
       new Connector (server, "avis", ewafURI, 
                                fedClass, options);
+    
+    waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
@@ -518,6 +528,18 @@ public class JUTestFederation
     return map;
   }
   
+  protected static void waitForConnect (Connector connector)
+    throws InterruptedException
+  {
+    long start = currentTimeMillis ();
+    
+    while (!connector.isConnected () && currentTimeMillis () - start < 10000)
+      sleep (500);
+    
+    if (!connector.isConnected ())
+      fail ("Failed to connect");
+  }
+  
   static class StandardFederatorSetup
   {
     public Router server1;
@@ -570,6 +592,8 @@ public class JUTestFederation
       connector = 
         new Connector (server1, "server1", ewafURI, 
                        classes.classFor ("server2"), options);
+      
+      waitForConnect (connector);
       
       client1 = new SimpleClient ("client1", "localhost", PORT1);
       client2 = new SimpleClient ("client2", "localhost", PORT2);
