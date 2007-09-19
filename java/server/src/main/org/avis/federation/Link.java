@@ -119,6 +119,9 @@ public class Link implements NotifyListener
     return session.containsAttribute ("linkClosed");
   }
   
+  /**
+   * Close the link and the session after sending a Disconn.
+   */
   public void close ()
   {
     close (REASON_SHUTDOWN);
