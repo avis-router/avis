@@ -63,7 +63,7 @@ public class Acceptor implements IoHandler, Closeable
    * detected (NACK codes in range 2500-2599 are allocated for
    * implementation-specific use).
    */
-  private static final int INVALID_DOMAIN = 2500;
+  public static final int INVALID_DOMAIN = 2500;
   
   protected Router router;
   protected Options options;
@@ -238,9 +238,9 @@ public class Acceptor implements IoHandler, Closeable
           ", host = " + hostIdFor (session) + 
           ", server domain = " + message.serverDomain, this);
   
-  send (session, 
-        new Nack
-          (message, INVALID_DOMAIN, nackMessage)).addListener (CLOSE);
+    send (session, 
+          new Nack
+            (message, INVALID_DOMAIN, nackMessage)).addListener (CLOSE);
   }
 
   private synchronized void createLink (IoSession session,
@@ -329,7 +329,7 @@ public class Acceptor implements IoHandler, Closeable
       if (!link.isClosed ())
       {
         warn ("Remote host \"" + hostIdFor (session) + 
-              "\" closed federation link with no warning", this);
+              "\" closed incoming federation link with no warning", this);
 
         link.close ();
       } else
