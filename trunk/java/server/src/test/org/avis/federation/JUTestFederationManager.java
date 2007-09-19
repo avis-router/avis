@@ -118,9 +118,9 @@ public class JUTestFederationManager
     client2.close ();
     
     connector.close ();
-    router2.close ();
     
     router1.close ();
+    router2.close ();
     
     assertTrue (manager.isClosed ());
   }
