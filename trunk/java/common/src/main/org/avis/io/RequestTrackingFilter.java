@@ -293,13 +293,13 @@ public class RequestTrackingFilter
     
     public synchronized RequestMessage<?> remove (XidMessage reply)
     {
-      Request entry = xidToRequest.remove (reply.xid);
+      Request request = xidToRequest.remove (reply.xid);
       
-      if (entry == null)
+      if (request == null)
         throw new IllegalArgumentException 
           ("Reply with unknown XID " + reply.xid);
       else
-        return entry.message;
+        return request.message;
     }
     
     private void cancelReplyCheck ()
