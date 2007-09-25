@@ -86,7 +86,7 @@ public class Main
     } catch (Throwable ex)
     {
       if (ex instanceof IllegalOptionException)
-        alarm ("Error in server configuration: " + ex.getMessage (), Main.class);
+        alarm ("Error in router configuration: " + ex.getMessage (), Main.class);
       else
         alarm ("Error starting router: " + ex.getMessage (), Main.class);
         
