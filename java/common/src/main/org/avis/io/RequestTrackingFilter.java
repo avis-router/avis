@@ -181,7 +181,7 @@ public class RequestTrackingFilter
   class Tracker implements Runnable
   {
     private IoSession session;
-    private Map<Integer, Entry> xidToRequest;
+    private Map<Integer, Request> xidToRequest;
     private ScheduledFuture<?> replyFuture;
     private ScheduledFuture<?> livenessFuture;
     private long lastLive;
@@ -189,7 +189,7 @@ public class RequestTrackingFilter
     public Tracker (IoSession session)
     {
       this.session = session;
-      this.xidToRequest = new HashMap<Integer, Entry> ();
+      this.xidToRequest = new HashMap<Integer, Request> ();
       this.lastLive = currentTimeMillis ();
       
       scheduleLivenessCheck ();
@@ -209,22 +209,6 @@ public class RequestTrackingFilter
       lastLive = currentTimeMillis ();
 
       scheduleLivenessCheck ();
-    }
-
-    private void scheduleLivenessCheck ()
-    {
-      if (livenessFuture == null)
-      {
-        livenessFuture = sharedExecutor.schedule 
-          (new Runnable ()
-          {
-            public void run ()
-            {
-              checkLiveness ();
-            }
-          }, 
-          livenessTimeout - (currentTimeMillis () - lastLive) / 1000, SECONDS);
-      }
     }
     
     /**
@@ -274,6 +258,22 @@ public class RequestTrackingFilter
       }
     }
 
+    private void scheduleLivenessCheck ()
+    {
+      if (livenessFuture == null)
+      {
+        livenessFuture = sharedExecutor.schedule 
+          (new Runnable ()
+          {
+            public void run ()
+            {
+              checkLiveness ();
+            }
+          }, 
+          livenessTimeout - (currentTimeMillis () - lastLive) / 1000, SECONDS);
+      }
+    }
+
     private void cancelLivenessCheck ()
     {
       if (livenessFuture != null)
@@ -286,20 +286,20 @@ public class RequestTrackingFilter
 
     public synchronized void add (RequestMessage<?> request)
     {
-      xidToRequest.put (request.xid, new Entry (request));
+      xidToRequest.put (request.xid, new Request (request));
       
       scheduleReplyCheck (replyTimeout);
     }
     
     public synchronized RequestMessage<?> remove (XidMessage reply)
     {
-      Entry entry = xidToRequest.remove (reply.xid);
+      Request entry = xidToRequest.remove (reply.xid);
       
       if (entry == null)
         throw new IllegalArgumentException 
           ("Reply with unknown XID " + reply.xid);
       else
-        return entry.request;
+        return entry.message;
     }
     
     private void cancelReplyCheck ()
@@ -328,19 +328,19 @@ public class RequestTrackingFilter
       long now = currentTimeMillis ();
       long earliestTimeout = now;
       
-      for (Iterator<Map.Entry<Integer, Entry>> i = 
+      for (Iterator<Map.Entry<Integer, Request>> i = 
              xidToRequest.entrySet ().iterator (); i.hasNext (); )
       {
-        Entry entry = i.next ().getValue ();
+        Request request = i.next ().getValue ();
         
-        if ((now - entry.sentAt) / 1000 >= replyTimeout)
+        if ((now - request.sentAt) / 1000 >= replyTimeout)
         {
           i.remove ();
           
-          injectMessage (new RequestTimeoutMessage (entry.request));
+          injectMessage (new RequestTimeoutMessage (request.message));
         } else
         {
-          earliestTimeout = min (earliestTimeout, entry.sentAt);
+          earliestTimeout = min (earliestTimeout, request.sentAt);
         }
       }
       
@@ -360,14 +360,14 @@ public class RequestTrackingFilter
     }
   }
   
-  static class Entry
+  static class Request
   {
-    public RequestMessage<?> request;
+    public RequestMessage<?> message;
     public long sentAt;
 
-    public Entry (RequestMessage<?> request)
+    public Request (RequestMessage<?> request)
     {
-      this.request = request;
+      this.message = request;
       this.sentAt = currentTimeMillis ();
     }
   }
