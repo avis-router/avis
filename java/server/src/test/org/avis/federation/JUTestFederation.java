@@ -16,10 +16,6 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -30,7 +26,6 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
-import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -38,6 +33,11 @@ import org.avis.security.Keys;
 import org.avis.subscription.ast.nodes.Const;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.LogFailTester;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
@@ -48,12 +48,13 @@ import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.INFO;
 import static org.avis.logging.Log.enableLogging;
+import static org.avis.logging.Log.shouldLog;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class JUTestFederation
@@ -73,7 +74,7 @@ public class JUTestFederation
     // enableLogging (TRACE, true);
     // enableLogging (DIAGNOSTIC, true);
 
-    oldLogInfoState = Log.shouldLog (INFO);
+    oldLogInfoState = shouldLog (INFO);
     
     enableLogging (INFO, false);
     
@@ -86,13 +87,13 @@ public class JUTestFederation
   {
     enableLogging (INFO, oldLogInfoState);
     
-    logTester.assertOkAndDispose ();
-    
     if (federation != null)
     {
       federation.close ();
       federation = null;
     }
+
+    logTester.assertOkAndDispose ();
   }
   
   @Test
