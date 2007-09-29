@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import org.avis.config.Options;
 import org.avis.io.messages.NotifyDeliver;
+import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.util.LogFailTester;
@@ -18,6 +19,8 @@ import org.avis.util.LogFailTester;
 import static java.lang.Thread.sleep;
 
 import static org.avis.io.Net.addressesFor;
+import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.enableLogging;
 import static org.avis.util.Collections.set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,6 +32,7 @@ public class JUTestFederationManager
   private static final int PORT2 = PORT1 + 10;
 
   private LogFailTester logTester;
+  private boolean oldLogInfoState;
 
   @Before
   public void setup ()
@@ -36,12 +40,18 @@ public class JUTestFederationManager
      // Log.enableLogging (Log.TRACE, true);
      // Log.enableLogging (Log.DIAGNOSTIC, true);
 
+    oldLogInfoState = Log.shouldLog (INFO);
+    
+    enableLogging (INFO, false);
+    
     logTester = new LogFailTester ();
   }
   
   @After
   public void tearDown ()
   {
+    enableLogging (INFO, oldLogInfoState);
+    
     logTester.assertOkAndDispose ();
   }
   
