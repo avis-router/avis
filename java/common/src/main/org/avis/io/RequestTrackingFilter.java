@@ -21,8 +21,10 @@ import org.avis.io.messages.TestConn;
 import org.avis.io.messages.XidMessage;
 
 import static java.lang.Math.min;
+import static java.lang.Math.random;
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.avis.logging.Log.trace;
@@ -204,7 +206,14 @@ public class RequestTrackingFilter
       this.xidToRequest = new HashMap<Integer, Request> ();
       this.lastLive = currentTimeMillis ();
       
-      scheduleLivenessCheck ();
+      /*
+       * Run a liveness check with a randomised delay offset. Helps to
+       * avoid two hosts syncing their checks and doubling up on
+       * messages.
+       */
+      long delay = livenessTimeout * 1000L;
+      
+      scheduleLivenessCheck (delay - (long)(random () * delay));
     }
     
     public synchronized void dispose ()
@@ -219,8 +228,6 @@ public class RequestTrackingFilter
     public synchronized void connectionIsLive ()
     {
       lastLive = currentTimeMillis ();
-
-      scheduleLivenessCheck ();
     }
     
     /**
@@ -272,8 +279,15 @@ public class RequestTrackingFilter
 
     private void scheduleLivenessCheck ()
     {
+      scheduleLivenessCheck 
+        ((livenessTimeout * 1000L) - (currentTimeMillis () - lastLive));
+    }
+    
+    private void scheduleLivenessCheck (long delay)
+    {
       if (livenessFuture == null)
       {
+        System.out.println ("*** check in " + delay);
         livenessFuture = sharedExecutor.schedule 
           (new Runnable ()
           {
@@ -281,8 +295,7 @@ public class RequestTrackingFilter
             {
               checkLiveness ();
             }
-          }, 
-          livenessTimeout - (currentTimeMillis () - lastLive) / 1000, SECONDS);
+          }, delay, MILLISECONDS);
       }
     }
 
