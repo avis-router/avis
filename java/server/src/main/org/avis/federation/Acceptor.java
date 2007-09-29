@@ -144,6 +144,18 @@ public class Acceptor implements IoHandler, Closeable
    */
   public void hang ()
   {
+    for (InetSocketAddress address : listenAddresses)
+    {
+      for (IoSession session : 
+           router.socketAcceptor ().getManagedSessions (address))
+      {
+        RequestTrackingFilter requestTracker = 
+          (RequestTrackingFilter)session.getFilterChain ().get ("requestTracker");
+        
+        requestTracker.hang (session);
+      }
+    }
+    
     closing = true;
   }
   
