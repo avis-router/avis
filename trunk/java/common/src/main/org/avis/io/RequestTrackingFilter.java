@@ -13,7 +13,7 @@ import org.apache.mina.common.IoSession;
 
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ErrorMessage;
-import org.avis.io.messages.LivenessTimeoutMessage;
+import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
@@ -66,6 +66,14 @@ public class RequestTrackingFilter
     {
       return shareCount == 0;
     }
+  }
+  
+  /**
+   * Testing method: simulate a hang by stopping request tracking.
+   */
+  public void hang (IoSession session)
+  {
+    trackerFor (session).dispose ();
   }
   
   @Override
@@ -150,7 +158,11 @@ public class RequestTrackingFilter
     
     // do not forward ConfConn liveness replies
     if (message == ConfConn.INSTANCE)
+    {
+      trace ("Liveness confirmed: received ConfConn", this);
+      
       return;
+    }
     
     if (message instanceof XidMessage && 
         !(message instanceof RequestMessage<?>))
@@ -247,11 +259,11 @@ public class RequestTrackingFilter
     {
       livenessFuture = null;
       
-      if ((currentTimeMillis () - lastLive) / 1000 >= replyTimeout)
+      if ((currentTimeMillis () - lastLive) / 1000 > replyTimeout)
       {
-        trace ("No reply to TestConn: sending liveness timeout message", this);
+        trace ("No reply to TestConn: signaling liveness failure", this);
         
-        injectMessage (new LivenessTimeoutMessage ());
+        injectMessage (new LivenessFailureMessage ());
       } else
       {
         scheduleLivenessCheck ();
