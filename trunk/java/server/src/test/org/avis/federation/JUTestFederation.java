@@ -323,17 +323,11 @@ public class JUTestFederation
     
     waitForAsyncConnect (connector);
     
-    // check we're waiting
-    assertTrue (connector.isWaitingForAsyncConnection ());
-    
     Acceptor acceptor = 
       new Acceptor (server2, "server2", classes, 
                     addressesFor (set (ewafURI)), options);
     
     waitForConnect (connector);
-    
-    // check we've connected
-    assertTrue (connector.isConnected ());
     
     connector.close ();
     acceptor.close ();
@@ -380,17 +374,11 @@ public class JUTestFederation
     
     waitForAsyncConnect (connector);
 
-    // check we're waiting
-    assertTrue (connector.isWaitingForAsyncConnection ());
-    
     acceptor = 
       new Acceptor (server2, "server2", classes, 
                     addressesFor (set (ewafURI)), options);
     
     waitForConnect (connector);
-    
-    // check we've reconnected
-    assertTrue (connector.isConnected ());
     
     connector.close ();
     acceptor.close ();
@@ -440,8 +428,6 @@ public class JUTestFederation
     waitForAsyncConnect (connector);
     
     logTester.unpause ();
-    
-    assertTrue (connector.isWaitingForAsyncConnection ());
     
     connector.close ();
     acceptor.close ();
