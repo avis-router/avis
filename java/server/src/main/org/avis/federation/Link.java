@@ -12,7 +12,7 @@ import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.ErrorMessage;
-import org.avis.io.messages.LivenessTimeoutMessage;
+import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.Notify;
@@ -225,7 +225,7 @@ public class Link implements NotifyListener
       case RequestTimeoutMessage.ID:
         handleRequestTimeout (((RequestTimeoutMessage)message).request);
         break;
-      case LivenessTimeoutMessage.ID:
+      case LivenessFailureMessage.ID:
         handleLivenessTimeout ();
         break;
       case ErrorMessage.ID:

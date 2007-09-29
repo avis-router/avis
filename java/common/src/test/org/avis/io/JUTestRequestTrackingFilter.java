@@ -7,7 +7,7 @@ import org.junit.Test;
 import static java.lang.Thread.sleep;
 
 import org.avis.io.messages.ConnRqst;
-import org.avis.io.messages.LivenessTimeoutMessage;
+import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.io.messages.TestConn;
 import org.avis.logging.Log;
@@ -106,7 +106,7 @@ public class JUTestRequestTrackingFilter
     
     // wait for LivenessTimeout
     connectListener.waitForMessage ();
-    assertEquals (LivenessTimeoutMessage.ID, connectListener.message.typeId ());
+    assertEquals (LivenessFailureMessage.ID, connectListener.message.typeId ());
     
     testSetup.close ();
     
