@@ -321,7 +321,7 @@ public class JUTestFederation
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
     
-    sleep (2000);
+    waitForAsyncConnect (connector);
     
     // check we're waiting
     assertTrue (connector.isWaitingForAsyncConnection ());
@@ -330,7 +330,7 @@ public class JUTestFederation
       new Acceptor (server2, "server2", classes, 
                     addressesFor (set (ewafURI)), options);
     
-    sleep (2000);
+    waitForConnect (connector);
     
     // check we've connected
     assertTrue (connector.isConnected ());
@@ -378,7 +378,7 @@ public class JUTestFederation
     
     acceptor.close ();
     
-    sleep (3000);
+    waitForAsyncConnect (connector);
 
     // check we're waiting
     assertTrue (connector.isWaitingForAsyncConnection ());
@@ -387,7 +387,7 @@ public class JUTestFederation
       new Acceptor (server2, "server2", classes, 
                     addressesFor (set (ewafURI)), options);
     
-    sleep (2000);
+    waitForConnect (connector);
     
     // check we've reconnected
     assertTrue (connector.isConnected ());
@@ -437,8 +437,7 @@ public class JUTestFederation
     // liveness check will generate a warning: ignore
     logTester.pause ();
     
-    // wait for other end to notice
-    sleep (4000);
+    waitForAsyncConnect (connector);
     
     logTester.unpause ();
     
@@ -634,16 +633,38 @@ public class JUTestFederation
     return map;
   }
   
+  /**
+   * Wait up to 10 seconds for a connector to be in connected state.
+   */
   protected static void waitForConnect (Connector connector)
     throws InterruptedException
   {
     long start = currentTimeMillis ();
     
     while (!connector.isConnected () && currentTimeMillis () - start < 10000)
-      sleep (500);
+      sleep (200);
     
     if (!connector.isConnected ())
       fail ("Failed to connect");
+  }
+  
+  /**
+   * Wait up to 10 seconds for a connector to go to waiting for an
+   * async connect.
+   */
+  private static void waitForAsyncConnect (Connector connector)
+    throws InterruptedException
+  {
+    long start = currentTimeMillis ();
+    
+    while (currentTimeMillis () - start < 10000 && 
+           !connector.isWaitingForAsyncConnection ())
+    {
+      sleep (200);
+    }
+    
+    if (!connector.isWaitingForAsyncConnection ())
+      fail ("Failed to go to async connect state");
   }
   
     /**
