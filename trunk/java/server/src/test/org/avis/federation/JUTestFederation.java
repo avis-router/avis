@@ -438,7 +438,7 @@ public class JUTestFederation
     logTester.pause ();
     
     // wait for other end to notice
-    sleep (8000);
+    sleep (4000);
     
     logTester.unpause ();
     
