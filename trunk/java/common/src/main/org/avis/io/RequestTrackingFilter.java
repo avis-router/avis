@@ -287,7 +287,6 @@ public class RequestTrackingFilter
     {
       if (livenessFuture == null)
       {
-        System.out.println ("*** check in " + delay);
         livenessFuture = sharedExecutor.schedule 
           (new Runnable ()
           {
