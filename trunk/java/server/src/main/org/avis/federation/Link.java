@@ -32,11 +32,13 @@ import static org.avis.federation.Federation.logError;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.internalError;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.util.Collections.union;
+import static org.avis.util.Text.className;
 
 /**
  * A bi-directional federation link between two endpoints, typically
@@ -226,7 +228,7 @@ public class Link implements NotifyListener
         handleRequestTimeout (((RequestTimeoutMessage)message).request);
         break;
       case LivenessFailureMessage.ID:
-        handleLivenessTimeout ();
+        handleLivenessFailure ();
         break;
       case ErrorMessage.ID:
         handleError ((ErrorMessage)message);
@@ -258,12 +260,13 @@ public class Link implements NotifyListener
       subscribe ();
     } else
     {
-      // NB: this shouldn't happen, FedSubReplace is the only request we send
-      warn ("Request to remote federator timed out: " + request.name (), this);
+      // this shouldn't happen, FedSubReplace is the only request we send
+      internalError ("Request timeout for unexpected message type: " + 
+                    className (request), this);
     }
   }
 
-  private void handleLivenessTimeout ()
+  private void handleLivenessFailure ()
   {
     warn ("Remote federator at " + remoteHostName + 
           " has stopped responding", this);
