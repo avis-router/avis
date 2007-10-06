@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
+import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoService;
@@ -23,6 +24,7 @@ import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.config.Options;
 import org.avis.io.ClientFrameCodec;
+import org.avis.io.ExceptionMonitorLogger;
 import org.avis.io.FrameTooLargeException;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
@@ -158,6 +160,9 @@ public class Router implements IoHandler, Closeable
     
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));
+    
+    // route MINA exceptions to log
+    ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
     
     for (InetSocketAddress address : options.listenAddresses ())
     {
