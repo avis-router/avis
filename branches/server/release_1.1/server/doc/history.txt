@@ -1,3 +1,36 @@
+Release 1.1.2 (October 6, 2007)
+----------------------------------------------------------------------
+
+This release corrects two errors in the federation module.
+
+ * Fixed AST encoding in federation: bitwise XOR (^) and OR (|) were
+   not being encoded with the correct node ID.
+
+ * Fixed liveness checking logic that would sometimes disconnect
+   federation.
+
+ * MINA exceptions are now sent to Avis log rather than console.
+
+
+Release 1.1.1 (September 8, 2007)
+----------------------------------------------------------------------
+
+This release corrects a minor error in the subscription parser and
+fixes a Java 6 compatibility issue.
+
+ * The subscription parser prior to this release was not allowing
+   functions with no space between the name and the bracket,
+   e.g. "size(name)": this has been fixed.
+
+ * The router was using the non-public sun.text.Normalizer Unicode
+   normalizer to implement decompose () and decompose-compat (). This
+   is not available in Java 6 onwards and has been replaced by the
+   public java.text.Normalizer API. This would cause the decompose
+   methods to fail if used on Java 6 and the router to fail to compile
+   under JDK 6. The router now automatically switches between the Java
+   5 and Java 6 normalization methods depending on the platform.
+
+
 Release 1.1.0 (August 27, 2007)
 ----------------------------------------------------------------------
 
