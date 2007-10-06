@@ -59,10 +59,13 @@ public class ElvinURI
     list ("ssl", "none", "xdr");
   
   /**
-   * Basic matcher for URI's. Detail parsing is done as a separate pass.
+   * Basic matcher for URI's. Key sections pulled out here: detail
+   * parsing is done as a separate pass.
    */
   private static final Pattern URL_PATTERN =
-    Pattern.compile ("(\\w+):(?:([^/]+))?/([^/]+)?/([^/].*?)(;.*)?");
+    // NB: key sections of regexp are marked with | below
+    //                |scheme|ver     |protocol|host:port  |options 
+    Pattern.compile ("(\\w+):([^/]+)?/([^/]+)?/([^;/][^;]*)(;.*)?");
 
   /**
    * The original URI string as passed into the constructor.
