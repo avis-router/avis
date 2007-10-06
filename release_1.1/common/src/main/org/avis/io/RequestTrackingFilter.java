@@ -13,7 +13,7 @@ import org.apache.mina.common.IoSession;
 
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ErrorMessage;
-import org.avis.io.messages.LivenessTimeoutMessage;
+import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
@@ -21,8 +21,10 @@ import org.avis.io.messages.TestConn;
 import org.avis.io.messages.XidMessage;
 
 import static java.lang.Math.min;
+import static java.lang.Math.random;
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.avis.logging.Log.trace;
@@ -66,6 +68,14 @@ public class RequestTrackingFilter
     {
       return shareCount == 0;
     }
+  }
+  
+  /**
+   * Testing method: simulate a hang by stopping request tracking.
+   */
+  public void hang (IoSession session)
+  {
+    trackerFor (session).dispose ();
   }
   
   @Override
@@ -150,7 +160,11 @@ public class RequestTrackingFilter
     
     // do not forward ConfConn liveness replies
     if (message == ConfConn.INSTANCE)
+    {
+      trace ("Liveness confirmed: received ConfConn", this);
+      
       return;
+    }
     
     if (message instanceof XidMessage && 
         !(message instanceof RequestMessage<?>))
@@ -181,7 +195,7 @@ public class RequestTrackingFilter
   class Tracker implements Runnable
   {
     private IoSession session;
-    private Map<Integer, Entry> xidToRequest;
+    private Map<Integer, Request> xidToRequest;
     private ScheduledFuture<?> replyFuture;
     private ScheduledFuture<?> livenessFuture;
     private long lastLive;
@@ -189,10 +203,17 @@ public class RequestTrackingFilter
     public Tracker (IoSession session)
     {
       this.session = session;
-      this.xidToRequest = new HashMap<Integer, Entry> ();
+      this.xidToRequest = new HashMap<Integer, Request> ();
       this.lastLive = currentTimeMillis ();
       
-      scheduleLivenessCheck ();
+      /*
+       * Run a liveness check with a randomised delay offset. Helps to
+       * avoid two hosts syncing their checks and doubling up on
+       * messages.
+       */
+      long delay = livenessTimeout * 1000L;
+      
+      scheduleLivenessCheck (delay - (long)(random () * delay));
     }
     
     public synchronized void dispose ()
@@ -207,24 +228,6 @@ public class RequestTrackingFilter
     public synchronized void connectionIsLive ()
     {
       lastLive = currentTimeMillis ();
-
-      scheduleLivenessCheck ();
-    }
-
-    private void scheduleLivenessCheck ()
-    {
-      if (livenessFuture == null)
-      {
-        livenessFuture = sharedExecutor.schedule 
-          (new Runnable ()
-          {
-            public void run ()
-            {
-              checkLiveness ();
-            }
-          }, 
-          livenessTimeout - (currentTimeMillis () - lastLive) / 1000, SECONDS);
-      }
     }
     
     /**
@@ -263,14 +266,35 @@ public class RequestTrackingFilter
     {
       livenessFuture = null;
       
-      if ((currentTimeMillis () - lastLive) / 1000 >= replyTimeout)
+      if ((currentTimeMillis () - lastLive) / 1000 > replyTimeout)
       {
-        trace ("No reply to TestConn: sending liveness timeout message", this);
+        trace ("No reply to TestConn: signaling liveness failure", this);
         
-        injectMessage (new LivenessTimeoutMessage ());
+        injectMessage (new LivenessFailureMessage ());
       } else
       {
         scheduleLivenessCheck ();
+      }
+    }
+
+    private void scheduleLivenessCheck ()
+    {
+      scheduleLivenessCheck 
+        ((livenessTimeout * 1000L) - (currentTimeMillis () - lastLive));
+    }
+    
+    private void scheduleLivenessCheck (long delay)
+    {
+      if (livenessFuture == null)
+      {
+        livenessFuture = sharedExecutor.schedule 
+          (new Runnable ()
+          {
+            public void run ()
+            {
+              checkLiveness ();
+            }
+          }, delay, MILLISECONDS);
       }
     }
 
@@ -286,20 +310,20 @@ public class RequestTrackingFilter
 
     public synchronized void add (RequestMessage<?> request)
     {
-      xidToRequest.put (request.xid, new Entry (request));
+      xidToRequest.put (request.xid, new Request (request));
       
       scheduleReplyCheck (replyTimeout);
     }
     
     public synchronized RequestMessage<?> remove (XidMessage reply)
     {
-      Entry entry = xidToRequest.remove (reply.xid);
+      Request request = xidToRequest.remove (reply.xid);
       
-      if (entry == null)
+      if (request == null)
         throw new IllegalArgumentException 
           ("Reply with unknown XID " + reply.xid);
       else
-        return entry.request;
+        return request.message;
     }
     
     private void cancelReplyCheck ()
@@ -328,19 +352,19 @@ public class RequestTrackingFilter
       long now = currentTimeMillis ();
       long earliestTimeout = now;
       
-      for (Iterator<Map.Entry<Integer, Entry>> i = 
+      for (Iterator<Map.Entry<Integer, Request>> i = 
              xidToRequest.entrySet ().iterator (); i.hasNext (); )
       {
-        Entry entry = i.next ().getValue ();
+        Request request = i.next ().getValue ();
         
-        if ((now - entry.sentAt) / 1000 >= replyTimeout)
+        if ((now - request.sentAt) / 1000 >= replyTimeout)
         {
           i.remove ();
           
-          injectMessage (new RequestTimeoutMessage (entry.request));
+          injectMessage (new RequestTimeoutMessage (request.message));
         } else
         {
-          earliestTimeout = min (earliestTimeout, entry.sentAt);
+          earliestTimeout = min (earliestTimeout, request.sentAt);
         }
       }
       
@@ -360,14 +384,14 @@ public class RequestTrackingFilter
     }
   }
   
-  static class Entry
+  static class Request
   {
-    public RequestMessage<?> request;
+    public RequestMessage<?> message;
     public long sentAt;
 
-    public Entry (RequestMessage<?> request)
+    public Request (RequestMessage<?> request)
     {
-      this.request = request;
+      this.message = request;
       this.sentAt = currentTimeMillis ();
     }
   }
