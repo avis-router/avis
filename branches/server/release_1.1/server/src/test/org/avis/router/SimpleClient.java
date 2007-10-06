@@ -2,7 +2,7 @@ package org.avis.router;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import java.io.IOException;
 
@@ -40,7 +40,6 @@ import static org.avis.logging.Log.trace;
 import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -54,7 +53,7 @@ public class SimpleClient implements IoHandler
   protected IoSession clientSession;
   protected boolean connected;
   protected BlockingQueue<Message> incomingMessages =
-    new SynchronousQueue<Message> ();
+    new LinkedBlockingQueue<Message> ();
 
   public String clientName;
   
@@ -316,7 +315,7 @@ public class SimpleClient implements IoHandler
   {
     trace (clientName + ": message received: " + message, this);
     
-    incomingMessages.put ((Message)message);
+    incomingMessages.add ((Message)message);
   }
 
   public void messageSent (IoSession session, Object message) throws Exception

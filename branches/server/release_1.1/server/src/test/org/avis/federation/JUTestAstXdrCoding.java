@@ -32,8 +32,16 @@ public class JUTestAstXdrCoding
     	       "greebo & 1 == 1 && begins-with (greebo, 'frob', 'wibble')");
     roundtrip ("size (foobar) > 10 && (foobar - 20 >= 100)");
     
+    roundtrip ("regex (name, 'a.*b')");
+    roundtrip ("name == 1 || name != 8 || name < 3");
+    roundtrip ("name == 1 || name != 8 ^^ ! (name >= 3)");
+    roundtrip ("name == name + 3 / 4 % foobar >>> 6");
+    roundtrip ("name == x & 1 | y");
+    roundtrip ("name == x ^ 1 | -y");
+    roundtrip ("int32 (name1) || string (name2)");
+    
     // check CONST_FALSE gets turned into EMPTY node
-    roundtrip (CONST_FALSE);
+    roundtrip (CONST_FALSE); 
 
     // can't do CONST_TRUE
     try

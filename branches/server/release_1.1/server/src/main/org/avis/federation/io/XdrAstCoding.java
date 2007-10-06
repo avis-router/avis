@@ -46,6 +46,8 @@ import static org.avis.federation.io.XdrAstType.AND;
 import static org.avis.federation.io.XdrAstType.BEGINS_WITH;
 import static org.avis.federation.io.XdrAstType.BIT_AND;
 import static org.avis.federation.io.XdrAstType.BIT_NEGATE;
+import static org.avis.federation.io.XdrAstType.BIT_OR;
+import static org.avis.federation.io.XdrAstType.BIT_XOR;
 import static org.avis.federation.io.XdrAstType.CONST_INT32;
 import static org.avis.federation.io.XdrAstType.CONST_INT64;
 import static org.avis.federation.io.XdrAstType.CONST_REAL64;
@@ -108,10 +110,10 @@ public final class XdrAstCoding
     typeCodes.put (MathBitAnd.class, BIT_AND);
     typeCodes.put (MathBitInvert.class, BIT_NEGATE);
     typeCodes.put (MathBitLogShiftRight.class, LOGICAL_SHIFT_RIGHT);
-    typeCodes.put (MathBitOr.class, OR);
+    typeCodes.put (MathBitOr.class, BIT_OR);
     typeCodes.put (MathBitShiftLeft.class, SHIFT_LEFT);
     typeCodes.put (MathBitShiftRight.class, SHIFT_RIGHT);
-    typeCodes.put (MathBitXor.class, XOR);
+    typeCodes.put (MathBitXor.class, BIT_XOR);
     typeCodes.put (MathDiv.class, DIVIDE);
     typeCodes.put (MathMinus.class, SUBTRACT);
     typeCodes.put (MathMod.class, MODULO);
@@ -211,7 +213,7 @@ public final class XdrAstCoding
     {
       StrUnicodeDecompose decompose = (StrUnicodeDecompose)node;
       
-      return decompose.mode == StrUnicodeDecompose.DECOMPOSE ?
+      return decompose.mode == StrUnicodeDecompose.Mode.DECOMPOSE ?
                DECOMPOSE : DECOMPOSE_COMPAT;
     } else
     {

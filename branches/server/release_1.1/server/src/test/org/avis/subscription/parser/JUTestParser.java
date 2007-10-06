@@ -32,8 +32,8 @@ public class JUTestParser
     
     for (int i = 0x21; i <= 0xff; i++)
     {
-      if (i == 0x22 || i == 0x27 || i == 0x29 || i == 0x30 || i == 0x2c ||
-          i == 0x5b || i == 0x5c || i == 0x5d)
+      if (i == 0x22 || i == 0x27 || i == 0x28 || i == 0x29 || i == 0x30 || 
+          i == 0x2c || i == 0x5b || i == 0x5c || i == 0x5d)
         continue;
       
       assertParsesTo ("tricky" + (char)i + "id",
@@ -129,6 +129,9 @@ public class JUTestParser
                     "(|| (== (field 'name') 'hello') (== (field 'name') 'there'))");
     assertParsesTo ("equals (name, 'hello', 42)",
                     "(|| (== (field 'name') 'hello') (== (field 'name') 42))");
+    
+    // check that spaces are not required before brackets
+    assertParsesTo ("size(name)", "(size (field 'name'))");
     
     assertParseError ("equals ('hello', 'there', 1)");
     assertParseError ("begins-with (name, 1)");
