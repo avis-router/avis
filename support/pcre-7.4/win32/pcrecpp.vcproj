@@ -22,7 +22,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				BasicRuntimeChecks="1"
 				CompileAs="2"
 				DebugInformationFormat="3"
@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -76,7 +76,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				CompileAs="2"
 				ExceptionHandling="TRUE"
 				InlineFunctionExpansion="2"
@@ -93,7 +93,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -128,7 +128,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				CompileAs="2"
 				ExceptionHandling="TRUE"
 				InlineFunctionExpansion="1"
@@ -145,7 +145,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -180,7 +180,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				CompileAs="2"
 				DebugInformationFormat="3"
 				ExceptionHandling="TRUE"
@@ -198,7 +198,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4&quot;;"
+				AdditionalIncludeDirectories=".;..;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -225,14 +225,14 @@
 	</Configurations>
 	<Files>
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt">
+				RelativePath="..\CMakeLists.txt">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 					Name="VCCustomBuildTool"
 					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4&quot; &quot;-BC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32&quot;"
-					AdditionalDependencies="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\config-cmake.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre.h.generic&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre_stringpiece.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcrecpparg.h.in&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;"
+					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
+					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
 					Outputs="pcretest.vcproj.cmake"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -240,8 +240,8 @@
 					<Tool
 					Name="VCCustomBuildTool"
 					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4&quot; &quot;-BC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32&quot;"
-					AdditionalDependencies="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\config-cmake.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre.h.generic&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre_stringpiece.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcrecpparg.h.in&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;"
+					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
+					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
 					Outputs="pcretest.vcproj.cmake"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -249,8 +249,8 @@
 					<Tool
 					Name="VCCustomBuildTool"
 					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4&quot; &quot;-BC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32&quot;"
-					AdditionalDependencies="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\config-cmake.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre.h.generic&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre_stringpiece.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcrecpparg.h.in&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;"
+					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
+					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
 					Outputs="pcretest.vcproj.cmake"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -258,8 +258,8 @@
 					<Tool
 					Name="VCCustomBuildTool"
 					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4&quot; &quot;-BC:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32&quot;"
-					AdditionalDependencies="&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\config-cmake.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre.h.generic&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre_stringpiece.h.in&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcrecpparg.h.in&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;&quot;C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\CMakeLists.txt&quot;;"
+					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
+					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
 					Outputs="pcretest.vcproj.cmake"/>
 				</FileConfiguration>
 			</File>
@@ -267,29 +267,29 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcrecpp.cc">
+				RelativePath="..\pcrecpp.cc">
 			</File>
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre_scanner.cc">
+				RelativePath="..\pcre_scanner.cc">
 			</File>
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre_stringpiece.cc">
+				RelativePath="..\pcre_stringpiece.cc">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcrecpp.h">
+				RelativePath="..\pcrecpp.h">
 			</File>
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\pcre_scanner.h">
+				RelativePath="..\pcre_scanner.h">
 			</File>
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\pcrecpparg.h">
+				RelativePath="pcrecpparg.h">
 			</File>
 			<File
-				RelativePath="C:\Documents and Settings\kru028.NEXUS\Desktop\braccetto code\avis\support\pcre-7.4\win32\pcre_stringpiece.h">
+				RelativePath="pcre_stringpiece.h">
 			</File>
 		</Filter>
 	</Files>
