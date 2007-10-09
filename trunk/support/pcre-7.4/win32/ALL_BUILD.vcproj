@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
@@ -20,19 +20,7 @@
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				ExceptionHandling="FALSE"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"
-				AssemblerListingLocation="Debug"
-				ObjectFile="$(IntDir)\"
-/>
-			<Tool
 				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"
@@ -46,11 +34,9 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
 				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -61,19 +47,7 @@
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				ExceptionHandling="FALSE"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"
-				AssemblerListingLocation="Release"
-				ObjectFile="$(IntDir)\"
-/>
-			<Tool
 				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"
@@ -87,11 +61,9 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
 				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
 		</Configuration>
 		<Configuration
 			Name="MinSizeRel|Win32"
@@ -102,19 +74,7 @@
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				ExceptionHandling="FALSE"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"
-				AssemblerListingLocation="MinSizeRel"
-				ObjectFile="$(IntDir)\"
-/>
-			<Tool
 				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"
@@ -128,11 +88,9 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
 				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
 		</Configuration>
 		<Configuration
 			Name="RelWithDebInfo|Win32"
@@ -143,19 +101,7 @@
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				ExceptionHandling="FALSE"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"
-				AssemblerListingLocation="RelWithDebInfo"
-				ObjectFile="$(IntDir)\"
-/>
-			<Tool
 				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"
@@ -169,53 +115,14 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
 				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
-			<File
-				RelativePath="..\CMakeLists.txt">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="MinSizeRel|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="RelWithDebInfo|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-			</File>
 		<Filter
 			Name="CMake Rules"
 			Filter="">
@@ -224,38 +131,42 @@
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine="echo &quot;Build all projects&quot;"
-					AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
-					Outputs="CMakeFiles\ALL_BUILD"/>
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine="echo &quot;Build all projects&quot;
+"
+						AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
+						Outputs="CMakeFiles\ALL_BUILD"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine="echo &quot;Build all projects&quot;"
-					AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
-					Outputs="CMakeFiles\ALL_BUILD"/>
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine="echo &quot;Build all projects&quot;
+"
+						AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
+						Outputs="CMakeFiles\ALL_BUILD"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="MinSizeRel|Win32">
 					<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine="echo &quot;Build all projects&quot;"
-					AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
-					Outputs="CMakeFiles\ALL_BUILD"/>
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine="echo &quot;Build all projects&quot;
+"
+						AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
+						Outputs="CMakeFiles\ALL_BUILD"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="RelWithDebInfo|Win32">
 					<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine="echo &quot;Build all projects&quot;"
-					AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
-					Outputs="CMakeFiles\ALL_BUILD"/>
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine="echo &quot;Build all projects&quot;
+"
+						AdditionalDependencies="CMakeFiles\ALL_BUILD.rule"
+						Outputs="CMakeFiles\ALL_BUILD"/>
 				</FileConfiguration>
 			</File>
 		</Filter>

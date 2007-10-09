@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
@@ -22,27 +22,34 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories=".;..;"
-				BasicRuntimeChecks="1"
-				CompileAs="2"
-				DebugInformationFormat="3"
-				ExceptionHandling="TRUE"
-				InlineFunctionExpansion="0"
 				Optimization="0"
+				InlineFunctionExpansion="0"
+				AdditionalIncludeDirectories=".;..;"
+				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"
+				ExceptionHandling="TRUE"
+				BasicRuntimeChecks="1"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"
 				AssemblerListingLocation="Debug"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/Debug/pcrecpp_unittest.pdb"
-/>
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" /STACK:10000000 /machine:I386 /debug"
+				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
+				OutputFile="Debug\pcrecpp_unittest.exe"
+				Version="0.0"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories=".\$(OutDir),."
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)\pcrecpp_unittest.pdb"
+				SubSystem="1"
+				StackReserveSize="10000000"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"
@@ -56,23 +63,25 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32,_WINDOWS,_DEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Debug\&quot;&quot;"
+				AdditionalIncludeDirectories=".;..;"/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions=" /STACK:10000000 /machine:I386 /debug"
-				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
-				OutputFile="Debug\pcrecpp_unittest.exe"
-				Version="0.0"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories=".\$(OutDir),."
-				ProgramDataBaseFile="$(OutDir)\pcrecpp_unittest.pdb"
-				GenerateDebugInformation="TRUE"
-				SubSystem="1"
-				StackReserveSize="10000000"/>
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -85,25 +94,31 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories=".;..;"
-				CompileAs="2"
-				ExceptionHandling="TRUE"
-				InlineFunctionExpansion="2"
 				Optimization="2"
+				InlineFunctionExpansion="2"
+				AdditionalIncludeDirectories=".;..;"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"
+				ExceptionHandling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"
 				AssemblerListingLocation="Release"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/Release/pcrecpp_unittest.pdb"
-/>
+				WarningLevel="3"
+				CompileAs="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" /STACK:10000000 /machine:I386"
+				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
+				OutputFile="Release\pcrecpp_unittest.exe"
+				Version="0.0"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories=".\$(OutDir),."
+				ProgramDatabaseFile="$(OutDir)\pcrecpp_unittest.pdb"
+				SubSystem="1"
+				StackReserveSize="10000000"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"
@@ -117,22 +132,25 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;Release\&quot;&quot;"
+				AdditionalIncludeDirectories=".;..;"/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions=" /STACK:10000000 /machine:I386"
-				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
-				OutputFile="Release\pcrecpp_unittest.exe"
-				Version="0.0"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories=".\$(OutDir),."
-				ProgramDataBaseFile="$(OutDir)\pcrecpp_unittest.pdb"
-				SubSystem="1"
-				StackReserveSize="10000000"/>
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="MinSizeRel|Win32"
@@ -145,25 +163,31 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories=".;..;"
-				CompileAs="2"
-				ExceptionHandling="TRUE"
-				InlineFunctionExpansion="1"
 				Optimization="1"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories=".;..;"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"
+				ExceptionHandling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"
 				AssemblerListingLocation="MinSizeRel"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/MinSizeRel/pcrecpp_unittest.pdb"
-/>
+				WarningLevel="3"
+				CompileAs="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" /STACK:10000000 /machine:I386"
+				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
+				OutputFile="MinSizeRel\pcrecpp_unittest.exe"
+				Version="0.0"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories=".\$(OutDir),."
+				ProgramDatabaseFile="$(OutDir)\pcrecpp_unittest.pdb"
+				SubSystem="1"
+				StackReserveSize="10000000"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"
@@ -177,22 +201,25 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;&quot;"
+				AdditionalIncludeDirectories=".;..;"/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions=" /STACK:10000000 /machine:I386"
-				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
-				OutputFile="MinSizeRel\pcrecpp_unittest.exe"
-				Version="0.0"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories=".\$(OutDir),."
-				ProgramDataBaseFile="$(OutDir)\pcrecpp_unittest.pdb"
-				SubSystem="1"
-				StackReserveSize="10000000"/>
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="RelWithDebInfo|Win32"
@@ -205,26 +232,33 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories=".;..;"
-				CompileAs="2"
-				DebugInformationFormat="3"
-				ExceptionHandling="TRUE"
-				InlineFunctionExpansion="1"
 				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories=".;..;"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"
+				ExceptionHandling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"
 				AssemblerListingLocation="RelWithDebInfo"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/RelWithDebInfo/pcrecpp_unittest.pdb"
-/>
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories=".;..;"
-				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"/>
+				Name="VCLinkerTool"
+				AdditionalOptions=" /STACK:10000000 /machine:I386 /debug"
+				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
+				OutputFile="RelWithDebInfo\pcrecpp_unittest.exe"
+				Version="0.0"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories=".\$(OutDir),."
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)\pcrecpp_unittest.pdb"
+				SubSystem="1"
+				StackReserveSize="10000000"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"
@@ -238,65 +272,30 @@
 				InterfaceIdentifierFileName="$(InputName)_i.c"
 				ProxyFileName="$(InputName)_p.c"/>
 			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32,_WINDOWS,NDEBUG,HAVE_CONFIG_H,_CRT_SECURE_NO_DEPRECATE,&quot;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;&quot;"
+				AdditionalIncludeDirectories=".;..;"/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions=" /STACK:10000000 /machine:I386 /debug"
-				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib pcrecpp.lib pcre.lib "
-				OutputFile="RelWithDebInfo\pcrecpp_unittest.exe"
-				Version="0.0"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories=".\$(OutDir),."
-				ProgramDataBaseFile="$(OutDir)\pcrecpp_unittest.pdb"
-				GenerateDebugInformation="TRUE"
-				SubSystem="1"
-				StackReserveSize="10000000"/>
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
-			<File
-				RelativePath="..\CMakeLists.txt">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="MinSizeRel|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="RelWithDebInfo|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.4\bin\cmake.exe&quot; -H.. -B."
-					AdditionalDependencies="..\CMakeLists.txt;CMakeFiles\CMakeSystem.cmake;CMakeFiles\CMakeCCompiler.cmake;CMakeFiles\CMakeCXXCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\gcc.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;CMakeFiles\CMakeRCCompiler.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\Windows-cl.cmake&quot;;CMakeFiles\CMakeCPlatform.cmake;CMakeFiles\CMakeCXXPlatform.cmake;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFile.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckIncludeFileCXX.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckFunctionExists.cmake&quot;;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Modules\CheckTypeSize.cmake&quot;;..\config-cmake.h.in;..\pcre.h.generic;..\pcre_stringpiece.h.in;..\pcrecpparg.h.in;&quot;C:\Program Files\CMake 2.4\share\cmake-2.4\Templates\CMakeWindowsSystemConfig.cmake&quot;;..\CMakeLists.txt;"
-					Outputs="pcretest.vcproj.cmake"/>
-				</FileConfiguration>
-			</File>
 		<Filter
 			Name="Source Files"
 			Filter="">
