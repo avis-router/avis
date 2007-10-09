@@ -178,8 +178,8 @@ ADD_CUSTOM_COMMAND(
 	COMMENT "Generating character tables (pcre_chartables.c) for current locale"
 	DEPENDS dftables
 	COMMAND ${DFTABLES_EXE}
-	ARGS	pcre_chartables.c
-	OUTPUT	pcre_chartables.c
+	ARGS	${CMAKE_BINARY_DIR}/pcre_chartables.c
+	OUTPUT	${CMAKE_BINARY_DIR}/pcre_chartables.c
 )
 
 # Source code
@@ -187,7 +187,7 @@ ADD_CUSTOM_COMMAND(
 SET(PCRE_HEADERS ${CMAKE_BINARY_DIR}/pcre.h)
 
 SET(PCRE_SOURCES
-	pcre_chartables.c
+	${CMAKE_BINARY_DIR}/pcre_chartables.c
 	pcre_compile.c
 	pcre_config.c
 	pcre_dfa_exec.c
