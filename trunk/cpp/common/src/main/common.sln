@@ -15,6 +15,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "messages", "messages.vcproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pcre", "..\..\..\..\support\pcre-7.4\win32\pcre.vcproj", "{6A643B38-1B4C-44E7-AA6D-8F9A59EC8C41}"
 	ProjectSection(ProjectDependencies) = postProject
+		{7E565116-019B-4D70-8378-64457CE82678} = {7E565116-019B-4D70-8378-64457CE82678}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pcrecpp", "..\..\..\..\support\pcre-7.4\win32\pcrecpp.vcproj", "{3717FA4A-2A60-43CE-A59C-8F32548D1344}"
@@ -22,6 +23,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pcrecpp", "..\..\..\..\supp
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "security", "security.vcproj", "{426181C0-8479-4838-B9F3-D3951F00E256}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dftables", "..\..\..\..\support\pcre-7.4\win32\dftables.vcproj", "{7E565116-019B-4D70-8378-64457CE82678}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -84,6 +89,14 @@ Global
 		{426181C0-8479-4838-B9F3-D3951F00E256}.Release.Build.0 = Release|Win32
 		{426181C0-8479-4838-B9F3-D3951F00E256}.RelWithDebInfo.ActiveCfg = Release|Win32
 		{426181C0-8479-4838-B9F3-D3951F00E256}.RelWithDebInfo.Build.0 = Release|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.Debug.ActiveCfg = Debug|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.Debug.Build.0 = Debug|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.MinSizeRel.ActiveCfg = MinSizeRel|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.MinSizeRel.Build.0 = MinSizeRel|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.Release.ActiveCfg = Release|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.Release.Build.0 = Release|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.RelWithDebInfo.ActiveCfg = RelWithDebInfo|Win32
+		{7E565116-019B-4D70-8378-64457CE82678}.RelWithDebInfo.Build.0 = RelWithDebInfo|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
