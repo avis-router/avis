@@ -136,7 +136,7 @@ public final class ConnectionOptions
   
   /**
    * Set a boolean value. NB: Elvin connection options are either
-   * strings or integers: this is actually a shortcut for setting an
+   * strings or integers -- this is actually a shortcut for setting an
    * int value to 0 or 1.
    * 
    * @see #getBoolean(String)
@@ -165,12 +165,7 @@ public final class ConnectionOptions
    */
   public Object get (String name)
   {
-    Object value = values.get (name);
-    
-    if (value == null)
-      throw new IllegalArgumentException ("No value for \"" + name + "\"");
-    else
-      return value;
+    return values.get (name);
   }
   
   /**
