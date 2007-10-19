@@ -20,7 +20,6 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
-import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.config.Options;
 import org.avis.io.ClientFrameCodec;
@@ -68,6 +67,7 @@ import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
+import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -413,7 +413,7 @@ public class Router implements IoHandler, Closeable
       nackLimit (session, message, "Too many keys");
     } else
     {
-      updateTcpSendImmediately (session, connection);
+      updateTcpSendImmediately (session, connection.options);
       updateQueueLength (session, connection);
       
       connection.options.setWithLegacy
@@ -740,17 +740,12 @@ public class Router implements IoHandler, Closeable
    * Handle the TCP.Send-Immediately connection option if set.
    */
   private static void updateTcpSendImmediately (IoSession session,
-                                                Connection connection)
+                                                Options options)
   {
-    if (session.getConfig () instanceof SocketSessionConfig)
+    if (!enableTcpNoDelay (session, 
+                           options.getInt ("TCP.Send-Immediately") == 1))
     {
-      SocketSessionConfig config = (SocketSessionConfig)session.getConfig ();
-
-      config.setTcpNoDelay 
-        (connection.options.getInt ("TCP.Send-Immediately") == 1);
-    } else
-    {
-      connection.options.remove ("TCP.Send-Immediately"); 
+      options.remove ("TCP.Send-Immediately"); 
     }
   }
   
