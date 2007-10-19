@@ -14,6 +14,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import org.apache.mina.common.IoSession;
+import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.common.ElvinURI;
 
@@ -168,5 +169,26 @@ public final class Net
     InetAddress address = hostAddressFor (session);
     
     return address.getCanonicalHostName () + '/' + address.getHostAddress ();
+  }
+
+  /**
+   * Set TCP no-delay flag for socket connections.
+   * 
+   * @param session The IO session.
+   * @param noDelay The new setting for TCP_NODELAY.
+   * 
+   * @return true if the setting could be changed.
+   */
+  public static boolean enableTcpNoDelay (IoSession session, boolean noDelay)
+  {
+    if (session.getConfig () instanceof SocketSessionConfig)
+    {
+      ((SocketSessionConfig)session.getConfig ()).setTcpNoDelay (noDelay);
+      
+      return true;
+    } else
+    {
+      return false; 
+    }
   }
 }
