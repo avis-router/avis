@@ -14,7 +14,6 @@ import java.io.IOException;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
@@ -28,6 +27,7 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.ElvinURI;
+import org.avis.common.InvalidURIException;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
 import org.avis.io.messages.ConfConn;
@@ -65,6 +65,7 @@ import static org.avis.client.CloseEvent.REASON_ROUTER_STOPPED_RESPONDING;
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
+import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.internalError;
@@ -189,7 +190,7 @@ public final class Elvin implements Closeable
    * 
    * @param elvinUri A URI for the Elvin router.
    * 
-   * @throws URISyntaxException if elvinUri is invalid.
+   * @throws InvalidURIException if elvinUri is invalid.
    * @throws IllegalArgumentException if one of the arguments is not
    *           valid.
    * @throws ConnectException if the socket to the router could not be
@@ -199,12 +200,36 @@ public final class Elvin implements Closeable
    * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
    */
   public Elvin (String elvinUri)
-    throws URISyntaxException,
+    throws InvalidURIException,
            IllegalArgumentException,
            ConnectException,
            IOException
   {
     this (new ElvinURI (elvinUri));
+  }
+  
+  /**
+   * Create a new connection to an Elvin router.
+   * 
+   * @param elvinUri A URI for the Elvin router.
+   * @param options The connection options.
+   * 
+   * @throws InvalidURIException if elvinUri is invalid.
+   * @throws IllegalArgumentException if one of the arguments is not
+   *           valid.
+   * @throws ConnectException if the socket to the router could not be
+   *           opened, e.g. connection refused.
+   * @throws IOException if a general network error occurs.
+   * 
+   * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
+   */
+  public Elvin (String elvinUri, ConnectionOptions options)
+    throws InvalidURIException,
+           IllegalArgumentException,
+           ConnectException,
+           IOException
+  {
+    this (new ElvinURI (elvinUri), options);
   }
   
   /**
@@ -415,6 +440,11 @@ public final class Elvin implements Closeable
         throw new IOException ("Timed out connecting to router " + routerUri);
       
       connection = connectFuture.getSession ();
+      
+      enableTcpNoDelay
+        (connection, 
+         connectionOptions.getBoolean ("TCP.Send-Immediately", false));
+      
     } catch (RuntimeIOException ex)
     {
       // unwrap MINA's RuntimeIOException
@@ -1418,9 +1448,9 @@ public final class Elvin implements Closeable
     IoSession session = connection;
     
     if (session == null)
-      throw new IOException ("Connection is closed");
+      throw new NotConnectedException ("Connection is closed");
     else if (!session.isConnected ())
-      throw new IOException ("Cannot operate while not connected to router");
+      throw new NotConnectedException ("Cannot operate while not connected to router");
   }
   
   class IoHandler extends IoHandlerAdapter
