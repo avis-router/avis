@@ -133,6 +133,18 @@ public final class ConnectionOptions
   {
     values.put (name, value);
   }
+  
+  /**
+   * Set a boolean value. NB: Elvin connection options are either
+   * strings or integers -- this is actually a shortcut for setting an
+   * int value to 0 or 1.
+   * 
+   * @see #getBoolean(String)
+   */
+  public void set (String name, boolean value)
+  {
+    values.put (name, value ? 1 : 0);
+  }
 
   /**
    * Set a string value.
@@ -153,12 +165,123 @@ public final class ConnectionOptions
    */
   public Object get (String name)
   {
+    return values.get (name);
+  }
+  
+  /**
+   * Get an integer value.
+   * 
+   * @param name The option name.
+   * 
+   * @return The option value.
+   * 
+   * @throws IllegalArgumentException if the option has no value or is
+   *                 not an int.
+   */
+  public int getInt (String name)
+    throws IllegalArgumentException
+  {
+    return asInt (name, values.get (name));
+  }
+  
+  /**
+   * Get an integer value.
+   * 
+   * @param name The option name.
+   * @param defaultValue The default value. This is returned if there
+   *                is no value for the option.
+   * 
+   * @return The option value.
+   * 
+   * @throws IllegalArgumentException if the option is not an int.
+   */
+  public int getInt (String name, int defaultValue)
+    throws IllegalArgumentException
+  {
     Object value = values.get (name);
     
     if (value == null)
-      throw new IllegalArgumentException ("No value for \"" + name + "\"");
+      return defaultValue;
     else
-      return value;
+      return asInt (name, value);
+  }
+
+  /**
+   * Get a string value.
+   * 
+   * @param name The option name.
+   * 
+   * @return The option value.
+   * 
+   * @throws IllegalArgumentException if the option has no value or is
+   *                 not a string.
+   */
+  public String getString (String name)
+    throws IllegalArgumentException
+  {
+    return asString (name, values.get (name));
+  }
+  
+  /**
+   * Get a string value.
+   * 
+   * @param name The option name.
+   * @param defaultValue The default value. This is returned if there
+   *                is no value for the option.
+   * 
+   * @return The option value.
+   * 
+   * @throws IllegalArgumentException if the option is not a string.
+   */
+  public String getString (String name, String defaultValue)
+    throws IllegalArgumentException
+  {
+    Object value = values.get (name);
+    
+    if (value == null)
+      return defaultValue;
+    else
+      return asString (name, value);
+  }
+  
+  /**
+   * Get a boolean value. NB: Elvin connection options are either
+   * strings or integers: this is actually a shortcut for getting an
+   * int value in the range 0 to 1.
+   * 
+   * @param name The option name.
+   * @return The boolean value.
+   * 
+   * @throws IllegalArgumentException if the option is not an int in
+   *                 the range 0-1.
+   */
+  public boolean getBoolean (String name)
+    throws IllegalArgumentException
+  {
+    return asBoolean (name, values.get (name));
+  }
+  
+  /**
+   * Get a boolean value. NB: Elvin connection options are either
+   * strings or integers: this is actually a shortcut for getting an
+   * int value in the range 0 to 1.
+   * 
+   * @param name The option name.
+   * @param defaultValue The value to return if there is no value set.
+   * @return The boolean value.
+   * 
+   * @throws IllegalArgumentException if the option is not an int in
+   *                 the range 0-1.
+   */
+  public boolean getBoolean (String name, boolean defaultValue)
+    throws IllegalArgumentException
+  {
+    Object value = values.get (name);
+    
+    if (value == null)
+      return defaultValue;
+    else
+      return asBoolean (name, value);
   }
   
   /**
@@ -186,5 +309,34 @@ public final class ConnectionOptions
     }
     
     return diff;
+  }
+  
+  private static int asInt (String name, Object value)
+  {
+    if (value instanceof Integer)
+      return (Integer)value;
+    else
+      throw new IllegalArgumentException 
+        ("\"" + name +"\" is not an integer: " + value);
+  }
+  
+  private static String asString (String name, Object value)
+  {
+    if (value instanceof String)
+      return (String)value;
+    else
+      throw new IllegalArgumentException 
+        ("\"" + name +"\" is not a string: " + value);
+  }
+  
+  private static boolean asBoolean (String name, Object value)
+  {
+    int intValue = asInt (name, value);
+    
+    if (intValue < 0 || intValue > 1)
+      throw new IllegalArgumentException 
+        ("\"" + name +"\" is not an boolean-valued integer: " + value);
+    
+    return intValue == 1;
   }
 }
