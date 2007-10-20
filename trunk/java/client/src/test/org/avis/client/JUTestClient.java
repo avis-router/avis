@@ -325,8 +325,6 @@ public class JUTestClient
     
     TestNtfnListener listener = new TestNtfnListener (sub);
     
-    sub.addListener (listener);
-    
     checkReceive (client, listener, "test");
     checkNotReceive (client, listener, "not_test");
 
@@ -749,6 +747,83 @@ public class JUTestClient
     closeListener.waitForEvent ();
     
     assertFalse (client.isOpen ());
+  }
+  
+  /**
+   * Create a "firehose" thread that fires 100 events per second at a
+   * client, see how it reacts when rapidly changing subs/closing.
+   */
+  @Test
+  public void firehose ()
+    throws Exception
+  {
+    createServer ();
+    
+    Elvin client = new Elvin (ELVIN_URI);
+    final Elvin firehoseClient = new Elvin (ELVIN_URI);
+    
+    // raise timeouts to accomodate the higher loads
+    client.setReceiveTimeout (20000);
+    firehoseClient.setReceiveTimeout (20000);
+    
+    Subscription subscription = client.subscribe ("require (test)");
+    
+    new TestNtfnListener (subscription);
+    
+    Thread firehose = new Thread ()
+    {
+      @Override
+      public void run ()
+      {
+        Notification ntfn = new Notification ();
+        ntfn.set ("test", 1);
+        
+        while (!interrupted () && firehoseClient.isOpen ())
+        {
+          try
+          {
+            firehoseClient.send (ntfn);
+            
+            try
+            {
+              sleep (10);
+            } catch (InterruptedException ex)
+            {
+              interrupt ();
+            }
+          } catch (IOException ex)
+          {
+            ex.printStackTrace ();
+            interrupt ();
+          }
+        }
+      }
+    };
+    
+    // Log.enableLogging (Log.TRACE, true);
+    
+    firehose.start ();
+    
+    for (int i = 0; i < 10; i++)
+    {
+      sleep (200);
+      
+      subscription.remove ();
+      
+      sleep (200);
+      
+      subscription = client.subscribe ("require (test)");
+      
+      new TestNtfnListener (subscription);
+    }
+    
+    client.close ();
+    
+    firehose.interrupt ();
+    
+    firehose.join (10000);
+    
+    firehoseClient.close ();
   }
   
   static void waitOn (Object lock)
