@@ -1,9 +1,7 @@
 package org.avis.client;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 
 import static org.avis.util.Collections.union;
@@ -39,14 +37,14 @@ public final class GeneralNotificationEvent extends AvisEventObject
 
   GeneralNotificationEvent (Elvin elvin,
                             Notification notification,
-                            long [] insecureSubscriptionIds,
-                            long [] secureSubscriptionIds)
+                            Set<Subscription> theInsecureMatches,
+                            Set<Subscription> theSecureMatches)
   {
     super (elvin);
     
     this.notification = notification;
-    this.insecureMatches = subscriptionSetFor (elvin, insecureSubscriptionIds);
-    this.secureMatches = subscriptionSetFor (elvin, secureSubscriptionIds);
+    this.insecureMatches = unmodifiableSet (theInsecureMatches);
+    this.secureMatches = unmodifiableSet (theSecureMatches);
     this.matches = union (secureMatches, insecureMatches);
   }
   
@@ -90,22 +88,5 @@ public final class GeneralNotificationEvent extends AvisEventObject
   public Set<Subscription> matches ()
   {
     return matches;
-  }
-  
-  /**
-   * Generate a subscription set for a given set of ID's
-   */
-  private static Set<Subscription> subscriptionSetFor (Elvin elvin,
-                                                       long [] ids)
-  {
-    if (ids.length == 0)
-      return emptySet ();
-    
-    HashSet<Subscription> subscriptions = new HashSet<Subscription> ();
-    
-    for (long id : ids)
-      subscriptions.add (elvin.subscriptionFor (id));
-    
-    return unmodifiableSet (subscriptions);
   }
 }
