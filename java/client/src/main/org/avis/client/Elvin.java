@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -163,14 +162,6 @@ public final class Elvin implements Closeable
   ConnectionOptions connectionOptions;
   AtomicBoolean connectionOpen;
   boolean elvinSessionEstablished;
-  
-  /**
-   * The subscription ID -> Subscription map. This is a concurrent
-   * hash map with concurrency level set to one to allow one thread at
-   * time to write, but any number to read. This allows the IO thread
-   * to safely read the subscriptions during a NotifyDeliver without
-   * having to acquire the mutex (which could cause deadlock).
-   */
   Map<Long, Subscription> subscriptions;
   
   Keys notificationKeys;
@@ -376,7 +367,7 @@ public final class Elvin implements Closeable
     this.connectionOpen = new AtomicBoolean (true);
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
-    this.subscriptions = new ConcurrentHashMap<Long, Subscription> (16, 0.75f, 1);
+    this.subscriptions = new HashMap<Long, Subscription> ();
     this.closeListeners =
       new ListenerList<CloseListener> (CloseListener.class, 
                                        "connectionClosed", CloseEvent.class);
@@ -946,21 +937,26 @@ public final class Elvin implements Closeable
   void subscribe (Subscription subscription)
     throws IOException
   {
-    subscription.id =
-      sendAndReceive
-        (new SubAddRqst (subscription.subscriptionExpr,
-                         subscription.keys,
-                         subscription.acceptInsecure ())).subscriptionId;
-    
-    /*
-     * There is a small window here where a NotifyDeliver could arrive
-     * before we have registered the sub ID. For now we just drop it.
-     */
-    
-    if (subscriptions.put (subscription.id, subscription) != null)
-      throw new IOException
-        ("Protocol error: server issued duplicate subscription ID " +
-         subscription.id);
+    synchronized (subscriptions)
+    {
+      subscription.id =
+        sendAndReceive
+          (new SubAddRqst (subscription.subscriptionExpr,
+                           subscription.keys,
+                           subscription.acceptInsecure ())).subscriptionId;
+      
+      /*
+       * There is a small window right here where a NotifyDeliver
+       * could arrive before we have registered the sub ID. Both
+       * handleNotifyDeliver () and this method sync on subscriptions,
+       * to avoid missing notifications in this window.
+       */
+      
+      if (subscriptions.put (subscription.id, subscription) != null)
+        throw new IOException
+          ("Protocol error: server issued duplicate subscription ID " +
+           subscription.id);
+    }
   }
 
   void unsubscribe (Subscription subscription)
@@ -1435,17 +1431,23 @@ public final class Elvin implements Closeable
   void handleNotifyDeliver (NotifyDeliver message)
   {
     /*
-     * We fire notify callbacks from a callback thread, since firing
-     * an event in this thread would cause deadlock if a listener
-     * triggers a receive (), at which point the IO processor thread
-     * will be waiting for a reply that cannot be processed since it
-     * is busy calling this method.
+     * Sync on subscriptions to block NotifyDeliver until subscribe () can
+     * register the subscription ID.
      */
-    
-    callbackExecutor.execute 
-      (new NotifyCallback (message, 
-                           subscriptionSetFor (message.secureMatches), 
-                           subscriptionSetFor (message.insecureMatches)));
+    synchronized (subscriptions)
+    {
+      /*
+       * We fire notify callbacks from a callback thread, since firing
+       * an event in this thread would cause deadlock if a listener
+       * triggers a receive (), at which point the IO processor thread
+       * will be waiting for a reply that cannot be processed since it
+       * is busy calling this method.
+       */
+      callbackExecutor.execute 
+        (new NotifyCallback (message, 
+                             subscriptionSetFor (message.secureMatches), 
+                             subscriptionSetFor (message.insecureMatches)));
+    }
   }
 
   /**
@@ -1488,12 +1490,7 @@ public final class Elvin implements Closeable
         subscriptionSet.add (subscriptionFor (id));
       } catch (IllegalArgumentException ex)
       {
-        /*
-         * todo need to handle case in subscribe () where notify
-         * deliver arrives before registration. For now, we ignore missing sub.
-         */
-        
-        // warn ("Received notification for invalid subscription ID " + id, this);
+        warn ("Received notification for invalid subscription ID " + id, this);
       }
     }
     
