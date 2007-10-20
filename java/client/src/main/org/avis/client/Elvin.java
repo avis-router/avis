@@ -1390,15 +1390,29 @@ public final class Elvin implements Closeable
     }
   }
 
-  private void handleErrorMessage (ErrorMessage message)
+  private void handleNotifyDeliver (NotifyDeliver message)
   {
-    close (REASON_PROTOCOL_VIOLATION, 
-           "Protocol error in communication with router: " + 
-           message.formattedMessage (),
-           message.error);
+    /*
+     * Sync on subscriptions to block NotifyDeliver until subscribe () can
+     * register the subscription ID.
+     */
+    synchronized (subscriptions)
+    {
+      /*
+       * Notify callbacks are executed from callback thread, since
+       * firing an event in this thread causes deadlock if a listener
+       * triggers a receive (), at which point the IO processor thread
+       * will be waiting for a reply that cannot be processed since it
+       * is busy calling this method.
+       */
+      callbackExecutor.execute 
+        (new NotifyCallback (message, 
+                             subscriptionsFor (message.secureMatches), 
+                             subscriptionsFor (message.insecureMatches)));
+    }
   }
-
-  void handleDisconnect (Disconn disconn)
+  
+  private void handleDisconnect (Disconn disconn)
   {
     int reason;
     String message;
@@ -1428,55 +1442,18 @@ public final class Elvin implements Closeable
     close (reason, message);
   }
   
-  void handleNotifyDeliver (NotifyDeliver message)
+  private void handleErrorMessage (ErrorMessage message)
   {
-    /*
-     * Sync on subscriptions to block NotifyDeliver until subscribe () can
-     * register the subscription ID.
-     */
-    synchronized (subscriptions)
-    {
-      /*
-       * We fire notify callbacks from a callback thread, since firing
-       * an event in this thread would cause deadlock if a listener
-       * triggers a receive (), at which point the IO processor thread
-       * will be waiting for a reply that cannot be processed since it
-       * is busy calling this method.
-       */
-      callbackExecutor.execute 
-        (new NotifyCallback (message, 
-                             subscriptionSetFor (message.secureMatches), 
-                             subscriptionSetFor (message.insecureMatches)));
-    }
-  }
-
-  /**
-   * Fire notification events for subscription listeners.
-   * 
-   * @param matches The subscription ID's
-   * @param secure Whether the notification was secure.
-   * @param ntfn The notification.
-   * @param data General data attached to the event for the client's use.
-   */
-  void fireSubscriptionNotify (Set<Subscription> matches,
-                               boolean secure,
-                               Notification ntfn,
-                               Map<String, Object> data)
-  {
-    for (Subscription subscription : matches)
-    {
-      if (subscription.hasListeners ())
-      {
-        subscription.notifyListeners
-          (new NotificationEvent (subscription, ntfn, secure, data));
-      }
-    }
+    close (REASON_PROTOCOL_VIOLATION, 
+           "Protocol error in communication with router: " + 
+           message.formattedMessage (),
+           message.error);
   }
   
   /**
    * Generate a subscription set for a given set of ID's
    */
-  Set<Subscription> subscriptionSetFor (long [] ids)
+  Set<Subscription> subscriptionsFor (long [] ids)
   {
     if (ids.length == 0)
       return emptySet ();
@@ -1505,14 +1482,14 @@ public final class Elvin implements Closeable
     if (session == null)
       throw new NotConnectedException ("Connection is closed");
     else if (!session.isConnected ())
-      throw new NotConnectedException ("Cannot operate while not connected to router");
+      throw new NotConnectedException ("Not connected to router");
   }
   
-  private class NotifyCallback implements Runnable
+  class NotifyCallback implements Runnable
   {
-    private final NotifyDeliver message;
-    private final Set<Subscription> secureMatches;
-    private final Set<Subscription> insecureMatches;
+    private NotifyDeliver message;
+    private Set<Subscription> secureMatches;
+    private Set<Subscription> insecureMatches;
 
     public NotifyCallback (NotifyDeliver message,
                            Set<Subscription> secureMatches,
@@ -1543,6 +1520,29 @@ public final class Elvin implements Closeable
           
           fireSubscriptionNotify (secureMatches, true, ntfn, data);
           fireSubscriptionNotify (insecureMatches, false, ntfn, data);
+        }
+      }
+    }
+    
+    /**
+     * Fire notification events for subscription listeners.
+     * 
+     * @param matches The subscription ID's
+     * @param secure Whether the notification was secure.
+     * @param ntfn The notification.
+     * @param data General data attached to the event for the client's use.
+     */
+    private void fireSubscriptionNotify (Set<Subscription> matches,
+                                         boolean secure,
+                                         Notification ntfn,
+                                         Map<String, Object> data)
+    {
+      for (Subscription subscription : matches)
+      {
+        if (subscription.hasListeners ())
+        {
+          subscription.notifyListeners
+            (new NotificationEvent (subscription, ntfn, secure, data));
         }
       }
     }
