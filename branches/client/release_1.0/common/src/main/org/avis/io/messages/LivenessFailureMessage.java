@@ -5,7 +5,7 @@ package org.avis.io.messages;
  * 
  * @author Matthew Phillips
  */
-public class LivenessTimeoutMessage extends SyntheticMessage
+public class LivenessFailureMessage extends SyntheticMessage
 {
   public static final int ID = -3;
   
