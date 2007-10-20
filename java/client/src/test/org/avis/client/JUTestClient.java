@@ -320,33 +320,70 @@ public class JUTestClient
   {
     createServer ();
     
-    final Elvin client = new Elvin (ELVIN_URI);
-    final Subscription sub = client.subscribe ("require (test)");
+    Elvin client = new Elvin (ELVIN_URI);
+    Subscription sub = client.subscribe ("require (test)");
     
+    TestNtfnListener listener = new TestNtfnListener (sub);
+    
+    sub.addListener (listener);
+    
+    checkReceive (client, listener, "test");
+    checkNotReceive (client, listener, "not_test");
+
     // change subscription
     sub.setSubscriptionExpr ("require (test2)");
     
-    sub.addListener (new NotificationListener ()
-    {
-      public void notificationReceived (NotificationEvent e)
-      {
-        synchronized (sub)
-        {
-          sub.notifyAll ();
-        }
-      }
-    });
+    checkReceive (client, listener, "test2");
+    checkNotReceive (client, listener, "test");
     
-    Notification ntfn = new Notification ();
-    ntfn.set ("test2", 1);
+    long id = sub.id;
     
-    synchronized (sub)
-    {
-      client.send (ntfn);
-      
-      waitOn (sub);
-    }
+    assertTrue (sub.isActive ());
+    
+    sub.remove ();
+    
+    assertFalse (sub.isActive ());
+    
+    assertNull (client.subscriptions.get (id));
+    
+    checkNotReceive (client, listener, "test2");
+    
+    client.close ();
   }
+
+  /**
+   * Check that client receives a notification with a required field.
+   */
+  private static void checkReceive (Elvin client, TestNtfnListener listener,
+                                    String requiredField)
+    throws IOException, InterruptedException
+  {
+    Notification ntfn = new Notification ();
+    
+    ntfn.set (requiredField, 1);
+    
+    listener.waitForNotification (client, ntfn, WAIT_TIMEOUT);
+    
+    listener.event = null;
+  }
+  
+  /**
+   * Check that client does not receive a notification with a required
+   * field.
+   */
+  private static void checkNotReceive (Elvin client, TestNtfnListener listener,
+                                       String notRequiredField)
+    throws IOException, InterruptedException
+  {
+    Notification ntfn = new Notification ();
+    ntfn.set (notRequiredField, 1);
+    
+    client.send (ntfn);
+    
+    listener.waitForNoNotification ();
+    
+    listener.event = null;
+  }    
 
   /**
    * Test subscription-specific and general (connection-wide)
@@ -543,12 +580,12 @@ public class JUTestClient
     Notification ntfn = new Notification ();
     ntfn.set ("From-Alice", 1);
     
-    secureListener.waitForNotification (client, ntfn);
+    secureListener.waitForSecureNotification (client, ntfn);
     assertNotNull (secureListener.event);
     assertTrue (secureListener.event.secure);
 
     TestNtfnListener insecureListener = new TestNtfnListener (insecureSub);
-    insecureListener.waitForNotification (client, ntfn);
+    insecureListener.waitForSecureNotification (client, ntfn);
     assertNull (insecureListener.event);
   }
   
@@ -766,13 +803,36 @@ public class JUTestClient
       notifyAll ();
     }
 
-    public synchronized void waitForNotification (Elvin client,
-                                                  Notification ntfn)
+    /**
+     * Send notification securely and wait for one to come back.
+     */
+    public synchronized void waitForSecureNotification (Elvin client,
+                                                        Notification ntfn)
       throws InterruptedException, IOException
     {
-      client.send (ntfn, REQUIRE_SECURE_DELIVERY);
+      waitForNotification (client, ntfn, REQUIRE_SECURE_DELIVERY, 2000);
+    }
+    
+    public synchronized void waitForNotification (Elvin client,
+                                                  Notification ntfn,
+                                                  long timeout)
+      throws InterruptedException, IOException
+    {
+      waitForNotification (client, ntfn, ALLOW_INSECURE_DELIVERY, timeout);
+    }
+    
+    /**
+     * Send notification securely and wait for one to come back.
+     */
+    public synchronized void waitForNotification (Elvin client,
+                                                  Notification ntfn,
+                                                  SecureMode secureMode,
+                                                  long timeout)
+      throws InterruptedException, IOException
+    {
+      client.send (ntfn, secureMode);
       
-      wait (2000);
+      wait (timeout);
     }
     
     public void reset ()
