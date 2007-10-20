@@ -38,7 +38,9 @@ import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.info;
+import static org.avis.logging.Log.internalError;
 import static org.avis.logging.Log.warn;
+import static org.avis.util.Text.className;
 import static org.avis.util.Text.shortException;
 
 /**
@@ -192,7 +194,7 @@ public class Connector implements IoHandler, Closeable
     };
     
     asyncConnectTimer.schedule 
-      (connectTask, options.getInt ("Federation.Request-Timeout") * 1000);
+      (connectTask, options.getInt ("Federation.Request-Timeout") * 1000L);
   }
   
   /**
@@ -236,7 +238,7 @@ public class Connector implements IoHandler, Closeable
         if (session.isConnected ())
         {
           if (link != null)
-            link.close ();
+            link.close ();  // closes session after disconn
           else
             session.close ();
         } else
@@ -244,15 +246,12 @@ public class Connector implements IoHandler, Closeable
           if (link != null && !link.initiatedSessionClose ())
           {
             warn ("Remote federator at " + uri + " " + 
-                  "closed link with no warning", this);
+                  "closed outgoing link with no warning", this);
             
             link.close ();
           }        
         }
         
-        // wait for session to be flushed
-        // todo check that this really flushes messages
-        session.close ().join (10000);
         session = null;
       }
       
@@ -309,8 +308,9 @@ public class Connector implements IoHandler, Closeable
       reopen ();
     } else
     {
-     // NB: this shouldn't happen, FedConnRqst is the only request we send
-      warn ("Request to remote federator timed out: " + request.name (), this);
+     // this shouldn't happen, FedConnRqst is the only request we send
+     internalError ("Request timeout for unexpected message type: " + 
+                    className (request), this);
     }
   }
   

@@ -8,7 +8,21 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import java.net.InetSocketAddress;
+
+import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.IoHandler;
+import org.apache.mina.common.IoSession;
+import org.apache.mina.common.ThreadModel;
+import org.apache.mina.transport.socket.nio.SocketConnector;
+import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+
 import org.avis.config.Options;
+import org.avis.federation.io.FederationFrameCodec;
+import org.avis.federation.io.messages.FedConnRqst;
+import org.avis.federation.io.messages.FedSubReplace;
+import org.avis.io.TestingIoHandler;
+import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
@@ -16,6 +30,7 @@ import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
 import org.avis.security.Keys;
+import org.avis.subscription.ast.nodes.Const;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.LogFailTester;
 
@@ -24,19 +39,23 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.io.Net.addressesFor;
+import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.enableLogging;
+import static org.avis.logging.Log.shouldLog;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class JUTestFederation
 {
@@ -47,13 +66,18 @@ public class JUTestFederation
   
   private LogFailTester logTester;
   private StandardFederatorSetup federation;
-
+  private boolean oldLogInfoState;
+  
   @Before
   public void setup ()
   {
     // enableLogging (TRACE, true);
     // enableLogging (DIAGNOSTIC, true);
 
+    oldLogInfoState = shouldLog (INFO);
+    
+    enableLogging (INFO, false);
+    
     logTester = new LogFailTester ();
   }
   
@@ -61,13 +85,15 @@ public class JUTestFederation
   public void tearDown ()
     throws Exception
   {
-    logTester.assertOkAndDispose ();
+    enableLogging (INFO, oldLogInfoState);
     
     if (federation != null)
     {
       federation.close ();
       federation = null;
     }
+
+    logTester.assertOkAndDispose ();
   }
   
   @Test
@@ -92,6 +118,99 @@ public class JUTestFederation
     testTwoWayClientSendReceive (federation.client1, federation.client2);
     
     federation.close ();
+  }
+  
+  /**
+   * Test the acceptor rejects various invalid attempts to connect.
+   */
+  @Test
+  public void rejection ()
+    throws Exception
+  {
+    FederationClass fedClass2 = StandardFederatorSetup.defaultClass ();
+    
+    FederationClasses classes = new FederationClasses ();
+    
+    classes.mapServerDomain ("server1", fedClass2);
+    
+    Router server1 = new Router (PORT1);
+
+    EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
+    Options options = new Options (FederationOptionSet.OPTION_SET);
+    
+    Acceptor acceptor = 
+      new Acceptor (server1, "server1", classes, 
+                    addressesFor (set (ewafURI)), options);
+    
+    // connector
+    TestingIoHandler listener = new TestingIoHandler ();
+    IoSession connectSession = connectFederation (server1, ewafURI, listener);
+
+    // incompatible version
+    logTester.pause ();
+    
+    connectSession.write
+      (new FedConnRqst (Federation.VERSION_MAJOR + 1, 0, "server2"));
+    
+    Nack nack = listener.waitForMessage (Nack.class);
+    
+    logTester.unpause ();
+    
+    assertEquals (Nack.PROT_INCOMPAT, nack.error);
+    
+    connectSession.close ();
+    
+    // bad server domain (same as acceptor's)
+    listener = new TestingIoHandler ();
+    connectSession = connectFederation (server1, ewafURI, listener);
+    
+    logTester.pause ();
+    
+    connectSession.write
+      (new FedConnRqst (Federation.VERSION_MAJOR, 
+                        Federation.VERSION_MINOR, "server1"));
+    
+    nack = listener.waitForMessage (Nack.class);
+    
+    logTester.unpause ();
+        
+    assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
+    
+    connectSession.close ();
+    
+    // no federation class mapped
+    listener = new TestingIoHandler ();
+    connectSession = connectFederation (server1, ewafURI, listener);
+    
+    logTester.pause ();
+    
+    connectSession.write
+      (new FedConnRqst (Federation.VERSION_MAJOR, 
+                        Federation.VERSION_MINOR, "bogus"));
+    
+    nack = listener.waitForMessage (Nack.class);
+    
+    logTester.unpause ();
+        
+    assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
+    
+    connectSession.close ();
+    
+    // bogus handshake
+    listener = new TestingIoHandler ();
+    connectSession = connectFederation (server1, ewafURI, listener);
+    
+    logTester.pause ();
+    
+    connectSession.write (new FedSubReplace (Const.CONST_FALSE));
+    
+    // acceptor should just abort connection
+    listener.waitForClose (connectSession);
+    
+    connectSession.close ();
+    
+    acceptor.close ();
+    server1.close ();
   }
   
   @Test
@@ -203,19 +322,13 @@ public class JUTestFederation
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
     
-    sleep (2000);
-    
-    // check we're waiting
-    assertTrue (connector.isWaitingForAsyncConnection ());
+    waitForAsyncConnect (connector);
     
     Acceptor acceptor = 
       new Acceptor (server2, "server2", classes, 
                     addressesFor (set (ewafURI)), options);
     
-    sleep (2000);
-    
-    // check we've connected
-    assertTrue (connector.isConnected ());
+    waitForConnect (connector);
     
     connector.close ();
     acceptor.close ();
@@ -256,26 +369,17 @@ public class JUTestFederation
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
 
-    sleep (1000);
+    waitForConnect (connector);
     
-    // check we've connected
-    assertTrue (connector.isConnected ());
-
     acceptor.close ();
     
-    sleep (3000);
+    waitForAsyncConnect (connector);
 
-    // check we're waiting
-    assertTrue (connector.isWaitingForAsyncConnection ());
-    
     acceptor = 
       new Acceptor (server2, "server2", classes, 
                     addressesFor (set (ewafURI)), options);
     
-    sleep (2000);
-    
-    // check we've reconnected
-    assertTrue (connector.isConnected ());
+    waitForConnect (connector);
     
     connector.close ();
     acceptor.close ();
@@ -314,23 +418,17 @@ public class JUTestFederation
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
 
-    sleep (1000);
+    waitForConnect (connector);
     
-    // check we've connected
-    assertTrue (connector.isConnected ());
-
     // "crash" link at acceptor end
     acceptor.hang ();
     
     // liveness check will generate a warning: ignore
     logTester.pause ();
     
-    // wait for other end to notice
-    sleep (8000);
+    waitForAsyncConnect (connector);
     
     logTester.unpause ();
-    
-    assertTrue (connector.isWaitingForAsyncConnection ());
     
     connector.close ();
     acceptor.close ();
@@ -338,7 +436,7 @@ public class JUTestFederation
     server1.close ();
     server2.close ();
   }
-  
+
   private static boolean runElvind = true;
   
   /**
@@ -370,6 +468,8 @@ public class JUTestFederation
     Connector connector = 
       new Connector (server, "avis", ewafURI, 
                                fedClass, options);
+    
+    waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
@@ -427,6 +527,8 @@ public class JUTestFederation
     Connector connector = 
       new Connector (server, "avis", ewafURI, 
                                fedClass, options);
+    
+    waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
@@ -518,6 +620,67 @@ public class JUTestFederation
     return map;
   }
   
+  /**
+   * Wait up to 10 seconds for a connector to be in connected state.
+   */
+  protected static void waitForConnect (Connector connector)
+    throws InterruptedException
+  {
+    long start = currentTimeMillis ();
+    
+    while (!connector.isConnected () && currentTimeMillis () - start < 10000)
+      sleep (200);
+    
+    if (!connector.isConnected ())
+      fail ("Failed to connect");
+  }
+  
+  /**
+   * Wait up to 10 seconds for a connector to go to waiting for an
+   * async connect.
+   */
+  private static void waitForAsyncConnect (Connector connector)
+    throws InterruptedException
+  {
+    long start = currentTimeMillis ();
+    
+    while (currentTimeMillis () - start < 10000 && 
+           !connector.isWaitingForAsyncConnection ())
+    {
+      sleep (200);
+    }
+    
+    if (!connector.isWaitingForAsyncConnection ())
+      fail ("Failed to go to async connect state");
+  }
+  
+    /**
+   * Create a connection to federation listener.
+   */
+  private static IoSession connectFederation (Router router,
+                                              EwafURI uri,
+                                              IoHandler listener)
+  {
+    SocketConnector connector = new SocketConnector (1, router.executor ());
+    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+    
+    connector.setWorkerTimeout (0);
+    
+    connectorConfig.setThreadModel (ThreadModel.MANUAL);
+    connectorConfig.setConnectTimeout (20);
+    
+    connectorConfig.getFilterChain ().addLast   
+      ("codec", FederationFrameCodec.FILTER);
+    
+    ConnectFuture future = 
+      connector.connect (new InetSocketAddress (uri.host, uri.port),
+                         listener, connectorConfig);
+    
+    future.join ();
+    
+    return future.getSession ();
+  }
+  
   static class StandardFederatorSetup
   {
     public Router server1;
@@ -570,6 +733,8 @@ public class JUTestFederation
       connector = 
         new Connector (server1, "server1", ewafURI, 
                        classes.classFor ("server2"), options);
+      
+      waitForConnect (connector);
       
       client1 = new SimpleClient ("client1", "localhost", PORT1);
       client2 = new SimpleClient ("client2", "localhost", PORT2);
