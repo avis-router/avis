@@ -104,6 +104,8 @@ public class JUTestElvinURI
     assertInvalid ("elvin://elvin_host;name1;name2=value2");
     assertInvalid ("elvin://elvin_host;=name1;name2=value2");
     assertInvalid ("elvin://elvin_host;");
+    assertInvalid ("elvin://;x=y");
+    assertInvalid ("elvin://;x=");
   }
   
   @Test
@@ -186,6 +188,10 @@ public class JUTestElvinURI
     assertInvalid ("elvin://[::1/128]]");
     assertInvalid ("elvin://[]");
     assertInvalid ("elvin://[");
+    assertInvalid ("elvin://[::1/128];hello");
+    assertInvalid ("elvin://[::1/128]:xyz");
+    assertInvalid ("elvin://[::1/128];");
+    assertInvalid ("elvin:///[::1/128]");
   }
   
   private static void assertSameUri (String uri1, String uri2)

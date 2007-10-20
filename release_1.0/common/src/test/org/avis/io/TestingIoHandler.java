@@ -1,11 +1,14 @@
 package org.avis.io;
 
+import junit.framework.AssertionFailedError;
+
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 
 import org.avis.io.messages.Message;
 
+import static org.avis.util.Text.className;
 import static org.junit.Assert.fail;
 
 /**
@@ -39,5 +42,41 @@ public class TestingIoHandler
       fail ("No message received");
     
     return message;
+  }
+
+  @SuppressWarnings("unchecked")
+  public synchronized <T extends Message> T waitForMessage (Class<T> type)
+    throws InterruptedException
+  {
+    waitForMessage ();
+    
+    if (type.isAssignableFrom (message.getClass ()))
+      return (T)message;
+    else
+      throw new AssertionFailedError ("Expected " + className (type) + ", was " + className (message));
+  }
+
+  public synchronized void waitForClose (IoSession session)
+  {
+    if (session.isClosing ())
+      return;
+    
+    try
+    {
+      wait (5000);
+    } catch (InterruptedException ex)
+    {
+      throw new Error (ex);
+    }
+    
+    if (!session.isClosing ())
+      throw new AssertionFailedError ("Session not closed");
+  }
+  
+  @Override
+  public synchronized void sessionClosed (IoSession session)
+    throws Exception
+  {
+    notifyAll ();
   }
 }
