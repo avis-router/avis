@@ -104,10 +104,9 @@ public final class Notification
   {
     this ();
     
-    for (Map.Entry<?, ?> entry : map.entrySet ())
-      set (checkField (entry.getKey ()), entry.getValue ());
-  } 
-  
+    setAll (map);
+  }
+
   /**
    * Create an instance from an string encoded notification.
    * See {@link #parse(Notification, Reader)}.
@@ -421,6 +420,22 @@ public final class Notification
   public int size ()
   {
     return attributes.size ();
+  }
+  
+  /**
+   * Copy all values in a map into this notification.
+   * 
+   * @param map The map to copy.
+   * 
+   * @throws IllegalArgumentException if a key in the map is not a
+   *                 string, or a value is not a string, integer,
+   *                 long, double or byte array. Some values may
+   *                 already have been added to the notification.
+   */
+  public void setAll (Map<?, ?> map)
+  {
+    for (Map.Entry<?, ?> entry : map.entrySet ())
+      set (checkField (entry.getKey ()), entry.getValue ());
   }
 
   /**

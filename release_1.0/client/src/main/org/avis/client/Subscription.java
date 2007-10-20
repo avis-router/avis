@@ -57,7 +57,14 @@ public final class Subscription
       elvin.unsubscribe (this);
       
       id = 0;
-    }    
+    }
+
+    /*
+     * Wait for any queued notification callbacks to be delivered so
+     * that client does not see callbacks after it has called
+     * remove ().
+     */
+    elvin.flushCallbacks ();
   }
   
   /**
@@ -133,6 +140,13 @@ public final class Subscription
         this.subscriptionExpr = newSubscriptionExpr;
       }
     }
+    
+    /*
+     * Wait for any queued notification callbacks to be delivered so
+     * that client does not see callbacks for old subscription after
+     * it has changed it.
+     */
+    elvin.flushCallbacks ();
   }
 
   /**
@@ -166,6 +180,13 @@ public final class Subscription
         this.secureMode = newMode;
       }
     }
+    
+    /*
+     * Wait for any queued notification callbacks to be delivered so
+     * that client does not see callbacks for subscription after it
+     * has changed it.
+     */
+    elvin.flushCallbacks ();
   }     
   
   /**
@@ -201,7 +222,14 @@ public final class Subscription
       elvin.modifyKeys (this, newKeys);
       
       this.keys = newKeys;
-    }    
+    }
+    
+    /*
+     * Wait for any queued notification callbacks to be delivered so
+     * that client does not see callbacks for old subscription after
+     * it has changed it.
+     */
+    elvin.flushCallbacks ();
   }
 
   /**
