@@ -612,8 +612,9 @@ public class JUTestClient
       
       setup ();
       
+      Log.enableLogging (Log.TRACE, true);
       firehose ();
-      
+
       cleanup ();
     }
   }
@@ -645,7 +646,7 @@ public class JUTestClient
       client.subscribe ("require (hello)");
       
       fail ("Client did not reject attempt to use closed connection");
-    } catch (IOException ex)
+    } catch (NotConnectedException ex)
     {
       // ok
     }
@@ -653,14 +654,8 @@ public class JUTestClient
     client.close ();
   }
   
-  /**
-   * Test close listener support.
-   * 
-   * todo very rarely get a "Shutdown callbacks took too long to
-   * finish" on closing client. suspect deadlock condition possible.
-   */
   @Test
-  public void closeListener ()
+  public void clientClose ()
     throws Exception
   {
     createServer ();
@@ -676,10 +671,17 @@ public class JUTestClient
     // close event must be fired before close () returns
     assertNotNull (listener.event);
     assertEquals (REASON_CLIENT_SHUTDOWN, listener.event.reason);
+  }
+  
+  @Test
+  public void serverClose ()
+    throws Exception
+  {
+    createServer ();
     
     // server shuts down cleanly
-    client = new Elvin (ELVIN_URI);
-    listener = new TestCloseListener ();
+    Elvin client = new Elvin (ELVIN_URI);
+    TestCloseListener listener = new TestCloseListener ();
     
     client.addCloseListener (listener);
     
@@ -697,12 +699,17 @@ public class JUTestClient
     listener.event = null;
     client.close ();
     assertNull (listener.event);
-    
-    // simulate server crash
+  }
+  
+  @Test
+  public void liveness () 
+    throws Exception
+  {
     createServer ();
+
+    Elvin client = new Elvin (ELVIN_URI);
     
-    client = new Elvin (ELVIN_URI);
-    listener = new TestCloseListener ();
+    TestCloseListener listener = new TestCloseListener ();
     
     client.setReceiveTimeout (1000);
     client.setLivenessTimeout (1000);
@@ -712,7 +719,9 @@ public class JUTestClient
     // check liveness check keeps connection open
     sleep (3000);
     
-    assertNull (listener.event);
+    assertNull (listener.event == null ? "" : 
+                "Unexpected close event " + listener.event.message, 
+                listener.event);
     assertTrue (client.isOpen ());
     
     // hang server
