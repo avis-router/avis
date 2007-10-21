@@ -39,16 +39,23 @@ public final class SharedExecutor
    * @param executor The executor. If this is not the shared instance,
    *                nothing is done.
    */
-  public static void release (ScheduledExecutorService executor)
+  public static boolean release (ScheduledExecutorService executor)
   {
     synchronized (SharedExecutor.class)
     {
-      if (executor == sharedExecutor && --shareCount == 0)
+      if (executor == sharedExecutor)
       {
-        sharedExecutor.shutdown ();
-        sharedExecutor = null;
+        if (--shareCount == 0)
+        {
+          sharedExecutor.shutdown ();
+          sharedExecutor = null;
+        }
+     
+        return true;
       }
     }
+    
+    return false;
   }
 
   public static boolean sharedExecutorDisposed ()
