@@ -1009,19 +1009,6 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * Lookup the subscription for an ID or throw an exception.
-   */
-  Subscription subscriptionFor (long id)
-  {
-    Subscription subscription = subscriptions.get (id);
-    
-    if (subscription != null)
-      return subscription;
-    else
-      throw new IllegalArgumentException ("No subscription for ID " + id);
-  }
-  
-  /**
    * Add a listener to all notifications received by all subscriptions
    * of this connection.
    * 
@@ -1472,6 +1459,19 @@ public final class Elvin implements Closeable
     }
     
     return subscriptionSet;
+  }
+  
+  /**
+   * Lookup the subscription for an ID or throw an exception.
+   */
+  Subscription subscriptionFor (long id)
+  {
+    Subscription subscription = subscriptions.get (id);
+    
+    if (subscription != null)
+      return subscription;
+    else
+      throw new IllegalArgumentException ("No subscription for ID " + id);
   }
   
   void checkConnected ()
