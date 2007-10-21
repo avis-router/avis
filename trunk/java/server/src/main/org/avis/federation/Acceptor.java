@@ -22,6 +22,7 @@ import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
 import org.avis.federation.io.messages.FedConnRply;
 import org.avis.federation.io.messages.FedConnRqst;
+import org.avis.io.LivenessFilter;
 import org.avis.io.RequestTrackingFilter;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -87,8 +88,9 @@ public class Acceptor implements IoHandler, Closeable
     this.options = options;
     this.links = new HashSet<Link> ();
     
-    int requestTimeout = options.getInt ("Federation.Request-Timeout");
-    int keepaliveInterval = options.getInt ("Federation.Keepalive-Interval");
+    int requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
+    int keepaliveInterval = 
+      options.getInt ("Federation.Keepalive-Interval") * 1000;
     
     SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
     
@@ -99,9 +101,12 @@ public class Acceptor implements IoHandler, Closeable
       acceptorConfig.getFilterChain ();
 
     filterChain.addLast ("codec", FederationFrameCodec.FILTER);
+    
     filterChain.addLast
-      ("requestTracker", 
-       new RequestTrackingFilter (requestTimeout, keepaliveInterval));
+      ("requestTracker", new RequestTrackingFilter (requestTimeout));
+    
+    filterChain.addLast
+      ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
     
     SocketAcceptor acceptor = router.socketAcceptor ();
 
