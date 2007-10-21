@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,13 +32,14 @@ import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
-import org.avis.io.messages.ConfConn;
+import org.avis.io.LivenessFilter;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DisconnRqst;
 import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.ErrorMessage;
+import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
@@ -49,17 +49,14 @@ import org.avis.io.messages.SecRqst;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubDelRqst;
 import org.avis.io.messages.SubModRqst;
-import org.avis.io.messages.TestConn;
 import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
-import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
@@ -160,26 +157,14 @@ public final class Elvin implements Closeable
   ElvinURI routerUri;
   IoSession connection;
   ConnectionOptions connectionOptions;
+  int receiveTimeout;
   AtomicBoolean connectionOpen;
   boolean elvinSessionEstablished;
   Map<Long, Subscription> subscriptions;
   
   Keys notificationKeys;
   Keys subscriptionKeys;
- 
-  /*
-   * The following fields are used for liveness checking.
-   * lastMessageTime is updated to the current time on any received
-   * message. livenessFuture is a scheduled future on the
-   * callbackExecutor that is either periodically checking liveness or
-   * waiting for a reply to a TestConn sent due to livenessTimeout
-   * expiring with no messages from the router.
-   */
-  int receiveTimeout;
-  int livenessTimeout;
-  long lastMessageTime;
-  ScheduledFuture<?> livenessFuture;
-  
+
   /**
    * We use a multi-thread I/O pool and a single-thread
    * callback/scheduler pool, which ensures callbacks are executed
@@ -376,9 +361,7 @@ public final class Elvin implements Closeable
         (GeneralNotificationListener.class, "notificationReceived", 
          GeneralNotificationEvent.class);
     this.replyLock = new Object ();
-    this.lastMessageTime = currentTimeMillis ();
     this.receiveTimeout = 10000;
-    this.livenessTimeout = 60000;
     
     if (!routerUri.protocol.equals (defaultProtocol ()))
     {
@@ -414,8 +397,6 @@ public final class Elvin implements Closeable
       
       if (!rejectedOptions.isEmpty ())
         throw new ConnectionOptionsException (options, rejectedOptions);
-      
-      scheduleLivenessCheck ();
     } catch (IOException ex)
     {
       close ();
@@ -441,6 +422,10 @@ public final class Elvin implements Closeable
       
       connectorConfig.getFilterChain ().addLast 
         ("codec", ClientFrameCodec.FILTER);
+      
+      connectorConfig.getFilterChain ().addLast 
+        ("liveness", 
+         new LivenessFilter (callbackExecutor, 60000, receiveTimeout));
       
       // route MINA exceptions to log
       ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
@@ -497,8 +482,6 @@ public final class Elvin implements Closeable
 
     synchronized (this)
     {
-      unscheduleLivenessCheck ();
-      
       if (isOpen ())
       {
         if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
@@ -511,6 +494,9 @@ public final class Elvin implements Closeable
             diagnostic ("Failed to cleanly disconnect", this, ex);
           }
         }
+        
+        // force this here, so filter cannot block callback executor shutdown
+        LivenessFilter.dispose (connection);
         
         connection.close ();
         connection = null;
@@ -537,8 +523,8 @@ public final class Elvin implements Closeable
       
       try
       {
-        if (!callbackExecutor.awaitTermination (receiveTimeout, MILLISECONDS))
-          warn ("Shutdown callbacks took too long to finish", this);
+        if (!callbackExecutor.awaitTermination (10, SECONDS))
+          warn ("Shutdown callbacks took too long to finish", this, new Error ());
       } catch (InterruptedException ex)
       {
         warn ("Interrupted waiting for shutdown callbacks", this, ex);
@@ -662,6 +648,8 @@ public final class Elvin implements Closeable
       throw new IllegalArgumentException
         ("Timeout cannot be < 0: " + receiveTimeout);
     
+    LivenessFilter.setReceiveTimeoutFor (connection, receiveTimeout);
+    
     this.receiveTimeout = receiveTimeout;
   }
   
@@ -670,7 +658,7 @@ public final class Elvin implements Closeable
    */
   public int livenessTimeout ()
   {
-    return livenessTimeout;
+    return LivenessFilter.filterFor (connection).livenessTimeout ();
   }
   
   /**
@@ -687,84 +675,7 @@ public final class Elvin implements Closeable
    */
   public synchronized void setLivenessTimeout (int livenessTimeout)
   {
-    if (livenessTimeout < 1000)
-      throw new IllegalArgumentException
-        ("Timeout cannot be < 1000: " + livenessTimeout);
-    
-    this.livenessTimeout = livenessTimeout;
-
-    scheduleLivenessCheck ();
-  }
-  
-  /**
-   * Schedule a liveness checking task to run in livenessTimeout
-   * milliseconds.
-   */
-  void scheduleLivenessCheck ()
-  {
-    Runnable livenessCheck = new Runnable ()
-    {
-      public void run ()
-      {
-        synchronized (mutex ())
-        {
-          if (isOpen ())
-          {
-            if (currentTimeMillis () - lastMessageTime >= livenessTimeout)
-              scheduleConnectionTest ();
-            else
-              scheduleLivenessCheck ();
-          }
-        }
-      }
-    };
-    
-    unscheduleLivenessCheck ();
-    
-    livenessFuture =
-      callbackExecutor.schedule
-        (livenessCheck,
-         livenessTimeout - (currentTimeMillis () - lastMessageTime),
-         MILLISECONDS);
-  }
-
-  void unscheduleLivenessCheck ()
-  {
-    if (livenessFuture != null)
-      livenessFuture.cancel (false);
-  }
-
-  /**
-   * Send a TestConn message and schedule a liveness checking task to
-   * run in receiveTimeout milliseconds. If no message is seen in this
-   * period, the connection is closed.
-   */
-  void scheduleConnectionTest ()
-  {
-    try
-    {
-      send (TestConn.INSTANCE);
-      
-      Runnable connCheck = new Runnable ()
-      {
-        public void run ()
-        {
-          /* Note use of ">" not ">=" below: in tests on a fast multi-core
-           * machine, server may respond in 0 measurable millis */
-          if (currentTimeMillis () - lastMessageTime > receiveTimeout)
-            close (REASON_ROUTER_STOPPED_RESPONDING, "Router stopped responding");
-          else
-            scheduleLivenessCheck ();
-        }
-      };
-        
-      livenessFuture = 
-        callbackExecutor.schedule (connCheck, receiveTimeout, MILLISECONDS);
-    } catch (IOException ex)
-    {
-      close (REASON_ROUTER_STOPPED_RESPONDING,
-             "IO error checking router connection: " + ex.getMessage ());
-    }
+    LivenessFilter.setLivenessTimeoutFor (connection, livenessTimeout);
   }
 
   /**
@@ -1371,6 +1282,9 @@ public final class Elvin implements Closeable
       case ErrorMessage.ID:
         handleErrorMessage ((ErrorMessage)message);
         break;
+      case LivenessFailureMessage.ID:
+        close (REASON_ROUTER_STOPPED_RESPONDING, "Router stopped responding");
+        break;
       default:
         // todo should probably fire an event for this
         warn ("Unexpected server message: " + message, this);
@@ -1570,11 +1484,6 @@ public final class Elvin implements Closeable
       if (shouldLog (TRACE))
         trace ("Client got message: " + message, this);
      
-      lastMessageTime = currentTimeMillis ();
-      
-      if (message == ConfConn.INSTANCE)
-        return;
-      
       if (message instanceof XidMessage)
         handleReply ((XidMessage)message);
       else if (connectionOpen.get ())
