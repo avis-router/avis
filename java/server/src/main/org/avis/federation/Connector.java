@@ -22,6 +22,7 @@ import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
 import org.avis.federation.io.messages.FedConnRply;
 import org.avis.federation.io.messages.FedConnRqst;
+import org.avis.io.LivenessFilter;
 import org.avis.io.RequestTrackingFilter;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -81,8 +82,9 @@ public class Connector implements IoHandler, Closeable
     this.connectorConfig = new SocketConnectorConfig ();
     this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
     
-    int requestTimeout = options.getInt ("Federation.Request-Timeout");
-    int keepaliveInterval = options.getInt ("Federation.Keepalive-Interval");
+    int requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
+    int keepaliveInterval = 
+      options.getInt ("Federation.Keepalive-Interval") * 1000;
 
     /* Change the worker timeout to make the I/O thread quit soon
      * when there's no connection to manage. */
@@ -97,8 +99,10 @@ public class Connector implements IoHandler, Closeable
     filterChain.addLast ("codec", FederationFrameCodec.FILTER);
     
     filterChain.addLast
-      ("requestTracker", 
-       new RequestTrackingFilter (requestTimeout, keepaliveInterval));
+      ("requestTracker", new RequestTrackingFilter (requestTimeout));
+    
+    filterChain.addLast
+      ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
     connect ();
   }
