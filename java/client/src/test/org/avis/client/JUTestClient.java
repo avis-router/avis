@@ -2,6 +2,8 @@ package org.avis.client;
 
 import java.io.IOException;
 
+import org.apache.mina.transport.socket.nio.SocketSessionConfig;
+
 import org.avis.common.ElvinURI;
 import org.avis.logging.Log;
 import org.avis.router.Router;
@@ -362,7 +364,7 @@ public class JUTestClient
     
     listener.waitForNotification (client, ntfn, WAIT_TIMEOUT);
     
-    listener.event = null;
+    listener.reset ();
   }
   
   /**
@@ -380,7 +382,7 @@ public class JUTestClient
     
     listener.waitForNoNotification ();
     
-    listener.event = null;
+    listener.reset ();
   }    
 
   /**
@@ -498,7 +500,7 @@ public class JUTestClient
     
     try
     {
-      new Elvin (new ElvinURI (ELVIN_URI), options, EMPTY_KEYS, EMPTY_KEYS);
+      new Elvin (ELVIN_URI, options);
       
       fail ("Failed to reject bogus options");
     } catch (ConnectionOptionsException ex)
@@ -511,6 +513,18 @@ public class JUTestClient
                          "Subscription.Max-Count",
                          "Totally.Bogus")));
     }
+    
+    // check TCP.Send-Immediately on client side
+    options = new ConnectionOptions ();
+    
+    options.set ("TCP.Send-Immediately", true);
+    
+    Elvin client = new Elvin (ELVIN_URI, options);
+    
+    assertTrue 
+      (((SocketSessionConfig)client.connection.getConfig ()).isTcpNoDelay ());
+    
+    client.close ();
   }
 
   @Test
