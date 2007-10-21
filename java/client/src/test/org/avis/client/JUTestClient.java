@@ -610,7 +610,11 @@ public class JUTestClient
     {
       System.out.println ("***** " + i);
       
-      modifySubInNotify ();
+      setup ();
+      
+      firehose ();
+      
+      cleanup ();
     }
   }
   
