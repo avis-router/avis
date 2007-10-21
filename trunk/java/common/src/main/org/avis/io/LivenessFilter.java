@@ -121,17 +121,9 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
     throws Exception
   {
     this.filterName = name;
-  }
-  
-  @Override
-  public void sessionCreated (NextFilter nextFilter, 
-                              IoSession session)
-  throws Exception
-  {
+    
     if (executor == null)
       executor = SharedExecutor.acquire ();
-    
-    nextFilter.sessionCreated (session);
   }
   
   @Override
@@ -139,7 +131,8 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
                            IoSession session)
     throws Exception
   {
-    SharedExecutor.release (executor);
+    if (SharedExecutor.release (executor))
+      executor = null;
 
     nextFilter.filterClose (session);
   }
