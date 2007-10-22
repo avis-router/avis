@@ -1222,7 +1222,8 @@ public final class Elvin implements Closeable
     if (reply.xid != request.xid)
     {
       throw new IOException
-        ("Protocol error: Transaction ID mismatch in reply from router");
+        ("Protocol error: Transaction ID mismatch in reply from router: " +
+         "reply XID " + reply.xid + " != request XID " + request.xid);
     } else if (request.replyType ().isAssignableFrom (reply.getClass ()))
     {
       return (R)reply;
