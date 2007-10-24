@@ -31,7 +31,7 @@ public final class GeneralNotificationEvent extends AvisEventObject
   public final Set<Subscription> insecureMatches;
   
   /**
-   * All subscriptions that securely matched the notification.
+   * All subscriptions that matched the notification.
    */
   public final Set<Subscription> matches;
 
