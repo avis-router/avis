@@ -1,5 +1,7 @@
 package org.avis.client;
 
+import java.util.Random;
+
 import java.io.IOException;
 
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
@@ -851,6 +853,71 @@ public class JUTestClient
     firehose.join (10000);
     
     firehoseClient.close ();
+  }
+  
+  @Test
+  public void multiThread ()
+    throws Exception
+  {
+    createServer ();
+    
+    Elvin client = new Elvin (ELVIN_URI);
+    
+    ClientThread thread1 = new ClientThread (client, 1);
+    ClientThread thread2 = new ClientThread (client, 2);
+    ClientThread thread3 = new ClientThread (client, 3);
+    
+    thread1.start ();
+    thread2.start ();
+    thread3.start ();
+    
+    sleep (20000);
+    
+    thread1.interrupt ();
+    thread2.interrupt ();
+    thread3.interrupt ();
+
+    client.close ();
+  }
+  
+  static class ClientThread extends Thread
+  {
+    private Elvin client;
+    private Random random;
+
+    public ClientThread (Elvin client, int number)
+    {
+      this.client = client;
+      this.random = new Random (number);
+    }
+    
+    @Override
+    public void run ()
+    {
+      try
+      {
+        client.subscribe ("require (number)");
+        
+        while (!interrupted () && client.isOpen ())
+        {
+          Subscription sub = 
+            client.subscribe ("number <= " + random.nextInt (5));
+          
+          Notification ntfn = new Notification ();
+          ntfn.set ("number", random.nextInt (5));
+          
+          client.send (ntfn);
+          
+          sub.remove ();
+        }
+      } catch (Exception ex)
+      {
+        if (!interrupted () && ex instanceof IOException)
+          Log.alarm ("Error in client thread", this, ex);
+        
+        interrupt ();
+      }
+    }
   }
   
   static void waitOn (Object lock)
