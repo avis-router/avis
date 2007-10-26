@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,6 +52,7 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
@@ -146,14 +146,6 @@ import static org.avis.util.Util.checkNotNull;
  */
 public final class Elvin implements Closeable
 {
-  private static final Runnable NULL_RUNNABLE = new Runnable ()
-  {
-    public void run()
-    {
-      // zip
-    }
-  };
-  
   ElvinURI routerUri;
   IoSession connection;
   ConnectionOptions connectionOptions;
@@ -173,6 +165,8 @@ public final class Elvin implements Closeable
   ExecutorService ioExecutor;
   ScheduledExecutorService callbackExecutor;
 
+  int callbacks;
+
   /**
    * lastReply is effectively a single-item queue for handling
    * responses to XID-based requests, using replyLock to synchronize
@@ -183,6 +177,7 @@ public final class Elvin implements Closeable
   
   ListenerList<CloseListener> closeListeners;
   ListenerList<GeneralNotificationListener> notificationListeners;
+
   
   /**
    * Create a new connection to an Elvin router.
@@ -537,18 +532,54 @@ public final class Elvin implements Closeable
   {
     if (closeListeners.hasListeners ())
     {
-      callbackExecutor.execute (new Runnable ()
+      queueCallback (new Callback ()
       {
-        public void run ()
+        @Override
+        public void callback ()
         {
-          synchronized (mutex ())
-          {
-            closeListeners.fire 
-              (new CloseEvent (this, reason, message, error));
-          }
+          closeListeners.fire 
+            (new CloseEvent (this, reason, message, error));
         }
       });
     }
+  }
+
+  Object callbackMutex = new Object ();
+  
+  private void queueCallback (Callback callback)
+  {
+    synchronized (callbackMutex)
+    {
+      callbacks++;
+    }
+    
+    callbackExecutor.execute (callback);
+  }
+  
+  abstract class Callback implements Runnable
+  {
+    public final void run ()
+    {
+      try
+      {
+        synchronized (mutex ())
+        {
+          callback ();
+        }
+      } finally
+      {
+        synchronized (callbackMutex)
+        {
+          if (callbacks == 0)
+            throw new IllegalStateException ("Too many finished callbacks");
+          
+          if (--callbacks == 0)
+            callbackMutex.notifyAll ();
+        }
+      }
+    }
+    
+    public abstract void callback ();
   }
 
   /**
@@ -558,19 +589,37 @@ public final class Elvin implements Closeable
   {
     if (!(currentThread () instanceof CallbackThread))
     {
-      try
+      synchronized (callbackMutex)
       {
-        callbackExecutor.submit (NULL_RUNNABLE).get (10, SECONDS);
-      } catch (TimeoutException ex)
-      {
-        warn ("Callbacks took too long to flush", this, ex);
-      } catch (Exception ex)
-      {
-        warn ("Error waiting for callbacks to flush", this, ex);
+        if (callbacks > 0)
+        {
+          if (!waitForNotify (callbackMutex, 10000))
+            warn ("Callbacks took too long to flush", this);
+        }
       }
     }
   }
   
+  private static boolean waitForNotify (Object object, int maxWait)
+  {
+    synchronized (object)
+    {
+      try
+      {
+        long start = currentTimeMillis ();
+        
+        object.wait (maxWait);
+        
+        return currentTimeMillis () - start < maxWait;
+      } catch (InterruptedException ex)
+      {
+        currentThread ().interrupt ();
+        
+        return false;
+      } 
+    }
+  }
+
   /**
    * Signal that this connection should be automatically closed when
    * the VM exits. This should be used with care since it creates a
@@ -848,8 +897,9 @@ public final class Elvin implements Closeable
   void subscribe (Subscription subscription)
     throws IOException
   {
-    synchronized (subscriptions)
-    {
+    // todo
+//    synchronized (subscriptions)
+//    {
       subscription.id =
         sendAndReceive
           (new SubAddRqst (subscription.subscriptionExpr,
@@ -867,7 +917,7 @@ public final class Elvin implements Closeable
         throw new IOException
           ("Protocol error: server issued duplicate subscription ID " +
            subscription.id);
-    }
+//    }
   }
 
   void unsubscribe (Subscription subscription)
@@ -1223,7 +1273,8 @@ public final class Elvin implements Closeable
     {
       throw new IOException
         ("Protocol error: Transaction ID mismatch in reply from router: " +
-         "reply XID " + reply.xid + " != request XID " + request.xid);
+         "reply " + className (reply) + " XID " + reply.xid + 
+         " != request " + className (request) + " XID " + request.xid);
     } else if (request.replyType ().isAssignableFrom (reply.getClass ()))
     {
       return (R)reply;
@@ -1254,8 +1305,12 @@ public final class Elvin implements Closeable
     synchronized (replyLock)
     {
       if (lastReply != null)
-        throw new IllegalStateException ("Reply buffer overflow");
-
+      {
+        throw new IllegalStateException 
+          ("Reply buffer overflow: " + className (reply) + 
+           " arrived with a " + className (lastReply) + " not collected");
+      }
+      
       lastReply = reply;
       
       replyLock.notify ();
@@ -1298,8 +1353,9 @@ public final class Elvin implements Closeable
      * Sync on subscriptions to block NotifyDeliver until subscribe () can
      * register the subscription ID.
      */
-    synchronized (subscriptions)
-    {
+     // todo
+//    synchronized (subscriptions)
+//    {
       /*
        * Notify callbacks are executed from callback thread, since
        * firing an event in this thread causes deadlock if a listener
@@ -1307,11 +1363,11 @@ public final class Elvin implements Closeable
        * will be waiting for a reply that cannot be processed since it
        * is busy calling this method.
        */
-      callbackExecutor.execute 
+      queueCallback
         (new NotifyCallback (message, 
                              subscriptionsFor (message.secureMatches), 
                              subscriptionsFor (message.insecureMatches)));
-    }
+//    }
   }
   
   private void handleDisconnect (Disconn disconn)
@@ -1400,7 +1456,7 @@ public final class Elvin implements Closeable
       throw new NotConnectedException ("Not connected to router");
   }
   
-  class NotifyCallback implements Runnable
+  class NotifyCallback extends Callback
   {
     private NotifyDeliver message;
     private Set<Subscription> secureMatches;
@@ -1415,28 +1471,23 @@ public final class Elvin implements Closeable
       this.insecureMatches = insecureMatches;
     }
 
-    public void run ()
+    @Override
+    public void callback ()
     {
-      synchronized (mutex ())
+      Notification ntfn = new Notification (message);
+      
+      if (notificationListeners.hasListeners ())
       {
-        if (isOpen ())
-        {
-          Notification ntfn = new Notification (message);
- 
-          if (notificationListeners.hasListeners ())
-          {
-            notificationListeners.fire
-              (new GeneralNotificationEvent (Elvin.this, ntfn,
-                                             insecureMatches,
-                                             secureMatches));
-          }
-          
-          Map<String, Object> data = new HashMap<String, Object> ();
-          
-          fireSubscriptionNotify (secureMatches, true, ntfn, data);
-          fireSubscriptionNotify (insecureMatches, false, ntfn, data);
-        }
-      }
+        notificationListeners.fire
+          (new GeneralNotificationEvent (Elvin.this, ntfn,
+                                         insecureMatches,
+                                         secureMatches));
+      }     
+        
+      Map<String, Object> data = new HashMap<String, Object> ();
+        
+      fireSubscriptionNotify (secureMatches, true, ntfn, data);
+      fireSubscriptionNotify (insecureMatches, false, ntfn, data);
     }
     
     /**
