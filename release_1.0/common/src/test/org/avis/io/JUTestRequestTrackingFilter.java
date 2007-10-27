@@ -2,15 +2,11 @@ package org.avis.io;
 
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
-import org.junit.Test;
-
-import static java.lang.Thread.sleep;
 
 import org.avis.io.messages.ConnRqst;
-import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
-import org.avis.io.messages.TestConn;
-import org.avis.logging.Log;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,11 +25,10 @@ public class JUTestRequestTrackingFilter
   {
     AcceptorConnectorSetup testSetup = new AcceptorConnectorSetup ();
     
-    RequestTrackingFilter requestTrackingFilter = 
-      new RequestTrackingFilter (2, Integer.MAX_VALUE);
+    RequestTrackingFilter filter = new RequestTrackingFilter (2000);
     
     testSetup.connectorConfig.getFilterChain ().addLast 
-      ("tracker", requestTrackingFilter);
+      ("tracker", filter);
     
     TestingIoHandler connectListener = new TestingIoHandler ();
     
@@ -70,47 +65,7 @@ public class JUTestRequestTrackingFilter
     
     testSetup.close ();
     
-    assertTrue (requestTrackingFilter.sharedResourcesDisposed ());
-  }
-  
-  /**
-   * Send a message check that RequestTracker generates a
-   * TestConn message and sends LivenessTimeout when no reponse.
-   */
-  @Test
-  public void livenessTimeout () 
-    throws Exception
-  {
-    Log.enableLogging (Log.TRACE, true);
-    Log.enableLogging (Log.DIAGNOSTIC, true);
-    
-    AcceptorConnectorSetup testSetup = new AcceptorConnectorSetup ();
-    
-    RequestTrackingFilter requestTrackingFilter = 
-      new RequestTrackingFilter (1, 1);
-    
-    testSetup.connectorConfig.getFilterChain ().addLast 
-      ("tracker", requestTrackingFilter);
-    
-    TestingIoHandler acceptorListener = new TestingIoHandler ();
-    TestingIoHandler connectListener = new TestingIoHandler ();
-    
-    testSetup.connect (acceptorListener, connectListener);
-    
-    // wait for TestConn message
-    acceptorListener.waitForMessage ();
-
-    assertEquals (TestConn.ID, acceptorListener.message.typeId ());
-    
-    sleep (1000);
-    
-    // wait for LivenessTimeout
-    connectListener.waitForMessage ();
-    assertEquals (LivenessFailureMessage.ID, connectListener.message.typeId ());
-    
-    testSetup.close ();
-    
-    assertTrue (requestTrackingFilter.sharedResourcesDisposed ());
+    assertTrue (SharedExecutor.sharedExecutorDisposed ());
   }
   
   static class NullAcceptorListener 

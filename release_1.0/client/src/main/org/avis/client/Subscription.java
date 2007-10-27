@@ -54,6 +54,8 @@ public final class Subscription
       if (id == 0)
         return;
       
+      checkActive ();
+      
       elvin.unsubscribe (this);
       
       id = 0;
@@ -64,7 +66,7 @@ public final class Subscription
      * that client does not see callbacks after it has called
      * remove ().
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }
   
   /**
@@ -84,13 +86,13 @@ public final class Subscription
   {
     synchronized (elvin)
     {
-      return id != 0;
+      return id != 0 && elvin.isOpen ();
     }
   }
 
-  private void checkLive ()
+  private void checkActive ()
   {
-    if (id == 0)
+    if (!isActive ())
       throw new IllegalStateException ("Subscription is not active");
   }
   
@@ -131,7 +133,7 @@ public final class Subscription
     
     synchronized (elvin)
     {
-      checkLive ();
+      checkActive ();
 
       if (!newSubscriptionExpr.equals (subscriptionExpr))
       {
@@ -146,7 +148,7 @@ public final class Subscription
      * that client does not see callbacks for old subscription after
      * it has changed it.
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }
 
   /**
@@ -171,7 +173,7 @@ public final class Subscription
     
     synchronized (elvin)
     {
-      checkLive ();
+      checkActive ();
       
       if (newMode != secureMode)
       {
@@ -186,7 +188,7 @@ public final class Subscription
      * that client does not see callbacks for subscription after it
      * has changed it.
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }     
   
   /**
@@ -217,7 +219,7 @@ public final class Subscription
     
     synchronized (elvin)
     {
-      checkLive ();
+      checkActive ();
       
       elvin.modifyKeys (this, newKeys);
       
@@ -229,7 +231,7 @@ public final class Subscription
      * that client does not see callbacks for old subscription after
      * it has changed it.
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }
 
   /**
