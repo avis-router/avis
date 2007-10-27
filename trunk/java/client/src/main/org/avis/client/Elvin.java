@@ -31,6 +31,7 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
+import org.avis.common.RuntimeInterruptedException;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
 import org.avis.io.LivenessFilter;
@@ -504,7 +505,6 @@ public final class Elvin implements Closeable
       fireCloseEvent (reason, message, error);
       
       ioExecutor.shutdown ();
-      callbackExecutor.shutdown ();
     }
     
     Thread.interrupted ();
@@ -513,12 +513,15 @@ public final class Elvin implements Closeable
     {
       if (!ioExecutor.awaitTermination (60000, TimeUnit.MILLISECONDS))
         warn ("IO executor took too long to finish", this);
-    } catch (InterruptedException ex1)
+    } catch (InterruptedException ex)
     {
-      // ok
+      currentThread ().interrupt ();
+      
+      throw new RuntimeInterruptedException (ex);
     }
     
     flushCallbacks ();
+    callbackExecutor.shutdown ();
   }
   
   void fireCloseEvent (final int reason, final String message, 
@@ -544,10 +547,10 @@ public final class Elvin implements Closeable
   {
     synchronized (callbackMutex)
     {
+      callbackExecutor.execute (callback);
+     
       callbacks++;
-    }
-    
-    callbackExecutor.execute (callback);
+    }    
   }
   
   abstract class Callback implements Runnable
@@ -588,9 +591,7 @@ public final class Elvin implements Closeable
         if (callbacks > 0)
         {
           if (!waitForNotify (callbackMutex, 10000))
-          {
             warn ("Callbacks took too long to flush", this, new Error ());
-          }
         }
       }
     }
@@ -611,7 +612,7 @@ public final class Elvin implements Closeable
       {
         currentThread ().interrupt ();
         
-        return false;
+        throw new RuntimeInterruptedException (ex);
       } 
     }
   }
@@ -1221,7 +1222,7 @@ public final class Elvin implements Closeable
    *           error occurs.
    */
   <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
-    throws IOException
+    throws IOException, RuntimeInterruptedException
   {
     send (request);
    
@@ -1233,7 +1234,7 @@ public final class Elvin implements Closeable
    * for a reply message to arrive from the router.
    */
   XidMessage receiveReply ()
-    throws IOException
+    throws IOException, RuntimeInterruptedException
   {
     synchronized (replyLock)
     {
@@ -1244,7 +1245,12 @@ public final class Elvin implements Closeable
           replyLock.wait (receiveTimeout);
         } catch (InterruptedException ex)
         {
-          throw new RuntimeException (ex);
+          // clear reply and continue interrupt
+          lastReply = null;
+          
+          currentThread ().interrupt ();
+          
+          throw new RuntimeInterruptedException (ex);
         }
       }
     
