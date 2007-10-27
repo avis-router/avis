@@ -5,12 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -18,9 +13,8 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
 import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
@@ -30,14 +24,17 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
+import org.avis.common.RuntimeInterruptedException;
 import org.avis.io.ClientFrameCodec;
-import org.avis.io.messages.ConfConn;
+import org.avis.io.ExceptionMonitorLogger;
+import org.avis.io.LivenessFilter;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DisconnRqst;
 import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.ErrorMessage;
+import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
@@ -47,18 +44,13 @@ import org.avis.io.messages.SecRqst;
 import org.avis.io.messages.SubAddRqst;
 import org.avis.io.messages.SubDelRqst;
 import org.avis.io.messages.SubModRqst;
-import org.avis.io.messages.TestConn;
 import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
-import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_PROTOCOL_VIOLATION;
@@ -147,44 +139,22 @@ import static org.avis.util.Util.checkNotNull;
  */
 public final class Elvin implements Closeable
 {
-  private static final Runnable NULL_RUNNABLE = new Runnable ()
-  {
-    public void run()
-    {
-      // zip
-    }
-  };
-  
   ElvinURI routerUri;
   IoSession connection;
   ConnectionOptions connectionOptions;
+  int receiveTimeout;
   AtomicBoolean connectionOpen;
   boolean elvinSessionEstablished;
   Map<Long, Subscription> subscriptions;
+  Callbacks callbacks;
   
   Keys notificationKeys;
   Keys subscriptionKeys;
- 
-  /*
-   * The following fields are used for liveness checking.
-   * lastMessageTime is updated to the current time on any received
-   * message. livenessFuture is a scheduled future on the
-   * callbackExecutor that is either periodically checking liveness or
-   * waiting for a reply to a TestConn sent due to livenessTimeout
-   * expiring with no messages from the router.
-   */
-  int receiveTimeout;
-  int livenessTimeout;
-  long lastMessageTime;
-  ScheduledFuture<?> livenessFuture;
-  
+
   /**
-   * We use a multi-thread I/O pool and a single-thread
-   * callback/scheduler pool, which ensures callbacks are executed
-   * sequentially.
+   * A multi-thread pool for handling MINA I/O.
    */
   ExecutorService ioExecutor;
-  ScheduledExecutorService callbackExecutor;
 
   /**
    * lastReply is effectively a single-item queue for handling
@@ -374,9 +344,8 @@ public final class Elvin implements Closeable
         (GeneralNotificationListener.class, "notificationReceived", 
          GeneralNotificationEvent.class);
     this.replyLock = new Object ();
-    this.lastMessageTime = currentTimeMillis ();
+    this.callbacks = new Callbacks (mutex ());
     this.receiveTimeout = 10000;
-    this.livenessTimeout = 60000;
     
     if (!routerUri.protocol.equals (defaultProtocol ()))
     {
@@ -390,17 +359,6 @@ public final class Elvin implements Closeable
     checkNotNull (connectionOptions, "Connection options");
     
     this.ioExecutor = newCachedThreadPool ();
-    
-    // create callbackExecutor that uses a single CallbackThread
-    this.callbackExecutor =
-      newScheduledThreadPool
-        (1, new ThreadFactory ()
-            {
-              public Thread newThread (Runnable target)
-              {
-                return new CallbackThread (target);
-              }
-            });
     
     try
     {
@@ -419,8 +377,6 @@ public final class Elvin implements Closeable
       
       if (!rejectedOptions.isEmpty ())
         throw new ConnectionOptionsException (options, rejectedOptions);
-      
-      scheduleLivenessCheck ();
     } catch (IOException ex)
     {
       close ();
@@ -446,6 +402,13 @@ public final class Elvin implements Closeable
       
       connectorConfig.getFilterChain ().addLast 
         ("codec", ClientFrameCodec.FILTER);
+      
+      connectorConfig.getFilterChain ().addLast 
+        ("liveness", 
+         new LivenessFilter (callbacks.executor (), 60000, receiveTimeout));
+      
+      // route MINA exceptions to log
+      ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
       
       ConnectFuture connectFuture =
         connector.connect
@@ -496,12 +459,13 @@ public final class Elvin implements Closeable
      * sessionClosed () event triggered by this method. */
     if (!connectionOpen.getAndSet (false))
       return;
-
+    
     synchronized (this)
     {
-      unscheduleLivenessCheck ();
-      
-      if (isOpen ())
+      // force this here, so filter cannot block callback executor shutdown
+      LivenessFilter.dispose (connection);
+
+      if (connection.isConnected ())
       {
         if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
         {
@@ -515,37 +479,17 @@ public final class Elvin implements Closeable
         }
         
         connection.close ();
-        connection = null;
       }
-  
-      // de-activate subscriptions
-      for (Subscription subscription : subscriptions.values ())
-        subscription.id = 0;
       
+      connection = null;
+
       // any callbacks will block until this sync section ends
       fireCloseEvent (reason, message, error);
       
       ioExecutor.shutdown ();
-      callbackExecutor.shutdown ();
     }
     
-    // wait for callback events to flush if we're not already in a callback
-    if (!(currentThread () instanceof CallbackThread))
-    {
-      /* todo work out why interrupted flag is set when called from
-       * MINA IO. For now just clear the flag, or awaitTermination ()
-       * throws a wobbly. */
-      Thread.interrupted ();
-      
-      try
-      {
-        if (!callbackExecutor.awaitTermination (receiveTimeout, MILLISECONDS))
-          warn ("Shutdown callbacks took too long to finish", this);
-      } catch (InterruptedException ex)
-      {
-        warn ("Interrupted waiting for shutdown callbacks", this, ex);
-      }
-    }
+    callbacks.shutdown ();
   }
   
   void fireCloseEvent (final int reason, final String message, 
@@ -553,37 +497,14 @@ public final class Elvin implements Closeable
   {
     if (closeListeners.hasListeners ())
     {
-      callbackExecutor.execute (new Runnable ()
+      callbacks.queue (new Runnable ()
       {
         public void run ()
         {
-          synchronized (mutex ())
-          {
-            closeListeners.fire 
-              (new CloseEvent (this, reason, message, error));
-          }
+          closeListeners.fire 
+            (new CloseEvent (this, reason, message, error));
         }
       });
-    }
-  }
-
-  /**
-   * Wait for up to 10 seconds for any queued callbacks to be called.
-   */
-  void flushCallbacks ()
-  {
-    if (!(currentThread () instanceof CallbackThread))
-    {
-      try
-      {
-        callbackExecutor.submit (NULL_RUNNABLE).get (10, SECONDS);
-      } catch (TimeoutException ex)
-      {
-        warn ("Callbacks took too long to flush", this, ex);
-      } catch (Exception ex)
-      {
-        warn ("Error waiting for callbacks to flush", this, ex);
-      }
     }
   }
   
@@ -619,7 +540,7 @@ public final class Elvin implements Closeable
    */
   public synchronized boolean isOpen ()
   {
-    return connection != null && connection.isConnected ();
+    return connectionOpen.get () && connection.isConnected ();
   }
   
   /**
@@ -664,6 +585,8 @@ public final class Elvin implements Closeable
       throw new IllegalArgumentException
         ("Timeout cannot be < 0: " + receiveTimeout);
     
+    LivenessFilter.setReceiveTimeoutFor (connection, receiveTimeout);
+    
     this.receiveTimeout = receiveTimeout;
   }
   
@@ -672,7 +595,7 @@ public final class Elvin implements Closeable
    */
   public int livenessTimeout ()
   {
-    return livenessTimeout;
+    return LivenessFilter.filterFor (connection).livenessTimeout ();
   }
   
   /**
@@ -689,84 +612,7 @@ public final class Elvin implements Closeable
    */
   public synchronized void setLivenessTimeout (int livenessTimeout)
   {
-    if (livenessTimeout < 1000)
-      throw new IllegalArgumentException
-        ("Timeout cannot be < 1000: " + livenessTimeout);
-    
-    this.livenessTimeout = livenessTimeout;
-
-    scheduleLivenessCheck ();
-  }
-  
-  /**
-   * Schedule a liveness checking task to run in livenessTimeout
-   * milliseconds.
-   */
-  void scheduleLivenessCheck ()
-  {
-    Runnable livenessCheck = new Runnable ()
-    {
-      public void run ()
-      {
-        synchronized (mutex ())
-        {
-          if (isOpen ())
-          {
-            if (currentTimeMillis () - lastMessageTime >= livenessTimeout)
-              scheduleConnectionTest ();
-            else
-              scheduleLivenessCheck ();
-          }
-        }
-      }
-    };
-    
-    unscheduleLivenessCheck ();
-    
-    livenessFuture =
-      callbackExecutor.schedule
-        (livenessCheck,
-         livenessTimeout - (currentTimeMillis () - lastMessageTime),
-         MILLISECONDS);
-  }
-
-  void unscheduleLivenessCheck ()
-  {
-    if (livenessFuture != null)
-      livenessFuture.cancel (false);
-  }
-
-  /**
-   * Send a TestConn message and schedule a liveness checking task to
-   * run in receiveTimeout milliseconds. If no message is seen in this
-   * period, the connection is closed.
-   */
-  void scheduleConnectionTest ()
-  {
-    try
-    {
-      send (TestConn.INSTANCE);
-      
-      Runnable connCheck = new Runnable ()
-      {
-        public void run ()
-        {
-          /* Note use of ">" not ">=" below: in tests on a fast multi-core
-           * machine, server may respond in 0 measurable millis */
-          if (currentTimeMillis () - lastMessageTime > receiveTimeout)
-            close (REASON_ROUTER_STOPPED_RESPONDING, "Router stopped responding");
-          else
-            scheduleLivenessCheck ();
-        }
-      };
-        
-      livenessFuture = 
-        callbackExecutor.schedule (connCheck, receiveTimeout, MILLISECONDS);
-    } catch (IOException ex)
-    {
-      close (REASON_ROUTER_STOPPED_RESPONDING,
-             "IO error checking router connection: " + ex.getMessage ());
-    }
+    LivenessFilter.setLivenessTimeoutFor (connection, livenessTimeout);
   }
 
   /**
@@ -939,7 +785,25 @@ public final class Elvin implements Closeable
   void subscribe (Subscription subscription)
     throws IOException
   {
+    /*
+     * There is a small window between sendAndReceive () and
+     * subscriptions.put () where a NotifyDeliver could arrive before
+     * we have registered the sub ID. Thus, we pre-register the sub
+     * against (reserved) ID 0, which subscriptionFor () will use as a
+     * fallback if it can't find an ID. Since these shenanigans occur
+     * inside the mutex, the client will not see the halfway
+     * subscribed state.
+     */
+ 
+    // pre-register subscription
     synchronized (subscriptions)
+    {
+      if (subscriptions.put (0L, subscription) != null)
+        throw new IllegalStateException 
+          ("Internal error: more than one pre-registered subscription");
+    }
+
+    try
     {
       subscription.id =
         sendAndReceive
@@ -947,17 +811,21 @@ public final class Elvin implements Closeable
                            subscription.keys,
                            subscription.acceptInsecure ())).subscriptionId;
       
-      /*
-       * There is a small window right here where a NotifyDeliver
-       * could arrive before we have registered the sub ID. Both
-       * handleNotifyDeliver () and this method sync on subscriptions,
-       * to avoid missing notifications in this window.
-       */
-      
-      if (subscriptions.put (subscription.id, subscription) != null)
-        throw new IOException
-          ("Protocol error: server issued duplicate subscription ID " +
-           subscription.id);
+      // register real ID
+      synchronized (subscriptions)
+      {
+        if (subscriptions.put (subscription.id, subscription) != null)
+          throw new IOException
+            ("Protocol error: server issued duplicate subscription ID " +
+             subscription.id);
+      }
+    } finally
+    {
+      // remove pre-registration
+      synchronized (subscriptions)
+      {
+        subscriptions.remove (0L);
+      }
     }
   }
 
@@ -966,9 +834,12 @@ public final class Elvin implements Closeable
   {
     sendAndReceive (new SubDelRqst (subscription.id));
 
-    if (subscriptions.remove (subscription.id) != subscription)
-      throw new IllegalStateException
-        ("Internal error: invalid subscription ID " + subscription.id);
+    synchronized (subscriptions)
+    {
+      if (subscriptions.remove (subscription.id) != subscription)
+        throw new IllegalStateException
+          ("Internal error: invalid subscription ID " + subscription.id);
+    }
   }
 
   void modifyKeys (Subscription subscription, Keys newKeys)
@@ -1008,19 +879,6 @@ public final class Elvin implements Closeable
   public synchronized boolean hasSubscription (Subscription subscription)
   {
     return subscriptions.containsValue (subscription);
-  }
-  
-  /**
-   * Lookup the subscription for an ID or throw an exception.
-   */
-  Subscription subscriptionFor (long id)
-  {
-    Subscription subscription = subscriptions.get (id);
-    
-    if (subscription != null)
-      return subscription;
-    else
-      throw new IllegalArgumentException ("No subscription for ID " + id);
   }
   
   /**
@@ -1154,7 +1012,7 @@ public final class Elvin implements Closeable
    * @see #setSubscriptionKeys(Keys)
    * @see #setKeys(Keys, Keys)
    */
-  public synchronized void setNotificationKeys (Keys newNotificationKeys)
+  public void setNotificationKeys (Keys newNotificationKeys)
     throws IOException
   {
     setKeys (newNotificationKeys, subscriptionKeys);
@@ -1183,7 +1041,7 @@ public final class Elvin implements Closeable
    * @see #setNotificationKeys(Keys)
    * @see #setKeys(Keys, Keys)
    */
-  public synchronized void setSubscriptionKeys (Keys newSubscriptionKeys)
+  public void setSubscriptionKeys (Keys newSubscriptionKeys)
     throws IOException
   {
     setKeys (notificationKeys, newSubscriptionKeys);
@@ -1207,27 +1065,29 @@ public final class Elvin implements Closeable
    * 
    * @throws IOException if an IO error occurs.
    */
-  public synchronized void setKeys (Keys newNotificationKeys,
-                                    Keys newSubscriptionKeys)
+  public void setKeys (Keys newNotificationKeys, Keys newSubscriptionKeys)
     throws IOException
   {
     checkNotNull (newNotificationKeys, "Notification keys");
     checkNotNull (newSubscriptionKeys, "Subscription keys");
     
-    Keys.Delta deltaNotificationKeys =
-      notificationKeys.deltaFrom (newNotificationKeys);
-    Keys.Delta deltaSubscriptionKeys =
-      subscriptionKeys.deltaFrom (newSubscriptionKeys);
-
-    if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
+    synchronized (this)
     {
-      sendAndReceive
-        (new SecRqst
-           (deltaNotificationKeys.added, deltaNotificationKeys.removed,
-            deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
-      
-      this.notificationKeys = newNotificationKeys;
-      this.subscriptionKeys = newSubscriptionKeys;
+      Keys.Delta deltaNotificationKeys =
+        notificationKeys.deltaFrom (newNotificationKeys);
+      Keys.Delta deltaSubscriptionKeys =
+        subscriptionKeys.deltaFrom (newSubscriptionKeys);
+  
+      if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
+      {
+        sendAndReceive
+          (new SecRqst
+             (deltaNotificationKeys.added, deltaNotificationKeys.removed,
+              deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
+        
+        this.notificationKeys = newNotificationKeys;
+        this.subscriptionKeys = newSubscriptionKeys;
+      }
     }
     
     /*
@@ -1235,7 +1095,7 @@ public final class Elvin implements Closeable
      * that client does not see callbacks for old keys after this is
      * called.
      */
-    flushCallbacks ();
+    callbacks.flush ();
   }
   
   void send (Message message)
@@ -1261,7 +1121,7 @@ public final class Elvin implements Closeable
    *           error occurs.
    */
   <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
-    throws IOException
+    throws IOException, RuntimeInterruptedException
   {
     send (request);
    
@@ -1273,7 +1133,7 @@ public final class Elvin implements Closeable
    * for a reply message to arrive from the router.
    */
   XidMessage receiveReply ()
-    throws IOException
+    throws IOException, RuntimeInterruptedException
   {
     synchronized (replyLock)
     {
@@ -1284,7 +1144,12 @@ public final class Elvin implements Closeable
           replyLock.wait (receiveTimeout);
         } catch (InterruptedException ex)
         {
-          throw new RuntimeException (ex);
+          // clear reply and continue interrupt
+          lastReply = null;
+          
+          currentThread ().interrupt ();
+          
+          throw new RuntimeInterruptedException (ex);
         }
       }
     
@@ -1326,7 +1191,9 @@ public final class Elvin implements Closeable
     if (reply.xid != request.xid)
     {
       throw new IOException
-        ("Protocol error: Transaction ID mismatch in reply from router");
+        ("Protocol error: Transaction ID mismatch in reply from router: " +
+         "reply " + className (reply) + " XID " + reply.xid + 
+         " != request " + className (request) + " XID " + request.xid);
     } else if (request.replyType ().isAssignableFrom (reply.getClass ()))
     {
       return (R)reply;
@@ -1352,13 +1219,29 @@ public final class Elvin implements Closeable
    * Handle replies to client-initiated messages by delivering them
    * back to the waiting thread.
    */
-  void handleReply (XidMessage reply)
+  void deliverReply (XidMessage reply)
   {
     synchronized (replyLock)
     {
       if (lastReply != null)
-        throw new IllegalStateException ("Reply buffer overflow");
-
+      {
+        if (!connectionOpen.get ())
+        {
+          /*
+           * Closing down in JUTestClient.multiThread () gets multiple
+           * SubReply's after connection shutdown. For now, we just
+           * bounce them.
+           */ 
+          diagnostic ("Ignored overflow " + className (reply) + 
+                      " after close", this);
+        } else
+        {
+          throw new IllegalStateException 
+            ("Reply buffer overflow: " + className (reply) + 
+             " arrived with a " + className (lastReply) + " not collected");
+        }
+      }
+      
       lastReply = reply;
       
       replyLock.notify ();
@@ -1386,21 +1269,31 @@ public final class Elvin implements Closeable
       case ErrorMessage.ID:
         handleErrorMessage ((ErrorMessage)message);
         break;
+      case LivenessFailureMessage.ID:
+        close (REASON_ROUTER_STOPPED_RESPONDING, "Router stopped responding");
+        break;
       default:
         // todo should probably fire an event for this
         warn ("Unexpected server message: " + message, this);
     }
   }
 
-  private void handleErrorMessage (ErrorMessage message)
+  private void handleNotifyDeliver (NotifyDeliver message)
   {
-    close (REASON_PROTOCOL_VIOLATION, 
-           "Protocol error in communication with router: " + 
-           message.formattedMessage (),
-           message.error);
+    /*
+     * Notify callbacks are executed from the callback thread, since
+     * firing an event in this thread causes deadlock if a listener
+     * triggers a receive (), at which point the IO processor thread
+     * will be waiting for a reply that cannot be processed since it
+     * is busy calling this method.
+     */
+    callbacks.queue
+      (new NotifyCallback (message, 
+                           subscriptionsFor (message.secureMatches), 
+                           subscriptionsFor (message.insecureMatches)));
   }
-
-  void handleDisconnect (Disconn disconn)
+  
+  private void handleDisconnect (Disconn disconn)
   {
     int reason;
     String message;
@@ -1430,55 +1323,18 @@ public final class Elvin implements Closeable
     close (reason, message);
   }
   
-  void handleNotifyDeliver (NotifyDeliver message)
+  private void handleErrorMessage (ErrorMessage message)
   {
-    /*
-     * Sync on subscriptions to block NotifyDeliver until subscribe () can
-     * register the subscription ID.
-     */
-    synchronized (subscriptions)
-    {
-      /*
-       * We fire notify callbacks from a callback thread, since firing
-       * an event in this thread would cause deadlock if a listener
-       * triggers a receive (), at which point the IO processor thread
-       * will be waiting for a reply that cannot be processed since it
-       * is busy calling this method.
-       */
-      callbackExecutor.execute 
-        (new NotifyCallback (message, 
-                             subscriptionSetFor (message.secureMatches), 
-                             subscriptionSetFor (message.insecureMatches)));
-    }
-  }
-
-  /**
-   * Fire notification events for subscription listeners.
-   * 
-   * @param matches The subscription ID's
-   * @param secure Whether the notification was secure.
-   * @param ntfn The notification.
-   * @param data General data attached to the event for the client's use.
-   */
-  void fireSubscriptionNotify (Set<Subscription> matches,
-                               boolean secure,
-                               Notification ntfn,
-                               Map<String, Object> data)
-  {
-    for (Subscription subscription : matches)
-    {
-      if (subscription.hasListeners ())
-      {
-        subscription.notifyListeners
-          (new NotificationEvent (subscription, ntfn, secure, data));
-      }
-    }
+    close (REASON_PROTOCOL_VIOLATION, 
+           "Protocol error in communication with router: " + 
+           message.formattedMessage (),
+           message.error);
   }
   
   /**
    * Generate a subscription set for a given set of ID's
    */
-  Set<Subscription> subscriptionSetFor (long [] ids)
+  Set<Subscription> subscriptionsFor (long [] ids)
   {
     if (ids.length == 0)
       return emptySet ();
@@ -1493,10 +1349,31 @@ public final class Elvin implements Closeable
       } catch (IllegalArgumentException ex)
       {
         warn ("Received notification for invalid subscription ID " + id, this);
+        
+        ex.printStackTrace ();
       }
     }
     
     return subscriptionSet;
+  }
+  
+  /**
+   * Lookup the subscription for an ID or throw an exception.
+   */
+  Subscription subscriptionFor (long id)
+  {
+    synchronized (subscriptions)
+    {
+      Subscription subscription = subscriptions.get (id);
+      
+      if (subscription == null)
+        subscription = subscriptions.get (0L);
+      
+      if (subscription != null)
+        return subscription;
+      else
+        throw new IllegalArgumentException ("No subscription for ID " + id);
+    }
   }
   
   void checkConnected ()
@@ -1507,14 +1384,14 @@ public final class Elvin implements Closeable
     if (session == null)
       throw new NotConnectedException ("Connection is closed");
     else if (!session.isConnected ())
-      throw new NotConnectedException ("Cannot operate while not connected to router");
+      throw new NotConnectedException ("Not connected to router");
   }
   
-  private class NotifyCallback implements Runnable
+  class NotifyCallback implements Runnable
   {
-    private final NotifyDeliver message;
-    private final Set<Subscription> secureMatches;
-    private final Set<Subscription> insecureMatches;
+    private NotifyDeliver message;
+    private Set<Subscription> secureMatches;
+    private Set<Subscription> insecureMatches;
 
     public NotifyCallback (NotifyDeliver message,
                            Set<Subscription> secureMatches,
@@ -1527,24 +1404,41 @@ public final class Elvin implements Closeable
 
     public void run ()
     {
-      synchronized (mutex ())
+      Notification ntfn = new Notification (message);
+      
+      if (notificationListeners.hasListeners ())
       {
-        if (isOpen ())
+        notificationListeners.fire
+          (new GeneralNotificationEvent (Elvin.this, ntfn,
+                                         insecureMatches,
+                                         secureMatches));
+      }     
+        
+      Map<String, Object> data = new HashMap<String, Object> ();
+        
+      fireSubscriptionNotify (secureMatches, true, ntfn, data);
+      fireSubscriptionNotify (insecureMatches, false, ntfn, data);
+    }
+    
+    /**
+     * Fire notification events for subscription listeners.
+     * 
+     * @param matches The subscription ID's
+     * @param secure Whether the notification was secure.
+     * @param ntfn The notification.
+     * @param data General data attached to the event for the client's use.
+     */
+    private void fireSubscriptionNotify (Set<Subscription> matches,
+                                         boolean secure,
+                                         Notification ntfn,
+                                         Map<String, Object> data)
+    {
+      for (Subscription subscription : matches)
+      {
+        if (subscription.hasListeners ())
         {
-          Notification ntfn = new Notification (message);
- 
-          if (notificationListeners.hasListeners ())
-          {
-            notificationListeners.fire
-              (new GeneralNotificationEvent (Elvin.this, ntfn,
-                                             insecureMatches,
-                                             secureMatches));
-          }
-          
-          Map<String, Object> data = new HashMap<String, Object> ();
-          
-          fireSubscriptionNotify (secureMatches, true, ntfn, data);
-          fireSubscriptionNotify (insecureMatches, false, ntfn, data);
+          subscription.notifyListeners
+            (new NotificationEvent (subscription, ntfn, secure, data));
         }
       }
     }
@@ -1559,7 +1453,10 @@ public final class Elvin implements Closeable
     public void exceptionCaught (IoSession session, Throwable cause)
       throws Exception
     {
-      internalError ("Unexpected exception in Elvin client", this, cause);
+      if (cause instanceof InterruptedException)
+        diagnostic ("MINA I/O thread interrupted", this);
+      else
+        internalError ("Unexpected exception in Elvin client", this, cause);
     }
 
     /**
@@ -1572,15 +1469,18 @@ public final class Elvin implements Closeable
       if (shouldLog (TRACE))
         trace ("Client got message: " + message, this);
      
-      lastMessageTime = currentTimeMillis ();
-      
-      if (message == ConfConn.INSTANCE)
-        return;
-      
-      if (message instanceof XidMessage)
-        handleReply ((XidMessage)message);
-      else if (connectionOpen.get ())
-        handleMessage ((Message)message);
+      try
+      {
+        if (message instanceof XidMessage)
+          deliverReply ((XidMessage)message);
+        else if (connectionOpen.get ())
+          handleMessage ((Message)message);
+      } catch (RuntimeInterruptedException ex)
+      {
+        currentThread ().interrupt ();
+        
+        throw (InterruptedException)ex.getCause ();
+      }
     }
     
     @Override
@@ -1589,27 +1489,6 @@ public final class Elvin implements Closeable
     {
       close (REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY,
              "Connection to router closed without warning");
-    }
-  }
-
-  /**
-   * The thread used for all callbacks in the callbackExecutor.
-   */
-  static class CallbackThread
-    extends Thread implements UncaughtExceptionHandler
-  {
-    private static final AtomicInteger counter = new AtomicInteger ();
-    
-    public CallbackThread (Runnable target)
-    {
-      super (target, "Elvin callback thread " + counter.getAndIncrement ());
-      
-      setUncaughtExceptionHandler (this);
-    }
-    
-    public void uncaughtException (Thread t, Throwable ex)
-    {
-      warn ("Uncaught exception in Elvin callback", Elvin.class, ex);
     }
   }
 }

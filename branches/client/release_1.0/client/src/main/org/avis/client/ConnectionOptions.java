@@ -335,7 +335,7 @@ public final class ConnectionOptions
     
     if (intValue < 0 || intValue > 1)
       throw new IllegalArgumentException 
-        ("\"" + name +"\" is not an boolean-valued integer: " + value);
+        ("\"" + name +"\" is not a boolean-valued integer: " + value);
     
     return intValue == 1;
   }

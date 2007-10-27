@@ -1,6 +1,12 @@
 package org.avis.client;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import java.io.IOException;
+
+import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.common.ElvinURI;
 import org.avis.logging.Log;
@@ -362,7 +368,7 @@ public class JUTestClient
     
     listener.waitForNotification (client, ntfn, WAIT_TIMEOUT);
     
-    listener.event = null;
+    listener.reset ();
   }
   
   /**
@@ -380,7 +386,7 @@ public class JUTestClient
     
     listener.waitForNoNotification ();
     
-    listener.event = null;
+    listener.reset ();
   }    
 
   /**
@@ -498,7 +504,7 @@ public class JUTestClient
     
     try
     {
-      new Elvin (new ElvinURI (ELVIN_URI), options, EMPTY_KEYS, EMPTY_KEYS);
+      new Elvin (ELVIN_URI, options);
       
       fail ("Failed to reject bogus options");
     } catch (ConnectionOptionsException ex)
@@ -511,6 +517,18 @@ public class JUTestClient
                          "Subscription.Max-Count",
                          "Totally.Bogus")));
     }
+    
+    // check TCP.Send-Immediately on client side
+    options = new ConnectionOptions ();
+    
+    options.set ("TCP.Send-Immediately", true);
+    
+    Elvin client = new Elvin (ELVIN_URI, options);
+    
+    assertTrue 
+      (((SocketSessionConfig)client.connection.getConfig ()).isTcpNoDelay ());
+    
+    client.close ();
   }
 
   @Test
@@ -596,7 +614,13 @@ public class JUTestClient
     {
       System.out.println ("***** " + i);
       
-      modifySubInNotify ();
+      setup ();
+      
+      //Log.enableLogging (Log.TRACE, true);
+      firehose ();
+      //multiThread ();
+
+      cleanup ();
     }
   }
   
@@ -627,7 +651,7 @@ public class JUTestClient
       client.subscribe ("require (hello)");
       
       fail ("Client did not reject attempt to use closed connection");
-    } catch (IOException ex)
+    } catch (NotConnectedException ex)
     {
       // ok
     }
@@ -635,14 +659,8 @@ public class JUTestClient
     client.close ();
   }
   
-  /**
-   * Test close listener support.
-   * 
-   * todo very rarely get a "Shutdown callbacks took too long to
-   * finish" on closing client. suspect deadlock condition possible.
-   */
   @Test
-  public void closeListener ()
+  public void clientClose ()
     throws Exception
   {
     createServer ();
@@ -658,10 +676,17 @@ public class JUTestClient
     // close event must be fired before close () returns
     assertNotNull (listener.event);
     assertEquals (REASON_CLIENT_SHUTDOWN, listener.event.reason);
+  }
+  
+  @Test
+  public void serverClose ()
+    throws Exception
+  {
+    createServer ();
     
     // server shuts down cleanly
-    client = new Elvin (ELVIN_URI);
-    listener = new TestCloseListener ();
+    Elvin client = new Elvin (ELVIN_URI);
+    TestCloseListener listener = new TestCloseListener ();
     
     client.addCloseListener (listener);
     
@@ -679,22 +704,29 @@ public class JUTestClient
     listener.event = null;
     client.close ();
     assertNull (listener.event);
-    
-    // simulate server crash
+  }
+  
+  @Test
+  public void liveness () 
+    throws Exception
+  {
     createServer ();
+
+    Elvin client = new Elvin (ELVIN_URI);
     
-    client = new Elvin (ELVIN_URI);
-    listener = new TestCloseListener ();
-    
-    client.setReceiveTimeout (1000);
-    client.setLivenessTimeout (1000);
+    TestCloseListener listener = new TestCloseListener ();
     
     client.addCloseListener (listener);
+
+    client.setReceiveTimeout (1000);
+    client.setLivenessTimeout (1000);
     
     // check liveness check keeps connection open
     sleep (3000);
     
-    assertNull (listener.event);
+    assertNull (listener.event == null ? "" : 
+                "Unexpected close event " + listener.event.message, 
+                listener.event);
     assertTrue (client.isOpen ());
     
     // hang server
@@ -800,23 +832,24 @@ public class JUTestClient
       }
     };
     
-    // Log.enableLogging (Log.TRACE, true);
+//    Log.enableLogging (Log.TRACE, true);
     
     firehose.start ();
     
-    for (int i = 0; i < 10; i++)
+    long start = currentTimeMillis ();
+    
+    // pound on it for a while
+    int runtime = 6000;
+    while (currentTimeMillis () - start < runtime)
     {
-      sleep (200);
-      
       subscription.remove ();
-      
-      sleep (200);
       
       subscription = client.subscribe ("require (test)");
       
       new TestNtfnListener (subscription);
     }
     
+    // todo check callbacks do not happen after close
     client.close ();
     
     firehose.interrupt ();
@@ -824,6 +857,78 @@ public class JUTestClient
     firehose.join (10000);
     
     firehoseClient.close ();
+  }
+  
+  // todo test setKeys and setSubscription
+  @Test
+  public void multiThread ()
+    throws Exception
+  {
+    createServer ();
+    
+    Elvin client = new Elvin (ELVIN_URI);
+    
+    // raise timeouts to accomodate the higher loads
+    client.setReceiveTimeout (20000);
+    
+    List<MultiThreadClientThread> threads = 
+      new ArrayList<MultiThreadClientThread> ();
+    
+    for (int i = 0; i < 16; i++)
+      threads.add (new MultiThreadClientThread (client, i));
+    
+    for (MultiThreadClientThread thread : threads)
+      thread.start ();
+    
+    // pound on it for a while
+    int runtime = 6000;
+    
+    sleep (runtime);
+    
+    for (MultiThreadClientThread thread : threads)
+      thread.interrupt ();
+
+    client.close ();
+  }
+  
+  static class MultiThreadClientThread extends Thread
+  {
+    private Elvin client;
+    private Random random;
+
+    public MultiThreadClientThread (Elvin client, int number)
+    {
+      this.client = client;
+      this.random = new Random (number);
+    }
+    
+    @Override
+    public void run ()
+    {
+      try
+      {
+        client.subscribe ("require (number)");
+        
+        while (!interrupted () && client.isOpen ())
+        {
+          Subscription sub = 
+            client.subscribe ("number <= " + random.nextInt (5));
+          
+          Notification ntfn = new Notification ();
+          ntfn.set ("number", random.nextInt (5));
+          
+          client.send (ntfn);
+          
+          sub.remove ();
+        }
+      } catch (Exception ex)
+      {
+        if (!interrupted () && ex instanceof IOException)
+          Log.alarm ("Error in client thread", this, ex);
+        
+        interrupt ();
+      }
+    }
   }
   
   static void waitOn (Object lock)
