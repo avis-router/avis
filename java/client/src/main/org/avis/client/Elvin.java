@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -336,8 +335,7 @@ public final class Elvin implements Closeable
     this.connectionOpen = new AtomicBoolean (true);
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
-    this.subscriptions = new 
-      ConcurrentHashMap<Long, Subscription> (16, 0.75F, 2);
+    this.subscriptions = new HashMap<Long, Subscription> ();
     this.closeListeners =
       new ListenerList<CloseListener> (CloseListener.class, 
                                        "connectionClosed", CloseEvent.class);
@@ -798,9 +796,12 @@ public final class Elvin implements Closeable
      */
  
     // pre-register subscription
-    if (subscriptions.put (0L, subscription) != null)
-      throw new IllegalStateException 
+    synchronized (subscriptions)
+    {
+      if (subscriptions.put (0L, subscription) != null)
+        throw new IllegalStateException 
         ("Internal error: more than one pre-registered subscription");
+    }
 
     try
     {
@@ -811,14 +812,20 @@ public final class Elvin implements Closeable
                            subscription.acceptInsecure ())).subscriptionId;
       
       // register real ID
-      if (subscriptions.put (subscription.id, subscription) != null)
-        throw new IOException
-          ("Protocol error: server issued duplicate subscription ID " +
-           subscription.id);
+      synchronized (subscriptions)
+      {
+        if (subscriptions.put (subscription.id, subscription) != null)
+          throw new IOException
+            ("Protocol error: server issued duplicate subscription ID " +
+             subscription.id);
+      }
     } finally
     {
       // remove pre-registration
-      subscriptions.remove (0L);
+      synchronized (subscriptions)
+      {
+        subscriptions.remove (0L);
+      }
     }
   }
 
@@ -827,9 +834,12 @@ public final class Elvin implements Closeable
   {
     sendAndReceive (new SubDelRqst (subscription.id));
 
-    if (subscriptions.remove (subscription.id) != subscription)
-      throw new IllegalStateException
-        ("Internal error: invalid subscription ID " + subscription.id);
+    synchronized (subscriptions)
+    {
+      if (subscriptions.remove (subscription.id) != subscription)
+        throw new IllegalStateException
+          ("Internal error: invalid subscription ID " + subscription.id);
+    }
   }
 
   void modifyKeys (Subscription subscription, Keys newKeys)
@@ -1340,15 +1350,18 @@ public final class Elvin implements Closeable
    */
   Subscription subscriptionFor (long id)
   {
-    Subscription subscription = subscriptions.get (id);
-    
-    if (subscription == null)
-      subscription = subscriptions.get (0L);
-    
-    if (subscription != null)
-      return subscription;
-    else
-      throw new IllegalArgumentException ("No subscription for ID " + id);
+    synchronized (subscriptions)
+    {
+      Subscription subscription = subscriptions.get (id);
+      
+      if (subscription == null)
+        subscription = subscriptions.get (0L);
+      
+      if (subscription != null)
+        return subscription;
+      else
+        throw new IllegalArgumentException ("No subscription for ID " + id);
+    }
   }
   
   void checkConnected ()
