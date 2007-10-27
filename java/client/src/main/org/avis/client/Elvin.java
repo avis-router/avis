@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -168,7 +167,8 @@ public final class Elvin implements Closeable
   ScheduledExecutorService callbackExecutor;
 
   int callbacks;
-
+  Object callbackMutex;
+  
   /**
    * lastReply is effectively a single-item queue for handling
    * responses to XID-based requests, using replyLock to synchronize
@@ -359,6 +359,7 @@ public final class Elvin implements Closeable
         (GeneralNotificationListener.class, "notificationReceived", 
          GeneralNotificationEvent.class);
     this.replyLock = new Object ();
+    this.callbackMutex = new Object ();
     this.receiveTimeout = 10000;
     
     if (!routerUri.protocol.equals (defaultProtocol ()))
@@ -500,24 +501,11 @@ public final class Elvin implements Closeable
       }
       
       connection = null;
-            
+
       // any callbacks will block until this sync section ends
       fireCloseEvent (reason, message, error);
       
       ioExecutor.shutdown ();
-    }
-    
-    Thread.interrupted ();
-    
-    try
-    {
-      if (!ioExecutor.awaitTermination (60000, TimeUnit.MILLISECONDS))
-        warn ("IO executor took too long to finish", this);
-    } catch (InterruptedException ex)
-    {
-      currentThread ().interrupt ();
-      
-      throw new RuntimeInterruptedException (ex);
     }
     
     flushCallbacks ();
@@ -541,8 +529,6 @@ public final class Elvin implements Closeable
     }
   }
 
-  Object callbackMutex = new Object ();
-  
   private void queueCallback (Callback callback)
   {
     synchronized (callbackMutex)
@@ -905,13 +891,9 @@ public final class Elvin implements Closeable
      */
  
     // pre-register subscription
-    // todo fix
-//    synchronized (subscriptions)
-//    {
-      if (subscriptions.put (0L, subscription) != null)
-        throw new IllegalStateException 
-          ("Internal error: more than one pre-registered subscription");
-//    }
+    if (subscriptions.put (0L, subscription) != null)
+      throw new IllegalStateException 
+        ("Internal error: more than one pre-registered subscription");
 
     try
     {
@@ -1540,7 +1522,10 @@ public final class Elvin implements Closeable
     public void exceptionCaught (IoSession session, Throwable cause)
       throws Exception
     {
-      internalError ("Unexpected exception in Elvin client", this, cause);
+      if (cause instanceof InterruptedException)
+        diagnostic ("MINA I/O thread interrupted", this);
+      else
+        internalError ("Unexpected exception in Elvin client", this, cause);
     }
 
     /**
@@ -1553,10 +1538,18 @@ public final class Elvin implements Closeable
       if (shouldLog (TRACE))
         trace ("Client got message: " + message, this);
      
-      if (message instanceof XidMessage)
-        handleReply ((XidMessage)message);
-      else if (connectionOpen.get ())
-        handleMessage ((Message)message);
+      try
+      {
+        if (message instanceof XidMessage)
+          handleReply ((XidMessage)message);
+        else if (connectionOpen.get ())
+          handleMessage ((Message)message);
+      } catch (RuntimeInterruptedException ex)
+      {
+        currentThread ().interrupt ();
+        
+        throw (InterruptedException)ex.getCause ();
+      }
     }
     
     @Override
