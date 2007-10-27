@@ -23,7 +23,7 @@ import static org.avis.logging.Log.warn;
 class Callbacks
 {
   protected int callbackCount;
-  protected ScheduledExecutorService callbackExecutor;
+  protected ScheduledExecutorService executor;
   protected Object callbackMutex;
   
   /**
@@ -35,7 +35,7 @@ class Callbacks
   public Callbacks (Object callbackMutex)
   {
     this.callbackMutex = callbackMutex;
-    this.callbackExecutor = newScheduledThreadPool (1, THREAD_FACTORY);
+    this.executor = newScheduledThreadPool (1, THREAD_FACTORY);
   }
   
   /**
@@ -45,12 +45,12 @@ class Callbacks
   {
     flush ();
     
-    callbackExecutor.shutdown ();
+    executor.shutdown ();
   }
   
   public ScheduledExecutorService executor ()
   {
-    return callbackExecutor;
+    return executor;
   }
   
   /**
@@ -60,7 +60,7 @@ class Callbacks
   {
     synchronized (this)
     {
-      callbackExecutor.execute (new Callback (runnable));
+      executor.execute (new Callback (runnable));
      
       callbackCount++;
     }
@@ -78,7 +78,7 @@ class Callbacks
         if (callbackCount > 0)
         {
           if (!waitForNotify (this, 10000))
-            warn ("Callbacks took too long to flush", this, new Error ());
+            warn ("Callbacks took too long to flush", this);
         }
       }
     }
@@ -98,7 +98,7 @@ class Callbacks
       this.runnable = runnable;
     }
 
-    public final void run ()
+    public void run ()
     {
       try
       {
