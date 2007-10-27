@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -57,7 +59,6 @@ import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_PROTOCOL_VIOLATION;
@@ -347,7 +348,8 @@ public final class Elvin implements Closeable
     this.connectionOpen = new AtomicBoolean (true);
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
-    this.subscriptions = new HashMap<Long, Subscription> ();
+    this.subscriptions = new 
+      ConcurrentHashMap<Long, Subscription> (16, 0.75F, 2);
     this.closeListeners =
       new ListenerList<CloseListener> (CloseListener.class, 
                                        "connectionClosed", CloseEvent.class);
@@ -474,10 +476,13 @@ public final class Elvin implements Closeable
      * sessionClosed () event triggered by this method. */
     if (!connectionOpen.getAndSet (false))
       return;
-
+    
     synchronized (this)
     {
-      if (isOpen ())
+      // force this here, so filter cannot block callback executor shutdown
+      LivenessFilter.dispose (connection);
+
+      if (connection.isConnected ())
       {
         if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
         {
@@ -490,17 +495,11 @@ public final class Elvin implements Closeable
           }
         }
         
-        // force this here, so filter cannot block callback executor shutdown
-        LivenessFilter.dispose (connection);
-        
         connection.close ();
-        connection = null;
       }
-  
-      // de-activate subscriptions
-      for (Subscription subscription : subscriptions.values ())
-        subscription.id = 0;
       
+      connection = null;
+            
       // any callbacks will block until this sync section ends
       fireCloseEvent (reason, message, error);
       
@@ -508,23 +507,18 @@ public final class Elvin implements Closeable
       callbackExecutor.shutdown ();
     }
     
-    // wait for callback events to flush if we're not already in a callback
-    if (!(currentThread () instanceof CallbackThread))
+    Thread.interrupted ();
+    
+    try
     {
-      /* todo work out why interrupted flag is set when called from
-       * MINA IO. For now just clear the flag, or awaitTermination ()
-       * throws a wobbly. */
-      Thread.interrupted ();
-      
-      try
-      {
-        if (!callbackExecutor.awaitTermination (10, SECONDS))
-          warn ("Shutdown callbacks took too long to finish", this, new Error ());
-      } catch (InterruptedException ex)
-      {
-        warn ("Interrupted waiting for shutdown callbacks", this, ex);
-      }
+      if (!ioExecutor.awaitTermination (60000, TimeUnit.MILLISECONDS))
+        warn ("IO executor took too long to finish", this);
+    } catch (InterruptedException ex1)
+    {
+      // ok
     }
+    
+    flushCallbacks ();
   }
   
   void fireCloseEvent (final int reason, final String message, 
@@ -594,7 +588,9 @@ public final class Elvin implements Closeable
         if (callbacks > 0)
         {
           if (!waitForNotify (callbackMutex, 10000))
-            warn ("Callbacks took too long to flush", this);
+          {
+            warn ("Callbacks took too long to flush", this, new Error ());
+          }
         }
       }
     }
@@ -652,7 +648,7 @@ public final class Elvin implements Closeable
    */
   public synchronized boolean isOpen ()
   {
-    return connection != null && connection.isConnected ();
+    return connectionOpen.get () && connection.isConnected ();
   }
   
   /**
@@ -897,27 +893,43 @@ public final class Elvin implements Closeable
   void subscribe (Subscription subscription)
     throws IOException
   {
-    // todo
+    /*
+     * There is a small window between sendAndReceive () and
+     * subscriptions.put () where a NotifyDeliver could arrive before
+     * we have registered the sub ID. Thus, we pre-register the sub
+     * against (reserved) ID 0, which subscriptionFor () will use as a
+     * fallback if it can't find an ID. Since these shenanigans occur
+     * inside the mutex, the client will not see the halfway
+     * subscribed state.
+     */
+ 
+    // pre-register subscription
+    // todo fix
 //    synchronized (subscriptions)
 //    {
+      if (subscriptions.put (0L, subscription) != null)
+        throw new IllegalStateException 
+          ("Internal error: more than one pre-registered subscription");
+//    }
+
+    try
+    {
       subscription.id =
         sendAndReceive
           (new SubAddRqst (subscription.subscriptionExpr,
                            subscription.keys,
                            subscription.acceptInsecure ())).subscriptionId;
       
-      /*
-       * There is a small window right here where a NotifyDeliver
-       * could arrive before we have registered the sub ID. Both
-       * handleNotifyDeliver () and this method sync on subscriptions,
-       * to avoid missing notifications in this window.
-       */
-      
+      // register real ID
       if (subscriptions.put (subscription.id, subscription) != null)
         throw new IOException
           ("Protocol error: server issued duplicate subscription ID " +
            subscription.id);
-//    }
+    } finally
+    {
+      // remove pre-registration
+      subscriptions.remove (0L);
+    }
   }
 
   void unsubscribe (Subscription subscription)
@@ -1100,7 +1112,7 @@ public final class Elvin implements Closeable
    * @see #setSubscriptionKeys(Keys)
    * @see #setKeys(Keys, Keys)
    */
-  public synchronized void setNotificationKeys (Keys newNotificationKeys)
+  public void setNotificationKeys (Keys newNotificationKeys)
     throws IOException
   {
     setKeys (newNotificationKeys, subscriptionKeys);
@@ -1129,7 +1141,7 @@ public final class Elvin implements Closeable
    * @see #setNotificationKeys(Keys)
    * @see #setKeys(Keys, Keys)
    */
-  public synchronized void setSubscriptionKeys (Keys newSubscriptionKeys)
+  public void setSubscriptionKeys (Keys newSubscriptionKeys)
     throws IOException
   {
     setKeys (notificationKeys, newSubscriptionKeys);
@@ -1153,27 +1165,29 @@ public final class Elvin implements Closeable
    * 
    * @throws IOException if an IO error occurs.
    */
-  public synchronized void setKeys (Keys newNotificationKeys,
-                                    Keys newSubscriptionKeys)
+  public void setKeys (Keys newNotificationKeys, Keys newSubscriptionKeys)
     throws IOException
   {
     checkNotNull (newNotificationKeys, "Notification keys");
     checkNotNull (newSubscriptionKeys, "Subscription keys");
     
-    Keys.Delta deltaNotificationKeys =
-      notificationKeys.deltaFrom (newNotificationKeys);
-    Keys.Delta deltaSubscriptionKeys =
-      subscriptionKeys.deltaFrom (newSubscriptionKeys);
-
-    if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
+    synchronized (this)
     {
-      sendAndReceive
-        (new SecRqst
-           (deltaNotificationKeys.added, deltaNotificationKeys.removed,
-            deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
-      
-      this.notificationKeys = newNotificationKeys;
-      this.subscriptionKeys = newSubscriptionKeys;
+      Keys.Delta deltaNotificationKeys =
+        notificationKeys.deltaFrom (newNotificationKeys);
+      Keys.Delta deltaSubscriptionKeys =
+        subscriptionKeys.deltaFrom (newSubscriptionKeys);
+  
+      if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
+      {
+        sendAndReceive
+          (new SecRqst
+             (deltaNotificationKeys.added, deltaNotificationKeys.removed,
+              deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
+        
+        this.notificationKeys = newNotificationKeys;
+        this.subscriptionKeys = newSubscriptionKeys;
+      }
     }
     
     /*
@@ -1350,24 +1364,16 @@ public final class Elvin implements Closeable
   private void handleNotifyDeliver (NotifyDeliver message)
   {
     /*
-     * Sync on subscriptions to block NotifyDeliver until subscribe () can
-     * register the subscription ID.
+     * Notify callbacks are executed from the callback thread, since
+     * firing an event in this thread causes deadlock if a listener
+     * triggers a receive (), at which point the IO processor thread
+     * will be waiting for a reply that cannot be processed since it
+     * is busy calling this method.
      */
-     // todo
-//    synchronized (subscriptions)
-//    {
-      /*
-       * Notify callbacks are executed from callback thread, since
-       * firing an event in this thread causes deadlock if a listener
-       * triggers a receive (), at which point the IO processor thread
-       * will be waiting for a reply that cannot be processed since it
-       * is busy calling this method.
-       */
-      queueCallback
-        (new NotifyCallback (message, 
-                             subscriptionsFor (message.secureMatches), 
-                             subscriptionsFor (message.insecureMatches)));
-//    }
+    queueCallback
+      (new NotifyCallback (message, 
+                           subscriptionsFor (message.secureMatches), 
+                           subscriptionsFor (message.insecureMatches)));
   }
   
   private void handleDisconnect (Disconn disconn)
@@ -1426,6 +1432,8 @@ public final class Elvin implements Closeable
       } catch (IllegalArgumentException ex)
       {
         warn ("Received notification for invalid subscription ID " + id, this);
+        
+        ex.printStackTrace ();
       }
     }
     
@@ -1438,6 +1446,9 @@ public final class Elvin implements Closeable
   Subscription subscriptionFor (long id)
   {
     Subscription subscription = subscriptions.get (id);
+    
+    if (subscription == null)
+      subscription = subscriptions.get (0L);
     
     if (subscription != null)
       return subscription;
