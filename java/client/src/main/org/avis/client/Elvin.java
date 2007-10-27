@@ -6,18 +6,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
-
-import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.ExceptionMonitor;
@@ -54,11 +49,9 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
-import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newScheduledThreadPool;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_PROTOCOL_VIOLATION;
@@ -154,21 +147,16 @@ public final class Elvin implements Closeable
   AtomicBoolean connectionOpen;
   boolean elvinSessionEstablished;
   Map<Long, Subscription> subscriptions;
+  Callbacks callbacks;
   
   Keys notificationKeys;
   Keys subscriptionKeys;
 
   /**
-   * We use a multi-thread I/O pool and a single-thread
-   * callback/scheduler pool, which ensures callbacks are executed
-   * sequentially.
+   * A multi-thread pool for handling MINA I/O.
    */
   ExecutorService ioExecutor;
-  ScheduledExecutorService callbackExecutor;
 
-  int callbacks;
-  Object callbackMutex;
-  
   /**
    * lastReply is effectively a single-item queue for handling
    * responses to XID-based requests, using replyLock to synchronize
@@ -179,7 +167,6 @@ public final class Elvin implements Closeable
   
   ListenerList<CloseListener> closeListeners;
   ListenerList<GeneralNotificationListener> notificationListeners;
-
   
   /**
    * Create a new connection to an Elvin router.
@@ -359,7 +346,7 @@ public final class Elvin implements Closeable
         (GeneralNotificationListener.class, "notificationReceived", 
          GeneralNotificationEvent.class);
     this.replyLock = new Object ();
-    this.callbackMutex = new Object ();
+    this.callbacks = new Callbacks (mutex ());
     this.receiveTimeout = 10000;
     
     if (!routerUri.protocol.equals (defaultProtocol ()))
@@ -374,10 +361,6 @@ public final class Elvin implements Closeable
     checkNotNull (connectionOptions, "Connection options");
     
     this.ioExecutor = newCachedThreadPool ();
-    
-    // create callbackExecutor that uses a single CallbackThread
-    this.callbackExecutor = 
-      newScheduledThreadPool (1, CALLBACK_THREAD_FACTORY);
     
     try
     {
@@ -424,7 +407,7 @@ public final class Elvin implements Closeable
       
       connectorConfig.getFilterChain ().addLast 
         ("liveness", 
-         new LivenessFilter (callbackExecutor, 60000, receiveTimeout));
+         new LivenessFilter (callbacks.executor (), 60000, receiveTimeout));
       
       // route MINA exceptions to log
       ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
@@ -508,8 +491,7 @@ public final class Elvin implements Closeable
       ioExecutor.shutdown ();
     }
     
-    flushCallbacks ();
-    callbackExecutor.shutdown ();
+    callbacks.shutdown ();
   }
   
   void fireCloseEvent (final int reason, final String message, 
@@ -517,10 +499,9 @@ public final class Elvin implements Closeable
   {
     if (closeListeners.hasListeners ())
     {
-      queueCallback (new Callback ()
+      callbacks.queue (new Runnable ()
       {
-        @Override
-        public void callback ()
+        public void run ()
         {
           closeListeners.fire 
             (new CloseEvent (this, reason, message, error));
@@ -528,81 +509,7 @@ public final class Elvin implements Closeable
       });
     }
   }
-
-  private void queueCallback (Callback callback)
-  {
-    synchronized (callbackMutex)
-    {
-      callbackExecutor.execute (callback);
-     
-      callbacks++;
-    }    
-  }
   
-  abstract class Callback implements Runnable
-  {
-    public final void run ()
-    {
-      try
-      {
-        synchronized (mutex ())
-        {
-          callback ();
-        }
-      } finally
-      {
-        synchronized (callbackMutex)
-        {
-          if (callbacks == 0)
-            throw new IllegalStateException ("Too many finished callbacks");
-          
-          if (--callbacks == 0)
-            callbackMutex.notifyAll ();
-        }
-      }
-    }
-    
-    public abstract void callback ();
-  }
-
-  /**
-   * Wait for up to 10 seconds for any queued callbacks to be called.
-   */
-  void flushCallbacks ()
-  {
-    if (!(currentThread () instanceof CallbackThread))
-    {
-      synchronized (callbackMutex)
-      {
-        if (callbacks > 0)
-        {
-          if (!waitForNotify (callbackMutex, 10000))
-            warn ("Callbacks took too long to flush", this, new Error ());
-        }
-      }
-    }
-  }
-  
-  private static boolean waitForNotify (Object object, int maxWait)
-  {
-    synchronized (object)
-    {
-      try
-      {
-        long start = currentTimeMillis ();
-        
-        object.wait (maxWait);
-        
-        return currentTimeMillis () - start < maxWait;
-      } catch (InterruptedException ex)
-      {
-        currentThread ().interrupt ();
-        
-        throw new RuntimeInterruptedException (ex);
-      } 
-    }
-  }
-
   /**
    * Signal that this connection should be automatically closed when
    * the VM exits. This should be used with care since it creates a
@@ -1178,7 +1085,7 @@ public final class Elvin implements Closeable
      * that client does not see callbacks for old keys after this is
      * called.
      */
-    flushCallbacks ();
+    callbacks.flush ();
   }
   
   void send (Message message)
@@ -1358,7 +1265,7 @@ public final class Elvin implements Closeable
      * will be waiting for a reply that cannot be processed since it
      * is busy calling this method.
      */
-    queueCallback
+    callbacks.queue
       (new NotifyCallback (message, 
                            subscriptionsFor (message.secureMatches), 
                            subscriptionsFor (message.insecureMatches)));
@@ -1455,7 +1362,7 @@ public final class Elvin implements Closeable
       throw new NotConnectedException ("Not connected to router");
   }
   
-  class NotifyCallback extends Callback
+  class NotifyCallback implements Runnable
   {
     private NotifyDeliver message;
     private Set<Subscription> secureMatches;
@@ -1470,8 +1377,7 @@ public final class Elvin implements Closeable
       this.insecureMatches = insecureMatches;
     }
 
-    @Override
-    public void callback ()
+    public void run ()
     {
       Notification ntfn = new Notification (message);
       
@@ -1558,36 +1464,6 @@ public final class Elvin implements Closeable
     {
       close (REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY,
              "Connection to router closed without warning");
-    }
-  }
-
-  private static final ThreadFactory CALLBACK_THREAD_FACTORY =
-    new ThreadFactory ()
-    {
-      public Thread newThread (Runnable target)
-      {
-        return new CallbackThread (target);
-      }
-    };
-    
-  /**
-   * The thread used for all callbacks in the callbackExecutor.
-   */
-  private static class CallbackThread
-    extends Thread implements UncaughtExceptionHandler
-  {
-    private static final AtomicInteger counter = new AtomicInteger ();
-    
-    public CallbackThread (Runnable target)
-    {
-      super (target, "Elvin callback thread " + counter.getAndIncrement ());
-      
-      setUncaughtExceptionHandler (this);
-    }
-    
-    public void uncaughtException (Thread t, Throwable ex)
-    {
-      warn ("Uncaught exception in Elvin callback", Elvin.class, ex);
     }
   }
 }
