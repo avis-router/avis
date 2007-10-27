@@ -1,5 +1,7 @@
 package org.avis.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import java.io.IOException;
@@ -15,7 +17,6 @@ import org.avis.util.LogFailTester;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
@@ -603,7 +604,7 @@ public class JUTestClient
     assertNull (insecureListener.event);
   }
   
-  @Ignore
+//  @Ignore
   @Test
   public void thrashTest ()
     throws Exception
@@ -614,8 +615,9 @@ public class JUTestClient
       
       setup ();
       
-      Log.enableLogging (Log.TRACE, true);
-      firehose ();
+      //Log.enableLogging (Log.TRACE, true);
+      //firehose ();
+      multiThread ();
 
       cleanup ();
     }
@@ -829,17 +831,17 @@ public class JUTestClient
       }
     };
     
-    // Log.enableLogging (Log.TRACE, true);
+//    Log.enableLogging (Log.TRACE, true);
     
     firehose.start ();
     
-    for (int i = 0; i < 10; i++)
+    long start = currentTimeMillis ();
+    
+    // pound on it for a while
+    int runtime = 30000;
+    while (currentTimeMillis () - start < runtime)
     {
-      sleep (200);
-      
       subscription.remove ();
-      
-      sleep (200);
       
       subscription = client.subscribe ("require (test)");
       
@@ -855,6 +857,7 @@ public class JUTestClient
     firehoseClient.close ();
   }
   
+  // todo test setKeys and setSubscription
   @Test
   public void multiThread ()
     throws Exception
@@ -863,29 +866,35 @@ public class JUTestClient
     
     Elvin client = new Elvin (ELVIN_URI);
     
-    ClientThread thread1 = new ClientThread (client, 1);
-    ClientThread thread2 = new ClientThread (client, 2);
-    ClientThread thread3 = new ClientThread (client, 3);
+    // raise timeouts to accomodate the higher loads
+    client.setReceiveTimeout (20000);
     
-    thread1.start ();
-    thread2.start ();
-    thread3.start ();
+    List<MultiThreadClientThread> threads = 
+      new ArrayList<MultiThreadClientThread> ();
     
-    sleep (20000);
+    for (int i = 0; i < 16; i++)
+      threads.add (new MultiThreadClientThread (client, i));
     
-    thread1.interrupt ();
-    thread2.interrupt ();
-    thread3.interrupt ();
+    for (MultiThreadClientThread thread : threads)
+      thread.start ();
+    
+    // pound on it for a while
+    sleep (1 * 60 * 1000);
+    
+    System.out.println ("start close");
+    
+    for (MultiThreadClientThread thread : threads)
+      thread.interrupt ();
 
     client.close ();
   }
   
-  static class ClientThread extends Thread
+  static class MultiThreadClientThread extends Thread
   {
     private Elvin client;
     private Random random;
 
-    public ClientThread (Elvin client, int number)
+    public MultiThreadClientThread (Elvin client, int number)
     {
       this.client = client;
       this.random = new Random (number);
