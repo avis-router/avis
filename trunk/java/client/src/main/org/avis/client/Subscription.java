@@ -66,7 +66,7 @@ public final class Subscription
      * that client does not see callbacks after it has called
      * remove ().
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }
   
   /**
@@ -148,7 +148,7 @@ public final class Subscription
      * that client does not see callbacks for old subscription after
      * it has changed it.
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }
 
   /**
@@ -188,7 +188,7 @@ public final class Subscription
      * that client does not see callbacks for subscription after it
      * has changed it.
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }     
   
   /**
@@ -231,7 +231,7 @@ public final class Subscription
      * that client does not see callbacks for old subscription after
      * it has changed it.
      */
-    elvin.flushCallbacks ();
+    elvin.callbacks.flush ();
   }
 
   /**
