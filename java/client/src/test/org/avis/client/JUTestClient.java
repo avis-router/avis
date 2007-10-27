@@ -17,6 +17,7 @@ import org.avis.util.LogFailTester;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
@@ -604,7 +605,7 @@ public class JUTestClient
     assertNull (insecureListener.event);
   }
   
-//  @Ignore
+  @Ignore
   @Test
   public void thrashTest ()
     throws Exception
@@ -616,8 +617,8 @@ public class JUTestClient
       setup ();
       
       //Log.enableLogging (Log.TRACE, true);
-      //firehose ();
-      multiThread ();
+      firehose ();
+      //multiThread ();
 
       cleanup ();
     }
@@ -715,10 +716,10 @@ public class JUTestClient
     
     TestCloseListener listener = new TestCloseListener ();
     
+    client.addCloseListener (listener);
+
     client.setReceiveTimeout (1000);
     client.setLivenessTimeout (1000);
-    
-    client.addCloseListener (listener);
     
     // check liveness check keeps connection open
     sleep (3000);
@@ -838,7 +839,7 @@ public class JUTestClient
     long start = currentTimeMillis ();
     
     // pound on it for a while
-    int runtime = 30000;
+    int runtime = 6000;
     while (currentTimeMillis () - start < runtime)
     {
       subscription.remove ();
@@ -848,6 +849,7 @@ public class JUTestClient
       new TestNtfnListener (subscription);
     }
     
+    // todo check callbacks do not happen after close
     client.close ();
     
     firehose.interrupt ();
@@ -879,9 +881,9 @@ public class JUTestClient
       thread.start ();
     
     // pound on it for a while
-    sleep (1 * 60 * 1000);
+    int runtime = 6000;
     
-    System.out.println ("start close");
+    sleep (runtime);
     
     for (MultiThreadClientThread thread : threads)
       thread.interrupt ();
