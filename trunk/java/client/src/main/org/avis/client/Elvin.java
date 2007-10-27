@@ -800,7 +800,7 @@ public final class Elvin implements Closeable
     {
       if (subscriptions.put (0L, subscription) != null)
         throw new IllegalStateException 
-        ("Internal error: more than one pre-registered subscription");
+          ("Internal error: more than one pre-registered subscription");
     }
 
     try
@@ -1219,15 +1219,27 @@ public final class Elvin implements Closeable
    * Handle replies to client-initiated messages by delivering them
    * back to the waiting thread.
    */
-  void handleReply (XidMessage reply)
+  void deliverReply (XidMessage reply)
   {
     synchronized (replyLock)
     {
       if (lastReply != null)
       {
-        throw new IllegalStateException 
-          ("Reply buffer overflow: " + className (reply) + 
-           " arrived with a " + className (lastReply) + " not collected");
+        if (!connectionOpen.get ())
+        {
+          /*
+           * Closing down in JUTestClient.multiThread () gets multiple
+           * SubReply's after connection shutdown. For now, we just
+           * bounce them.
+           */ 
+          diagnostic ("Ignored overflow " + className (reply) + 
+                      " after close", this);
+        } else
+        {
+          throw new IllegalStateException 
+            ("Reply buffer overflow: " + className (reply) + 
+             " arrived with a " + className (lastReply) + " not collected");
+        }
       }
       
       lastReply = reply;
@@ -1460,7 +1472,7 @@ public final class Elvin implements Closeable
       try
       {
         if (message instanceof XidMessage)
-          handleReply ((XidMessage)message);
+          deliverReply ((XidMessage)message);
         else if (connectionOpen.get ())
           handleMessage ((Message)message);
       } catch (RuntimeInterruptedException ex)
