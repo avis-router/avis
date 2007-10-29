@@ -73,6 +73,26 @@ public class JUTestClient
   }
   
   /**
+   * Test case where no server is running.
+   */
+  @Test
+  public void noServerRunning ()
+    throws Exception
+  {
+    try
+    {
+      Elvin client = new Elvin (ELVIN_URI);
+      
+      client.close ();
+      
+      fail ();
+    } catch (IOException ex)
+    {
+      // ok
+    }
+  }
+  
+  /**
    * Test that client handles changing subs in a notification callback.
    */
   @Test
