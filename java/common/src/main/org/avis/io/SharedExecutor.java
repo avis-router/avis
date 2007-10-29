@@ -45,6 +45,9 @@ public final class SharedExecutor
     {
       if (executor == sharedExecutor)
       {
+        if (shareCount == 0)
+          throw new IllegalStateException ("Too many release calls");
+
         if (--shareCount == 0)
         {
           sharedExecutor.shutdown ();
