@@ -22,9 +22,9 @@ import static org.avis.logging.Log.trace;
 
 /**
  * A MINA I/O filter that adds liveness checking using
- * TestConn/ConfConn. Generates LivenessTimeoutMessage's when
+ * TestConn/ConfConn. Generates LivenessFailureMessage's when
  * livenessTimeout passes and no response to a TestConn is seen within
- * replyTimeout seconds.
+ * receiveTimeout seconds.
  * 
  * @author Matthew Phillips
  */
@@ -172,13 +172,9 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
     
     // do not forward ConfConn liveness replies
     if (message == ConfConn.INSTANCE)
-    {
       trace ("Liveness confirmed: received ConfConn", this);
-      
-      return;
-    }
-    
-    nextFilter.messageReceived (session, message);
+    else
+      nextFilter.messageReceived (session, message);
   }
   
   /**
