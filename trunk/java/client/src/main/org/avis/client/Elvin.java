@@ -462,26 +462,29 @@ public final class Elvin implements Closeable
     
     synchronized (this)
     {
-      // force this here, so filter cannot block callback executor shutdown
-      LivenessFilter.dispose (connection);
-
-      if (connection.isConnected ())
+      if (connection != null)
       {
-        if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
+        // force this here, so filter cannot block callback executor shutdown
+        LivenessFilter.dispose (connection);
+  
+        if (connection.isConnected ())
         {
-          try
+          if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
           {
-            sendAndReceive (new DisconnRqst ());
-          } catch (Exception ex)
-          {
-            diagnostic ("Failed to cleanly disconnect", this, ex);
+            try
+            {
+              sendAndReceive (new DisconnRqst ());
+            } catch (Exception ex)
+            {
+              diagnostic ("Failed to cleanly disconnect", this, ex);
+            }
           }
+          
+          connection.close ();
         }
-        
-        connection.close ();
+
+        connection = null;
       }
-      
-      connection = null;
 
       // any callbacks will block until this sync section ends
       fireCloseEvent (reason, message, error);
