@@ -50,9 +50,10 @@ Not allocated
 
 Client
 
+* allow connection options in URI
+* add example code to web site: syntax highlighting
 * web-based management: may need to be in context of OSGi
 * add subscription string escape utilities
-* allow connection options in URI
 * synchronous reconnect/redirect? block for up to x secs before closing
 * better reporting for going over connection limits (e.g. max subs)
 * UDP unotify
