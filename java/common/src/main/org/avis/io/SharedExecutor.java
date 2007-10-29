@@ -24,7 +24,7 @@ public final class SharedExecutor
    */
   public static ScheduledExecutorService acquire ()
   {
-    synchronized (LivenessFilter.class)
+    synchronized (SharedExecutor.class)
     {
       if (shareCount++ == 0)
         sharedExecutor = newScheduledThreadPool (1);
