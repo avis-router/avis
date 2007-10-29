@@ -70,7 +70,10 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
    */
   public static void dispose (IoSession session)
   {
-    trackerFor (session).dispose ();
+    Tracker tracker = trackerFor (session);
+    
+    if (tracker != null)
+      tracker.dispose ();
   }
 
   public static LivenessFilter filterFor (IoSession session)
