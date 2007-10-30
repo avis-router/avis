@@ -24,14 +24,17 @@ Bugs
 Releases
 ----------------------------------------------------------------------
 
-Server 1.1.1
+Server 1.1.3
 
  * DONE: Unicode decompose on 1.6
 
- * require(e) vs. require (e). Mantara accepts both, we don't do first
+ * DONE: require(e) vs. require (e). Mantara accepts both, we don't do first
    one any more.
  
  * Update MINA: some tests fail 1.1.2
+
+ * java.io.IOException: Connection reset by peer: do not log IO errors
+   as alarms?
 
 Server 1.2
 
