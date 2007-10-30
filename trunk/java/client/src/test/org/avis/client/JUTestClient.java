@@ -7,6 +7,10 @@ import java.util.Random;
 import java.io.IOException;
 
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import org.avis.common.ElvinURI;
 import org.avis.logging.Log;
@@ -14,11 +18,6 @@ import org.avis.router.Router;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.util.LogFailTester;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
@@ -33,7 +32,6 @@ import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -948,6 +946,48 @@ public class JUTestClient
         
         interrupt ();
       }
+    }
+  }
+  
+  /**
+   * Check that we cannot deadlock callbacks by pre-acquiring the
+   * client mutex.
+   */
+  @Test
+  public void callbackDeadlock ()
+    throws Exception
+  {
+    createServer ();
+    
+    final Elvin client = new Elvin (ELVIN_URI);
+    
+    Subscription sub1 = client.subscribe ("require (test)");
+    
+    // add a listener which will require the client mutex
+    sub1.addListener (new NotificationListener ()
+    {
+      public void notificationReceived (NotificationEvent e)
+      {
+        synchronized (client.mutex ())
+        {
+          // zip
+        }
+      }
+    });
+
+    // grab mutex
+    synchronized (client.mutex ())
+    {
+      client.send (new Notification ("test", 1));
+
+      // subscribe forces callback flush
+      Subscription sub2 = client.subscribe ("require (test)");
+      
+      client.send (new Notification ("test", 1));
+
+      TestNtfnListener listener = new TestNtfnListener (sub2);
+
+      listener.waitForNotification ();
     }
   }
   
