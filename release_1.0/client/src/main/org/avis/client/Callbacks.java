@@ -1,7 +1,6 @@
 package org.avis.client;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -10,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
+import static java.util.Collections.emptyList;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 
 import static org.avis.logging.Log.alarm;
@@ -18,6 +18,12 @@ import static org.avis.logging.Log.warn;
 /**
  * A single-threaded callback scheduler, which ensures callbacks are
  * executed sequentially.
+ * <p>
+ * 
+ * Thread notes: modifications to the callback queue are synced using
+ * this instance. The callback mutex is acquired when invoking
+ * callbacks. If both are held, they must be acquired in callbackMutex ->
+ * this order to avoid deadlock.
  * 
  * @author Matthew Phillips
  */
@@ -26,7 +32,7 @@ class Callbacks
   protected List<Runnable> callbacks;
   protected ScheduledExecutorService executor;
   protected Object callbackMutex;
-  protected CallbackRunner callbackRunner;
+  protected Runnable callbackRunner;
   protected Future<?> callbackRunnerFuture;
   
   /**
@@ -40,7 +46,13 @@ class Callbacks
     this.callbackMutex = callbackMutex;
     this.executor = newScheduledThreadPool (1, THREAD_FACTORY);
     this.callbacks = new ArrayList<Runnable> ();
-    this.callbackRunner = new CallbackRunner ();
+    this.callbackRunner = new Runnable ()
+    {
+      public void run ()
+      {
+        runCallbacks ();
+      }
+    };
   }
   
   /**
@@ -50,12 +62,15 @@ class Callbacks
   {
     synchronized (callbackMutex)
     {
-      flush ();
-      
-      executor.shutdown ();
-      
-      executor = null;
-      callbacks = null;
+      synchronized (this)
+      {
+        flush ();
+        
+        executor.shutdown ();
+        
+        executor = null;
+        callbacks = null;
+      }
     }
   }
   
@@ -71,6 +86,9 @@ class Callbacks
   {
     synchronized (this)
     {
+      if (callbacks == null)
+        throw new IllegalStateException ("Callbacks queue is disposed");
+
       callbacks.add (runnable);
       
       if (callbackRunnerFuture == null)
@@ -80,35 +98,44 @@ class Callbacks
   
   public void flush ()
   {
-    synchronized (callbackMutex)
-    {
-      runCallbacks ();
-    }
+    runCallbacks ();
   }
   
   protected void runCallbacks ()
   {
-    if (callbackRunnerFuture != null)
+    List<Runnable> callbacksToRun;
+    
+    synchronized (this)
     {
-      callbackRunnerFuture.cancel (false);
-      callbackRunnerFuture = null;
+      if (callbackRunnerFuture != null)
+      {
+        callbackRunnerFuture.cancel (false);
+        callbackRunnerFuture = null;
+      }
+      
+      if (callbacks.isEmpty ())
+      {
+        callbacksToRun = emptyList ();
+      } else
+      {
+        callbacksToRun = new ArrayList<Runnable> (callbacks);
+        callbacks.clear ();
+      }
     }
     
-    if (callbacks.size () > 0)
+    if (callbacksToRun.size () > 0)
     {
-      // iterate over copy in case a callback generates a callback
-      Iterator<Runnable> i = new ArrayList<Runnable> (callbacks).iterator ();
-
-      callbacks.clear ();
-      
-      while (i.hasNext ())
+      synchronized (callbackMutex)
       {
-        try
+        for (Runnable callback : callbacksToRun)
         {
-          i.next ().run ();
-        } catch (RuntimeException ex)
-        {
-          alarm ("Unhandled exception in callback", this, ex);
+          try
+          {
+            callback.run ();
+          } catch (RuntimeException ex)
+          {
+            alarm ("Unhandled exception in callback", this, ex);
+          }
         }
       }
     }
@@ -118,10 +145,7 @@ class Callbacks
   {
     public void run ()
     {
-      synchronized (callbackMutex)
-      {
-        runCallbacks ();
-      }
+      runCallbacks ();
     }
   }
 
