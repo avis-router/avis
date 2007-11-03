@@ -100,7 +100,7 @@ import static org.avis.util.Util.checkNotNull;
  * Notification notification = new Notification ();
  * notification.set (&quot;Foo&quot;, 42);
  * notification.set (&quot;Bar&quot;, &quot;bar&quot;);
- * notification.set (&quot;Data&quot;, new byte [] {0x00, 0xff});
+ * notification.set (&quot;Data&quot;, new byte []{0x00, 0xff});
  * 
  * elvin.send (notification);
  * 
@@ -129,10 +129,13 @@ import static org.avis.util.Util.checkNotNull;
  * changing subscriptions and sending notifications from a callback is
  * fully supported.
  * 
- * <li>Clients should not take a lot of time in a callback, since all
- * other operations are blocked during this time. Use another thread,
- * e.g. via an {@link ExecutorService}, if you need to perform a
- * long-running operation.
+ * <li>Clients should not take a lot of time in a callback since all
+ * other operations are blocked during this time (the client
+ * {@linkplain #mutex() mutex} is automatically pre-acquired during
+ * callback execution in order to avoid possible deadlock in callbacks
+ * that access the client connection). Callbacks should spawn long
+ * running or blocking operations on another thread, e.g. via an
+ * {@link ExecutorService}.
  * </ul>
  * 
  * @author Matthew Phillips
@@ -462,34 +465,37 @@ public final class Elvin implements Closeable
     
     synchronized (this)
     {
-      // force this here, so filter cannot block callback executor shutdown
-      LivenessFilter.dispose (connection);
-
-      if (connection.isConnected ())
+      if (connection != null)
       {
-        if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
+        // force this here, so filter cannot block callback executor shutdown
+        LivenessFilter.dispose (connection);
+  
+        if (connection.isConnected ())
         {
-          try
+          if (elvinSessionEstablished && reason == REASON_CLIENT_SHUTDOWN)
           {
-            sendAndReceive (new DisconnRqst ());
-          } catch (Exception ex)
-          {
-            diagnostic ("Failed to cleanly disconnect", this, ex);
+            try
+            {
+              sendAndReceive (new DisconnRqst ());
+            } catch (Exception ex)
+            {
+              diagnostic ("Failed to cleanly disconnect", this, ex);
+            }
           }
+          
+          connection.close ();
         }
-        
-        connection.close ();
+
+        connection = null;
       }
-      
-      connection = null;
 
       // any callbacks will block until this sync section ends
       fireCloseEvent (reason, message, error);
       
       ioExecutor.shutdown ();
+
+      callbacks.shutdown ();
     }
-    
-    callbacks.shutdown ();
   }
   
   void fireCloseEvent (final int reason, final String message, 
@@ -774,6 +780,8 @@ public final class Elvin implements Closeable
                                               SecureMode secureMode)
     throws IOException, InvalidSubscriptionException
   {
+    checkConnected ();
+    
     Subscription subscription =
       new Subscription (this, subscriptionExpr, secureMode, keys);
     
@@ -892,6 +900,8 @@ public final class Elvin implements Closeable
   {
     synchronized (this)
     {
+      callbacks.flush ();
+      
       notificationListeners.add (listener);
     }
   }
@@ -1087,15 +1097,10 @@ public final class Elvin implements Closeable
         
         this.notificationKeys = newNotificationKeys;
         this.subscriptionKeys = newSubscriptionKeys;
+
+        callbacks.flush ();
       }
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for old keys after this is
-     * called.
-     */
-    callbacks.flush ();
   }
   
   void send (Message message)

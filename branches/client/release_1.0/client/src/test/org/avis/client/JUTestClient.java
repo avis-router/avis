@@ -7,6 +7,10 @@ import java.util.Random;
 import java.io.IOException;
 
 import org.apache.mina.transport.socket.nio.SocketSessionConfig;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import org.avis.common.ElvinURI;
 import org.avis.logging.Log;
@@ -14,11 +18,6 @@ import org.avis.router.Router;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.util.LogFailTester;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
@@ -33,7 +32,6 @@ import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -49,7 +47,8 @@ public class JUTestClient
   
   private Router server;
   private LogFailTester logTester;
-
+  private int runtime = 6000;
+  
   @Before
   public void setup ()
   {
@@ -73,6 +72,26 @@ public class JUTestClient
   }
   
   /**
+   * Test case where no server is running.
+   */
+  @Test
+  public void noServerRunning ()
+    throws Exception
+  {
+    try
+    {
+      Elvin client = new Elvin (ELVIN_URI);
+      
+      client.close ();
+      
+      fail ();
+    } catch (IOException ex)
+    {
+      // ok
+    }
+  }
+  
+  /**
    * Test that client handles changing subs in a notification callback.
    */
   @Test
@@ -87,46 +106,56 @@ public class JUTestClient
     
     assertTrue (client.hasSubscription (sub));
     
-    sub.addListener (new NotificationListener ()
-    {
-      public void notificationReceived (NotificationEvent e)
-      {
-        assertFalse (e.secure);
-        
-        try
-        {
-          sub.remove ();
-          
-          // check is not active and can be removed again with no effect
-          assertFalse (sub.isActive ());
-          sub.remove ();
-          
-          synchronized (sub)
-          {
-            sub.notifyAll ();
-          }
-        } catch (IOException ex)
-        {
-          throw new RuntimeException (ex);
-        }
-      }
-    });
+    ModifySubListener listener = new ModifySubListener (sub);
     
     Notification ntfn = new Notification ();
     ntfn.set ("test", 1);
     ntfn.set ("payload", "test 1");
     
-    synchronized (sub)
-    {
-      client.send (ntfn);
-      
-      waitOn (sub);
-    }
+    client.send (ntfn);
+    
+    listener.waitForNotification ();
     
     assertFalse (client.hasSubscription (sub));
     
     client.close ();
     server.close ();
+  }
+  
+  private final class ModifySubListener extends TestNtfnListener
+  {
+    private final Subscription sub;
+
+    public ModifySubListener (Subscription sub)
+    {
+      super (sub);
+      
+      this.sub = sub;
+    }
+
+    @Override
+    public synchronized void notificationReceived (NotificationEvent e)
+    {
+      if (event != null)
+        throw new IllegalStateException ("Notification overflow");
+
+      assertFalse (e.secure);
+
+      try
+      {
+        sub.remove ();
+
+        // check is not active and can be removed again with no effect
+        assertFalse (sub.isActive ());
+        
+        sub.remove ();
+
+        super.notificationReceived (e);
+      } catch (IOException ex)
+      {
+        throw new RuntimeException (ex);
+      }
+    }
   }
   
   /**
@@ -616,9 +645,11 @@ public class JUTestClient
       
       setup ();
       
+      runtime = 30000;
+      
       //Log.enableLogging (Log.TRACE, true);
-      firehose ();
-      //multiThread ();
+      //firehose ();
+      multiThread ();
 
       cleanup ();
     }
@@ -839,7 +870,7 @@ public class JUTestClient
     long start = currentTimeMillis ();
     
     // pound on it for a while
-    int runtime = 6000;
+    
     while (currentTimeMillis () - start < runtime)
     {
       subscription.remove ();
@@ -881,8 +912,6 @@ public class JUTestClient
       thread.start ();
     
     // pound on it for a while
-    int runtime = 6000;
-    
     sleep (runtime);
     
     for (MultiThreadClientThread thread : threads)
@@ -928,6 +957,40 @@ public class JUTestClient
         
         interrupt ();
       }
+    }
+  }
+  
+  @Test
+  public void callbacks ()
+    throws Exception
+  {
+    createServer ();
+    
+    final Elvin client = new Elvin (ELVIN_URI);
+    
+    // grab mutex
+    synchronized (client.mutex ())
+    {
+      Subscription sub = client.subscribe ("require (test)");
+
+      client.send (new Notification ("test", 1));
+
+      // subscribe forces callback flush
+      
+      client.send (new Notification ("test", 1));
+
+      sleep (2000);
+      
+      sub.remove ();
+      
+      TestCloseListener listener = new TestCloseListener ();
+      
+      client.addCloseListener (listener);
+      
+      // close forces callback flush: should do it in this thread, no blocking
+      client.close ();
+      
+      assertNotNull (listener.event);
     }
   }
   
