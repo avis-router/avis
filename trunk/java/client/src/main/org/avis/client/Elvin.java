@@ -100,7 +100,7 @@ import static org.avis.util.Util.checkNotNull;
  * Notification notification = new Notification ();
  * notification.set (&quot;Foo&quot;, 42);
  * notification.set (&quot;Bar&quot;, &quot;bar&quot;);
- * notification.set (&quot;Data&quot;, new byte [] {0x00, 0xff});
+ * notification.set (&quot;Data&quot;, new byte []{0x00, 0xff});
  * 
  * elvin.send (notification);
  * 
@@ -129,10 +129,13 @@ import static org.avis.util.Util.checkNotNull;
  * changing subscriptions and sending notifications from a callback is
  * fully supported.
  * 
- * <li>Clients should not take a lot of time in a callback, since all
- * other operations are blocked during this time. Use another thread,
- * e.g. via an {@link ExecutorService}, if you need to perform a
- * long-running operation.
+ * <li>Clients should not take a lot of time in a callback since all
+ * other operations are blocked during this time (the client
+ * {@linkplain #mutex() mutex} is automatically pre-acquired during
+ * callback execution in order to avoid possible deadlock in callbacks
+ * that access the client connection). Callbacks should spawn long
+ * running or blocking operations on another thread, e.g. via an
+ * {@link ExecutorService}.
  * </ul>
  * 
  * @author Matthew Phillips
@@ -490,9 +493,9 @@ public final class Elvin implements Closeable
       fireCloseEvent (reason, message, error);
       
       ioExecutor.shutdown ();
+
+      callbacks.shutdown ();
     }
-    
-    callbacks.shutdown ();
   }
   
   void fireCloseEvent (final int reason, final String message, 
