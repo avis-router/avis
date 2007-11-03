@@ -1090,7 +1090,6 @@ public final class Elvin implements Closeable
   
       if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
       {
-        
         sendAndReceive
           (new SecRqst
              (deltaNotificationKeys.added, deltaNotificationKeys.removed,
