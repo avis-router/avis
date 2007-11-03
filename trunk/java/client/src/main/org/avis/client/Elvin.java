@@ -780,6 +780,10 @@ public final class Elvin implements Closeable
                                               SecureMode secureMode)
     throws IOException, InvalidSubscriptionException
   {
+    checkConnected ();
+    
+    callbacks.flush ();
+    
     Subscription subscription =
       new Subscription (this, subscriptionExpr, secureMode, keys);
     
@@ -898,6 +902,8 @@ public final class Elvin implements Closeable
   {
     synchronized (this)
     {
+      callbacks.flush ();
+      
       notificationListeners.add (listener);
     }
   }
@@ -1086,6 +1092,8 @@ public final class Elvin implements Closeable
   
       if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
       {
+        callbacks.flush ();
+        
         sendAndReceive
           (new SecRqst
              (deltaNotificationKeys.added, deltaNotificationKeys.removed,
@@ -1095,13 +1103,6 @@ public final class Elvin implements Closeable
         this.subscriptionKeys = newSubscriptionKeys;
       }
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for old keys after this is
-     * called.
-     */
-    callbacks.flush ();
   }
   
   void send (Message message)
