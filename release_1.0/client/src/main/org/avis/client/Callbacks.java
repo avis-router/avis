@@ -1,17 +1,18 @@
 package org.avis.client;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
-import org.avis.common.RuntimeInterruptedException;
-
-import static java.lang.System.currentTimeMillis;
-import static java.lang.Thread.currentThread;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 
+import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.warn;
 
 /**
@@ -22,9 +23,11 @@ import static org.avis.logging.Log.warn;
  */
 class Callbacks
 {
-  protected int callbackCount;
+  protected List<Runnable> callbacks;
   protected ScheduledExecutorService executor;
   protected Object callbackMutex;
+  protected CallbackRunner callbackRunner;
+  protected Future<?> callbackRunnerFuture;
   
   /**
    * Create a new instance.
@@ -36,6 +39,8 @@ class Callbacks
   {
     this.callbackMutex = callbackMutex;
     this.executor = newScheduledThreadPool (1, THREAD_FACTORY);
+    this.callbacks = new ArrayList<Runnable> ();
+    this.callbackRunner = new CallbackRunner ();
   }
   
   /**
@@ -43,9 +48,15 @@ class Callbacks
    */
   public void shutdown ()
   {
-    flush ();
-    
-    executor.shutdown ();
+    synchronized (callbackMutex)
+    {
+      flush ();
+      
+      executor.shutdown ();
+      
+      executor = null;
+      callbacks = null;
+    }
   }
   
   public ScheduledExecutorService executor ()
@@ -60,86 +71,60 @@ class Callbacks
   {
     synchronized (this)
     {
-      executor.execute (new Callback (runnable));
-     
-      callbackCount++;
+      callbacks.add (runnable);
+      
+      if (callbackRunnerFuture == null)
+        callbackRunnerFuture = executor.submit (callbackRunner);
     }
   }
   
-  /**
-   * Wait for up to 10 seconds for any queued callbacks to be called.
-   */
   public void flush ()
   {
-    if (!(currentThread () instanceof CallbackThread))
+    synchronized (callbackMutex)
     {
-      synchronized (this)
+      runCallbacks ();
+    }
+  }
+  
+  protected void runCallbacks ()
+  {
+    if (callbackRunnerFuture != null)
+    {
+      callbackRunnerFuture.cancel (false);
+      callbackRunnerFuture = null;
+    }
+    
+    if (callbacks.size () > 0)
+    {
+      // iterate over copy in case a callback generates a callback
+      Iterator<Runnable> i = new ArrayList<Runnable> (callbacks).iterator ();
+
+      callbacks.clear ();
+      
+      while (i.hasNext ())
       {
-        if (callbackCount > 0)
+        try
         {
-          if (!waitForNotify (this, 10000))
-            warn ("Callbacks took too long to flush", this);
+          i.next ().run ();
+        } catch (RuntimeException ex)
+        {
+          alarm ("Unhandled exception in callback", this, ex);
         }
       }
     }
   }
-  
-  protected Object mutex ()
+
+  class CallbackRunner implements Runnable
   {
-    return this;
-  }
-
-  class Callback implements Runnable
-  {
-    private Runnable runnable;
-
-    public Callback (Runnable runnable)
-    {
-      this.runnable = runnable;
-    }
-
     public void run ()
     {
-      try
+      synchronized (callbackMutex)
       {
-        synchronized (callbackMutex)
-        {
-          runnable.run ();
-        }
-      } finally
-      {
-        synchronized (mutex ())
-        {
-          if (callbackCount == 0)
-            throw new IllegalStateException ("Too many finished callbacks");
-          
-          if (--callbackCount == 0)
-            mutex ().notifyAll ();
-        }
+        runCallbacks ();
       }
     }
   }
 
-  private static boolean waitForNotify (Object object, int maxWait)
-  {
-    synchronized (object)
-    {
-      try
-      {
-        long start = currentTimeMillis ();
-        
-        object.wait (maxWait);
-        
-        return currentTimeMillis () - start < maxWait;
-      } catch (InterruptedException ex)
-      {
-        currentThread ().interrupt ();
-        
-        throw new RuntimeInterruptedException (ex);
-      } 
-    }
-  }
-  
   private static final ThreadFactory THREAD_FACTORY =
     new ThreadFactory ()
     {

@@ -59,14 +59,9 @@ public final class Subscription
       elvin.unsubscribe (this);
       
       id = 0;
-    }
 
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks after it has called
-     * remove ().
-     */
-    elvin.callbacks.flush ();
+      elvin.callbacks.flush ();
+    }
   }
   
   /**
@@ -138,17 +133,12 @@ public final class Subscription
       if (!newSubscriptionExpr.equals (subscriptionExpr))
       {
         elvin.modifySubscriptionExpr (this, newSubscriptionExpr);
-        
+
         this.subscriptionExpr = newSubscriptionExpr;
+
+        elvin.callbacks.flush ();
       }
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for old subscription after
-     * it has changed it.
-     */
-    elvin.callbacks.flush ();
   }
 
   /**
@@ -178,17 +168,12 @@ public final class Subscription
       if (newMode != secureMode)
       {
         elvin.modifySecureMode (this, newMode);
-      
+        
         this.secureMode = newMode;
+
+        elvin.callbacks.flush ();
       }
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for subscription after it
-     * has changed it.
-     */
-    elvin.callbacks.flush ();
   }     
   
   /**
@@ -220,18 +205,13 @@ public final class Subscription
     synchronized (elvin)
     {
       checkActive ();
-      
+     
       elvin.modifyKeys (this, newKeys);
       
       this.keys = newKeys;
+
+      elvin.callbacks.flush ();
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for old subscription after
-     * it has changed it.
-     */
-    elvin.callbacks.flush ();
   }
 
   /**
@@ -243,6 +223,8 @@ public final class Subscription
   {
     synchronized (elvin)
     {
+      elvin.callbacks.flush ();
+      
       notificationListeners.add (listener);
     }
   }
