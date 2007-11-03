@@ -1,3 +1,51 @@
+Release 1.0.4 (October 27, 2007)
+----------------------------------------------------------------------
+
+This release fixes a number of errors that have been identified when
+sharing a single connection between multiple threads.
+
+ * The fix applied in 1.0.3 for the "invalid subscription ID" warning
+   was not sufficient. A more robust technique has been implemented.
+
+ * The client's close () method could block and raise several errors
+   when under load.
+
+ * The use of Thread.interrupt () to terminate client threads could
+   put the client in an inconsistent state.
+
+ * The test suite has been improved to add tests for robustness when
+   used from multi-threaded clients.
+
+
+Release 1.0.3 (October 20, 2007)
+----------------------------------------------------------------------
+
+This release fixes three errors and adds a number of small
+improvements to the API.
+
+ * Under heavy load, a race condition in subscribe and unsubscribe was
+   resulting in "invalid subscription ID" log warnings.
+
+ * The TCP.Send-Immediately setting, which can be used to disable TCP
+   buffering, was not being honoured by the client.
+
+ * The Elvin constructor was erroneously declaring it throws the
+   checked URISyntaxException rather than the unchecked
+   InvalidURIException that is actually thrown when the URI is
+   invalid.
+
+ * Queued callbacks (e.g. for notifications) are now flushed so
+   clients will not see notifications for a subscription after a
+   remove (), setKeys (), etc. method returns.
+
+ * Improved ConnectionOptions API.
+
+ * NotConnectedException (a subclass of IOException) is now thrown
+   when an attempt to use a closed connection is detected.
+
+ * Added setAll () to Notification.
+
+
 Release 1.0.2 (September 1, 2007)
 ----------------------------------------------------------------------
 
