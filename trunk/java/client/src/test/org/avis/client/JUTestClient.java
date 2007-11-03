@@ -47,7 +47,8 @@ public class JUTestClient
   
   private Router server;
   private LogFailTester logTester;
-
+  private int runtime = 6000;
+  
   @Before
   public void setup ()
   {
@@ -634,9 +635,11 @@ public class JUTestClient
       
       setup ();
       
+      runtime = 30000;
+      
       //Log.enableLogging (Log.TRACE, true);
-      firehose ();
-      //multiThread ();
+      //firehose ();
+      multiThread ();
 
       cleanup ();
     }
@@ -857,7 +860,7 @@ public class JUTestClient
     long start = currentTimeMillis ();
     
     // pound on it for a while
-    int runtime = 6000;
+    
     while (currentTimeMillis () - start < runtime)
     {
       subscription.remove ();
@@ -899,8 +902,6 @@ public class JUTestClient
       thread.start ();
     
     // pound on it for a while
-    int runtime = 6000;
-    
     sleep (runtime);
     
     for (MultiThreadClientThread thread : threads)
@@ -949,45 +950,37 @@ public class JUTestClient
     }
   }
   
-  /**
-   * Check that we cannot deadlock callbacks by pre-acquiring the
-   * client mutex.
-   */
   @Test
-  public void callbackDeadlock ()
+  public void callbacks ()
     throws Exception
   {
     createServer ();
     
     final Elvin client = new Elvin (ELVIN_URI);
     
-    Subscription sub1 = client.subscribe ("require (test)");
-    
-    // add a listener which will require the client mutex
-    sub1.addListener (new NotificationListener ()
-    {
-      public void notificationReceived (NotificationEvent e)
-      {
-        synchronized (client.mutex ())
-        {
-          // zip
-        }
-      }
-    });
-
     // grab mutex
     synchronized (client.mutex ())
     {
+      Subscription sub = client.subscribe ("require (test)");
+
       client.send (new Notification ("test", 1));
 
       // subscribe forces callback flush
-      Subscription sub2 = client.subscribe ("require (test)");
       
       client.send (new Notification ("test", 1));
 
-      TestNtfnListener listener = new TestNtfnListener (sub2);
-
-      listener.waitForNotification ();
+      sleep (2000);
+      
+      sub.remove ();
+      
+      TestCloseListener listener = new TestCloseListener ();
+      
+      client.addCloseListener (listener);
+      
+      // close forces callback flush: should do it in this thread, no blocking
+      client.close ();
+      
+      assertNotNull (listener.event);
     }
   }
   
