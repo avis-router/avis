@@ -56,17 +56,12 @@ public final class Subscription
       
       checkActive ();
       
+      elvin.callbacks.flush ();
+      
       elvin.unsubscribe (this);
       
       id = 0;
     }
-
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks after it has called
-     * remove ().
-     */
-    elvin.callbacks.flush ();
   }
   
   /**
@@ -137,18 +132,13 @@ public final class Subscription
 
       if (!newSubscriptionExpr.equals (subscriptionExpr))
       {
+        elvin.callbacks.flush ();
+
         elvin.modifySubscriptionExpr (this, newSubscriptionExpr);
         
         this.subscriptionExpr = newSubscriptionExpr;
       }
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for old subscription after
-     * it has changed it.
-     */
-    elvin.callbacks.flush ();
   }
 
   /**
@@ -177,18 +167,13 @@ public final class Subscription
       
       if (newMode != secureMode)
       {
+        elvin.callbacks.flush ();
+        
         elvin.modifySecureMode (this, newMode);
       
         this.secureMode = newMode;
       }
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for subscription after it
-     * has changed it.
-     */
-    elvin.callbacks.flush ();
   }     
   
   /**
@@ -220,18 +205,13 @@ public final class Subscription
     synchronized (elvin)
     {
       checkActive ();
+     
+      elvin.callbacks.flush ();
       
       elvin.modifyKeys (this, newKeys);
       
       this.keys = newKeys;
     }
-    
-    /*
-     * Wait for any queued notification callbacks to be delivered so
-     * that client does not see callbacks for old subscription after
-     * it has changed it.
-     */
-    elvin.callbacks.flush ();
   }
 
   /**
@@ -243,6 +223,8 @@ public final class Subscription
   {
     synchronized (elvin)
     {
+      elvin.callbacks.flush ();
+      
       notificationListeners.add (listener);
     }
   }
