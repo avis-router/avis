@@ -106,46 +106,56 @@ public class JUTestClient
     
     assertTrue (client.hasSubscription (sub));
     
-    sub.addListener (new NotificationListener ()
-    {
-      public void notificationReceived (NotificationEvent e)
-      {
-        assertFalse (e.secure);
-        
-        try
-        {
-          sub.remove ();
-          
-          // check is not active and can be removed again with no effect
-          assertFalse (sub.isActive ());
-          sub.remove ();
-          
-          synchronized (sub)
-          {
-            sub.notifyAll ();
-          }
-        } catch (IOException ex)
-        {
-          throw new RuntimeException (ex);
-        }
-      }
-    });
+    ModifySubListener listener = new ModifySubListener (sub);
     
     Notification ntfn = new Notification ();
     ntfn.set ("test", 1);
     ntfn.set ("payload", "test 1");
     
-    synchronized (sub)
-    {
-      client.send (ntfn);
-      
-      waitOn (sub);
-    }
+    client.send (ntfn);
+    
+    listener.waitForNotification ();
     
     assertFalse (client.hasSubscription (sub));
     
     client.close ();
     server.close ();
+  }
+  
+  private final class ModifySubListener extends TestNtfnListener
+  {
+    private final Subscription sub;
+
+    public ModifySubListener (Subscription sub)
+    {
+      super (sub);
+      
+      this.sub = sub;
+    }
+
+    @Override
+    public synchronized void notificationReceived (NotificationEvent e)
+    {
+      if (event != null)
+        throw new IllegalStateException ("Notification overflow");
+
+      assertFalse (e.secure);
+
+      try
+      {
+        sub.remove ();
+
+        // check is not active and can be removed again with no effect
+        assertFalse (sub.isActive ());
+        
+        sub.remove ();
+
+        super.notificationReceived (e);
+      } catch (IOException ex)
+      {
+        throw new RuntimeException (ex);
+      }
+    }
   }
   
   /**
