@@ -782,8 +782,6 @@ public final class Elvin implements Closeable
   {
     checkConnected ();
     
-    callbacks.flush ();
-    
     Subscription subscription =
       new Subscription (this, subscriptionExpr, secureMode, keys);
     
@@ -1092,7 +1090,6 @@ public final class Elvin implements Closeable
   
       if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
       {
-        callbacks.flush ();
         
         sendAndReceive
           (new SecRqst
@@ -1101,6 +1098,8 @@ public final class Elvin implements Closeable
         
         this.notificationKeys = newNotificationKeys;
         this.subscriptionKeys = newSubscriptionKeys;
+
+        callbacks.flush ();
       }
     }
   }

@@ -56,11 +56,11 @@ public final class Subscription
       
       checkActive ();
       
-      elvin.callbacks.flush ();
-      
       elvin.unsubscribe (this);
       
       id = 0;
+
+      elvin.callbacks.flush ();
     }
   }
   
@@ -132,11 +132,11 @@ public final class Subscription
 
       if (!newSubscriptionExpr.equals (subscriptionExpr))
       {
-        elvin.callbacks.flush ();
-
         elvin.modifySubscriptionExpr (this, newSubscriptionExpr);
-        
+
         this.subscriptionExpr = newSubscriptionExpr;
+
+        elvin.callbacks.flush ();
       }
     }
   }
@@ -167,11 +167,11 @@ public final class Subscription
       
       if (newMode != secureMode)
       {
-        elvin.callbacks.flush ();
-        
         elvin.modifySecureMode (this, newMode);
-      
+        
         this.secureMode = newMode;
+
+        elvin.callbacks.flush ();
       }
     }
   }     
@@ -206,11 +206,11 @@ public final class Subscription
     {
       checkActive ();
      
-      elvin.callbacks.flush ();
-      
       elvin.modifyKeys (this, newKeys);
       
       this.keys = newKeys;
+
+      elvin.callbacks.flush ();
     }
   }
 
