@@ -1,6 +1,7 @@
 package org.avis.client;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -95,18 +96,21 @@ class Callbacks
     
     if (callbacks.size () > 0)
     {
-      for (Runnable callback : callbacks)
+      // iterate over copy in case a callback generates a callback
+      Iterator<Runnable> i = new ArrayList<Runnable> (callbacks).iterator ();
+
+      callbacks.clear ();
+      
+      while (i.hasNext ())
       {
         try
         {
-          callback.run ();
+          i.next ().run ();
         } catch (RuntimeException ex)
         {
           alarm ("Unhandled exception in callback", this, ex);
         }
       }
-      
-      callbacks.clear ();
     }
   }
 
