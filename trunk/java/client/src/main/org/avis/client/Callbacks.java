@@ -82,11 +82,14 @@ class Callbacks
   /**
    * Queue a callback.
    */
-  public void queue (Runnable runnable)
+  public void queue (Runnable callback)
   {
     synchronized (this)
     {
-      callbacks.add (runnable);
+      if (callbacks == null)
+        throw new IllegalStateException ("Callbacks queue is disposed");
+
+      callbacks.add (callback);
       
       if (callbackRunnerFuture == null)
         callbackRunnerFuture = executor.submit (callbackRunner);
@@ -135,14 +138,6 @@ class Callbacks
           }
         }
       }
-    }
-  }
-
-  class CallbackRunner implements Runnable
-  {
-    public void run ()
-    {
-      runCallbacks ();
     }
   }
 
