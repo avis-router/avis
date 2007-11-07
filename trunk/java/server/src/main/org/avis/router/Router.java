@@ -836,7 +836,10 @@ public class Router implements IoHandler, Closeable
   public void exceptionCaught (IoSession session, Throwable ex)
     throws Exception
   {
-    alarm ("Server exception", this, ex);
+    if (ex instanceof IOException)
+      diagnostic ("IO exception while processing message", this, ex);
+    else
+      alarm ("Server exception", this, ex);
   }
   
   public void messageSent (IoSession session, Object message)
