@@ -123,4 +123,12 @@
     </concat>
   </target>
 
+  <target name="clean" description="Clean generated website files">
+    <delete>
+      <fileset dir="${web}/site">
+        <include name="*.html" />
+      </fileset>
+    </delete>
+  </target>
+
 </project>
