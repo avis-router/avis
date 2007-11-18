@@ -88,6 +88,7 @@ public class Acceptor implements IoHandler, Closeable
     this.options = options;
     this.links = new HashSet<Link> ();
     
+    // todo this should be a long to avoid overflow
     int requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
     int keepaliveInterval = 
       options.getInt ("Federation.Keepalive-Interval") * 1000;
