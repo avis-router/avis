@@ -82,7 +82,7 @@ public abstract class MathParentNode extends ParentBiNode
         return evaluateReal64 ((Double)number1, (Double)number2);
     } catch (ArithmeticException ex)
     {
-      // e.g. div by zero. treat this is a bottom'ing condition
+      // e.g. div by zero. treat this as a bottom'ing condition
       return null;
     }
   }

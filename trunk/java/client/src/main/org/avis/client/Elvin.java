@@ -822,6 +822,7 @@ public final class Elvin implements Closeable
       // register real ID
       synchronized (subscriptions)
       {
+        // todo should close connection here
         if (subscriptions.put (subscription.id, subscription) != null)
           throw new IOException
             ("Protocol error: server issued duplicate subscription ID " +
@@ -1237,13 +1238,13 @@ public final class Elvin implements Closeable
            * SubReply's after connection shutdown. For now, we just
            * bounce them.
            */ 
-          diagnostic ("Ignored overflow " + className (reply) + 
+          diagnostic ("Ignored overflow " + reply.name () + 
                       " after close", this);
         } else
         {
           throw new IllegalStateException 
-            ("Reply buffer overflow: " + className (reply) + 
-             " arrived with a " + className (lastReply) + " not collected");
+            ("Reply buffer overflow: " + reply.name () + 
+             " arrived with a " + lastReply.name () + " not collected");
         }
       }
       
