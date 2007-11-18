@@ -1,3 +1,19 @@
+Release 1.0.5 (November 3, 2007)
+----------------------------------------------------------------------
+
+This release fixes an error that would cause the client to temporarily
+stall in some situations while waiting for queued callbacks to
+complete.
+
+ * Callbacks are now flushed by invoking them from the current thread
+   rather than waiting for the callback thread (which may end up
+   waiting on the current thread if it holds the client
+   mutex). Callback flushing typically occurs during calls such as
+   Subscription.remove (), Elvin.setKeys (), Elvin.close (), etc to
+   ensure that queued callbacks related to a removed subscription or
+   keyset are not delivered after the subscription has been removed.
+
+
 Release 1.0.4 (October 27, 2007)
 ----------------------------------------------------------------------
 
