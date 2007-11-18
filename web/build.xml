@@ -146,10 +146,10 @@
     <taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask"
              classpath="${support}/java_syntax_highlighting/syntax.jar" />
 
-    <mkdir dir="site/examples" />
+    <mkdir dir="site/client-examples" />
 
     <syntax srcDir="${client}/src/examples/org/avis/client/examples"
-            destDir="${web}/site/examples" css="../examples-syntax.css" />
+            destDir="${web}/site/client-examples" css="../client-examples.css" />
   </target>
 
   <target name="clean" description="Clean generated website files">
@@ -158,7 +158,7 @@
         <include name="*.html" />
       </fileset>
 
-      <fileset dir="${web}/site/examples" />
+      <fileset dir="${web}/site/client-examples" />
 
     </delete>
   </target>
