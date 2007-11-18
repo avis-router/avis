@@ -311,16 +311,6 @@
     
   </target>
  
-  <target name="deploy-website-javadoc" depends="javadoc"
-          description="Rsync Javadoc to sourceforge web site">
-    <exec executable="rsync" dir="build/javadoc">
-      <arg value="-rlgoDv" />
-      <arg value="--delete" />
-      <arg value="." />
-      <arg value="sourceforge:/home/groups/a/av/avis/htdocs/client_library/javadoc/" />
-    </exec>
-  </target>
-
   <target name="example-helloworld" depends="compile-examples"
           description="Run the Hello World example">
     <antcall target="run-example">

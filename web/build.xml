@@ -12,7 +12,10 @@
   <property name="web" value="${avis-root}/web" />
   <property name="client" value="${avis-root}/java/client" />
   <property name="support" value="${avis-root}/support" />
-	
+
+  <property name="sourceforge-web" 
+            value="sourceforge:/home/groups/a/av/avis/htdocs" />
+
   <!-- Markdown 1.0.1: needed to build web page -->
   <property name="markdown" 
             value="${avis-root}/support/markdown-1.0.1/Markdown.pl" />
@@ -81,8 +84,8 @@
     </antcall>
 
   </target>
-  
-  <target name="deploy-website" depends="website"
+
+  <target name="deploy" depends="website"
           description="Rsync web site to sourceforge">
     <exec executable="rsync" dir="${web}/site">
       <arg value="-rlgoDv" />
@@ -91,14 +94,29 @@
       <arg line="--include *.png" />
       <arg line="--include *.gif" />
       <arg line="--include *.css" />
-      <arg line="--exclude *" />
+      <arg line="--include client-library/examples/*.html" />
+      <arg line="--exclude client-library/javadoc" />
       <arg line="--exclude */.svn" />
       <arg line="--exclude .*" />
       <arg value="." />
-      <arg value="sourceforge:/home/groups/a/av/avis/htdocs/" />
+      <arg value="${sourceforge-web}" />
     </exec>
   </target>
 
+  <target name="deploy-javadoc"
+          description="Rsync client library Javadoc to sourceforge web site">
+
+    <ant dir="${client}" target="javadoc"
+         inheritall="false" inheritrefs="false" />
+
+    <exec executable="rsync" dir="${client}/build/javadoc">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg value="." />
+      <arg value="${sourceforge-web}/client-library/javadoc/" />
+    </exec>
+  </target>
+  
   <!-- Build a web page from text template using Markdown -->
   <target name="fn:make-html" 
           depends="check-html-uptodate" 
@@ -146,10 +164,11 @@
     <taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask"
              classpath="${support}/java_syntax_highlighting/syntax.jar" />
 
-    <mkdir dir="site/client-examples" />
+    <mkdir dir="site/client-library/examples" />
 
     <syntax srcDir="${client}/src/examples/org/avis/client/examples"
-            destDir="${web}/site/client-examples" css="../client-examples.css" />
+            destDir="${web}/site/client-library/examples" 
+            css="../../client-examples.css" />
   </target>
 
   <target name="clean" description="Clean generated website files">
@@ -158,7 +177,7 @@
         <include name="*.html" />
       </fileset>
 
-      <fileset dir="${web}/site/client-examples" />
+      <fileset dir="${web}/site/client-library/examples" />
 
     </delete>
   </target>
