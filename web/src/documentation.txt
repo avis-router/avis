@@ -7,6 +7,8 @@ Documentation hosted on this site:
 
  * [Configuring Federation][federation].
 
+ * [Client library documentation][client].
+
  * [The Elvin Subscription Language][subscription]. Another version of
    this is also [available from Mantara's web
    site][subscription_mantara] (PDF).
@@ -26,6 +28,7 @@ maintainer](mailto:avis@mattp.name).
 
 [subscription]: subscription_language.html
 [federation]: federation.html
+[client]: client_library.html
 [installation]: installation.html
 [elvin.org]: http://elvin.org/
 [subscription_mantara]: http://www.mantara.com/support/docs/guides/elvin-sublang/elvin-sublang-4.0.pdf
