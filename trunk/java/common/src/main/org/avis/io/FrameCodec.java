@@ -122,10 +122,6 @@ public abstract class FrameCodec
       {
         ErrorMessage error = new ErrorMessage (ex, message);
         
-        // fill in XID if possible
-        if (message instanceof XidMessage && in.remaining () >= 4)
-          ((XidMessage)message).xid = in.getInt ();
-        
         in.skip (in.remaining ());
         
         session.suspendRead ();
