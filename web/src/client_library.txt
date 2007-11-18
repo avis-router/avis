@@ -14,12 +14,32 @@ used by the router.
 
  * A description of the [Elvin subscription language][subscription].
 
+Examples
+----------------------------------------------------------------------
+
+
 The client library package contains a number of programming examples
 in `src/examples` and documentation on how to use them in
-`doc/examples.txt`.
+`doc/examples.txt`. The examples are:
 
-You can also see examples of the client library in use at the
-[examples page][examples].
+  * [HelloWorld.java](client-examples/HelloWorld.java.html). A single
+    class creates two Elvin client connections, one sending the
+    traditional "Hello World" message as a greeting, the other one
+    listening for all greetings and printing them to the console.
+
+  * [WallBroadcaster.java](client-examples/WallBroadcaster.java.html)
+    and
+    [WallReceiver.java](client-examples/WallReceiver.java.html). This
+    example uses two console applications to simulate a simple Unix
+    "wall"-style command that broadcasts text to a number of consoles.
+
+  * [SecureSender.java](client-examples/SecureSender.java.html) and
+    [SecureReceiver.java](client-examples/SecureReceiver.java.html). In
+    this example we set up a situation where a sender wants to ensure
+    that only receivers it trusts can see its messages.
+
+You can also see a demonstration of the client library in a realistic
+scenario at the [examples page][examples].
 
 [download]: https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
 
