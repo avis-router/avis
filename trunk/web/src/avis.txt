@@ -56,11 +56,11 @@ Technology Organisation][DSTO] (DSTO).
 
 In 2003 Mantara Software Inc was created as a DSTC spin-off commercial
 entity in order to further develop and market Elvin. When Mantara
-announced it would stop offering Elvin as a supported product, Matthew
-Phillips implemented the Elvin open specifications published at
-[elvin.org][] as free software in the form of the Avis project.
+announced it would stop offering Elvin as a stand-alone product,
+Matthew Phillips implemented the Elvin open specifications published
+at [elvin.org][] as free software in the form of the Avis project.
 
-The Avis project aims to support developing systems using the proven
+The Avis project aims to support ongoing development using the proven
 Elvin message bus approach. It is intended that Avis will track
 developments in the Elvin specifications in order to remain a
 compatible long-term option.
