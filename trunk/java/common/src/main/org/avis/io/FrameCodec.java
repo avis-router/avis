@@ -12,7 +12,6 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
-import org.avis.io.messages.XidMessage;
 
 import static org.avis.logging.Log.internalError;
 
