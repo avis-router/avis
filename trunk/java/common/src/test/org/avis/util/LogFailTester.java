@@ -7,14 +7,12 @@ import org.avis.logging.LogEvent;
 import org.avis.logging.LogListener;
 
 import static org.avis.logging.Log.ALARM;
-import static org.avis.logging.Log.INTERNAL_ERROR;
 import static org.avis.logging.Log.WARNING;
 import static org.avis.logging.Log.addLogListener;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.removeLogListener;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.toLogString;
-
 import static org.junit.Assert.fail;
 
 /**
@@ -49,7 +47,6 @@ public class LogFailTester implements LogListener
     
     enableLogging (ALARM, false);
     enableLogging (WARNING, false);
-    enableLogging (INTERNAL_ERROR, false);
   }
   
   /**
@@ -64,7 +61,6 @@ public class LogFailTester implements LogListener
     
     enableLogging (ALARM, wasLoggingErrors);
     enableLogging (WARNING, wasLoggingErrors);
-    enableLogging (INTERNAL_ERROR, wasLoggingErrors);
   }
   
   /**
