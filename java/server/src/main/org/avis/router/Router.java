@@ -24,7 +24,6 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 import org.avis.config.Options;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
-import org.avis.io.FrameTooLargeException;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -670,31 +669,17 @@ public class Router implements IoHandler, Closeable
   private static void handleError (IoSession session, ErrorMessage message)
   {
     /*
-     * When a frame is too large: for requests we can send a NACK for,
-     * simply reject and keep on truckin. For frames that cannot be
-     * NACK'd (e.g. NotifyEmit), we treat this as a protocol error and
-     * Disconn with a descriptive message rather than silently (from
-     * the client's POV) dropping them.
+     * For requests we can send a NACK for, reject before closing
+     * session.
      */
-    if (message.error instanceof FrameTooLargeException)
+    if (message.cause instanceof RequestMessage<?>)
     {
-      if (message.cause instanceof RequestMessage<?>)
-      {
-        // codec will have suspended input on error, restart
-        session.resumeRead ();
-        
-        nackLimit (session, (XidMessage)message.cause, 
-                   message.error.getMessage ());
-      } else
-      {
-        handleProtocolViolation (session, message.cause, 
-                                 message.error.getMessage (), null);
-      }
-    } else
-    {
-      handleProtocolViolation (session, message.cause, 
-                               message.formattedMessage (), message.error);
+      nackLimit (session, (XidMessage)message.cause, 
+                 message.error.getMessage ());
     }
+    
+    handleProtocolViolation (session, message.cause, 
+                             message.error.getMessage (), null);
   }
 
   /**
