@@ -51,7 +51,7 @@ public class JUTestRouter
 {
   static final int PORT = 29170;
 
-  private Router server;
+  private Router router;
   private Random random;
   private LogFailTester logTester;
 
@@ -68,8 +68,8 @@ public class JUTestRouter
   @After
   public void tearDown ()
   {
-    if (server != null)
-      server.close ();
+    if (router != null)
+      router.close ();
     
     logTester.assertOkAndDispose ();
   }
@@ -78,7 +78,7 @@ public class JUTestRouter
   public void connect ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     
     ConnRqst connRqst = new ConnRqst (4, 0);
@@ -95,7 +95,7 @@ public class JUTestRouter
     assertEquals (disconnRqst.xid, disconnRply.xid);
     
     client.close ();
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -107,7 +107,7 @@ public class JUTestRouter
   public void connectionOptions ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
     HashMap<String, Object> options = new HashMap<String, Object> ();
@@ -134,12 +134,20 @@ public class JUTestRouter
     secRqst.addNtfnKeys = new Keys ();
     secRqst.addNtfnKeys.add (SHA1_PRODUCER, new Key (new byte [1025]));
     
+    logTester.pause ();
+    
     client.send (secRqst);
     Nack nack = (Nack)client.receive ();
     
     assertEquals (secRqst.xid, nack.xid);
     
     client.closeImmediately ();
+    
+    router.close ();
+    
+    logTester.unpause ();
+    
+    router = new Router (PORT);
     
     // remove packet length restriction for following tests
     options.remove ("Packet.Max-Length");
@@ -202,7 +210,7 @@ public class JUTestRouter
     
     client.close ();
     
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -219,7 +227,7 @@ public class JUTestRouter
     options.set ("Subscription.Max-Length", 1024);
     //options.set ("Attribute.Opaque.Max-Length", 2048 * 1024);
     
-    server = new Router (options);
+    router = new Router (options);
     SimpleClient client = new SimpleClient ("localhost", PORT);
 
     client.connect ();
@@ -229,8 +237,14 @@ public class JUTestRouter
     secRqst.addNtfnKeys = new Keys ();
     secRqst.addNtfnKeys.add (SHA1_PRODUCER, new Key (new byte [1025]));
     
+    logTester.pause ();
+    
     client.send (secRqst);
     XidMessage reply = (XidMessage)client.receive ();
+    
+    router.close ();
+    
+    logTester.unpause ();
     
     assertTrue ("Expected a NACK", reply instanceof Nack);
     assertEquals (secRqst.xid, reply.xid);
@@ -246,7 +260,7 @@ public class JUTestRouter
   public void subscribe ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     
     client.connect ();
@@ -318,7 +332,7 @@ public class JUTestRouter
     assertTrue (client.receive () instanceof ConfConn);
     
     client.close ();
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -328,7 +342,7 @@ public class JUTestRouter
   public void multiClient ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
     // client 1
     SimpleClient client1 = new SimpleClient ();
@@ -387,7 +401,7 @@ public class JUTestRouter
     
     client1.close ();
     client2.close ();
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -400,7 +414,7 @@ public class JUTestRouter
   public void security ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
 //    SimpleClient alice = new SimpleClient ("localhost", 2917);
 //    SimpleClient bob = new SimpleClient ("localhost", 2917);
@@ -445,7 +459,7 @@ public class JUTestRouter
   public void securitySecModify ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
     SimpleClient alice = new SimpleClient ("alice");
     SimpleClient bob = new SimpleClient ("bob");
@@ -529,7 +543,7 @@ public class JUTestRouter
   public void securitySubModify ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
     SimpleClient alice = new SimpleClient ("alice");
     SimpleClient bob = new SimpleClient ("bob");
@@ -619,7 +633,7 @@ public class JUTestRouter
   public void unotify ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client1 = new SimpleClient ("client1");
     SimpleClient client2 = new SimpleClient ("client2");
     
@@ -651,7 +665,7 @@ public class JUTestRouter
     
     enableLogging (WARNING, false);
     
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     SimpleClient badClient = new SimpleClient ();
     
