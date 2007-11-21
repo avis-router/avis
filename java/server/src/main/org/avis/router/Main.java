@@ -47,7 +47,7 @@ public class Main
     enableLogging (TRACE, false);
     enableLogging (DIAGNOSTIC, false);
     
-    ByteBuffer.setUseDirectBuffers (false);
+    ByteBuffer.setUseDirectBuffers (true);
     
     Properties avisProperties = readAvisProperties ();
     System.getProperties ().putAll (avisProperties);
