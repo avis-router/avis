@@ -59,7 +59,7 @@ public class JUTestFederationManager
   public void basicListen () 
     throws Exception
   {
-    EwafURI federationUri = new EwafURI ("ewaf://0.0.0.0:" + (PORT1 - 1));
+    EwafURI federationUri = new EwafURI ("ewaf://127.0.0.1:" + (PORT1 - 1));
 
     Options options = new Options (FederationOptionSet.OPTION_SET);
     
@@ -138,7 +138,7 @@ public class JUTestFederationManager
   public void fullConnectAccept () 
     throws Exception
   {
-    EwafURI federationUri = new EwafURI ("ewaf://0.0.0.0:" + (PORT1 - 1));
+    EwafURI federationUri = new EwafURI ("ewaf://127.0.0.1:" + (PORT1 - 1));
 
     // router 1 (acceptor)
     Options options1 = new Options (FederationOptionSet.OPTION_SET);
