@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
+import static org.avis.common.LegacyConnectionOptions.legacyToNew;
+import static org.avis.common.LegacyConnectionOptions.newToLegacy;
 import static org.avis.util.Util.valuesEqual;
 
 /**
@@ -78,13 +80,14 @@ public final class ConnectionOptions
 {
   private static final Map<String, Object> EMPTY_MAP = emptyMap ();
 
-  private Map<String, Object> values;
-
   /**
    * An immutable set of empty options.
    */
   public static final ConnectionOptions EMPTY_OPTIONS =
     new ConnectionOptions (EMPTY_MAP);
+
+  private Map<String, Object> values;
+  private boolean includeLegacy;
   
   /**
    * Create an empty instance.
@@ -97,8 +100,122 @@ public final class ConnectionOptions
   private ConnectionOptions (Map<String, Object> values)
   {
     this.values = values;
+    this.includeLegacy = true;
+  }
+  
+  /**
+   * Enable legacy connection option compatibility (default is
+   * enabled). This enables compatibility with older Mantara Elvin
+   * routers, and should be left active unless you are sure the target
+   * router supports new-style options. Enabling this adds a small
+   * amount of size to the initial connection request, but no further
+   * overhead.
+   * 
+   * @see #asMapWithLegacy()
+   */
+  public void includeLegacy (boolean newValue)
+  {
+    this.includeLegacy = newValue;
   }
 
+  /**
+   * Generate a map view of this connection option set, automatically
+   * adding legacy connection options as required.
+   * 
+   * @see #convertLegacyToNew(Map)
+   */
+  protected Map<String, Object> asMapWithLegacy ()
+  {
+    if (values.isEmpty ())
+      return emptyMap ();
+    
+    HashMap<String, Object> options = new HashMap<String, Object> ();
+    
+    for (Map.Entry<String, Object> entry : values.entrySet ())
+    {
+      if (includeLegacy)
+      {
+        Object value = entry.getValue ();
+        
+        /*
+         * TCP.Send-Immediately maps to router.coalesce-delay which
+         * has opposite meaning.
+         */
+        if (entry.getKey ().equals ("TCP.Send-Immediately"))
+          value = value.equals (0) ? 1 : 0;
+        
+        options.put (newToLegacy (entry.getKey ()), value);
+      }
+      
+      options.put (entry.getKey (), entry.getValue ());
+    }
+    
+    return options;
+  }
+  
+  /**
+   * Convert options that may contain legacy settings to new-style
+   * ones as required.
+   * 
+   * @param legacyOptions input options.
+   * @return A set of options with any legacy options mapped to the
+   *         new style ones.
+   */
+  protected static Map<String, Object> convertLegacyToNew 
+    (Map<String, Object> legacyOptions)
+  {
+    if (legacyOptions.isEmpty ())
+      return emptyMap ();
+    
+    HashMap<String, Object> options = new HashMap<String, Object> ();
+    
+    for (Map.Entry<String, Object> entry : legacyOptions.entrySet ())
+    {
+      Object value = entry.getValue ();
+        
+      /*
+       * router.coalesce-delay maps to TCP.Send-Immediately which has
+       * opposite meaning.
+       */
+      if (entry.getKey ().equals ("router.coalesce-delay"))
+        value = value.equals (0) ? 1 : 0;
+      
+      options.put (legacyToNew (entry.getKey ()), value);
+    }
+    
+    return options;
+  }
+  
+  /**
+   * Generate an immutable, live map of the current options.
+   * 
+   * @see #asMapWithLegacy()
+   */
+  public Map<String, Object> asMap ()
+  {
+    return unmodifiableMap (values);
+  }
+  
+  /**
+   * Generate the difference between this option set and an actual set
+   * returned by the server. Includes logic for dealing with legacy
+   * connection options.
+   */
+  protected Map<String, Object> differenceFrom (Map<String, Object> options)
+  {
+    HashMap<String, Object> diff = new HashMap<String, Object> ();
+    
+    for (Entry<String, Object> entry : values.entrySet ())
+    {
+      Object actualValue = options.get (entry.getKey ());
+      
+      if (!valuesEqual (entry.getValue (), actualValue))
+        diff.put (entry.getKey (), actualValue);
+    }
+    
+    return diff;
+  }
+  
   /**
    * Set a connection option.  
    * 
@@ -282,33 +399,6 @@ public final class ConnectionOptions
       return defaultValue;
     else
       return asBoolean (name, value);
-  }
-  
-  /**
-   * Generate an immutable, live map of the current options.
-   */
-  public Map<String, Object> asMap ()
-  {
-    return unmodifiableMap (values);
-  }
-  
-  /**
-   * Generate the difference between this option set and an actual set
-   * returned by the server.
-   */
-  Map<String, Object> differenceFrom (Map<String, Object> options)
-  {
-    HashMap<String, Object> diff = new HashMap<String, Object> ();
-    
-    for (Entry<String, Object> entry : values.entrySet ())
-    {
-      Object actualValue = options.get (entry.getKey ());
-      
-      if (!valuesEqual (entry.getValue (), actualValue))
-        diff.put (entry.getKey (), actualValue);
-    }
-    
-    return diff;
   }
   
   private static int asInt (String name, Object value)

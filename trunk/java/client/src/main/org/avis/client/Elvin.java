@@ -58,6 +58,7 @@ import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY;
 import static org.avis.client.CloseEvent.REASON_ROUTER_STOPPED_RESPONDING;
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
+import static org.avis.client.ConnectionOptions.convertLegacyToNew;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.io.Net.enableTcpNoDelay;
@@ -370,13 +371,13 @@ public final class Elvin implements Closeable
       ConnRply connRply =
         sendAndReceive (new ConnRqst (routerUri.versionMajor,
                                       routerUri.versionMinor,
-                                      options.asMap (),
+                                      options.asMapWithLegacy (),
                                       notificationKeys, subscriptionKeys));
       
       elvinSessionEstablished = true;
       
       Map<String, Object> rejectedOptions =
-        options.differenceFrom (connRply.options);
+        options.differenceFrom (convertLegacyToNew (connRply.options));
       
       if (!rejectedOptions.isEmpty ())
         throw new ConnectionOptionsException (options, rejectedOptions);
