@@ -97,6 +97,11 @@ public class SimpleClient implements IoHandler
     future.join ();
     clientSession = future.getSession ();
   }
+  
+  public boolean isConnected ()
+  {
+    return clientSession != null && clientSession.isConnected ();
+  }
 
   public synchronized void send (Message message)
     throws NoConnectionException
