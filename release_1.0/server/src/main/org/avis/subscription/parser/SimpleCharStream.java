@@ -5,7 +5,6 @@ package org.avis.subscription.parser;
  * An implementation of interface CharStream, where the stream is assumed to
  * contain only ASCII characters (without unicode processing).
  */
-
 @SuppressWarnings("all")
 public class SimpleCharStream
 {
