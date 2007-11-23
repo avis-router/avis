@@ -66,7 +66,7 @@ public class AcceptorConnectorSetup
   public void connect (IoHandler acceptorListener, IoHandler connectorListener)
     throws IOException
   {
-    InetSocketAddress remoteAddress = new InetSocketAddress ("0.0.0.0", 29170);
+    InetSocketAddress remoteAddress = new InetSocketAddress ("127.0.0.1", 29170);
     
     acceptor.bind (remoteAddress, acceptorListener, acceptorConfig);
     
