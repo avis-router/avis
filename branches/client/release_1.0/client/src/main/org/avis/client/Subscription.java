@@ -42,7 +42,11 @@ public final class Subscription
   }
   
   /**
-   * Remove this subscription (unsubscribe). May be called more than once.
+   * Remove this subscription (unsubscribe). May be called more than
+   * once. Unlike the other methods on this class, this may be called
+   * on a subscription for a connection that has been closed without
+   * generating an error, since such a subscription is effectively
+   * removed anyway.
    * 
    * @throws IOException if a network error occurs.
    */
@@ -54,13 +58,13 @@ public final class Subscription
       if (id == 0)
         return;
       
-      checkActive ();
-      
-      elvin.unsubscribe (this);
+      if (elvin.isOpen ())
+        elvin.unsubscribe (this);
       
       id = 0;
 
-      elvin.callbacks.flush ();
+      if (elvin.isOpen ())
+        elvin.callbacks.flush ();
     }
   }
   

@@ -80,6 +80,10 @@ public abstract class FrameCodec
     // if (isEnabled (TRACE) && in.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec input: " + in.getHexDump (), this);
     
+    // if in overflow mode, do not try to read any further
+    if (session.getAttribute ("haveFrameOverflow") != null)
+      return false;
+    
     if (!haveFullFrame (session, in))
       return false;
     
@@ -113,6 +117,10 @@ public abstract class FrameCodec
         
         in.skip (remainder);
       }
+      
+      out.write (message);
+    
+      return true;
     } catch (Exception ex)
     {
       // handle client protocol violations by generating an ErrorMessage
@@ -123,23 +131,21 @@ public abstract class FrameCodec
         ErrorMessage error = new ErrorMessage (ex, message);
         
         // fill in XID if possible
-        if (message instanceof XidMessage && in.remaining () >= 4)
-          ((XidMessage)message).xid = in.getInt ();
-        
-        in.skip (in.remaining ());
-        
-        session.suspendRead ();
+        if (message instanceof XidMessage && in.capacity () >= 12)
+          ((XidMessage)message).xid = in.getInt (8);
 
-        message = error;
+        // set frame overflow flag => stop reading further data
+        if (ex instanceof FrameTooLargeException)
+          session.setAttribute ("haveFrameOverflow");
+        
+        out.write (error);
+        
+        return true;
       } else
       {
         throw (RuntimeException)ex;
       }
     }
-    
-    out.write (message);
-    
-    return true;
   }
 
   /**

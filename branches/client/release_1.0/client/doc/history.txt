@@ -1,3 +1,20 @@
+Release 1.0.6 (November 23, 2007)
+----------------------------------------------------------------------
+
+This release improves compatibility with older Mantara routers.
+
+ * Connection options are now sent with their legacy counterparts so
+   that older Mantara routers can process them. In the previous client
+   library release, specifying a new connection option that the
+   Mantara router did not understand, such as TCP.Send-Immediately,
+   would cause a connection failure.
+
+ * Subscription.remove () may now be called for subscriptions on a
+   closed connection without generating an error.
+
+ * Updated to the latest MINA 1.1.4 release.
+
+
 Release 1.0.5 (November 3, 2007)
 ----------------------------------------------------------------------
 
