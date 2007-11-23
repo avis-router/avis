@@ -3,12 +3,10 @@ package org.avis.router;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.avis.router.ClientConnectionOptions;
-
 import org.junit.Test;
 
+import static org.avis.common.LegacyConnectionOptions.legacyToNew;
 import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -77,7 +75,7 @@ public class JUTestClientConnectionOptions
   {
     assertEquals
       (CLIENT_CONNECTION_OPTION_SET.defaults.get
-        (CLIENT_CONNECTION_OPTION_SET.legacyToNew (name)), accepted.get (name));
+        (legacyToNew (name)), accepted.get (name));
   }
 
   private static void assertRequested (Map<String, Object> requested,
