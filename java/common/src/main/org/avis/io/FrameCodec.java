@@ -14,7 +14,7 @@ import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.XidMessage;
 
-import static org.avis.logging.Log.internalError;
+import static org.avis.logging.Log.diagnostic;
 
 /**
  * Base class for Elvin XDR frame codecs. Reads/writes messages
@@ -112,8 +112,8 @@ public abstract class FrameCodec
       
       if (remainder > 0)
       {
-        internalError ("Some input not read by " + message.getClass () +
-                       " (" + remainder + " bytes)", this);
+        diagnostic ("Some input not read by " + message.getClass () +
+                    " (" + remainder + " bytes)", this);
         
         in.skip (remainder);
       }
@@ -131,7 +131,7 @@ public abstract class FrameCodec
         ErrorMessage error = new ErrorMessage (ex, message);
         
         // fill in XID if possible
-        if (message instanceof XidMessage && in.capacity () >= 12)
+        if (message instanceof XidMessage && in.limit () >= 12)
           ((XidMessage)message).xid = in.getInt (8);
 
         // set frame overflow flag => stop reading further data
