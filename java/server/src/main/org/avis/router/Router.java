@@ -405,7 +405,11 @@ public class Router implements IoHandler, Closeable
       send (session,
             new Nack (message, PROT_INCOMPAT,
                       "Max supported protocol version is " +
-                       + CLIENT_VERSION_MAJOR + '.' + CLIENT_VERSION_MINOR));
+                       + CLIENT_VERSION_MAJOR + '.' + CLIENT_VERSION_MINOR +
+                       ": use a connection URI like " +
+                       "elvin:" + CLIENT_VERSION_MAJOR + '.' + 
+                       CLIENT_VERSION_MINOR + "//hostname to specify " +
+                       "protocol version"));
     } else if (message.notificationKeys.size () > maxKeys ||
                message.subscriptionKeys.size () > maxKeys)
     {
