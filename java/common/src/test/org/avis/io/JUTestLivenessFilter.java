@@ -9,6 +9,7 @@ import org.avis.logging.Log;
 
 import org.junit.Test;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,6 +52,13 @@ public class JUTestLivenessFilter
     testSetup.close ();
     
     assertTrue (SharedExecutor.sharedExecutorDisposed ());
+    
+    // wait for tracker to be disposed on session close
+    long start = currentTimeMillis ();
+    
+    while (currentTimeMillis () - start < 5000 && !tracker.isDisposed ())
+      sleep (200);
+    
     assertTrue (tracker.isDisposed ());
   }
   
