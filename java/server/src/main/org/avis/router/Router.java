@@ -672,18 +672,19 @@ public class Router implements IoHandler, Closeable
 
   private static void handleError (IoSession session, ErrorMessage message)
   {
+    String diagnosticMessage = message.error.getMessage ();
+
+    if (diagnosticMessage == null)
+      diagnosticMessage = "Protocol violation";
+    
     /*
      * For requests we can send a NACK for, reject before closing
      * session.
      */
     if (message.cause instanceof RequestMessage<?>)
-    {
-      nackLimit (session, (XidMessage)message.cause, 
-                 message.error.getMessage ());
-    }
+      nackLimit (session, (XidMessage)message.cause, diagnosticMessage);
     
-    handleProtocolViolation (session, message.cause, 
-                             message.error.getMessage (), null);
+    handleProtocolViolation (session, message.cause, diagnosticMessage, null);
   }
 
   /**
@@ -700,6 +701,16 @@ public class Router implements IoHandler, Closeable
                                                String diagnosticMessage,
                                                Throwable error)
   {
+    /* Mark session in violation and handle once: codec may generate a number
+     * of error messages. */
+    if (session.getAttribute ("protocolViolation") != null)
+      return;
+    
+    session.setAttribute ("protocolViolation");
+    
+    if (diagnosticMessage == null)
+      diagnosticMessage = "Protocol violation";
+    
     warn ("Disconnecting client due to protocol violation: " +
           diagnosticMessage, Router.class);
 
