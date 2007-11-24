@@ -17,6 +17,11 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
+/**
+ * Fuzz tests an Elvin router by writing message frames with random payloads.
+ * 
+ * @author Matthew Phillips
+ */
 public class Fuzz
 {
   final static int [] MESSAGES = new int []
@@ -26,7 +31,7 @@ public class Fuzz
   public static void main (String [] args)
     throws InterruptedException
   {
-    new Fuzz (args [0]).run ();
+    new Fuzz ((args.length > 0 ? args [0] : "127.0.0.1")).run ();
   }
 
   private SocketConnector connector;
@@ -67,19 +72,12 @@ public class Fuzz
       buffer.putInt (MESSAGES [random.nextInt (MESSAGES.length)]);
       
       for (int i = bytes; i > 0; i--)
-      {
         buffer.put ((byte)(random.nextInt (256) - 127));
-        
-//        if (i < 10)
-//          System.out.println ("byte " + i + " = " + buffer.get (i));
-      }
       
       buffer.flip ();
       session.write (buffer).addListener (IoFutureListener.CLOSE);
       
       System.out.println ("Wrote " + bytes + " bytes");
-      
-//      session.close ();
       
       sleep (200);
     }
