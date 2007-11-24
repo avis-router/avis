@@ -79,7 +79,7 @@ public class Fuzz
       
       System.out.println ("Wrote " + bytes + " bytes");
       
-      sleep (200);
+      sleep (10);
     }
   }
   
