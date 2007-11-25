@@ -701,15 +701,8 @@ public class Router implements IoHandler, Closeable
                                                String diagnosticMessage,
                                                Throwable error)
   {
-    /* Mark session in violation and handle once: codec may generate a number
-     * of error messages. */
-    if (session.getAttribute ("protocolViolation") != null)
-      return;
-    
-    session.setAttribute ("protocolViolation");
-    
     if (diagnosticMessage == null)
-      diagnosticMessage = "Protocol violation";
+      diagnosticMessage = "Frame format error";
     
     warn ("Disconnecting client due to protocol violation: " +
           diagnosticMessage, Router.class);
@@ -717,8 +710,6 @@ public class Router implements IoHandler, Closeable
     if (error != null)
       diagnostic ("Decode stack trace", Router.class, error);
     
-    session.suspendRead ();
-
     Connection connection = peekConnectionFor (session);
     
     if (connection != null)
