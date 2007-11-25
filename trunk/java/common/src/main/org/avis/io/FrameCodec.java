@@ -80,8 +80,8 @@ public abstract class FrameCodec
     // if (isEnabled (TRACE) && in.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec input: " + in.getHexDump (), this);
     
-    // if in overflow mode, do not try to read any further
-    if (session.getAttribute ("haveFrameOverflow") != null)
+    // if in protocol violation mode, do not try to read any further
+    if (session.getAttribute ("protocolViolation") != null)
       return false;
     
     if (!haveFullFrame (session, in))
@@ -123,21 +123,24 @@ public abstract class FrameCodec
       return true;
     } catch (Exception ex)
     {
-      // handle client protocol violations by generating an ErrorMessage
       if (ex instanceof ProtocolCodecException ||
           ex instanceof BufferUnderflowException ||
           ex instanceof FrameTooLargeException)
       {
-        ErrorMessage error = new ErrorMessage (ex, message);
+        /*
+         * Mark session in violation and handle once: codec will only
+         * generate one error message, it's up to consumer to try to
+         * recover or close connection.
+         */
+        session.setAttribute ("protocolViolation");
+        session.suspendRead ();
+        
+        ErrorMessage error = new ErrorMessage (ex, message); 
         
         // fill in XID if possible
         if (message instanceof XidMessage && in.limit () >= 12)
           ((XidMessage)message).xid = in.getInt (8);
 
-        // set frame overflow flag => stop reading further data
-        if (ex instanceof FrameTooLargeException)
-          session.setAttribute ("haveFrameOverflow");
-        
         out.write (error);
         
         return true;
