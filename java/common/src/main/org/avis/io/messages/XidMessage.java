@@ -38,7 +38,15 @@ public abstract class XidMessage extends Message
 
   public XidMessage (int xid)
   {
+    if (xid <= 0)
+      throw new IllegalArgumentException ("Invalid XID: " + xid);
+    
     this.xid = xid;
+  }
+
+  public boolean hasValidXid ()
+  {
+    return xid > 0;
   }
 
   @Override
@@ -46,6 +54,9 @@ public abstract class XidMessage extends Message
     throws ProtocolCodecException
   {
     xid = in.getInt ();
+    
+    if (xid <= 0)
+      throw new ProtocolCodecException ("XID must be >= 0: " + xid);
   }
 
   @Override
