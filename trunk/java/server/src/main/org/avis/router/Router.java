@@ -37,7 +37,6 @@ import org.avis.io.messages.Notify;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.QuenchPlaceHolder;
-import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.SecRply;
 import org.avis.io.messages.SecRqst;
 import org.avis.io.messages.SubAddRqst;
@@ -75,7 +74,6 @@ import static org.avis.io.messages.Nack.IMPL_LIMIT;
 import static org.avis.io.messages.Nack.NOT_IMPL;
 import static org.avis.io.messages.Nack.NO_SUCH_SUB;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
-import static org.avis.io.messages.Nack.PROT_ERROR;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
@@ -672,29 +670,18 @@ public class Router implements IoHandler, Closeable
 
   private static void handleError (IoSession session, ErrorMessage message)
   {
-    String diagnosticMessage = message.error.getMessage ();
-
-    if (diagnosticMessage == null)
-      diagnosticMessage = "Protocol violation";
-    
-    /*
-     * For requests we can send a NACK for, reject before closing
-     * session.
-     */
-    if (message.cause instanceof RequestMessage<?>)
-      nackLimit (session, (XidMessage)message.cause, diagnosticMessage);
-    
-    handleProtocolViolation (session, message.cause, diagnosticMessage, null);
+    handleProtocolViolation (session, message.cause, 
+                             message.error.getMessage (), null);
   }
 
   /**
-   * Handle a protocol violation by a client by sending a NACK (if
-   * appropriate) and disconnecting with the REASON_PROTOCOL_VIOLATION code.
+   * Handle a protocol violation by a client disconnecting with the
+   * REASON_PROTOCOL_VIOLATION code.
    * 
    * @param session The client session.
    * @param cause The message that caused the violation.
    * @param diagnosticMessage The diagnostic sent back to the client.
-   * @throws NoConnectionException 
+   * @throws NoConnectionException
    */
   private static void handleProtocolViolation (IoSession session,
                                                Message cause,
@@ -713,12 +700,16 @@ public class Router implements IoHandler, Closeable
     Connection connection = peekConnectionFor (session);
     
     if (connection != null)
-      connection.close ();
-    
-    if (cause instanceof RequestMessage<?>)
     {
-      send (session,
-            new Nack ((XidMessage)cause, PROT_ERROR, diagnosticMessage));
+      connection.lockWrite ();
+      
+      try
+      {
+        connection.close ();
+      } finally
+      {
+        connection.unlockWrite ();
+      }
     }
     
     // send Disconn and close
