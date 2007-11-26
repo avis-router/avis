@@ -139,7 +139,12 @@ public abstract class FrameCodec
         
         // fill in XID if possible
         if (message instanceof XidMessage && in.limit () >= 12)
-          ((XidMessage)message).xid = in.getInt (8);
+        {
+          int xid = in.getInt (8);
+          
+          if (xid > 0)
+            ((XidMessage)message).xid = xid;
+        }
 
         out.write (error);
         
