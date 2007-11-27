@@ -11,8 +11,10 @@ import org.junit.Test;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
+import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DisconnRply;
 import org.avis.io.messages.DisconnRqst;
+import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
@@ -23,7 +25,6 @@ import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.SubRply;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
-import org.avis.io.messages.XidMessage;
 import org.avis.security.Key;
 import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
@@ -137,9 +138,9 @@ public class JUTestRouter
     logTester.pause ();
     
     client.send (secRqst);
-    Nack nack = (Nack)client.receive ();
+    Message reply = client.receive ();
     
-    assertEquals (secRqst.xid, nack.xid);
+    assertTrue (reply instanceof Disconn);
     
     client.closeImmediately ();
     
@@ -162,7 +163,7 @@ public class JUTestRouter
     
     SubAddRqst subAddRqst = new SubAddRqst ("Invalid == 1");
     client.send (subAddRqst);
-    nack = (Nack)client.receive ();
+    Nack nack = (Nack)client.receive ();
     
     assertEquals (subAddRqst.xid, nack.xid);
     client.close ();
@@ -240,14 +241,13 @@ public class JUTestRouter
     logTester.pause ();
     
     client.send (secRqst);
-    XidMessage reply = (XidMessage)client.receive ();
+    Message reply = client.receive ();
     
     router.close ();
     
     logTester.unpause ();
     
-    assertTrue ("Expected a NACK", reply instanceof Nack);
-    assertEquals (secRqst.xid, reply.xid);
+    assertTrue ("Expected a Disconn", reply instanceof Disconn);
     
     client.closeImmediately ();
   }
@@ -695,7 +695,9 @@ public class JUTestRouter
     
     SecRqst secRqst = new SecRqst ();
     badClient.send (secRqst);
-    Nack nack = (Nack)badClient.receive ();
+    Message reply = badClient.receive ();
+    assertTrue (reply instanceof Disconn);
+    
     badClient.close ();
 
     // try subscription with no connection
@@ -704,8 +706,8 @@ public class JUTestRouter
     SubAddRqst subAddRqst =
       new SubAddRqst ("require (hello)", EMPTY_KEYS, true);
     badClient.send (subAddRqst);
-    nack = (Nack)badClient.receive ();
-    assertEquals (subAddRqst.xid, nack.xid);
+    reply = badClient.receive ();
+    assertTrue (reply instanceof Disconn);
     badClient.close ();
     
     // try to connect twice
@@ -714,8 +716,8 @@ public class JUTestRouter
 
     ConnRqst connRqst = new ConnRqst (4, 0);
     badClient.send (connRqst);
-    nack = (Nack)badClient.receive ();
-    assertEquals (connRqst.xid, nack.xid);
+    reply = badClient.receive ();
+    assertTrue (reply instanceof Disconn);
     
     // server will have disconnected us for being Bad, so just kill socket
     badClient.closeImmediately ();
@@ -726,8 +728,9 @@ public class JUTestRouter
     
     SubModRqst subModRqst = new SubModRqst (123456, "", true);
     badClient.send (subModRqst);
-    nack = (Nack)badClient.receive ();
-    assertEquals (subModRqst.xid, nack.xid);
+    reply = badClient.receive ();
+    assertTrue (reply instanceof Nack);
+    assertEquals (subModRqst.xid, ((Nack)reply).xid);
     
     badClient.close ();
     client.close ();
