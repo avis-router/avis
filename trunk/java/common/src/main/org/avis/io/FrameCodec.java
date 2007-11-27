@@ -108,14 +108,15 @@ public abstract class FrameCodec
       
       message.decode (in);
       
-      int remainder = frameSize - (in.position () - dataStart);
+      int bytesRead = in.position () - dataStart;
       
-      if (remainder > 0)
+      if (bytesRead != frameSize)
       {
-        diagnostic ("Some input not read by " + message.getClass () +
-                    " (" + remainder + " bytes)", this);
+        diagnostic ("Some input not read by " + message.name (), this);
         
-        in.skip (remainder);
+        throw new ProtocolCodecException 
+          ("Frame header said " + frameSize + 
+           " bytes, but only read " + bytesRead);
       }
       
       out.write (message);
