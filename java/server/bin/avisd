@@ -41,7 +41,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-jvm_options="-server -Xms64M -Xmx128M -Xverify:none -XX:+UseParallelGC"
+jvm_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
 
 command="java $jvm_options -jar $avisd_jar $avisd_opts"
 
