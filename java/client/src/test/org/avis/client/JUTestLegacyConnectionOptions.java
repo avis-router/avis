@@ -9,7 +9,7 @@ import org.junit.Test;
 import static java.util.Collections.unmodifiableMap;
 
 import static org.avis.client.ConnectionOptions.convertLegacyToNew;
-import static org.avis.common.LegacyConnectionOptions.newToLegacy;
+import static org.avis.io.LegacyConnectionOptions.newToLegacy;
 import static org.junit.Assert.assertEquals;
 
 public class JUTestLegacyConnectionOptions

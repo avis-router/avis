@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
-import static org.avis.common.LegacyConnectionOptions.legacyToNew;
-import static org.avis.common.LegacyConnectionOptions.newToLegacy;
+import static org.avis.io.LegacyConnectionOptions.legacyToNew;
+import static org.avis.io.LegacyConnectionOptions.newToLegacy;
 import static org.avis.util.Util.valuesEqual;
 
 /**
