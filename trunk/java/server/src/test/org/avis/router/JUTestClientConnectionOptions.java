@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import static org.avis.common.LegacyConnectionOptions.legacyToNew;
+import static org.avis.io.LegacyConnectionOptions.legacyToNew;
 import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

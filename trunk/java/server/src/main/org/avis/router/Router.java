@@ -227,17 +227,6 @@ public class Router implements IoHandler, Closeable
       diagnostic ("Interrupted while waiting for shutdown", this, ex);
     }
   }
-
-  private static WriteFuture send (IoSession session, Message message)
-  {    
-    if (shouldLog (TRACE))
-    {
-      trace ("Server sent message to " + idFor (session) + ": " + message,
-             Router.class);
-    }
-    
-    return session.write (message);
-  }
   
   /**
    * The shared executor thread pool used by the router. Plugins may
@@ -955,6 +944,17 @@ public class Router implements IoHandler, Closeable
     return connection;
   }
   
+  private static WriteFuture send (IoSession session, Message message)
+  {    
+    if (shouldLog (TRACE))
+    {
+      trace ("Server sent message to " + idFor (session) + ": " + message,
+             Router.class);
+    }
+    
+    return session.write (message);
+  }
+
   /**
    * Get the connection associated with a session or null for no connection.
    */

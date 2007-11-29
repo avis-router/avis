@@ -6,7 +6,7 @@ import java.util.Map;
 import org.avis.config.Options;
 import org.avis.util.IllegalOptionException;
 
-import static org.avis.common.LegacyConnectionOptions.legacyToNew;
+import static org.avis.io.LegacyConnectionOptions.legacyToNew;
 
 /**
  * Extends the Avis connection option set to be used against the

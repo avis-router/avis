@@ -6,7 +6,7 @@ import org.avis.config.Options;
 
 import static java.util.Collections.emptyMap;
 
-import static org.avis.common.LegacyConnectionOptions.newToLegacy;
+import static org.avis.io.LegacyConnectionOptions.newToLegacy;
 import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
 
 /**
