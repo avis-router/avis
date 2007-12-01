@@ -40,6 +40,7 @@ import static org.avis.logging.Log.trace;
 import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -98,11 +99,30 @@ public class SimpleClient implements IoHandler
     clientSession = future.getSession ();
   }
   
-  public boolean isConnected ()
+  public SimpleClient (InetSocketAddress address, 
+                       SocketConnectorConfig cfg)
   {
-    return clientSession != null && clientSession.isConnected ();
+    this ("client", address, cfg);
   }
+  
+  public SimpleClient (String clientName,
+                       InetSocketAddress address, 
+                       SocketConnectorConfig cfg)
+  {
+    this.clientName = clientName;
+    
+    SocketConnector connector = new SocketConnector ();
 
+    /* Change the worker timeout to 1 second to make the I/O thread
+     * quit soon when there's no connection to manage. */
+    connector.setWorkerTimeout (1);
+    
+    ConnectFuture future = connector.connect (address, this, cfg);
+                                     
+    future.join ();
+    clientSession = future.getSession ();
+  }
+  
   public synchronized void send (Message message)
     throws NoConnectionException
   {
