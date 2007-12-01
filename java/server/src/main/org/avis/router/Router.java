@@ -175,11 +175,7 @@ public class Router implements IoHandler, Closeable
       }
       
       for (InetSocketAddress address : addressesFor (uri))
-      {
-        diagnostic ("Router binding to " + uri + " (" + address + ")", this);
-
         acceptor.bind (address, this, bindConfig);
-      }
     }
   }
 
