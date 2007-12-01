@@ -66,13 +66,12 @@ public class JUTestTLS
     connectorConfig.setConnectTimeout (10);
     
     SSLContext sslContext = SSLContext.getInstance ("TLS");
-    sslContext.init (null, new TrustManager [] {ACCCEPT_ALL_MANAGER}, null);
+    sslContext.init (null, new TrustManager [] {ACCEPT_ALL_MANAGER}, null);
     
     SSLFilter sslFilter = new SSLFilter (sslContext);
     sslFilter.setUseClientMode (true);
     
-    connectorConfig.getFilterChain ().addFirst 
-      ("ssl", sslFilter);
+    connectorConfig.getFilterChain ().addFirst  ("ssl", sslFilter);
                                 
     connectorConfig.getFilterChain ().addLast 
       ("codec", ClientFrameCodec.FILTER);
@@ -80,7 +79,7 @@ public class JUTestTLS
     return connectorConfig;
   }
   
-  static final X509TrustManager ACCCEPT_ALL_MANAGER = new X509TrustManager ()
+  static final X509TrustManager ACCEPT_ALL_MANAGER = new X509TrustManager ()
   {
     public void checkClientTrusted (X509Certificate [] x509Certificates,
                                     String s)
