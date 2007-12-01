@@ -163,10 +163,7 @@ public class Router implements IoHandler, Closeable
       if (uri.isSecure ())
       {
         if (secureAcceptorConfig == null)
-        {
-          secureAcceptorConfig = 
-            createSecureConfig (defaultAcceptorConfig, routerOptions);
-        }
+          secureAcceptorConfig = createSecureConfig ();
         
         bindConfig = secureAcceptorConfig;
       } else
@@ -200,12 +197,12 @@ public class Router implements IoHandler, Closeable
     
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));
+    
     return defaultAcceptorConfig;
   }
   
-  private static SocketAcceptorConfig createSecureConfig
-    (SocketAcceptorConfig baseConfig, RouterOptions routerOptions)
-      throws IllegalOptionException, IOException
+  private SocketAcceptorConfig createSecureConfig ()
+    throws IllegalOptionException, IOException
   {
     InputStream keystoreStream = null;
     
@@ -228,8 +225,7 @@ public class Router implements IoHandler, Closeable
       SSLContext sslContext = SSLContext.getInstance ("TLS");
       sslContext.init (keyFactory.getKeyManagers (), null, null);
       
-      SocketAcceptorConfig secureAcceptorConfig = 
-        (SocketAcceptorConfig)baseConfig.clone ();
+      SocketAcceptorConfig secureAcceptorConfig = createDefaultConfig ();
 
       secureAcceptorConfig.getFilterChain ().addFirst 
         ("ssl", new SSLFilter (sslContext));
