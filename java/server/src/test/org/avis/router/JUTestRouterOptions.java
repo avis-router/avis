@@ -7,8 +7,8 @@ import java.util.Set;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 
+import org.avis.common.ElvinURI;
 import org.avis.federation.FederationOptionSet;
 
 import org.junit.Test;
@@ -16,6 +16,7 @@ import org.junit.Test;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 
 import static org.avis.common.Common.DEFAULT_PORT;
+import static org.avis.io.Net.addressesFor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,9 +31,10 @@ public class JUTestRouterOptions
     options.set ("Port", "29170");
     options.set ("Listen", "elvin://0.0.0.0");
     
-    Set<InetSocketAddress> addresses = options.listenAddresses ();
+    Set<ElvinURI> uris = options.listenURIs ();
+    Set<InetSocketAddress> addresses = addressesFor (uris);
     
-    assertEquals (1, addresses.size ());
+    assertEquals (1, uris.size ());
     
     assertTrue
       (addresses.contains (new InetSocketAddress (options.getInt ("Port"))));
@@ -97,7 +99,7 @@ public class JUTestRouterOptions
     options.set ("Listen",
                  "elvin:/tcp,none,xdr/localhost:1234 \t elvin://localhost");
     
-    Set<InetSocketAddress> addresses = options.listenAddresses ();
+    Set<InetSocketAddress> addresses = addressesFor (options.listenURIs ());
     
     boolean found1234 = false;
     
@@ -128,12 +130,12 @@ public class JUTestRouterOptions
   }
 
   private void testHost (Set<InetAddress> hostAddresses, String hostOption, int port)
-    throws SocketException
+    throws Exception
   {
     RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://" + hostOption);
     
-    Set<InetSocketAddress> addresses = options.listenAddresses ();
+    Set<InetSocketAddress> addresses = addressesFor (options.listenURIs ());
     
     assertEquals (hostAddresses.size (), addresses.size ());
     
@@ -144,12 +146,12 @@ public class JUTestRouterOptions
   private void testInterfaces (Set<InetAddress> interfaceAddresses,
                                String interfaceOption,
                                int port)
-    throws SocketException
+    throws Exception
   {
     RouterOptions options = new RouterOptions ();
     options.set ("Listen", "elvin://!" + interfaceOption);
     
-    Set<InetSocketAddress> addresses = options.listenAddresses ();
+    Set<InetSocketAddress> addresses = addressesFor (options.listenURIs ());
     
     assertEquals (interfaceAddresses.size (), addresses.size ());
     
