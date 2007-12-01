@@ -2,15 +2,20 @@ package org.avis.router;
 
 import java.util.Properties;
 
+import java.io.File;
 import java.io.IOException;
+
+import java.net.InetSocketAddress;
 
 import org.apache.mina.common.ByteBuffer;
 
+import org.avis.common.ElvinURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptionSet;
 import org.avis.logging.Log;
 import org.avis.util.IllegalOptionException;
 
+import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
@@ -68,8 +73,12 @@ public class Main
     {
       final Router router = new Router (config);
 
-      info ("Router listening on port " + config.get ("Port"), Main.class);
-
+      for (ElvinURI uri : config.listenURIs ())
+      {
+        for (InetSocketAddress address : addressesFor (uri))
+          info ("Router listening on " + uri + " (" + address + ")", Main.class);
+      }
+      
       if (config.getBoolean ("Federation.Activated"))
         new FederationManager (router, config);
       
@@ -118,9 +127,11 @@ public class Main
           config.set ("Port", intArg (args, ++i));
         } else if (arg.equals ("-c"))
         {
-          String configFile = stringArg (args, ++i);
+          File configFile = 
+            new File (stringArg (args, ++i)).getAbsoluteFile ();
           
           config.setAll (propertiesFrom (fileStream (configFile)));
+          config.setRelativeDirectory (configFile.getParentFile ());
           
           diagnostic ("Read configuration from " + configFile, Main.class);
         } else
