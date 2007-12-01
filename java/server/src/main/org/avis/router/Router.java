@@ -4,8 +4,14 @@ import java.util.concurrent.ExecutorService;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.net.InetSocketAddress;
+
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
@@ -16,11 +22,13 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.ReadThrottleFilterBuilder;
+import org.apache.mina.filter.SSLFilter;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
+import org.avis.common.ElvinURI;
 import org.avis.config.Options;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
@@ -58,13 +66,14 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
+
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
+import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
@@ -87,6 +96,12 @@ import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokens
 
 public class Router implements IoHandler, Closeable
 {
+  static
+  {
+    // route MINA exceptions to log
+    ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
+  }
+  
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
   
@@ -138,10 +153,42 @@ public class Router implements IoHandler, Closeable
       new SocketAcceptor (getRuntime ().availableProcessors () + 1,
                           executor);
     
-    SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
+    SocketAcceptorConfig defaultAcceptorConfig = createDefaultConfig ();
+    SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
     
-    acceptorConfig.setReuseAddress (true);
-    acceptorConfig.setThreadModel (ThreadModel.MANUAL);
+    for (ElvinURI uri : options.listenURIs ())
+    {
+      SocketAcceptorConfig bindConfig;
+      
+      if (uri.isSecure ())
+      {
+        if (secureAcceptorConfig == null)
+        {
+          secureAcceptorConfig = 
+            createSecureConfig (defaultAcceptorConfig, routerOptions);
+        }
+        
+        bindConfig = secureAcceptorConfig;
+      } else
+      {
+        bindConfig = defaultAcceptorConfig;
+      }
+      
+      for (InetSocketAddress address : addressesFor (uri))
+      {
+        diagnostic ("Router binding to " + uri + " (" + address + ")", this);
+
+        acceptor.bind (address, this, bindConfig);
+      }
+    }
+  }
+
+  private SocketAcceptorConfig createDefaultConfig ()
+  {
+    SocketAcceptorConfig defaultAcceptorConfig = new SocketAcceptorConfig ();
+    
+    defaultAcceptorConfig.setReuseAddress (true);
+    defaultAcceptorConfig.setThreadModel (ThreadModel.MANUAL);
     
     /*
      * Setup IO filter chain with codec and then thread pool. NOTE:
@@ -151,21 +198,54 @@ public class Router implements IoHandler, Closeable
      * http://mina.apache.org/configuring-thread-model.html.
      */
     DefaultIoFilterChainBuilder filterChainBuilder =
-      acceptorConfig.getFilterChain ();
+      defaultAcceptorConfig.getFilterChain ();
 
     filterChainBuilder.addLast ("codec", ClientFrameCodec.FILTER);
     
     filterChainBuilder.addLast
       ("threadPool", new ExecutorFilter (executor));
+    return defaultAcceptorConfig;
+  }
+  
+  private static SocketAcceptorConfig createSecureConfig
+    (SocketAcceptorConfig baseConfig, RouterOptions routerOptions)
+      throws IllegalOptionException, IOException
+  {
+    InputStream keystoreStream = null;
     
-    // route MINA exceptions to log
-    ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
-    
-    for (InetSocketAddress address : options.listenAddresses ())
+    try
     {
-      diagnostic ("Router binding to address: " + address, this);
+      keystoreStream = 
+        routerOptions.getAbsoluteURI 
+          ("TLS.Router-Keystore").toURL ().openStream ();
 
-      acceptor.bind (address, this, acceptorConfig);
+      char [] passphrase = 
+        routerOptions.getString 
+          ("TLS.Router-Keystore.Passphrase").toCharArray ();
+      
+      KeyStore keystore = KeyStore.getInstance ("JKS");
+      keystore.load (keystoreStream, passphrase);
+      
+      KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
+      keyFactory.init (keystore, passphrase);
+    
+      SSLContext sslContext = SSLContext.getInstance ("TLS");
+      sslContext.init (keyFactory.getKeyManagers (), null, null);
+      
+      SocketAcceptorConfig secureAcceptorConfig = 
+        (SocketAcceptorConfig)baseConfig.clone ();
+
+      secureAcceptorConfig.getFilterChain ().addFirst 
+        ("ssl", new SSLFilter (sslContext));
+      
+      return secureAcceptorConfig;
+    } catch (Exception ex)
+    {
+      throw new IOException ("Failed to initialise TLS: " + ex);
+    } finally
+    {
+      if (keystoreStream != null)
+        keystoreStream.close ();
     }
   }
 
