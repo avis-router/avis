@@ -34,6 +34,7 @@ public class Options implements Iterable<Map.Entry<String, Object>>
   protected Map<String, Object> values;
   protected List<Options> defaults;
   protected OptionSet optionSet;
+  protected File relativeDirectory;
   
   public Options ()
   {
@@ -45,11 +46,28 @@ public class Options implements Iterable<Map.Entry<String, Object>>
     this.values = new TreeMap<String, Object> (CASE_INSENSITIVE_ORDER);
     this.defaults = new ArrayList<Options> ();
     this.optionSet = optionSet;
+    this.relativeDirectory = new File (System.getProperty ("user.dir"));
   }
   
   public OptionSet optionSet ()
   {
     return optionSet;
+  }
+  
+  public void setRelativeDirectory (String directory)
+  {
+    setRelativeDirectory (new File (directory));
+  }
+  
+  /**
+   * Set the directory used to resolve relative file paths and URI's
+   * given in the config. This can be used so that relative paths
+   * specified in the config resolve relative to the config itself
+   * rather than the current working directory (which is the default).
+   */
+  public void setRelativeDirectory (File directory)
+  {
+    this.relativeDirectory = directory;
   }
 
   public Iterator<Entry<String, Object>> iterator ()
@@ -173,12 +191,14 @@ public class Options implements Iterable<Map.Entry<String, Object>>
   
   /**
    * Get the absolute value of a URI option, resolved against the
-   * current directory if needed. e.g. "file.txt" resolves to something like
-   * "file:/home/user/file.txt", whereas "http://host/file.txt" is untouched.
+   * {@linkplain #setRelativeDirectory(File) current directory} if
+   * needed. e.g. "file.txt" resolves to something like
+   * "file:/home/user/file.txt", whereas "http://host/file.txt" is
+   * untouched.
    * 
    * @param option The option name.
    * 
-   * @return An absolute URI. 
+   * @return An absolute URI.
    */
   public URI getAbsoluteURI (String option)
   {
@@ -188,13 +208,13 @@ public class Options implements Iterable<Map.Entry<String, Object>>
     {
       URI uri = (URI)value;
       
-      if (!uri.isAbsolute ())
-        uri = new File (System.getProperty ("user.dir")).toURI ().resolve (uri);
-      
-      return uri;
+      if (uri.isAbsolute ())
+        return uri;
+      else
+        return relativeDirectory.toURI ().resolve (uri);
     } else
     {
-      throw new IllegalOptionException (option, "Not a boolean");
+      throw new IllegalOptionException (option, "Not a URI");
     }
   }
   
