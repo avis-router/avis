@@ -9,6 +9,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import java.io.File;
+
+import java.net.URI;
+
 import org.avis.util.IllegalOptionException;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
@@ -165,6 +169,33 @@ public class Options implements Iterable<Map.Entry<String, Object>>
   public Map<String, Object> getParamOption (String option)
   {
     return OptionTypeParam.getParamOption (this, option);
+  }
+  
+  /**
+   * Get the absolute value of a URI option, resolved against the
+   * current directory if needed. e.g. "file.txt" resolves to something like
+   * "file:/home/user/file.txt", whereas "http://host/file.txt" is untouched.
+   * 
+   * @param option The option name.
+   * 
+   * @return An absolute URI. 
+   */
+  public URI getAbsoluteURI (String option)
+  {
+    Object value = get (option);
+    
+    if (value instanceof URI)
+    {
+      URI uri = (URI)value;
+      
+      if (!uri.isAbsolute ())
+        uri = new File (System.getProperty ("user.dir")).toURI ().resolve (uri);
+      
+      return uri;
+    } else
+    {
+      throw new IllegalOptionException (option, "Not a boolean");
+    }
   }
   
   /**
