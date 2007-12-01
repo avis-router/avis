@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Test;
+import java.net.URI;
 
 import org.avis.util.IllegalOptionException;
 
+import org.junit.Test;
+
 import static org.avis.common.Common.K;
 import static org.avis.common.Common.MB;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -130,6 +133,29 @@ public class JUTestOptions
     assertEquals (false, options.get ("Federation.Active"));
     assertEquals (200, options.get ("Packet.Max-Length"));
     assertEquals (false, options.get ("Root1"));
+  }
+  
+  @Test
+  public void uri () 
+    throws Exception
+  {
+    OptionSet optionSet = new OptionSet ();
+    optionSet.add ("FileUri", new OptionTypeURI (), new URI (""));
+    optionSet.add ("HttpUri", new OptionTypeURI (), new URI (""));
+    
+    Options options = new Options (optionSet);
+    
+    options.set ("FileUri", "file.txt");
+    options.set ("HttpUri", "http://host/file.txt");
+    
+    URI fileUri = options.getAbsoluteURI ("FileUri");
+    URI httpUri = options.getAbsoluteURI ("HttpUri");
+    
+    String dir = System.getProperty ("user.dir").replaceAll ("\\\\", "/");
+    
+    assertEquals ("file:" + dir + "/file.txt", fileUri.toString ());
+    assertTrue (fileUri.isAbsolute ());
+    assertEquals ("http://host/file.txt", httpUri.toString ());
   }
   
   static class ConnectionOptionSet extends OptionSet
