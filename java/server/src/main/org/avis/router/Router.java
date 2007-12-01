@@ -176,6 +176,9 @@ public class Router implements IoHandler, Closeable
     }
   }
 
+  /**
+   * Create default MINA config for incoming connections.
+   */
   private SocketAcceptorConfig createDefaultConfig ()
   {
     SocketAcceptorConfig defaultAcceptorConfig = new SocketAcceptorConfig ();
@@ -201,6 +204,9 @@ public class Router implements IoHandler, Closeable
     return defaultAcceptorConfig;
   }
   
+  /**
+   * Create MINA config for incoming secure (TLS) connections.
+   */
   private SocketAcceptorConfig createSecureConfig ()
     throws IllegalOptionException, IOException
   {
@@ -964,7 +970,10 @@ public class Router implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    trace ("Server session opened for " + idFor (session), this);
+    trace ("Server session " + idFor (session) + 
+           " opened for connection on " + session.getServiceAddress () + 
+           (isSecure (session) ? " (TLS secured)" : ""), this);
+    
   }
   
   private static void setConnection (IoSession session,
@@ -1038,5 +1047,11 @@ public class Router implements IoHandler, Closeable
   private static String idFor (IoSession session)
   {
     return toHexString (identityHashCode (session));
+  }
+  
+  private static boolean isSecure (IoSession session)
+  {
+    return session.getServiceConfig ().getFilterChain ().contains 
+      (SSLFilter.class);
   }
 }
