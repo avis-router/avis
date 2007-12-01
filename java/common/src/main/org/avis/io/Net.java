@@ -101,9 +101,7 @@ public final class Net
     Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
     
     for (ElvinURI uri : uris)
-    {
       addAddressFor (addresses, uri);
-    }
     
     return addresses;
   }
