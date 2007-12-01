@@ -70,8 +70,11 @@ public class RouterOptions extends Options
       {
         ElvinURI uri = new ElvinURI (listenItem, defaultUri);
         
-        if (!uri.protocol.equals (defaultProtocol ()) &&
-            !uri.protocol.equals (secureProtocol ()))
+        if (uri.protocol.equals (defaultProtocol ()) ||
+            uri.protocol.equals (secureProtocol ()))
+        {
+          uris.add (uri);
+        } else
         {
           throw new IllegalOptionException
             ("Listen",
@@ -79,9 +82,6 @@ public class RouterOptions extends Options
              defaultProtocol () + " and " + secureProtocol () + 
              ": " + listenItem);
         }
-        
-        uris.add (uri);
-        
       } catch (InvalidURIException ex)
       {
         throw new IllegalOptionException ("Listen", ex.getMessage ());
