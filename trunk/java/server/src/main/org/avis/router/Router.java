@@ -210,14 +210,12 @@ public class Router implements IoHandler, Closeable
   private SocketAcceptorConfig createSecureConfig ()
     throws IllegalOptionException, IOException
   {
-    InputStream keystoreStream = null;
+    InputStream keystoreStream = 
+      routerOptions.getAbsoluteURI 
+        ("TLS.Router-Keystore").toURL ().openStream ();
     
     try
     {
-      keystoreStream = 
-        routerOptions.getAbsoluteURI 
-          ("TLS.Router-Keystore").toURL ().openStream ();
-
       char [] passphrase = 
         routerOptions.getString 
           ("TLS.Router-Keystore.Passphrase").toCharArray ();
@@ -242,8 +240,7 @@ public class Router implements IoHandler, Closeable
       throw new IOException ("Failed to initialise TLS: " + ex);
     } finally
     {
-      if (keystoreStream != null)
-        keystoreStream.close ();
+      keystoreStream.close ();
     }
   }
 
