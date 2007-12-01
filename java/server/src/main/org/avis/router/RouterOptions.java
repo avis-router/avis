@@ -4,17 +4,13 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import java.io.IOException;
-
-import java.net.InetSocketAddress;
-
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.config.Options;
 import org.avis.util.IllegalOptionException;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
-import static org.avis.io.Net.addressesFor;
+import static org.avis.common.ElvinURI.secureProtocol;
 import static org.avis.util.Text.split;
 
 /**
@@ -60,10 +56,10 @@ public class RouterOptions extends Options
   }
   
   /**
-   * Generate the set of network addresses the server should bind to
-   * as specified by the Listen setting.
+   * Generate the set of URI's the server should bind to as specified
+   * by the Listen setting.
    */
-  public Set<InetSocketAddress> listenAddresses ()
+  public Set<ElvinURI> listenURIs ()
   {
     Set<ElvinURI> uris = new HashSet<ElvinURI> ();
     ElvinURI defaultUri = new ElvinURI ("0.0.0.0", getInt ("Port"));
@@ -74,12 +70,14 @@ public class RouterOptions extends Options
       {
         ElvinURI uri = new ElvinURI (listenItem, defaultUri);
         
-        if (!uri.protocol.equals (defaultProtocol ()))
+        if (!uri.protocol.equals (defaultProtocol ()) &&
+            !uri.protocol.equals (secureProtocol ()))
         {
           throw new IllegalOptionException
             ("Listen",
-             "Avis only supports " + defaultProtocol () +" protocol: " + 
-             listenItem);
+             "Avis only supports protocols: " + 
+             defaultProtocol () + " and " + secureProtocol () + 
+             ": " + listenItem);
         }
         
         uris.add (uri);
@@ -90,12 +88,6 @@ public class RouterOptions extends Options
       }
     }
     
-    try
-    {
-      return addressesFor (uris);
-    } catch (IOException ex)
-    {
-      throw new IllegalOptionException ("Listen", ex.getMessage ());
-    }
+    return uris;
   }
 }
