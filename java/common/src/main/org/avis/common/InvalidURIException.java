@@ -14,4 +14,9 @@ public class InvalidURIException extends RuntimeException
   {
     super ("Invalid URI \"" + uri + "\": " + message);
   }
+
+  public InvalidURIException (URISyntaxException ex)
+  {
+    super (ex);
+  }
 }
