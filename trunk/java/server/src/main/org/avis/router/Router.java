@@ -933,8 +933,9 @@ public class Router implements IoHandler, Closeable
     throws Exception
   {
     // set idle time to 15 seconds: client has this long to connect or UNotify
-    // todo idle time should be configurable
-    session.setIdleTime (READER_IDLE, 15);
+    session.setIdleTime
+      (READER_IDLE, 
+       routerOptions.getInt ("Client.Idle-Connection-Timeout"));
     
     // install read throttle
     ReadThrottleFilterBuilder readThrottle = new ReadThrottleFilterBuilder ();
