@@ -13,6 +13,7 @@ public class RouterOptionSet extends OptionSet
   {
     add ("Port", 1, DEFAULT_PORT, 65535);
     add ("Listen", "elvin://0.0.0.0");
+    add ("IO.Use-Direct-Buffers", true);
     add ("TLS.Router-Keystore", new OptionTypeURI (), uri ("router.ks"));
     add ("TLS.Router-Keystore.Passphrase", "");
     
