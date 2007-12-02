@@ -932,7 +932,7 @@ public class Router implements IoHandler, Closeable
   public void sessionCreated (IoSession session)
     throws Exception
   {
-    // set idle time to 15 seconds: client has this long to connect or UNotify
+    // client has this long to connect or UNotify
     session.setIdleTime
       (READER_IDLE, 
        routerOptions.getInt ("Client.Idle-Connection-Timeout"));
