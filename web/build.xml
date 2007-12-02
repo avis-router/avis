@@ -18,7 +18,7 @@
 
   <!-- Markdown 1.0.1: needed to build web page -->
   <property name="markdown" 
-            value="${avis-root}/support/markdown-1.0.1/Markdown.pl" />
+            value="${support}/markdown-1.0.1/Markdown.pl" />
 
   <!-- Use arcane Ant-isms to build web page from text using Markdown -->
   <target name="website" depends="htmlize-source-examples"
