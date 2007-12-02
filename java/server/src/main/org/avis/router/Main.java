@@ -7,8 +7,6 @@ import java.io.IOException;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.ByteBuffer;
-
 import org.avis.common.ElvinURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptionSet;
@@ -51,8 +49,6 @@ public class Main
     
     enableLogging (TRACE, false);
     enableLogging (DIAGNOSTIC, false);
-    
-    ByteBuffer.setUseDirectBuffers (true);
     
     Properties avisProperties = readAvisProperties ();
     System.getProperties ().putAll (avisProperties);

@@ -73,6 +73,7 @@ import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
+import static org.avis.io.FrameCodec.setUseDirectBuffersFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
@@ -153,6 +154,8 @@ public class Router implements IoHandler, Closeable
       new SocketAcceptor (getRuntime ().availableProcessors () + 1,
                           executor);
     
+    // setUseDirectBuffers (options.getBoolean ("IO.Use-Direct-Buffers"));
+
     SocketAcceptorConfig defaultAcceptorConfig = createDefaultConfig ();
     SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
     
@@ -935,6 +938,7 @@ public class Router implements IoHandler, Closeable
     
     // install read throttle
     ReadThrottleFilterBuilder readThrottle = new ReadThrottleFilterBuilder ();
+    
     readThrottle.setMaximumConnectionBufferSize
       (CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length"));
     
@@ -946,6 +950,9 @@ public class Router implements IoHandler, Closeable
     setMaxFrameLengthFor
       (session,
        CONNECTION_OPTION_SET.defaults.getInt ("Packet.Max-Length"));
+    
+    setUseDirectBuffersFor 
+      (session, routerOptions.getBoolean ("IO.Use-Direct-Buffers"));
     
     sessions.add (session);
   }
