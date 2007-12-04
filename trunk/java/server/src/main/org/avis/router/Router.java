@@ -66,14 +66,14 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.System.identityHashCode;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import static org.apache.mina.common.ByteBuffer.setUseDirectBuffers;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
-
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
-import static org.avis.io.FrameCodec.setUseDirectBuffersFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
@@ -124,19 +124,39 @@ public class Router implements IoHandler, Closeable
 
   private ListenerList<NotifyListener> notifyListeners;
   private ListenerList<CloseListener> closeListeners;
-  
+ 
+  /**
+   * Create an instance with default configuration.
+   */
   public Router ()
     throws IOException
   {
     this (DEFAULT_PORT);
   }
   
+  /**
+   * Shortcut to create an instance listening to localhost:port.
+   */
   public Router (int port)
     throws IOException
   {
     this (new RouterOptions (port));
   }
   
+  /**
+   * Create a new instance.
+   * 
+   * @param options The router configuration options. Note that, due
+   *                to a MINA limitation, the IO.Use-Direct-Buffers
+   *                option applies globally, so using multiple router
+   *                instances with this option set to different values
+   *                will clash.
+   * 
+   * @throws IOException if an network error during router
+   *                 initialisation.
+   * @throws IllegalOptionException If an option in the configuratiion
+   *                 options is invalid.
+   */
   public Router (RouterOptions options)
     throws IOException, IllegalOptionException
   {
@@ -154,7 +174,7 @@ public class Router implements IoHandler, Closeable
       new SocketAcceptor (getRuntime ().availableProcessors () + 1,
                           executor);
     
-    // setUseDirectBuffers (options.getBoolean ("IO.Use-Direct-Buffers"));
+    setUseDirectBuffers (options.getBoolean ("IO.Use-Direct-Buffers"));
 
     SocketAcceptorConfig defaultAcceptorConfig = createDefaultConfig ();
     SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
@@ -951,9 +971,6 @@ public class Router implements IoHandler, Closeable
     setMaxFrameLengthFor
       (session,
        CONNECTION_OPTION_SET.defaults.getInt ("Packet.Max-Length"));
-    
-    setUseDirectBuffersFor 
-      (session, routerOptions.getBoolean ("IO.Use-Direct-Buffers"));
     
     sessions.add (session);
   }

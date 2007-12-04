@@ -34,7 +34,7 @@ public abstract class FrameCodec
     throws Exception
   {
     // buffer is auto deallocated
-    ByteBuffer buffer = ByteBuffer.allocate (4096, useDirectBuffers (session)); 
+    ByteBuffer buffer = ByteBuffer.allocate (4096); 
     buffer.setAutoExpand (true);
     
     // leave room for frame size
@@ -223,19 +223,5 @@ public abstract class FrameCodec
       return Integer.MAX_VALUE;
     else
       return length;
-  }
-  
-  public static void setUseDirectBuffersFor (IoSession session,
-                                             boolean value)
-  {
-    session.setAttribute ("useDirectBuffers", value);
-  }
-  
-  private boolean useDirectBuffers (IoSession session)
-  {
-    Boolean useDirectBuffers = 
-      (Boolean)session.getAttribute ("useDirectBuffers");
-    
-    return useDirectBuffers == null ? true : useDirectBuffers;
   }
 }
