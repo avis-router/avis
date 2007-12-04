@@ -137,14 +137,18 @@ Scenarios
    server auth required option for client, plus optional trust
    keystore. Extend null trust manager as per example. Will need to
    add new Elvin constructor taking client options and absorb keys,
-   etc into it.
+   etc into it. Server can have optional client auth
 
  * Server 1.3/Client 1.3: Cliend and/or server auth.
 
 Todo
 
- * Optional SSL
-
+ * Avis client lib TLS
+ * Federation TLS
+ * Ship Avis server with default certs?
+ * Create client/server certs, test mutual auth
+ * Use separate keystore for trusted certs?
+  
 Questions
 
  * Do we need to support trusted clients? => need trust store on
