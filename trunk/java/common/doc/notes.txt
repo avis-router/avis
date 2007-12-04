@@ -141,6 +141,10 @@ Scenarios
 
  * Server 1.3/Client 1.3: Cliend and/or server auth.
 
+Todo
+
+ * Optional SSL
+
 Questions
 
  * Do we need to support trusted clients? => need trust store on
