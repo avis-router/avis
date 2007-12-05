@@ -39,7 +39,7 @@ public final class Streams
    * Read all the bytes from a stream and then close it.
    * 
    * @param in The input stream to read.
-   * @return The bytres read.
+   * @return The bytes read.
    * 
    * @throws IOException if an error occurs reading stream.
    * 
@@ -48,17 +48,21 @@ public final class Streams
   public static byte [] bytesFrom (InputStream in)
     throws IOException
   {
-    ByteArrayOutputStream str = new ByteArrayOutputStream (4096);
-    
-    byte [] buffer = new byte [4096];
-    int length;
-    
-    while ((length = in.read (buffer)) != -1)
-      str.write (buffer, 0, length);
-    
-    in.close ();
-    
-    return str.toByteArray ();
+    try
+    {
+      ByteArrayOutputStream str = new ByteArrayOutputStream (4096);
+      
+      byte [] buffer = new byte [4096];
+      int length;
+      
+      while ((length = in.read (buffer)) != -1)
+        str.write (buffer, 0, length);
+      
+      return str.toByteArray ();
+    } finally
+    {
+      close (in);
+    }
   }
 
   /**
@@ -107,23 +111,16 @@ public final class Streams
   public static Properties propertiesFrom (InputStream in)
     throws IOException
   {
-    Properties properties = new Properties ();
-    
     try
     {
+      Properties properties = new Properties ();
       properties.load (in);
+      
+      return properties;
     } finally
     {
-      try
-      {
-        in.close ();
-      } catch (IOException ex)
-      {
-        // zip
-      }
+      close (in);
     } 
-  
-    return properties;
   }
 
   /**
@@ -229,16 +226,54 @@ public final class Streams
   public static String stringFrom (Reader reader)
     throws IOException
   {
-    StringBuilder str = new StringBuilder ();
-    
-    char [] buffer = new char [4096];
-    int length;
-    
-    while ((length = reader.read (buffer)) != -1)
-      str.append (buffer, 0, length);
-    
-    reader.close ();
-    
-    return str.toString ();
+    try
+    {
+      StringBuilder str = new StringBuilder ();
+      
+      char [] buffer = new char [4096];
+      int length;
+
+      while ((length = reader.read (buffer)) != -1)
+        str.append (buffer, 0, length);
+      
+      return str.toString ();
+    } finally
+    {
+      close (reader);
+    }
+  }
+  
+  /**
+   * Close an input stream. Eats the (pointless, because there's
+   * nothing we can do) IO exception and returns true/false instead.
+   */
+  public static boolean close (InputStream in)
+  {
+    try
+    {
+      in.close ();
+      
+      return true;
+    } catch (IOException ex)
+    {
+      return false;
+    }
+  }
+  
+  /**
+   * Close a character stream. Eats the (pointless, because there's
+   * nothing we can do) IO exception and returns true/false instead.
+   */
+  public static boolean close (Reader in)
+  {
+    try
+    {
+      in.close ();
+      
+      return true;
+    } catch (IOException ex)
+    {
+      return false;
+    }
   }
 }
