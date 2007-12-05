@@ -141,6 +141,8 @@ public class JUTestRouter
     Message reply = client.receive ();
     
     assertTrue (reply instanceof Disconn);
+    // check the disconnect message advises looking at Packet.Max-Length
+    assertTrue (((Disconn)reply).args.contains ("Packet.Max-Length"));
     
     client.closeImmediately ();
     

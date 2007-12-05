@@ -33,6 +33,7 @@ import org.avis.common.ElvinURI;
 import org.avis.config.Options;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
+import org.avis.io.FrameTooLargeException;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -762,10 +763,24 @@ public class Router implements IoHandler, Closeable
     send (session, new Nack (message, NOT_IMPL, "Quench not supported"));
   }
 
-  private static void handleError (IoSession session, ErrorMessage message)
+  private static void handleError (IoSession session, 
+                                   ErrorMessage errorMessage)
   {
-    handleProtocolViolation (session, message.cause, 
-                             message.error.getMessage (), null);
+    String message;
+    
+    if (errorMessage.error instanceof FrameTooLargeException)
+    {
+      // add helpful advisory for client that exceeds max frame size
+      message = 
+        errorMessage.error.getMessage () + 
+        ". Use the Packet.Max-Length connection option to increase the " +
+        "maximum notification size.";
+    } else
+    {
+      message = errorMessage.error.getMessage ();
+    }
+    
+    handleProtocolViolation (session, errorMessage.cause, message, null);
   }
 
   /**
