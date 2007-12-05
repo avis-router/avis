@@ -35,9 +35,9 @@ public class CloseEvent extends EventObject
   public static final int REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY = 3;
 
   /**
-   * The router decided that the client violated the protocol rules.
-   * This would only happen in the case of a serious bug in the client
-   * or router.
+   * Either the client or the router decided that the protocol rules
+   * have been violated. This would only happen in the case of a
+   * serious bug in the client or router.
    */
   public static final int REASON_PROTOCOL_VIOLATION = 4;
   
