@@ -12,6 +12,7 @@ import java.security.KeyStore;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
@@ -249,9 +250,15 @@ public class Router implements IoHandler, Closeable
       KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
       keyFactory.init (keystore, passphrase);
     
-      SSLContext sslContext = SSLContext.getInstance ("TLS");
-      sslContext.init (keyFactory.getKeyManagers (), null, null);
+      TrustManagerFactory trustFactory =
+        TrustManagerFactory.getInstance ("SunX509");
+      trustFactory.init (keystore);
       
+      SSLContext sslContext = SSLContext.getInstance ("TLS");
+   
+      sslContext.init (keyFactory.getKeyManagers (), 
+                       trustFactory.getTrustManagers (), null);
+
       SocketAcceptorConfig secureAcceptorConfig = createDefaultConfig ();
 
       secureAcceptorConfig.getFilterChain ().addFirst 
