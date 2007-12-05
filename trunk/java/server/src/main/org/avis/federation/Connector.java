@@ -82,8 +82,8 @@ public class Connector implements IoHandler, Closeable
     this.connectorConfig = new SocketConnectorConfig ();
     this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
     
-    int requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
-    int keepaliveInterval = 
+    long requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
+    long keepaliveInterval = 
       options.getInt ("Federation.Keepalive-Interval") * 1000;
 
     /* Change the worker timeout to make the I/O thread quit soon
@@ -91,7 +91,7 @@ public class Connector implements IoHandler, Closeable
     connector.setWorkerTimeout (0);
     
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (requestTimeout);
+    connectorConfig.setConnectTimeout ((int)(requestTimeout / 1000));
     
     DefaultIoFilterChainBuilder filterChain = 
       connectorConfig.getFilterChain ();
