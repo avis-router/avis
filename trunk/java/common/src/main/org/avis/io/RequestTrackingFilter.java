@@ -40,7 +40,7 @@ public class RequestTrackingFilter
   extends IoFilterAdapter implements IoFilter
 {
   protected ScheduledExecutorService executor;
-  protected int replyTimeout;
+  protected long replyTimeout;
   protected String filterName;
   
   /**
@@ -49,7 +49,7 @@ public class RequestTrackingFilter
    * @param replyTimeout The amount of time (in millis) to wait for
    *                a reply.
    */
-  public RequestTrackingFilter (int replyTimeout)
+  public RequestTrackingFilter (long replyTimeout)
   {
     this (null, replyTimeout);
   }
@@ -62,7 +62,7 @@ public class RequestTrackingFilter
    *                a reply.
    */
   public RequestTrackingFilter (ScheduledExecutorService executor,
-                                int replyTimeout)
+                                long replyTimeout)
   {
     this.executor = executor;
     this.replyTimeout = replyTimeout;
