@@ -30,8 +30,8 @@ import static org.avis.logging.Log.trace;
  */
 public class LivenessFilter extends IoFilterAdapter implements IoFilter
 {
-  protected int receiveTimeout;
-  protected int livenessTimeout;
+  protected long receiveTimeout;
+  protected long livenessTimeout;
   protected String filterName;
   protected ScheduledExecutorService executor;
   
@@ -43,7 +43,7 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
    * @param receiveTimeout The amount of time (in millis) to wait for
    *                a reply.
    */
-  public LivenessFilter (int livenessTimeout, int receiveTimeout)
+  public LivenessFilter (long livenessTimeout, long receiveTimeout)
   {
     this (null, livenessTimeout, receiveTimeout);
   }
@@ -58,7 +58,7 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
    *                a reply.
    */
   public LivenessFilter (ScheduledExecutorService executor,
-                         int livenessTimeout, int receiveTimeout)
+                         long livenessTimeout, long receiveTimeout)
   {
     this.executor = executor;
     this.livenessTimeout = livenessTimeout;
@@ -81,12 +81,12 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
     return trackerFor (session).filter ();
   }
   
-  public int livenessTimeout ()
+  public long livenessTimeout ()
   {
     return livenessTimeout;
   }
   
-  public static void setLivenessTimeoutFor (IoSession session, int newTimeout)
+  public static void setLivenessTimeoutFor (IoSession session, long newTimeout)
   {
     if (newTimeout < 1000)
       throw new IllegalArgumentException 
@@ -98,7 +98,7 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
     tracker.timeoutUpdated ();
   }
   
-  public static void setReceiveTimeoutFor (IoSession session, int newTimeout)
+  public static void setReceiveTimeoutFor (IoSession session, long newTimeout)
   {
     if (newTimeout < 0)
       throw new IllegalArgumentException 
