@@ -823,11 +823,11 @@ public final class Elvin implements Closeable
       // register real ID
       synchronized (subscriptions)
       {
-        // todo should close connection here
         if (subscriptions.put (subscription.id, subscription) != null)
-          throw new IOException
-            ("Protocol error: server issued duplicate subscription ID " +
-             subscription.id);
+        {
+          close (REASON_PROTOCOL_VIOLATION, 
+               "Router issued duplicate subscription ID " + subscription.id);
+        }
       }
     } finally
     {
@@ -1215,10 +1215,13 @@ public final class Elvin implements Closeable
         throw new RouterNackException (request, nack);
     } else
     {
-      // todo this indicates a pretty serious fuckup. should close?
-      throw new IOException
-        ("Protocol error: received a " + className (reply) +
-         ": was expecting " + className (request.replyType ()));
+      String message = "Received a " + className (reply) + 
+                       ": was expecting " + className (request.replyType ());
+      
+      // this is a serious error: it's unlikely we can continue the session
+      close (REASON_PROTOCOL_VIOLATION, message);
+      
+      throw new IOException ("Protocol violation: " + message);
     }
   }
   
