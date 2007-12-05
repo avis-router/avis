@@ -602,7 +602,7 @@ public final class Elvin implements Closeable
    */
   public int livenessTimeout ()
   {
-    return LivenessFilter.filterFor (connection).livenessTimeout ();
+    return (int)LivenessFilter.filterFor (connection).livenessTimeout ();
   }
   
   /**
