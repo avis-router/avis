@@ -26,6 +26,8 @@ Releases
 
 Server 1.2
 
+ * default federation class? e.g. Federation.Apply-Class[Public]=*
+ * includes in config: would allow federation to be spec'd separately
  * Test large frames with new heap sizes
  * ?Federation.Classes.Require=internal
  * TLS
@@ -37,6 +39,7 @@ Server 1.2
 Client 1.1
 
  * TLS
+ * client options to subsume constructor options
  * allow connection options in URI? merge with given options?
  * add subscription string escape utilities
 
