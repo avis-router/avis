@@ -26,6 +26,7 @@ Releases
 
 Server 1.2
 
+ * do we need to worry about keystore and key passphrases?
  * hostname matchin in fed should be case-insenstive (do we support IP
    addresses?)
  * default federation class? e.g. Federation.Apply-Class[Public]=*
@@ -41,6 +42,7 @@ Server 1.2
 Client 1.1
 
  * TLS
+ * Handle TLS connect failure better
  * client options to subsume constructor options
  * allow connection options in URI? merge with given options?
  * add subscription string escape utilities
