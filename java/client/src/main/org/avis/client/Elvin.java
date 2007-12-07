@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.TrustManager;
 
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
@@ -31,6 +31,7 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.common.RuntimeInterruptedException;
+import org.avis.io.AvisX509TrustManager;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
 import org.avis.io.LivenessFilter;
@@ -511,27 +512,28 @@ public final class Elvin implements Closeable
   private SSLFilter createSecureFilter () 
     throws IOException
   {
+    checkNotNull (options.keystore, "Keystore");
+    checkNotNull (options.keystorePassphrase, "Keystore passphrase");
+    
     // todo handle SSL handshake failure better
     try
     {
-      KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
+      KeyManagerFactory keyFactory = 
+        KeyManagerFactory.getInstance ("SunX509");
       
       keyFactory.init (options.keystore, 
                        options.keystorePassphrase.toCharArray ());
  
-      TrustManagerFactory trustFactory =
-        TrustManagerFactory.getInstance ("SunX509");
-      
-      trustFactory.init (options.keystore);
+      AvisX509TrustManager trustManager = 
+        new AvisX509TrustManager (options.keystore, 
+                                  options.requireTrustedServer, false);
       
       SSLContext sslContext = SSLContext.getInstance ("TLS");
  
       sslContext.init (keyFactory.getKeyManagers (), 
-                       trustFactory.getTrustManagers (), null);
+                       new TrustManager [] {trustManager}, null);
 
       SSLFilter filter = new SSLFilter (sslContext);
-      
-      // todo add option for untrusted server here
       
       filter.setUseClientMode (true);
       

@@ -27,15 +27,21 @@ public class ElvinOptions implements Cloneable
    */
   public ConnectionOptions connectionOptions;
   
-  /** The global notification keys that apply to all notifications. */
+  /** 
+   * The global notification keys that apply to all notifications. 
+   */
   public Keys notificationKeys;
   
-  /** The global subscription keys that apply to all subscriptions. */
+  /** 
+   * The global subscription keys that apply to all subscriptions.
+   */
   public Keys subscriptionKeys;
   
   /**
    * The keystore used for TLS/SSL secure connections. The
-   * keystorePassphrase option must also be set.
+   * keystorePassphrase option must also be set when this is used.
+   * 
+   * @see #setKeystore(URL, String)
    */
   public KeyStore keystore;
   
@@ -44,6 +50,13 @@ public class ElvinOptions implements Cloneable
    */
   public String keystorePassphrase;
 
+  /**
+   * When true, only servers with a certificate matching the trusted
+   * certificates in the keystore will be acceptable for secure
+   * connections.
+   */
+  public boolean requireTrustedServer;
+  
   /**
    * The amount of time (in milliseconds) that must pass before the
    * router is assumed to not be responding to a request.
@@ -74,6 +87,7 @@ public class ElvinOptions implements Cloneable
     this.connectionOptions = connectionOptions;
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
+    this.requireTrustedServer = false;
     this.receiveTimeout = 10000;
     this.livenessTimeout = 60000;
   }
