@@ -15,8 +15,8 @@ public class RouterOptionSet extends OptionSet
     add ("Listen", "elvin://0.0.0.0");
     add ("Client.Idle-Connection-Timeout", 1, 15, Integer.MAX_VALUE);
     add ("IO.Use-Direct-Buffers", true);
-    add ("TLS.Router-Keystore", new OptionTypeURI (), uri ("router.ks"));
-    add ("TLS.Router-Keystore.Passphrase", "");
+    add ("TLS.Keystore", new OptionTypeURI (), uri ("router.ks"));
+    add ("TLS.Keystore-Passphrase", "");
     
     inheritFrom (CONNECTION_OPTION_SET);
   }

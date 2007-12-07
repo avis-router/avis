@@ -237,13 +237,13 @@ public class Router implements IoHandler, Closeable
   {
     InputStream keystoreStream = 
       routerOptions.getAbsoluteURI 
-        ("TLS.Router-Keystore").toURL ().openStream ();
+        ("TLS.Keystore").toURL ().openStream ();
     
     try
     {
       char [] passphrase = 
         routerOptions.getString 
-          ("TLS.Router-Keystore.Passphrase").toCharArray ();
+          ("TLS.Keystore-Passphrase").toCharArray ();
       
       KeyStore keystore = KeyStore.getInstance ("JKS");
       keystore.load (keystoreStream, passphrase);
