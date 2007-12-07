@@ -2,6 +2,7 @@ package org.avis.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.avis.util.IllegalOptionException;
 
@@ -16,12 +17,14 @@ public class OptionTypeURI extends OptionType
   public Object convert (String option, Object value)
     throws IllegalOptionException
   {
-    if (value instanceof URI)
-      return value;
-    
     try
     {
-      return new URI (value.toString ());
+      if (value instanceof URI)
+        return value;
+      else if (value instanceof URL)
+        return ((URL)value).toURI ();
+      else
+        return new URI (value.toString ());
     } catch (URISyntaxException ex)
     {
       throw new IllegalOptionException
