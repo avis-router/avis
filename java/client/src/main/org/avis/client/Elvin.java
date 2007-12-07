@@ -480,7 +480,9 @@ public final class Elvin implements Closeable
       
       filters.addLast 
         ("liveness", 
-         new LivenessFilter (callbacks.executor (), 60000, options.receiveTimeout));
+         new LivenessFilter (callbacks.executor (), 
+                             options.livenessTimeout, 
+                             options.receiveTimeout));
       
       // route MINA exceptions to log
       ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
@@ -513,10 +515,13 @@ public final class Elvin implements Closeable
     try
     {
       KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
-      keyFactory.init (options.keystore, options.keystorePassphrase.toCharArray ());
+      
+      keyFactory.init (options.keystore, 
+                       options.keystorePassphrase.toCharArray ());
  
       TrustManagerFactory trustFactory =
         TrustManagerFactory.getInstance ("SunX509");
+      
       trustFactory.init (options.keystore);
       
       SSLContext sslContext = SSLContext.getInstance ("TLS");
@@ -704,7 +709,7 @@ public final class Elvin implements Closeable
    */
   public int livenessTimeout ()
   {
-    return (int)LivenessFilter.filterFor (connection).livenessTimeout ();
+    return options.livenessTimeout;
   }
   
   /**
@@ -722,6 +727,8 @@ public final class Elvin implements Closeable
   public synchronized void setLivenessTimeout (int livenessTimeout)
   {
     LivenessFilter.setLivenessTimeoutFor (connection, livenessTimeout);
+    
+    options.livenessTimeout = livenessTimeout;
   }
 
   /**

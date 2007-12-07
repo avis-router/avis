@@ -50,6 +50,14 @@ public class ElvinOptions implements Cloneable
    */
   public int receiveTimeout;
 
+  /**
+   * Set the liveness timeout period (default is 60 seconds). If no
+   * messages are seen from the router in this period, a connection
+   * test message is sent and, if no reply is seen, the connection is
+   * deemed to be closed.
+   */
+  public int livenessTimeout;
+
   public ElvinOptions ()
   {
     this (EMPTY_OPTIONS, EMPTY_KEYS, EMPTY_KEYS);
@@ -67,6 +75,7 @@ public class ElvinOptions implements Cloneable
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
     this.receiveTimeout = 10000;
+    this.livenessTimeout = 60000;
   }
 
   @Override
