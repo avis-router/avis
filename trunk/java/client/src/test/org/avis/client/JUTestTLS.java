@@ -18,6 +18,9 @@ public class JUTestTLS
 {
   private static final String SECURE_URI = "elvin:/secure/127.0.0.1:29170";
 
+  /**
+   * Test a basic client/server connect over TLS.
+   */
   @Test
   public void connect () 
     throws Exception
