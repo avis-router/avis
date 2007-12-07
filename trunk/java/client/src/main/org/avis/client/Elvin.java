@@ -13,12 +13,18 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
+import org.apache.mina.filter.SSLFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -61,6 +67,7 @@ import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.ConnectionOptions.convertLegacyToNew;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
+import static org.avis.common.ElvinURI.secureProtocol;
 import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.diagnostic;
@@ -144,17 +151,13 @@ import static org.avis.util.Util.checkNotNull;
 public final class Elvin implements Closeable
 {
   ElvinURI routerUri;
+  ElvinOptions options;
   IoSession connection;
-  ConnectionOptions connectionOptions;
-  int receiveTimeout;
   AtomicBoolean connectionOpen;
   boolean elvinSessionEstablished;
   Map<Long, Subscription> subscriptions;
   Callbacks callbacks;
   
-  Keys notificationKeys;
-  Keys subscriptionKeys;
-
   /**
    * A multi-thread pool for handling MINA I/O.
    */
@@ -297,7 +300,7 @@ public final class Elvin implements Closeable
   {
     this (routerUri, EMPTY_OPTIONS, notificationKeys, subscriptionKeys);
   }
-  
+
   /**
    * Create a new connection to an Elvin router.
    * 
@@ -334,11 +337,72 @@ public final class Elvin implements Closeable
            IOException,
            ConnectionOptionsException
   {
+    this (routerUri, 
+          new ElvinOptions (options, notificationKeys, subscriptionKeys));
+  }
+  
+  /**
+   * Create a new connection to an Elvin router.
+   * 
+   * @param routerUri The URI of the router to connect to.
+   * @param options The Elvin client options. Modifying these after
+   *                they have been passed into this constructor has no
+   *                effect.
+   * 
+   * @throws IllegalArgumentException if one of the arguments is not
+   *                 valid.
+   * @throws ConnectException if a socket to the router could not be
+   *                 opened, e.g. connection refused.
+   * @throws ConnectionOptionsException if the router rejected the
+   *                 connection options. The client may elect to
+   *                 change the options and try to create a new
+   *                 connection.
+   * @throws IOException if some other IO error occurs.
+   * 
+   * @see #subscribe(String, Keys, SecureMode)
+   * @see #send(Notification, Keys, SecureMode)
+   * @see #setKeys(Keys, Keys)
+   */
+  public Elvin (String routerUri, ElvinOptions options)
+    throws IllegalArgumentException,
+           ConnectException,
+           IOException,
+           ConnectionOptionsException
+  {
+    this (new ElvinURI (routerUri), options);
+  }
+  
+  /**
+   * Create a new connection to an Elvin router.
+   * 
+   * @param routerUri The URI of the router to connect to.
+   * @param options The Elvin client options. Modifying these after
+   *                they have been passed into this constructor has no
+   *                effect.
+   * 
+   * @throws IllegalArgumentException if one of the arguments is not
+   *                 valid.
+   * @throws ConnectException if a socket to the router could not be
+   *                 opened, e.g. connection refused.
+   * @throws ConnectionOptionsException if the router rejected the
+   *                 connection options. The client may elect to
+   *                 change the options and try to create a new
+   *                 connection.
+   * @throws IOException if some other IO error occurs.
+   * 
+   * @see #subscribe(String, Keys, SecureMode)
+   * @see #send(Notification, Keys, SecureMode)
+   * @see #setKeys(Keys, Keys)
+   */
+  public Elvin (ElvinURI routerUri, ElvinOptions options)
+    throws IllegalArgumentException,
+           ConnectException,
+           IOException,
+           ConnectionOptionsException
+  {
     this.routerUri = routerUri;
-    this.connectionOptions = options;
+    this.options = options.clone ();
     this.connectionOpen = new AtomicBoolean (true);
-    this.notificationKeys = notificationKeys;
-    this.subscriptionKeys = subscriptionKeys;
     this.subscriptions = new HashMap<Long, Subscription> ();
     this.closeListeners =
       new ListenerList<CloseListener> (CloseListener.class, 
@@ -349,18 +413,15 @@ public final class Elvin implements Closeable
          GeneralNotificationEvent.class);
     this.replyLock = new Object ();
     this.callbacks = new Callbacks (mutex ());
-    this.receiveTimeout = 10000;
     
-    if (!routerUri.protocol.equals (defaultProtocol ()))
+    if (!routerUri.protocol.equals (defaultProtocol ()) &&
+        !routerUri.protocol.equals (secureProtocol ()))
     {
       throw new IllegalArgumentException
-        ("Only the default protocol stack " +
-         defaultProtocol () + " is currently supported");
+        ("Avis only supports protocols: " + 
+         defaultProtocol () + " and " + secureProtocol () + 
+         ": " + routerUri);
     }
-    
-    checkNotNull (notificationKeys, "Notification keys");
-    checkNotNull (subscriptionKeys, "Subscription keys");
-    checkNotNull (connectionOptions, "Connection options");
     
     this.ioExecutor = newCachedThreadPool ();
     
@@ -369,18 +430,24 @@ public final class Elvin implements Closeable
       openConnection ();      
 
       ConnRply connRply =
-        sendAndReceive (new ConnRqst (routerUri.versionMajor,
-                                      routerUri.versionMinor,
-                                      options.asMapWithLegacy (),
-                                      notificationKeys, subscriptionKeys));
+        sendAndReceive 
+          (new ConnRqst (routerUri.versionMajor,
+                         routerUri.versionMinor,
+                         options.connectionOptions.asMapWithLegacy (),
+                         options.notificationKeys, 
+                         options.subscriptionKeys));
       
       elvinSessionEstablished = true;
       
       Map<String, Object> rejectedOptions =
-        options.differenceFrom (convertLegacyToNew (connRply.options));
+        options.connectionOptions.differenceFrom 
+          (convertLegacyToNew (connRply.options));
       
       if (!rejectedOptions.isEmpty ())
-        throw new ConnectionOptionsException (options, rejectedOptions);
+      {
+        throw new ConnectionOptionsException 
+          (options.connectionOptions, rejectedOptions);
+      }
     } catch (IOException ex)
     {
       close ();
@@ -402,14 +469,18 @@ public final class Elvin implements Closeable
       
       SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
       connectorConfig.setThreadModel (ThreadModel.MANUAL);
-      connectorConfig.setConnectTimeout (receiveTimeout);
+      connectorConfig.setConnectTimeout (options.receiveTimeout);
+
+      DefaultIoFilterChainBuilder filters = connectorConfig.getFilterChain ();
       
-      connectorConfig.getFilterChain ().addLast 
-        ("codec", ClientFrameCodec.FILTER);
+      if (routerUri.isSecure ())
+        filters.addFirst ("ssl", createSecureFilter ());
+
+      filters.addLast ("codec", ClientFrameCodec.FILTER);
       
-      connectorConfig.getFilterChain ().addLast 
+      filters.addLast 
         ("liveness", 
-         new LivenessFilter (callbacks.executor (), 60000, receiveTimeout));
+         new LivenessFilter (callbacks.executor (), 60000, options.receiveTimeout));
       
       // route MINA exceptions to log
       ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
@@ -419,19 +490,50 @@ public final class Elvin implements Closeable
           (new InetSocketAddress (routerUri.host, routerUri.port),
            new IoHandler (), connectorConfig);
                         
-      if (!connectFuture.join (receiveTimeout))
+      if (!connectFuture.join (options.receiveTimeout))
         throw new IOException ("Timed out connecting to router " + routerUri);
       
       connection = connectFuture.getSession ();
       
       enableTcpNoDelay
         (connection, 
-         connectionOptions.getBoolean ("TCP.Send-Immediately", false));
+         options.connectionOptions.getBoolean ("TCP.Send-Immediately", false));
       
     } catch (RuntimeIOException ex)
     {
       // unwrap MINA's RuntimeIOException
       throw (IOException)ex.getCause ();
+    }
+  }
+  
+  private SSLFilter createSecureFilter () 
+    throws IOException
+  {
+    // todo handle SSL handshake failure better
+    try
+    {
+      KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
+      keyFactory.init (options.keystore, options.keystorePassphrase.toCharArray ());
+ 
+      TrustManagerFactory trustFactory =
+        TrustManagerFactory.getInstance ("SunX509");
+      trustFactory.init (options.keystore);
+      
+      SSLContext sslContext = SSLContext.getInstance ("TLS");
+ 
+      sslContext.init (keyFactory.getKeyManagers (), 
+                       trustFactory.getTrustManagers (), null);
+
+      SSLFilter filter = new SSLFilter (sslContext);
+      
+      // todo add option for untrusted server here
+      
+      filter.setUseClientMode (true);
+      
+      return filter;
+    } catch (Exception ex)
+    {
+      throw new IOException ("Error initialising TLS: " + ex);
     }
   }
   
@@ -566,7 +668,7 @@ public final class Elvin implements Closeable
    */
   public ConnectionOptions connectionOptions ()
   {
-    return connectionOptions;
+    return options.connectionOptions;
   }
   
   /**
@@ -574,7 +676,7 @@ public final class Elvin implements Closeable
    */
   public int receiveTimeout ()
   {
-    return receiveTimeout;
+    return options.receiveTimeout;
   }
 
   /**
@@ -594,7 +696,7 @@ public final class Elvin implements Closeable
     
     LivenessFilter.setReceiveTimeoutFor (connection, receiveTimeout);
     
-    this.receiveTimeout = receiveTimeout;
+    options.receiveTimeout = receiveTimeout;
   }
   
   /**
@@ -1006,7 +1108,7 @@ public final class Elvin implements Closeable
    */
   public Keys notificationKeys ()
   {
-    return notificationKeys;
+    return options.notificationKeys;
   }
   
   /**
@@ -1027,7 +1129,7 @@ public final class Elvin implements Closeable
   public void setNotificationKeys (Keys newNotificationKeys)
     throws IOException
   {
-    setKeys (newNotificationKeys, subscriptionKeys);
+    setKeys (newNotificationKeys, options.subscriptionKeys);
   }
   
   /**
@@ -1035,7 +1137,7 @@ public final class Elvin implements Closeable
    */
   public Keys subscriptionKeys ()
   {
-    return notificationKeys;
+    return options.notificationKeys;
   }
   
   /**
@@ -1056,7 +1158,7 @@ public final class Elvin implements Closeable
   public void setSubscriptionKeys (Keys newSubscriptionKeys)
     throws IOException
   {
-    setKeys (notificationKeys, newSubscriptionKeys);
+    setKeys (options.notificationKeys, newSubscriptionKeys);
   }
   
   /**
@@ -1086,9 +1188,9 @@ public final class Elvin implements Closeable
     synchronized (this)
     {
       Keys.Delta deltaNotificationKeys =
-        notificationKeys.deltaFrom (newNotificationKeys);
+        options.notificationKeys.deltaFrom (newNotificationKeys);
       Keys.Delta deltaSubscriptionKeys =
-        subscriptionKeys.deltaFrom (newSubscriptionKeys);
+        options.subscriptionKeys.deltaFrom (newSubscriptionKeys);
   
       if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
       {
@@ -1097,8 +1199,8 @@ public final class Elvin implements Closeable
              (deltaNotificationKeys.added, deltaNotificationKeys.removed,
               deltaSubscriptionKeys.added, deltaSubscriptionKeys.removed));
         
-        this.notificationKeys = newNotificationKeys;
-        this.subscriptionKeys = newSubscriptionKeys;
+        options.notificationKeys = newNotificationKeys;
+        options.subscriptionKeys = newSubscriptionKeys;
 
         callbacks.flush ();
       }
@@ -1148,7 +1250,7 @@ public final class Elvin implements Closeable
       {
         try
         {
-          replyLock.wait (receiveTimeout);
+          replyLock.wait (options.receiveTimeout);
         } catch (InterruptedException ex)
         {
           // clear reply and continue interrupt
@@ -1173,7 +1275,8 @@ public final class Elvin implements Closeable
         checkConnected ();
         
         throw new IOException 
-          ("Timeout error: did not receive a reply from router");
+          ("Timeout error: router did not respond within " + 
+           (options.receiveTimeout / 1000) + " seconds");
       }
     }
   }
