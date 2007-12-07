@@ -43,8 +43,8 @@ public class JUTestTLS
     URI keystore = getClass ().getResource ("tls_test.ks").toURI ();
     
     options.set ("Listen", "elvin:/secure/127.0.0.1:" + PORT);
-    options.set ("TLS.Router-Keystore", keystore);
-    options.set ("TLS.Router-Keystore.Passphrase", "testing");
+    options.set ("TLS.Keystore", keystore);
+    options.set ("TLS.Keystore-Passphrase", "testing");
    
     Router router = new Router (options);
     
