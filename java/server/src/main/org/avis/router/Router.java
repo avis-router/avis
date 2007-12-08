@@ -348,7 +348,7 @@ public class Router implements IoHandler, Closeable
     try
     {
       while (!sessions.isEmpty () && currentTimeMillis () - start < 20000)
-        sleep (200);
+        sleep (100);
     } catch (InterruptedException ex)
     {
       Thread.currentThread ().interrupt ();
