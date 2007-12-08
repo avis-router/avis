@@ -437,6 +437,8 @@ public final class Elvin implements Closeable
     
     this.ioExecutor = newCachedThreadPool ();
     
+    boolean successfullyConnected = false;
+    
     try
     {
       openConnection ();      
@@ -460,12 +462,12 @@ public final class Elvin implements Closeable
         throw new ConnectionOptionsException 
           (options.connectionOptions, rejectedOptions);
       }
-    } catch (IOException ex)
-    {
-      // todo handle other exceptions here
-      close ();
       
-      throw ex;
+      successfullyConnected = true;
+    } finally
+    {
+      if (!successfullyConnected)
+        close ();
     }
   }
   
