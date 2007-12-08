@@ -10,14 +10,6 @@ Bugs
   testing for Alain. Not due to connected clients. Perhaps due to
   waiting for Disconn to be sent?
 
-* ep doesn't do ^D properly: needs to handle empty lines
-  
-* client should probably not log messages: events instead, esp
-  DropWarn
-
-* DONE: Java 1.6 doesn't have DECOMPOSE. Will break if used on 1.6,
-  won't compile on 1.6.
-
 * BUG: ec hangs on Presence-Protocol from public.elvin.org. Takes a long time
   to close connection. possibly related to use of "tee" on command line
 
@@ -26,14 +18,14 @@ Releases
 
 Server 1.2
 
- * do we need to worry about keystore and key passphrases?
- * hostname matchin in fed should be case-insenstive (do we support IP
+ * Federation TLS
+ * Ship Avis server with default certs?
+ * hostname matching in fed should be case-insenstive (do we support IP
    addresses?)
  * default federation class? e.g. Federation.Apply-Class[Public]=*
  * includes in config: would allow federation to be spec'd separately
  * Test large frames with new heap sizes
  * ?Federation.Classes.Require=internal
- * TLS
  * windows JRE does not have -server, need to add installer option
  * thread pool size option?
  * date in log messages
@@ -42,10 +34,14 @@ Server 1.2
 Client 1.1
 
  * TLS
- * Handle TLS connect failure better
- * client options to subsume constructor options
+ * DONE: Handle TLS connect failure better
+ * DONE: client options to subsume constructor options
  * allow connection options in URI? merge with given options?
  * add subscription string escape utilities
+ * ep doesn't do ^D properly: needs to handle empty lines 
+ * client should probably not log messages: events instead, esp
+   DropWarn
+ * ec/ep options for TLS
 
 Not allocated
 --------------
@@ -94,10 +90,10 @@ Server
 * add message logging via MINA filter, remove current crusty approach
 * notification dropping incl DropWarn
 * write a multi-threaded test thrasher to test consistency
-* write a multi-threaded test thrasher to try to crash server
 * look into whether server can store hashed keys only and avoid
   hashing them on each match. See Connection.matchSubscriptions ()
 
+* DONE: write a multi-threaded test thrasher to try to crash server
 * DONE: increase Packet.Max-Length
 * DONE: Unicode decompose on 1.6
 * DONE: require(e) vs. require (e). Mantara accepts both, we don't do first
@@ -134,54 +130,55 @@ Server
 * DONE: port to MINA 1.0.0. total API change, no porting guide?!
   IoSession seems to replace ProtocolSession. see
   http://svn.apache.org/viewvc/directory/trunks/mina/example/src/main/java/org/apache/mina/example/sumup/
+* DONE: Java 1.6 doesn't have DECOMPOSE. Will break if used on 1.6,
+  won't compile on 1.6.
+
+
 
 SSL
 ----------------------------------------------------------------------
 
 Scenarios
 
- * Server 1.2/Client 1.1: Client connects to
-   elvin:/secure/public.elvin.org, wants auth and privacy. Enable
-   server auth on client, server has cert from root CA. Add optional
-   server auth required option for client, plus optional trust
-   keystore. Extend null trust manager as per example. Will need to
-   add new Elvin constructor taking client options and absorb keys,
-   etc into it. Server can have optional client auth
-
- * Server 1.3/Client 1.3: Cliend and/or server auth.
+ * Client connects to elvin:/secure/public.elvin.org, wants auth and
+   privacy. Enable server auth on client, server has cert from root
+   CA. Add optional server auth required option for client, plus
+   optional trust keystore. Extend null trust manager as per
+   example. Will need to add new Elvin constructor taking client
+   options and absorb keys, etc into it. Server can have optional
+   client auth
 
 Todo
 
- * Avis client lib TLS
- * Federation TLS
- * Ship Avis server with default certs?
- * Create client/server certs, test mutual auth
- * Use separate keystore for trusted certs?
+ * DONE: Avis client lib TLS
+ * DONE: Create client/server certs, test mutual auth
+ * DONE: Use separate keystore for trusted certs?
   
 Questions
 
- * Do we need to support trusted clients? => need trust store on
-   server, key store on client, enable client auth on server.
+ * CLOSED: Do we need to support trusted clients? => need trust store
+   on server, key store on client, enable client auth on server.
 
  * Do we want security per-URI?
 
- * Do we need to support trusted servers? => need trust store on
-   client, enable server auth on client
+ * CLOSED: Do we need to support trusted servers? => need trust store
+   on client, enable server auth on client
 
  * Federation TLS: security per class?
 
- * Enable remote auth with URI option?
+ * CLOSED: Enable remote auth with URI option?
    elvin:/secure/host?Remote-Auth=true. probably not: options are
    connection options, not client config.
 
  * Do we want to support keystores other than JKS? eg. PKCS12. Check
    we could just import PKCS12, and add instructions if so.
 
- * Client -> trust: could implement trust manager: see "Creating Your
-   Own X509TrustManager"
+ * CLOSED: Client -> trust: could implement trust manager: see
+   "Creating Your Own X509TrustManager"
 
- * Could use a KeyManager to use password auth? Not sure how
-   X509KeyManager can be extended to do this.
+ * Password auth? Could use a KeyManager to use password auth? Not
+   sure how X509KeyManager can be extended to do this. There may be an
+   Elvin spec for this.
 
 
 References
