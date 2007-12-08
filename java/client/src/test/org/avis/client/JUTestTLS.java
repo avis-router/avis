@@ -53,15 +53,13 @@ public class JUTestTLS
   private LogFailTester logTester;
   
   /**
-   * Test a basic client/server connect over TLS.
+   * Test a basic client/server connect over TLS with client default
+   * keystore.
    */
   @Test
   public void connect () 
     throws Exception
   {
-    // todo test unset keystore is OK
-
-    URL clientKeystoreUrl = getClass ().getResource ("client.ks");
     URL routerKeystoreUrl = getClass ().getResource ("router.ks");
 
     RouterOptions routerOptions = new RouterOptions ();
@@ -74,11 +72,7 @@ public class JUTestTLS
     
     autoClose (router);
     
-    ElvinOptions options = new ElvinOptions ();
-    
-    options.setKeystore (clientKeystoreUrl, "testing");
-    
-    Elvin elvin = new Elvin (SECURE_URI, options);
+    Elvin elvin = new Elvin (SECURE_URI);
     
     elvin.close ();
     router.close ();
