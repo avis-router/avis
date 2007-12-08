@@ -65,7 +65,9 @@ import org.avis.util.ListenerList;
 
 import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.identityHashCode;
+import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -262,8 +264,12 @@ public class Router implements IoHandler, Closeable
 
       SocketAcceptorConfig secureAcceptorConfig = createDefaultConfig ();
 
-      secureAcceptorConfig.getFilterChain ().addFirst 
-        ("ssl", new SSLFilter (sslContext));
+      SSLFilter sslFilter = new SSLFilter (sslContext);
+      
+      sslFilter.setNeedClientAuth 
+        (routerOptions.getBoolean ("TLS.Require-Trusted-Client"));
+      
+      secureAcceptorConfig.getFilterChain ().addFirst ("ssl", sslFilter);
       
       return secureAcceptorConfig;
     } catch (Exception ex)
@@ -320,7 +326,8 @@ public class Router implements IoHandler, Closeable
       }
     }
     
-    sessions.clear ();
+    waitForAllSessionsClosed ();
+    
     acceptor.unbindAll ();
     executor.shutdown ();
     
@@ -332,6 +339,28 @@ public class Router implements IoHandler, Closeable
     {
       diagnostic ("Interrupted while waiting for shutdown", this, ex);
     }
+  }
+
+  private void waitForAllSessionsClosed ()
+  {
+    long start = currentTimeMillis ();
+    
+    try
+    {
+      while (!sessions.isEmpty () && currentTimeMillis () - start < 20000)
+        sleep (200);
+    } catch (InterruptedException ex)
+    {
+      Thread.currentThread ().interrupt ();
+    }
+    
+    if (!sessions.isEmpty ())
+    {
+      warn ("Sessions took too long to close " +
+      		"(" + sessions.size () + " still open", this);
+    }
+    
+    sessions.clear ();
   }
   
   /**
@@ -977,7 +1006,7 @@ public class Router implements IoHandler, Closeable
     // client has this long to connect or UNotify
     session.setIdleTime
       (READER_IDLE, 
-       routerOptions.getInt ("Client.Idle-Connection-Timeout"));
+       routerOptions.getInt ("IO.Idle-Connection-Timeout"));
     
     // install read throttle
     ReadThrottleFilterBuilder readThrottle = new ReadThrottleFilterBuilder ();
