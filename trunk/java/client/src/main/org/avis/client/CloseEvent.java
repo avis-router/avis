@@ -42,11 +42,17 @@ public class CloseEvent extends EventObject
   public static final int REASON_PROTOCOL_VIOLATION = 4;
   
   /**
+   * An I/O exception was thrown while communicating with the router.
+   * The exception will be in the error field.
+   */
+  public static final int REASON_IO_ERROR = 5;
+  
+  /**
    * The reason for the shutdown: {@link #REASON_CLIENT_SHUTDOWN},
    * {@link #REASON_ROUTER_SHUTDOWN},
    * {@link #REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY},
    * {@link #REASON_ROUTER_STOPPED_RESPONDING},
-   * {@link #REASON_PROTOCOL_VIOLATION}.
+   * {@link #REASON_PROTOCOL_VIOLATION}, {@link #REASON_IO_ERROR}.
    */
   public final int reason;
 
