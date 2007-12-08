@@ -15,6 +15,7 @@ import java.net.InetSocketAddress;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManager;
 
 import org.apache.mina.common.ConnectFuture;
@@ -55,11 +56,14 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
+import static java.lang.Thread.sleep;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
+import static org.avis.client.CloseEvent.REASON_IO_ERROR;
 import static org.avis.client.CloseEvent.REASON_PROTOCOL_VIOLATION;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY;
@@ -474,9 +478,15 @@ public final class Elvin implements Closeable
 
       DefaultIoFilterChainBuilder filters = connectorConfig.getFilterChain ();
       
-      if (routerUri.isSecure ())
-        filters.addFirst ("ssl", createSecureFilter ());
+      SSLFilter sslFilter = null;
 
+      if (routerUri.isSecure ())
+      {
+        sslFilter = createSSLFilter ();
+      
+        filters.addFirst ("ssl", sslFilter);
+      }
+      
       filters.addLast ("codec", ClientFrameCodec.FILTER);
       
       filters.addLast 
@@ -498,6 +508,9 @@ public final class Elvin implements Closeable
       
       connection = connectFuture.getSession ();
       
+      if (sslFilter != null)
+        startSSL (sslFilter);
+        
       enableTcpNoDelay
         (connection, 
          options.connectionOptions.getBoolean ("TCP.Send-Immediately", false));
@@ -509,13 +522,12 @@ public final class Elvin implements Closeable
     }
   }
   
-  private SSLFilter createSecureFilter () 
+  private SSLFilter createSSLFilter () 
     throws IOException
   {
     checkNotNull (options.keystore, "Keystore");
     checkNotNull (options.keystorePassphrase, "Keystore passphrase");
     
-    // todo handle SSL handshake failure better
     try
     {
       KeyManagerFactory keyFactory = 
@@ -542,6 +554,43 @@ public final class Elvin implements Closeable
     {
       throw new IOException ("Error initialising TLS: " + ex);
     }
+  }
+  
+  /**
+   * Start the SSL session. MINA would do this automatically, but we
+   * force it here so that if the SSL handshake fails, the exception
+   * propagates out of the constructor.
+   */
+  private void startSSL (SSLFilter sslFilter) 
+    throws SSLException
+  {
+    sslFilter.startSSL (connection);
+    
+    /*
+     * Unfortunately SSL handshake is async: we have to poll.
+     * exceptionCaught () has some special logic to attach SSL
+     * exceptions to the session if it sees one from MINA.
+     */
+    long start = currentTimeMillis ();
+    
+    try
+    {
+      while (sslFilter.getSSLSession (connection) == null &&
+             !connection.containsAttribute ("sslException") &&
+             currentTimeMillis () - start < options.receiveTimeout)
+      {
+        sleep (10);
+      }
+    } catch (InterruptedException ex)
+    {
+      currentThread ().interrupt ();
+    }
+    
+    SSLException sslException = 
+      (SSLException)connection.getAttribute ("sslException");
+    
+    if (sslException != null)
+      throw sslException;
   }
   
   /**
@@ -1579,8 +1628,12 @@ public final class Elvin implements Closeable
     public void exceptionCaught (IoSession session, Throwable cause)
       throws Exception
     {
-      if (cause instanceof InterruptedException)
+      if (cause instanceof SSLException && !elvinSessionEstablished && connection != null)
+        connection.setAttribute ("sslException", cause);
+      else if (cause instanceof InterruptedException)
         diagnostic ("MINA I/O thread interrupted", this);
+      else if (cause instanceof IOException)
+        close (REASON_IO_ERROR, "I/O error communicating with router", cause);
       else
         internalError ("Unexpected exception in Elvin client", this, cause);
     }
