@@ -156,6 +156,12 @@ import static org.avis.util.Util.checkNotNull;
  */
 public final class Elvin implements Closeable
 {
+  static
+  {
+    // route MINA exceptions to log
+    ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
+  }
+
   protected ElvinURI routerUri;
   protected ElvinOptions options;
   protected IoSession connection;
@@ -456,12 +462,16 @@ public final class Elvin implements Closeable
       }
     } catch (IOException ex)
     {
+      // todo handle other exceptions here
       close ();
       
       throw ex;
     }
   }
   
+  /**
+   * Open a network connection to the router.
+   */
   void openConnection ()
     throws IOException
   {
@@ -479,15 +489,6 @@ public final class Elvin implements Closeable
 
       DefaultIoFilterChainBuilder filters = connectorConfig.getFilterChain ();
       
-      SSLFilter sslFilter = null;
-
-      if (routerUri.isSecure ())
-      {
-        sslFilter = createSSLFilter ();
-      
-        filters.addFirst ("ssl", sslFilter);
-      }
-      
       filters.addLast ("codec", ClientFrameCodec.FILTER);
       
       filters.addLast 
@@ -495,9 +496,6 @@ public final class Elvin implements Closeable
          new LivenessFilter (callbacks.executor (), 
                              options.livenessTimeout, 
                              options.receiveTimeout));
-      
-      // route MINA exceptions to log
-      ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
       
       ConnectFuture connectFuture =
         connector.connect
@@ -508,10 +506,10 @@ public final class Elvin implements Closeable
         throw new IOException ("Timed out connecting to router " + routerUri);
       
       connection = connectFuture.getSession ();
+
+      if (routerUri.isSecure ())
+        openSSL ();
       
-      if (sslFilter != null)
-        startSSL (sslFilter);
-        
       enableTcpNoDelay
         (connection, 
          options.connectionOptions.getBoolean ("TCP.Send-Immediately", false));
@@ -523,6 +521,27 @@ public final class Elvin implements Closeable
     }
   }
   
+  /**
+   * Open an TLS/SSL session for the current connection.
+   */
+  private void openSSL ()
+    throws IOException
+  {
+    SSLFilter sslFilter = createSSLFilter ();
+  
+    connection.getFilterChain ().addFirst ("ssl", sslFilter);
+    
+    /*
+     * MINA would do this automatically, but we force it here so that
+     * if the SSL handshake fails the exception propagates out of this
+     * method.
+     */
+    handshakeSSL (sslFilter);
+  }
+
+  /**
+   * Create a MINA SSL filter configured from the current options.
+   */
   private SSLFilter createSSLFilter () 
     throws IOException
   {
@@ -567,11 +586,9 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * Start the SSL session. MINA would do this automatically, but we
-   * force it here so that if the SSL handshake fails, the exception
-   * propagates out of the constructor.
+   * Start the SSL handshake process.
    */
-  private void startSSL (SSLFilter sslFilter) 
+  private void handshakeSSL (SSLFilter sslFilter) 
     throws SSLException
   {
     sslFilter.startSSL (connection);
