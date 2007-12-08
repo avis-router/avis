@@ -5,7 +5,6 @@ import org.apache.mina.common.IoHandlerAdapter;
 
 import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.TestConn;
-import org.avis.logging.Log;
 
 import org.junit.Test;
 
@@ -20,8 +19,8 @@ public class JUTestLivenessFilter
   public void livenessTimeout () 
     throws Exception
   {
-    Log.enableLogging (Log.TRACE, true);
-    Log.enableLogging (Log.DIAGNOSTIC, true);
+    // Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
     
     AcceptorConnectorSetup testSetup = new AcceptorConnectorSetup ();
     
