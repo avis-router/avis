@@ -13,10 +13,11 @@ public class RouterOptionSet extends OptionSet
   {
     add ("Port", 1, DEFAULT_PORT, 65535);
     add ("Listen", "elvin://0.0.0.0");
-    add ("Client.Idle-Connection-Timeout", 1, 15, Integer.MAX_VALUE);
+    add ("IO.Idle-Connection-Timeout", 1, 15, Integer.MAX_VALUE);
     add ("IO.Use-Direct-Buffers", true);
-    add ("TLS.Keystore", new OptionTypeURI (), uri ("router.ks"));
+    add ("TLS.Keystore", new OptionTypeURI (), uri ("avis-router.keystore"));
     add ("TLS.Keystore-Passphrase", "");
+    add ("TLS.Require-Trusted-Client", false);
     
     inheritFrom (CONNECTION_OPTION_SET);
   }
