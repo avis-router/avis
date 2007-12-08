@@ -527,7 +527,7 @@ public final class Elvin implements Closeable
    * Open an TLS/SSL session for the current connection.
    */
   private void openSSL ()
-    throws IOException
+    throws IOException, SSLException
   {
     SSLFilter sslFilter = createSSLFilter ();
   
@@ -545,7 +545,7 @@ public final class Elvin implements Closeable
    * Create a MINA SSL filter configured from the current options.
    */
   private SSLFilter createSSLFilter () 
-    throws IOException
+    throws IOException, SSLException
   {
     if (options.keystore != null && options.keystorePassphrase == null)
     {
