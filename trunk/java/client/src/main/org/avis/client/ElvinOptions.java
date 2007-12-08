@@ -38,8 +38,9 @@ public class ElvinOptions implements Cloneable
   public Keys subscriptionKeys;
   
   /**
-   * The keystore used for TLS/SSL secure connections. The
-   * keystorePassphrase option must also be set when this is used.
+   * The keystore used for TLS/SSL secure connections. This may be
+   * null to use the default JVM TLS certificate chain. If it is set,
+   * the keystorePassphrase option must also be set.
    * 
    * @see #setKeystore(URL, String)
    */
@@ -52,8 +53,13 @@ public class ElvinOptions implements Cloneable
 
   /**
    * When true, only servers with a certificate matching the trusted
-   * certificates in the keystore will be acceptable for secure
-   * connections.
+   * certificates in the supplied keystore or the JVM's CA
+   * certificates will be acceptable for secure connections. See the
+   * documentation for <a
+   * href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jsse/JSSERefGuide.html#X509TrustManager">
+   * JSSE's X509TrustManager</a> for more information.
+   * 
+   * @see #keystore
    */
   public boolean requireTrustedServer;
   
