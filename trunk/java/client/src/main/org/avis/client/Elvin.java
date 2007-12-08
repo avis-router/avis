@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -525,25 +526,34 @@ public final class Elvin implements Closeable
   private SSLFilter createSSLFilter () 
     throws IOException
   {
-    checkNotNull (options.keystore, "Keystore");
-    checkNotNull (options.keystorePassphrase, "Keystore passphrase");
+    if (options.keystore != null && options.keystorePassphrase == null)
+    {
+      throw new IllegalArgumentException 
+        ("Passphrase must be set when using a keystore");
+    }
     
     try
     {
-      KeyManagerFactory keyFactory = 
-        KeyManagerFactory.getInstance ("SunX509");
+      KeyManager [] keyManagers = null;
       
-      keyFactory.init (options.keystore, 
-                       options.keystorePassphrase.toCharArray ());
- 
+      if (options.keystore != null)
+      {
+        KeyManagerFactory keyFactory = 
+          KeyManagerFactory.getInstance ("SunX509");
+        
+        keyFactory.init (options.keystore, 
+                         options.keystorePassphrase.toCharArray ());
+        
+        keyManagers = keyFactory.getKeyManagers ();
+      }
+      
       AvisX509TrustManager trustManager = 
         new AvisX509TrustManager (options.keystore, 
                                   options.requireTrustedServer, false);
       
       SSLContext sslContext = SSLContext.getInstance ("TLS");
  
-      sslContext.init (keyFactory.getKeyManagers (), 
-                       new TrustManager [] {trustManager}, null);
+      sslContext.init (keyManagers, new TrustManager [] {trustManager}, null);
 
       SSLFilter filter = new SSLFilter (sslContext);
       
