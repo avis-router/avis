@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import java.net.URL;
 
+import javax.net.ssl.SSLException;
+
 import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.RouterOptions;
@@ -15,6 +17,8 @@ import org.avis.util.LogFailTester;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 import static java.lang.Thread.sleep;
 
@@ -29,10 +33,10 @@ import static java.lang.Thread.sleep;
    Commands to export server/client certs and import into other keystore 
    to enable client/server auth:
    
-     keytool -keystore client.ks -alias test -storepass testing \
+     keytool -export -keystore client.ks -alias test -storepass testing \
        -file client.cer
 
-     keytool -keystore router.ks -alias test -storepass testing \
+     keytool -export -keystore router.ks -alias test -storepass testing \
        -file router.cer
 
      keytool -import -keystore router.ks -alias client -storepass testing \
@@ -55,6 +59,8 @@ public class JUTestTLS
   public void connect () 
     throws Exception
   {
+    // todo test unset keystore is OK
+
     URL clientKeystoreUrl = getClass ().getResource ("client.ks");
     URL routerKeystoreUrl = getClass ().getResource ("router.ks");
 
@@ -66,18 +72,13 @@ public class JUTestTLS
     
     Router router = new Router (routerOptions);
     
+    autoClose (router);
+    
     ElvinOptions options = new ElvinOptions ();
     
     options.setKeystore (clientKeystoreUrl, "testing");
     
     Elvin elvin = new Elvin (SECURE_URI, options);
-    
-    /*
-     * todo: when no gap, we occasionally get an SSL exception which
-     * seems to be indicating SSL filter is being used after it has
-     * been disposed.
-     */
-    sleep (1000);
     
     elvin.close ();
     router.close ();
@@ -90,8 +91,6 @@ public class JUTestTLS
   public void connectAuthRequired () 
     throws Exception
   {
-    // todo test failure when server cert is missing
-    
     URL clientKeystoreUrl = getClass ().getResource ("client.ks");
     URL routerKeystoreUrl = getClass ().getResource ("router.ks");
 
@@ -114,6 +113,48 @@ public class JUTestTLS
     Elvin elvin = new Elvin (SECURE_URI, options);
     
     elvin.close ();
+    router.close ();
+  }
+  
+  /**
+   * Test a client/server connect fails when using required
+   * authorization and no trusted server/client is available.
+   */
+  @Test
+  public void connectAuthRequiredNoCert () 
+    throws Exception
+  {
+    URL clientKeystoreUrl = getClass ().getResource ("client_no_router_cert.ks");
+    URL routerKeystoreUrl = getClass ().getResource ("router.ks");
+
+    RouterOptions routerOptions = new RouterOptions ();
+    
+    routerOptions.set ("Listen", SECURE_URI);
+    routerOptions.set ("TLS.Keystore", routerKeystoreUrl);
+    routerOptions.set ("TLS.Keystore-Passphrase", "testing");
+    routerOptions.set ("TLS.Require-Trusted-Client", true);
+    
+    Router router = new Router (routerOptions);
+   
+    autoClose (router);
+    
+    ElvinOptions options = new ElvinOptions ();
+    
+    options.setKeystore (clientKeystoreUrl, "testing");
+    options.requireTrustedServer = true;
+    
+    try
+    {
+      Elvin elvin = new Elvin (SECURE_URI, options);
+
+      elvin.close ();
+      
+      fail ();
+    } catch (SSLException ex)
+    {
+      // ok
+    }
+    
     router.close ();
   }
   
@@ -152,8 +193,11 @@ public class JUTestTLS
   }
   
   @After
-  public void logAfter ()
+  public void logAfter () throws InterruptedException
   {
     logTester.assertOkAndDispose ();
+    
+    // todo fix this bogosity
+    sleep (5000);
   }
 }
