@@ -1628,14 +1628,23 @@ public final class Elvin implements Closeable
     public void exceptionCaught (IoSession session, Throwable cause)
       throws Exception
     {
-      if (cause instanceof SSLException && !elvinSessionEstablished && connection != null)
-        connection.setAttribute ("sslException", cause);
-      else if (cause instanceof InterruptedException)
+      if (cause instanceof SSLException)
+      {
+        // when initiating connection, tunnel SSL exception to startSSL ()
+        if (!elvinSessionEstablished && connection != null)
+          connection.setAttribute ("sslException", cause);
+        else
+          close (REASON_IO_ERROR, "SSL error", cause);
+      } else if (cause instanceof InterruptedException)
+      {
         diagnostic ("MINA I/O thread interrupted", this);
-      else if (cause instanceof IOException)
+      } else if (cause instanceof IOException)
+      {
         close (REASON_IO_ERROR, "I/O error communicating with router", cause);
-      else
+      } else
+      {
         internalError ("Unexpected exception in Elvin client", this, cause);
+      }
     }
 
     /**
