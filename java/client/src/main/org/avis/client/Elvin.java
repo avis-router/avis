@@ -156,29 +156,29 @@ import static org.avis.util.Util.checkNotNull;
  */
 public final class Elvin implements Closeable
 {
-  ElvinURI routerUri;
-  ElvinOptions options;
-  IoSession connection;
-  AtomicBoolean connectionOpen;
-  boolean elvinSessionEstablished;
-  Map<Long, Subscription> subscriptions;
-  Callbacks callbacks;
+  protected ElvinURI routerUri;
+  protected ElvinOptions options;
+  protected IoSession connection;
+  protected AtomicBoolean connectionOpen;
+  protected boolean elvinSessionEstablished;
+  protected Map<Long, Subscription> subscriptions;
+  protected Callbacks callbacks;
   
   /**
    * A multi-thread pool for handling MINA I/O.
    */
-  ExecutorService ioExecutor;
+  protected ExecutorService ioExecutor;
 
   /**
    * lastReply is effectively a single-item queue for handling
    * responses to XID-based requests, using replyLock to synchronize
    * access.
    */
-  XidMessage lastReply;
-  Object replyLock;
+  protected XidMessage lastReply;
+  protected Object replyLock;
   
-  ListenerList<CloseListener> closeListeners;
-  ListenerList<GeneralNotificationListener> notificationListeners;
+  protected ListenerList<CloseListener> closeListeners;
+  protected ListenerList<GeneralNotificationListener> notificationListeners;
   
   /**
    * Create a new connection to an Elvin router.
