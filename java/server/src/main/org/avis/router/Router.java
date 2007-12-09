@@ -282,13 +282,17 @@ public class Router implements IoHandler, Closeable
             ("TLS.Keystore-Passphrase").toCharArray ();
         
         KeyStore keystore = KeyStore.getInstance ("JKS");
+        
         keystore.load (keystoreStream, passphrase);
         
-        KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
+        KeyManagerFactory keyFactory = 
+          KeyManagerFactory.getInstance ("SunX509");
+        
         keyFactory.init (keystore, passphrase);
       
         TrustManagerFactory trustFactory =
           TrustManagerFactory.getInstance ("SunX509");
+        
         trustFactory.init (keystore);
         
         sslContext = SSLContext.getInstance ("TLS");
