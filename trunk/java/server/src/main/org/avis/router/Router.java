@@ -114,7 +114,7 @@ public class Router implements IoHandler, Closeable
   private RouterOptions routerOptions;
   private ExecutorService executor;
   private SocketAcceptor acceptor;
-  private SSLFilter sslFilter;
+  private SSLContext sslContext;
   private volatile boolean closing;
   
   /**
@@ -194,7 +194,8 @@ public class Router implements IoHandler, Closeable
     filters.addLast ("codec", ClientFrameCodec.FILTER);
     filters.addLast ("threadPool", new ExecutorFilter (executor));
     
-    bind (options.listenURIs (), this, filters);
+    bind (options.listenURIs (), this, filters, 
+          routerOptions.getBoolean ("TLS.Require-Trusted-Client"));
   }
 
   /**
@@ -205,11 +206,15 @@ public class Router implements IoHandler, Closeable
    * @param uris The URI's to listen to.
    * @param handler The IO handler.
    * @param filters The IO filters.
+   * @param requireTrustedTLSClient True if, when TLS is used, the
+   *                remote client must be in the trusted certificate
+   *                chain.
    * 
    * @throws IOException if an error occurred during binding.
    */
   public void bind (Set<? extends ElvinURI> uris, IoHandler handler,
-                    DefaultIoFilterChainBuilder filters) 
+                    DefaultIoFilterChainBuilder filters, 
+                    boolean requireTrustedTLSClient) 
     throws IOException
   {
     SocketAcceptorConfig defaultAcceptorConfig = createDefaultConfig (filters);
@@ -226,7 +231,7 @@ public class Router implements IoHandler, Closeable
           DefaultIoFilterChainBuilder secureFilters = 
             (DefaultIoFilterChainBuilder)filters.clone ();
           
-          secureFilters.addFirst ("ssl", sslFilter ());
+          secureFilters.addFirst ("ssl", sslFilter (requireTrustedTLSClient));
 
           secureAcceptorConfig = createDefaultConfig (secureFilters);
         }
@@ -261,50 +266,49 @@ public class Router implements IoHandler, Closeable
    * Lazy create the MINA SSL filter for incoming secure (TLS)
    * connections.
    */
-  private SSLFilter sslFilter ()
+  private SSLFilter sslFilter (boolean requireTrustedTLSClient)
     throws IllegalOptionException, IOException
   {
-    if (sslFilter != null)
-      return sslFilter;
-    
-    InputStream keystoreStream = 
-      routerOptions.getAbsoluteURI 
-        ("TLS.Keystore").toURL ().openStream ();
-    
-    try
+    if (sslContext == null)
     {
-      char [] passphrase = 
-        routerOptions.getString 
-          ("TLS.Keystore-Passphrase").toCharArray ();
+      InputStream keystoreStream = 
+        routerOptions.getAbsoluteURI 
+          ("TLS.Keystore").toURL ().openStream ();
       
-      KeyStore keystore = KeyStore.getInstance ("JKS");
-      keystore.load (keystoreStream, passphrase);
+      try
+      {
+        char [] passphrase = 
+          routerOptions.getString 
+            ("TLS.Keystore-Passphrase").toCharArray ();
+        
+        KeyStore keystore = KeyStore.getInstance ("JKS");
+        keystore.load (keystoreStream, passphrase);
+        
+        KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
+        keyFactory.init (keystore, passphrase);
       
-      KeyManagerFactory keyFactory = KeyManagerFactory.getInstance ("SunX509");
-      keyFactory.init (keystore, passphrase);
-    
-      TrustManagerFactory trustFactory =
-        TrustManagerFactory.getInstance ("SunX509");
-      trustFactory.init (keystore);
-      
-      SSLContext sslContext = SSLContext.getInstance ("TLS");
-   
-      sslContext.init (keyFactory.getKeyManagers (), 
-                       trustFactory.getTrustManagers (), null);
-
-      sslFilter = new SSLFilter (sslContext);
-      
-      sslFilter.setNeedClientAuth 
-        (routerOptions.getBoolean ("TLS.Require-Trusted-Client"));
-      
-      return sslFilter;
-    } catch (Exception ex)
-    {
-      throw new IOException ("Failed to initialise TLS: " + ex);
-    } finally
-    {
-      keystoreStream.close ();
+        TrustManagerFactory trustFactory =
+          TrustManagerFactory.getInstance ("SunX509");
+        trustFactory.init (keystore);
+        
+        sslContext = SSLContext.getInstance ("TLS");
+     
+        sslContext.init (keyFactory.getKeyManagers (), 
+                         trustFactory.getTrustManagers (), null);
+      } catch (Exception ex)
+      {
+        throw new IOException ("Failed to initialise TLS: " + ex);
+      } finally
+      {
+        keystoreStream.close ();
+      }
     }
+    
+    SSLFilter sslFilter = new SSLFilter (sslContext);
+    
+    sslFilter.setNeedClientAuth (requireTrustedTLSClient);
+    
+    return sslFilter;
   }
 
   /**
