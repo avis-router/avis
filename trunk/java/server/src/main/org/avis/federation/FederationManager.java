@@ -20,7 +20,6 @@ import static java.lang.Integer.toHexString;
 import static java.lang.System.identityHashCode;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
-import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
 import static org.avis.util.Text.shortException;
@@ -188,8 +187,7 @@ public class FederationManager implements CloseListener
         for (EwafURI uri : uris)
           checkUri ("Federation.Listen", uri);
         
-        return new Acceptor (router, serverDomain, classes, 
-                             addressesFor (uris), config);
+        return new Acceptor (router, serverDomain, classes, uris, config);
       } catch (IOException ex)
       {
         throw new IllegalOptionException ("Federation.Listen", 
