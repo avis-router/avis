@@ -35,6 +35,7 @@ import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
+import static org.avis.federation.Federation.logMinaException;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.logging.Log.diagnostic;
@@ -400,7 +401,6 @@ public class Connector implements IoHandler, Closeable
   public void exceptionCaught (IoSession theSession, Throwable cause)
     throws Exception
   {
-    warn ("Unexpected exception while processing federation message", 
-          this, cause);
+    logMinaException (cause, this);
   }
 }
