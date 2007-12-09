@@ -31,7 +31,6 @@ import org.avis.router.SimpleClient;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.subscription.ast.nodes.Const;
-import org.avis.subscription.parser.ParseException;
 import org.avis.util.LogFailTester;
 
 import org.junit.After;
@@ -39,13 +38,13 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
-import static org.avis.io.Net.addressesFor;
+import static org.avis.federation.TestUtils.waitForAsyncConnect;
+import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.logging.Log.INFO;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.shouldLog;
@@ -55,12 +54,11 @@ import static org.avis.util.Collections.set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 public class JUTestFederation
 {
-  private static final int PORT1 = 29170;
-  private static final int PORT2 = 29180;
+  static final int PORT1 = 29170;
+  static final int PORT2 = 29180;
   
   private static final String MANTARA_ELVIN = "/usr/local/sbin/elvind";
   
@@ -139,8 +137,7 @@ public class JUTestFederation
     Options options = new Options (FederationOptionSet.OPTION_SET);
     
     Acceptor acceptor = 
-      new Acceptor (server1, "server1", classes, 
-                    addressesFor (set (ewafURI)), options);
+      new Acceptor (server1, "server1", classes, set (ewafURI), options);
     
     // connector
     TestingIoHandler listener = new TestingIoHandler ();
@@ -325,8 +322,7 @@ public class JUTestFederation
     waitForAsyncConnect (connector);
     
     Acceptor acceptor = 
-      new Acceptor (server2, "server2", classes, 
-                    addressesFor (set (ewafURI)), options);
+      new Acceptor (server2, "server2", classes, set (ewafURI), options);
     
     waitForConnect (connector);
     
@@ -362,8 +358,7 @@ public class JUTestFederation
     // Log.enableLogging (Log.TRACE, true);
 
     Acceptor acceptor = 
-      new Acceptor (server2, "server2", classes, 
-                    addressesFor (set (ewafURI)), options);
+      new Acceptor (server2, "server2", classes, set (ewafURI), options);
 
     Connector connector = 
       new Connector (server1, "server1", ewafURI, 
@@ -376,8 +371,7 @@ public class JUTestFederation
     waitForAsyncConnect (connector);
 
     acceptor = 
-      new Acceptor (server2, "server2", classes, 
-                    addressesFor (set (ewafURI)), options);
+      new Acceptor (server2, "server2", classes, set (ewafURI), options);
     
     waitForConnect (connector);
     
@@ -411,8 +405,7 @@ public class JUTestFederation
     // Log.enableLogging (Log.TRACE, true);
 
     Acceptor acceptor = 
-      new Acceptor (server2, "server2", classes, 
-                    addressesFor (set (ewafURI)), options);
+      new Acceptor (server2, "server2", classes, set (ewafURI), options);
 
     Connector connector = 
       new Connector (server1, "server1", ewafURI, 
@@ -621,40 +614,6 @@ public class JUTestFederation
   }
   
   /**
-   * Wait up to 10 seconds for a connector to be in connected state.
-   */
-  protected static void waitForConnect (Connector connector)
-    throws InterruptedException
-  {
-    long start = currentTimeMillis ();
-    
-    while (!connector.isConnected () && currentTimeMillis () - start < 10000)
-      sleep (200);
-    
-    if (!connector.isConnected ())
-      fail ("Failed to connect");
-  }
-  
-  /**
-   * Wait up to 10 seconds for a connector to go to waiting for an
-   * async connect.
-   */
-  private static void waitForAsyncConnect (Connector connector)
-    throws InterruptedException
-  {
-    long start = currentTimeMillis ();
-    
-    while (currentTimeMillis () - start < 10000 && 
-           !connector.isWaitingForAsyncConnection ())
-    {
-      sleep (200);
-    }
-    
-    if (!connector.isWaitingForAsyncConnection ())
-      fail ("Failed to go to async connect state");
-  }
-  
-    /**
    * Create a connection to federation listener.
    */
   private static IoSession connectFederation (Router router,
@@ -679,84 +638,5 @@ public class JUTestFederation
     future.join ();
     
     return future.getSession ();
-  }
-  
-  static class StandardFederatorSetup
-  {
-    public Router server1;
-    public Router server2;
-    
-    public SimpleClient client1;
-    public SimpleClient client2;
-    
-    public Connector connector;
-    public Acceptor acceptor;
-    
-    public StandardFederatorSetup ()
-      throws Exception
-    {
-      this (new Options (FederationOptionSet.OPTION_SET));
-    }
-    
-    public StandardFederatorSetup (FederationClasses classes)
-      throws Exception
-    {
-      this (classes, new Options (FederationOptionSet.OPTION_SET));
-    }
-    
-    public StandardFederatorSetup (Options options)
-      throws Exception
-    {
-      this (new FederationClasses (defaultClass ()), options);
-    }
-
-    public static FederationClass defaultClass ()
-      throws ParseException
-    {
-      return new FederationClass ("require (federated)",
-                                  "require (federated)");
-    }
-    
-    public StandardFederatorSetup (FederationClasses classes,
-                                   Options options)
-      throws Exception
-    {
-      server1 = new Router (PORT1);
-      server2 = new Router (PORT2);
-
-      EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
-      
-      acceptor = 
-        new Acceptor (server2, "server2", classes, 
-                      addressesFor (set (ewafURI)), options);
-      
-      connector = 
-        new Connector (server1, "server1", ewafURI, 
-                       classes.classFor ("server2"), options);
-      
-      waitForConnect (connector);
-      
-      client1 = new SimpleClient ("client1", "localhost", PORT1);
-      client2 = new SimpleClient ("client2", "localhost", PORT2);
-      
-      client1.connect ();
-      client2.connect ();
-      
-      client1.subscribe ("require (federated) && from == 'client2'");
-      client2.subscribe ("require (federated) && from == 'client1'");
-    }
-    
-    public void close ()
-      throws Exception
-    {
-      client1.close ();
-      client2.close ();
-      
-      connector.close ();
-      acceptor.close ();
-      
-      server1.close ();
-      server2.close ();
-    }
   }
 }
