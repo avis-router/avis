@@ -1,12 +1,14 @@
 package org.avis.federation;
 
+import java.util.concurrent.TimeUnit;
+
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.fail;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static junit.framework.Assert.fail;
 
 public class TestUtils
 {
-
   /**
    * Wait up to 10 seconds for a connector to be in connected state.
    */
@@ -41,4 +43,28 @@ public class TestUtils
       fail ("Failed to go to async connect state");
   }
 
+  public static void waitForSingleLink (final Acceptor acceptor) 
+    throws InterruptedException
+  {
+    waitUpto (8, SECONDS, new Predicate ()
+    {
+      public boolean satisfied ()
+      {
+        return acceptor.links.size () == 1;
+      }
+    });
+  }
+  
+  public static void waitUpto (long duration, TimeUnit unit,
+                               Predicate predicate) 
+    throws InterruptedException
+  {
+    long finishAt = currentTimeMillis () + unit.toMillis (duration);
+    
+    while (!predicate.satisfied () && currentTimeMillis () < finishAt)
+      sleep (10);
+    
+    if (!predicate.satisfied ())
+      fail ();
+  }
 }

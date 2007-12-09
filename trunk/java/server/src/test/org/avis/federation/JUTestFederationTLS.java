@@ -1,7 +1,5 @@
 package org.avis.federation;
 
-import java.util.concurrent.TimeUnit;
-
 import java.net.InetSocketAddress;
 
 import javax.net.ssl.SSLContext;
@@ -25,14 +23,10 @@ import org.avis.router.RouterOptions;
 
 import org.junit.Test;
 
-import static java.lang.System.currentTimeMillis;
-import static java.lang.Thread.sleep;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static junit.framework.Assert.fail;
-
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.JUTestFederation.PORT1;
+import static org.avis.federation.TestUtils.waitForSingleLink;
 import static org.avis.util.Collections.set;
 
 public class JUTestFederationTLS
@@ -78,31 +72,6 @@ public class JUTestFederationTLS
     router.close ();
   }
   
-  private static void waitForSingleLink (final Acceptor acceptor) 
-    throws InterruptedException
-  {
-    waitFor (8, SECONDS, new Predicate ()
-    {
-      public boolean satisfied ()
-      {
-        return acceptor.links.size () == 1;
-      }
-    });
-  }
-
-  private static void waitFor (long duration, TimeUnit unit,
-                               Predicate predicate) 
-    throws InterruptedException
-  {
-    long finishAt = currentTimeMillis () + unit.toMillis (duration);
-    
-    while (!predicate.satisfied () && currentTimeMillis () < finishAt)
-      sleep (10);
-    
-    if (!predicate.satisfied ())
-      fail ();
-  }
-
   /**
    * Create a connection to federation listener.
    */
