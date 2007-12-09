@@ -1,5 +1,6 @@
 package org.avis.router;
 
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import java.io.Closeable;
@@ -113,6 +114,7 @@ public class Router implements IoHandler, Closeable
   private RouterOptions routerOptions;
   private ExecutorService executor;
   private SocketAcceptor acceptor;
+  private SSLFilter sslFilter;
   private volatile boolean closing;
   
   /**
@@ -128,7 +130,7 @@ public class Router implements IoHandler, Closeable
 
   private ListenerList<NotifyListener> notifyListeners;
   private ListenerList<CloseListener> closeListeners;
- 
+
   /**
    * Create an instance with default configuration.
    */
@@ -179,39 +181,6 @@ public class Router implements IoHandler, Closeable
                           executor);
     
     setUseDirectBuffers (options.getBoolean ("IO.Use-Direct-Buffers"));
-
-    SocketAcceptorConfig defaultAcceptorConfig = createDefaultConfig ();
-    SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
-    
-    for (ElvinURI uri : options.listenURIs ())
-    {
-      SocketAcceptorConfig bindConfig;
-      
-      if (uri.isSecure ())
-      {
-        if (secureAcceptorConfig == null)
-          secureAcceptorConfig = createSecureConfig ();
-        
-        bindConfig = secureAcceptorConfig;
-      } else
-      {
-        bindConfig = defaultAcceptorConfig;
-      }
-      
-      for (InetSocketAddress address : addressesFor (uri))
-        acceptor.bind (address, this, bindConfig);
-    }
-  }
-
-  /**
-   * Create default MINA config for incoming connections.
-   */
-  private SocketAcceptorConfig createDefaultConfig ()
-  {
-    SocketAcceptorConfig defaultAcceptorConfig = new SocketAcceptorConfig ();
-    
-    defaultAcceptorConfig.setReuseAddress (true);
-    defaultAcceptorConfig.setThreadModel (ThreadModel.MANUAL);
     
     /*
      * Setup IO filter chain with codec and then thread pool. NOTE:
@@ -220,23 +189,84 @@ public class Router implements IoHandler, Closeable
      * since notification processing is non-blocking. See
      * http://mina.apache.org/configuring-thread-model.html.
      */
-    DefaultIoFilterChainBuilder filterChainBuilder =
-      defaultAcceptorConfig.getFilterChain ();
+    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
 
-    filterChainBuilder.addLast ("codec", ClientFrameCodec.FILTER);
+    filters.addLast ("codec", ClientFrameCodec.FILTER);
+    filters.addLast ("threadPool", new ExecutorFilter (executor));
     
-    filterChainBuilder.addLast
-      ("threadPool", new ExecutorFilter (executor));
+    bind (options.listenURIs (), this, filters);
+  }
+
+  /**
+   * Bind to a set of URI's. This can be used by plugins to bind to
+   * network addresses using the same network setup as the router
+   * would, including TLS parameters.
+   * 
+   * @param uris The URI's to listen to.
+   * @param handler The IO handler.
+   * @param filters The IO filters.
+   * 
+   * @throws IOException if an error occurred during binding.
+   */
+  public void bind (Set<? extends ElvinURI> uris, IoHandler handler,
+                    DefaultIoFilterChainBuilder filters) 
+    throws IOException
+  {
+    SocketAcceptorConfig defaultAcceptorConfig = createDefaultConfig (filters);
+    SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
+    
+    for (ElvinURI uri : uris)
+    {
+      SocketAcceptorConfig bindConfig;
+      
+      if (uri.isSecure ())
+      {
+        if (secureAcceptorConfig == null)
+        {
+          DefaultIoFilterChainBuilder secureFilters = 
+            (DefaultIoFilterChainBuilder)filters.clone ();
+          
+          secureFilters.addFirst ("ssl", sslFilter ());
+
+          secureAcceptorConfig = createDefaultConfig (secureFilters);
+        }
+        
+        bindConfig = secureAcceptorConfig;
+      } else
+      {
+        bindConfig = defaultAcceptorConfig;
+      }
+      
+      for (InetSocketAddress address : addressesFor (uri))
+        acceptor.bind (address, handler, bindConfig);
+    }
+  }
+
+  /**
+   * Create default MINA config for incoming connections.
+   */
+  private SocketAcceptorConfig createDefaultConfig 
+    (DefaultIoFilterChainBuilder filters)
+  {
+    SocketAcceptorConfig defaultAcceptorConfig = new SocketAcceptorConfig ();
+    
+    defaultAcceptorConfig.setReuseAddress (true);
+    defaultAcceptorConfig.setThreadModel (ThreadModel.MANUAL);
+    defaultAcceptorConfig.setFilterChainBuilder (filters);
     
     return defaultAcceptorConfig;
   }
   
   /**
-   * Create MINA config for incoming secure (TLS) connections.
+   * Lazy create the MINA SSL filter for incoming secure (TLS)
+   * connections.
    */
-  private SocketAcceptorConfig createSecureConfig ()
+  private SSLFilter sslFilter ()
     throws IllegalOptionException, IOException
   {
+    if (sslFilter != null)
+      return sslFilter;
+    
     InputStream keystoreStream = 
       routerOptions.getAbsoluteURI 
         ("TLS.Keystore").toURL ().openStream ();
@@ -262,16 +292,12 @@ public class Router implements IoHandler, Closeable
       sslContext.init (keyFactory.getKeyManagers (), 
                        trustFactory.getTrustManagers (), null);
 
-      SocketAcceptorConfig secureAcceptorConfig = createDefaultConfig ();
-
-      SSLFilter sslFilter = new SSLFilter (sslContext);
+      sslFilter = new SSLFilter (sslContext);
       
       sslFilter.setNeedClientAuth 
         (routerOptions.getBoolean ("TLS.Require-Trusted-Client"));
       
-      secureAcceptorConfig.getFilterChain ().addFirst ("ssl", sslFilter);
-      
-      return secureAcceptorConfig;
+      return sslFilter;
     } catch (Exception ex)
     {
       throw new IOException ("Failed to initialise TLS: " + ex);
