@@ -45,7 +45,7 @@ import static java.lang.Thread.sleep;
      keytool -import -keystore client.ks -alias router -storepass testing \
        -file router.cer 
  */
-public class JUTestTLS
+public class JUTestClientTLS
 {
   private static final String SECURE_URI = "elvin:/secure/127.0.0.1:29170";
   
