@@ -1,5 +1,7 @@
 package org.avis.federation;
 
+import java.io.IOException;
+
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
@@ -7,6 +9,7 @@ import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 
 import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
@@ -68,5 +71,21 @@ public final class Federation
   public static void logError (ErrorMessage message, Object source)
   {
     warn ("Error in federation packet", source, message.error);
+  }
+
+  /**
+   * Called by IO handlers to log MINA exceptions.
+   */
+  public static void logMinaException (Throwable cause, Object source)
+  {
+    if (cause instanceof IOException)
+    {
+      diagnostic ("I/O exception while processing federation message", 
+                  source, cause);
+    } else
+    {
+      warn ("Unexpected exception while processing federation message", 
+            source, cause);
+    }
   }
 }
