@@ -20,9 +20,11 @@ import org.avis.io.ExceptionMonitorLogger;
 
 import org.junit.Test;
 
+import static org.avis.common.Common.DEFAULT_PORT;
+
 public class JUTestTLS
 {
-  private static final int PORT = 29170;
+  private static final int SECURE_PORT = 29170;
 
   /*
    * Command to generate the test key store:
@@ -42,28 +44,36 @@ public class JUTestTLS
     RouterOptions options = new RouterOptions ();
     URI keystore = getClass ().getResource ("tls_test.ks").toURI ();
     
-    options.set ("Listen", "elvin:/secure/127.0.0.1:" + PORT);
+    options.set ("Listen", 
+                 "elvin://127.0.0.1 elvin:/secure/127.0.0.1:" + SECURE_PORT);
     options.set ("TLS.Keystore", keystore);
     options.set ("TLS.Keystore-Passphrase", "testing");
    
     Router router = new Router (options);
     
-    SimpleClient client = 
-      new SimpleClient (new InetSocketAddress ("127.0.0.1", PORT), 
+    SimpleClient standardClient = 
+      new SimpleClient (new InetSocketAddress ("127.0.0.1", DEFAULT_PORT), 
+                        createStandardConfig ());
+    
+    standardClient.connect ();
+    
+    standardClient.close ();
+    
+    SimpleClient secureClient = 
+      new SimpleClient (new InetSocketAddress ("127.0.0.1", SECURE_PORT), 
                         createTLSConfig ());
     
-    client.connect ();
+    secureClient.connect ();
     
-    client.close ();
+    secureClient.close ();
+    
     router.close ();
   }
 
   private static SocketConnectorConfig createTLSConfig () 
     throws Exception
   {
-    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (10);
+    SocketConnectorConfig connectorConfig = createStandardConfig ();
     
     SSLContext sslContext = SSLContext.getInstance ("TLS");
     sslContext.init (null, new TrustManager [] {ACCEPT_ALL_MANAGER}, null);
@@ -73,6 +83,16 @@ public class JUTestTLS
     
     connectorConfig.getFilterChain ().addFirst  ("ssl", sslFilter);
                                 
+    return connectorConfig;
+  }
+  
+  private static SocketConnectorConfig createStandardConfig () 
+    throws Exception
+  {
+    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+    connectorConfig.setThreadModel (ThreadModel.MANUAL);
+    connectorConfig.setConnectTimeout (10);
+    
     connectorConfig.getFilterChain ().addLast 
       ("codec", ClientFrameCodec.FILTER);
     
