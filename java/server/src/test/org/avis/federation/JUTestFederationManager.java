@@ -5,10 +5,6 @@ import java.util.Map;
 
 import java.net.InetAddress;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.avis.config.Options;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.logging.Log;
@@ -16,12 +12,16 @@ import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.util.LogFailTester;
 
-import static java.lang.Thread.sleep;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
+import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.INFO;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.util.Collections.set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -99,9 +99,7 @@ public class JUTestFederationManager
       new Connector (router2, "router2", federationUri, fedClass,
                      new Options (FederationOptionSet.OPTION_SET));
     
-    sleep (1000);
-    
-    assertTrue (connector.isConnected ());
+    waitForConnect (connector);
     
     assertEquals (1, manager.acceptor.links.size ());
     
@@ -165,7 +163,7 @@ public class JUTestFederationManager
 
     FederationManager manager2 = new FederationManager (router2, options2);
 
-    JUTestFederation.waitForConnect (manager2.connectors.get (0));
+    waitForConnect (manager2.connectors.get (0));
     
     assertEquals (1, manager1.acceptor.links.size ());
     
