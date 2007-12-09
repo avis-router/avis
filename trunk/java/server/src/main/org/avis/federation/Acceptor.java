@@ -13,10 +13,8 @@ import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
-import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -36,7 +34,9 @@ import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
+import static org.avis.federation.Federation.logMinaException;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
+import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.hostAddressFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
@@ -77,14 +77,14 @@ public class Acceptor implements IoHandler, Closeable
   public Acceptor (Router router,
                    String serverDomain,
                    FederationClasses federationClasses, 
-                   Set<InetSocketAddress> listenAddresses, 
+                   Set<EwafURI> uris, 
                    Options options)
     throws IOException
   {
     this.router = router;
     this.serverDomain = serverDomain;
     this.federationClasses = federationClasses;
-    this.listenAddresses = listenAddresses;
+    this.listenAddresses = addressesFor (uris);
     this.options = options;
     this.links = new HashSet<Link> ();
     
@@ -92,30 +92,25 @@ public class Acceptor implements IoHandler, Closeable
     long keepaliveInterval = 
       options.getInt ("Federation.Keepalive-Interval") * 1000;
     
-    SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig ();
-    
-    acceptorConfig.setReuseAddress (true);
-    acceptorConfig.setThreadModel (ThreadModel.MANUAL);
-    
-    DefaultIoFilterChainBuilder filterChain = 
-      acceptorConfig.getFilterChain ();
+    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
 
-    filterChain.addLast ("codec", FederationFrameCodec.FILTER);
+    filters.addLast ("codec", FederationFrameCodec.FILTER);
     
-    filterChain.addLast
+    filters.addLast
       ("requestTracker", new RequestTrackingFilter (requestTimeout));
     
-    filterChain.addLast
+    filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
-    
-    SocketAcceptor acceptor = router.socketAcceptor ();
 
-    for (InetSocketAddress address : listenAddresses)
+    router.bind (uris, this, filters);
+
+    if (shouldLog (DIAGNOSTIC))
     {
-      if (shouldLog (DIAGNOSTIC))
-        diagnostic ("Federator listening on address: " + address, this);
-
-      acceptor.bind (address, this, acceptorConfig);
+      for (EwafURI uri : uris)
+      {
+        diagnostic ("Federator listening on " + uri + " " + 
+                    addressesFor (uri), this);
+      }
     }
   }
 
@@ -362,8 +357,7 @@ public class Acceptor implements IoHandler, Closeable
   public void exceptionCaught (IoSession session, Throwable cause)
     throws Exception
   {
-    warn ("Unexpected exception while processing federation message", 
-          this, cause);
+    logMinaException (cause, this);
   }
 
   public void messageSent (IoSession session, Object message)
