@@ -18,6 +18,8 @@ Releases
 
 Server 1.2
 
+ * DONE: client auth split into clients and federators
+ * Support client auth in connection options
  * Federation TLS
  * Ship Avis server with default certs?
  * hostname matching in fed should be case-insenstive (do we support IP
