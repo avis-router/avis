@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import static org.avis.common.Common.DEFAULT_PORT;
 
-public class JUTestTLS
+public class JUTestRouterTLS
 {
   private static final int SECURE_PORT = 29170;
 
