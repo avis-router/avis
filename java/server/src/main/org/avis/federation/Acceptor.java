@@ -102,7 +102,8 @@ public class Acceptor implements IoHandler, Closeable
     filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
-    router.bind (uris, this, filters);
+    router.bind (uris, this, filters, 
+                 options.getBoolean ("Federation.TLS.Require-Trusted-Client"));
 
     if (shouldLog (DIAGNOSTIC))
     {

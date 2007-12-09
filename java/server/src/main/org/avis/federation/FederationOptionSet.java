@@ -45,6 +45,8 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Add-Outgoing-Attribute", attrOption, emptyMap ());
     add ("Federation.Request-Timeout", 1, 20, Integer.MAX_VALUE);
     add ("Federation.Keepalive-Interval", 1, 60, Integer.MAX_VALUE);
+    add ("Federation.TLS.Require-Trusted-Client", false);
+    add ("Federation.TLS.Require-Trusted-Server", false);
     
     // allow connection options such as Packet.Max-Length
     inheritFrom (CONNECTION_OPTION_SET);
