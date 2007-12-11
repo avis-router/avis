@@ -11,8 +11,10 @@ import org.junit.Test;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
+import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DisconnRply;
 import org.avis.io.messages.DisconnRqst;
+import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
@@ -23,7 +25,6 @@ import org.avis.io.messages.SubModRqst;
 import org.avis.io.messages.SubRply;
 import org.avis.io.messages.TestConn;
 import org.avis.io.messages.UNotify;
-import org.avis.io.messages.XidMessage;
 import org.avis.security.Key;
 import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
@@ -51,7 +52,7 @@ public class JUTestRouter
 {
   static final int PORT = 29170;
 
-  private Router server;
+  private Router router;
   private Random random;
   private LogFailTester logTester;
 
@@ -68,8 +69,8 @@ public class JUTestRouter
   @After
   public void tearDown ()
   {
-    if (server != null)
-      server.close ();
+    if (router != null)
+      router.close ();
     
     logTester.assertOkAndDispose ();
   }
@@ -78,7 +79,7 @@ public class JUTestRouter
   public void connect ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     
     ConnRqst connRqst = new ConnRqst (4, 0);
@@ -95,7 +96,7 @@ public class JUTestRouter
     assertEquals (disconnRqst.xid, disconnRply.xid);
     
     client.close ();
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -107,7 +108,7 @@ public class JUTestRouter
   public void connectionOptions ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
     HashMap<String, Object> options = new HashMap<String, Object> ();
@@ -134,12 +135,20 @@ public class JUTestRouter
     secRqst.addNtfnKeys = new Keys ();
     secRqst.addNtfnKeys.add (SHA1_PRODUCER, new Key (new byte [1025]));
     
-    client.send (secRqst);
-    Nack nack = (Nack)client.receive ();
+    logTester.pause ();
     
-    assertEquals (secRqst.xid, nack.xid);
+    client.send (secRqst);
+    Message reply = client.receive ();
+    
+    assertTrue (reply instanceof Disconn);
     
     client.closeImmediately ();
+    
+    router.close ();
+    
+    logTester.unpause ();
+    
+    router = new Router (PORT);
     
     // remove packet length restriction for following tests
     options.remove ("Packet.Max-Length");
@@ -154,7 +163,7 @@ public class JUTestRouter
     
     SubAddRqst subAddRqst = new SubAddRqst ("Invalid == 1");
     client.send (subAddRqst);
-    nack = (Nack)client.receive ();
+    Nack nack = (Nack)client.receive ();
     
     assertEquals (subAddRqst.xid, nack.xid);
     client.close ();
@@ -202,7 +211,7 @@ public class JUTestRouter
     
     client.close ();
     
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -219,7 +228,7 @@ public class JUTestRouter
     options.set ("Subscription.Max-Length", 1024);
     //options.set ("Attribute.Opaque.Max-Length", 2048 * 1024);
     
-    server = new Router (options);
+    router = new Router (options);
     SimpleClient client = new SimpleClient ("localhost", PORT);
 
     client.connect ();
@@ -229,11 +238,16 @@ public class JUTestRouter
     secRqst.addNtfnKeys = new Keys ();
     secRqst.addNtfnKeys.add (SHA1_PRODUCER, new Key (new byte [1025]));
     
-    client.send (secRqst);
-    XidMessage reply = (XidMessage)client.receive ();
+    logTester.pause ();
     
-    assertTrue ("Expected a NACK", reply instanceof Nack);
-    assertEquals (secRqst.xid, reply.xid);
+    client.send (secRqst);
+    Message reply = client.receive ();
+    
+    router.close ();
+    
+    logTester.unpause ();
+    
+    assertTrue ("Expected a Disconn", reply instanceof Disconn);
     
     client.closeImmediately ();
   }
@@ -246,7 +260,7 @@ public class JUTestRouter
   public void subscribe ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     
     client.connect ();
@@ -318,7 +332,7 @@ public class JUTestRouter
     assertTrue (client.receive () instanceof ConfConn);
     
     client.close ();
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -328,7 +342,7 @@ public class JUTestRouter
   public void multiClient ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
     // client 1
     SimpleClient client1 = new SimpleClient ();
@@ -387,7 +401,7 @@ public class JUTestRouter
     
     client1.close ();
     client2.close ();
-    server.close ();
+    router.close ();
   }
   
   /**
@@ -400,7 +414,7 @@ public class JUTestRouter
   public void security ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
 //    SimpleClient alice = new SimpleClient ("localhost", 2917);
 //    SimpleClient bob = new SimpleClient ("localhost", 2917);
@@ -445,7 +459,7 @@ public class JUTestRouter
   public void securitySecModify ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
     SimpleClient alice = new SimpleClient ("alice");
     SimpleClient bob = new SimpleClient ("bob");
@@ -529,7 +543,7 @@ public class JUTestRouter
   public void securitySubModify ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     
     SimpleClient alice = new SimpleClient ("alice");
     SimpleClient bob = new SimpleClient ("bob");
@@ -619,7 +633,7 @@ public class JUTestRouter
   public void unotify ()
     throws Exception
   {
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client1 = new SimpleClient ("client1");
     SimpleClient client2 = new SimpleClient ("client2");
     
@@ -651,7 +665,7 @@ public class JUTestRouter
     
     enableLogging (WARNING, false);
     
-    server = new Router (PORT);
+    router = new Router (PORT);
     SimpleClient client = new SimpleClient ();
     SimpleClient badClient = new SimpleClient ();
     
@@ -681,7 +695,9 @@ public class JUTestRouter
     
     SecRqst secRqst = new SecRqst ();
     badClient.send (secRqst);
-    Nack nack = (Nack)badClient.receive ();
+    Message reply = badClient.receive ();
+    assertTrue (reply instanceof Disconn);
+    
     badClient.close ();
 
     // try subscription with no connection
@@ -690,8 +706,8 @@ public class JUTestRouter
     SubAddRqst subAddRqst =
       new SubAddRqst ("require (hello)", EMPTY_KEYS, true);
     badClient.send (subAddRqst);
-    nack = (Nack)badClient.receive ();
-    assertEquals (subAddRqst.xid, nack.xid);
+    reply = badClient.receive ();
+    assertTrue (reply instanceof Disconn);
     badClient.close ();
     
     // try to connect twice
@@ -700,8 +716,8 @@ public class JUTestRouter
 
     ConnRqst connRqst = new ConnRqst (4, 0);
     badClient.send (connRqst);
-    nack = (Nack)badClient.receive ();
-    assertEquals (connRqst.xid, nack.xid);
+    reply = badClient.receive ();
+    assertTrue (reply instanceof Disconn);
     
     // server will have disconnected us for being Bad, so just kill socket
     badClient.closeImmediately ();
@@ -712,8 +728,9 @@ public class JUTestRouter
     
     SubModRqst subModRqst = new SubModRqst (123456, "", true);
     badClient.send (subModRqst);
-    nack = (Nack)badClient.receive ();
-    assertEquals (subModRqst.xid, nack.xid);
+    reply = badClient.receive ();
+    assertTrue (reply instanceof Nack);
+    assertEquals (subModRqst.xid, ((Nack)reply).xid);
     
     badClient.close ();
     client.close ();
