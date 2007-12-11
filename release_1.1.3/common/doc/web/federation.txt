@@ -1,0 +1,70 @@
+Federation
+======================================================================
+
+Elvin routers can be federated together to form wide-area event
+notification networks. A federated network of Elvin routers appears to
+provide a single space of events to clients.
+
+Federation Classes
+----------------------------------------------------------------------
+
+To federate two routers you first need to decide which events to
+exchange. For trusted routers this may be simply be all events,
+however you will usually want to be specific as to what sorts of
+events you want to accept and provide.
+
+In Avis, a _federation class_ is used to specify events to import and
+export using subscription expressions. For example, you might define a
+`Public` federation class that allows [tickertape and
+presence][tickertape] events in and out using:
+
+<pre>
+   <span class="variable-name">Federation.Subscribe</span>[<span class="constant">Public</span>] = \
+      Presence-Protocol == 1000 || string (Message)
+
+   <span class="variable-name">Federation.Provide</span>[<span class="constant">Public</span>] = \
+      Distribution == "world" && \
+      (Presence-Protocol == 1000 || string (Message))
+</pre>
+
+This example class allows any tickertape or presence event into the
+router, but only events with a `Distribution` field with the value
+"world" to be federated outwards.
+
+Connecting Routers
+----------------------------------------------------------------------
+
+To connect two routers you need to decide which one initiates the
+connection and which listens for connections. The router that
+initiates the connection needs a line like:
+
+<pre>
+    <span class="variable-name">Federation.Connect</span>[<span class="constant">Public</span>] = ewaf://public.elvin.org
+</pre>
+
+This specifies that the router should connect to `public.elvin.org`
+using the `Public` federation class.
+
+Incoming Connections
+----------------------------------------------------------------------
+
+The host that listens for incoming connections needs to have a mapping
+for the remote host's federation ID or host name to a federation
+class. For example, to specify that connections from the host
+`host.somedomain.org` should use the `Public` federation class:
+
+<pre>
+    <span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Public</span>] = @public.elvin.org
+</pre>
+
+And to set which address and port to listen to for incoming federation
+connections:
+
+<pre>
+    <span class="variable-name">Federation.Listen</span> = ewaf://0.0.0.0:2916
+</pre>
+
+See the `etc/avisd.conf` file for more information on setting up
+federation.
+
+[tickertape]: http://tickertape.org/documents/what_is_tickertape.html "About tickertape messaging"
