@@ -68,14 +68,6 @@ public class RequestTrackingFilter
     this.replyTimeout = replyTimeout;
   }
   
-  /**
-   * Testing method: simulate a hang by stopping request tracking.
-   */
-  public void hang (IoSession session)
-  {
-    trackerFor (session).dispose ();
-  }
-  
   @Override
   public void onPreAdd (IoFilterChain parent, String name,
                         NextFilter nextFilter) 
