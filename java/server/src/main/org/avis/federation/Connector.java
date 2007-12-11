@@ -352,7 +352,8 @@ public class Connector implements IoHandler, Closeable
     throws Exception
   {
     diagnostic ("Federator \"" + serverDomain + 
-                "\" connected to remote federator at " + uri, this);
+                "\" requesting federation link with remote router at " + uri, 
+                this);
   }
   
   public void sessionClosed (IoSession theSession)
