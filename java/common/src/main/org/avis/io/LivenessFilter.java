@@ -169,12 +169,26 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
     throws Exception
   {
     trackerFor (session).connectionIsLive ();
-    
-    // do not forward ConfConn liveness replies
+
+    // handle TestConn and ConfConn in this filter, pass on others
     if (message == ConfConn.INSTANCE)
+    {
       trace ("Liveness confirmed: received ConfConn", this);
-    else
+    } else if (message == TestConn.INSTANCE)
+    {
+      if (session.getScheduledWriteRequests () == 0)
+      {
+        session.write (ConfConn.INSTANCE);
+        
+        trace ("Sent ConfConn in response to TestConn liveness check", this);
+      } else
+      {
+        trace ("Ignored TestConn: outgoing messages already in queue", this);
+      }
+    } else
+    {
       nextFilter.messageReceived (session, message);
+    }
   }
   
   /**

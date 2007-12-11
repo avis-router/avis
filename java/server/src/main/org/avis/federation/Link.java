@@ -8,7 +8,6 @@ import org.apache.mina.common.WriteFuture;
 import org.avis.federation.io.messages.Ack;
 import org.avis.federation.io.messages.FedNotify;
 import org.avis.federation.io.messages.FedSubReplace;
-import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.Disconn;
 import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.ErrorMessage;
@@ -18,7 +17,6 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.Notify;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
-import org.avis.io.messages.TestConn;
 import org.avis.router.NotifyListener;
 import org.avis.router.Router;
 import org.avis.security.Keys;
@@ -26,8 +24,8 @@ import org.avis.subscription.ast.Node;
 
 import static java.lang.System.arraycopy;
 import static java.util.Arrays.asList;
-import static org.apache.mina.common.IoFutureListener.CLOSE;
 
+import static org.apache.mina.common.IoFutureListener.CLOSE;
 import static org.avis.federation.Federation.logError;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
@@ -212,9 +210,6 @@ public class Link implements NotifyListener
       case Disconn.ID:
         close (REASON_DISCONN_REQUESTED);
         break;
-      case TestConn.ID:
-        handleTestConn ();
-        break;
       case DropWarn.ID:
         handleDropWarn ();
         break;
@@ -242,12 +237,6 @@ public class Link implements NotifyListener
   {
     warn ("Remote federator sent a dropped packet warning: " +
           "a message may have been discarded due to congestion", this);
-  }
-
-  private void handleTestConn ()
-  {
-    if (session.getScheduledWriteRequests () == 0)
-      send (ConfConn.INSTANCE);
   }
 
   private void handleRequestTimeout (RequestMessage<?> request)
