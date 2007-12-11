@@ -150,10 +150,8 @@ public class Acceptor implements IoHandler, Closeable
       for (IoSession session : 
            router.socketAcceptor ().getManagedSessions (address))
       {
-        RequestTrackingFilter requestTracker = 
-          (RequestTrackingFilter)session.getFilterChain ().get ("requestTracker");
-        
-        requestTracker.hang (session);
+        session.getFilterChain ().remove ("requestTracker");
+        session.getFilterChain ().remove ("liveness");
       }
     }
     
