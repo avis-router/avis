@@ -36,12 +36,13 @@ while [ $# -gt 0 ]; do
     -daemon)  daemon=1; shift;;
     -logfile) logfile=$2; shift 2;;
     -v|-vv)   avisd_opts="$avisd_opts $1"; shift;;
-    -p|-c)    avisd_opts="$avisd_opts $1 $2"; shift 2;;
+    -p|-c)    avisd_opts="$avisd_opts $1 $2"; shift;
+  	      if [ ! -z $1 ]; then shift; fi;;
     *)        usage; exit 1;;
   esac
 done
 
-jvm_options="-server -Xms128M -Xmx256M -Xverify:none -XX:+UseParallelGC"
+jvm_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
 
 command="java $jvm_options -jar $avisd_jar $avisd_opts"
 
