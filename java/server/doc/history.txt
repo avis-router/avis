@@ -1,3 +1,17 @@
+Release 1.1.2 (October 6, 2007)
+----------------------------------------------------------------------
+
+This release corrects two errors in the federation module.
+
+ * Fixed AST encoding in federation: bitwise XOR (^) and OR (|) were
+   not being encoded with the correct node ID.
+
+ * Fixed liveness checking logic that would sometimes disconnect
+   federation.
+
+ * MINA exceptions are now sent to Avis log rather than console.
+
+
 Release 1.1.1 (September 8, 2007)
 ----------------------------------------------------------------------
 
