@@ -421,4 +421,13 @@ public class ElvinURI
   {
     return SECURE_PROTOCOL;
   }
+
+  /**
+   * True if this URI specifies secure TLS transport (protocol.equals
+   * (secureProtocol ())).
+   */
+  public boolean isSecure ()
+  {
+    return protocol.equals (secureProtocol ());
+  }
 }

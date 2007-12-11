@@ -116,7 +116,7 @@ public final class XdrCoding
   {
     try
     {
-      int length = in.getInt ();
+      int length = getPositiveInt (in);
 
       if (length == 0)
       {
@@ -209,7 +209,7 @@ public final class XdrCoding
   public static Map<String, Object> getNameValues (ByteBuffer in)
     throws ProtocolCodecException
   {
-    int pairs = in.getInt ();
+    int pairs = getPositiveInt (in);
     
     if (pairs == 0)
       return emptyMap ();
@@ -234,7 +234,7 @@ public final class XdrCoding
   public static Object [] getObjects (ByteBuffer in)
     throws ProtocolCodecException
   {
-    Object [] objects = new Object [in.getInt ()];
+    Object [] objects = new Object [getPositiveInt (in)];
     
     for (int i = 0; i < objects.length; i++)
       objects [i] = getObject (in);
@@ -315,10 +315,13 @@ public final class XdrCoding
 
   /**
    * Read a length-delimited, 4-byte-aligned byte array.
+   * 
+   * @throws ProtocolCodecException 
    */
-  public static byte [] getBytes (ByteBuffer in)
+  public static byte [] getBytes (ByteBuffer in) 
+    throws ProtocolCodecException
   {
-    return getBytes (in, in.getInt ());
+    return getBytes (in, getPositiveInt (in));
   }
   
   /**
@@ -357,8 +360,9 @@ public final class XdrCoding
    * Read a length-demlimited array of longs.
    */
   public static long [] getLongArray (ByteBuffer in)
+    throws ProtocolCodecException
   {
-    long [] longs = new long [in.getInt ()];
+    long [] longs = new long [getPositiveInt (in)];
     
     for (int i = 0; i < longs.length; i++)
       longs [i] = in.getLong ();
@@ -383,7 +387,7 @@ public final class XdrCoding
   public static String [] getStringArray (ByteBuffer in)
     throws BufferUnderflowException, ProtocolCodecException
   {
-    String [] strings = new String [in.getInt ()];
+    String [] strings = new String [getPositiveInt (in)];
     
     for (int i = 0; i < strings.length; i++)
       strings [i] = getString (in);
@@ -400,5 +404,19 @@ public final class XdrCoding
     
     for (String s : strings)
       putString (out, s);
+  }
+  
+  /**
+   * Read an int >= 0 or generate an exception.
+   */
+  private static int getPositiveInt (ByteBuffer in) 
+    throws ProtocolCodecException
+  {
+    int value = in.getInt ();
+    
+    if (value >= 0)
+      return value;
+    else
+      throw new ProtocolCodecException ("Length cannot be negative: " + value);
   }
 }

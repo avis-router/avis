@@ -511,7 +511,8 @@ public class Keys
       putBytes (out, key.data);
   }
   
-  private static void decodeKeys (ByteBuffer in, Set<Key> keys)
+  private static void decodeKeys (ByteBuffer in, Set<Key> keys) 
+    throws ProtocolCodecException
   {
     for (int keysetCount = in.getInt (); keysetCount > 0; keysetCount--)
       keys.add (new Key (getBytes (in)));

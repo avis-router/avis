@@ -5,6 +5,7 @@ import java.util.Properties;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -82,6 +83,15 @@ public final class Streams
     }
   }
 
+  /**
+   * Open an input stream on a file.
+   */
+  public static InputStream fileStream (File file)
+    throws FileNotFoundException
+  {
+    return fileStream (file.getPath ());
+  }
+  
   /**
    * Open an input stream on a file.
    */

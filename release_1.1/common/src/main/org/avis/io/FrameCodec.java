@@ -14,7 +14,7 @@ import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.XidMessage;
 
-import static org.avis.logging.Log.internalError;
+import static org.avis.logging.Log.diagnostic;
 
 /**
  * Base class for Elvin XDR frame codecs. Reads/writes messages
@@ -33,7 +33,8 @@ public abstract class FrameCodec
                       ProtocolEncoderOutput out)
     throws Exception
   {
-    ByteBuffer buffer = ByteBuffer.allocate (4096); // auto deallocated
+    // buffer is auto deallocated
+    ByteBuffer buffer = ByteBuffer.allocate (4096); 
     buffer.setAutoExpand (true);
     
     // leave room for frame size
@@ -80,6 +81,10 @@ public abstract class FrameCodec
     // if (isEnabled (TRACE) && in.limit () <= MAX_BUFFER_DUMP)
     //  trace ("Codec input: " + in.getHexDump (), this);
     
+    // if in protocol violation mode, do not try to read any further
+    if (session.getAttribute ("protocolViolation") != null)
+      return false;
+    
     if (!haveFullFrame (session, in))
       return false;
     
@@ -104,42 +109,53 @@ public abstract class FrameCodec
       
       message.decode (in);
       
-      int remainder = frameSize - (in.position () - dataStart);
+      int bytesRead = in.position () - dataStart;
       
-      if (remainder > 0)
+      if (bytesRead != frameSize)
       {
-        internalError ("Some input not read by " + message.getClass () +
-                       " (" + remainder + " bytes)", this);
+        diagnostic ("Some input not read by " + message.name (), this);
         
-        in.skip (remainder);
+        throw new ProtocolCodecException 
+          ("Frame header said " + frameSize + 
+           " bytes, but only read " + bytesRead);
       }
+      
+      out.write (message);
+    
+      return true;
     } catch (Exception ex)
     {
-      // handle client protocol violations by generating an ErrorMessage
       if (ex instanceof ProtocolCodecException ||
           ex instanceof BufferUnderflowException ||
           ex instanceof FrameTooLargeException)
       {
-        ErrorMessage error = new ErrorMessage (ex, message);
+        /*
+         * Mark session in violation and handle once: codec will only
+         * generate one error message, it's up to consumer to try to
+         * recover or close connection.
+         */
+        session.setAttribute ("protocolViolation");
+        session.suspendRead ();
+        
+        ErrorMessage error = new ErrorMessage (ex, message); 
         
         // fill in XID if possible
-        if (message instanceof XidMessage && in.remaining () >= 4)
-          ((XidMessage)message).xid = in.getInt ();
-        
-        in.skip (in.remaining ());
-        
-        session.suspendRead ();
+        if (message instanceof XidMessage && in.limit () >= 12)
+        {
+          int xid = in.getInt (8);
+          
+          if (xid > 0)
+            ((XidMessage)message).xid = xid;
+        }
 
-        message = error;
+        out.write (error);
+        
+        return true;
       } else
       {
         throw (RuntimeException)ex;
       }
     }
-    
-    out.write (message);
-    
-    return true;
   }
 
   /**
@@ -194,6 +210,11 @@ public abstract class FrameCodec
     // zip
   }
 
+  public static void setMaxFrameLengthFor (IoSession session, int length)
+  {
+    session.setAttribute ("maxFrameLength", length);
+  }
+
   private static int maxFrameLengthFor (IoSession session)
   {
     Integer length = (Integer)session.getAttribute ("maxFrameLength");
@@ -202,10 +223,5 @@ public abstract class FrameCodec
       return Integer.MAX_VALUE;
     else
       return length;
-  }
-
-  public static void setMaxFrameLengthFor (IoSession session, int length)
-  {
-    session.setAttribute ("maxFrameLength", length);
   }
 }

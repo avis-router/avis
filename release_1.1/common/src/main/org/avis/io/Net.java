@@ -11,11 +11,15 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import org.apache.mina.common.IoSession;
+import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.common.ElvinURI;
+import org.avis.common.InvalidURIException;
 
 import static java.util.Arrays.asList;
 
@@ -97,24 +101,51 @@ public final class Net
     Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
     
     for (ElvinURI uri : uris)
-    {
-      Collection<InetAddress> inetAddresses;
-      
-      if (uri.host.startsWith ("!"))
-        inetAddresses = addressesForInterface (uri.host.substring (1));
-      else
-        inetAddresses = addressesForHost (uri.host);
-      
-      for (InetAddress address : inetAddresses)
-      {
-        if (address.isAnyLocalAddress ())
-          addresses.add (new InetSocketAddress (uri.port));
-        else if (!address.isLinkLocalAddress ())
-          addresses.add (new InetSocketAddress (address, uri.port));
-      }
-    }
+      addAddressFor (addresses, uri);
     
     return addresses;
+  }
+
+  /**
+   * Generate the addresses for a given URI. This method allows
+   * interface names to be used rather than host names by prefixing
+   * the host name with "!".
+   * 
+   * @param uri The URI.
+   * @return The set of network addresses that correspond to the URI.
+   * 
+   * @throws IOException
+   * @throws SocketException
+   * @throws UnknownHostException
+   */
+  public static Set<InetSocketAddress> addressesFor (ElvinURI uri)
+    throws IOException, SocketException, UnknownHostException
+  {
+    Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
+    
+    addAddressFor (addresses, uri);
+    
+    return addresses;
+  }
+
+  private static void addAddressFor (Set<InetSocketAddress> addresses,
+                                     ElvinURI uri)
+    throws SocketException, IOException, UnknownHostException
+  {
+    Collection<InetAddress> inetAddresses;
+    
+    if (uri.host.startsWith ("!"))
+      inetAddresses = addressesForInterface (uri.host.substring (1));
+    else
+      inetAddresses = addressesForHost (uri.host);
+    
+    for (InetAddress address : inetAddresses)
+    {
+      if (address.isAnyLocalAddress ())
+        addresses.add (new InetSocketAddress (uri.port));
+      else if (!address.isLinkLocalAddress ())
+        addresses.add (new InetSocketAddress (address, uri.port));
+    }
   }
   
   private static Collection<InetAddress> addressesForHost (String host)
@@ -168,5 +199,45 @@ public final class Net
     InetAddress address = hostAddressFor (session);
     
     return address.getCanonicalHostName () + '/' + address.getHostAddress ();
+  }
+
+  /**
+   * Set TCP no-delay flag for socket connections.
+   * 
+   * @param session The IO session.
+   * @param noDelay The new setting for TCP_NODELAY.
+   * 
+   * @return true if the setting could be changed.
+   */
+  public static boolean enableTcpNoDelay (IoSession session, boolean noDelay)
+  {
+    if (session.getConfig () instanceof SocketSessionConfig)
+    {
+      ((SocketSessionConfig)session.getConfig ()).setTcpNoDelay (noDelay);
+      
+      return true;
+    } else
+    {
+      return false; 
+    }
+  }
+
+  /**
+   * Create a new URI without the annoying checked exception.
+   * 
+   * @param uriString The URI string.
+   * @return A new URI.
+   * @throws InvalidURIException if uriString is invalid.
+   */
+  public static URI uri (String uriString)
+    throws InvalidURIException
+  {
+    try
+    {
+      return new URI (uriString);
+    } catch (URISyntaxException ex)
+    {
+      throw new InvalidURIException (ex);
+    }
   }
 }

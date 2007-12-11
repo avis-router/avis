@@ -20,12 +20,10 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
-import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 
 import org.avis.config.Options;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
-import org.avis.io.FrameTooLargeException;
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -39,7 +37,6 @@ import org.avis.io.messages.Notify;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.QuenchPlaceHolder;
-import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.SecRply;
 import org.avis.io.messages.SecRqst;
 import org.avis.io.messages.SubAddRqst;
@@ -68,6 +65,7 @@ import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
+import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -76,7 +74,6 @@ import static org.avis.io.messages.Nack.IMPL_LIMIT;
 import static org.avis.io.messages.Nack.NOT_IMPL;
 import static org.avis.io.messages.Nack.NO_SUCH_SUB;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
-import static org.avis.io.messages.Nack.PROT_ERROR;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
@@ -406,14 +403,18 @@ public class Router implements IoHandler, Closeable
       send (session,
             new Nack (message, PROT_INCOMPAT,
                       "Max supported protocol version is " +
-                       + CLIENT_VERSION_MAJOR + '.' + CLIENT_VERSION_MINOR));
+                       + CLIENT_VERSION_MAJOR + '.' + CLIENT_VERSION_MINOR +
+                       ": use a connection URI like " +
+                       "elvin:" + CLIENT_VERSION_MAJOR + '.' + 
+                       CLIENT_VERSION_MINOR + "//hostname to specify " +
+                       "protocol version"));
     } else if (message.notificationKeys.size () > maxKeys ||
                message.subscriptionKeys.size () > maxKeys)
     {
       nackLimit (session, message, "Too many keys");
     } else
     {
-      updateTcpSendImmediately (session, connection);
+      updateTcpSendImmediately (session, connection.options);
       updateQueueLength (session, connection);
       
       connection.options.setWithLegacy
@@ -669,65 +670,46 @@ public class Router implements IoHandler, Closeable
 
   private static void handleError (IoSession session, ErrorMessage message)
   {
-    /*
-     * When a frame is too large: for requests we can send a NACK for,
-     * simply reject and keep on truckin. For frames that cannot be
-     * NACK'd (e.g. NotifyEmit), we treat this as a protocol error and
-     * Disconn with a descriptive message rather than silently (from
-     * the client's POV) dropping them.
-     */
-    if (message.error instanceof FrameTooLargeException)
-    {
-      if (message.cause instanceof RequestMessage<?>)
-      {
-        // codec will have suspended input on error, restart
-        session.resumeRead ();
-        
-        nackLimit (session, (XidMessage)message.cause, 
-                   message.error.getMessage ());
-      } else
-      {
-        handleProtocolViolation (session, message.cause, 
-                                 message.error.getMessage (), null);
-      }
-    } else
-    {
-      handleProtocolViolation (session, message.cause, 
-                               message.formattedMessage (), message.error);
-    }
+    handleProtocolViolation (session, message.cause, 
+                             message.error.getMessage (), null);
   }
 
   /**
-   * Handle a protocol violation by a client by sending a NACK (if
-   * appropriate) and disconnecting with the REASON_PROTOCOL_VIOLATION code.
+   * Handle a protocol violation by a client disconnecting with the
+   * REASON_PROTOCOL_VIOLATION code.
    * 
    * @param session The client session.
    * @param cause The message that caused the violation.
    * @param diagnosticMessage The diagnostic sent back to the client.
-   * @throws NoConnectionException 
+   * @throws NoConnectionException
    */
   private static void handleProtocolViolation (IoSession session,
                                                Message cause,
                                                String diagnosticMessage,
                                                Throwable error)
   {
+    if (diagnosticMessage == null)
+      diagnosticMessage = "Frame format error";
+    
     warn ("Disconnecting client due to protocol violation: " +
           diagnosticMessage, Router.class);
 
     if (error != null)
       diagnostic ("Decode stack trace", Router.class, error);
     
-    session.suspendRead ();
-
     Connection connection = peekConnectionFor (session);
     
     if (connection != null)
-      connection.close ();
-    
-    if (cause instanceof RequestMessage<?>)
     {
-      send (session,
-            new Nack ((XidMessage)cause, PROT_ERROR, diagnosticMessage));
+      connection.lockWrite ();
+      
+      try
+      {
+        connection.close ();
+      } finally
+      {
+        connection.unlockWrite ();
+      }
     }
     
     // send Disconn and close
@@ -740,17 +722,12 @@ public class Router implements IoHandler, Closeable
    * Handle the TCP.Send-Immediately connection option if set.
    */
   private static void updateTcpSendImmediately (IoSession session,
-                                                Connection connection)
+                                                Options options)
   {
-    if (session.getConfig () instanceof SocketSessionConfig)
+    if (!enableTcpNoDelay (session, 
+                           options.getInt ("TCP.Send-Immediately") == 1))
     {
-      SocketSessionConfig config = (SocketSessionConfig)session.getConfig ();
-
-      config.setTcpNoDelay 
-        (connection.options.getInt ("TCP.Send-Immediately") == 1);
-    } else
-    {
-      connection.options.remove ("TCP.Send-Immediately"); 
+      options.remove ("TCP.Send-Immediately"); 
     }
   }
   
@@ -841,7 +818,10 @@ public class Router implements IoHandler, Closeable
   public void exceptionCaught (IoSession session, Throwable ex)
     throws Exception
   {
-    alarm ("Server exception", this, ex);
+    if (ex instanceof IOException)
+      diagnostic ("IO exception while processing message", this, ex);
+    else
+      alarm ("Server exception", this, ex);
   }
   
   public void messageSent (IoSession session, Object message)

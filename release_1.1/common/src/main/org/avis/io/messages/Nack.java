@@ -1,12 +1,12 @@
 package org.avis.io.messages;
 
+import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.filter.codec.ProtocolCodecException;
+
 import static org.avis.io.XdrCoding.getObjects;
 import static org.avis.io.XdrCoding.getString;
 import static org.avis.io.XdrCoding.putObjects;
 import static org.avis.io.XdrCoding.putString;
-
-import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.filter.codec.ProtocolCodecException;
 
 public class Nack extends XidMessage
 {
@@ -40,6 +40,9 @@ public class Nack extends XidMessage
   public Nack (XidMessage inReplyTo, int error, String message, Object ...args)
   {
     super (inReplyTo);
+    
+    if (message == null)
+      throw new NullPointerException ("Message cannot be null");
     
     this.error = error;
     this.message = message;

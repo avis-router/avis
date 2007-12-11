@@ -4,9 +4,10 @@ import java.util.Map;
 
 import org.avis.config.Options;
 
-import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
-
 import static java.util.Collections.emptyMap;
+
+import static org.avis.io.LegacyConnectionOptions.newToLegacy;
+import static org.avis.router.ClientConnectionOptionSet.CLIENT_CONNECTION_OPTION_SET;
 
 /**
  * Avis router connection options.
@@ -69,6 +70,6 @@ public class ClientConnectionOptions extends Options
   public void setWithLegacy (String option, Object value)
   {
     set (option, value);
-    set (CLIENT_CONNECTION_OPTION_SET.newToLegacy (option), value);
+    set (newToLegacy (option), value);
   }
 }
