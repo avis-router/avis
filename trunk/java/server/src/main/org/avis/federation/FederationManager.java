@@ -20,6 +20,7 @@ import org.avis.util.IllegalOptionException;
 import static java.lang.Integer.toHexString;
 import static java.lang.System.identityHashCode;
 
+import static java.util.Collections.emptySet;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
@@ -71,7 +72,10 @@ public class FederationManager implements CloseListener
 
   public Set<EwafURI> listenURIs ()
   {
-    return acceptor.listenURIs ();
+    if (acceptor == null)
+      return emptySet ();
+    else
+      return acceptor.listenURIs ();
   }
 
   public void routerClosing (Router theRouter)
