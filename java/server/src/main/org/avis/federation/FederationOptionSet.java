@@ -38,7 +38,7 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Provide", fedClassOption, emptyMap ());
     add ("Federation.Apply-Class", 
          new OptionTypeParam (new OptionTypeSet (String.class)), emptyMap ());
-    add ("Federation.Default-Apply-Class", "");
+    add ("Federation.Default-Class", "");
     add ("Federation.Connect", 
          new OptionTypeParam (ewafUriOption), emptyMap ());
     add ("Federation.Listen", new OptionTypeSet (EwafURI.class), emptySet ());

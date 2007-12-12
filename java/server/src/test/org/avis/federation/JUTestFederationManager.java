@@ -208,7 +208,7 @@ public class JUTestFederationManager
     options1.set ("Federation.Listen", federationUri);
     options1.set ("Federation.Subscribe[Test]", "require (federated)");
     options1.set ("Federation.Provide[Test]", "require (federated)");
-    options1.set ("Federation.Default-Apply-Class", "Test");
+    options1.set ("Federation.Default-Class", "Test");
     
     Router router1 = new Router (PORT1);
     
