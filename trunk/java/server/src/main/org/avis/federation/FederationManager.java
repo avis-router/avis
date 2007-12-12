@@ -68,7 +68,12 @@ public class FederationManager implements CloseListener
   {
     return connectors;
   }
-  
+
+  public Set<EwafURI> listenURIs ()
+  {
+    return acceptor.listenURIs ();
+  }
+
   public void routerClosing (Router theRouter)
   {
     close ();

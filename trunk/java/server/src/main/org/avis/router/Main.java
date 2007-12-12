@@ -69,7 +69,7 @@ public class Main
     {
       final Router router = new Router (config);
 
-      for (ElvinURI uri : config.listenURIs ())
+      for (ElvinURI uri : router.listenURIs ())
       {
         for (InetSocketAddress address : addressesFor (uri))
           info ("Router listening on " + address + " (" + uri + ")", Main.class);
@@ -80,7 +80,7 @@ public class Main
         FederationManager federationManager = 
           new FederationManager (router, config);
        
-        for (ElvinURI uri : federationManager.acceptor ().listenURIs ())
+        for (ElvinURI uri : federationManager.listenURIs ())
         {
           for (InetSocketAddress address : addressesFor (uri))
           {

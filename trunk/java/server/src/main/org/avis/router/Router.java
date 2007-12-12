@@ -414,6 +414,11 @@ public class Router implements IoHandler, Closeable
     return acceptor;
   }
   
+  public Set<ElvinURI> listenURIs ()
+  {
+    return routerOptions.listenURIs ();
+  }
+  
   public Options options ()
   {
     return routerOptions;
