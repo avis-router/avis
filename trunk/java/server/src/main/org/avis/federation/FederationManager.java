@@ -259,7 +259,7 @@ public class FederationManager implements CloseListener
     
     classes.setDefaultClass 
       (classes.define 
-        (federationConfig.getString ("Federation.Default-Apply-Class")));
+        (federationConfig.getString ("Federation.Default-Class")));
     
     return classes;
   }
