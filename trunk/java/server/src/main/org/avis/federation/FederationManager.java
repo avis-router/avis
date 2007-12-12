@@ -1,6 +1,7 @@
 package org.avis.federation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,6 +57,16 @@ public class FederationManager implements CloseListener
       initAcceptor (router, serverDomain, classes, federationConfig);
     
     router.addCloseListener (this);
+  }
+  
+  public Acceptor acceptor ()
+  {
+    return acceptor;
+  }
+  
+  public Collection<Connector> connectors ()
+  {
+    return connectors;
   }
   
   public void routerClosing (Router theRouter)
