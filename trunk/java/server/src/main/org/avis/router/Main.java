@@ -72,11 +72,23 @@ public class Main
       for (ElvinURI uri : config.listenURIs ())
       {
         for (InetSocketAddress address : addressesFor (uri))
-          info ("Router listening on " + uri + " (" + address + ")", Main.class);
+          info ("Router listening on " + address + " (" + uri + ")", Main.class);
       }
       
       if (config.getBoolean ("Federation.Activated"))
-        new FederationManager (router, config);
+      {
+        FederationManager federationManager = 
+          new FederationManager (router, config);
+       
+        for (ElvinURI uri : federationManager.acceptor ().listenURIs ())
+        {
+          for (InetSocketAddress address : addressesFor (uri))
+          {
+            info ("Federator listening on " + address + " (" + uri + ")", 
+                  Main.class);
+          }
+        }
+      }
       
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
