@@ -70,9 +70,11 @@ public class Acceptor implements IoHandler, Closeable
   protected Options options;
   protected String serverDomain;
   protected FederationClasses federationClasses;
+  protected Set<EwafURI> listenUris;
   protected Set<Link> links;
   protected Set<InetSocketAddress> listenAddresses;
   protected volatile boolean closing;
+
 
   public Acceptor (Router router,
                    String serverDomain,
@@ -84,6 +86,7 @@ public class Acceptor implements IoHandler, Closeable
     this.router = router;
     this.serverDomain = serverDomain;
     this.federationClasses = federationClasses;
+    this.listenUris = uris;
     this.listenAddresses = addressesFor (uris);
     this.options = options;
     this.links = new HashSet<Link> ();
@@ -138,6 +141,16 @@ public class Acceptor implements IoHandler, Closeable
       
       socketAcceptor.unbind (address);
     }
+  }
+  
+  public Set<EwafURI> listenURIs ()
+  {
+    return listenUris;
+  }
+  
+  public Set<InetSocketAddress> listenAddresses ()
+  {
+    return listenAddresses;
   }
   
   /**
