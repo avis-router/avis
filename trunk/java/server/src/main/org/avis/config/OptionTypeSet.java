@@ -9,10 +9,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.avis.util.IllegalOptionException;
 
 import static org.avis.util.Text.split;
+import static org.avis.util.Text.stripBackslashes;
 
 /**
- * An option that turns space-separated items in string values into
- * a set of values by using a string constructor of a type.
+ * An option that turns space-separated items in string values into a
+ * set of values by using a string constructor of a type. Backslash
+ * escape can be used to quote spaces.
  */
 public class OptionTypeSet extends OptionType
 {
@@ -43,8 +45,9 @@ public class OptionTypeSet extends OptionType
     {
       Set<Object> values = new HashSet<Object> ();
       
-      for (String item : split (value.toString (), "\\s+"))
-        values.add (constructor.newInstance (item));
+      // split using regex that allows any space not preceeded by \
+      for (String item : split (value.toString ().trim (), "((?<!\\\\)\\s)+"))
+        values.add (constructor.newInstance (stripBackslashes (item)));
       
       return values;
     } catch (InvocationTargetException ex)
