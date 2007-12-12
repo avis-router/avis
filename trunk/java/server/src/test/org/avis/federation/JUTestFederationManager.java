@@ -195,6 +195,45 @@ public class JUTestFederationManager
     assertTrue (manager2.isClosed ());
   }
   
+  @Test
+  public void defaultApplyClass () 
+    throws Exception
+  {
+    EwafURI federationUri = new EwafURI ("ewaf://127.0.0.1:" + (PORT1 - 1));
+
+    // router 1 (acceptor)
+    Options options1 = new Options (FederationOptionSet.OPTION_SET);
+    
+    options1.set ("Federation.Router-Name", "router1");
+    options1.set ("Federation.Listen", federationUri);
+    options1.set ("Federation.Subscribe[Test]", "require (federated)");
+    options1.set ("Federation.Provide[Test]", "require (federated)");
+    options1.set ("Federation.Default-Apply-Class", "Test");
+    
+    Router router1 = new Router (PORT1);
+    
+    FederationManager manager1 = new FederationManager (router1, options1);
+
+    // router 2 (connector)
+    Options options2 = new Options (FederationOptionSet.OPTION_SET);
+    
+    options2.set ("Federation.Router-Name", "router2");
+    options2.set ("Federation.Connect[Test]", federationUri);
+    options2.set ("Federation.Subscribe[Test]", "require (federated)");
+    options2.set ("Federation.Provide[Test]", "require (federated)");
+    
+    Router router2 = new Router (PORT2);
+
+    FederationManager manager2 = new FederationManager (router2, options2);
+
+    waitForConnect (manager2.connectors.get (0));
+    
+    assertEquals (1, manager1.acceptor.links.size ());
+    
+    router2.close ();
+    router1.close ();
+  }
+  
   private static Map<String, Object> map (String... nameValues)
   {
     HashMap<String, Object> map = new HashMap<String, Object> ();

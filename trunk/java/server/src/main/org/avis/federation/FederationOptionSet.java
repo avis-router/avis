@@ -34,13 +34,15 @@ public class FederationOptionSet extends OptionSet
     
     add ("Federation.Activated", false);
     add ("Federation.Router-Name", "");
-    add ("Federation.Listen", new OptionTypeSet (EwafURI.class), emptySet ());
     add ("Federation.Subscribe", fedClassOption, emptyMap ());
     add ("Federation.Provide", fedClassOption, emptyMap ());
     add ("Federation.Apply-Class", 
          new OptionTypeParam (new OptionTypeSet (String.class)), emptyMap ());
+    add ("Federation.Default-Apply-Class", "");
     add ("Federation.Connect", 
          new OptionTypeParam (ewafUriOption), emptyMap ());
+    add ("Federation.Listen", new OptionTypeSet (EwafURI.class), emptySet ());
+    add ("Federation.Router-Name", "");
     add ("Federation.Add-Incoming-Attribute", attrOption, emptyMap ());
     add ("Federation.Add-Outgoing-Attribute", attrOption, emptyMap ());
     add ("Federation.Request-Timeout", 1, 20, Integer.MAX_VALUE);

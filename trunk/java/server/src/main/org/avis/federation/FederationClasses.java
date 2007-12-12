@@ -46,6 +46,11 @@ public class FederationClasses
       new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
   }
 
+  public void setDefaultClass (FederationClass newDefaultClass)
+  {
+    defaultClass = newDefaultClass;
+  }
+  
   public FederationClass defaultClass ()
   {
     return defaultClass;
