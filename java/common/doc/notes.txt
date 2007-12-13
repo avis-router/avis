@@ -3,7 +3,6 @@ Releases
 
 Server 1.2
 
- * DONE: client auth split into clients and federators
  * Support client auth in connection options
  * Federation TLS
  * Ship Avis server with default certs?
@@ -19,8 +18,6 @@ Server 1.2
 Client 1.1
 
  * TLS
- * DONE: Handle TLS connect failure better
- * DONE: client options to subsume constructor options
  * allow connection options in URI? merge with given options?
  * add subscription string escape utilities
  * ep doesn't do ^D properly: needs to handle empty lines 
@@ -51,6 +48,8 @@ Client
 
 Server
 
+* failure to find VM wrapper on windows (David). possibly due to 
+  uninstalling Java 5 after installing Java 6
 * Mantara ec requires elvin:4.0//...
 * Warning: Failed to cleanly shut down thread pool. avisd during
   testing for Alain. Also seen in FOCAL, possibly related to
