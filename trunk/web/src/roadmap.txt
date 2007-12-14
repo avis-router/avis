@@ -47,7 +47,7 @@ Others
 
 Not yet scheduled:
 
-* Web monitoring/configuration interface.
+* Web-based configuration interface.
 
 * Router auto discovery.
 
