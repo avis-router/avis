@@ -153,7 +153,7 @@ public class FederationManager implements CloseListener
     {
       try
       {
-        domain = discoverLocalDomain ();
+        domain = defaultServerDomain ();
       } catch (IOException ex)
       {
         throw new IllegalConfigOptionException
@@ -167,10 +167,10 @@ public class FederationManager implements CloseListener
   }
 
   /**
-   * Do the best we can to guess a good server domain based on PID and
-   * hostname
+   * Do the best we can to guess a good server domain based on
+   * identity hashcode.PID.hostname.
    */
-  private String discoverLocalDomain ()
+  private String defaultServerDomain ()
     throws IOException
   {
     String instanceId = toHexString (identityHashCode (this));
@@ -182,12 +182,9 @@ public class FederationManager implements CloseListener
      * hashcode + hostname.
      */
     if (runtimeName.matches ("\\d+@.+"))
-    {
       return instanceId + '.' + runtimeName;
-    } else
-    {
-      return instanceId + "@" + localHostName ();
-    }
+    else
+      return instanceId + '@' + localHostName ();
   }
 
   @SuppressWarnings("unchecked")
