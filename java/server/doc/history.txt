@@ -1,3 +1,37 @@
+Release 1.1.4 (December 15, 2007)
+----------------------------------------------------------------------
+
+This release provides some enchancements to federation setup.
+
+ * Federation.Connect now accepts multiple URI's allowing federation
+   connections to more than one router.
+
+ * Hostnames in the federation configuration are now matched case
+   insensitively.
+
+ * Escapes can now be used to quote literal spaces in space-separated
+   lists in the configuration file.
+
+ * Changed default federation server domain to be different when
+   running multiple router instances in the same VM.
+
+
+Release 1.1.3 (December 11, 2007)
+----------------------------------------------------------------------
+
+This release corrects an error that may occur when federating over
+high-latency networks. It also improves the router's diagnostics when
+abused by badly behaved clients.
+
+ * Fixed bug that that could cause failure while establishing a
+   federation link from Windows XP to a remote host over a
+   high-latency network connection.
+
+ * Improved handling and diagnostics of bad frames.
+
+ * Adjusted JVM heap configuration to reduce memory usage under load.
+
+
 Release 1.1.2 (October 6, 2007)
 ----------------------------------------------------------------------
 
