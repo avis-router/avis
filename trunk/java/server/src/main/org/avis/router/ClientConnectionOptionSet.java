@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.avis.config.Options;
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 import static org.avis.io.LegacyConnectionOptions.legacyToNew;
 
@@ -75,7 +75,7 @@ public class ClientConnectionOptionSet extends ConnectionOptionSet
   @Override
   protected void validateAndSet (Options options,
                                  String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     /*
      * Special handling for old router.coalesce-delay, which has the
