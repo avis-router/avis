@@ -16,6 +16,10 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -34,11 +38,6 @@ import org.avis.subscription.ast.nodes.Const;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.LogFailTester;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 
@@ -52,7 +51,6 @@ import static org.avis.logging.Log.shouldLog;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -116,6 +114,24 @@ public class JUTestFederation
     federation = new StandardFederatorSetup ();
     
     testTwoWayClientSendReceive (federation.client1, federation.client2);
+    
+    federation.close ();
+  }
+  
+  /**
+   * Check that case does not matter for hostnames.
+   */
+  @Test
+  public void hostnameCaseInsensitive ()
+    throws Exception
+  {
+    FederationClass fedClass = StandardFederatorSetup.defaultClass ();
+    
+    FederationClasses classes = new FederationClasses ();
+    
+    classes.mapHost ("LOCALhost", fedClass);
+    
+    federation = new StandardFederatorSetup (classes);
     
     federation.close ();
   }
