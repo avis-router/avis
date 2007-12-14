@@ -1,9 +1,11 @@
 package org.avis.federation;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import java.net.InetAddress;
+
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 /**
  * Defines a mapping from remote hosts to the FederationClass that
@@ -34,10 +36,14 @@ public class FederationClasses
   public FederationClasses (FederationClass defaultClass)
   {
     this.defaultClass = defaultClass;
-    this.classes = new HashMap<String, FederationClass> ();
-    this.dnsDomains = new HashMap<String, FederationClass> ();
-    this.hosts = new HashMap<String, FederationClass> ();
-    this.federatorDomains = new HashMap<String, FederationClass> ();
+    this.classes = 
+      new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
+    this.dnsDomains = 
+      new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
+    this.hosts = 
+      new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
+    this.federatorDomains = 
+      new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
   }
 
   public FederationClass defaultClass ()
