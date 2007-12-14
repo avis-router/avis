@@ -8,7 +8,7 @@ import java.net.URI;
 
 import org.junit.Test;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 import static java.util.Collections.emptySet;
 
@@ -227,7 +227,7 @@ public class JUTestOptions
     @Override
     protected void validateAndSet (Options options,
                                    String option, Object value)
-      throws IllegalOptionException
+      throws IllegalConfigOptionException
     {
       if (legacyToNew.containsKey (option))
         option = legacyToNew.get (option);
