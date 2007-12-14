@@ -83,17 +83,18 @@ public class FederationManager implements CloseListener
     return connectors == null;
   }
   
+  @SuppressWarnings("unchecked")
   private static List<Connector> initConnectors
     (Router router,
      String serverDomain,
      FederationClasses classes, 
      Options config)
   {
-    Map<String, Object> connect = 
-      config.getParamOption ("Federation.Connect");
+    Map<String, Set<EwafURI>> connect = 
+      (Map<String, Set<EwafURI>>)config.getParamOption ("Federation.Connect");
    
     // check federation classes and URI's make sense
-    for (Entry<String, Object> entry : connect.entrySet ())
+    for (Entry<String, Set<EwafURI>> entry : connect.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
@@ -105,27 +106,27 @@ public class FederationManager implements CloseListener
             "this connection cannot import or export any notifications");
       }
       
-      checkUri ("Federation.Connect[" + entry.getKey () + "]",
-                (EwafURI)entry.getValue ());
+      for (EwafURI uri : entry.getValue ())
+        checkUri ("Federation.Connect[" + entry.getKey () + "]", uri);
     }
     
-    List<Connector> connectors = 
-      new ArrayList<Connector> (connect.size ());
+    List<Connector> connectors = new ArrayList<Connector> (connect.size ());
     
-    for (Entry<String, Object> entry : connect.entrySet ())
+    for (Entry<String, Set<EwafURI>> entry : connect.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
-      connectors.add
-        (new Connector 
-          (router, serverDomain, (EwafURI)entry.getValue (), 
-           fedClass, config));
+      for (EwafURI uri : entry.getValue ())
+      {
+        connectors.add
+          (new Connector (router, serverDomain, uri, fedClass, config));
+      }
     }
     
     return connectors;
   }
 
-  private static String initServerDomain (Options federationConfig)
+  private String initServerDomain (Options federationConfig)
   {
     String domain = federationConfig.getString ("Federation.Router-Name");
     
@@ -150,9 +151,10 @@ public class FederationManager implements CloseListener
    * Do the best we can to guess a good server domain based on PID and
    * hostname
    */
-  private static String discoverLocalDomain ()
+  private String discoverLocalDomain ()
     throws IOException
   {
+    String instanceId = toHexString (identityHashCode (this));
     String runtimeName = ManagementFactory.getRuntimeMXBean ().getName ();
  
     /*
@@ -162,11 +164,10 @@ public class FederationManager implements CloseListener
      */
     if (runtimeName.matches ("\\d+@.+"))
     {
-      return runtimeName;
+      return instanceId + '.' + runtimeName;
     } else
     {
-      return toHexString (identityHashCode (FederationManager.class)) +
-             "@" + localHostName ();
+      return instanceId + "@" + localHostName ();
     }
   }
 
@@ -203,20 +204,20 @@ public class FederationManager implements CloseListener
   {
     FederationClasses classes = new FederationClasses ();
     
-    Map<String, Object> provide = 
+    Map<String, ?> provide = 
       federationConfig.getParamOption ("Federation.Provide");
     
-    for (Entry<String, Object> entry : provide.entrySet ())
+    for (Entry<String, ?> entry : provide.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
       fedClass.outgoingFilter = (Node)entry.getValue ();
     }
     
-    Map<String, Object> subscribe = 
+    Map<String, ?> subscribe = 
       federationConfig.getParamOption ("Federation.Subscribe");
     
-    for (Entry<String, Object> entry : subscribe.entrySet ())
+    for (Entry<String, ?> entry : subscribe.entrySet ())
     {
       Node incomingFilter = (Node)entry.getValue ();
 
@@ -235,10 +236,10 @@ public class FederationManager implements CloseListener
       classes.define (entry.getKey ()).incomingFilter = incomingFilter;
     }
     
-    Map<String, Object> applyClass = 
+    Map<String, ?> applyClass = 
       federationConfig.getParamOption ("Federation.Apply-Class");
     
-    for (Entry<String, Object> entry : applyClass.entrySet ())
+    for (Entry<String, ?> entry : applyClass.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
@@ -266,20 +267,20 @@ public class FederationManager implements CloseListener
   private static void initAddAttributes (Options config,
                                          FederationClasses classes)
   {
-    Map<String, Object> incoming = 
+    Map<String, ?> incoming = 
       config.getParamOption ("Federation.Add-Incoming-Attribute");
     
-    for (Entry<String, Object> entry : incoming.entrySet ())
+    for (Entry<String, ?> entry : incoming.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
       fedClass.incomingAttributes = (Map<String, Object>)entry.getValue ();
     }
     
-    Map<String, Object> outgoing = 
+    Map<String, ?> outgoing = 
       config.getParamOption ("Federation.Add-Outgoing-Attribute");
     
-    for (Entry<String, Object> entry : outgoing.entrySet ())
+    for (Entry<String, ?> entry : outgoing.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
