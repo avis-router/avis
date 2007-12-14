@@ -48,6 +48,7 @@ Client
 
 Server
 
+* ditch use of @ in federation? use of server domain is fairly useless
 * failure to find VM wrapper on windows (David). possibly due to 
   uninstalling Java 5 after installing Java 6
 * Mantara ec requires elvin:4.0//...
