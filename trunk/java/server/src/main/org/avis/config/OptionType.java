@@ -2,7 +2,7 @@ package org.avis.config;
 
 import static org.avis.util.Text.className;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 
 /**
@@ -19,10 +19,10 @@ public abstract class OptionType
    * @param value The value.
    * @return The converted value or just value if none needed.
    * 
-   * @throws IllegalOptionException if value is not convertible.
+   * @throws IllegalConfigOptionException if value is not convertible.
    */
   public abstract Object convert (String option, Object value)
-    throws IllegalOptionException;
+    throws IllegalConfigOptionException;
   
   /**
    * Check that a value is valid for this option.

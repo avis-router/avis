@@ -3,7 +3,7 @@ package org.avis.config;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 import static java.util.Arrays.asList;
 
@@ -32,7 +32,7 @@ public class OptionTypeString extends OptionType
   
   @Override
   public Object convert (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     return value.toString ();
   }

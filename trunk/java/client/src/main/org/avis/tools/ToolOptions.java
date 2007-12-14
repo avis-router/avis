@@ -9,7 +9,7 @@ import org.avis.security.DualKeyScheme;
 import org.avis.security.Key;
 import org.avis.security.Keys;
 import org.avis.util.CommandLineOptions;
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalCommandLineOption;
 
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
@@ -68,7 +68,7 @@ public abstract class ToolOptions extends CommandLineOptions
   
   @Override
   protected void handleArg (Queue<String> args)
-    throws IllegalOptionException
+    throws IllegalCommandLineOption
   {
     String arg = args.peek ();
     
@@ -79,7 +79,7 @@ public abstract class ToolOptions extends CommandLineOptions
         elvinUri = new ElvinURI (stringArg (args));
       } catch (InvalidURIException ex)
       {
-        throw new IllegalOptionException
+        throw new IllegalCommandLineOption
           (arg, "Invalid Elvin URI: " + ex.getMessage ());
       }
     } else if (takeArg (args, "-x"))
@@ -110,20 +110,20 @@ public abstract class ToolOptions extends CommandLineOptions
       return new Key (dataToBytes (bytesFrom (fileStream (filename))));
     } catch (Exception ex)
     {
-      throw new IllegalOptionException
+      throw new IllegalCommandLineOption
         ("Could not read key from \"" + filename + "\": " + ex.getMessage ());
     }
   }
 
   @Override
   protected void checkOptions ()
-    throws IllegalOptionException
+    throws IllegalCommandLineOption
   {
     if (elvinUri == null)
-      throw new IllegalOptionException ("Missing Elvin URI");
+      throw new IllegalCommandLineOption ("Missing Elvin URI");
     
     if (secureMode == REQUIRE_SECURE_DELIVERY && keys.isEmpty ())
-      throw new IllegalOptionException
+      throw new IllegalCommandLineOption
         ("-x", "Cannot activate secure mode if no keys specified");
   }
 }

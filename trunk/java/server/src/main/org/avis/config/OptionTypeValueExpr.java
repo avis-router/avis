@@ -1,6 +1,6 @@
 package org.avis.config;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.InvalidFormatException;
 import org.avis.util.Text;
 
@@ -22,14 +22,14 @@ public class OptionTypeValueExpr extends OptionType
 
   @Override
   public Object convert (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     try
     {
       return stringToValue (value.toString ());
     } catch (InvalidFormatException ex)
     {
-      throw new IllegalOptionException (option, ex.getMessage ());
+      throw new IllegalConfigOptionException (option, ex.getMessage ());
     }
   }
 }

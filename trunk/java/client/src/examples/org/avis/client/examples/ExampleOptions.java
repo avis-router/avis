@@ -5,7 +5,7 @@ import java.util.Queue;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.util.CommandLineOptions;
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalCommandLineOption;
 
 import static java.lang.System.getProperty;
 
@@ -43,7 +43,7 @@ public class ExampleOptions extends CommandLineOptions
   
   @Override
   protected void handleArg (Queue<String> args)
-    throws IllegalOptionException
+    throws IllegalCommandLineOption
   {
     String arg = args.peek ();
     
@@ -54,7 +54,7 @@ public class ExampleOptions extends CommandLineOptions
         elvinUri = new ElvinURI (stringArg (args));
       } catch (InvalidURIException ex)
       {
-        throw new IllegalOptionException
+        throw new IllegalCommandLineOption
           (arg, "Invalid Elvin URI: " + ex.getMessage ());
       }
     }

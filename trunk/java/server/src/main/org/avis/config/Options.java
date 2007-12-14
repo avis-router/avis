@@ -13,7 +13,7 @@ import java.io.File;
 
 import java.net.URI;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.util.Collections.unmodifiableMap;
@@ -89,10 +89,10 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * Set a bulk lot of options. This is equivalent to calling
    * {@link #set(String, Object)} for each entry.
    * 
-   * @throws IllegalOptionException
+   * @throws IllegalConfigOptionException
    */
   public void setAll (Map<String, Object> options)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     for (Entry<String, Object> entry : options.entrySet ())
       set (entry.getKey (), entry.getValue ());
@@ -101,10 +101,10 @@ public class Options implements Iterable<Map.Entry<String, Object>>
   /**
    * Set a bulk lot of options from java.util.Properties source.
    * 
-   * @throws IllegalOptionException
+   * @throws IllegalConfigOptionException
    */
   public void setAll (Properties properties)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     for (Entry<Object, Object> entry : properties.entrySet ())
       set ((String)entry.getKey (), entry.getValue ());
@@ -116,20 +116,20 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * @param option The option name.
    * @return The value.
    * 
-   * @throws IllegalOptionException if the option is not defined or is
+   * @throws IllegalConfigOptionException if the option is not defined or is
    *           not an integer.
    * 
    * @see #get(String)
    */
   public int getInt (String option)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     Object value = get (option);
     
     if (value instanceof Integer)
       return (Integer)value;
     else
-      throw new IllegalOptionException (option, "Not an integer");
+      throw new IllegalConfigOptionException (option, "Not an integer");
   }
   
   /**
@@ -138,20 +138,20 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * @param option The option name.
    * @return The value.
    * 
-   * @throws IllegalOptionException if the option is not defined or is
+   * @throws IllegalConfigOptionException if the option is not defined or is
    *           not a string.
    * 
    * @see #get(String)
    */
   public String getString (String option)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     Object value = get (option);
     
     if (value instanceof String)
       return (String)value;
     else
-      throw new IllegalOptionException (option, "Not a string");
+      throw new IllegalConfigOptionException (option, "Not a string");
   }
   
   /**
@@ -160,20 +160,20 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * @param option The option name.
    * @return The value.
    * 
-   * @throws IllegalOptionException if the option is not defined or is
+   * @throws IllegalConfigOptionException if the option is not defined or is
    *           not a boolean.
    * 
    * @see #get(String)
    */
   public boolean getBoolean (String option)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     Object value = get (option);
     
     if (value instanceof Boolean)
       return (Boolean)value;
     else
-      throw new IllegalOptionException (option, "Not a boolean");
+      throw new IllegalConfigOptionException (option, "Not a boolean");
   }
   
   /**
@@ -184,9 +184,32 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * 
    * @return The value of the option, mapping parameters to values.
    */
-  public Map<String, Object> getParamOption (String option)
+  public Map<String, ?> getParamOption (String option)
   {
     return OptionTypeParam.getParamOption (this, option);
+  }
+  
+  /**
+   * Get an option value that is a set.
+   * 
+   * @param <T> The type of item in the set.
+   * 
+   * @param option The option name.
+   * @param type The type of option. This is somewhat bogus, but
+   *                needed by the compiler to check generic types.
+   * @return The set value.
+   * 
+   * @throws IllegalConfigOptionException if the value is not a set.
+   */
+  @SuppressWarnings({"unused", "unchecked"})
+  public <T> Set<T> getSet (String option, Class<T> type)
+  {
+    Object value = get (option);
+    
+    if (value instanceof Set<?>)
+      return (Set<T>)value;
+    else
+       throw new IllegalConfigOptionException (option, "Not a set");
   }
   
   /**
@@ -214,7 +237,7 @@ public class Options implements Iterable<Map.Entry<String, Object>>
         return relativeDirectory.toURI ().resolve (uri);
     } else
     {
-      throw new IllegalOptionException (option, "Not a URI");
+      throw new IllegalConfigOptionException (option, "Not a URI");
     }
   }
   
@@ -224,21 +247,21 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * @param option The option name
    * @return The value.
    * 
-   * @throws IllegalOptionException if the option is not defined.
+   * @throws IllegalConfigOptionException if the option is not defined.
    * 
    * @see #peek(String)
    * @see #set(String, Object)
    * @see #isDefined(String)
    */
   public Object get (String option)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     Object value = peek (option);
     
     if (value != null)
       return value;
     else
-      throw new IllegalOptionException (option, "Undefined option");
+      throw new IllegalConfigOptionException (option, "Undefined option");
   }
   
   /**
@@ -276,7 +299,7 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * @param option The option name.
    * @param value The option value.
    * 
-   * @throws IllegalOptionException if the option is not defined or
+   * @throws IllegalConfigOptionException if the option is not defined or
    *           the value is invalid.
    *           
    * @see #get(String)
@@ -284,10 +307,10 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * @see OptionSet#validateAndSet(Options, String, Object)
    */
   public void set (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     if (value == null)
-      throw new IllegalOptionException (option, "Value cannot be null");
+      throw new IllegalConfigOptionException (option, "Value cannot be null");
     
     OptionSet set = optionSet.findOptionSetFor (option);
     

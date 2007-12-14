@@ -1,6 +1,6 @@
 package org.avis.config;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 
 public class OptionTypeBoolean extends OptionType
@@ -9,7 +9,7 @@ public class OptionTypeBoolean extends OptionType
 
   @Override
   public Object convert (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     if (value instanceof Boolean)
       return value;
@@ -21,7 +21,7 @@ public class OptionTypeBoolean extends OptionType
     else if (v.equals ("0") || v.equals ("false") || v.equals ("no"))
       return false;
     else
-      throw new IllegalOptionException
+      throw new IllegalConfigOptionException
         (option, "\"" + value + "\" is not a valid true/false boolean");
   }
   

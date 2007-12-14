@@ -1,6 +1,6 @@
 package org.avis.config;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 
 public class OptionTypeInt extends OptionType
@@ -38,7 +38,7 @@ public class OptionTypeInt extends OptionType
       return Integer.parseInt (text) * unit;
     } catch (NumberFormatException ex)
     {
-      throw new IllegalOptionException
+      throw new IllegalConfigOptionException
         (option, "\"" + value + "\" is not a valid integer");
     }
   }
