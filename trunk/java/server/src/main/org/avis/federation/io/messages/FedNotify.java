@@ -21,7 +21,12 @@ public class FedNotify extends Notify
   {
     // zip
   }
- 
+
+  public FedNotify (Object... attributes)
+  {
+    super (attributes);
+  }
+
   public FedNotify (Map<String, Object> attributes,
                     boolean deliverInsecure,
                     Keys keys,
