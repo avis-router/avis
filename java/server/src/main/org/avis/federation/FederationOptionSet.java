@@ -8,7 +8,7 @@ import org.avis.config.OptionTypeSet;
 import org.avis.config.OptionTypeValueExpr;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
@@ -28,9 +28,9 @@ public class FederationOptionSet extends OptionSet
   protected FederationOptionSet ()
   {
     OptionTypeParam fedClassOption = new OptionTypeParam (new SubExpOption ());
-    EwafUriOption ewafUriOption = new EwafUriOption ();
     OptionTypeParam attrOption = 
       new OptionTypeParam (new OptionTypeValueExpr (), 2);
+    OptionTypeSet setOfURI = new OptionTypeSet (EwafURI.class);
     
     add ("Federation.Activated", false);
     add ("Federation.Router-Name", "");
@@ -39,9 +39,8 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Apply-Class", 
          new OptionTypeParam (new OptionTypeSet (String.class)), emptyMap ());
     add ("Federation.Default-Class", "");
-    add ("Federation.Connect", 
-         new OptionTypeParam (ewafUriOption), emptyMap ());
-    add ("Federation.Listen", new OptionTypeSet (EwafURI.class), emptySet ());
+    add ("Federation.Connect", new OptionTypeParam (setOfURI), emptyMap ());
+    add ("Federation.Listen", setOfURI, emptySet ());
     add ("Federation.Router-Name", "");
     add ("Federation.Add-Incoming-Attribute", attrOption, emptyMap ());
     add ("Federation.Add-Outgoing-Attribute", attrOption, emptyMap ());
@@ -61,7 +60,7 @@ public class FederationOptionSet extends OptionSet
   {
     @Override
     public Object convert (String option, Object value)
-      throws IllegalOptionException
+      throws IllegalConfigOptionException
     {
       try
       {
@@ -71,7 +70,7 @@ public class FederationOptionSet extends OptionSet
           return parse (value.toString ());
       } catch (ParseException ex)
       {
-        throw new IllegalOptionException 
+        throw new IllegalConfigOptionException 
           (option, "Invalid subscription: " + ex.getMessage ());
       }
     }
@@ -90,7 +89,7 @@ public class FederationOptionSet extends OptionSet
   {
     @Override
     public Object convert (String option, Object value)
-      throws IllegalOptionException
+      throws IllegalConfigOptionException
     {
       try
       {
@@ -100,7 +99,7 @@ public class FederationOptionSet extends OptionSet
         return value;
       } catch (InvalidURIException ex)
       {
-        throw new IllegalOptionException (option, ex.getMessage ());
+        throw new IllegalConfigOptionException (option, ex.getMessage ());
       }
     }
 
