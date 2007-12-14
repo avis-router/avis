@@ -1,0 +1,110 @@
+package org.avis.router;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.junit.Test;
+
+import org.avis.io.messages.NotifyEmit;
+import org.avis.logging.Log;
+import org.avis.util.IllegalConfigOptionException;
+
+import static org.avis.util.Streams.close;
+
+public class JUTestMain
+{
+  @Test
+  public void main ()
+    throws Exception
+  {
+    File config1 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29170\n" + 
+      "Federation.Activated=yes\n" + 
+      "Federation.Connect[Test]=" +
+        "ewaf://127.0.0.1:29181 ewaf://127.0.0.1:29191\n" + 
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)"
+    );
+    
+    File config2 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29180\n" + 
+      "Federation.Activated=yes\n" + 
+      "Federation.Listen=ewaf://127.0.0.1:29181\n" + 
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Apply-Class[Test]=@127.0.0.1"
+    );
+    
+    File config3 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29190\n" + 
+      "Federation.Activated=yes\n" + 
+      "Federation.Listen=ewaf://127.0.0.1:29191\n" + 
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Apply-Class[Test]=@127.0.0.1"
+    );
+    
+    Router router1 = startRouter (config1);
+    Router router2 = startRouter (config2);
+    Router router3 = startRouter (config3);
+    
+    // Thread.sleep (10000);
+    
+    SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
+    SimpleClient client2 = new SimpleClient ("127.0.0.1", 29190);
+    
+    client1.connect ();
+    client1.subscribe ("test == 1");
+    
+    client2.connect ();
+    client2.subscribe ("test == 2");
+    
+    Log.enableLogging (Log.TRACE, true);
+    Log.enableLogging (Log.DIAGNOSTIC, true);
+    
+    client1.send (new NotifyEmit ("test", 2));
+    
+    client2.receive ();
+    
+    client2.send (new NotifyEmit ("test", 1));
+    
+    client1.receive ();
+    
+    client1.close ();
+    client2.close ();
+    
+    router1.close ();
+    router2.close ();
+    router3.close ();
+  }
+
+  private static Router startRouter (File config) 
+    throws IllegalConfigOptionException, IOException
+  {
+    return Main.start ("-c", config.getAbsolutePath ());
+  }
+
+  private static File configFile (String contents)
+    throws IOException
+  {
+    File configFile = File.createTempFile ("avis", ".conf");
+    
+    configFile.deleteOnExit ();
+    
+    PrintWriter configStream = new PrintWriter (configFile);
+    
+    try
+    {
+      configStream.append (contents);
+    } finally
+    {
+      close (configStream);
+    }
+    
+    return configFile;
+  }
+}
