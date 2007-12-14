@@ -15,6 +15,11 @@ public class NotifyEmit extends Notify
     super ();
   }
   
+  public NotifyEmit (Object... attributes)
+  {
+    super (attributes);
+  }
+
   public NotifyEmit (Map<String, Object> attributes)
   {
     this (attributes, true, EMPTY_KEYS);
