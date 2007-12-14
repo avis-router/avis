@@ -53,8 +53,8 @@ Server
 * Mantara ec requires elvin:4.0//...
 * Warning: Failed to cleanly shut down thread pool. avisd during
   testing for Alain. Also seen in FOCAL, possibly related to
-  federation. Not due to connected clients. Perhaps due to waiting for
-  Disconn to be sent?
+  federation reconnection. Not due to connected clients. Perhaps due
+  to waiting for Disconn to be sent?
 * simple web-based stats: use small HTTP server.
 * web-based management: use small HTTP server. or in context of OSGi
 * OS X: installation in /usr/local means getting blown away on system
