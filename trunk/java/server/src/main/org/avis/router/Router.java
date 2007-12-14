@@ -61,7 +61,7 @@ import org.avis.security.Keys;
 import org.avis.subscription.parser.ConstantExpressionException;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
 
 import static java.lang.Integer.toHexString;
@@ -160,11 +160,11 @@ public class Router implements IoHandler, Closeable
    * 
    * @throws IOException if an network error during router
    *                 initialisation.
-   * @throws IllegalOptionException If an option in the configuratiion
+   * @throws IllegalConfigOptionException If an option in the configuratiion
    *                 options is invalid.
    */
   public Router (RouterOptions options)
-    throws IOException, IllegalOptionException
+    throws IOException, IllegalConfigOptionException
   {
     this.notifyListeners = 
       new ListenerList<NotifyListener>
@@ -267,7 +267,7 @@ public class Router implements IoHandler, Closeable
    * connections.
    */
   private SSLFilter sslFilter (boolean requireTrustedTLSClient)
-    throws IllegalOptionException, IOException
+    throws IllegalConfigOptionException, IOException
   {
     if (sslContext == null)
     {
