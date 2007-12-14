@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.avis.common.ElvinURI;
+import org.avis.config.Options;
+import org.avis.federation.EwafURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptionSet;
 import org.avis.logging.Log;
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalCommandLineOption;
+import org.avis.util.IllegalConfigOptionException;
 
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.DIAGNOSTIC;
@@ -56,40 +59,10 @@ public class Main
     info ("Avis event router version " +
           avisProperties.getProperty ("avis.router.version"), Main.class);
     
-    RouterOptionSet routerOptionSet = new RouterOptionSet ();
-    
-    // add federation options to router's option set
-    routerOptionSet.inheritFrom (FederationOptionSet.OPTION_SET);
-    
-    RouterOptions config = new RouterOptions (routerOptionSet);
-    
-    parseCommandLine (args, config);
-    
     try
     {
-      final Router router = new Router (config);
+      final Router router = start (args);
 
-      for (ElvinURI uri : router.listenURIs ())
-      {
-        for (InetSocketAddress address : addressesFor (uri))
-          info ("Router listening on " + address + " (" + uri + ")", Main.class);
-      }
-      
-      if (config.getBoolean ("Federation.Activated"))
-      {
-        FederationManager federationManager = 
-          new FederationManager (router, config);
-       
-        for (ElvinURI uri : federationManager.listenURIs ())
-        {
-          for (InetSocketAddress address : addressesFor (uri))
-          {
-            info ("Federator listening on " + address + " (" + uri + ")", 
-                  Main.class);
-          }
-        }
-      }
-      
       Runtime.getRuntime ().addShutdownHook (new Thread ()
       {
         public void run ()
@@ -100,29 +73,96 @@ public class Main
         }
       });
       
+      // show status
+      Options config = router.options ();
+
+      for (ElvinURI uri : router.listenURIs ())
+      {
+        for (InetSocketAddress address : addressesFor (uri))
+          info ("Router listening on " + address + " (" + uri + ")", Main.class);
+      }
+      
+      if (config.getBoolean ("Federation.Activated"))
+      {
+        for (EwafURI uri : config.getSet ("Federation.Listen", EwafURI.class))
+        {
+          for (InetSocketAddress address : addressesFor (uri))
+          {
+            info ("Federator listening on " + address + " (" + uri + ")", 
+                  Main.class);
+          }
+        }
+      }
     } catch (Throwable ex)
     {
-      if (ex instanceof IllegalOptionException)
-        alarm ("Error in router configuration: " + ex.getMessage (), Main.class);
-      else
+      if (ex instanceof IllegalArgumentException)
+      {
+        if (ex instanceof IllegalConfigOptionException)
+        {
+          alarm ("Error in router configuration: " + ex.getMessage (), 
+                 Main.class);
+        } else if (ex instanceof IllegalCommandLineOption)
+        {
+          alarm (ex.getMessage (), Main.class);
+        
+          System.err.println ();
+          System.err.println (USAGE);
+        }
+        
+        exit (1);
+      } else
+      {
         alarm ("Error starting router: " + ex.getMessage (), Main.class);
         
-      if (shouldLog (DIAGNOSTIC))
-        ex.printStackTrace ();
-      
-      exit (2);
+        if (shouldLog (DIAGNOSTIC))
+          ex.printStackTrace ();
+        
+        exit (2);
+      }
     }
   }
 
-  private static void parseCommandLine (String [] args,
-                                        RouterOptions config)
+  /**
+   * Create and start a router with a given set of command line
+   * arguments.
+   * 
+   * @param args The command line.
+   * 
+   * @return The new router instance.
+   * 
+   * @throws IllegalConfigOptionException
+   * @throws IOException
+   */
+  public static Router start (String... args) 
+    throws IllegalConfigOptionException, IOException
   {
-    try
+    RouterOptionSet routerOptionSet = new RouterOptionSet ();
+    
+    // add federation options to router's option set
+    routerOptionSet.inheritFrom (FederationOptionSet.OPTION_SET);
+    
+    RouterOptions config = new RouterOptions (routerOptionSet);
+    
+    parseCommandLine (args, config);
+    
+    Router router = new Router (config);
+    
+    if (config.getBoolean ("Federation.Activated"))
+      new FederationManager (router, config);
+
+    return router;
+  }
+  
+  private static void parseCommandLine (String [] args,
+                                        RouterOptions config) 
+    throws IllegalConfigOptionException, IllegalCommandLineOption
+  {
+    for (int i = 0; i < args.length; i++)
     {
-      for (int i = 0; i < args.length; i++)
+      String arg = args [i];
+    
+      try
       {
-        String arg = args [i];
-      
         if (arg.equals ("-v"))
         {
           enableLogging (DIAGNOSTIC, true);
@@ -144,19 +184,15 @@ public class Main
           diagnostic ("Read configuration from " + configFile, Main.class);
         } else
         {
-          System.err.println ("\nUnknown option: \"" + arg + "\"\n");
-          System.err.println (USAGE);
-          System.exit (1);
+          throw new IllegalCommandLineOption 
+            ("Unknown command line option: \"" + arg + "\"");
         }
+      } catch (IOException ex)
+      {
+        throw new IllegalCommandLineOption 
+          ("Error in command line option: \"" + arg + "\": " + 
+           ex.getMessage ());
       }
-    } catch (Exception ex)
-    {
-      alarm ("Error configuring router: " + ex.getMessage (), Main.class);
-      
-      if (shouldLog (DIAGNOSTIC))
-        ex.printStackTrace ();
-      
-      exit (2);
     }
   }
 
