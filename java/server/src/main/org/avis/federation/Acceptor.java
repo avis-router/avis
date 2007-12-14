@@ -37,7 +37,7 @@ import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.federation.Federation.logMinaException;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
-import static org.avis.io.Net.hostAddressFor;
+import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.DIAGNOSTIC;
@@ -193,7 +193,7 @@ public class Acceptor implements IoHandler, Closeable
 
   private void handleFedConnRqst (IoSession session, FedConnRqst message)
   {
-    InetAddress remoteHost = hostAddressFor (session);
+    InetAddress remoteHost = remoteHostAddressFor (session);
     String hostName = remoteHost.getCanonicalHostName ();
     
     if (message.versionMajor != VERSION_MAJOR || 
