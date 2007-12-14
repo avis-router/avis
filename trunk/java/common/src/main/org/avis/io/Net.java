@@ -179,7 +179,7 @@ public final class Net
   /**
    * Find the host address for an InetSocketAddress session.
    */
-  public static InetAddress hostAddressFor (IoSession session)
+  public static InetAddress remoteHostAddressFor (IoSession session)
   {
     if (session.getRemoteAddress () instanceof InetSocketAddress)
     {
@@ -196,7 +196,7 @@ public final class Net
    */
   public static String hostIdFor (IoSession session)
   {
-    InetAddress address = hostAddressFor (session);
+    InetAddress address = remoteHostAddressFor (session);
     
     return address.getCanonicalHostName () + '/' + address.getHostAddress ();
   }
