@@ -6,7 +6,7 @@ import java.util.Set;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 import static org.avis.util.Text.split;
 import static org.avis.util.Text.stripBackslashes;
@@ -39,7 +39,7 @@ public class OptionTypeSet extends OptionType
   
   @Override
   public Object convert (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     try
     {
@@ -52,10 +52,10 @@ public class OptionTypeSet extends OptionType
       return values;
     } catch (InvocationTargetException ex)
     {
-      throw new IllegalOptionException (option, ex.getCause ().getMessage ());
+      throw new IllegalConfigOptionException (option, ex.getCause ().getMessage ());
     } catch (Exception ex)
     {
-      throw new IllegalOptionException (option, ex.toString ());
+      throw new IllegalConfigOptionException (option, ex.toString ());
     }
   }
 }

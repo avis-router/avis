@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.Pair;
 
 import static java.util.Collections.emptyList;
@@ -35,7 +35,7 @@ public class OptionTypeParam extends OptionType
 
   @Override
   public Object convert (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     return value;
   }
@@ -54,7 +54,7 @@ public class OptionTypeParam extends OptionType
   {
     if (params.size () != paramCount)
     {
-      throw new IllegalOptionException 
+      throw new IllegalConfigOptionException 
         (option, "Parameters required: " + paramCount);
     }
     
@@ -63,7 +63,7 @@ public class OptionTypeParam extends OptionType
     String valid = subOption.validate (option, value);
     
     if (valid != null)
-      throw new IllegalOptionException (option, valid);
+      throw new IllegalConfigOptionException (option, valid);
     
     // create/lookup base Map value
     Map<String, Object> baseValue = 
@@ -93,7 +93,7 @@ public class OptionTypeParam extends OptionType
     if (type instanceof OptionTypeParam)
       return (Map<String, Object>)options.get (option);
     else
-      throw new IllegalOptionException (option, "Not a parameterised option");
+      throw new IllegalConfigOptionException (option, "Not a parameterised option");
   }
 
   /**
@@ -108,7 +108,7 @@ public class OptionTypeParam extends OptionType
       if (option.indexOf (']') == -1)
         return new Pair<String, List<String>> (option, EMPTY_STRING_LIST);
       else
-        throw new IllegalOptionException (option, "Orphan ]");
+        throw new IllegalConfigOptionException (option, "Orphan ]");
     }
     
     String base = option.substring (0, index);
@@ -119,14 +119,14 @@ public class OptionTypeParam extends OptionType
       int end = option.indexOf (']', index);
       
       if (end == -1)
-        throw new IllegalOptionException (option, "Missing ]");
+        throw new IllegalConfigOptionException (option, "Missing ]");
       
       params.add (option.substring (index + 1, end));
       
       index = end + 1;
       
       if (index < option.length () && option.charAt (index) != '[')
-          throw new IllegalOptionException (option, "Junk in parameter list");
+          throw new IllegalConfigOptionException (option, "Junk in parameter list");
     }
     
     return new Pair<String, List<String>> (base, params);

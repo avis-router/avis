@@ -4,7 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 /**
  * A URI-valued option.
@@ -15,7 +15,7 @@ public class OptionTypeURI extends OptionType
 {
   @Override
   public Object convert (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     try
     {
@@ -27,7 +27,7 @@ public class OptionTypeURI extends OptionType
         return new URI (value.toString ());
     } catch (URISyntaxException ex)
     {
-      throw new IllegalOptionException
+      throw new IllegalConfigOptionException
         (option, "\"" + value + "\" is not a valid URI");
     }
   }

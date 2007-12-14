@@ -2,7 +2,7 @@ package org.avis.tools;
 
 import java.util.Queue;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalCommandLineOption;
 
 /**
  * Options for the ec command.
@@ -28,7 +28,7 @@ public class EcOptions extends ToolOptions
   
   @Override
   protected void handleArg (Queue<String> args)
-    throws IllegalOptionException
+    throws IllegalCommandLineOption
   {
     String arg = args.peek ();
     
@@ -37,7 +37,7 @@ public class EcOptions extends ToolOptions
       if (subscription == null)
         subscription = args.remove ();
       else
-        throw new IllegalOptionException ("Can only have one subscription");
+        throw new IllegalCommandLineOption ("Can only have one subscription");
     } else
     {
       super.handleArg (args);
@@ -50,6 +50,6 @@ public class EcOptions extends ToolOptions
     super.checkOptions ();
 
     if (subscription == null)
-      throw new IllegalOptionException ("No subscription specified");
+      throw new IllegalCommandLineOption ("No subscription specified");
   }
 }

@@ -21,10 +21,10 @@ public abstract class CommandLineOptions
    * 
    * @param argv The command line options.
    * 
-   * @throws IllegalOptionException if an error is detected.
+   * @throws IllegalConfigOptionException if an error is detected.
    */
   public void parse (String [] argv)
-    throws IllegalOptionException
+    throws IllegalCommandLineOption
   {
     Queue<String> args = new LinkedList<String> (asList (argv));
     
@@ -35,9 +35,9 @@ public abstract class CommandLineOptions
         String arg = args.peek ();
         
         if (arg.startsWith ("-"))
-          throw new IllegalOptionException (arg, "Unknown option");
+          throw new IllegalCommandLineOption (arg, "Unknown option");
         else
-          throw new IllegalOptionException ("Unknown extra parameter: " + arg);
+          throw new IllegalCommandLineOption ("Unknown extra parameter: " + arg);
       }
     }
     
@@ -56,7 +56,7 @@ public abstract class CommandLineOptions
     try
     {
       parse (args);
-    } catch (IllegalOptionException ex)
+    } catch (IllegalCommandLineOption ex)
     {
       usageError (ex.getMessage ());
     }
@@ -92,10 +92,10 @@ public abstract class CommandLineOptions
    * 
    * @param args The commnd line queue.
    * 
-   * @throws IllegalOptionException
+   * @throws IllegalConfigOptionException
    */
   protected abstract void handleArg (Queue<String> args)
-    throws IllegalOptionException;
+    throws IllegalCommandLineOption;
 
   /**
    * Generate a usage string suitable for printing to the console.
@@ -108,7 +108,7 @@ public abstract class CommandLineOptions
    * parameter not specified.
    */
   protected void checkOptions ()
-    throws IllegalOptionException
+    throws IllegalCommandLineOption
   {
     // zip
   }
@@ -119,15 +119,15 @@ public abstract class CommandLineOptions
    * 
    * @param args The args queue.
    * @return The parameter to the switch.
-   * @throws IllegalOptionException if no parameter is present.
+   * @throws IllegalConfigOptionException if no parameter is present.
    */
   protected static String stringArg (Queue<String> args)
-    throws IllegalOptionException
+    throws IllegalCommandLineOption
   {
     String option = args.remove ();
     
     if (args.isEmpty ())
-      throw new IllegalOptionException (option, "Missing parameter");
+      throw new IllegalCommandLineOption (option, "Missing parameter");
     else
       return args.remove ();
   }
@@ -138,7 +138,7 @@ public abstract class CommandLineOptions
    * 
    * @param args The args queue.
    * @return The parameter to the argument.
-   * @throws IllegalOptionException if no parameter is present or it
+   * @throws IllegalConfigOptionException if no parameter is present or it
    *           is not a number.
    */
   protected static int intArg (Queue<String> args)
@@ -151,7 +151,7 @@ public abstract class CommandLineOptions
       return parseInt (value);
     } catch (NumberFormatException ex)
     {
-      throw new IllegalOptionException (arg, "Not a valid number: " + value);
+      throw new IllegalCommandLineOption (arg, "Not a valid number: " + value);
     }
   }
 

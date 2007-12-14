@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.Pair;
 
 import static org.avis.config.OptionTypeParam.splitOptionParam;
@@ -154,7 +154,7 @@ public class OptionSet
    * Get the maximum value for an int option.
    */
   public int getMaxValue (String name)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     return intOption (name).max;
   }
@@ -163,20 +163,20 @@ public class OptionSet
    * Get the minimum value for an int option.
    */
   public int getMinValue (String name)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     return intOption (name).min;
   }
   
   private OptionTypeInt intOption (String name)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     OptionType info = findOptionType (name);
     
     if (info instanceof OptionTypeInt)
       return (OptionTypeInt)info;
     else
-      throw new IllegalOptionException (name, "Not an integer value");  
+      throw new IllegalConfigOptionException (name, "Not an integer value");  
   }
   
   /**
@@ -222,7 +222,7 @@ public class OptionSet
    * @param option The option.
    * @param value The value to validate and set.
    * 
-   * @throws IllegalOptionException if the value or option are not
+   * @throws IllegalConfigOptionException if the value or option are not
    *           valid.
    * 
    * @see #validate(String, Object)
@@ -244,7 +244,7 @@ public class OptionSet
     {
       if (!optionItems.item2.isEmpty ())
       {
-        throw new IllegalOptionException
+        throw new IllegalConfigOptionException
           (option, "Cannot specify parameters for option");
       }
     }
@@ -256,7 +256,7 @@ public class OptionSet
     if (message == null)
       set (options, optionItems.item1, value);
     else
-      throw new IllegalOptionException (option, message);
+      throw new IllegalConfigOptionException (option, message);
   }
   
   /**
@@ -283,11 +283,11 @@ public class OptionSet
   /**
    * Shortcut to {@link OptionType#convert(String, Object)}.
    * 
-   * @throws IllegalOptionException if option not defined or value is
+   * @throws IllegalConfigOptionException if option not defined or value is
    *                 invalid.
    */
   public Object convert (String option, Object value)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     return optionTypeFor (option).convert (option, value);
   }
@@ -330,15 +330,15 @@ public class OptionSet
   /**
    * Get the option type for a given option.
    * 
-   * @throws IllegalOptionException if option is not defined.
+   * @throws IllegalConfigOptionException if option is not defined.
    */
   public OptionType optionTypeFor (String option)
-    throws IllegalOptionException
+    throws IllegalConfigOptionException
   {
     OptionType type = findOptionType (option);
     
     if (type == null)
-      throw new IllegalOptionException (option, "Undefined option");
+      throw new IllegalConfigOptionException (option, "Undefined option");
     
     return type;
   }
