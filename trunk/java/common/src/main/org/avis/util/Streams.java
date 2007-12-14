@@ -5,6 +5,7 @@ import java.util.Properties;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -247,24 +248,7 @@ public final class Streams
    * Close an input stream. Eats the (pointless, because there's
    * nothing we can do) IO exception and returns true/false instead.
    */
-  public static boolean close (InputStream in)
-  {
-    try
-    {
-      in.close ();
-      
-      return true;
-    } catch (IOException ex)
-    {
-      return false;
-    }
-  }
-  
-  /**
-   * Close a character stream. Eats the (pointless, because there's
-   * nothing we can do) IO exception and returns true/false instead.
-   */
-  public static boolean close (Reader in)
+  public static boolean close (Closeable in)
   {
     try
     {
