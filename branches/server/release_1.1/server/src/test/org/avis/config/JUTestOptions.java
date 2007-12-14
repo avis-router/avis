@@ -8,8 +8,11 @@ import org.junit.Test;
 
 import org.avis.util.IllegalOptionException;
 
+import static java.util.Collections.emptySet;
+
 import static org.avis.common.Common.K;
 import static org.avis.common.Common.MB;
+import static org.avis.util.Collections.set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -130,6 +133,25 @@ public class JUTestOptions
     assertEquals (false, options.get ("Federation.Active"));
     assertEquals (200, options.get ("Packet.Max-Length"));
     assertEquals (false, options.get ("Root1"));
+  }
+  
+  @Test
+  public void optionTypeSet () 
+    throws Exception
+  {
+    OptionSet optionSet = new OptionSet ();
+    optionSet.add ("Values", new OptionTypeSet (String.class), emptySet ());
+    
+    Options options = new Options (optionSet);
+    
+    options.set ("Values", "1");
+    assertEquals (set ("1"), options.get ("Values"));
+    
+    options.set ("Values", "1 2");
+    assertEquals (set ("1", "2"), options.get ("Values"));
+    
+    options.set ("Values", " 1\\ 2 \n 3\n ");
+    assertEquals (set ("1 2", "3"), options.get ("Values"));
   }
   
   static class ConnectionOptionSet extends OptionSet
