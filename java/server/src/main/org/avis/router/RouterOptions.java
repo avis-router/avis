@@ -7,7 +7,7 @@ import java.util.Set;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.config.Options;
-import org.avis.util.IllegalOptionException;
+import org.avis.util.IllegalConfigOptionException;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.common.ElvinURI.secureProtocol;
@@ -76,7 +76,7 @@ public class RouterOptions extends Options
           uris.add (uri);
         } else
         {
-          throw new IllegalOptionException
+          throw new IllegalConfigOptionException
             ("Listen",
              "Avis only supports protocols: " + 
              defaultProtocol () + " and " + secureProtocol () + 
@@ -84,7 +84,7 @@ public class RouterOptions extends Options
         }
       } catch (InvalidURIException ex)
       {
-        throw new IllegalOptionException ("Listen", ex.getMessage ());
+        throw new IllegalConfigOptionException ("Listen", ex.getMessage ());
       }
     }
     
