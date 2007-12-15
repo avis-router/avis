@@ -48,18 +48,22 @@ using the `Public` federation class.
 Incoming Connections
 ----------------------------------------------------------------------
 
-To set which address and port to listen to for incoming federation
-connections:
+To have a router listen to for incoming federation connections you
+might have an entry like:
 
 <pre>
 <span class="variable-name">Federation.Listen</span> = ewaf://0.0.0.0:2916
 </pre>
 
+This listens for incoming federation connections on port 2916 on all
+network interfaces.
+
 The host that listens for incoming connections also needs a mapping
-from a remote host's name to a federation class to use for the
+from a remote host to a federation class to use for the
 connection. For example, to specify that connections from the host
 `public.elvin.org` should use the `Public` federation class, and that
-a host you manage called `hex.somewhere.org` uses an `Internal` class:
+a host you manage called `hex.somewhere.org` uses the `Internal`
+class:
 
 <pre>
 <span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Public</span>] = @public.elvin.org
@@ -74,9 +78,9 @@ of the `Apply-Class` mappings:
 <span class="variable-name">Federation.Default-Class</span> = Public
 </pre>
 
-As a security measure, if there is no mapping for a connecting host
-either via `Apply-Class` or `Default-Class`, then the host will be
-refused federation access.
+As a security measure, if there is no mapping for a host either via
+`Apply-Class` or `Default-Class`, then it will be refused federation
+access.
 
 See the comments in `etc/avisd.conf` file for more information on
 setting up federation.
