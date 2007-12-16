@@ -1,10 +1,10 @@
 Release 1.1.4 (December 15, 2007)
 ----------------------------------------------------------------------
 
-This release provides some enchancements to federation setup.
+This release provides some enhancements to federation setup.
 
  * Federation.Connect now accepts multiple URI's allowing federation
-   connections to more than one router.
+   connections with the same class to more than one router.
 
  * Hostnames in the federation configuration are now matched case
    insensitively.
@@ -12,8 +12,8 @@ This release provides some enchancements to federation setup.
  * Escapes can now be used to quote literal spaces in space-separated
    lists in the configuration file.
 
- * Changed default federation server domain to be different when
-   running multiple router instances in the same VM.
+ * Changed default federation server domain so that it is different
+   when running multiple router instances in the same VM.
 
 
 Release 1.1.3 (December 11, 2007)
@@ -88,7 +88,7 @@ This release adds support for multi-router federation.
 
  * The router now enforces stricter compliance on subscription
    expressions. In regard to identifiers this means that expressions
-   with no space betwen identifier and punctuation like "size(name)"
+   with no space between identifier and punctuation like "size(name)"
    are no longer valid. This is not optimal, and may change in a
    future release: it is recommended to use spaces to avoid ambiguity.
 
@@ -105,7 +105,7 @@ specification. All users are advised to upgrade.
    violation and disconnection.
 
  * The router was erroneously expanding C-style escapes in strings
-   (\n, \t, etc) to their equivalvent in a C string (newline, tab,
+   (\n, \t, etc) to their equivalent in a C string (newline, tab,
    etc).
 
  * The router was not applying default connection limits in its
