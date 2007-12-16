@@ -1,4 +1,4 @@
-Release 1.1.4 (December 15, 2007)
+Release 1.1.4 (December 16, 2007)
 ----------------------------------------------------------------------
 
 This release provides some enhancements to federation setup.
