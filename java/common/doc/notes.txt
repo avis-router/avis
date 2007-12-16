@@ -3,7 +3,8 @@ Releases
 
 Server 1.2
 
- * Support client auth in connection options
+ * Support client auth in connection
+   options. elvin:/secure/0.0.0.0:29170?TLS.Require-Trusted-Client=true
  * Federation TLS
  * Ship Avis server with default certs?
  * default federation class? e.g. Federation.Apply-Class[Public]=*
