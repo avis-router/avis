@@ -68,7 +68,7 @@ public class FederationManager implements CloseListener
    * 
    * @throws IllegalArgumentException if no manager found.
    */
-  public static FederationManager managerFor (Router router)
+  public static FederationManager federationManagerFor (Router router)
   {
     for (Object listener : router.closeListeners ())
     {
