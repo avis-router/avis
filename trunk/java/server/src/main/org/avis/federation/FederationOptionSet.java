@@ -1,6 +1,5 @@
 package org.avis.federation;
 
-import org.avis.common.InvalidURIException;
 import org.avis.config.OptionSet;
 import org.avis.config.OptionType;
 import org.avis.config.OptionTypeParam;
@@ -79,34 +78,6 @@ public class FederationOptionSet extends OptionSet
     public String validate (String option, Object value)
     {
       return validateType (value, Node.class);
-    }
-  }
-
-  /**
-   * An EWAF URI option.
-   */
-  static class EwafUriOption extends OptionType
-  {
-    @Override
-    public Object convert (String option, Object value)
-      throws IllegalConfigOptionException
-    {
-      try
-      {
-        if (!(value instanceof EwafURI))
-          value = new EwafURI (value.toString ());
-        
-        return value;
-      } catch (InvalidURIException ex)
-      {
-        throw new IllegalConfigOptionException (option, ex.getMessage ());
-      }
-    }
-
-    @Override
-    public String validate (String option, Object value)
-    {
-      return validateType (value, EwafURI.class);
     }
   }
 }
