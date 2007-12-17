@@ -3,8 +3,6 @@ package org.avis.util;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.avis.logging.Log;
-
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 
@@ -17,13 +15,13 @@ import static java.util.Arrays.asList;
 public abstract class CommandLineOptions
 {
   /**
-   * Parse an array of command line options.
+   * Parse an array of command line options and create an option set.
    * 
    * @param argv The command line options.
    * 
    * @throws IllegalConfigOptionException if an error is detected.
    */
-  public void parse (String [] argv)
+  public CommandLineOptions (String... argv)
     throws IllegalCommandLineOption
   {
     Queue<String> args = new LinkedList<String> (asList (argv));
@@ -45,37 +43,42 @@ public abstract class CommandLineOptions
   }
   
   /**
-   * Parse the command line options successfully or exit() with a usage
-   * error.
+   * Handle an error in parsing command line options or starting the
+   * command line application by printing an error on the console and
+   * exiting the VM with an error code.
    * 
-   * @see #usageError(String)
-   * @see #usage()
+   * @param appName The application's name.
+   * @param usage The command line usage string. The app name will be
+   *                appended to this, so this should just include the
+   *                options summary plus any detail.
+   * @param ex The error that triggered the exit.
+   *                IllegalCommandLineOption is handled specially by
+   *                printing a usage string.
    */
-  public void parseOrExit (String [] args)
+  public static void handleError (String appName, String usage, Exception ex)
   {
-    try
+    if (ex instanceof IllegalCommandLineOption)
     {
-      parse (args);
-    } catch (IllegalCommandLineOption ex)
+      System.err.println (appName + ": " + ex.getMessage ());
+      System.err.println ();
+      
+      System.err.println ("Usage:");
+      System.err.println ();
+      System.err.print ("  ");
+      System.err.print (appName);
+      System.err.print (' ');
+      System.err.println (usage);
+      
+      System.exit (1);
+    } else
     {
-      usageError (ex.getMessage ());
+      System.err.println (appName + ": error on startup: " + ex.getMessage ());
+      System.err.println ();
+      
+      System.exit (2);
     }
   }
   
-  protected void usageError (String message)
-  {
-    String applicationName = Log.applicationName ();
-    
-    if (applicationName != null)
-      System.err.print (applicationName + ": ");
-    
-    System.err.println (message);
-    System.err.println ();
-    System.err.println (usage ());
-    System.err.println ();
-    System.exit (1);
-  }
-
   private boolean argHandled (Queue<String> args)
   {
     int size = args.size ();
@@ -96,11 +99,6 @@ public abstract class CommandLineOptions
    */
   protected abstract void handleArg (Queue<String> args)
     throws IllegalCommandLineOption;
-
-  /**
-   * Generate a usage string suitable for printing to the console.
-   */
-  protected abstract String usage ();
 
   /**
    * Called at the end of parsing. Throw IllegalOptionException if the
