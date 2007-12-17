@@ -11,19 +11,17 @@ import org.avis.util.IllegalCommandLineOption;
  */
 public class EcOptions extends ToolOptions
 {
-  private static final String USAGE =
-    "Usage: ec " + COMMON_USAGE_SUMMARY + " subscription\n\n" +
-    COMMON_USAGE_DETAIL;
+  public static final String USAGE =
+    COMMON_USAGE_SUMMARY + " subscription\n\n" + COMMON_USAGE_DETAIL;
 
   /**
    * The subscription expression.
    */
   public String subscription;
- 
-  @Override
-  protected String usage ()
+
+  public EcOptions (String... args)
   {
-    return USAGE;
+    super (args);
   }
   
   @Override
