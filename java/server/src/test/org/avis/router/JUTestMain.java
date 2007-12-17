@@ -6,12 +6,22 @@ import java.io.PrintWriter;
 
 import org.junit.Test;
 
+import org.avis.federation.Connector;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.logging.Log;
 import org.avis.util.IllegalConfigOptionException;
 
+import static org.avis.federation.FederationManager.managerFor;
+import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.util.Streams.close;
 
+/**
+ * Full integration test between three routers. Starts each router as
+ * if started from command line and federates in a V: router1 ->
+ * router2 and router1 -> router3.
+ * 
+ * @author Matthew Phillips
+ */
 public class JUTestMain
 {
   @Test
@@ -25,7 +35,8 @@ public class JUTestMain
       "Federation.Connect[Test]=" +
         "ewaf://127.0.0.1:29181 ewaf://127.0.0.1:29191\n" + 
       "Federation.Subscribe[Test]=require (test)\n" + 
-      "Federation.Provide[Test]=require (test)"
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Request-Timeout=2"
     );
     
     File config2 = configFile
@@ -47,12 +58,17 @@ public class JUTestMain
       "Federation.Provide[Test]=require (test)\n" +
       "Federation.Apply-Class[Test]=@127.0.0.1"
     );
-    
-    Router router1 = startRouter (config1);
+
+    Log.enableLogging (Log.INFO, false);
+    // Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
+
     Router router2 = startRouter (config2);
     Router router3 = startRouter (config3);
-    
-    // Thread.sleep (10000);
+    Router router1 = startRouter (config1);
+
+    for (Connector connector : managerFor (router1).connectors ())
+      waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
     SimpleClient client2 = new SimpleClient ("127.0.0.1", 29190);
@@ -62,9 +78,6 @@ public class JUTestMain
     
     client2.connect ();
     client2.subscribe ("test == 2");
-    
-    Log.enableLogging (Log.TRACE, true);
-    Log.enableLogging (Log.DIAGNOSTIC, true);
     
     client1.send (new NotifyEmit ("test", 2));
     
