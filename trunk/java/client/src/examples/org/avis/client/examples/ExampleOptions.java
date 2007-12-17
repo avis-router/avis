@@ -19,26 +19,18 @@ public class ExampleOptions extends CommandLineOptions
 {
   protected static final String USAGE =
     "-e elvin\n\n" +
-    "  -e elvin  Set the Elvin URI e.g. elvin://host:port";
+    "    -e elvin  Set the Elvin URI e.g. elvin://host:port";
   
   /**
    * The Elvin router to connect to.
    */
   public ElvinURI elvinUri;
 
-  private String appName;
-  
-  ExampleOptions (String appName)
+  public ExampleOptions (String... args)
   {
-    this.elvinUri = new ElvinURI (getProperty ("elvin", "elvin://localhost"));
+    super (args);
     
-    this.appName = appName;
-  }
-  
-  @Override
-  protected String usage ()
-  {
-    return "usage: " + appName + " " + USAGE;
+    this.elvinUri = new ElvinURI (getProperty ("elvin", "elvin://localhost"));
   }
   
   @Override

@@ -1,6 +1,7 @@
 package org.avis.client.examples;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.avis.client.Elvin;
@@ -10,7 +11,9 @@ import org.avis.security.Key;
 import org.avis.security.Keys;
 
 import static org.avis.client.SecureMode.REQUIRE_SECURE_DELIVERY;
+import static org.avis.client.examples.ExampleOptions.USAGE;
 import static org.avis.security.KeyScheme.SHA1_CONSUMER;
+import static org.avis.util.CommandLineOptions.handleError;
 
 /*
  * This is the receiver part of the security example. In this example
@@ -25,11 +28,18 @@ public class SecureReceiver
   public static void main (String [] args)
     throws Exception
   {
-    // read command line options
-    ExampleOptions options = new ExampleOptions ("secure-receiver");
-    
-    options.parseOrExit (args);
-    
+    try
+    {
+      run (new ExampleOptions (args));
+    } catch (Exception ex)
+    {
+      handleError ("secure-receiver", USAGE, ex);
+    }
+  }
+  
+  private static void run (ExampleOptions options)
+    throws IOException
+  {
     Elvin elvin = new Elvin (options.elvinUri);
     
     elvin.closeOnExit ();

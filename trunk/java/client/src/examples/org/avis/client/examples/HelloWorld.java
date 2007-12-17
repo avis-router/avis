@@ -1,10 +1,15 @@
 package org.avis.client.examples;
 
+import java.io.IOException;
+
 import org.avis.client.Elvin;
 import org.avis.client.Notification;
 import org.avis.client.NotificationEvent;
 import org.avis.client.NotificationListener;
 import org.avis.client.Subscription;
+
+import static org.avis.client.examples.ExampleOptions.USAGE;
+import static org.avis.util.CommandLineOptions.handleError;
 
 /*
  * This example demonstrates two Elvin clients, one sending the
@@ -23,11 +28,18 @@ public class HelloWorld
   public static void main (String [] args)
     throws Exception
   {
-    // read command line options
-    ExampleOptions options = new ExampleOptions ("hello");
-    
-    options.parseOrExit (args);
-    
+    try
+    {
+      run (new ExampleOptions (args));
+    } catch (Exception ex)
+    {
+      handleError ("hello", USAGE, ex);
+    }
+  }
+  
+  private static void run (ExampleOptions options) 
+    throws IOException, InterruptedException
+  {
     // create a client that listens for messages with a "Greeting" field
     Elvin listeningClient = new Elvin (options.elvinUri);
     

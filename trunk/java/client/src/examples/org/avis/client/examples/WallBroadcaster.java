@@ -1,9 +1,13 @@
 package org.avis.client.examples;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.avis.client.Elvin;
 import org.avis.client.Notification;
+
+import static org.avis.client.examples.ExampleOptions.USAGE;
+import static org.avis.util.CommandLineOptions.handleError;
 
 /*
  * This is the broadcaster part of the "wall" example. In this
@@ -18,11 +22,18 @@ public class WallBroadcaster
   public static void main (String [] args)
     throws Exception
   {
-    // read command line options
-    ExampleOptions options = new ExampleOptions ("wall-broadcaster");
-    
-    options.parseOrExit (args);
-    
+    try
+    {
+      run (new ExampleOptions (args));
+    } catch (Exception ex)
+    {
+      handleError ("wall-broadcaster", USAGE, ex);
+    }
+  }
+  
+  private static void run (ExampleOptions options)
+    throws IOException
+  {
     Elvin elvin = new Elvin (options.elvinUri);
     
     elvin.closeOnExit ();

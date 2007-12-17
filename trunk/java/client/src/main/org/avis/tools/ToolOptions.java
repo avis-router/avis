@@ -2,6 +2,10 @@ package org.avis.tools;
 
 import java.util.Queue;
 
+import java.io.IOException;
+
+import java.net.ConnectException;
+
 import org.avis.client.SecureMode;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
@@ -60,10 +64,25 @@ public abstract class ToolOptions extends CommandLineOptions
    */
   public SecureMode secureMode;
   
-  ToolOptions ()
+  public ToolOptions (String... args)
   {
+    super (args);
+    
     this.secureMode = ALLOW_INSECURE_DELIVERY;
     this.keys = new Keys ();
+  }
+  
+  public static void handleIOError (String appName, IOException ex)
+  {
+    System.err.print (appName);
+    System.err.print (": ");
+    
+    if (ex instanceof ConnectException)
+      System.err.println ("Failed to connect to Elvin: connection refused");
+    else
+      System.err.println ("Error connecting to Elvin: " + ex.getMessage ());
+    
+    System.exit (3);
   }
   
   @Override
