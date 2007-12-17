@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * A generic event listener list. The list is thread safe, but does
@@ -55,6 +56,11 @@ public class ListenerList<E>
   {
     this.listenerMethod = lookupMethod (listenerType, method, paramTypes);
     this.listeners = emptyList ();
+  }
+  
+  public List<E> asList ()
+  {
+    return unmodifiableList (listeners);
   }
   
   public void add (E listener)
