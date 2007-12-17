@@ -24,7 +24,7 @@ import static org.avis.util.Streams.close;
  * 
  * @author Matthew Phillips
  */
-public class JUTestMain
+public class JUTestFederationIntegration
 {
   @Test
   public void main ()
