@@ -60,6 +60,25 @@ public class FederationManager implements CloseListener
     router.addCloseListener (this);
   }
   
+  /**
+   * Find the federation manager for a router.
+   * 
+   * @param router The router.
+   * @return The last federation manager created for the router.
+   * 
+   * @throws IllegalArgumentException if no manager found.
+   */
+  public static FederationManager managerFor (Router router)
+  {
+    for (Object listener : router.closeListeners ())
+    {
+      if (listener instanceof FederationManager)
+        return (FederationManager)listener;
+    }
+    
+    throw new IllegalArgumentException ("No federation manager");
+  }
+  
   public Acceptor acceptor ()
   {
     return acceptor;
