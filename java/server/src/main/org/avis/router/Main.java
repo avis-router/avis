@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.avis.common.ElvinURI;
-import org.avis.config.Options;
 import org.avis.federation.EwafURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptionSet;
@@ -16,6 +15,7 @@ import org.avis.logging.Log;
 import org.avis.util.IllegalCommandLineOption;
 import org.avis.util.IllegalConfigOptionException;
 
+import static org.avis.federation.FederationManager.managerFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.TRACE;
@@ -73,18 +73,15 @@ public class Main
         }
       });
       
-      // show status
-      Options config = router.options ();
-
       for (ElvinURI uri : router.listenURIs ())
       {
         for (InetSocketAddress address : addressesFor (uri))
           info ("Router listening on " + address + " (" + uri + ")", Main.class);
       }
       
-      if (config.getBoolean ("Federation.Activated"))
+      if (router.options ().getBoolean ("Federation.Activated"))
       {
-        for (EwafURI uri : config.getSet ("Federation.Listen", EwafURI.class))
+        for (EwafURI uri : managerFor (router).listenURIs ())
         {
           for (InetSocketAddress address : addressesFor (uri))
           {
