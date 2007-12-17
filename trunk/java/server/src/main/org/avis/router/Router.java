@@ -1,5 +1,6 @@
 package org.avis.router;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -461,6 +462,14 @@ public class Router implements IoHandler, Closeable
   public void removeCloseListener (CloseListener listener)
   {
     closeListeners.remove (listener);
+  }
+  
+  /**
+   * Get a list of the current close event listeners.
+   */
+  public List<CloseListener> closeListeners ()
+  {
+    return closeListeners.asList ();
   }
   
   /**
