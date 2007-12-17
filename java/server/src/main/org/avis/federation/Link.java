@@ -73,6 +73,7 @@ public class Link implements NotifyListener
   private String remoteServerDomain;
   private String remoteHostName;
   private Node remotePullFilter;
+  private boolean subscribed;
   private volatile boolean closed;
 
   public Link (IoSession session,
@@ -89,6 +90,7 @@ public class Link implements NotifyListener
     this.remoteServerDomain = remoteServerDomain;
     this.remoteHostName = remoteHostName;
     this.remotePullFilter = CONST_FALSE;
+    this.subscribed = false;
     
     subscribe ();
     
@@ -104,6 +106,17 @@ public class Link implements NotifyListener
   public String remoteServerDomain ()
   {
     return remoteServerDomain;
+  }
+
+  /**
+   * True if the link is fully initialised from its POV. This is
+   * automatically true for links with a null pull filter, and true
+   * for links with a non-null pull filter that has been ACK'd by the
+   * remote.
+   */
+  public boolean isLive ()
+  {
+    return federationClass.incomingFilter == CONST_FALSE || subscribed;
   }
 
   public boolean isClosed ()
@@ -217,7 +230,7 @@ public class Link implements NotifyListener
         handleNack ((Nack)message);
         break;
       case Ack.ID:
-        // zip
+        handleAck ((Ack)message);
         break;
       case RequestTimeoutMessage.ID:
         handleRequestTimeout (((RequestTimeoutMessage)message).request);
@@ -268,6 +281,12 @@ public class Link implements NotifyListener
     logError (message, this);
     
     handleProtocolViolation (message.error.getMessage ());
+  }
+
+  private void handleAck (Ack ack)
+  {
+    if (ack.request instanceof FedSubReplace)
+      subscribed = true;
   }
 
   private void handleNack (Nack nack)
