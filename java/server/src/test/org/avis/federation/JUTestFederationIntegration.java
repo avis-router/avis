@@ -13,7 +13,7 @@ import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.util.IllegalConfigOptionException;
 
-import static org.avis.federation.FederationManager.managerFor;
+import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.util.Streams.close;
 
@@ -69,7 +69,7 @@ public class JUTestFederationIntegration
     Router router3 = startRouter (config3);
     Router router1 = startRouter (config1);
 
-    for (Connector connector : managerFor (router1).connectors ())
+    for (Connector connector : federationManagerFor (router1).connectors ())
       waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);

@@ -15,7 +15,7 @@ import org.avis.logging.Log;
 import org.avis.util.IllegalCommandLineOption;
 import org.avis.util.IllegalConfigOptionException;
 
-import static org.avis.federation.FederationManager.managerFor;
+import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.TRACE;
@@ -81,7 +81,7 @@ public class Main
       
       if (router.options ().getBoolean ("Federation.Activated"))
       {
-        for (EwafURI uri : managerFor (router).listenURIs ())
+        for (EwafURI uri : federationManagerFor (router).listenURIs ())
         {
           for (InetSocketAddress address : addressesFor (uri))
           {
