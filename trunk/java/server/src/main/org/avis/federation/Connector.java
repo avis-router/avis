@@ -118,9 +118,13 @@ public class Connector implements IoHandler, Closeable
     return asyncConnectTimer != null;
   }
   
+  /**
+   * True if the link has been connected plus successful handshake and
+   * initial subscription.
+   */
   public boolean isConnected ()
   {
-    return link != null;
+    return link != null && link.isLive ();
   }
   
   /**
