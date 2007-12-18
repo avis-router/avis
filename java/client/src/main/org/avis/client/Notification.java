@@ -10,6 +10,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -22,7 +23,7 @@ import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 
-import static org.avis.util.Streams.readLine;
+import static org.avis.util.Streams.bufferedReaderFor;
 import static org.avis.util.Text.appendEscaped;
 import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.className;
@@ -166,11 +167,12 @@ public final class Notification
   public static void parse (Notification ntfn, Reader in)
     throws IOException, InvalidFormatException
   {
+    BufferedReader reader = bufferedReaderFor (in);
     String line = null;
     
     try
     {
-      while ((line = nextLine (in)) != null)
+      while ((line = nextLine (reader)) != null)
         parseLine (ntfn, line);
       
     } catch (InvalidFormatException ex)
@@ -186,14 +188,14 @@ public final class Notification
    * @return The next line, or null if at eof or the notification
    *         "---" terminator.
    */
-  private static String nextLine (Reader in)
+  private static String nextLine (BufferedReader in)
     throws IOException
   {
     String line;
     
     do
     {
-      line = readLine (in);
+      line = in.readLine ();
     } while (line != null && line.startsWith ("$"));
     
     if (line != null)
