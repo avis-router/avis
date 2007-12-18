@@ -298,6 +298,8 @@
       <include name="org/avis/tools/Ec.class" />
       <include name="org/avis/tools/Ep.class" />
       <include name="org/avis/tools/Hash.class" />
+      
+      <include name="org/avis/io/StreamReader.class" />
         
       <exclude name="org/avis/client/*" />
       <exclude name="org/avis/io/*" />
