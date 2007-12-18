@@ -1,19 +1,16 @@
 package org.avis.tools;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 import org.avis.client.Elvin;
 import org.avis.client.Notification;
+import org.avis.io.StreamReader;
 import org.avis.util.InvalidFormatException;
 
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.tools.EpOptions.USAGE;
 import static org.avis.tools.ToolOptions.handleIOError;
 import static org.avis.util.CommandLineOptions.handleError;
-import static org.avis.util.Streams.eof;
 
 /**
  * The ep command line utility. Reads a notification from standard
@@ -66,12 +63,11 @@ public class Ep
       }
     });
     
-    Reader input =
-      new BufferedReader (new InputStreamReader (System.in, "UTF-8"));
+    StreamReader input = new StreamReader (System.in);
     
-    while (!eof (input))
+    while (!input.eof ())
       elvin.send (new Notification (input), options.secureMode);
-    
+
     elvin.close ();
   }
 }
