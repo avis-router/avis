@@ -71,5 +71,7 @@ public class Ep
     
     while (!eof (input))
       elvin.send (new Notification (input), options.secureMode);
+    
+    elvin.close ();
   }
 }
