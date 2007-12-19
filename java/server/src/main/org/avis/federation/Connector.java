@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 import java.net.InetSocketAddress;
 
@@ -15,6 +16,7 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
+import org.apache.mina.filter.SSLFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -30,6 +32,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.router.Router;
+import org.avis.util.IllegalConfigOptionException;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
@@ -72,7 +75,8 @@ public class Connector implements IoHandler, Closeable
   
   public Connector (Router router, String serverDomain,
                     EwafURI uri, FederationClass federationClass,
-                    Options options)
+                    Options options) 
+    throws IllegalConfigOptionException, IOException
   {
     this.router = router;
     this.uri = uri;
@@ -94,20 +98,38 @@ public class Connector implements IoHandler, Closeable
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
     connectorConfig.setConnectTimeout ((int)(requestTimeout / 1000));
     
-    DefaultIoFilterChainBuilder filterChain = 
-      connectorConfig.getFilterChain ();
+    DefaultIoFilterChainBuilder filters = connectorConfig.getFilterChain ();
     
-    filterChain.addLast ("codec", FederationFrameCodec.FILTER);
+    if (uri.isSecure ())
+    {
+      filters.addFirst
+        ("ssl", 
+         sslFilter
+           (options.getBoolean ("Federation.TLS.Require-Trusted-Server")));
+    }
     
-    filterChain.addLast
+    filters.addLast ("codec", FederationFrameCodec.FILTER);
+    
+    filters.addLast
       ("requestTracker", new RequestTrackingFilter (requestTimeout));
     
-    filterChain.addLast
+    filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
     connect ();
   }
   
+  private SSLFilter sslFilter (boolean requireTrustedServer) 
+    throws IOException
+  {
+    SSLFilter filter = 
+      new SSLFilter (router.createSSLContext (requireTrustedServer));
+    
+    filter.setUseClientMode (true);
+    
+    return filter;
+  }
+
   public Link link ()
   {
     return link;
