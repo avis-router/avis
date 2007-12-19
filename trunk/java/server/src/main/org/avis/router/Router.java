@@ -10,11 +10,10 @@ import java.io.InputStream;
 
 import java.net.InetSocketAddress;
 
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
@@ -72,16 +71,17 @@ import static java.lang.System.identityHashCode;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
 import static org.apache.mina.common.ByteBuffer.setUseDirectBuffers;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
+
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
+import static org.avis.io.TLS.sslContextFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -115,6 +115,7 @@ public class Router implements IoHandler, Closeable
   private RouterOptions routerOptions;
   private ExecutorService executor;
   private SocketAcceptor acceptor;
+  private KeyStore keystore;
   private SSLContext sslContext;
   private volatile boolean closing;
   
@@ -262,7 +263,27 @@ public class Router implements IoHandler, Closeable
     
     return defaultAcceptorConfig;
   }
-  
+
+  /**
+   * Create a new SSL context using the router's keystore. This can be
+   * used by clients that wish to use TLS connections using the
+   * router's TLS settings.
+   * 
+   * @param requireTrustedServer True if the context should be set to
+   *                allow only trusted servers.
+   * 
+   * @return A new SSL context.
+   * 
+   * @throws IOException if TLS failed to initialise.
+   */
+  public SSLContext createSSLContext (boolean requireTrustedServer) 
+    throws IOException
+  {
+    return sslContextFor (keystore (), 
+                          routerOptions.getString ("TLS.Keystore-Passphrase"), 
+                          requireTrustedServer);
+  }
+
   /**
    * Lazy create the MINA SSL filter for incoming secure (TLS)
    * connections.
@@ -271,44 +292,8 @@ public class Router implements IoHandler, Closeable
     throws IllegalConfigOptionException, IOException
   {
     if (sslContext == null)
-    {
-      InputStream keystoreStream = 
-        routerOptions.getAbsoluteURI 
-          ("TLS.Keystore").toURL ().openStream ();
-      
-      try
-      {
-        char [] passphrase = 
-          routerOptions.getString 
-            ("TLS.Keystore-Passphrase").toCharArray ();
-        
-        KeyStore keystore = KeyStore.getInstance ("JKS");
-        
-        keystore.load (keystoreStream, passphrase);
-        
-        KeyManagerFactory keyFactory = 
-          KeyManagerFactory.getInstance ("SunX509");
-        
-        keyFactory.init (keystore, passphrase);
-      
-        TrustManagerFactory trustFactory =
-          TrustManagerFactory.getInstance ("SunX509");
-        
-        trustFactory.init (keystore);
-        
-        sslContext = SSLContext.getInstance ("TLS");
-     
-        sslContext.init (keyFactory.getKeyManagers (), 
-                         trustFactory.getTrustManagers (), null);
-      } catch (Exception ex)
-      {
-        throw new IOException ("Failed to initialise TLS: " + ex);
-      } finally
-      {
-        keystoreStream.close ();
-      }
-    }
-    
+      sslContext = createSSLContext (false);
+
     SSLFilter sslFilter = new SSLFilter (sslContext);
     
     sslFilter.setNeedClientAuth (requireTrustedTLSClient);
@@ -316,6 +301,38 @@ public class Router implements IoHandler, Closeable
     return sslFilter;
   }
 
+  /**
+   * Lazy load the router's keystore.
+   */
+  private KeyStore keystore () 
+    throws IOException
+  {
+    if (keystore == null)
+    {
+      InputStream keystoreStream = 
+        routerOptions.getAbsoluteURI ("TLS.Keystore").toURL ().openStream ();
+      
+      try
+      {
+        String passphrase = 
+          routerOptions.getString ("TLS.Keystore-Passphrase");
+        
+        keystore = KeyStore.getInstance ("JKS");
+        
+        keystore.load (keystoreStream, passphrase.toCharArray ());
+      } catch (GeneralSecurityException ex)
+      {
+        throw new IOException ("Failed to load TLS keystore: " + 
+                               ex.getMessage ());
+      } finally
+      {
+        keystoreStream.close ();
+      }
+    }
+    
+    return keystore;
+  }
+  
   /**
    * Close all connections synchronously. Close listeners are notified
    * before shutdown commences. May be called more than once with no
