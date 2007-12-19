@@ -206,10 +206,15 @@ public final class Text
   public static String quotedStringToString (String valueExpr)
     throws InvalidFormatException
   {
-    int last = findFirstNonEscaped (valueExpr, 1, '"');
+    if (valueExpr.length () == 0)
+      throw new InvalidFormatException ("Empty string");
     
-    if (last == -1)
-      last = findFirstNonEscaped (valueExpr, 1, '\'');
+    char quote = valueExpr.charAt (0);
+    
+    if (quote != '\'' && quote != '"')
+      throw new InvalidFormatException ("String must start with a quote");
+    
+    int last = findFirstNonEscaped (valueExpr, 1, quote);
     
     if (last == -1)
       throw new InvalidFormatException ("Missing terminating quote in string");
