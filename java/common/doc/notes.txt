@@ -3,6 +3,7 @@ Releases
 
 Server 1.2
 
+ * Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * Support client auth in connection
    options. elvin:/secure/0.0.0.0:29170?TLS.Require-Trusted-Client=true
  * Federation TLS
