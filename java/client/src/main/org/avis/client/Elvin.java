@@ -13,11 +13,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
-import javax.net.ssl.TrustManager;
 
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
@@ -33,7 +29,6 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.common.RuntimeInterruptedException;
-import org.avis.io.AvisX509TrustManager;
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
 import org.avis.io.LivenessFilter;
@@ -75,6 +70,7 @@ import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.common.ElvinURI.secureProtocol;
 import static org.avis.io.Net.enableTcpNoDelay;
+import static org.avis.io.TLS.sslContextFor;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.internalError;
@@ -555,28 +551,10 @@ public final class Elvin implements Closeable
     
     try
     {
-      KeyManager [] keyManagers = null;
-      
-      if (options.keystore != null)
-      {
-        KeyManagerFactory keyFactory = 
-          KeyManagerFactory.getInstance ("SunX509");
-        
-        keyFactory.init (options.keystore, 
-                         options.keystorePassphrase.toCharArray ());
-        
-        keyManagers = keyFactory.getKeyManagers ();
-      }
-      
-      AvisX509TrustManager trustManager = 
-        new AvisX509TrustManager (options.keystore, 
-                                  options.requireTrustedServer, false);
-      
-      SSLContext sslContext = SSLContext.getInstance ("TLS");
- 
-      sslContext.init (keyManagers, new TrustManager [] {trustManager}, null);
-
-      SSLFilter filter = new SSLFilter (sslContext);
+      SSLFilter filter = 
+        new SSLFilter (sslContextFor (options.keystore, 
+                                      options.keystorePassphrase, 
+                                      options.requireTrustedServer));
       
       filter.setUseClientMode (true);
       
