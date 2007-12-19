@@ -471,7 +471,7 @@ public final class Elvin implements Closeable
    * Open a network connection to the router.
    */
   void openConnection ()
-    throws IOException
+    throws IOException, IllegalArgumentException
   {
     try
     {
@@ -523,7 +523,7 @@ public final class Elvin implements Closeable
    * Open an TLS/SSL session for the current connection.
    */
   private void openSSL ()
-    throws IOException, SSLException
+    throws IOException, IllegalArgumentException
   {
     SSLFilter sslFilter = createSSLFilter ();
   
@@ -541,28 +541,16 @@ public final class Elvin implements Closeable
    * Create a MINA SSL filter configured from the current options.
    */
   private SSLFilter createSSLFilter () 
-    throws IOException, SSLException
+    throws IOException, IllegalArgumentException
   {
-    if (options.keystore != null && options.keystorePassphrase == null)
-    {
-      throw new IllegalArgumentException 
-        ("Passphrase must be set when using a keystore");
-    }
+    SSLFilter filter = 
+      new SSLFilter (sslContextFor (options.keystore, 
+                                    options.keystorePassphrase, 
+                                    options.requireTrustedServer));
     
-    try
-    {
-      SSLFilter filter = 
-        new SSLFilter (sslContextFor (options.keystore, 
-                                      options.keystorePassphrase, 
-                                      options.requireTrustedServer));
-      
-      filter.setUseClientMode (true);
-      
-      return filter;
-    } catch (Exception ex)
-    {
-      throw new IOException ("Error initialising TLS: " + ex);
-    }
+    filter.setUseClientMode (true);
+    
+    return filter;
   }
   
   /**
