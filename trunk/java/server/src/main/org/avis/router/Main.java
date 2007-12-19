@@ -94,16 +94,16 @@ public class Main
     {
       if (ex instanceof IllegalArgumentException)
       {
-        if (ex instanceof IllegalConfigOptionException)
-        {
-          alarm ("Error in router configuration: " + ex.getMessage (), 
-                 Main.class);
-        } else if (ex instanceof IllegalCommandLineOption)
+        if (ex instanceof IllegalCommandLineOption)
         {
           alarm (ex.getMessage (), Main.class);
         
           System.err.println ();
           System.err.println (USAGE);
+        } else
+        {
+          alarm ("Error in router configuration: " + ex.getMessage (), 
+                 Main.class);
         }
         
         exit (1);
