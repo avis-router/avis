@@ -53,15 +53,17 @@ public final class TLS
    * @param requireTrustedServer True if only servers that are in the
    *                trusted certificate chain are acceptable. Has no
    *                effect when used in server mode.
-   *                
+   * 
    * @return The SSL context.
    * 
+   * @throws IllegalArgumentException if a keystore is specified and
+   *                 no passphrase is set.
    * @throws IOException if an error occurred initialising TLS.
    */
   public static SSLContext sslContextFor (KeyStore keystore, 
                                           String keystorePassphrase,
                                           boolean requireTrustedServer) 
-    throws IOException
+    throws IOException, IllegalArgumentException
   {
     if (keystore != null && keystorePassphrase == null)
     {
