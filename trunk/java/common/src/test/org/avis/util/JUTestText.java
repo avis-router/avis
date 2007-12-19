@@ -20,14 +20,37 @@ public class JUTestText
     throws Exception
   {
     assertEquals ("hello", Text.stringToValue ("'hello'"));
+    assertEquals ("he\"llo", Text.stringToValue ("'he\"llo'"));
+    assertEquals ("he\"llo", Text.stringToValue ("'he\\\"llo'"));
+    assertEquals ("he\\\"llo", Text.stringToValue ("'he\\\\\\\"llo'"));
     assertEquals ("hello", Text.stringToValue ("\"hello\""));
     assertEquals (32, Text.stringToValue ("32"));
     assertEquals (42L, Text.stringToValue ("42L"));
     assertEquals (0.12, Text.stringToValue ("0.12"));
     assertEquals ("0e ff de", 
                   Text.bytesToHex ((byte [])Text.stringToValue ("[0e ff de]")));
+    
+    assertStringValueInvalid ("'hello\"");
+    assertStringValueInvalid ("\"hello'");
+    assertStringValueInvalid ("'hello");
+    assertStringValueInvalid ("\"hello");
+    
+    assertStringValueInvalid (".2");
   }
   
+  private static void assertStringValueInvalid (String string)
+  {
+    try
+    {
+      Text.stringToValue (string);
+      
+      fail ();
+    } catch (InvalidFormatException ex)
+    {
+      // ok
+    }
+  }
+
   @Test
   public void parseHexBytes ()
      throws Exception
