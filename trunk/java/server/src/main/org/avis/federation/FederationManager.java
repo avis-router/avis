@@ -41,7 +41,7 @@ public class FederationManager implements CloseListener
   protected List<Connector> connectors;
 
   public FederationManager (Router router, Options federationConfig) 
-    throws IllegalConfigOptionException
+    throws IllegalConfigOptionException, IOException
   {
     this.router = router;
     
@@ -126,7 +126,8 @@ public class FederationManager implements CloseListener
     (Router router,
      String serverDomain,
      FederationClasses classes, 
-     Options config)
+     Options config) 
+     throws IllegalConfigOptionException, IOException
   {
     Map<String, Set<EwafURI>> connect = 
       (Map<String, Set<EwafURI>>)config.getParamOption ("Federation.Connect");
