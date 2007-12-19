@@ -20,7 +20,7 @@ public final class CommandLine
    * @param arg The argument index to retrieve.
    * @return The argument at arg.
    * 
-   * @throws IllegalArgumentException if arg does not exist.
+   * @throws IllegalCommandLineOption if arg does not exist.
    */
   public static String stringArg (String [] args, int arg)
   {
@@ -29,8 +29,8 @@ public final class CommandLine
       return args [arg];
     } catch (ArrayIndexOutOfBoundsException ex)
     {
-      throw new IllegalArgumentException
-        ("Missing parameter for \"" + args [arg - 1] + "\" option");
+      throw new IllegalCommandLineOption 
+        (args [arg - 1], "Missing parameter");
     }
   }
 
@@ -42,7 +42,7 @@ public final class CommandLine
    * @param arg The argument index to retrieve.
    * @return The argument at arg.
    * 
-   * @throws IllegalArgumentException if arg does not exist or is not
+   * @throws IllegalCommandLineOption if arg does not exist or is not
    *           a number.
    */
   public static int intArg (String [] args, int arg)
@@ -52,8 +52,8 @@ public final class CommandLine
       return Integer.parseInt (stringArg (args, arg));
     } catch (NumberFormatException ex)
     {
-      throw new IllegalArgumentException
-        (args [arg - 1] + ": not a number: " + args [arg]);
+      throw new IllegalCommandLineOption
+        (args [arg - 1], "Not a valid number: " + args [arg]);
     }
   }
 }
