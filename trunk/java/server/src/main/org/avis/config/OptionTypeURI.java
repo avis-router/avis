@@ -35,9 +35,6 @@ public class OptionTypeURI extends OptionType
   @Override
   public String validate (String option, Object value)
   {
-    if (value instanceof URI)
-      return null;
-    else
-      return "Value is not a URI";
+    return validateType (value, URI.class);
   }
 }
