@@ -46,8 +46,7 @@ public class ExampleOptions extends CommandLineOptions
         elvinUri = new ElvinURI (stringArg (args));
       } catch (InvalidURIException ex)
       {
-        throw new IllegalCommandLineOption
-          (arg, "Invalid Elvin URI: " + ex.getMessage ());
+        throw new IllegalCommandLineOption (arg, ex.getMessage ());
       }
     }
   }
