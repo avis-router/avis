@@ -13,10 +13,14 @@ import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 import org.avis.federation.io.FederationFrameCodec;
 import org.avis.federation.io.messages.FedConnRqst;
 import org.avis.io.TestingIoHandler;
+import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.RouterOptionSet;
 import org.avis.router.RouterOptions;
+import org.avis.util.LogFailTester;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
@@ -26,10 +30,36 @@ import static org.avis.federation.JUTestFederation.PORT2;
 import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.federation.TestUtils.waitForSingleLink;
 import static org.avis.io.TLS.defaultSSLContext;
+import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.enableLogging;
 import static org.avis.util.Collections.set;
 
 public class JUTestFederationTLS
 {
+  private LogFailTester logTester;
+  private boolean oldLogInfoState;
+
+  @Before
+  public void setup ()
+  {
+    // Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
+
+    oldLogInfoState = Log.shouldLog (INFO);
+    
+    enableLogging (INFO, false);
+    
+    logTester = new LogFailTester ();
+  }
+  
+  @After
+  public void tearDown ()
+  {
+    enableLogging (INFO, oldLogInfoState);
+    
+    logTester.assertOkAndDispose ();
+  }
+  
   @Test
   public void listener () 
     throws Exception
@@ -64,9 +94,9 @@ public class JUTestFederationTLS
     
     waitForSingleLink (acceptor);
     
-    session.close ();
-    
     acceptor.close ();
+
+    session.close ();
     
     router.close ();
   }
