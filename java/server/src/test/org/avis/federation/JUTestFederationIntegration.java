@@ -27,7 +27,7 @@ import static org.avis.util.Streams.close;
 public class JUTestFederationIntegration
 {
   @Test
-  public void main ()
+  public void integration ()
     throws Exception
   {
     File config1 = configFile
@@ -59,6 +59,82 @@ public class JUTestFederationIntegration
       "Federation.Subscribe[Test]=require (test)\n" + 
       "Federation.Provide[Test]=require (test)\n" +
       "Federation.Apply-Class[Test]=@127.0.0.1"
+    );
+
+    Log.enableLogging (Log.INFO, false);
+    // Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
+
+    Router router2 = startRouter (config2);
+    Router router3 = startRouter (config3);
+    Router router1 = startRouter (config1);
+
+    for (Connector connector : federationManagerFor (router1).connectors ())
+      waitForConnect (connector);
+    
+    SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
+    SimpleClient client2 = new SimpleClient ("127.0.0.1", 29190);
+    
+    client1.connect ();
+    client1.subscribe ("test == 1");
+    
+    client2.connect ();
+    client2.subscribe ("test == 2");
+    
+    client1.send (new NotifyEmit ("test", 2));
+    
+    client2.receive ();
+    
+    client2.send (new NotifyEmit ("test", 1));
+    
+    client1.receive ();
+    
+    client1.close ();
+    client2.close ();
+    
+    router1.close ();
+    router2.close ();
+    router3.close ();
+  }
+  
+  /**
+   * Full integration test including TLS in connector/acceptor.
+   */
+  @Test
+  public void integrationTLS ()
+    throws Exception
+  {
+    String commonOptions = 
+      "Federation.Activated=yes\n" +
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Apply-Class[Test]=@127.0.0.1\n" +
+      "Federation.Request-Timeout=2\n" +
+      "TLS.Keystore=" + getClass ().getResource ("router.ks") + "\n" +
+      "TLS.Keystore-Passphrase=testing\n" +
+      "Federation.TLS.Require-Trusted-Server=true\n" +
+      "Federation.TLS.Require-Trusted-Client=true\n";
+    
+    File config1 = configFile
+    (
+      "Listen=elvin:/secure/127.0.0.1:29170\n" +
+      commonOptions +
+      "Federation.Connect[Test]=" +
+        "ewaf:/secure/127.0.0.1:29181 ewaf:/secure/127.0.0.1:29191\n" 
+    );
+    
+    File config2 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29180\n" +
+      commonOptions +
+      "Federation.Listen=ewaf:/secure/127.0.0.1:29181\n"
+    );
+    
+    File config3 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29190\n" +
+      commonOptions +
+      "Federation.Listen=ewaf:/secure/127.0.0.1:29191\n"
     );
 
     Log.enableLogging (Log.INFO, false);
