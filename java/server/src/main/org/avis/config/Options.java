@@ -222,23 +222,36 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * @param option The option name.
    * 
    * @return An absolute URI.
+   * 
+   * @see #toAbsoluteURI(URI)
    */
   public URI getAbsoluteURI (String option)
   {
     Object value = get (option);
     
     if (value instanceof URI)
-    {
-      URI uri = (URI)value;
-      
-      if (uri.isAbsolute ())
-        return uri;
-      else
-        return relativeDirectory.toURI ().resolve (uri);
-    } else
-    {
+      return toAbsoluteURI ((URI)value);
+    else
       throw new IllegalConfigOptionException (option, "Not a URI");
-    }
+  }
+  
+  /**
+   * Resolve a URI against the
+   * {@linkplain #setRelativeDirectory(File) current directory} if
+   * needed. e.g. "file.txt" resolves to something like
+   * "file:/home/user/file.txt", whereas "http://host/file.txt" is
+   * untouched.
+   * 
+   * @param uri The URI to resolve.
+   * 
+   * @return An absolute URI.
+   */
+  public URI toAbsoluteURI (URI uri)
+  {
+    if (uri.isAbsolute ())
+      return uri;
+    else
+      return relativeDirectory.toURI ().resolve (uri);
   }
   
   /**
