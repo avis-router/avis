@@ -3,12 +3,15 @@ Releases
 
 Server 1.2
 
+ * --change default federation class syntax?
+   e.g. Federation.Apply-Class[Public]=*
+ * ditch use of @ in federation. use of server domain is fairly useless
  * Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
- * Support client auth in connection
-   options. elvin:/secure/0.0.0.0:29170?TLS.Require-Trusted-Client=true
+ * Support client auth in connect/listen
+   options. elvin:/secure/0.0.0.0:29170?require-trusted=true. put
+   options in as default layer in front of config.
  * Federation TLS
  * Ship Avis server with default certs?
- * default federation class? e.g. Federation.Apply-Class[Public]=*
  * includes in config: would allow federation to be spec'd separately
  * Test large frames with new heap sizes
  * ?Federation.Classes.Require=internal
@@ -20,9 +23,11 @@ Server 1.2
 Client 1.1
 
  * TLS
- * allow connection options in URI? merge with given options?
+ * allow connection options in URI? merge with given options? --use
+   server options package and ditch special options class?--
  * add subscription string escape utilities
- * ep doesn't do ^D properly: needs to handle empty lines 
+ * DONE: ep doesn't do ^D properly
+ * ep needs to handle empty lines 
  * client should probably not log messages: events instead, esp
    DropWarn
  * ec/ep options for TLS
@@ -33,7 +38,8 @@ Not allocated
 Client
 
 * client source won't build in Eclipse without server. Need to add it
-  ot deal with it otherwise. 
+  or deal with it otherwise.
+* handle redirect disconns 
 * synchronous reconnect/redirect? block for up to x secs before closing
 * better reporting for going over connection limits (e.g. max subs)
 * UDP unotify
@@ -50,7 +56,6 @@ Client
 
 Server
 
-* ditch use of @ in federation? use of server domain is fairly useless
 * failure to find VM wrapper on windows (David). possibly due to 
   uninstalling Java 5 after installing Java 6
 * Mantara ec requires elvin:4.0//...
@@ -59,7 +64,8 @@ Server
   federation reconnection. Not due to connected clients. Perhaps due
   to waiting for Disconn to be sent?
 * simple web-based stats: use small HTTP server.
-* web-based management: use small HTTP server. or in context of OSGi
+* web-based management: use small HTTP server. or in context of
+  OSGi. allow shutdown-and-redirect
 * OS X: installation in /usr/local means getting blown away on system
   reinstall. should we go in /opt?
 * DEB, Solaris: look at je4 packages dir
