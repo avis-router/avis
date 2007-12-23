@@ -19,7 +19,6 @@ import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoService;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
@@ -119,15 +118,6 @@ public class Router implements IoHandler, Closeable
   private SSLContext sslContext;
   private volatile boolean closing;
   
-  /**
-   * Server maintains its own concurrently-accessible session set
-   * rather than use
-   * {@link IoService#getManagedSessions(java.net.SocketAddress)} in
-   * order to avoid overhead of copying on every traversal. This may
-   * be a premature optimization since the concurrent hash set may
-   * have just as large an overhead: if anyone cares they should
-   * profile this.
-   */
   private ConcurrentHashSet<IoSession> sessions;
 
   private ListenerList<NotifyListener> notifyListeners;
@@ -395,11 +385,11 @@ public class Router implements IoHandler, Closeable
 
   private void waitForAllSessionsClosed ()
   {
-    long start = currentTimeMillis ();
+    long finish = currentTimeMillis () + 20000;
     
     try
     {
-      while (!sessions.isEmpty () && currentTimeMillis () - start < 20000)
+      while (!sessions.isEmpty () && currentTimeMillis () < finish)
         sleep (100);
     } catch (InterruptedException ex)
     {
@@ -570,7 +560,7 @@ public class Router implements IoHandler, Closeable
        * A message processing method detected a protocol violation
        * e.g. attempt to remove non existent subscription.
        */
-      handleProtocolViolation (session, message, ex.getMessage (), ex);
+      disconnectProtocolViolation (session, message, ex.getMessage (), ex);
     }
   }
 
@@ -874,7 +864,7 @@ public class Router implements IoHandler, Closeable
       message = errorMessage.error.getMessage ();
     }
     
-    handleProtocolViolation (session, errorMessage.cause, message, null);
+    disconnectProtocolViolation (session, errorMessage.cause, message, null);
   }
 
   /**
@@ -886,10 +876,10 @@ public class Router implements IoHandler, Closeable
    * @param diagnosticMessage The diagnostic sent back to the client.
    * @throws NoConnectionException
    */
-  private static void handleProtocolViolation (IoSession session,
-                                               Message cause,
-                                               String diagnosticMessage,
-                                               Throwable error)
+  private static void disconnectProtocolViolation (IoSession session,
+                                                   Message cause,
+                                                   String diagnosticMessage,
+                                                   Throwable error)
   {
     if (diagnosticMessage == null)
       diagnosticMessage = "Frame format error";
@@ -928,7 +918,7 @@ public class Router implements IoHandler, Closeable
                                                 Options options)
   {
     if (!enableTcpNoDelay (session, 
-                           options.getInt ("TCP.Send-Immediately") == 1))
+                           options.getInt ("TCP.Send-Immediately") != 0))
     {
       options.remove ("TCP.Send-Immediately"); 
     }
