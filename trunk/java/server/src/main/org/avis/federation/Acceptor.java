@@ -214,8 +214,7 @@ public class Acceptor implements IoHandler, Closeable
     } else
     {
       Link existingLink = linkForDomain (message.serverDomain);
-      FederationClass fedClass = 
-        federationClasses.classFor (remoteHost, message.serverDomain);
+      FederationClass fedClass = federationClasses.classFor (remoteHost);
 
       if (existingLink != null)
       {

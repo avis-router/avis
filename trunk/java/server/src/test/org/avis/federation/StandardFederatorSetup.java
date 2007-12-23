@@ -5,8 +5,11 @@ import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.subscription.parser.ParseException;
 
+import static java.net.InetAddress.getLocalHost;
+
 import static org.avis.federation.JUTestFederation.PORT1;
 import static org.avis.federation.JUTestFederation.PORT2;
+import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.util.Collections.set;
 
 public class StandardFederatorSetup
@@ -26,16 +29,19 @@ public class StandardFederatorSetup
     this (new Options (FederationOptionSet.OPTION_SET));
   }
   
-  public StandardFederatorSetup (FederationClasses classes)
+  public StandardFederatorSetup (FederationClasses classes1,
+                                 FederationClasses classes2)
     throws Exception
   {
-    this (classes, new Options (FederationOptionSet.OPTION_SET));
+    this (classes1, classes2, new Options (FederationOptionSet.OPTION_SET));
   }
   
   public StandardFederatorSetup (Options options)
     throws Exception
   {
-    this (new FederationClasses (defaultClass ()), options);
+    this (new FederationClasses (defaultClass ()),
+          new FederationClasses (defaultClass ()),
+          options);
   }
 
   public static FederationClass defaultClass ()
@@ -45,7 +51,8 @@ public class StandardFederatorSetup
                                 "require (federated)");
   }
   
-  public StandardFederatorSetup (FederationClasses classes,
+  public StandardFederatorSetup (FederationClasses classes1,
+                                 FederationClasses classes2,
                                  Options options)
     throws Exception
   {
@@ -55,13 +62,13 @@ public class StandardFederatorSetup
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
     
     acceptor = 
-      new Acceptor (server2, "server2", classes, set (ewafURI), options);
+      new Acceptor (server2, "server2", classes2, set (ewafURI), options);
     
     connector = 
       new Connector (server1, "server1", ewafURI, 
-                     classes.classFor ("server2"), options);
+                     classes1.classFor (getLocalHost ()), options);
     
-    TestUtils.waitForConnect (connector);
+    waitForConnect (connector);
     
     client1 = new SimpleClient ("client1", "localhost", PORT1);
     client2 = new SimpleClient ("client2", "localhost", PORT2);

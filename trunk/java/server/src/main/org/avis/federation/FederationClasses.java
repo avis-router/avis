@@ -1,11 +1,16 @@
 package org.avis.federation;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import java.net.InetAddress;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+
+import static org.avis.util.Wildcard.toPattern;
 
 /**
  * Defines a mapping from remote hosts to the FederationClass that
@@ -19,9 +24,7 @@ public class FederationClasses
 {
   private FederationClass defaultClass;
   private Map<String, FederationClass> classes;
-  private Map<String, FederationClass> dnsDomains;
-  private Map<String, FederationClass> federatorDomains;
-  private Map<String, FederationClass> hosts;
+  private Map<Pattern, FederationClass> hostToClass;
 
   public FederationClasses ()
   {
@@ -38,12 +41,7 @@ public class FederationClasses
     this.defaultClass = defaultClass;
     this.classes = 
       new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
-    this.dnsDomains = 
-      new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
-    this.hosts = 
-      new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
-    this.federatorDomains = 
-      new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
+    this.hostToClass = new HashMap<Pattern, FederationClass> ();
   }
 
   public void setDefaultClass (FederationClass newDefaultClass)
@@ -80,62 +78,69 @@ public class FederationClasses
    * Get the federation class mapped to a given host.
    * 
    * @param address The host's address.
-   * @param serverDomain The federation server domain.
    * 
    * @return The federation class, or defaultClass if no explicit
    *         mapping found.
    */
-  public FederationClass classFor (InetAddress address, String serverDomain)
+  public FederationClass classFor (InetAddress address)
   {
-    String hostName = address.getCanonicalHostName ();
-
-    // match host name/IP
-    FederationClass fedClass = hosts.get (hostName);
-    
-    if (fedClass != null)
-      return fedClass;
-    
-    fedClass = hosts.get (address.getHostAddress ());
-    
-    if (fedClass != null)
-      return fedClass;
-
-    // match domain
-    for (Map.Entry<String, FederationClass> entry : dnsDomains.entrySet ())
+    return classFor (address.getCanonicalHostName (), 
+                     address.getHostAddress ());
+  }
+  
+  /**
+   * Get the federation class mapped to a given host.
+   * 
+   * @param hostName The host's canonical name.
+   * @param ip The host's IP address.
+   * 
+   * @return The federation class, or defaultClass if no explicit
+   *         mapping found.
+   */
+  public FederationClass classFor (String hostName, String ip)
+  {
+    for (Map.Entry<Pattern, FederationClass> entry : hostToClass.entrySet ())
     {
-      if (hostName.endsWith (entry.getKey ()))
+      Pattern hostPattern = entry.getKey ();
+      
+      if (hostPattern.matcher (hostName).matches () ||
+          hostPattern.matcher (ip).matches ())
+      {
         return entry.getValue ();
+      }
     }
     
-    return classFor (serverDomain);
-  }
-
-  /**
-   * Match a federation class for the given server domain.
-   */
-  public FederationClass classFor (String serverDomain)
-  {
-    FederationClass fedClass = federatorDomains.get (serverDomain);
-    
-    if (fedClass != null)
-      return fedClass;
-    
-    // fall back to default
     return defaultClass;
   }
   
-  public void mapDnsDomain (String domain, FederationClass fedClass)
+  /**
+   * Map a host pattern to a federation class.
+   * 
+   * @param hostPattern A host-matching pattern.
+   * @param fedClass The federation class to use for matching hosts.
+   */
+  public void map (Pattern hostPattern, FederationClass fedClass)
   {
-    dnsDomains.put (domain, fedClass);
+    hostToClass.put (hostPattern, fedClass);
   }
 
-  public void mapHost (String hostname, FederationClass fedClass)
+  /**
+   * Map a wildcard host pattern to a federation class.
+   * 
+   * @param host A wildcard host-matching pattern.
+   * @param fedClass The federation class to use for matching hosts.
+   */
+  public void map (String host, FederationClass fedClass)
   {
-    hosts.put (hostname, fedClass);
+    map (toPattern (host, CASE_INSENSITIVE), fedClass);
   }
-  
-  public void mapServerDomain (String serverDomain, FederationClass fedClass)
+
+  /**
+   * Clear all mappings and classes.
+   */
+  public void clear ()
   {
-    federatorDomains.put (serverDomain, fedClass);
+    classes.clear ();
+    hostToClass.clear ();
   }
 }

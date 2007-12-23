@@ -66,9 +66,7 @@ public class JUTestFederationTLS
   {
     FederationClass fedClass = StandardFederatorSetup.defaultClass ();
     
-    FederationClasses classes = new FederationClasses ();
-    
-    classes.mapServerDomain ("server2", fedClass);
+    FederationClasses classes = new FederationClasses (fedClass);
     
     RouterOptionSet routerOptionSet = new RouterOptionSet ();
     
@@ -112,9 +110,7 @@ public class JUTestFederationTLS
     EwafURI ewafURI = new EwafURI ("ewaf:/secure/127.0.0.1:" + (PORT1 + 1));
    
     // router1 (listener)
-    FederationClasses classes = new FederationClasses ();
-    
-    classes.mapServerDomain ("server2", fedClass);
+    FederationClasses classes = new FederationClasses (fedClass);
     
     RouterOptionSet routerOptionSet = new RouterOptionSet ();
     
