@@ -4,20 +4,22 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static junit.framework.Assert.fail;
 
 public class TestUtils
 {
+  public static final long MAX_WAIT = 8000;
+  
   /**
-   * Wait up to 10 seconds for a connector to be in connected state.
+   * Wait up to 8 seconds for a connector to be in connected state.
    */
   public static void waitForConnect (Connector connector)
     throws InterruptedException
   {
-    long start = currentTimeMillis ();
+    long finish = currentTimeMillis () + MAX_WAIT;
     
-    while (!connector.isConnected () && currentTimeMillis () - start < 10000)
+    while (currentTimeMillis () < finish && !connector.isConnected ())
       sleep (200);
     
     if (!connector.isConnected ())
@@ -25,15 +27,15 @@ public class TestUtils
   }
 
   /**
-   * Wait up to 10 seconds for a connector to go to waiting for an
+   * Wait up to 8 seconds for a connector to go to waiting for an
    * async connect.
    */
   public static void waitForAsyncConnect (Connector connector)
     throws InterruptedException
   {
-    long start = currentTimeMillis ();
+    long finish = currentTimeMillis () + MAX_WAIT;
     
-    while (currentTimeMillis () - start < 10000 && 
+    while (currentTimeMillis () < finish && 
            !connector.isWaitingForAsyncConnection ())
     {
       sleep (200);
@@ -46,7 +48,7 @@ public class TestUtils
   public static void waitForSingleLink (final Acceptor acceptor) 
     throws InterruptedException
   {
-    waitUpto (8, SECONDS, new Predicate ()
+    waitUpto (MAX_WAIT, MILLISECONDS, new Predicate ()
     {
       public boolean satisfied ()
       {
