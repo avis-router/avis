@@ -3,22 +3,21 @@ Releases
 
 Server 1.2
 
- * --change default federation class syntax?
-   e.g. Federation.Apply-Class[Public]=*
- * ditch use of @ in federation. use of server domain is fairly useless
  * Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * Support client auth in connect/listen
    options. elvin:/secure/0.0.0.0:29170?require-trusted=true. put
    options in as default layer in front of config.
- * Federation TLS
- * Ship Avis server with default certs?
- * includes in config: would allow federation to be spec'd separately
  * Test large frames with new heap sizes
- * ?Federation.Classes.Require=internal
- * windows JRE does not have -server, need to add installer option
  * thread pool size option?
  * date in log messages
- * Liveness TestConn for client connections?
+ * DONE: ditch use of @ in federation. use of server domain is fairly useless
+ * DONE: allow wildcards in federation
+ * DONE: --Liveness TestConn for client connections?
+ * DONE: do we allow no keystore? 
+ * DONE--: change default federation class syntax?
+   e.g. Federation.Apply-Class[Public]=*
+ * DONE: Federation TLS
+ * DONE: Ship Avis server with default certs?
 
 Client 1.1
 
@@ -26,11 +25,11 @@ Client 1.1
  * allow connection options in URI? merge with given options? --use
    server options package and ditch special options class?--
  * add subscription string escape utilities
- * DONE: ep doesn't do ^D properly
  * ep needs to handle empty lines 
  * client should probably not log messages: events instead, esp
    DropWarn
  * ec/ep options for TLS
+ * DONE: ep doesn't do ^D properly
 
 Not allocated
 --------------
@@ -56,6 +55,9 @@ Client
 
 Server
 
+* windows JRE does not have -server, need to add installer option
+* includes in config: would allow federation to be spec'd separately
+* Federation.Classes.Require=internal
 * failure to find VM wrapper on windows (David). possibly due to 
   uninstalling Java 5 after installing Java 6
 * Mantara ec requires elvin:4.0//...
