@@ -10,8 +10,13 @@ import static java.util.regex.Pattern.compile;
  * Generates regex patterns that match Unix-style wildcards * and ?.
  * Currently handles * and ? by generating regex equivalents.
  */
-public class Wildcard
+public final class Wildcard
 {
+  private Wildcard ()
+  {
+    // zip
+  }
+  
   /**
    * Generate a patten matcher for a wildcard expression.
    * 
