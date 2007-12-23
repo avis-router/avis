@@ -59,13 +59,15 @@ public class JUTestFederationManager
   public void basicListen () 
     throws Exception
   {
+    InetAddress localHost = InetAddress.getLocalHost ();
     EwafURI federationUri = new EwafURI ("ewaf://127.0.0.1:" + (PORT1 - 1));
 
     Options options = new Options (FederationOptionSet.OPTION_SET);
     
     options.set ("Federation.Router-Name", "router1");
     options.set ("Federation.Listen", federationUri);
-    options.set ("Federation.Apply-Class[Test]", "router2 bogus");
+    options.set ("Federation.Apply-Class[Test]", 
+                 localHost.getHostAddress () + " localhost bogus");
     options.set ("Federation.Subscribe[Test]", "require (federated)");
     options.set ("Federation.Provide[Test]", "require (federated)");
     options.set ("Federation.Add-Incoming-Attribute[Test][Added-Incoming]", 
@@ -77,8 +79,7 @@ public class JUTestFederationManager
     
     FederationManager manager = new FederationManager (router1, options);
     
-    FederationClass testClass = 
-      manager.classes.classFor (InetAddress.getLocalHost (), "router2");
+    FederationClass testClass = manager.classes.classFor (localHost);
     
     assertFalse (testClass.allowsNothing ());
     
@@ -143,7 +144,7 @@ public class JUTestFederationManager
     
     options1.set ("Federation.Router-Name", "router1");
     options1.set ("Federation.Listen", federationUri);
-    options1.set ("Federation.Apply-Class[Test]", "router2");
+    options1.set ("Federation.Apply-Class[Test]", "localhost");
     options1.set ("Federation.Subscribe[Test]", "require (federated)");
     options1.set ("Federation.Provide[Test]", "require (federated)");
     

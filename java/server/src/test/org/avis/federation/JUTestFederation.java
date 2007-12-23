@@ -52,6 +52,7 @@ import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 public class JUTestFederation
 {
@@ -106,6 +107,25 @@ public class JUTestFederation
   }
   
   @Test
+  public void wildcards () 
+    throws Exception
+  {
+    FederationClasses classes = new FederationClasses ();
+    
+    FederationClass class1 = classes.define ("class1");
+    FederationClass class2 = classes.define ("class2");
+    
+    classes.map ("*.elvin.org", class1);
+    classes.map ("111.111.111.1??", class2);
+    
+    assertSame (class1, classes.classFor ("public.elvin.org", ""));
+    assertSame (class2, classes.classFor ("", "111.111.111.123"));
+    assertSame (class2, classes.classFor ("", "111.111.111.134"));
+    assertSame (classes.defaultClass (), 
+                classes.classFor ("", "111.111.111.234"));
+  }
+  
+  @Test
   public void basic ()
     throws Exception
   {
@@ -125,11 +145,13 @@ public class JUTestFederation
   {
     FederationClass fedClass = StandardFederatorSetup.defaultClass ();
     
-    FederationClasses classes = new FederationClasses ();
+    FederationClasses classes1 = new FederationClasses ();
+    FederationClasses classes2 = new FederationClasses ();
     
-    classes.mapHost ("LOCALhost", fedClass);
+    classes1.map ("LOCALhost", fedClass);
+    classes2.map ("localHOSt", fedClass);
     
-    federation = new StandardFederatorSetup (classes);
+    federation = new StandardFederatorSetup (classes1, classes2);
     
     federation.close ();
   }
@@ -145,7 +167,7 @@ public class JUTestFederation
     
     FederationClasses classes = new FederationClasses ();
     
-    classes.mapServerDomain ("server1", fedClass2);
+    classes.map ("localhost", fedClass2);
     
     Router server1 = new Router (PORT1);
 
@@ -192,6 +214,9 @@ public class JUTestFederation
     connectSession.close ();
     
     // no federation class mapped
+    
+    classes.clear ();
+    
     listener = new TestingIoHandler ();
     connectSession = connectFederation (server1, ewafURI, listener);
     
@@ -208,6 +233,8 @@ public class JUTestFederation
     assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
     
     connectSession.close ();
+    
+    classes.map ("localhost", fedClass2);
     
     // bogus handshake
     listener = new TestingIoHandler ();
@@ -231,20 +258,19 @@ public class JUTestFederation
     throws Exception
   {
     FederationClass fedClass1 = StandardFederatorSetup.defaultClass ();
-    FederationClass fedClass2 = StandardFederatorSetup.defaultClass ();
-    
-    FederationClasses classes = new FederationClasses ();
-    
-    classes.mapServerDomain ("server2", fedClass1);
-    classes.mapServerDomain ("server1", fedClass2);
-    
+        
     fedClass1.incomingAttributes = new HashMap<String, Object> ();
     fedClass1.outgoingAttributes = new HashMap<String, Object> ();
     
     fedClass1.incomingAttributes.put ("Incoming", "incoming");
     fedClass1.outgoingAttributes.put ("Outgoing", "outgoing");
     
-    federation = new StandardFederatorSetup (classes);
+    FederationClasses classes1 = 
+      new FederationClasses (fedClass1);
+    FederationClasses classes2 = 
+      new FederationClasses (StandardFederatorSetup.defaultClass ());
+    
+    federation = new StandardFederatorSetup (classes1, classes2);
     
     // client 1 -> client 2
     federation.client1.sendNotify 
