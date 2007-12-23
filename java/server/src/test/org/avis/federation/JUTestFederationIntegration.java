@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.io.messages.NotifyEmit;
@@ -12,10 +14,19 @@ import org.avis.router.Main;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.util.IllegalConfigOptionException;
+import org.avis.util.LogFailTester;
+
+import static java.lang.Thread.sleep;
 
 import static org.avis.federation.FederationManager.federationManagerFor;
+import static org.avis.federation.TestUtils.MAX_WAIT;
 import static org.avis.federation.TestUtils.waitForConnect;
+import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.enableLogging;
+import static org.avis.logging.Log.shouldLog;
 import static org.avis.util.Streams.close;
+
+import static org.junit.Assert.assertFalse;
 
 /**
  * Full federation integration test between three routers. Starts each
@@ -26,6 +37,28 @@ import static org.avis.util.Streams.close;
  */
 public class JUTestFederationIntegration
 {
+  private LogFailTester logTester;
+  private boolean oldLogInfoState;
+  
+  @Before
+  public void setup ()
+  {
+    oldLogInfoState = shouldLog (INFO);
+    
+    enableLogging (INFO, false);
+    
+    logTester = new LogFailTester ();
+  }
+  
+  @After
+  public void tearDown ()
+    throws Exception
+  {
+    enableLogging (INFO, oldLogInfoState);
+    
+    logTester.assertOkAndDispose ();
+  }
+  
   @Test
   public void integration ()
     throws Exception
@@ -137,6 +170,15 @@ public class JUTestFederationIntegration
       "Federation.Listen=ewaf:/secure/127.0.0.1:29191\n"
     );
 
+    // config with untrusted cert
+    File config4 = configFile
+    (
+      "Listen=elvin:/secure/127.0.0.1:29200\n" +
+      commonOptions +
+      "TLS.Keystore=" + getClass ().getResource ("untrusted.ks") + "\n" +
+      "Federation.Connect[Test]=ewaf:/secure/127.0.0.1:29181" 
+    );
+    
     Log.enableLogging (Log.INFO, false);
     // Log.enableLogging (Log.TRACE, true);
     // Log.enableLogging (Log.DIAGNOSTIC, true);
@@ -167,6 +209,20 @@ public class JUTestFederationIntegration
     
     client1.close ();
     client2.close ();
+    
+    // check that federator with untrusted cert cannot connect
+    logTester.pause ();
+    
+    Router router4 = startRouter (config4);
+    
+    sleep (MAX_WAIT);
+    
+    for (Connector connector : federationManagerFor (router4).connectors ())
+      assertFalse (connector.isConnected ());
+    
+    router4.close ();
+    
+    logTester.unpause ();
     
     router3.close ();
     router2.close ();
