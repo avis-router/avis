@@ -168,9 +168,9 @@ public class JUTestFederationIntegration
     client1.close ();
     client2.close ();
     
-    router1.close ();
-    router2.close ();
     router3.close ();
+    router2.close ();
+    router1.close ();
   }
 
   private static Router startRouter (File config) 
