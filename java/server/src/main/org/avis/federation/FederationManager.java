@@ -22,6 +22,7 @@ import static java.lang.System.identityHashCode;
 import static java.util.Collections.emptySet;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
+import static org.avis.common.ElvinURI.secureProtocol;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
 import static org.avis.util.Text.shortException;
@@ -329,11 +330,12 @@ public class FederationManager implements CloseListener
   
   private static void checkUri (String option, EwafURI uri)
   {
-    if (!uri.protocol.equals (defaultProtocol ()))
+    if (!uri.protocol.equals (defaultProtocol ()) && 
+        !uri.protocol.equals (secureProtocol ()))
     {
       throw new IllegalConfigOptionException
-        (option, "Avis only supports " + defaultProtocol () +" protocol: " + 
-         uri);
+        (option, "Avis only supports " + defaultProtocol () + 
+         " and " + secureProtocol () + " protocols: " + uri);
     }
   }
 }
