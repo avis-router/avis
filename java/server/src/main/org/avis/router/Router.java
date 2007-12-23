@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.InetSocketAddress;
+import java.net.URI;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -297,10 +298,12 @@ public class Router implements IoHandler, Closeable
   private KeyStore keystore () 
     throws IOException
   {
-    if (keystore == null)
+    URI keystoreUri = (URI)routerOptions.get ("TLS.Keystore");
+    
+    if (keystore == null && keystoreUri.toString ().length () > 0)
     {
       InputStream keystoreStream = 
-        routerOptions.getAbsoluteURI ("TLS.Keystore").toURL ().openStream ();
+        routerOptions.toAbsoluteURI (keystoreUri).toURL ().openStream ();
       
       try
       {
