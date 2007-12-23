@@ -6,11 +6,8 @@ import java.util.regex.Pattern;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.ast.StringCompareNode;
 
-import static java.lang.Character.isLetterOrDigit;
-import static java.lang.Character.isWhitespace;
-import static java.util.regex.Pattern.compile;
-
 import static org.avis.subscription.ast.Nodes.createConjunction;
+import static org.avis.util.Wildcard.toPattern;
 
 /**
  * NOTE: no real spec for wildcard exists. This implements ? and *
@@ -20,7 +17,7 @@ import static org.avis.subscription.ast.Nodes.createConjunction;
  */
 public class StrWildcard extends StringCompareNode
 {
-  private Pattern regex;
+  private Pattern wildcard;
 
   /**
    * Create from a list of arguments.
@@ -34,48 +31,7 @@ public class StrWildcard extends StringCompareNode
   {
     super (stringExpr, stringConst);
     
-    this.regex = compile (toRegex (string));
-  }
-
-  /**
-   * Fairly dumb wildcard -> regex converter. Handles * and ? by
-   * generating regex equivalents.
-   */
-  private static String toRegex (String wildcard)
-  {
-    StringBuilder regex = new StringBuilder (wildcard.length () * 2);
-    
-    for (int i = 0; i < wildcard.length (); i++)
-    {
-      char c = wildcard.charAt (i);
-      
-      switch (c)
-      {
-        case '*':
-          regex.append (".*");
-          break;
-        case '?':
-          regex.append ('.');
-          break;
-        case '\\':
-          if (++i < wildcard.length ())
-          {
-            regex.append ('\\');
-            regex.append (wildcard.charAt (i));
-          } else
-          {
-            regex.append ("\\\\");
-          }
-          break;
-        default:
-          if (isLetterOrDigit (c) || isWhitespace (c))
-            regex.append (c);
-          else
-            regex.append ('\\').append (c);
-      }
-    }
-    
-    return regex.toString ();
+    this.wildcard = toPattern (string);
   }
 
   @Override
@@ -87,6 +43,6 @@ public class StrWildcard extends StringCompareNode
   @Override
   protected boolean evaluate (String string1, String string2)
   {
-    return regex.matcher (string1).matches ();
+    return wildcard.matcher (string1).matches ();
   }
 }
