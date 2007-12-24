@@ -5,6 +5,9 @@ import java.io.IOException;
 import org.avis.security.Keys;
 import org.avis.util.ListenerList;
 
+import static java.lang.Character.isDigit;
+import static java.lang.Character.isLetter;
+
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.util.Util.checkNotNull;
 
@@ -259,5 +262,68 @@ public final class Subscription
   void notifyListeners (NotificationEvent event)
   {
     notificationListeners.fire (event);
+  }
+
+  /**
+   * Escape illegal characters in a field name for use in a
+   * subscription expression. This can be useful when constructing
+   * subscription expressions dynamically.
+   * 
+   * @param field The string to use as a field name.
+   * @return The escaped version of field, guaranteed to be a valid
+   *         field name.
+   *         
+   * @see #escapeString(String)
+   */
+  public static String escapeField (String field)
+  {
+    StringBuilder escapedStr = new StringBuilder (field.length () * 2);
+    
+    for (int i = 0; i < field.length (); i++)
+    {
+      char c = field.charAt (i);
+      boolean escape = false;
+      
+      if (i == 0)
+        escape = !(isLetter (c) || c == '_');
+      else
+        escape = !(isLetter (c) || isDigit (c) || c == '_');
+      
+      if (escape)
+        escapedStr.append ('\\');
+      
+      escapedStr.append (c);
+    }
+    
+    return escapedStr.toString ();
+  }
+  
+  /**
+   * Escape illegal characters in a string value for use in a
+   * subscription expression. This can be useful when constructing
+   * subscription expressions dynamically.
+   * 
+   * @param string A string that will occur within single or double
+   *                quotes in a subscription expression.
+   * @return The escaped version of string, guaranteed to be a valid
+   *         to occur inside a string expression.
+   *         
+   * @see #escapeField(String)
+   */
+  public static String escapeString (String string)
+  {
+    StringBuilder escapedStr = new StringBuilder (string.length () * 2);
+    
+    for (int i = 0; i < string.length (); i++)
+    {
+      char c = string.charAt (i);
+      
+      if (c == '\"' || c == '\'' || c == '\\')
+        escapedStr.append ('\\');
+      
+      escapedStr.append (c);
+    }
+    
+    return escapedStr.toString ();
   }
 }

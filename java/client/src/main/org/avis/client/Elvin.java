@@ -934,6 +934,8 @@ public final class Elvin implements Closeable
    * @see #send(Notification, Keys, SecureMode)
    * @see #addNotificationListener(GeneralNotificationListener)
    * @see Subscription
+   * @see Subscription#escapeField(String)
+   * @see Subscription#escapeString(String)
    * @see SecureMode
    * @see Keys
    */
