@@ -49,6 +49,7 @@ public class JUTestParser
     assertParsesTo ("'a\\\\'", "'a\\'");
     assertParsesTo ("\"a\\\\!\"", "'a\\!'");
     assertParsesTo ("\"a\\\"\"", "'a\"'");
+    assertParsesTo ("\"\'abc\'\"", "''abc''");
     
     assertParseError ("'a\\'");
   }
