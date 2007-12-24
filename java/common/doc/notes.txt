@@ -3,13 +3,15 @@ Releases
 
 Server 1.2
 
- * Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * Support client auth in connect/listen
    options. elvin:/secure/0.0.0.0:29170?require-trusted=true. put
    options in as default layer in front of config.
+ * date in log messages: Dec 23 04:20:01
+ * do we want clients trusted by CA's to be trusted?
+ * test add keystore to distro
+ * Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * Test large frames with new heap sizes
  * thread pool size option?
- * date in log messages
  * DONE: ditch use of @ in federation. use of server domain is fairly useless
  * DONE: allow wildcards in federation
  * DONE: --Liveness TestConn for client connections?
@@ -21,8 +23,8 @@ Server 1.2
 
 Client 1.1
 
- * TLS
- * allow connection options in URI? merge with given options? --use
+ * DONE: TLS
+ * allow connection options in URI. merge with given options? --use
    server options package and ditch special options class?--
  * add subscription string escape utilities
  * ep needs to handle empty lines 
