@@ -125,13 +125,16 @@ public final class ElvinOptions implements Cloneable
   }
 
   /**
-   * Shortcut to load a keystore from a Java keystore file.
+   * Shortcut to load a keystore from a <a
+   * href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/keytool.html">Java
+   * keystore file</a>.
    * 
    * @param keystorePath The file path for the keystore.
    * @param passphrase The passphrase for the keystore.
    * 
-   * @throws IOException if an error occurred while loading the keystore.
-   *
+   * @throws IOException if an error occurred while loading the
+   *                 keystore.
+   * 
    * @see #setKeystore(URL, String)
    */
   public void setKeystore (String keystorePath, String passphrase)
@@ -141,12 +144,15 @@ public final class ElvinOptions implements Cloneable
   }
   
   /**
-   * Shortcut to load a keystore from a Java keystore file.
+   * Shortcut to load a keystore from a <a
+   * href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/keytool.html">Java
+   * keystore file</a>.
    * 
    * @param keystoreUrl The URL for the keystore file.
    * @param passphrase The passphrase for the keystore.
    * 
-   * @throws IOException if an error occurred while loading the keystore.
+   * @throws IOException if an error occurred while loading the
+   *                 keystore.
    */
   public void setKeystore (URL keystoreUrl, String passphrase)
     throws IOException 
