@@ -18,10 +18,10 @@ import static org.avis.util.Util.checkNotNull;
 
 /**
  * Options for controlling an Elvin client connection. The options
- * object used to initialise the Elvin connection cannot be changed
- * directly after the connection is established, but some can be
- * changed on a live connection using methods on the connection
- * itself, e.g. {@link Elvin#setNotificationKeys(Keys)}.
+ * object used to initialise the Elvin connection cannot be directly
+ * changed after the connection is created, but some settings can be
+ * changed on a live connection object using supported methods such as
+ * {@link Elvin#setNotificationKeys(Keys)}, etc.
  * 
  * @author Matthew Phillips
  */
@@ -80,11 +80,11 @@ public final class ElvinOptions implements Cloneable
   public long receiveTimeout;
 
   /**
-   * Set the liveness timeout period (in milliseconds). If no messages
-   * are seen from the router in this period, a connection test
-   * message is sent and, if no reply is seen, the connection is
-   * deemed to be closed. Default is 60 seconds.
-   *
+   * The liveness timeout period (in milliseconds). If no messages are
+   * seen from the router in this period a connection test message is
+   * sent and if no reply is seen the connection is deemed to be
+   * defunct and automatically closed. Default is 60 seconds.
+   * 
    * @see Elvin#setLivenessTimeout(long)
    */
   public long livenessTimeout;
