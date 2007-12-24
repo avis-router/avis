@@ -28,6 +28,7 @@ Source: "service\config\wrapper.conf"; DestDir: "{app}\config"
 Source: "service\logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"; Flags: onlyifdoesntexist
 Source: "..\..\lib\avisd.jar"; DestDir: "{app}\lib"
 Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
+Source: "..\..\etc\avis-router.keystore"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
 Source: "..\..\doc\LICENSE.txt"; DestDir: "{app}"
 
 ; JRE Files

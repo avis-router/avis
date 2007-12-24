@@ -35,6 +35,8 @@ install -Dp -m 0644 -o root -g root \
   server/lib/avisd.jar $RPM_BUILD_ROOT/%{_libdir}/avisd.jar
 install -Dp -m 0644 -o root -g root \
   server/etc/avisd.config $RPM_BUILD_ROOT/%{_sysconfdir}/avis/avisd.config
+install -Dp -m 0644 -o root -g root \
+  server/etc/avis-router.keystore $RPM_BUILD_ROOT/%{_sysconfdir}/avis/avis-router.keystore
 
 # service
 sed -e "s|__CONFDIR__|%{_sysconfdir}|g" \
@@ -50,3 +52,4 @@ rm %{_tmppath}/avisd.tmp
 %{_libdir}/avisd.jar
 /etc/init.d/avisd
 %config %{_sysconfdir}/avis/avisd.config
+%config %{_sysconfdir}/avis/avis-router.keystore

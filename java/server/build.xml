@@ -234,6 +234,7 @@
         <include name="build.xml" />
         <include name="lib/*.jar" />
         <include name="etc/avisd.config" />
+        <include name="etc/avis-router.keystore" />
         <include name="doc/history.txt" />
         <include name="doc/README.txt" />
         <include name="doc/LICENSE.txt" />
@@ -484,6 +485,10 @@
     <copy file="etc/avisd.config"
           tofile="${root}/etc/avis/avisd.config"
           preservelastmodified="true" />
+    <copy file="etc/avis-router.keystore"
+          tofile="${root}/etc/avis/avis-router.keystore"
+          preservelastmodified="true" />
+
   </target>
 
   <!-- run "sudo rm -rf ${root}" -->
