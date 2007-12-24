@@ -1,5 +1,6 @@
 package org.avis.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,11 +17,15 @@ import static org.avis.util.Streams.close;
 import static org.avis.util.Util.checkNotNull;
 
 /**
- * Options for controlling an Elvin client connection.
+ * Options for controlling an Elvin client connection. The options
+ * object used to initialise the Elvin connection cannot be changed
+ * directly after the connection is established, but some can be
+ * changed on a live connection using methods on the connection
+ * itself, e.g. {@link Elvin#setNotificationKeys(Keys)}.
  * 
  * @author Matthew Phillips
  */
-public class ElvinOptions implements Cloneable
+public final class ElvinOptions implements Cloneable
 {
   /**
    * The options sent to the router to negotiate connection parameters.
@@ -48,6 +53,8 @@ public class ElvinOptions implements Cloneable
   
   /**
    * The passphrase used to secure the keystore and its keys.
+   * 
+   * @see #keystore
    */
   public String keystorePassphrase;
 
@@ -65,17 +72,22 @@ public class ElvinOptions implements Cloneable
   
   /**
    * The amount of time (in milliseconds) that must pass before the
-   * router is assumed to not be responding to a request.
+   * router is assumed to not be responding to a request. Default is
+   * 10 seconds.
+   *
+   * @see Elvin#setReceiveTimeout(long)
    */
-  public int receiveTimeout;
+  public long receiveTimeout;
 
   /**
-   * Set the liveness timeout period (default is 60 seconds). If no
-   * messages are seen from the router in this period, a connection
-   * test message is sent and, if no reply is seen, the connection is
-   * deemed to be closed.
+   * Set the liveness timeout period (in milliseconds). If no messages
+   * are seen from the router in this period, a connection test
+   * message is sent and, if no reply is seen, the connection is
+   * deemed to be closed. Default is 60 seconds.
+   *
+   * @see Elvin#setLivenessTimeout(long)
    */
-  public int livenessTimeout;
+  public long livenessTimeout;
 
   public ElvinOptions ()
   {
@@ -110,6 +122,22 @@ public class ElvinOptions implements Cloneable
     {
       throw new Error (ex);
     }
+  }
+
+  /**
+   * Shortcut to load a keystore from a Java keystore file.
+   * 
+   * @param keystorePath The file path for the keystore.
+   * @param passphrase The passphrase for the keystore.
+   * 
+   * @throws IOException if an error occurred while loading the keystore.
+   *
+   * @see #setKeystore(URL, String)
+   */
+  public void setKeystore (String keystorePath, String passphrase)
+    throws IOException 
+  {
+    setKeystore (new File (keystorePath).toURL (), passphrase);
   }
   
   /**
