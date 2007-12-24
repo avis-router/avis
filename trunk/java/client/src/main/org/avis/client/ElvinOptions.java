@@ -17,11 +17,13 @@ import static org.avis.util.Streams.close;
 import static org.avis.util.Util.checkNotNull;
 
 /**
- * Options for controlling an Elvin client connection. The options
- * object used to initialise the Elvin connection cannot be directly
- * changed after the connection is created, but some settings can be
- * changed on a live connection object using supported methods such as
- * {@link Elvin#setNotificationKeys(Keys)}, etc.
+ * Options for configuring an Elvin client connection. Includes router
+ * connection parameters, security keys, SSL parameters and timeouts.
+ * 
+ * The options object used to initialise the Elvin connection cannot
+ * be directly changed after the connection is created, but some
+ * settings can be changed on a live connection object using supported
+ * methods such as {@link Elvin#setNotificationKeys(Keys)}, etc.
  * 
  * @author Matthew Phillips
  */
