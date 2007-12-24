@@ -483,7 +483,7 @@ public final class Elvin implements Closeable
       
       SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
       connectorConfig.setThreadModel (ThreadModel.MANUAL);
-      connectorConfig.setConnectTimeout (options.receiveTimeout);
+      connectorConfig.setConnectTimeout ((int)(options.receiveTimeout / 1000));
 
       DefaultIoFilterChainBuilder filters = connectorConfig.getFilterChain ();
       
@@ -525,67 +525,57 @@ public final class Elvin implements Closeable
   private void openSSL ()
     throws IOException, IllegalArgumentException
   {
-    SSLFilter sslFilter = createSSLFilter ();
-  
-    connection.getFilterChain ().addFirst ("ssl", sslFilter);
-    
-    /*
-     * MINA would do this automatically, but we force it here so that
-     * if the SSL handshake fails the exception propagates out of this
-     * method.
-     */
-    handshakeSSL (sslFilter);
-  }
-
-  /**
-   * Create a MINA SSL filter configured from the current options.
-   */
-  private SSLFilter createSSLFilter () 
-    throws IOException, IllegalArgumentException
-  {
     SSLFilter filter = 
       new SSLFilter (sslContextFor (options.keystore, 
                                     options.keystorePassphrase, 
                                     options.requireTrustedServer));
     
     filter.setUseClientMode (true);
+
+    connection.getFilterChain ().addFirst ("ssl", filter);
     
-    return filter;
+    /*
+     * MINA would do this automatically, but we force it here so that
+     * if the SSL handshake fails the exception propagates out of this
+     * method.
+     */
+    handshakeSSL (filter);
   }
-  
+
   /**
    * Start the SSL handshake process.
    */
-  private void handshakeSSL (SSLFilter sslFilter) 
+  private void handshakeSSL (SSLFilter filter) 
     throws SSLException
   {
-    sslFilter.startSSL (connection);
+    filter.startSSL (connection);
     
     /*
      * Unfortunately SSL handshake is async: we have to poll.
      * exceptionCaught () has some special logic to attach SSL
      * exceptions to the session if it sees one from MINA.
      */
-    long start = currentTimeMillis ();
+    long finishAt = currentTimeMillis () + options.receiveTimeout;
     
     try
     {
-      while (sslFilter.getSSLSession (connection) == null &&
+      while (filter.getSSLSession (connection) == null &&
              !connection.containsAttribute ("sslException") &&
-             currentTimeMillis () - start < options.receiveTimeout)
+             currentTimeMillis () < finishAt)
       {
         sleep (10);
       }
+
+      SSLException sslException = 
+        (SSLException)connection.getAttribute ("sslException");
+    
+      if (sslException != null)
+        throw sslException;
+
     } catch (InterruptedException ex)
     {
       currentThread ().interrupt ();
     }
-    
-    SSLException sslException = 
-      (SSLException)connection.getAttribute ("sslException");
-    
-    if (sslException != null)
-      throw sslException;
   }
   
   /**
@@ -712,9 +702,21 @@ public final class Elvin implements Closeable
   }
   
   /**
+   * Return the current options for the connection. These options
+   * reflect any changes made after initialisation, e.g. by using
+   * {@link #setReceiveTimeout(long)}, {@link
+   * #setNotificationKeys(Keys)}, etc.
+   */
+  public ElvinOptions options ()
+  {
+    return options;
+  }
+
+  /**
    * The connection options established with the router. These cannot
    * be changed after connection.
    * 
+   * @see #options()
    * @see #Elvin(ElvinURI, ConnectionOptions, Keys, Keys)
    */
   public ConnectionOptions connectionOptions ()
@@ -723,9 +725,10 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * @see #setReceiveTimeout(int)
+   * @see #setReceiveTimeout(long)
+   * @see #options()
    */
-  public int receiveTimeout ()
+  public long receiveTimeout ()
   {
     return options.receiveTimeout;
   }
@@ -733,13 +736,14 @@ public final class Elvin implements Closeable
   /**
    * Set the amount of time that must pass before the router is
    * assumed not to be responding to a request message (default is 10
-   * seconds).
+   * seconds). This method can be used on a live connection, unlike
+   * {@link ElvinOptions#receiveTimeout}.
    * 
    * @param receiveTimeout The new receive timeout in milliseconds.
    * 
-   * @see #setLivenessTimeout(int)
+   * @see #setLivenessTimeout(long)
    */
-  public synchronized void setReceiveTimeout (int receiveTimeout)
+  public synchronized void setReceiveTimeout (long receiveTimeout)
   {
     if (receiveTimeout < 0)
       throw new IllegalArgumentException
@@ -751,9 +755,10 @@ public final class Elvin implements Closeable
   }
   
   /**
-   * @see #setLivenessTimeout(int)
+   * @see #setLivenessTimeout(long)
+   * @see #options()
    */
-  public int livenessTimeout ()
+  public long livenessTimeout ()
   {
     return options.livenessTimeout;
   }
@@ -763,14 +768,15 @@ public final class Elvin implements Closeable
    * messages are seen from the router in this period a connection
    * test message is sent and if no reply is seen within the
    * {@linkplain #receiveTimeout() receive timeout period} the
-   * connection is deemed to be closed.
+   * connection is deemed to be closed. This method can be used on a
+   * live connection, unlike {@link ElvinOptions#livenessTimeout}.
    * 
    * @param livenessTimeout The new liveness timeout in milliseconds.
    *          Cannot be less than 1000.
    * 
-   * @see #setReceiveTimeout(int)
+   * @see #setReceiveTimeout(long)
    */
-  public synchronized void setLivenessTimeout (int livenessTimeout)
+  public synchronized void setLivenessTimeout (long livenessTimeout)
   {
     LivenessFilter.setLivenessTimeoutFor (connection, livenessTimeout);
     
@@ -1073,6 +1079,8 @@ public final class Elvin implements Closeable
   {
     synchronized (this)
     {
+      callbacks.flush ();
+
       notificationListeners.remove (listener);
     }
   }
@@ -1245,7 +1253,8 @@ public final class Elvin implements Closeable
       Keys.Delta deltaSubscriptionKeys =
         options.subscriptionKeys.deltaFrom (newSubscriptionKeys);
   
-      if (!deltaNotificationKeys.isEmpty () || !deltaSubscriptionKeys.isEmpty ())
+      if (!deltaNotificationKeys.isEmpty () || 
+          !deltaSubscriptionKeys.isEmpty ())
       {
         sendAndReceive
           (new SecRqst
@@ -1625,7 +1634,7 @@ public final class Elvin implements Closeable
     {
       if (cause instanceof SSLException)
       {
-        // when initiating connection, tunnel SSL exception to startSSL ()
+        // tunnel SSL exception to handshakeSSL ()
         if (!elvinSessionEstablished && connection != null)
           connection.setAttribute ("sslException", cause);
         else
