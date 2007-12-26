@@ -112,14 +112,17 @@ public final class ElvinOptions implements Cloneable
     this.livenessTimeout = 60000;
   }
 
+  /**
+   * Create a copy of this option set. This does not deep clone the
+   * keys and connection options, since these should be treated as
+   * immutable after first use.
+   */
   @Override
   public ElvinOptions clone ()
   {
     try
     {
-      ElvinOptions copy = (ElvinOptions)super.clone ();
-      
-      return copy;
+      return (ElvinOptions)super.clone ();
     } catch (CloneNotSupportedException ex)
     {
       throw new Error (ex);
