@@ -1,0 +1,164 @@
+Using SSL/TLS
+======================================================================
+
+The Avis router has the option to use TLS (also known as SSL) to
+authenticate and encrypt communications between the router and its
+clients or federation links. You can use TLS to ensure only authorised
+clients and federators are allowed to connect to the router, and to
+ensure that eavesdroppers cannot intercept your traffic.
+
+Setting Up TLS
+----------------------------------------------------------------------
+
+The simplest use of TLS is to encrypt communications between client
+and router without requiring authentication. To set up a TLS-secured
+client endpoint, you just need to specify it in the `Listen`
+configuration option:
+
+<pre>
+<span class="variable-name">Listen</span> = elvin:/secure/0.0.0.0:29170
+</pre>
+
+This creates a TLS-secured endpoint on port 29170 ready for client to
+connect to. This sort of TLS does not require that you manage the keys
+and certificates that would be required to authenticate the router
+and/or client to each other.
+
+Using TLS Authentication
+----------------------------------------------------------------------
+
+If you wish to use TLS to authenticate a router to a client and/or the
+client to the router, you will need to create a private key and
+associated public key certificate for each end that needs to be
+authenticated.
+
+For example, to authenticate a router to a client &ndash; i.e. to give
+assurance a client is connected to a trusted router over and insecure
+network &ndash; the router needs a unique private key, and the client
+needs to accept the associated public key (in the form of a PKI
+certificate) as trusted.<sup>[1][]</sup> For authenticating the client
+to the router, the reverse applies: the client needs a private key and
+the router must trust the accompanying public key.
+
+Generating A TLS Key
+----------------------------------------------------------------------
+
+To generate a key for use in Avis, you will need to use [the
+`keytool` command][keytool] that ships with the Java Development Kit (JDK)
+version 1.5.0 or later. The `keytool` utility stores and rerieves keys
+and certificate chains in a Java _keystore_, which is a binary
+archive, encrypted with a passphrase.
+
+As an example of using `keytool` to generate a new key inside a
+self-signed certificate, the command that was used to generate the key
+in the file `etc/avis-router.keystore` that ships with the router is:
+
+    > keytool -genkey -alias avis-router -keysize 512 \
+       -validity 3650 -keyalg RSA \
+       -name "CN=Matthew Phillips, 
+         OU=avis.sourceforge.net, \
+         O=Avis Project, L=Adelaide, \
+         S=South Australia, C=AU" \
+       -keypass avis-router -storepass avis-router \
+       -keystore avis-router.keystore
+
+To list the keys in a keystore:
+
+    > keytool -v -list -keystore avis-router.keystore \
+        -storepass avis-router
+
+    Keystore type: jks
+    Keystore provider: SUN
+    
+    Your keystore contains 1 entry
+    
+    Alias name: avis-router
+    Creation date: Dec 23, 2007
+    Entry type: keyEntry
+    Certificate chain length: 1
+    Certificate[1]:
+    Owner: CN=Matthew Phillips, OU=avis.sourceforge.net, O=Avis Project, L=Adelaide, ST=South Australia, C=AU
+    Issuer: CN=Matthew Phillips, OU=avis.sourceforge.net, O=Avis Project, L=Adelaide, ST=South Australia, C=AU
+    Serial number: 476db4f7
+    Valid from: Sun Dec 23 11:38:07 CST 2007 until: Wed Dec 20 11:38:07 CST 2017
+    Certificate fingerprints:
+             MD5:  17:4C:C7:0E:5E:F3:CB:4F:8E:74:84:9E:B8:AF:64:16
+             SHA1: FC:FD:F0:80:E1:FA:27:60:7A:E0:39:69:68:41:51:97:09:9B:BB:AE
+
+
+<a id="creating_trust">
+Creating A Trust Relationship
+----------------------------------------------------------------------
+
+First, generate a key for the router:
+
+    > keytool -genkey -alias my-router-key -keysize 512 \
+       -validity 3650 -keyalg RSA \
+       -name "CN=My Name, 
+         OU=my.organisation.unit, \
+         O=My Organisation, L=My Location, \
+         S=My State, C=MY COUNTRY CODE" \
+       -keypass mypassword -storepass mypassword \
+       -keystore my-router.keystore
+
+This creates a key called `my-router-key` in a keystore called
+`my-router.keystore`. Put the keystore in the same directory as the
+`avisd.config` configuration file, and specify that Avis use it rather
+than the default using these lines in the configuration:
+
+<pre>
+<span class="variable-name">TLS.Keystore</span> = my-router.keystore
+<span class="variable-name">TLS.Keystore-Passphrase</span> = mypassword
+</pre>
+
+To export the public key to a X.509 certificate file:
+
+    keytool -export -keystore my-router.keystore \
+      -alias my-router-key -storepass mypassword \
+      -file my-router.cer
+
+To import the public key certificate into the client's keystore as a
+trusted key:
+
+    keytool -import -keystore my-client.keystore \
+      -alias my-router-key -storepass mypassword \
+       -file my-router.cer
+
+Now, when the client connects to the router holding the private key,
+it will be able to verify the router is trusted.
+
+A reverse trust relationship can also be established for the client to
+the router (this is more commonly done with federation links than
+normal clients), and the router can be configured to _only_ accept
+authenticated clients via the `TLS.Require-Trusted-Client`
+configuration setting, and only authenticated [federation
+links][federation] using `Federation.TLS.Require-Trusted-Client` and
+`Federation.TLS.Require-Trusted-Server`.
+
+<!--  -->
+<!-- http://java.sun.com/j2se/1.5.0/docs/guide/security/jsse/JSSERefGuide.html -->
+
+<div class="footnotes">
+
+<hr />
+
+Footnotes
+
+<ol>
+
+<li id="fn1-tls">
+
+<p> If the router holds a certificate signed by one of the root
+    Certification Authorities (CA's) trusted by the client
+    (e.g. Verisign or Thawte), the client does not need explictly add
+    the router's public key to its chain of trust: it will be accepted
+    as trusted because a trusted CA has signed it.</p>
+
+</li>
+
+</ol>
+</div>
+
+[1]: #fn1-tls
+[keytool]: http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/keytool.html "Information on how to use keytool"
+[federation]: federation.html
