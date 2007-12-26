@@ -3,6 +3,8 @@ Releases
 
 Server 1.2
 
+ * TLS web page
+ * how do we map fed classes to only trusted clients?
  * Support client auth in connect/listen
    options. elvin:/secure/0.0.0.0:29170?require-trusted=true. put
    options in as default layer in front of config.
@@ -23,14 +25,14 @@ Server 1.2
 
 Client 1.1
 
- * DONE: TLS
  * allow connection options in URI. merge with given options? --use
    server options package and ditch special options class?--
- * add subscription string escape utilities
  * ep needs to handle empty lines 
  * client should probably not log messages: events instead, esp
    DropWarn
  * ec/ep options for TLS
+ * DONE: TLS
+ * DONE: add subscription string escape utilities
  * DONE: ep doesn't do ^D properly
 
 Not allocated
