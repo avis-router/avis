@@ -143,10 +143,9 @@ import static org.avis.util.Util.checkNotNull;
  * other operations are blocked during this time (the client
  * {@linkplain #mutex() mutex} is automatically pre-acquired during
  * callback execution in order to avoid possible deadlock in callbacks
- * that access the client connection). Callbacks should spawn long
+ * that access the client connection). Callbacks should execute long
  * running or blocking operations on another thread, e.g. via an
- * {@link ExecutorService}.
- * </ul>
+ * {@link ExecutorService}.  </ul>
  * 
  * @author Matthew Phillips
  */
