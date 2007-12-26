@@ -7,6 +7,8 @@ Documentation hosted on this site:
 
  * [Configuring Federation][federation].
 
+ * [Configuring TLS/SSL][tls].
+
  * [Client library documentation][client].
 
  * [The Elvin Subscription Language][subscription]. Another version of
@@ -27,6 +29,7 @@ maintainer](mailto:avis@mattp.name).
 &nbsp;
 
 [subscription]: subscription_language.html
+[tls]: tls.html
 [federation]: federation.html
 [client]: client_library.html
 [installation]: installation.html
