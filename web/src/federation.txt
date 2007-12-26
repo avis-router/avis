@@ -67,7 +67,6 @@ class:
 
 <pre>
 <span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Public</span>] = @public.elvin.org
-
 <span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Internal</span>] = @hex.somewhere.org
 </pre>
 
@@ -85,6 +84,35 @@ access.
 See the comments in `etc/avisd.conf` file for more information on
 setting up federation.
 
+Using TLS Authentication
+----------------------------------------------------------------------
+
+To use TLS authentication to restrict federation to only routers that
+you have established a pre-existing trust relationship with, you first
+need to either [exchange certificates][trust] to establish trust, or
+use certificates signed by the root Certification Authorities (CA's)
+for both routers.
+
+Once a trust relationship is established, you can set up TLS
+federation endpoints in `avisd.config`. For example, the settings
+below create a `Trusted` federation class
+
+<pre>
+<span class="variable-name">Federation.Subscribe</span>[<span class="constant">Trusted</span>] = \
+  Presence-Protocol == 1000 || string (Message)
+
+<span class="variable-name">Federation.Provide</span>[<span class="constant">Trusted</span>] = TRUE
+
+<span class="variable-name">Federation.Listen</span> = ewaf:/secure/0.0.0.0:29160
+
+<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Trusted</span>] = hex.somewhere.org
+
+<span class="variable-name">Federation.TLS.Require-Trusted-Client</span> = true
+<span class="variable-name">Federation.TLS.Require-Trusted-Server</span> = true
+</pre>
+
+
 [tickertape]: http://tickertape.org/documents/what_is_tickertape.html "About tickertape messaging"
 
 [subscription]: subscription_language.html
+[trust]: tls.html#creating_trust
