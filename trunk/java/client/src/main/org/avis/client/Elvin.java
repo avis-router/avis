@@ -469,7 +469,7 @@ public final class Elvin implements Closeable
   /**
    * Open a network connection to the router.
    */
-  void openConnection ()
+  private void openConnection ()
     throws IOException, IllegalArgumentException
   {
     try
@@ -588,7 +588,7 @@ public final class Elvin implements Closeable
     close (REASON_CLIENT_SHUTDOWN, "Client shutting down normally");
   }
   
-  void close (int reason, String message)
+  private void close (int reason, String message)
   {
     close (reason, message, null);
   }
@@ -598,7 +598,7 @@ public final class Elvin implements Closeable
    * 
    * @see #isOpen()
    */
-  void close (int reason, String message, Throwable error)
+  private void close (int reason, String message, Throwable error)
   {
     /* Use of atomic flag allows close() to be lock-free when already
      * closed, which avoids contention when IoHandler gets a
@@ -641,8 +641,8 @@ public final class Elvin implements Closeable
     }
   }
   
-  void fireCloseEvent (final int reason, final String message, 
-                       final Throwable error)
+  private void fireCloseEvent (final int reason, final String message, 
+                               final Throwable error)
   {
     if (closeListeners.hasListeners ())
     {
@@ -953,7 +953,7 @@ public final class Elvin implements Closeable
     return subscription;
   }
   
-  void subscribe (Subscription subscription)
+  protected void subscribe (Subscription subscription)
     throws IOException
   {
     /*
@@ -1001,7 +1001,7 @@ public final class Elvin implements Closeable
     }
   }
 
-  void unsubscribe (Subscription subscription)
+  protected void unsubscribe (Subscription subscription)
     throws IOException
   {
     sendAndReceive (new SubDelRqst (subscription.id));
@@ -1014,7 +1014,7 @@ public final class Elvin implements Closeable
     }
   }
 
-  void modifyKeys (Subscription subscription, Keys newKeys)
+  protected void modifyKeys (Subscription subscription, Keys newKeys)
     throws IOException
   {
     Keys.Delta delta = subscription.keys.deltaFrom (newKeys);
@@ -1027,8 +1027,8 @@ public final class Elvin implements Closeable
     }
   }
 
-  void modifySubscriptionExpr (Subscription subscription,
-                               String subscriptionExpr)
+  protected void modifySubscriptionExpr (Subscription subscription,
+                                         String subscriptionExpr)
     throws IOException
   {
     sendAndReceive
@@ -1036,7 +1036,8 @@ public final class Elvin implements Closeable
                        subscription.acceptInsecure ()));
   }
   
-  void modifySecureMode (Subscription subscription, SecureMode mode)
+  protected void modifySecureMode (Subscription subscription, 
+                                   SecureMode mode)
     throws IOException
   {
     sendAndReceive
@@ -1270,7 +1271,7 @@ public final class Elvin implements Closeable
     }
   }
   
-  void send (Message message)
+  private void send (Message message)
     throws IOException
   {
     checkConnected ();
@@ -1292,7 +1293,7 @@ public final class Elvin implements Closeable
    * @throws IOException if no suitable reply is seen or a network
    *           error occurs.
    */
-  <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
+  private <R extends XidMessage> R sendAndReceive (RequestMessage<R> request)
     throws IOException, RuntimeInterruptedException
   {
     send (request);
@@ -1304,7 +1305,7 @@ public final class Elvin implements Closeable
    * Block the calling thread for up to receiveTimeout millis waiting
    * for a reply message to arrive from the router.
    */
-  XidMessage receiveReply ()
+  private XidMessage receiveReply ()
     throws IOException, RuntimeInterruptedException
   {
     synchronized (replyLock)
@@ -1356,7 +1357,7 @@ public final class Elvin implements Closeable
    *           error occurs.
    */
   @SuppressWarnings("unchecked")
-  <R extends XidMessage> R receiveReply (RequestMessage<R> request)
+  private <R extends XidMessage> R receiveReply (RequestMessage<R> request)
     throws IOException
   {
     XidMessage reply = receiveReply ();
@@ -1399,7 +1400,7 @@ public final class Elvin implements Closeable
    * Handle replies to client-initiated messages by delivering them
    * back to the waiting thread.
    */
-  void deliverReply (XidMessage reply)
+  protected void deliverReply (XidMessage reply)
   {
     synchronized (replyLock)
     {
@@ -1431,7 +1432,7 @@ public final class Elvin implements Closeable
   /**
    * Handle router-initiated messages (e.g. NotifyDeliver, Disconn, etc).
    */
-  void handleMessage (Message message)
+  protected void handleMessage (Message message)
   {
     switch (message.typeId ())
     {
@@ -1467,10 +1468,16 @@ public final class Elvin implements Closeable
      * will be waiting for a reply that cannot be processed since it
      * is busy calling this method.
      */
-    callbacks.queue
-      (new NotifyCallback (message, 
-                           subscriptionsFor (message.secureMatches), 
-                           subscriptionsFor (message.insecureMatches)));
+    try
+    {
+      callbacks.queue
+        (new NotifyCallback (message, 
+                             subscriptionsFor (message.secureMatches), 
+                             subscriptionsFor (message.insecureMatches)));
+    } catch (IllegalStateException ex)
+    {
+      close (REASON_PROTOCOL_VIOLATION, ex.getMessage ());
+    }
   }
   
   private void handleDisconnect (Disconn disconn)
@@ -1513,50 +1520,39 @@ public final class Elvin implements Closeable
   
   /**
    * Generate a subscription set for a given set of ID's
+   *
+   * @throws IllegalStateException if any of the ID's cannot be
+   * resolved to a subscription.
    */
-  Set<Subscription> subscriptionsFor (long [] ids)
+  private Set<Subscription> subscriptionsFor (long [] ids)
+    throws IllegalStateException
   {
     if (ids.length == 0)
       return emptySet ();
     
     HashSet<Subscription> subscriptionSet = new HashSet<Subscription> ();
-    
-    for (long id : ids)
+ 
+    synchronized (subscriptions)
     {
-      try
+      for (long id : ids)
       {
-        subscriptionSet.add (subscriptionFor (id));
-      } catch (IllegalArgumentException ex)
-      {
-        warn ("Received notification for invalid subscription ID " + id, this);
-        
-        ex.printStackTrace ();
+        Subscription subscription = subscriptions.get (id);
+      
+        if (subscription == null)
+          subscription = subscriptions.get (0L);
+      
+        if (subscription != null)
+          subscriptionSet.add (subscription);
+        else
+          throw new IllegalStateException 
+            ("Received notification for invalid subscription ID " + id);
       }
     }
-    
+
     return subscriptionSet;
   }
   
-  /**
-   * Lookup the subscription for an ID or throw an exception.
-   */
-  Subscription subscriptionFor (long id)
-  {
-    synchronized (subscriptions)
-    {
-      Subscription subscription = subscriptions.get (id);
-      
-      if (subscription == null)
-        subscription = subscriptions.get (0L);
-      
-      if (subscription != null)
-        return subscription;
-      else
-        throw new IllegalArgumentException ("No subscription for ID " + id);
-    }
-  }
-  
-  void checkConnected ()
+  protected void checkConnected ()
     throws IOException
   {
     IoSession session = connection;
@@ -1567,9 +1563,9 @@ public final class Elvin implements Closeable
       throw new NotConnectedException ("Not connected to router");
   }
   
-  class NotifyCallback implements Runnable
+  private class NotifyCallback implements Runnable
   {
-    private NotifyDeliver message;
+    private Notification notification;
     private Set<Subscription> secureMatches;
     private Set<Subscription> insecureMatches;
 
@@ -1577,27 +1573,25 @@ public final class Elvin implements Closeable
                            Set<Subscription> secureMatches,
                            Set<Subscription> insecureMatches)
     {
-      this.message = message;
+      this.notification = new Notification (message);
       this.secureMatches = secureMatches;
       this.insecureMatches = insecureMatches;
     }
 
     public void run ()
     {
-      Notification ntfn = new Notification (message);
-      
       if (notificationListeners.hasListeners ())
       {
         notificationListeners.fire
-          (new GeneralNotificationEvent (Elvin.this, ntfn,
+          (new GeneralNotificationEvent (Elvin.this, notification,
                                          insecureMatches,
                                          secureMatches));
       }     
         
       Map<String, Object> data = new HashMap<String, Object> ();
-        
-      fireSubscriptionNotify (secureMatches, true, ntfn, data);
-      fireSubscriptionNotify (insecureMatches, false, ntfn, data);
+
+      fireSubscriptionNotify (secureMatches, true, notification, data);
+      fireSubscriptionNotify (insecureMatches, false, notification, data);
     }
     
     /**
@@ -1624,7 +1618,7 @@ public final class Elvin implements Closeable
     }
   }
 
-  class IoHandler extends IoHandlerAdapter
+  private class IoHandler extends IoHandlerAdapter
   {
     /**
      * Handle exceptions from MINA.
