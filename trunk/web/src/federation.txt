@@ -95,23 +95,54 @@ for both routers.
 
 Once a trust relationship is established, you can set up TLS
 federation endpoints in `avisd.config`. For example, the settings
-below create a `Trusted` federation class
+below create a federation link to a trusted host named
+`hex.somewhere.org`.
 
 <pre>
+<span class="variable-name">Federation.Listen</span> = ewaf:/secure/0.0.0.0:29160
+
+<span class="comment-delimiter"># </span><span class="comment">Require that hex.somewhere.org be TLS-authenticated
+</span><span class="variable-name">Federation.TLS.Require-Trusted-Hosts</span> = hex.somewhere.org
+
+<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Trusted</span>] = hex.somewhere.org
+
 <span class="variable-name">Federation.Subscribe</span>[<span class="constant">Trusted</span>] = \
   Presence-Protocol == 1000 || string (Message)
 
 <span class="variable-name">Federation.Provide</span>[<span class="constant">Trusted</span>] = TRUE
-
-<span class="variable-name">Federation.Listen</span> = ewaf:/secure/0.0.0.0:29160
-
-<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Trusted</span>] = hex.somewhere.org
-
-<span class="variable-name">Federation.TLS.Require-Trusted-Client</span> = true
-<span class="variable-name">Federation.TLS.Require-Trusted-Server</span> = true
 </pre>
 
+This creates a listening TLS endpoint on port 29160 and ensures that
+any host connecting to it that claims to be `hex.somewhere.org` is
+authenticated against its public key certificate in our keychain (or
+the root CA's chain of trust): this ensures that address-spoofing
+cannot be used to access this trusted federation link.<sup>[1][]</sup>
 
+The rest of the federation setup is similar to any other, applying the
+`Trusted` class to `hex.somewhere.org`.
+
+<div class="footnotes">
+
+<hr />
+
+Footnotes
+
+<ol>
+
+<li id="fn1-tls">
+
+<p> If you're thinking this sort of security thing would be better
+    handled at a lower level than Avis, you're probably right. If
+    you're using IPv6 you could choose to deal with security at the
+    transport layer. With IPv4 you're stuck with either TLS at the
+    application layer, or using a proxy/firewall arrangement in front
+    of the router.</p>
+
+</li>
+
+</ol>
+
+[1]: #fn1-tls
 [tickertape]: http://tickertape.org/documents/what_is_tickertape.html "About tickertape messaging"
 
 [subscription]: subscription_language.html
