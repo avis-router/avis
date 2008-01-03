@@ -49,7 +49,7 @@ Logic
 ----------------------------------------------------------------------
 
 The evaluation of a subscription uses Lukasiewicz's tri-state logic
-that adds the value bottom (which represents "undecidable" or
+that adds the value *bottom* (which represents "undecidable" or
 "indefinite") to the familiar true and false.
 
 <table border="1" cellpadding="4">
@@ -82,13 +82,13 @@ that adds the value bottom (which represents "undecidable" or
 </table>
 
 Any subscription expression that refers to a name that is not present
-in the notification being evaluated results in bottom.
+in the notification being evaluated results in *bottom*.
 
 In addition, many of the functions in Elvin have constraints on their
 parameters (ie. data type) and have an undefined result should these
 constraints not be met. For example, if `begins-with ()`, which
 expects a string parameter is provided with a 32-bit integer then the
-result of the function is bottom.
+result of the function is *bottom*.
 
 Notifications are delivered only if the result of subscription
 evaluation is true.
@@ -100,7 +100,7 @@ A name evaluates to its corresponding value in the notification. Where
 a name occurs in an expression, during evaluation of a notification,
 the value of the name is taken to be the value of the attribute with
 the matching name in the notification. If the name is not in the
-notification, its value becomes bottom (see the previous section on
+notification, its value becomes *bottom* (see the previous section on
 logic).
 
 Names may contain only printing ASCII characters (32-126) and are
@@ -204,7 +204,7 @@ precedence) are defined:
 <dt>!</dt>
 
 <dd>An expression may be negated by a preceding <code>!</code>. The
-negation of bottom is bottom.</dd>
+negation of <em>bottom</em> is <em>bottom</em>.</dd>
 
 <dt>&amp;&amp;</dt>
 
@@ -231,7 +231,7 @@ equality test is supported on opaque data.
 
 If a comparison is attempted between incomparable types or if either
 of the values being compared refers to a value not present in the
-notification, then the result is bottom. The != operator is the
+notification, then the result is <em>bottom</em>. The != operator is the
 negation of the equality operator. <code>x != y</code> is functionally
 equivalent to <code>! (x == y)</code>.</dd>
 
@@ -240,7 +240,7 @@ equivalent to <code>! (x == y)</code>.</dd>
 <dd>Two numeric values may be compared with other numbers by placing one
 of the inequality operators between the values. If either of the
 values is not a number (or not defined) then the result of the
-comparison is bottom.
+comparison is <em>bottom</em>.
 
 Simple arithmetic and logical operators are supported too, making
 subscriptions like the following possible:
@@ -271,7 +271,7 @@ logical operators.
 The bitwise operators are only defined on the two integer types. If
 they are applied to other types then the result is undefined which
 will result in the smallest enclosing logical evaluating to
-bottom.</dd>
+<em>bottom</em>.</dd>
 
 <dt>&lt;&lt;, &gt;&gt; and &gt;&gt;&gt;</dt>
 
@@ -298,8 +298,8 @@ the values on either side of the operator.</dd>
 
 The following functions take one argument and return a logic value. If
 the value of name is of the given type, they evaluate to true, if name
-is not present in the notification, they evaluate to bottom, otherwise
-they evaluate to false.
+is not present in the notification, they evaluate to <em>bottom</em>,
+otherwise they evaluate to false.
 
 <dl class="function-definition">
 
@@ -350,19 +350,19 @@ etc.
 <dt>begins-with (name, string, ...)</dt>
 
 <dd>Returns true if the value of name is a string and begins with any
-of the string arguments, bottom if the value name is not a string or
+of the string arguments, <em>bottom</em> if the value name is not a string or
 not present in the notification and false otherwise.</dd>
 
 <dt>contains (name, string, ...)</dt>
 
 <dd>Returns true if the value of name is a string and it contains any
-of the string arguments, bottom if the value name is not a string or
+of the string arguments, <em>bottom</em> if the value name is not a string or
 not present in the notification and false otherwise.</dd>
 
 <dt>ends-with (name, string, ...)</dt>
 
 <dd>Returns true if the value of name is a string and ends with any of the
-string arguments, bottom if the value name is not a string or not
+string arguments, <em>bottom</em> if the value name is not a string or not
 present in the notification and false otherwise.</dd>
 
 <dt>wildcard (name, string, ...)</dt>
@@ -413,7 +413,7 @@ resulting string value.</dd>
 
 <dt>require (name)</dt>
 
-<dd>Returns true if name is present in the notification, bottom
+<dd>Returns true if name is present in the notification, <em>bottom</em>
 otherwise.</dd>
 
 <dt>equals (name, value, ...)</dt>
@@ -424,7 +424,7 @@ otherwise.</dd>
 
 <dd>If name is a string then <code>size ()</code> returns the number
 of characters in the string. If name is an opaque then it returns the
-number of bytes in the opaque. Returns bottom for all other data
-types.</dd>
+number of bytes in the opaque. Returns <em>bottom</em> for all other
+data types.</dd>
 
 </dl>
