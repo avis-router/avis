@@ -11,9 +11,9 @@ Setting Up TLS
 ----------------------------------------------------------------------
 
 The simplest use of TLS is to encrypt communications between client
-and router without requiring authentication. To set up a TLS-secured
-client endpoint, you just need to specify it in the `Listen`
-configuration option:
+and router without requiring authentication. To set up this sort of
+TLS-secured client endpoint, you just need to specify it in the
+`Listen` configuration option:
 
 <pre>
 <span class="variable-name">Listen</span> = elvin:/secure/0.0.0.0:29170
@@ -33,7 +33,7 @@ associated public key certificate for each end that needs to be
 authenticated.
 
 For example, to authenticate a router to a client &ndash; i.e. to give
-assurance a client is connected to a trusted router over and insecure
+assurance a client is connected to a trusted router over an insecure
 network &ndash; the router needs a unique private key, and the client
 needs to accept the associated public key (in the form of a PKI
 certificate) as trusted.<sup>[1][]</sup> For authenticating the client
@@ -43,11 +43,11 @@ the router must trust the accompanying public key.
 Generating A TLS Key
 ----------------------------------------------------------------------
 
-To generate a key for use in Avis, you will need to use [the
-`keytool` command][keytool] that ships with the Java Development Kit (JDK)
-version 1.5.0 or later. The `keytool` utility stores and rerieves keys
-and certificate chains in a Java _keystore_, which is a binary
-archive, encrypted with a passphrase.
+To generate a key for use in Avis, you will need to use the [`keytool`
+command][keytool] that ships with the Java Development Kit (JDK). The
+`keytool` utility stores and rerieves keys and certificate chains in a
+Java _keystore_, which is a binary archive, encrypted with a
+passphrase.
 
 As an example of using `keytool` to generate a new key inside a
 self-signed certificate, the command that was used to generate the key
@@ -111,7 +111,7 @@ than the default using these lines in the configuration:
 <span class="variable-name">TLS.Keystore-Passphrase</span> = mypassword
 </pre>
 
-To export the public key to a X.509 certificate file:
+To export the public key to an X.509 certificate file:
 
     keytool -export -keystore my-router.keystore \
       -alias my-router-key -storepass mypassword \
@@ -124,16 +124,15 @@ trusted key:
       -alias my-router-key -storepass mypassword \
        -file my-router.cer
 
-Now, when the client connects to the router holding the private key,
-it will be able to verify the router is trusted.
+Now, when the client connects to the router it will be able to verify
+the router is trusted.
 
-A reverse trust relationship can also be established for the client to
-the router (this is more commonly done with federation links than
-normal clients), and the router can be configured to _only_ accept
-authenticated clients via the `TLS.Require-Trusted-Client`
-configuration setting, and only authenticated [federation
-links][federation] using `Federation.TLS.Require-Trusted-Client` and
-`Federation.TLS.Require-Trusted-Server`.
+A reverse trust relationship can also be established from the router
+to the client,<sup>[2][]</sup> and the router can be configured to
+_only_ accept authenticated clients via the
+`TLS.Require-Trusted-Hosts` configuration setting, and only
+authenticated [federation links][federation] using
+`Federation.TLS.Require-Trusted-Hosts`.
 
 <!--  -->
 <!-- http://java.sun.com/j2se/1.5.0/docs/guide/security/jsse/JSSERefGuide.html -->
@@ -154,11 +153,18 @@ Footnotes
     the router's public key to its chain of trust: it will be accepted
     as trusted because a trusted CA has signed it.</p>
 
+<li id="fn2-tls">
+
+<p>This is more commonly done with client federation links (where the
+   client is the router with the <code>Federation.Connect</code>
+   option) than normal clients.</p>
+
 </li>
 
 </ol>
 </div>
 
 [1]: #fn1-tls
+[2]: #fn2-tls
 [keytool]: http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/keytool.html "Information on how to use keytool"
 [federation]: federation.html
