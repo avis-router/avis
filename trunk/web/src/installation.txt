@@ -24,7 +24,7 @@ required. If you do wish to change any of the router's default
 parameters, these are specified in a file called `avisd.config`. See
 the installation instructions for your platform below for information
 on where this file can be found. Documentation and templates for the
-config options can be found in file itself.
+config options can be found in the file itself.
 
 Windows
 ----------------------------------------------------------------------
@@ -52,6 +52,12 @@ The Avis RPM is targeted and tested on Fedora Core 2 and
 later. However the RPM is architecture-independent and not
 particularly dependent on Fedora, so it may work on other RPM-based
 Linux distributions.
+
+NOTE: Avis will *not* run under GNU gcj, which is the default version
+of Java shipped with Fedora. You'll need to download the Java SE 1.6
+JDK from [java.sun.com][sun_java], and then use [these instructions at
+jpackage.org](http://jpackage.org/installation.php) to install Sun
+Java and make it the default runtime.
 
 To install:
 
