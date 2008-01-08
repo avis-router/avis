@@ -21,15 +21,17 @@ import static org.avis.util.Util.checkNotNull;
  */
 public final class Subscription
 {
-  Elvin elvin;
-  String subscriptionExpr;
-  SecureMode secureMode;
-  Keys keys;
-  long id;
-  ListenerList<NotificationListener> notificationListeners;
+  protected Elvin elvin;
+  protected String subscriptionExpr;
+  protected SecureMode secureMode;
+  protected Keys keys;
+  protected long id;
+  protected ListenerList<NotificationListener> notificationListeners;
 
-  Subscription (Elvin elvin,
-                String subscriptionExpr, SecureMode secureMode, Keys keys)
+  protected Subscription (Elvin elvin,
+                          String subscriptionExpr, 
+                          SecureMode secureMode, 
+                          Keys keys)
   {
     this.elvin = elvin;
     this.subscriptionExpr = checkSubscription (subscriptionExpr);
