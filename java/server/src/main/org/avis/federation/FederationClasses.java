@@ -1,16 +1,18 @@
 package org.avis.federation;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import org.avis.io.InetAddressFilter;
+import org.avis.util.Filter;
+import org.avis.util.Pair;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-
-import static org.avis.util.Wildcard.toPattern;
 
 /**
  * Defines a mapping from remote hosts to the FederationClass that
@@ -24,7 +26,7 @@ public class FederationClasses
 {
   private FederationClass defaultClass;
   private Map<String, FederationClass> classes;
-  private Map<Pattern, FederationClass> hostToClass;
+  private List<Pair<Filter<InetAddress>, FederationClass>> hostToClass;
 
   public FederationClasses ()
   {
@@ -41,7 +43,7 @@ public class FederationClasses
     this.defaultClass = defaultClass;
     this.classes = 
       new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
-    this.hostToClass = new HashMap<Pattern, FederationClass> ();
+    this.hostToClass = new ArrayList<Pair<Filter<InetAddress>,FederationClass>> ();
   }
 
   public void setDefaultClass (FederationClass newDefaultClass)
@@ -84,44 +86,44 @@ public class FederationClasses
    */
   public FederationClass classFor (InetAddress address)
   {
-    return classFor (address.getCanonicalHostName (), 
-                     address.getHostAddress ());
-  }
-  
-  /**
-   * Get the federation class mapped to a given host.
-   * 
-   * @param hostName The host's canonical name.
-   * @param ip The host's IP address.
-   * 
-   * @return The federation class, or defaultClass if no explicit
-   *         mapping found.
-   */
-  public FederationClass classFor (String hostName, String ip)
-  {
-    for (Map.Entry<Pattern, FederationClass> entry : hostToClass.entrySet ())
+    for (Pair<Filter<InetAddress>, FederationClass> entry : hostToClass)
     {
-      Pattern hostPattern = entry.getKey ();
-      
-      if (hostPattern.matcher (hostName).matches () ||
-          hostPattern.matcher (ip).matches ())
-      {
-        return entry.getValue ();
-      }
+      if (entry.item1.matches (address))
+        return entry.item2;
     }
     
     return defaultClass;
   }
   
   /**
+   * Get the federation class mapped to a given host.
+   * 
+   * @param hostName The host's canonical name.
+   * 
+   * @return The federation class, or defaultClass if no explicit
+   *         mapping found.
+   */
+  public FederationClass classFor (String hostName)
+  {
+    try
+    {
+      return classFor (InetAddress.getByName (hostName));
+    } catch (UnknownHostException ex)
+    {
+      throw new IllegalArgumentException (ex.getMessage ());
+    }
+  }
+  
+  /**
    * Map a host pattern to a federation class.
    * 
-   * @param hostPattern A host-matching pattern.
+   * @param matcher A host-matching filter.
    * @param fedClass The federation class to use for matching hosts.
    */
-  public void map (Pattern hostPattern, FederationClass fedClass)
+  public void map (Filter<InetAddress> matcher, FederationClass fedClass)
   {
-    hostToClass.put (hostPattern, fedClass);
+    hostToClass.add 
+      (new Pair<Filter<InetAddress>, FederationClass> (matcher, fedClass));
   }
 
   /**
@@ -132,7 +134,7 @@ public class FederationClasses
    */
   public void map (String host, FederationClass fedClass)
   {
-    map (toPattern (host, CASE_INSENSITIVE), fedClass);
+    map (new InetAddressFilter (host), fedClass);
   }
 
   /**
