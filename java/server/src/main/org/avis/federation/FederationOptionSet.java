@@ -2,11 +2,14 @@ package org.avis.federation;
 
 import org.avis.config.OptionSet;
 import org.avis.config.OptionType;
+import org.avis.config.OptionTypeGeneric;
 import org.avis.config.OptionTypeParam;
 import org.avis.config.OptionTypeSet;
 import org.avis.config.OptionTypeValueExpr;
+import org.avis.io.InetAddressFilter;
 import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
+import org.avis.util.Filter;
 import org.avis.util.IllegalConfigOptionException;
 
 import static java.util.Collections.emptyMap;
@@ -45,8 +48,8 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Add-Outgoing-Attribute", attrOption, emptyMap ());
     add ("Federation.Request-Timeout", 1, 20, Integer.MAX_VALUE);
     add ("Federation.Keepalive-Interval", 1, 60, Integer.MAX_VALUE);
-    add ("Federation.TLS.Require-Trusted-Client", false);
-    add ("Federation.TLS.Require-Trusted-Server", false);
+    add ("Federation.Require-Authenticated", 
+         new OptionTypeGeneric (InetAddressFilter.class), Filter.MATCH_NONE);
     
     // allow connection options such as Packet.Max-Length
     inheritFrom (CONNECTION_OPTION_SET);

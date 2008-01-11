@@ -16,7 +16,6 @@ import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.ThreadModel;
-import org.apache.mina.filter.SSLFilter;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -32,6 +31,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.RequestMessage;
 import org.avis.io.messages.RequestTimeoutMessage;
 import org.avis.router.Router;
+import org.avis.util.Filter;
 import org.avis.util.IllegalConfigOptionException;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
@@ -73,6 +73,7 @@ public class Connector implements IoHandler, Closeable
   private Timer asyncConnectTimer;
   protected volatile boolean closing;
   
+  @SuppressWarnings("unchecked")
   public Connector (Router router, String serverDomain,
                     EwafURI uri, FederationClass federationClass,
                     Options options) 
@@ -98,15 +99,7 @@ public class Connector implements IoHandler, Closeable
     connectorConfig.setThreadModel (ThreadModel.MANUAL);
     connectorConfig.setConnectTimeout ((int)(requestTimeout / 1000));
     
-    DefaultIoFilterChainBuilder filters = connectorConfig.getFilterChain ();
-    
-    if (uri.isSecure ())
-    {
-      filters.addFirst
-        ("ssl", 
-         sslFilter
-           (options.getBoolean ("Federation.TLS.Require-Trusted-Server")));
-    }
+    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
     
     filters.addLast ("codec", FederationFrameCodec.FILTER);
     
@@ -116,20 +109,20 @@ public class Connector implements IoHandler, Closeable
     filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
+    Filter<InetSocketAddress> authRequired = 
+      (Filter<InetSocketAddress>)options.get 
+        ("Federation.Require-Authenticated");
+    
+    if (uri.isSecure ())
+      filters = router.createSecureFilters (filters, authRequired, true);
+    else
+      filters = router.createStandardFilters (filters, authRequired);
+    
+    connectorConfig.setFilterChainBuilder (filters);
+    
     connect ();
   }
   
-  private SSLFilter sslFilter (boolean requireTrustedServer) 
-    throws IOException
-  {
-    SSLFilter filter = 
-      new SSLFilter (router.createSSLContext (requireTrustedServer));
-    
-    filter.setUseClientMode (true);
-    
-    return filter;
-  }
-
   public Link link ()
   {
     return link;
@@ -192,7 +185,7 @@ public class Connector implements IoHandler, Closeable
     } catch (RuntimeIOException ex)
     {
       diagnostic ("Failed to connect to federator at " + uri + ", retrying: " + 
-                  shortException (ex.getCause ()), this);
+                  shortException (ex.getCause ()), this, ex);
       
       asyncConnect ();
     }

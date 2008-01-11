@@ -1,7 +1,10 @@
 package org.avis.router;
 
 import org.avis.config.OptionSet;
+import org.avis.config.OptionTypeGeneric;
 import org.avis.config.OptionTypeURI;
+import org.avis.io.InetAddressFilter;
+import org.avis.util.Filter;
 
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.Net.uri;
@@ -17,7 +20,8 @@ public class RouterOptionSet extends OptionSet
     add ("IO.Use-Direct-Buffers", true);
     add ("TLS.Keystore", new OptionTypeURI (), uri ("avis-router.keystore"));
     add ("TLS.Keystore-Passphrase", "");
-    add ("TLS.Require-Trusted-Client", false);
+    add ("Require-Authenticated", 
+         new OptionTypeGeneric (InetAddressFilter.class), Filter.MATCH_NONE);
     
     inheritFrom (CONNECTION_OPTION_SET);
   }
