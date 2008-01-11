@@ -119,9 +119,6 @@ is authenticated against its public key certificate in our keychain
 other nefarious techniques cannot be used to access the trusted
 federation link.<sup>[1][]</sup>
 
-The rest of the federation setup is similar to any other, applying the
-`Trusted` class to `hex.somewhere.org`.
-
 <div class="footnotes">
 
 <hr />
