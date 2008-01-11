@@ -588,7 +588,7 @@ public final class Elvin implements Closeable
     close (REASON_CLIENT_SHUTDOWN, "Client shutting down normally");
   }
   
-  private void close (int reason, String message)
+  protected void close (int reason, String message)
   {
     close (reason, message, null);
   }
@@ -598,9 +598,9 @@ public final class Elvin implements Closeable
    * 
    * @see #isOpen()
    */
-  private void close (int reason, String message, Throwable error)
+  protected void close (int reason, String message, Throwable error)
   {
-    /* Use of atomic flag allows close() to be lock-free when already
+    /* Use of atomic flag allows close () to be lock-free when already
      * closed, which avoids contention when IoHandler gets a
      * sessionClosed () event triggered by this method. */
     if (!connectionOpen.getAndSet (false))
@@ -1620,6 +1620,11 @@ public final class Elvin implements Closeable
 
   private class IoHandler extends IoHandlerAdapter
   {
+    public IoHandler ()
+    {
+      // zip
+    }
+    
     /**
      * Handle exceptions from MINA.
      */
@@ -1674,6 +1679,7 @@ public final class Elvin implements Closeable
     public void sessionClosed (IoSession session)
       throws Exception
     {
+      // NB: close () does nothing if connection already closed normally
       close (REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY,
              "Connection to router closed without warning");
     }
