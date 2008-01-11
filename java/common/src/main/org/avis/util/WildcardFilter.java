@@ -17,8 +17,6 @@ import static org.avis.util.Wildcard.toPattern;
  */
 public class WildcardFilter implements Filter<String>
 {
-  public static final WildcardFilter MATCH_NONE = new WildcardFilter ("");
-
   private List<Pattern> patterns;
   
   public WildcardFilter (String pattern)
