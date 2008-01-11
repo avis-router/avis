@@ -282,8 +282,8 @@ public class FederationManager implements CloseListener
       for (String hostPatterns : (Set<String>)entry.getValue ())
       {
         // compatibility with Avis 1.1
-        if (hostPatterns.startsWith ("@"))
-          hostPatterns = hostPatterns.substring (1);
+        if (hostPatterns.contains ("@"))
+          hostPatterns = hostPatterns.replaceAll ("@", "");
         
         classes.map (hostPatterns, fedClass);
       }
