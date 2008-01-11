@@ -198,8 +198,9 @@ public class Router implements IoHandler, Closeable
    * @param uris The URI's to listen to.
    * @param handler The IO handler.
    * @param baseFilters The IO filters used by all connection types.
-   * @param authRequired Hosts matched by this filter
-   *                must be successfully authenticated via TLS.
+   * @param authRequired Hosts matched by this filter must be
+   *                successfully authenticated via TLS or will be
+   *                refused access.
    * 
    * @throws IOException if an error occurred during binding.
    */
