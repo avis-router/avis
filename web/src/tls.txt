@@ -44,10 +44,10 @@ Generating A TLS Key
 ----------------------------------------------------------------------
 
 To generate a key for use in Avis, you will need to use the [`keytool`
-command][keytool] command that ships with the Java Development
-Kit. The `keytool` utility stores and retrieves keys and certificate
-chains in a Java _keystore_, which is a binary archive, encrypted with
-a passphrase.
+command][keytool] that ships with the Java Development Kit. The
+`keytool` utility stores and retrieves keys and certificate chains in
+a Java _keystore_, which is a binary archive, encrypted with a
+passphrase.
 
 As an example of using `keytool` to generate a new key inside a
 self-signed certificate, the command that was used to generate the key
