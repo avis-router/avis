@@ -26,6 +26,7 @@ import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.Nack;
 import org.avis.router.Router;
+import org.avis.util.Filter;
 
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
@@ -37,8 +38,8 @@ import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.federation.Federation.logMinaException;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
-import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.io.Net.hostIdFor;
+import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
@@ -75,7 +76,7 @@ public class Acceptor implements IoHandler, Closeable
   protected Set<InetSocketAddress> listenAddresses;
   protected volatile boolean closing;
 
-
+  @SuppressWarnings("unchecked")
   public Acceptor (Router router,
                    String serverDomain,
                    FederationClasses federationClasses, 
@@ -105,8 +106,10 @@ public class Acceptor implements IoHandler, Closeable
     filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
-    router.bind (uris, this, filters, 
-                 options.getBoolean ("Federation.TLS.Require-Trusted-Client"));
+    router.bind 
+      (uris, this, filters, 
+       (Filter<InetSocketAddress>)options.get
+         ("Federation.Require-Authenticated"));
 
     if (shouldLog (DIAGNOSTIC))
     {

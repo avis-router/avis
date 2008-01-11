@@ -1,12 +1,10 @@
 package org.avis.federation;
 
+import java.util.Collection;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import org.avis.io.messages.NotifyEmit;
 import org.avis.logging.Log;
@@ -15,6 +13,10 @@ import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.LogFailTester;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import static java.lang.Thread.sleep;
 
@@ -26,6 +28,7 @@ import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.util.Streams.close;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
@@ -91,7 +94,7 @@ public class JUTestFederationIntegration
       "Federation.Listen=ewaf://127.0.0.1:29191\n" + 
       "Federation.Subscribe[Test]=require (test)\n" + 
       "Federation.Provide[Test]=require (test)\n" +
-      "Federation.Apply-Class[Test]=@127.0.0.1"
+      "Federation.Apply-Class[Test]=127.0.0.1"
     );
 
     Log.enableLogging (Log.INFO, false);
@@ -132,21 +135,23 @@ public class JUTestFederationIntegration
   
   /**
    * Full integration test including TLS in connector/acceptor.
+   * 
+   * Router 1 connects -> Router 2
+   *                   -> Router 3
    */
   @Test
   public void integrationTLS ()
     throws Exception
   {
     String commonOptions = 
+      "TLS.Keystore=" + getClass ().getResource ("router.ks") + "\n" +
+      "TLS.Keystore-Passphrase=testing\n" +
       "Federation.Activated=yes\n" +
       "Federation.Subscribe[Test]=require (test)\n" + 
       "Federation.Provide[Test]=require (test)\n" +
-      "Federation.Apply-Class[Test]=@127.0.0.1\n" +
+      "Federation.Apply-Class[Test]=127.0.0.1\n" +
       "Federation.Request-Timeout=2\n" +
-      "TLS.Keystore=" + getClass ().getResource ("router.ks") + "\n" +
-      "TLS.Keystore-Passphrase=testing\n" +
-      "Federation.TLS.Require-Trusted-Server=true\n" +
-      "Federation.TLS.Require-Trusted-Client=true\n";
+      "Federation.Require-Authenticated=127.0.0.1\n";
     
     File config1 = configFile
     (
@@ -160,7 +165,9 @@ public class JUTestFederationIntegration
     (
       "Listen=elvin://127.0.0.1:29180\n" +
       commonOptions +
-      "Federation.Listen=ewaf:/secure/127.0.0.1:29181\n"
+      "Federation.Listen=" +
+        "ewaf:/secure/127.0.0.1:29181 " +
+        "ewaf://127.0.0.1:29182\n"
     );
     
     File config3 = configFile
@@ -179,15 +186,28 @@ public class JUTestFederationIntegration
       "Federation.Connect[Test]=ewaf:/secure/127.0.0.1:29181" 
     );
     
-    Log.enableLogging (Log.INFO, false);
-    // Log.enableLogging (Log.TRACE, true);
-    // Log.enableLogging (Log.DIAGNOSTIC, true);
+    // config with trusted cert but not using TLS
+    File config5 = configFile
+    (
+      "Listen=elvin:/secure/127.0.0.1:29300\n" +
+      commonOptions +
+      "Federation.Connect[Test]=ewaf://127.0.0.1:29182" 
+    );
+    
+//    Log.enableLogging (Log.INFO, true);
+//    Log.enableLogging (Log.TRACE, true);
+//    Log.enableLogging (Log.DIAGNOSTIC, true);
 
     Router router2 = startRouter (config2);
     Router router3 = startRouter (config3);
     Router router1 = startRouter (config1);
 
-    for (Connector connector : federationManagerFor (router1).connectors ())
+    Collection<Connector> connectors = 
+      federationManagerFor (router1).connectors ();
+    
+    assertEquals (2, connectors.size ());
+    
+    for (Connector connector : connectors)
       waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
@@ -215,18 +235,33 @@ public class JUTestFederationIntegration
     
     Router router4 = startRouter (config4);
     
-    sleep (MAX_WAIT);
-    
-    for (Connector connector : federationManagerFor (router4).connectors ())
-      assertFalse (connector.isConnected ());
+    assertFailsToConnect (router4);
     
     router4.close ();
+    
+    // check that federator cannot connect insecurely
+    logTester.pause ();
+    
+    Router router5 = startRouter (config5);
+    
+    assertFailsToConnect (router5);
+    
+    router5.close ();
     
     logTester.unpause ();
     
     router3.close ();
     router2.close ();
     router1.close ();
+  }
+
+  private static void assertFailsToConnect (Router router)
+    throws InterruptedException
+  {
+    sleep (MAX_WAIT);
+    
+    for (Connector connector : federationManagerFor (router).connectors ())
+      assertFalse (connector.isConnected ());
   }
 
   private static Router startRouter (File config) 

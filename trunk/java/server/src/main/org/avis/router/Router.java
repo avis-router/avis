@@ -14,8 +14,6 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import javax.net.ssl.SSLContext;
-
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IdleStatus;
@@ -61,6 +59,7 @@ import org.avis.security.Keys;
 import org.avis.subscription.parser.ConstantExpressionException;
 import org.avis.subscription.parser.ParseException;
 import org.avis.util.ConcurrentHashSet;
+import org.avis.util.Filter;
 import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
 
@@ -81,7 +80,6 @@ import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
-import static org.avis.io.TLS.sslContextFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -116,7 +114,6 @@ public class Router implements IoHandler, Closeable
   private ExecutorService executor;
   private SocketAcceptor acceptor;
   private KeyStore keystore;
-  private SSLContext sslContext;
   private volatile boolean closing;
   
   private ConcurrentHashSet<IoSession> sessions;
@@ -156,6 +153,7 @@ public class Router implements IoHandler, Closeable
    * @throws IllegalConfigOptionException If an option in the configuratiion
    *                 options is invalid.
    */
+  @SuppressWarnings("unchecked")
   public Router (RouterOptions options)
     throws IOException, IllegalConfigOptionException
   {
@@ -188,7 +186,7 @@ public class Router implements IoHandler, Closeable
     filters.addLast ("threadPool", new ExecutorFilter (executor));
     
     bind (options.listenURIs (), this, filters, 
-          routerOptions.getBoolean ("TLS.Require-Trusted-Client"));
+          (Filter<InetSocketAddress>)routerOptions.get ("Require-Authenticated"));
   }
 
   /**
@@ -198,19 +196,20 @@ public class Router implements IoHandler, Closeable
    * 
    * @param uris The URI's to listen to.
    * @param handler The IO handler.
-   * @param filters The IO filters.
-   * @param requireTrustedTLSClient True if, when TLS is used, the
-   *                remote client must be in the trusted certificate
-   *                chain.
+   * @param baseFilters The IO filters used by all connection types.
+   * @param authRequired Hosts matched by this filter
+   *                must be successfully authenticated via TLS.
    * 
    * @throws IOException if an error occurred during binding.
    */
   public void bind (Set<? extends ElvinURI> uris, IoHandler handler,
-                    DefaultIoFilterChainBuilder filters, 
-                    boolean requireTrustedTLSClient) 
+                    DefaultIoFilterChainBuilder baseFilters, 
+                    Filter<InetSocketAddress> authRequired) 
     throws IOException
   {
-    SocketAcceptorConfig defaultAcceptorConfig = createDefaultConfig (filters);
+    SocketAcceptorConfig defaultAcceptorConfig = 
+      createAcceptorConfig 
+        (createStandardFilters (baseFilters, authRequired));
     SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
     
     for (ElvinURI uri : uris)
@@ -221,12 +220,9 @@ public class Router implements IoHandler, Closeable
       {
         if (secureAcceptorConfig == null)
         {
-          DefaultIoFilterChainBuilder secureFilters = 
-            (DefaultIoFilterChainBuilder)filters.clone ();
-          
-          secureFilters.addFirst ("ssl", sslFilter (requireTrustedTLSClient));
-
-          secureAcceptorConfig = createDefaultConfig (secureFilters);
+          secureAcceptorConfig = 
+            createAcceptorConfig 
+              (createSecureFilters (baseFilters, authRequired, false));
         }
         
         bindConfig = secureAcceptorConfig;
@@ -242,8 +238,13 @@ public class Router implements IoHandler, Closeable
 
   /**
    * Create default MINA config for incoming connections.
+   * 
+   * @param filters The base set of common filters.
+   * @param authRequired The set of hosts that must connect via
+   *                authenticated connections and should be
+   *                blacklisted from non authenticated access.
    */
-  private SocketAcceptorConfig createDefaultConfig 
+  private SocketAcceptorConfig createAcceptorConfig 
     (DefaultIoFilterChainBuilder filters)
   {
     SocketAcceptorConfig defaultAcceptorConfig = new SocketAcceptorConfig ();
@@ -254,42 +255,36 @@ public class Router implements IoHandler, Closeable
     
     return defaultAcceptorConfig;
   }
-
-  /**
-   * Create a new SSL context using the router's keystore. This can be
-   * used by clients that wish to use TLS connections using the
-   * router's TLS settings.
-   * 
-   * @param requireTrustedServer True if the context should be set to
-   *                allow only trusted servers.
-   * 
-   * @return A new SSL context.
-   * 
-   * @throws IOException if TLS failed to initialise.
-   */
-  public SSLContext createSSLContext (boolean requireTrustedServer) 
-    throws IOException
+  
+  public DefaultIoFilterChainBuilder createStandardFilters 
+    (DefaultIoFilterChainBuilder commonFilters, 
+     Filter<InetSocketAddress> authRequired)
   {
-    return sslContextFor (keystore (), 
-                          routerOptions.getString ("TLS.Keystore-Passphrase"), 
-                          requireTrustedServer);
+    if (authRequired != Filter.MATCH_NONE)
+    {
+      commonFilters = (DefaultIoFilterChainBuilder)commonFilters.clone (); 
+      
+      commonFilters.addFirst ("blacklist", new BlacklistFilter (authRequired));
+    }
+    
+    return commonFilters;
   }
-
-  /**
-   * Lazy create the MINA SSL filter for incoming secure (TLS)
-   * connections.
-   */
-  private SSLFilter sslFilter (boolean requireTrustedTLSClient)
-    throws IllegalConfigOptionException, IOException
+  
+  public DefaultIoFilterChainBuilder createSecureFilters 
+    (DefaultIoFilterChainBuilder commonFilters, 
+     Filter<InetSocketAddress> authRequired, boolean clientMode) 
+     throws IOException
   {
-    if (sslContext == null)
-      sslContext = createSSLContext (false);
-
-    SSLFilter sslFilter = new SSLFilter (sslContext);
+    DefaultIoFilterChainBuilder secureFilters = 
+      (DefaultIoFilterChainBuilder)commonFilters.clone ();
     
-    sslFilter.setNeedClientAuth (requireTrustedTLSClient);
+    secureFilters.addFirst 
+      ("security", 
+       new SecurityFilter (keystore (), 
+                           routerOptions.getString ("TLS.Keystore-Passphrase"), 
+                           authRequired, clientMode));
     
-    return sslFilter;
+    return secureFilters;
   }
 
   /**
@@ -599,6 +594,7 @@ public class Router implements IoHandler, Closeable
       updateTcpSendImmediately (session, connection.options);
       updateQueueLength (session, connection);
       
+      // todo is this getting nuked by accepted () below?
       connection.options.setWithLegacy
         ("Vendor-Identification", "Avis " + ROUTER_VERSION);
       
