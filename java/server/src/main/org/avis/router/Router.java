@@ -8,6 +8,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
 
@@ -186,7 +187,7 @@ public class Router implements IoHandler, Closeable
     filters.addLast ("threadPool", new ExecutorFilter (executor));
     
     bind (options.listenURIs (), this, filters, 
-          (Filter<InetSocketAddress>)routerOptions.get ("Require-Authenticated"));
+          (Filter<InetAddress>)routerOptions.get ("Require-Authenticated"));
   }
 
   /**
@@ -204,7 +205,7 @@ public class Router implements IoHandler, Closeable
    */
   public void bind (Set<? extends ElvinURI> uris, IoHandler handler,
                     DefaultIoFilterChainBuilder baseFilters, 
-                    Filter<InetSocketAddress> authRequired) 
+                    Filter<InetAddress> authRequired) 
     throws IOException
   {
     SocketAcceptorConfig defaultAcceptorConfig = 
@@ -256,9 +257,18 @@ public class Router implements IoHandler, Closeable
     return defaultAcceptorConfig;
   }
   
+  /**
+   * Create the filters used for standard, non secured links.
+   * 
+   * @param commonFilters The initial set of filters to add to.
+   * @param authRequired The hosts for which authentication is
+   *                required. For standard link these hosts are denied
+   *                connection.
+   * @return The new filter set.
+   */
   public DefaultIoFilterChainBuilder createStandardFilters 
     (DefaultIoFilterChainBuilder commonFilters, 
-     Filter<InetSocketAddress> authRequired)
+     Filter<InetAddress> authRequired)
   {
     if (authRequired != Filter.MATCH_NONE)
     {
@@ -270,10 +280,20 @@ public class Router implements IoHandler, Closeable
     return commonFilters;
   }
   
+  /**
+   * Create the filters used for TLS-secured links.
+   * 
+   * @param commonFilters The initial set of filters to add to.
+   * @param authRequired The hosts for which authentication is
+   *                required.
+   * @param clientMode True if the TLS filter should be in client mode.
+   * 
+   * @return The new filter set.
+   */
   public DefaultIoFilterChainBuilder createSecureFilters 
     (DefaultIoFilterChainBuilder commonFilters, 
-     Filter<InetSocketAddress> authRequired, boolean clientMode) 
-     throws IOException
+     Filter<InetAddress> authRequired, 
+     boolean clientMode) throws IOException
   {
     DefaultIoFilterChainBuilder secureFilters = 
       (DefaultIoFilterChainBuilder)commonFilters.clone ();
