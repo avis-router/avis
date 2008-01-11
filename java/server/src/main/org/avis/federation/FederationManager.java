@@ -20,14 +20,12 @@ import org.avis.util.IllegalConfigOptionException;
 import static java.lang.Integer.toHexString;
 import static java.lang.System.identityHashCode;
 import static java.util.Collections.emptySet;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.common.ElvinURI.secureProtocol;
 import static org.avis.io.Net.localHostName;
 import static org.avis.subscription.ast.nodes.Const.CONST_TRUE;
 import static org.avis.util.Text.shortException;
-import static org.avis.util.Wildcard.toPattern;
 
 /**
  * Constructs the federation setup by reading Federation.*
@@ -281,13 +279,13 @@ public class FederationManager implements CloseListener
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
-      for (String value : (Set<String>)entry.getValue ())
+      for (String hostPatterns : (Set<String>)entry.getValue ())
       {
         // compatibility with Avis 1.1
-        if (value.startsWith ("@"))
-          value = value.substring (1);
+        if (hostPatterns.startsWith ("@"))
+          hostPatterns = hostPatterns.substring (1);
         
-        classes.map (toPattern (value, CASE_INSENSITIVE), fedClass);
+        classes.map (hostPatterns, fedClass);
       }
     }
     
