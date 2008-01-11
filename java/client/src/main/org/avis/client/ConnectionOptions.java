@@ -198,8 +198,7 @@ public final class ConnectionOptions
   
   /**
    * Generate the difference between this option set and an actual set
-   * returned by the server. Includes logic for dealing with legacy
-   * connection options.
+   * returned by the server.
    */
   protected Map<String, Object> differenceFrom (Map<String, Object> options)
   {
@@ -242,9 +241,6 @@ public final class ConnectionOptions
   
   /**
    * Set an integer value.
-   * 
-   * @param name 
-   * @param value 
    */
   public void set (String name, int value)
   {
@@ -252,9 +248,9 @@ public final class ConnectionOptions
   }
   
   /**
-   * Set a boolean value. NB: Elvin connection options are either
-   * strings or integers -- this is actually a shortcut for setting an
-   * int value to 0 or 1.
+   * Set a boolean value. Elvin connection options are actually either
+   * strings or integers: this is a shortcut for setting an int value
+   * to 0 or 1.
    * 
    * @see #getBoolean(String)
    */
@@ -265,9 +261,6 @@ public final class ConnectionOptions
 
   /**
    * Set a string value.
-   * 
-   * @param name 
-   * @param value 
    */
   public void set (String name, String value)
   {
@@ -379,9 +372,9 @@ public final class ConnectionOptions
   }
   
   /**
-   * Get a boolean value. NB: Elvin connection options are either
-   * strings or integers: this is actually a shortcut for getting an
-   * int value in the range 0 to 1.
+   * Get a boolean value. Elvin connection options are actually either
+   * strings or integers: this is a shortcut for getting an int value
+   * in the range 0 or 1.
    * 
    * @param name The option name.
    * @param defaultValue The value to return if there is no value set.
