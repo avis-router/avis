@@ -150,7 +150,10 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
   public void sessionClosed (NextFilter nextFilter, IoSession session)
     throws Exception
   {
-    trackerFor (session).dispose ();
+    Tracker tracker = trackerFor (session);
+    
+    if (tracker != null)
+      tracker.dispose ();
     
     nextFilter.sessionClosed (session);
   }
