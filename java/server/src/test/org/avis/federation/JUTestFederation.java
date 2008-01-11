@@ -118,11 +118,10 @@ public class JUTestFederation
     classes.map ("*.elvin.org", class1);
     classes.map ("111.111.111.1??", class2);
     
-    assertSame (class1, classes.classFor ("public.elvin.org", ""));
-    assertSame (class2, classes.classFor ("", "111.111.111.123"));
-    assertSame (class2, classes.classFor ("", "111.111.111.134"));
-    assertSame (classes.defaultClass (), 
-                classes.classFor ("", "111.111.111.234"));
+    assertSame (class1, classes.classFor ("public.elvin.org"));
+    assertSame (class2, classes.classFor ("111.111.111.123"));
+    assertSame (class2, classes.classFor ("111.111.111.134"));
+    assertSame (classes.defaultClass (), classes.classFor ("111.111.111.234"));
   }
   
   @Test
