@@ -398,6 +398,14 @@ public final class Text
   }
   
   /**
+   * Shortcut to execute split on any whitespace character.
+   */
+  public static String [] split (String text)
+  {
+    return split (text, "\\s+");
+  }
+  
+  /**
    * String.split ("") returns {""} rather than {} like you might
    * expect: this returns empty array on "".
    */
