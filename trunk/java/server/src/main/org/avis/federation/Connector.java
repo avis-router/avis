@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import java.io.Closeable;
 import java.io.IOException;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
@@ -109,9 +110,8 @@ public class Connector implements IoHandler, Closeable
     filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
-    Filter<InetSocketAddress> authRequired = 
-      (Filter<InetSocketAddress>)options.get 
-        ("Federation.Require-Authenticated");
+    Filter<InetAddress> authRequired = 
+      (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
     
     if (uri.isSecure ())
       filters = router.createSecureFilters (filters, authRequired, true);

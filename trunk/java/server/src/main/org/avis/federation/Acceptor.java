@@ -108,8 +108,7 @@ public class Acceptor implements IoHandler, Closeable
 
     router.bind 
       (uris, this, filters, 
-       (Filter<InetSocketAddress>)options.get
-         ("Federation.Require-Authenticated"));
+       (Filter<InetAddress>)options.get ("Federation.Require-Authenticated"));
 
     if (shouldLog (DIAGNOSTIC))
     {
