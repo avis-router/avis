@@ -2,7 +2,7 @@ package org.avis.federation;
 
 import org.avis.config.OptionSet;
 import org.avis.config.OptionType;
-import org.avis.config.OptionTypeGeneric;
+import org.avis.config.OptionTypeFromString;
 import org.avis.config.OptionTypeParam;
 import org.avis.config.OptionTypeSet;
 import org.avis.config.OptionTypeValueExpr;
@@ -49,7 +49,7 @@ public class FederationOptionSet extends OptionSet
     add ("Federation.Request-Timeout", 1, 20, Integer.MAX_VALUE);
     add ("Federation.Keepalive-Interval", 1, 60, Integer.MAX_VALUE);
     add ("Federation.Require-Authenticated", 
-         new OptionTypeGeneric (InetAddressFilter.class), Filter.MATCH_NONE);
+         new OptionTypeFromString (InetAddressFilter.class), Filter.MATCH_NONE);
     
     // allow connection options such as Packet.Max-Length
     inheritFrom (CONNECTION_OPTION_SET);
