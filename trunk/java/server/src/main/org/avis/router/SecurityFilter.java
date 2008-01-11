@@ -1,5 +1,6 @@
 package org.avis.router;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import java.security.KeyStore;
@@ -15,7 +16,7 @@ import org.avis.util.Filter;
 import static org.avis.io.TLS.sslContextFor;
 
 /**
- * A front end TLS filter that wraps a MINA SSL filter for secure
+ * A front end filter that wraps a MINA SSL filter for secure
  * connections. This allows the policy for determining which hosts
  * must be authenticated to be determined on a per host basis.
  * 
@@ -25,12 +26,12 @@ public class SecurityFilter implements IoFilter
 {
   private KeyStore keystore;
   private String keystorePassphrase;
-  private Filter<InetSocketAddress> authRequired;
+  private Filter<InetAddress> authRequired;
   private boolean clientMode;
 
   public SecurityFilter (KeyStore keystore,
                          String keystorePassphrase,
-                         Filter<InetSocketAddress> authRequired, 
+                         Filter<InetAddress> authRequired, 
                          boolean clientMode)
   {
     this.keystore = keystore;
@@ -46,8 +47,10 @@ public class SecurityFilter implements IoFilter
     
     if (filter == null)
     {
-      boolean needAuth = 
-        authRequired.matches ((InetSocketAddress)session.getRemoteAddress ());
+      InetAddress address = 
+        ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
+      
+      boolean needAuth = authRequired.matches (address);
       
       filter = 
         new SSLFilter (sslContextFor (keystore, keystorePassphrase, needAuth));
