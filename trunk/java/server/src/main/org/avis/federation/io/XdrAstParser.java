@@ -279,6 +279,10 @@ class XdrAstParser
   {
     int count = in.getInt ();
     
+    if (count < 0)
+      throw new ProtocolCodecException 
+        ("Child count cannot be negative: " + count);
+    
     List<Node> children = new ArrayList<Node> (count);
     
     for ( ; count > 0; count--)
