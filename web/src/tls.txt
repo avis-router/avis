@@ -3,9 +3,9 @@ Using SSL/TLS
 
 The Avis router has the option to use TLS (also known as SSL) to
 authenticate and encrypt communications between the router and its
-clients or federation links. You can use TLS to ensure only authorised
-clients and federators are allowed to connect to the router, and to
-ensure that eavesdroppers cannot intercept your traffic.
+clients. You can use TLS to ensure only authorised clients and
+federators are allowed to connect to the router, and to ensure that
+eavesdroppers cannot intercept your traffic.
 
 Setting Up TLS
 ----------------------------------------------------------------------
@@ -35,19 +35,19 @@ authenticated.
 For example, to authenticate a router to a client &ndash; i.e. to give
 assurance a client is connected to a trusted router over an insecure
 network &ndash; the router needs a unique private key, and the client
-needs to accept the associated public key (in the form of a PKI
-certificate) as trusted.<sup>[1][]</sup> For authenticating the client
-to the router, the reverse applies: the client needs a private key and
-the router must trust the accompanying public key.
+needs to accept the associated public key as trusted.<sup>[1][]</sup>
+For authenticating the client to the router the reverse applies: the
+client needs a private key and the router must trust the accompanying
+public key.
 
 Generating A TLS Key
 ----------------------------------------------------------------------
 
 To generate a key for use in Avis, you will need to use the [`keytool`
-command][keytool] that ships with the Java Development Kit (JDK). The
-`keytool` utility stores and rerieves keys and certificate chains in a
-Java _keystore_, which is a binary archive, encrypted with a
-passphrase.
+command][keytool] command that ships with the Java Development
+Kit. The `keytool` utility stores and retrieves keys and certificate
+chains in a Java _keystore_, which is a binary archive, encrypted with
+a passphrase.
 
 As an example of using `keytool` to generate a new key inside a
 self-signed certificate, the command that was used to generate the key
@@ -122,17 +122,16 @@ trusted key:
 
     keytool -import -keystore my-client.keystore \
       -alias my-router-key -storepass mypassword \
-       -file my-router.cer
+      -file my-router.cer
 
 Now, when the client connects to the router it will be able to verify
 the router is trusted.
 
 A reverse trust relationship can also be established from the router
 to the client,<sup>[2][]</sup> and the router can be configured to
-_only_ accept authenticated clients via the
-`TLS.Require-Trusted-Hosts` configuration setting, and only
-authenticated [federation links][federation] using
-`Federation.TLS.Require-Trusted-Hosts`.
+_only_ accept authenticated clients via the `Require-Authenticated`
+configuration setting, and only authenticated [federation
+links][federation] using `Federation.Require-Authenticated`.
 
 <!--  -->
 <!-- http://java.sun.com/j2se/1.5.0/docs/guide/security/jsse/JSSERefGuide.html -->
