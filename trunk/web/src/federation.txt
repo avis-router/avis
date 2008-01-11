@@ -91,9 +91,9 @@ To use TLS authentication to restrict federation to only routers that
 you have established a pre-existing trust relationship with, you first
 need to either [exchange certificates][trust] to establish trust, or
 use certificates signed by the root Certification Authorities (CA's)
-for both routers.
+trusted by both routers.
 
-Once a trust relationship is established, you can set up TLS
+Once a trust relationship is established, you can set up secure
 federation endpoints in `avisd.config`. For example, the settings
 below create a federation link to a trusted host named
 `hex.somewhere.org`.
@@ -102,7 +102,7 @@ below create a federation link to a trusted host named
 <span class="variable-name">Federation.Listen</span> = ewaf:/secure/0.0.0.0:29160
 
 <span class="comment-delimiter"># </span><span class="comment">Require that hex.somewhere.org be TLS-authenticated
-</span><span class="variable-name">Federation.TLS.Require-Trusted-Hosts</span> = hex.somewhere.org
+</span><span class="variable-name">Federation.Require-Authenticated</span> = hex.somewhere.org
 
 <span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Trusted</span>] = hex.somewhere.org
 
@@ -112,11 +112,12 @@ below create a federation link to a trusted host named
 <span class="variable-name">Federation.Provide</span>[<span class="constant">Trusted</span>] = TRUE
 </pre>
 
-This creates a listening TLS endpoint on port 29160 and ensures that
-any host connecting to it that claims to be `hex.somewhere.org` is
-authenticated against its public key certificate in our keychain (or
-the root CA's chain of trust): this ensures that address-spoofing
-cannot be used to access this trusted federation link.<sup>[1][]</sup>
+This creates a secure listening endpoint on port 29160, and ensures
+that any host connecting to it that claims to be `hex.somewhere.org`
+is authenticated against its public key certificate in our keychain
+(or the root CA's chain of trust): this means that address-spoofing or
+other nefarious techniques cannot be used to access the trusted
+federation link.<sup>[1][]</sup>
 
 The rest of the federation setup is similar to any other, applying the
 `Trusted` class to `hex.somewhere.org`.
