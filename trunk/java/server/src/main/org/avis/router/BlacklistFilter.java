@@ -1,5 +1,6 @@
 package org.avis.router;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.mina.common.IoFilter;
@@ -17,9 +18,9 @@ import static org.avis.logging.Log.diagnostic;
  */
 public class BlacklistFilter extends IoFilterAdapter implements IoFilter
 {
-  private Filter<InetSocketAddress> blacklist;
+  private Filter<InetAddress> blacklist;
 
-  public BlacklistFilter (Filter<InetSocketAddress> blacklist)
+  public BlacklistFilter (Filter<InetAddress> blacklist)
   {
     this.blacklist = blacklist;
   }
@@ -28,10 +29,13 @@ public class BlacklistFilter extends IoFilterAdapter implements IoFilter
   public void sessionOpened (NextFilter nextFilter, IoSession session)
     throws Exception
   {
-    if (blacklist.matches ((InetSocketAddress)session.getRemoteAddress ()))
+    InetAddress address = 
+      ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
+    
+    if (blacklist.matches (address))
     {
       diagnostic ("Refusing unauthenticated connection attempt from " + 
-                  session.getRemoteAddress () + 
+                  address + 
                   " due to it matching the hosts requiring authentication", 
                   this);
       
