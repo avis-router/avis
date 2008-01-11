@@ -1,9 +1,13 @@
 package org.avis.io;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 
 import org.avis.util.Filter;
 import org.avis.util.WildcardFilter;
+
+import static java.util.Arrays.asList;
+
+import static org.avis.util.Text.split;
 
 /**
  * A filter for internet addresses, matching against either the host
@@ -11,19 +15,19 @@ import org.avis.util.WildcardFilter;
  * 
  * @author Matthew Phillips
  */
-public class InetAddressFilter implements Filter<InetSocketAddress>
+public class InetAddressFilter implements Filter<InetAddress>
 {
   private WildcardFilter filter;
 
   public InetAddressFilter (String patterns)
   {
-    this.filter = new WildcardFilter (patterns);
+    this.filter = new WildcardFilter (asList (split (patterns)));
   }
   
-  public boolean matches (InetSocketAddress address)
+  public boolean matches (InetAddress address)
   {
     return filter.matches (address.getHostName ()) ||
-           filter.matches (address.getAddress ().getHostAddress ()) ||
-           filter.matches (address.getAddress ().getCanonicalHostName ());
+           filter.matches (address.getHostAddress ()) ||
+           filter.matches (address.getCanonicalHostName ());
   }
 }
