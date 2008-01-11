@@ -30,6 +30,7 @@ public class HelloWorld
   {
     try
     {
+      // todo simplify: just have a method that extracts the Elvin URI?
       run (new ExampleOptions (args));
     } catch (Exception ex)
     {
