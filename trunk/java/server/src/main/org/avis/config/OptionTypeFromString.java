@@ -12,12 +12,12 @@ import org.avis.util.IllegalConfigOptionException;
  * 
  * @author Matthew Phillips
  */
-public class OptionTypeGeneric extends OptionType
+public class OptionTypeFromString extends OptionType
 {
   private Class<?> valueType;
   private Constructor<?> constructor;
 
-  public OptionTypeGeneric (Class<?> valueType)
+  public OptionTypeFromString (Class<?> valueType)
   {
     this.valueType = valueType;
     
