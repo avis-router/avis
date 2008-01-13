@@ -527,7 +527,7 @@ public final class Elvin implements Closeable
     SSLFilter filter = 
       new SSLFilter (sslContextFor (options.keystore, 
                                     options.keystorePassphrase, 
-                                    options.requireTrustedServer));
+                                    options.requireAuthenticatedServer));
     
     filter.setUseClientMode (true);
 

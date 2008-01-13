@@ -61,16 +61,20 @@ public final class ElvinOptions implements Cloneable
   public String keystorePassphrase;
 
   /**
-   * When true, only servers with a certificate matching the trusted
-   * certificates in the supplied keystore or the JVM's CA
-   * certificates will be acceptable for secure connections. See the
-   * documentation for <a
+   * Used to ensure that the router the client is connected to is
+   * authentic. When true, only servers with a certificate
+   * authenticated against the trusted certificates in the supplied
+   * keystore or the JVM's CA certificates will be acceptable for
+   * secure connections. See the <a
+   * href="http://avis.sourceforge.net/tls.html">documentation at the
+   * Avis web site</a> and <a
    * href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jsse/JSSERefGuide.html#X509TrustManager">
-   * JSSE's X509TrustManager</a> for more information.
+   * the description of JSSE's X509TrustManager</a> for more
+   * information.
    * 
    * @see #keystore
    */
-  public boolean requireTrustedServer;
+  public boolean requireAuthenticatedServer;
   
   /**
    * The amount of time (in milliseconds) that must pass before the
@@ -107,7 +111,7 @@ public final class ElvinOptions implements Cloneable
     this.connectionOptions = connectionOptions;
     this.notificationKeys = notificationKeys;
     this.subscriptionKeys = subscriptionKeys;
-    this.requireTrustedServer = false;
+    this.requireAuthenticatedServer = false;
     this.receiveTimeout = 10000;
     this.livenessTimeout = 60000;
   }

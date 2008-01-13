@@ -21,6 +21,8 @@ import org.apache.mina.transport.socket.nio.SocketSessionConfig;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 
+import static java.lang.Integer.toHexString;
+import static java.lang.System.identityHashCode;
 import static java.util.Arrays.asList;
 
 /**
@@ -239,5 +241,10 @@ public final class Net
     {
       throw new InvalidURIException (ex);
     }
+  }
+
+  public static String idFor (IoSession session)
+  {
+    return toHexString (identityHashCode (session));
   }
 }
