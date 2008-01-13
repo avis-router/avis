@@ -20,8 +20,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.fail;
 
-import static java.lang.Thread.sleep;
-
 /*
  * Command to generate the test key store:
 
@@ -91,9 +89,9 @@ public class JUTestClientTLS
     RouterOptions routerOptions = new RouterOptions ();
     
     routerOptions.set ("Listen", SECURE_URI);
+    routerOptions.set ("Require-Authenticated", "*");
     routerOptions.set ("TLS.Keystore", routerKeystoreUrl);
     routerOptions.set ("TLS.Keystore-Passphrase", "testing");
-    routerOptions.set ("TLS.Require-Trusted-Client", true);
     
     Router router = new Router (routerOptions);
    
@@ -102,7 +100,7 @@ public class JUTestClientTLS
     ElvinOptions options = new ElvinOptions ();
     
     options.setKeystore (clientKeystoreUrl, "testing");
-    options.requireTrustedServer = true;
+    options.requireAuthenticatedServer = true;
     
     Elvin elvin = new Elvin (SECURE_URI, options);
     
@@ -124,9 +122,9 @@ public class JUTestClientTLS
     RouterOptions routerOptions = new RouterOptions ();
     
     routerOptions.set ("Listen", SECURE_URI);
+    routerOptions.set ("Require-Authenticated", "*");
     routerOptions.set ("TLS.Keystore", routerKeystoreUrl);
     routerOptions.set ("TLS.Keystore-Passphrase", "testing");
-    routerOptions.set ("TLS.Require-Trusted-Client", true);
     
     Router router = new Router (routerOptions);
    
@@ -135,7 +133,7 @@ public class JUTestClientTLS
     ElvinOptions options = new ElvinOptions ();
     
     options.setKeystore (clientKeystoreUrl, "testing");
-    options.requireTrustedServer = true;
+    options.requireAuthenticatedServer = true;
     
     try
     {
@@ -184,14 +182,15 @@ public class JUTestClientTLS
     logTester = new LogFailTester ();
     
     Log.enableLogging (Log.TRACE, false);
+    
+    // Log.enableLogging (Log.INFO, true);
+    // Log.enableLogging (Log.TRACE, true);
+    // Log.enableLogging (Log.DIAGNOSTIC, true);
   }
   
   @After
   public void logAfter () throws InterruptedException
   {
     logTester.assertOkAndDispose ();
-    
-    // todo fix this bogosity
-    sleep (5000);
   }
 }
