@@ -23,7 +23,6 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.ReadThrottleFilterBuilder;
-import org.apache.mina.filter.SSLFilter;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
@@ -64,10 +63,8 @@ import org.avis.util.Filter;
 import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
 
-import static java.lang.Integer.toHexString;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.identityHashCode;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -81,6 +78,7 @@ import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
+import static org.avis.io.Net.idFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -1118,9 +1116,9 @@ public class Router implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    trace ("Server session " + idFor (session) + 
-           " opened for connection on " + session.getServiceAddress () + 
-           (isSecure (session) ? " (TLS secured)" : ""), this);
+    diagnostic ("Server session " + idFor (session) + 
+                " opened for connection on " + session.getServiceAddress () + 
+                (isSecure (session) ? " (using TLS)" : ""), this);
     
   }
   
@@ -1192,14 +1190,9 @@ public class Router implements IoHandler, Closeable
     return (Connection)session.getAttachment ();
   }
   
-  private static String idFor (IoSession session)
-  {
-    return toHexString (identityHashCode (session));
-  }
-  
-  private static boolean isSecure (IoSession session)
+  public static boolean isSecure (IoSession session)
   {
     return session.getServiceConfig ().getFilterChain ().contains 
-      (SSLFilter.class);
+      (SecurityFilter.class);
   }
 }
