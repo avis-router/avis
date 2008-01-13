@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import java.net.ConnectException;
 
+import org.avis.client.ElvinOptions;
 import org.avis.client.SecureMode;
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
@@ -34,7 +35,7 @@ import static org.avis.util.Text.dataToBytes;
 public abstract class ToolOptions extends CommandLineOptions
 {
   protected static final String COMMON_USAGE_SUMMARY =
-    "-e elvin [-x] [-X] [-C file] [-P file]";
+    "-e elvin [-x] [-X] [-C file] [-P file] [-k keystore passphrase]";
 
   protected static final String COMMON_USAGE_DETAIL =
     "  -e elvin  Set the Elvin URI e.g. elvin://host:port\n" +
@@ -42,6 +43,7 @@ public abstract class ToolOptions extends CommandLineOptions
     "  -X        Allow insecure notifications (default)\n" +
     "  -C file   Read consumer key from file\n" +
     "  -P file   Read producer key from file\n" +
+    "  -k keys   Set keystore and passphrase for TLS/SSL\n" +
     "\n" +
     "  Key file formats are: \n" +
     "\n" +
@@ -54,10 +56,7 @@ public abstract class ToolOptions extends CommandLineOptions
    */
   public ElvinURI elvinUri;
   
-  /**
-   * The security keys.
-   */
-  public Keys keys;
+  public ElvinOptions clientOptions;
   
   /**
    * The security requirement.
@@ -69,7 +68,10 @@ public abstract class ToolOptions extends CommandLineOptions
     super (args);
     
     this.secureMode = ALLOW_INSECURE_DELIVERY;
-    this.keys = new Keys ();
+    this.clientOptions = new ElvinOptions ();
+    
+    clientOptions.notificationKeys = new Keys ();
+    clientOptions.subscriptionKeys = clientOptions.notificationKeys;
   }
   
   public static void handleIOError (String appName, IOException ex)
@@ -112,11 +114,16 @@ public abstract class ToolOptions extends CommandLineOptions
     } else if (arg.equals ("-P"))                
     {
       addKey (PRODUCER, keyFromFile (stringArg (args)));
+    } else if (arg.equals ("-k"))                
+    {
+      loadKeystore (stringArg (args), bareArg (args));
     }
   }
   
   private void addKey (DualKeyScheme.Subset subset, Key key)
   {
+    Keys keys = clientOptions.notificationKeys;
+    
     keys.add (subset == CONSUMER ? SHA1_CONSUMER : SHA1_PRODUCER, key);
     keys.add (SHA1_DUAL, subset, key);
   }
@@ -132,6 +139,19 @@ public abstract class ToolOptions extends CommandLineOptions
         ("Could not read key from \"" + filename + "\": " + ex.getMessage ());
     }
   }
+  
+  private void loadKeystore (String keystorePath, String passphrase)
+    throws IllegalCommandLineOption
+  {
+    try
+    {
+      clientOptions.setKeystore (keystorePath, passphrase);
+    } catch (IOException ex)
+    {
+      throw new IllegalCommandLineOption 
+        ("-k", "Error loading key store: " + ex.getMessage ());
+    }
+  }
 
   @Override
   protected void checkOptions ()
@@ -140,8 +160,11 @@ public abstract class ToolOptions extends CommandLineOptions
     if (elvinUri == null)
       throw new IllegalCommandLineOption ("Missing Elvin URI");
     
-    if (secureMode == REQUIRE_SECURE_DELIVERY && keys.isEmpty ())
+    if (secureMode == REQUIRE_SECURE_DELIVERY && 
+        clientOptions.notificationKeys.isEmpty ())
+    {
       throw new IllegalCommandLineOption
         ("-x", "Cannot activate secure mode if no keys specified");
+    }
   }
 }

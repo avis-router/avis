@@ -15,7 +15,6 @@ import org.avis.client.Elvin;
 import org.avis.client.GeneralNotificationEvent;
 import org.avis.client.GeneralNotificationListener;
 
-import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.tools.EcOptions.USAGE;
 import static org.avis.tools.ToolOptions.handleIOError;
 import static org.avis.util.CommandLineOptions.handleError;
@@ -59,7 +58,7 @@ public class Ec
   public Ec (EcOptions options)
     throws IOException
   {
-    this.elvin = new Elvin (options.elvinUri, EMPTY_KEYS, options.keys);
+    this.elvin = new Elvin (options.elvinUri, options.clientOptions);
     
     System.err.println ("ec: Connected to server " +
                         options.elvinUri.toCanonicalString ());

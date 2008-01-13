@@ -7,7 +7,6 @@ import org.avis.client.Notification;
 import org.avis.io.StreamReader;
 import org.avis.util.InvalidFormatException;
 
-import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.tools.EpOptions.USAGE;
 import static org.avis.tools.ToolOptions.handleIOError;
 import static org.avis.util.CommandLineOptions.handleError;
@@ -57,8 +56,7 @@ public class Ep
   public Ep (EpOptions options)
     throws IOException, InvalidFormatException
   {
-    this.elvin =
-      new Elvin (options.elvinUri, options.keys, EMPTY_KEYS);
+    this.elvin = new Elvin (options.elvinUri, options.clientOptions);
     
     System.err.println ("ep: Connected to server " +
                         options.elvinUri.toCanonicalString ());
