@@ -111,15 +111,25 @@ public abstract class CommandLineOptions
     // zip
   }
   
+  protected static String bareArg (Queue<String> args)
+    throws IllegalCommandLineOption
+  {
+    if (args.isEmpty ())
+      throw new IllegalCommandLineOption ("Missing parameter");
+    else
+      return args.remove ();
+  }
+  
   /**
    * Take an option switch plus its string parameter (in the form of
-   * {-s string}) off the queue.
+   * {-s string}) off the queue. The string parameter may not begin
+   * with "-" (i.e look like an option switch)
    * 
    * @param args The args queue.
    * @return The parameter to the switch.
    * @throws IllegalConfigOptionException if no parameter is present.
    */
-  protected static String stringArg (Queue<String> args)
+  protected static String arg (Queue<String> args)
     throws IllegalCommandLineOption
   {
     String option = args.remove ();
@@ -128,6 +138,29 @@ public abstract class CommandLineOptions
       throw new IllegalCommandLineOption (option, "Missing parameter");
     else
       return args.remove ();
+  }
+  
+  /**
+   * Take an option switch plus its string parameter (in the form of
+   * {-s string}) off the queue. This is the same as arg (), but the
+   * string parameter may not begin with "-" (i.e look like an option
+   * switch)
+   * 
+   * @param args The args queue.
+   * @return The parameter to the switch.
+   * @throws IllegalConfigOptionException if no parameter is present.
+   */
+  protected static String stringArg (Queue<String> args)
+    throws IllegalCommandLineOption
+  {
+    String option = args.peek ();
+    String arg = arg (args);
+    
+    if (arg.startsWith ("-"))
+      throw new IllegalCommandLineOption 
+        (option, "Missing parameter: was followed by option" + arg);
+    
+    return arg;
   }
 
   /**
