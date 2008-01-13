@@ -31,12 +31,20 @@ public class Ec
   /**
    * Run ec.
    */
-   public static void main (String [] args)
-    throws Exception
+  public static void main (String [] args)
   {
     try
     {
-      run (new EcOptions (args));
+      final Ec ec = new Ec (new EcOptions (args));
+      
+      Runtime.getRuntime ().addShutdownHook (new Thread ()
+      {
+        @Override
+        public void run ()
+        {
+          ec.close ();
+        }
+      });
     } catch (IOException ex)
     {
       handleIOError ("ec", ex);
@@ -45,12 +53,13 @@ public class Ec
       handleError ("ec", USAGE, ex);
     }
   }
+
+  private Elvin elvin;
   
-  private static void run (EcOptions options)
+  public Ec (EcOptions options)
     throws IOException
   {
-    final Elvin elvin =
-      new Elvin (options.elvinUri, EMPTY_KEYS, options.keys);
+    this.elvin = new Elvin (options.elvinUri, EMPTY_KEYS, options.keys);
     
     System.err.println ("ec: Connected to server " +
                         options.elvinUri.toCanonicalString ());
@@ -70,18 +79,14 @@ public class Ec
       }
     });
     
-    Runtime.getRuntime ().addShutdownHook (new Thread ()
-    {
-      @Override
-      public void run ()
-      {
-        elvin.close ();
-      }
-    });
-
     elvin.subscribe (options.subscription, options.secureMode);
     
     elvin.addNotificationListener (new Listener ());
+  }
+  
+  public void close ()
+  {
+    elvin.close ();
   }
 
   static class Listener implements GeneralNotificationListener
