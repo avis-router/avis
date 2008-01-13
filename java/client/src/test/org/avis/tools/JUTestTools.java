@@ -9,11 +9,14 @@ import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
 
+import java.net.URL;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.client.Elvin;
+import org.avis.client.ElvinOptions;
 import org.avis.client.Notification;
 import org.avis.client.TestNtfnListener;
 import org.avis.router.Router;
@@ -27,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 public class JUTestTools
 {
   public static final String ELVIN_URI = "elvin://127.0.0.1:29170";
+  public static final String SECURE_ELVIN_URI = "elvin:/secure/127.0.0.1:29171";
   
   protected Writer input;
   protected ByteArrayOutputStream output;
@@ -91,6 +95,44 @@ public class JUTestTools
   }
   
   @Test
+  public void ecTLS () 
+    throws Exception
+  {
+    URL routerKeystoreUrl = getClass ().getResource ("router.ks");
+    URL clientKeystoreUrl = getClass ().getResource ("client.ks");
+    
+    RouterOptions routerOptions = new RouterOptions ();
+    
+    routerOptions.set ("Listen", SECURE_ELVIN_URI);
+    routerOptions.set ("TLS.Keystore", routerKeystoreUrl);
+    routerOptions.set ("TLS.Keystore-Passphrase", "testing");
+    
+    Router router = new Router (routerOptions);
+    
+    ElvinOptions clientOptions = new ElvinOptions ();
+    clientOptions.setKeystore (clientKeystoreUrl, "testing");
+    
+    Elvin client = new Elvin (SECURE_ELVIN_URI, clientOptions);
+   
+    Ec ec = new Ec (new EcOptions ("-e", SECURE_ELVIN_URI, "-k", 
+                                   routerKeystoreUrl.getPath (), 
+                                   "testing", "require (test)"));
+    
+    client.send (new Notification ("test", 1));
+    client.close ();
+    
+    waitForOutput 
+      ("ec: Connected to server elvin:4.0/tcp,none,xdr/127.0.0.1:29170\n" +
+       "$time\n" + 
+       "test: 1\n" + 
+       "---\n");
+    
+    ec.close ();
+    
+    router.close ();
+  }
+  
+  @Test
   public void ep () 
     throws Exception
   {
@@ -101,7 +143,7 @@ public class JUTestTools
     
     Elvin client = new Elvin (ELVIN_URI);
 
-    TestNtfnListener listener = 
+    TestNtfnListener ntfnListener = 
       new TestNtfnListener (client.subscribe ("require (test)"));
     
     new Thread ()
@@ -122,7 +164,7 @@ public class JUTestTools
     input.append ("test: 1\n---\n");
     input.close ();
     
-    listener.waitForNotification ();
+    ntfnListener.waitForNotification ();
     
     router.close ();
   }
