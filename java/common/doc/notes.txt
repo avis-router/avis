@@ -3,17 +3,17 @@ Releases
 
 Server 1.2
 
- * TLS web page
- * how do we map fed classes to only trusted clients?
- * Support client auth in connect/listen
+ * date in log messages: Dec 23 04:20:01
+ * ?do we want clients trusted by CA's to be trusted
+ * ?Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
+ * Test large frames with new heap sizes
+ * ?thread pool size option
+ * DONE: TLS web page
+ * DONE: how do we map fed classes to only trusted clients?
+ * DONE: Support client auth in connect/listen
    options. elvin:/secure/0.0.0.0:29170?require-trusted=true. put
    options in as default layer in front of config.
- * date in log messages: Dec 23 04:20:01
- * do we want clients trusted by CA's to be trusted?
- * test add keystore to distro
- * Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
- * Test large frames with new heap sizes
- * thread pool size option?
+ * DONE: test add keystore to distro
  * DONE: ditch use of @ in federation. use of server domain is fairly useless
  * DONE: allow wildcards in federation
  * DONE: --Liveness TestConn for client connections?
@@ -25,12 +25,12 @@ Server 1.2
 
 Client 1.1
 
- * allow connection options in URI. merge with given options? --use
-   server options package and ditch special options class?--
+ * ec/ep options for TLS
  * ep needs to handle empty lines 
  * client should probably not log messages: events instead, esp
    DropWarn
- * ec/ep options for TLS
+ * DONE: --allow connection options in URI. merge with given options? --use
+   server options package and ditch special options class?--
  * DONE: TLS
  * DONE: add subscription string escape utilities
  * DONE: ep doesn't do ^D properly
@@ -59,6 +59,9 @@ Client
 
 Server
 
+* Password auth? Could use a KeyManager to use password auth? Not sure
+  how X509KeyManager can be extended to do this. There may be an Elvin
+  spec for this.
 * windows JRE does not have -server, need to add installer option
 * includes in config: would allow federation to be spec'd separately
 * Federation.Classes.Require=internal
@@ -115,26 +118,23 @@ Questions
  * CLOSED: Do we need to support trusted clients? => need trust store
    on server, key store on client, enable client auth on server.
 
- * Do we want security per-URI?
+ * CLOSED: Do we want security per-URI?
 
  * CLOSED: Do we need to support trusted servers? => need trust store
    on client, enable server auth on client
 
- * Federation TLS: security per class?
+ * CLOSED: Federation TLS: security per class?
 
  * CLOSED: Enable remote auth with URI option?
    elvin:/secure/host?Remote-Auth=true. probably not: options are
    connection options, not client config.
 
- * Do we want to support keystores other than JKS? eg. PKCS12. Check
-   we could just import PKCS12, and add instructions if so.
+ * CLOSED: Do we want to support keystores other than JKS?
+   eg. PKCS12. Check we could just import PKCS12, and add instructions
+   if so.
 
  * CLOSED: Client -> trust: could implement trust manager: see
    "Creating Your Own X509TrustManager"
-
- * Password auth? Could use a KeyManager to use password auth? Not
-   sure how X509KeyManager can be extended to do this. There may be an
-   Elvin spec for this.
 
 
 References
