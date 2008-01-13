@@ -36,6 +36,7 @@ import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.federation.Federation.logMinaException;
+import static org.avis.federation.Federation.logSessionOpened;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.hostIdFor;
@@ -324,6 +325,8 @@ public class Acceptor implements IoHandler, Closeable
   {
     if (closing)
       session.close ();
+    else
+      logSessionOpened (session, this);
   }
 
   public void messageReceived (IoSession session, Object theMessage)

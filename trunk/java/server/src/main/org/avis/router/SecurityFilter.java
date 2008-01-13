@@ -14,6 +14,7 @@ import org.apache.mina.filter.SSLFilter;
 import org.avis.util.Filter;
 
 import static org.avis.io.TLS.sslContextFor;
+import static org.avis.logging.Log.diagnostic;
 
 /**
  * A front end filter that wraps a MINA SSL filter for secure
@@ -51,6 +52,10 @@ public class SecurityFilter implements IoFilter
         ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
       
       boolean needAuth = authRequired.matches (address);
+      
+      diagnostic ("Host " + address + " connecting via TLS " +
+                  (needAuth ? "needs authentication" : 
+                               "does not require authentication"), this);
       
       filter = 
         new SSLFilter (sslContextFor (keystore, keystorePassphrase, needAuth));

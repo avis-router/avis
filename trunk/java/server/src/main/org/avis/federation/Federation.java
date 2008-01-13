@@ -7,7 +7,9 @@ import org.apache.mina.common.WriteFuture;
 
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
+import org.avis.router.Router;
 
+import static org.avis.io.Net.idFor;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
@@ -87,5 +89,12 @@ public final class Federation
       warn ("Unexpected exception while processing federation message", 
             source, cause);
     }
+  }
+
+  public static void logSessionOpened (IoSession session, Object source)
+  {
+    diagnostic ("Federation session " + idFor (session) + 
+                " opened for connection on " + session.getServiceAddress () + 
+                (Router.isSecure (session) ? " (using TLS)" : ""), source);
   }
 }

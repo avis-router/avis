@@ -40,6 +40,7 @@ import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
 import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.federation.Federation.logMinaException;
+import static org.avis.federation.Federation.logSessionOpened;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.logging.Log.diagnostic;
@@ -370,9 +371,7 @@ public class Connector implements IoHandler, Closeable
   public void sessionOpened (IoSession theSession)
     throws Exception
   {
-    diagnostic ("Federator \"" + serverDomain + 
-                "\" requesting federation link with remote router at " + uri, 
-                this);
+    logSessionOpened (session, this);
   }
   
   public void sessionClosed (IoSession theSession)

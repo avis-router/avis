@@ -34,10 +34,9 @@ public class BlacklistFilter extends IoFilterAdapter implements IoFilter
     
     if (blacklist.matches (address))
     {
-      diagnostic ("Refusing unauthenticated connection attempt from " + 
-                  address + 
-                  " due to it matching the hosts requiring authentication", 
-                  this);
+      diagnostic 
+        ("Refusing non-TLS connection from host " + address + 
+         " due to it matching the hosts requiring authentication", this);
       
       session.close ();
     } else
