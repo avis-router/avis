@@ -12,31 +12,31 @@ Setting Up TLS
 
 The simplest use of TLS is to encrypt communications between client
 and router without requiring authentication. To set up this sort of
-TLS-secured client endpoint, you just need to specify it in the
-`Listen` configuration option:
+TLS-secured client endpoint, you just need to specify it as a secure
+endpoint URI in the `Listen` configuration option:
 
 <pre>
 <span class="variable-name">Listen</span> = elvin:/secure/0.0.0.0:29170
 </pre>
 
-This creates a TLS-secured endpoint on port 29170 ready for client to
-connect to. This sort of TLS does not require that you manage the keys
-and certificates that would be required to authenticate the router
-and/or client to each other.
+This creates a TLS-secured endpoint on port 29170 ready for clients to
+connect to. This sort of TLS does not provide any authentication
+between the router and the client, but the TLS encryption it enables
+does greatly reduce the possibility of eavesdropping.
 
 Using TLS Authentication
 ----------------------------------------------------------------------
 
-If you wish to use TLS to authenticate a router to a client and/or the
-client to the router, you will need to create a private key and
-associated public key certificate for each end that needs to be
+If you wish to use TLS to strongly authenticate a router to a client
+and/or the client to the router, you will need to create a private key
+and associated public key certificate for each end that needs to be
 authenticated.
 
-For example, to authenticate a router to a client &ndash; i.e. to give
+For example, to authenticate a router to a client in order to give
 assurance a client is connected to a trusted router over an insecure
-network &ndash; the router needs a unique private key, and the client
-needs to accept the associated public key as trusted.<sup>[1][]</sup>
-For authenticating the client to the router the reverse applies: the
+network, the router needs a unique private key, and the client needs
+to accept the associated public key as trusted.<sup>[1][]</sup> For
+authenticating the client to the router the reverse applies: the
 client needs a private key and the router must trust the accompanying
 public key.
 
@@ -46,8 +46,7 @@ Generating A TLS Key
 To generate a key for use in Avis, you will need to use the [`keytool`
 command][keytool] that ships with the Java Development Kit. The
 `keytool` utility stores and retrieves keys and certificate chains in
-a Java _keystore_, which is a binary archive, encrypted with a
-passphrase.
+a _keystore_, which is a binary archive, encrypted with a passphrase.
 
 As an example of using `keytool` to generate a new key inside a
 self-signed certificate, the command that was used to generate the key
@@ -86,7 +85,7 @@ To list the keys in a keystore:
              SHA1: FC:FD:F0:80:E1:FA:27:60:7A:E0:39:69:68:41:51:97:09:9B:BB:AE
 
 
-<a id="creating_trust">
+<a id="creating-trust" />
 Creating A Trust Relationship
 ----------------------------------------------------------------------
 
@@ -101,10 +100,12 @@ First, generate a key for the router:
        -keypass mypassword -storepass mypassword \
        -keystore my-router.keystore
 
-This creates a key called `my-router-key` in a keystore called
-`my-router.keystore`. Put the keystore in the same directory as the
-`avisd.config` configuration file, and specify that Avis use it rather
-than the default using these lines in the configuration:
+This creates a key called `my-router-key`<sup>[2][]</sup> in a
+keystore called `my-router.keystore` (obviously you should replace the
+"my-thing" placeholders with names appropriate to your usage). Put the
+keystore in the same directory as the `avisd.config` configuration
+file, and specify that Avis use it rather than the default using these
+lines in the configuration:
 
 <pre>
 <span class="variable-name">TLS.Keystore</span> = my-router.keystore
@@ -128,7 +129,7 @@ Now, when the client connects to the router it will be able to verify
 the router is trusted.
 
 A reverse trust relationship can also be established from the router
-to the client,<sup>[2][]</sup> and the router can be configured to
+to the client,<sup>[3][]</sup> and the router can be configured to
 _only_ accept authenticated clients via the `Require-Authenticated`
 configuration setting, and only authenticated [federation
 links][federation] using `Federation.Require-Authenticated`.
@@ -151,6 +152,18 @@ Footnotes
 
 <li id="fn2-tls">
 
+<p> This is known as a <em>self signed</em> key, meaning that it has
+    no chain of trust associated with it: the chain starts and ends
+    with the key. You can also arrange for a commercial CA to validate
+    and sign this key, which means receivers of the exported public
+    key certificate chain will trust the key if they trust the CA that
+    signed it, rather than needing to import your public key
+    manually.</p>
+
+</li>
+
+<li id="fn3-tls">
+
 <p>This is more commonly done with client federation links (where the
    client is the router with the <code>Federation.Connect</code>
    option) than normal clients.</p>
@@ -162,5 +175,6 @@ Footnotes
 
 [1]: #fn1-tls
 [2]: #fn2-tls
+[3]: #fn3-tls
 [keytool]: http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/keytool.html "Information on how to use keytool"
 [federation]: federation.html
