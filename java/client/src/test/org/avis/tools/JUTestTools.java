@@ -3,16 +3,15 @@ package org.avis.tools;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.avis.client.Elvin;
 import org.avis.client.Notification;
 import org.avis.router.Router;
 import org.avis.router.RouterOptions;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
