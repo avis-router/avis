@@ -2,7 +2,12 @@ package org.avis.tools;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.PrintStream;
+import java.io.Writer;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,6 +15,7 @@ import org.junit.Test;
 
 import org.avis.client.Elvin;
 import org.avis.client.Notification;
+import org.avis.client.TestNtfnListener;
 import org.avis.router.Router;
 import org.avis.router.RouterOptions;
 
@@ -22,20 +28,27 @@ public class JUTestTools
 {
   public static final String ELVIN_URI = "elvin://127.0.0.1:29170";
   
-  private ByteArrayOutputStream output;
-  private PrintStream oldStdErr;
-  private PrintStream oldStdOut;
+  protected Writer input;
+  protected ByteArrayOutputStream output;
+  protected PrintStream oldStdErr;
+  protected PrintStream oldStdOut;
+  protected InputStream oldStdIn;
   
   @Before
-  public void setup ()
+  public void setup () 
+    throws IOException
   {
     output = new ByteArrayOutputStream (4096);
-
+    PipedInputStream inputStr = new PipedInputStream ();
+    input = new OutputStreamWriter (new PipedOutputStream (inputStr), "UTF-8");
+    
     oldStdErr = System.err;
     oldStdOut = System.out;
+    oldStdIn = System.in;
     
     System.setErr (new PrintStream (output, true));
     System.setOut (new PrintStream (output, true));
+    System.setIn (inputStr);
   }
   
   @After
@@ -44,8 +57,10 @@ public class JUTestTools
   {
     System.setErr (oldStdErr);
     System.setOut (oldStdOut);
+    System.setIn (oldStdIn);
     
     output.close ();
+    input.close ();
   }
   
   @Test
@@ -62,6 +77,7 @@ public class JUTestTools
     Ec ec = new Ec (new EcOptions ("-e", ELVIN_URI, "require (test)"));
     
     client.send (new Notification ("test", 1));
+    client.close ();
     
     waitForOutput 
       ("ec: Connected to server elvin:4.0/tcp,none,xdr/127.0.0.1:29170\n" +
@@ -70,6 +86,43 @@ public class JUTestTools
        "---\n");
     
     ec.close ();
+    
+    router.close ();
+  }
+  
+  @Test
+  public void ep () 
+    throws Exception
+  {
+    RouterOptions options = new RouterOptions ();
+    options.set ("Listen", ELVIN_URI);
+    
+    Router router = new Router (options);
+    
+    Elvin client = new Elvin (ELVIN_URI);
+
+    TestNtfnListener listener = 
+      new TestNtfnListener (client.subscribe ("require (test)"));
+    
+    new Thread ()
+    {
+      @Override
+      public void run ()
+      {
+        try
+        {
+          new Ep (new EpOptions ("-e", ELVIN_URI));
+        } catch (Exception ex)
+        {
+          ex.printStackTrace (oldStdErr);
+        }
+      }
+    }.start ();
+    
+    input.append ("test: 1\n---\n");
+    input.close ();
+    
+    listener.waitForNotification ();
     
     router.close ();
   }
