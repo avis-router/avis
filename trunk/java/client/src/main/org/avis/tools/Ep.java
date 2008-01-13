@@ -28,7 +28,16 @@ public class Ep
   {
     try
     {
-      run (new EpOptions (args));
+      final Ep ep = new Ep (new EpOptions (args));
+      
+      Runtime.getRuntime ().addShutdownHook (new Thread ()
+      {
+        @Override
+        public void run ()
+        {
+          ep.close ();
+        }
+      });
     } catch (InvalidFormatException ex)
     {
       System.err.println ("ep: Invalid notification: " + ex.getMessage ());
@@ -42,32 +51,28 @@ public class Ep
       handleError ("ec", USAGE, ex);
     }
   }
+
+  private Elvin elvin;
   
-  private static void run (EpOptions options)
+  public Ep (EpOptions options)
     throws IOException, InvalidFormatException
   {
-    final Elvin elvin =
+    this.elvin =
       new Elvin (options.elvinUri, options.keys, EMPTY_KEYS);
     
     System.err.println ("ep: Connected to server " +
                         options.elvinUri.toCanonicalString ());
     
-    Runtime.getRuntime ().addShutdownHook (new Thread ()
-    {
-      @Override
-      public void run ()
-      {
-        System.err.println ("ep: Closing connection");
-        
-        elvin.close ();
-      }
-    });
-    
     StreamReader input = new StreamReader (System.in);
     
-    while (!input.eof ())
+    while (!input.eof () && elvin.isOpen ())
       elvin.send (new Notification (input), options.secureMode);
 
+    elvin.close ();
+  }
+  
+  public void close ()
+  {
     elvin.close ();
   }
 }
