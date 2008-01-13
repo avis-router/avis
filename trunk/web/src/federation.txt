@@ -144,4 +144,4 @@ Footnotes
 [tickertape]: http://tickertape.org/documents/what_is_tickertape.html "About tickertape messaging"
 
 [subscription]: subscription_language.html
-[trust]: tls.html#creating_trust
+[trust]: tls.html#creating-trust
