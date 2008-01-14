@@ -355,7 +355,7 @@ public class Connector implements IoHandler, Closeable
           remoteServerDomain + "\"", this);
     
     link =
-      new Link (session, router,
+      new Link (router, session,
                 federationClass, serverDomain, 
                 remoteServerDomain, 
                 remoteAddress.getAddress ().getCanonicalHostName ());

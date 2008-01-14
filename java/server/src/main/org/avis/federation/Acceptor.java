@@ -275,7 +275,7 @@ public class Acceptor implements IoHandler, Closeable
                                         FederationClass federationClass)
   {
     Link link =
-      new Link (session, router, federationClass,
+      new Link (router, session, federationClass,
                 serverDomain, remoteServerDomain, remoteHost);
     
     session.setAttribute ("federationLink", link);
