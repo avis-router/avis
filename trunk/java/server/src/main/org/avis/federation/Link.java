@@ -76,8 +76,8 @@ public class Link implements NotifyListener
   private boolean subscribed;
   private volatile boolean closed;
 
-  public Link (IoSession session,
-               Router router, 
+  public Link (Router router,
+               IoSession session, 
                FederationClass federationClass, 
                String serverDomain, 
                String remoteServerDomain,
