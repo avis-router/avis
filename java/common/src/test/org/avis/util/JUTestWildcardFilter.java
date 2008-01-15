@@ -11,10 +11,10 @@ public class JUTestWildcardFilter
   public void wildcards () 
     throws Exception
   {
-    assertFalse (new WildcardFilter ("").matches (""));
+    assertTrue (new WildcardFilter ("").matches (""));
     assertTrue (new WildcardFilter ("abc").matches ("abc"));
     assertFalse (new WildcardFilter ("abc").matches ("abcd"));
     assertTrue (new WildcardFilter ("abc*").matches ("abcd"));
-    assertTrue (new WildcardFilter ("def abc*").matches ("abcd"));
+    assertTrue (new WildcardFilter ("def", "abc*").matches ("abcd"));
   }
 }
