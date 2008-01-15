@@ -24,7 +24,8 @@ import static org.avis.common.Common.DEFAULT_PORT;
 
 public class JUTestRouterTLS
 {
-  private static final int SECURE_PORT = 29170;
+  private static final int PORT = 29170;
+  private static final int SECURE_PORT = 29171;
 
   /*
    * Command to generate the test key store:
@@ -45,7 +46,8 @@ public class JUTestRouterTLS
     URI keystore = getClass ().getResource ("tls_test.ks").toURI ();
     
     options.set ("Listen", 
-                 "elvin://127.0.0.1 elvin:/secure/127.0.0.1:" + SECURE_PORT);
+                 "elvin://127.0.0.1:" + PORT + " " + 
+                 "elvin:/secure/127.0.0.1:" + SECURE_PORT);
     options.set ("TLS.Keystore", keystore);
     options.set ("TLS.Keystore-Passphrase", "testing");
    
