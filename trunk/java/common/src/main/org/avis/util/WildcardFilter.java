@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
@@ -19,9 +20,14 @@ public class WildcardFilter implements Filter<String>
 {
   private List<Pattern> patterns;
   
-  public WildcardFilter (String pattern)
+  public WildcardFilter (String wildcardPattern)
   {
-    this (singleton (pattern));
+    this (singleton (wildcardPattern));
+  }
+  
+  public WildcardFilter (String... wildcardPatterns)
+  {
+    this (asList (wildcardPatterns));
   }
   
   public WildcardFilter (Collection<String> wildcardPatterns)
