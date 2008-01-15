@@ -65,13 +65,13 @@ public abstract class ToolOptions extends CommandLineOptions
   
   public ToolOptions (String... args)
   {
-    super (args);
-    
     this.secureMode = ALLOW_INSECURE_DELIVERY;
     this.clientOptions = new ElvinOptions ();
     
     clientOptions.notificationKeys = new Keys ();
     clientOptions.subscriptionKeys = clientOptions.notificationKeys;
+    
+    handleOptions (args);
   }
   
   public static void handleIOError (String appName, IOException ex)
