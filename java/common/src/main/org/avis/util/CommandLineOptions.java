@@ -15,13 +15,32 @@ import static java.util.Arrays.asList;
 public abstract class CommandLineOptions
 {
   /**
-   * Parse an array of command line options and create an option set.
+   * Create a new instance.
+   * 
+   * @see #handleOptions(String...)
+   */
+  public CommandLineOptions ()
+  {
+    // zip
+  }
+
+  /**
+   * Create a new instance and immediately parse an array of command
+   * line options and create an option set.
    * 
    * @param argv The command line options.
    * 
    * @throws IllegalConfigOptionException if an error is detected.
+   * 
+   * @see #handleOptions(String...)
    */
   public CommandLineOptions (String... argv)
+    throws IllegalCommandLineOption
+  {
+    handleOptions (argv);
+  }
+  
+  protected void handleOptions (String... argv)
     throws IllegalCommandLineOption
   {
     Queue<String> args = new LinkedList<String> (asList (argv));
