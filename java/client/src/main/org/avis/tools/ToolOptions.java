@@ -38,12 +38,13 @@ public abstract class ToolOptions extends CommandLineOptions
     "-e elvin [-x] [-X] [-C file] [-P file] [-k keystore passphrase]";
 
   protected static final String COMMON_USAGE_DETAIL =
-    "  -e elvin  Set the Elvin URI e.g. elvin://host:port\n" +
-    "  -x        Allow only secure notifications\n" +
-    "  -X        Allow insecure notifications (default)\n" +
-    "  -C file   Read consumer key from file\n" +
-    "  -P file   Read producer key from file\n" +
-    "  -k keys   Set keystore and passphrase for TLS/SSL\n" +
+    "  -e elvin       Set the Elvin URI e.g. elvin://host:port\n" +
+    "  -x             Allow only secure notifications\n" +
+    "  -X             Allow insecure notifications (default)\n" +
+    "  -C file        Read consumer key from file\n" +
+    "  -P file        Read producer key from file\n" +
+    "  -k keystore\n" +
+    "     passphrase  Set keystore and passphrase for TLS/SSL\n" +
     "\n" +
     "  Key file formats are: \n" +
     "\n" +
