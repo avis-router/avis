@@ -94,6 +94,9 @@ public class JUTestTools
     router.close ();
   }
   
+  /**
+   * Test ec's support for TLS (-k option).
+   */
   @Test
   public void ecTLS () 
     throws Exception
@@ -122,7 +125,7 @@ public class JUTestTools
     client.close ();
     
     waitForOutput 
-      ("ec: Connected to server elvin:4.0/tcp,none,xdr/127.0.0.1:29170\n" +
+      ("ec: Connected to server elvin:4.0/ssl,none,xdr/127.0.0.1:29171\n" +
        "$time\n" + 
        "test: 1\n" + 
        "---\n");
