@@ -371,7 +371,7 @@ public class Connector implements IoHandler, Closeable
   public void sessionOpened (IoSession theSession)
     throws Exception
   {
-    logSessionOpened (session, this);
+    logSessionOpened (theSession, this);
   }
   
   public void sessionClosed (IoSession theSession)
