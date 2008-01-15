@@ -29,9 +29,15 @@ import static org.junit.Assert.assertEquals;
 
 public class JUTestTools
 {
-  public static final String ELVIN_URI = "elvin://127.0.0.1:29170";
-  public static final String SECURE_ELVIN_URI = "elvin:/secure/127.0.0.1:29171";
-  
+  protected static final String KEYSTORE_PASSPHRASE = "testing";
+  protected static final String ELVIN_URI = "elvin://127.0.0.1:29170";
+  protected static final String SECURE_ELVIN_URI = 
+    "elvin:/secure/127.0.0.1:29171";
+  protected static final URL CLIENT_KEYSTORE_URL = 
+    JUTestTools.class.getResource ("client.ks");
+  protected static final URL routerKeystoreUrl = 
+    JUTestTools.class.getResource ("router.ks");
+
   protected Writer input;
   protected ByteArrayOutputStream output;
   protected PrintStream oldStdErr;
@@ -101,25 +107,15 @@ public class JUTestTools
   public void ecTLS () 
     throws Exception
   {
-    URL routerKeystoreUrl = getClass ().getResource ("router.ks");
-    URL clientKeystoreUrl = getClass ().getResource ("client.ks");
+    Router router = new Router (secureRouterOptions ());
     
-    RouterOptions routerOptions = new RouterOptions ();
-    
-    routerOptions.set ("Listen", SECURE_ELVIN_URI);
-    routerOptions.set ("TLS.Keystore", routerKeystoreUrl);
-    routerOptions.set ("TLS.Keystore-Passphrase", "testing");
-    
-    Router router = new Router (routerOptions);
-    
-    ElvinOptions clientOptions = new ElvinOptions ();
-    clientOptions.setKeystore (clientKeystoreUrl, "testing");
+    ElvinOptions clientOptions = secureClientOptions ();
     
     Elvin client = new Elvin (SECURE_ELVIN_URI, clientOptions);
    
     Ec ec = new Ec (new EcOptions ("-e", SECURE_ELVIN_URI, "-k", 
-                                   routerKeystoreUrl.getPath (), 
-                                   "testing", "require (test)"));
+                                   CLIENT_KEYSTORE_URL.getPath (), 
+                                   KEYSTORE_PASSPHRASE, "require (test)"));
     
     client.send (new Notification ("test", 1));
     client.close ();
@@ -170,6 +166,62 @@ public class JUTestTools
     ntfnListener.waitForNotification ();
     
     router.close ();
+  }
+  
+  @Test
+  public void epTLS () 
+    throws Exception
+  {
+    Router router = new Router (secureRouterOptions ());
+    
+    Elvin client = new Elvin (SECURE_ELVIN_URI, secureClientOptions ());
+
+    TestNtfnListener ntfnListener = 
+      new TestNtfnListener (client.subscribe ("require (test)"));
+    
+    new Thread ()
+    {
+      @Override
+      public void run ()
+      {
+        try
+        {
+          new Ep (new EpOptions ("-e", SECURE_ELVIN_URI, "-k", 
+                                   CLIENT_KEYSTORE_URL.getPath (), 
+                                   KEYSTORE_PASSPHRASE));
+        } catch (Exception ex)
+        {
+          ex.printStackTrace (oldStdErr);
+        }
+      }
+    }.start ();
+    
+    input.append ("test: 1\n---\n");
+    input.close ();
+    
+    ntfnListener.waitForNotification ();
+    
+    router.close ();
+  }
+
+  private ElvinOptions secureClientOptions () 
+    throws IOException
+  {
+    ElvinOptions clientOptions = new ElvinOptions ();
+    clientOptions.setKeystore (CLIENT_KEYSTORE_URL, KEYSTORE_PASSPHRASE);
+    
+    return clientOptions;
+  }
+
+  private RouterOptions secureRouterOptions ()
+  {
+    RouterOptions routerOptions = new RouterOptions ();
+    
+    routerOptions.set ("Listen", SECURE_ELVIN_URI);
+    routerOptions.set ("TLS.Keystore", routerKeystoreUrl);
+    routerOptions.set ("TLS.Keystore-Passphrase", KEYSTORE_PASSPHRASE);
+    
+    return routerOptions;
   }
 
   private void waitForOutput (String expectedOutput) 
