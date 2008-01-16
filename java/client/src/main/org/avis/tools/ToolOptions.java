@@ -45,6 +45,7 @@ public abstract class ToolOptions extends CommandLineOptions
     "  -P file        Read producer key from file\n" +
     "  -k keystore\n" +
     "     passphrase  Set keystore and passphrase for TLS/SSL\n" +
+    "  -a             Require authenticated server when using TLS\n" +
     "\n" +
     "  Key file formats are: \n" +
     "\n" +
@@ -118,6 +119,9 @@ public abstract class ToolOptions extends CommandLineOptions
     } else if (arg.equals ("-k"))                
     {
       loadKeystore (stringArg (args), bareArg (args));
+    } else if (takeArg (args, "-a"))                
+    {
+      clientOptions.requireAuthenticatedServer = true;
     }
   }
   
