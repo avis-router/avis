@@ -7,6 +7,8 @@ Server 1.2
  * ?do we want clients trusted by CA's to be trusted
  * ?Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * Test large frames with new heap sizes
+ * switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
+  (10.4 only, but Java 5 only works there anyway). /Library/LaunchDaemons/ 
  * ?thread pool size option
  * DONE: TLS web page
  * DONE: how do we map fed classes to only trusted clients?
@@ -25,8 +27,10 @@ Server 1.2
 
 Client 1.1
 
- * ec/ep options for TLS
- * ep needs to handle empty lines 
+* client source won't build in Eclipse without server. Need to add it
+  or deal with it otherwise.
+ * DONE: ec/ep options for TLS
+ * NOT DONE: ep needs to handle empty lines 
  * client should probably not log messages: events instead, esp
    DropWarn
  * DONE: --allow connection options in URI. merge with given options? --use
@@ -40,20 +44,16 @@ Not allocated
 
 Client
 
-* client source won't build in Eclipse without server. Need to add it
-  or deal with it otherwise.
 * handle redirect disconns 
 * synchronous reconnect/redirect? block for up to x secs before closing
 * better reporting for going over connection limits (e.g. max subs)
 * UDP unotify
 * auto connect/reconnect
 * lots of ec/ep options
-* incorporate better RPM .spec and .rc files from OpenPKG http://cvs.openpkg.org/rlog?f=openpkg-src/avis/avis.spec http://cvs.openpkg.org/rlog?f=openpkg-src/avis/rc.avis
 * discovery
 * async/future-based messaging in client. use futures to track responses.
 * BUG: ec hangs on Presence-Protocol from public.elvin.org. Takes a long time
   to close connection. possibly related to use of "tee" on command line
-
 * MAYBE: replace IOException witn RuntimeIOException? relates/affected
   by async idea
 
@@ -75,14 +75,10 @@ Server
 * simple web-based stats: use small HTTP server.
 * web-based management: use small HTTP server. or in context of
   OSGi. allow shutdown-and-redirect
-* OS X: installation in /usr/local means getting blown away on system
-  reinstall. should we go in /opt?
 * DEB, Solaris: look at je4 packages dir
 * what happens when sending ntfn to client that's too big?
 * test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
 * profile performance
-* switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
-  (10.4 only, but Java 5 only works there anyway). /Library/LaunchDaemons/ 
 * partly done: router-wide options that allow client to grow connection
   footprint such like as keys, subscriptions. client can still easily kill
   server using long subs atm. keys attack window reduced but still may be
@@ -93,6 +89,8 @@ Server
 * write a multi-threaded test thrasher to test consistency
 * look into whether server can store hashed keys only and avoid
   hashing them on each match. See Connection.matchSubscriptions ()
+* DONE: OS X: installation in /usr/local means getting blown away on system
+  reinstall. should we go in /opt?
 
 SSL
 ----------------------------------------------------------------------
