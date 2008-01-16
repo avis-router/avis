@@ -7,8 +7,10 @@ Server 1.2
  * ?do we want clients trusted by CA's to be trusted
  * ?Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * Test large frames with new heap sizes
- * switch to launchd for OS X http://en.wikipedia.org/wiki/Launchd
-  (10.4 only, but Java 5 only works there anyway). /Library/LaunchDaemons/ 
+ * switch to launchd for OS X http://developer.apple.com/macosx/launchd.html
+  (10.4 only, but Java 5 only works there anyway). Put in 
+  /Library/LaunchDaemons/. Look at 
+  /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist. 
  * ?thread pool size option
  * DONE: TLS web page
  * DONE: how do we map fed classes to only trusted clients?
