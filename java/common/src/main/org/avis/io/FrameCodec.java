@@ -14,8 +14,6 @@ import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.XidMessage;
 
-import static org.avis.logging.Log.diagnostic;
-
 /**
  * Base class for Elvin XDR frame codecs. Reads/writes messages
  * to/from the Elvin XDR frame format with the help of
@@ -113,10 +111,9 @@ public abstract class FrameCodec
       
       if (bytesRead != frameSize)
       {
-        diagnostic ("Some input not read by " + message.name (), this);
-        
         throw new ProtocolCodecException 
-          ("Frame header said " + frameSize + 
+          ("Some input not read for " + message.name () + ": " +
+           "Frame header said " + frameSize + 
            " bytes, but only read " + bytesRead);
       }
       
