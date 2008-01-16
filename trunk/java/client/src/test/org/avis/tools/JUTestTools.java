@@ -115,7 +115,8 @@ public class JUTestTools
    
     Ec ec = new Ec (new EcOptions ("-e", SECURE_ELVIN_URI, "-k", 
                                    CLIENT_KEYSTORE_URL.getPath (), 
-                                   KEYSTORE_PASSPHRASE, "require (test)"));
+                                   KEYSTORE_PASSPHRASE, "-a", 
+                                   "require (test)"));
     
     client.send (new Notification ("test", 1));
     client.close ();
@@ -188,7 +189,7 @@ public class JUTestTools
         {
           new Ep (new EpOptions ("-e", SECURE_ELVIN_URI, "-k", 
                                    CLIENT_KEYSTORE_URL.getPath (), 
-                                   KEYSTORE_PASSPHRASE));
+                                   KEYSTORE_PASSPHRASE, "-a"));
         } catch (Exception ex)
         {
           ex.printStackTrace (oldStdErr);
