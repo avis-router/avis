@@ -12,6 +12,9 @@ import java.io.IOException;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
+import java.nio.channels.UnresolvedAddressException;
 
 import javax.net.ssl.SSLException;
 
@@ -515,6 +518,14 @@ public final class Elvin implements Closeable
     {
       // unwrap MINA's RuntimeIOException
       throw (IOException)ex.getCause ();
+    } catch (UnresolvedAddressException ex)
+    {
+      UnknownHostException newEx = new UnknownHostException 
+        ("Host name for " + routerUri + " could not be resolved");
+      
+      newEx.initCause (ex);
+      
+      throw newEx;
     }
   }
   
