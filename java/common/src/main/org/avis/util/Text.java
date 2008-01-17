@@ -2,10 +2,15 @@ package org.avis.util;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import java.nio.charset.CharacterCodingException;
 
+import static java.lang.Integer.toHexString;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.lang.System.arraycopy;
+import static java.lang.System.identityHashCode;
 import static java.util.Arrays.asList;
 
 import static org.avis.io.XdrCoding.fromUTF8;
@@ -58,6 +63,68 @@ public final class Text
       return className (ex.getClass ());
     else
       return className (ex.getClass ()) + ": " + ex.getMessage ();
+  }
+
+  /**
+   * Generate a hex ID for an object.
+   */
+  public static String idFor (Object instance)
+  {
+    return toHexString (identityHashCode (instance));
+  }
+  
+  /**
+   * Generate a string value of the notification.
+   * 
+   * @param attributes The attribute name/value pairs.
+   * 
+   * @return The string formatted version of the notification attributes.
+   */
+  public static String formatNotification (Map<String, Object> attributes)
+  {
+    StringBuilder str = new StringBuilder ();
+
+    SortedSet<String> names = new TreeSet<String> (CASE_INSENSITIVE_ORDER);
+    names.addAll (attributes.keySet ());
+    
+    boolean first = true;
+    
+    for (String name : names)
+    {
+      if (!first)
+        str.append ('\n');
+      
+      first = false;
+      
+      appendEscaped (str, name, " :");
+      
+      str.append (": ");
+      
+      appendValue (str, attributes.get (name));
+    }
+    
+    return str.toString ();
+  }
+  
+  private static void appendValue (StringBuilder str, Object value)
+  {
+    if (value instanceof String)
+    {
+      str.append ('"');
+      appendEscaped (str, (String)value, '"');
+      str.append ('"');
+    } else if (value instanceof Number)
+    {
+      str.append (value);
+      
+      if (value instanceof Long)
+        str.append ('L');   
+    } else
+    {
+      str.append ('[');
+      appendHexBytes (str, (byte [])value);
+      str.append (']');
+    }
   }
   
   /**
