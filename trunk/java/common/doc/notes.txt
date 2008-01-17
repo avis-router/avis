@@ -3,6 +3,7 @@ Releases
 
 Server 1.2
 
+ * dump notifications in -vv mode
  * date in log messages: Dec 23 04:20:01
  * ?do we want clients trusted by CA's to be trusted
  * ?Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
@@ -34,7 +35,7 @@ Client 1.1
  * DONE: ec/ep options for TLS
  * NOT DONE: ep needs to handle empty lines 
  * client should probably not log messages: events instead, esp
-   DropWarn
+   DropWarn. Will need a way to send these to log for testing.
  * DONE: --allow connection options in URI. merge with given options? --use
    server options package and ditch special options class?--
  * DONE: TLS
