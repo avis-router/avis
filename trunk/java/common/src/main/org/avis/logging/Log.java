@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.avis.util.ListenerList;
 
@@ -34,7 +35,7 @@ public final class Log
     @Override
     protected DateFormat initialValue ()
     {
-      return DateFormat.getTimeInstance ();
+      return new SimpleDateFormat ("MMM dd HH:mm:ss");
     }
   };
   
