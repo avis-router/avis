@@ -29,7 +29,7 @@ public final class Log
     new String [] {"Trace", "Diagnostic", "Info",
                    "Warning", "Alarm", "Internal Error"};
   
-  private static final ThreadLocal<DateFormat> DATE_FORMAT =
+  private static final ThreadLocal<DateFormat> dateFormat =
     new ThreadLocal<DateFormat> ()
   {
     @Override
@@ -207,7 +207,7 @@ public final class Log
                                     String messageStr,
                                     Throwable exception)
   {
-    str.append (DATE_FORMAT.get ().format (time));
+    str.append (dateFormat.get ().format (time));
 
     if (applicationName != null)
       str.append (": ").append (applicationName);
