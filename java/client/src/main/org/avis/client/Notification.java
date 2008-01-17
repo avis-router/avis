@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import java.io.BufferedReader;
@@ -17,17 +15,16 @@ import java.io.StringReader;
 
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.util.InvalidFormatException;
+import org.avis.util.Text;
 
-import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 
 import static org.avis.util.Streams.bufferedReaderFor;
-import static org.avis.util.Text.appendEscaped;
-import static org.avis.util.Text.appendHexBytes;
 import static org.avis.util.Text.className;
 import static org.avis.util.Text.findFirstNonEscaped;
+import static org.avis.util.Text.formatNotification;
 import static org.avis.util.Text.stringToValue;
 import static org.avis.util.Text.stripBackslashes;
 
@@ -248,53 +245,13 @@ public final class Notification
    * Generate a string value of the notification. The format is
    * compatible with that used by the ec/ep commands. See
    * {@link #parse(Notification, Reader)} for an example.
+   * 
+   * @see Text#formatNotification(Map)
    */
   @Override
   public String toString ()
   {
-    StringBuilder str = new StringBuilder ();
-
-    SortedSet<String> names = new TreeSet<String> (CASE_INSENSITIVE_ORDER);
-    names.addAll (attributes.keySet ());
-    
-    boolean first = true;
-    
-    for (String name : names)
-    {
-      if (!first)
-        str.append ('\n');
-      
-      first = false;
-      
-      appendEscaped (str, name, " :");
-      
-      str.append (": ");
-      
-      appendValue (str, attributes.get (name));
-    }
-    
-    return str.toString ();
-  }
-  
-  private static void appendValue (StringBuilder str, Object value)
-  {
-    if (value instanceof String)
-    {
-      str.append ('"');
-      appendEscaped (str, (String)value, '"');
-      str.append ('"');
-    } else if (value instanceof Number)
-    {
-      str.append (value);
-      
-      if (value instanceof Long)
-        str.append ('L');   
-    } else
-    {
-      str.append ('[');
-      appendHexBytes (str, (byte [])value);
-      str.append (']');
-    }
+    return formatNotification (attributes);
   }
 
   /**
