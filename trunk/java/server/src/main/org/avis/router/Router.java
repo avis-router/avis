@@ -62,6 +62,7 @@ import org.avis.util.ConcurrentHashSet;
 import org.avis.util.Filter;
 import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
+import org.avis.util.Text;
 
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
@@ -78,7 +79,6 @@ import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
-import static org.avis.io.Net.idFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -97,6 +97,8 @@ import static org.avis.logging.Log.warn;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
+import static org.avis.util.Text.formatNotification;
+import static org.avis.util.Text.idFor;
 
 public class Router implements IoHandler, Closeable
 {
@@ -525,7 +527,7 @@ public class Router implements IoHandler, Closeable
       return;
     
     if (shouldLog (TRACE))
-      trace ("Server got message from " + idFor (session) +
+      trace ("Server got message from " + Text.idFor (session) +
              ": " + messageObject, this);
     
     Message message = (Message)messageObject;
@@ -779,11 +781,17 @@ public class Router implements IoHandler, Closeable
   private void handleNotifyEmit (IoSession session, NotifyEmit message)
     throws NoConnectionException
   {
+    if (shouldLog (TRACE))
+      logNotification (session, message);
+    
     deliverNotification (message, connectionFor (session).notificationKeys);
   }
-  
+
   private void handleUnotify (UNotify message)
   {
+    if (shouldLog (TRACE))
+      logNotification (null, message);
+    
     deliverNotification (message, EMPTY_KEYS);
   }
   
@@ -827,6 +835,12 @@ public class Router implements IoHandler, Closeable
 
         if (matches.matched ())
         {
+          if (shouldLog (TRACE))
+          {
+            trace ("Delivering notification " + idFor (message) + 
+                   " to client " + idFor (session), this);
+          }
+          
           send (session, new NotifyDeliver (message.attributes,
                                             matches.secure (),
                                             matches.insecure ()));
@@ -1048,7 +1062,7 @@ public class Router implements IoHandler, Closeable
     throws Exception
   {
     if (shouldLog (TRACE))
-      trace ("Server session " + idFor (session) + " closed", this);
+      trace ("Server session " + Text.idFor (session) + " closed", this);
     
     sessions.remove (session);
 
@@ -1106,7 +1120,7 @@ public class Router implements IoHandler, Closeable
     if (status == READER_IDLE && peekConnectionFor (session) == null)
     {
       diagnostic
-        ("Client " + idFor (session) +
+        ("Client " + Text.idFor (session) +
          " waited too long to connect: closing session", this);
       
       session.close ();
@@ -1116,7 +1130,7 @@ public class Router implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    diagnostic ("Server session " + idFor (session) + 
+    diagnostic ("Server session " + Text.idFor (session) + 
                 " opened for connection on " + session.getServiceAddress () + 
                 (isSecure (session) ? " (using TLS)" : ""), this);
     
@@ -1175,13 +1189,20 @@ public class Router implements IoHandler, Closeable
   {    
     if (shouldLog (TRACE))
     {
-      trace ("Server sent message to " + idFor (session) + ": " + message,
+      trace ("Server sent message to " + Text.idFor (session) + ": " + message,
              Router.class);
     }
     
     return session.write (message);
   }
 
+  private void logNotification (IoSession session, Notify message)
+  {
+    trace ("Notification " + idFor (message) + 
+           " from client " + idFor (session) + ":\n" + 
+           formatNotification (message.attributes), this);
+  }
+  
   /**
    * Get the connection associated with a session or null for no connection.
    */
