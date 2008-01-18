@@ -2,8 +2,6 @@ package org.avis.util;
 
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import java.nio.charset.CharacterCodingException;
 
@@ -12,6 +10,7 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.lang.System.arraycopy;
 import static java.lang.System.identityHashCode;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.sort;
 
 import static org.avis.io.XdrCoding.fromUTF8;
 import static org.avis.io.XdrCoding.toUTF8;
@@ -82,11 +81,13 @@ public final class Text
    */
   public static String formatNotification (Map<String, Object> attributes)
   {
-    StringBuilder str = new StringBuilder ();
-
-    SortedSet<String> names = new TreeSet<String> (CASE_INSENSITIVE_ORDER);
-    names.addAll (attributes.keySet ());
+    String [] names = new String [attributes.size ()];
     
+    attributes.keySet ().toArray (names);
+    
+    sort (names, CASE_INSENSITIVE_ORDER);
+    
+    StringBuilder str = new StringBuilder ();
     boolean first = true;
     
     for (String name : names)
