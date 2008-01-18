@@ -1,55 +1,97 @@
-Name: avis
-Summary: Avis event router
-URL: http://avis.sourceforge.net/
-Version: %{_avis_version}
-Release: %{_avis_release}
-License: GPL
-Packager: Matthew Phillips <avis@mattp.name>
-Vendor: (none)
-# Requires: java >= 0:1.4
-Group: System/Servers
-# BuildRequires: java-devel >= 0:1.4, ant, jpackage-utils
+Name:         avis
+Summary:      Event Router
+URL:          http://avis.sourceforge.net/
+Vendor:       Matthew Phillips
+Packager:     Avis Project <avis@mattp.name>
+Distribution: Sourceforge
+Group:        System/Servers
+License:      GPL
+Version:      %{_avis_version}
+Release:      %{_avis_release}
+
+#   build information
+Prefix:       %{_prefix}
+BuildRoot:    %{_topdir}
+# Requires:     java >= 0:1.5
+Requires:     jdk >= 0:1.5
+AutoReq:      no
+AutoReqProv:  no
 BuildArchitectures: noarch
-BuildRoot: %{_builddir}/%{name}-root
-Source0: avis-src-%{_avis_version}.zip
 
 %description
-Avis is an event router service compatible with the commercial Elvin
-implementation developed by Mantara Software. Avis provides a
-general-purpose, fast and scalable publish/subscribe message bus using
-content-based subscriptions.
-
-%prep
-%setup -q
-
-%build
-unset CLASSPATH
-cd server
-ant
+    Avis is a multicast event bus. It provides a fast, publish/subscribe
+    event routing service compatible with the commercial Elvin
+    implementation developed by Mantara Software. Elvin routers can be
+    federated together to form wide-area event notification networks.
+    Clients can exchange events with other clients anywhere on the bus,
+    subscribing to messages using pattern-matching expressions that
+    select messages based on their content.
 
 %install
-rm -rf $RPM_BUILD_ROOT
-install -Dp -m 0755 -o root -g root \
-  server/bin/avisd $RPM_BUILD_ROOT/%{_sbindir}/avisd
-install -Dp -m 0644 -o root -g root \
-  server/lib/avisd.jar $RPM_BUILD_ROOT/%{_libdir}/avisd.jar
-install -Dp -m 0644 -o root -g root \
-  server/etc/avisd.config $RPM_BUILD_ROOT/%{_sysconfdir}/avis/avisd.config
-install -Dp -m 0644 -o root -g root \
-  server/etc/avis-router.keystore $RPM_BUILD_ROOT/%{_sysconfdir}/avis/avis-router.keystore
+    # create installation hierarchy
+    mkdir -p -m 755 \
+        $RPM_BUILD_ROOT%{_prefix}/bin \
+        $RPM_BUILD_ROOT%{_prefix}/libexec/avis \
+        $RPM_BUILD_ROOT%{_prefix}/var/avis \
+        $RPM_BUILD_ROOT/etc/avis \
+        $RPM_BUILD_ROOT/etc/init.d
 
-# service
-sed -e "s|__CONFDIR__|%{_sysconfdir}|g" \
-    -e "s|__BINDIR__|%{_sbindir}|g" \
-  < server/packaging/fedora/init_script.in > %{_tmppath}/avisd.tmp
-install -Dp -m 0755 -o root -g root \
-  %{_tmppath}/avisd.tmp $RPM_BUILD_ROOT/etc/init.d/avisd
-rm %{_tmppath}/avisd.tmp
+    # install avis and ec/ep libs
+   install -c -m 644 \
+        %{_avis_server}/lib/avis-router.jar \
+        %{_avis_client}/lib/avis-client.jar \
+        %{_avis_client}/lib/avis-tools.jar \
+        $RPM_BUILD_ROOT%{_prefix}/libexec/avis/
+
+    # install default server configuration
+    install -c -m 644 \
+        %{_avis_server}/etc/avisd.config \
+        %{_avis_server}/etc/avis-router.keystore \
+        $RPM_BUILD_ROOT/etc/avis/
+
+    # install ec/ep
+    ( echo "#!/bin/sh"
+      echo "exec %{_prefix}/bin/java -Xverify:none \\%{nil}"
+      echo "    -cp %{_prefix}/libexec/avis/avis-tools.jar:%{_prefix}/libexec/avis/avis-client.jar \\%{nil}"
+      echo "    org.avis.tools.Ec \${1+\"\$@\"}"
+    ) > %{_tmppath}/ec
+
+    ( echo "#!/bin/sh"
+      echo "exec %{_prefix}/bin/java -Xverify:none \\%{nil}"
+      echo "    -cp %{_prefix}/libexec/avis/avis-tools.jar:%{_prefix}/libexec/avis/avis-client.jar \\%{nil}"
+      echo "    org.avis.tools.Ep \${1+\"\$@\"}"
+    ) > %{_tmppath}/ep
+
+    install -c -m 755 \
+      %{_tmppath}/ec %{_tmppath}/ep $RPM_BUILD_ROOT%{_prefix}/bin/
+
+    install -Dp -m 0755 \
+      %{_avis_server}/bin/avisd \
+      $RPM_BUILD_ROOT%{_prefix}/sbin/avisd
+ 
+    # init script
+    sed -e "s|__PREFIX__|%{_prefix}|g" \
+      < %{_avis_server}/packaging/fedora/rc_init_script.in > %{_tmppath}/avisd
+    
+    install -Dp -m 0755 \
+      %{_tmppath}/avisd $RPM_BUILD_ROOT/etc/init.d/
 
 %files
-%defattr(-,root,root)
-%{_sbindir}/avisd
-%{_libdir}/avisd.jar
-/etc/init.d/avisd
-%config %{_sysconfdir}/avis/avisd.config
-%config %{_sysconfdir}/avis/avis-router.keystore
+     %defattr(-,root,root)
+     %{_prefix}/sbin/avisd
+     %{_prefix}/bin/ec
+     %{_prefix}/bin/ep
+     %{_prefix}/libexec/avis/avis-router.jar
+     %{_prefix}/libexec/avis/avis-tools.jar
+     %{_prefix}/libexec/avis/avis-client.jar
+     /etc/init.d/avisd
+     %config /etc/avis/avisd.config
+     %config /etc/avis/avis-router.keystore
+
+    #   determine installation files
+#    %{l_rpmtool} files -v -ofiles -r$RPM_BUILD_ROOT \
+#        %{l_files_std} \
+#        '%config %{_prefix}/etc/avis/avisd.config' \
+#        '%dir %attr(-,%{l_rusr},%{l_rgrp}) %{_prefix}/var/avis'
+
+#%files -f files
