@@ -17,13 +17,13 @@ Supported Platforms
 ----------------------------------------------------------------------
 
 Avis will run on platforms with a Java 5 Standard Edition runtime. It
-has been tested on Mac OS X Tiger (10.4), Windows XP and Windows
-Server 2003, Fedora (Core 2 and onwards) and Debian Sarge (3.1).
+has been tested on Mac OS X (10.4 and 10.5), Windows XP and Windows
+Server 2003, Fedora (Core 2 through 8) and Debian Sarge (3.1).
 
 Although Avis is platform-independent, the "avisd" script and example
-command lines appearing later are for Unix environments with a "bash"
-shell interpreter.  Windows users can either translate as needed or
-run under cygwin (http://www.cygwin.com).
+command lines appearing later are for Unix environments with a Bourne
+shell.  Windows users can either translate as needed or run under
+cygwin (http://www.cygwin.com).
 
 
 Requirements
@@ -53,23 +53,15 @@ Optional:
   * JavaCC 4.0 or later. Only required if you wish to change the
     subscription parser. http://javacc.dev.java.net.
 
-Very optional (these only apply if you're working in the development
-tree from Subversion and need to update the web site):
-
-  * Markdown 1.0.1 or later. Required to build the web
-    site. http://daringfireball.net/projects/markdown.
-
-  * rsync. Required to upload web site.
-
 To build the router with Ant, change to the "server" sub-directory of
 where you extracted Avis and simply run Ant with the default build
 target:
 
-  > cd avis-1.1/server
+  > cd avis-1.2/server
   > ant
 
-This will build the file "lib/avisd.jar", which is the Avis event
-router executable.
+This will build the file "lib/avis-router.jar", which is the Avis
+event router executable.
 
 To see all build targets run:
 
@@ -81,7 +73,7 @@ Usage
 
 To run the Avis event router service using the bash helper script:
 
-  > cd avis-1.0/server
+  > cd avis-1.2/server
   > ./bin/avisd
 
 To see command line options:
@@ -89,9 +81,8 @@ To see command line options:
   > ./bin/avisd -h
 
 You can use the ec (Elvin Consumer) and ep (Elvin Producer) utilities
-to subscribe to and generate notifications from the command
-line. These are not bundled with the server, you can get these as part
-of the Avis client library.
+which are bundled with the router to subscribe to and generate
+notifications from the command line.
 
   [from shell #1]
   > cd bin
