@@ -87,7 +87,7 @@ public final class Text
     
     sort (names, CASE_INSENSITIVE_ORDER);
     
-    StringBuilder str = new StringBuilder ();
+    StringBuilder str = new StringBuilder (names.length * 16);
     boolean first = true;
     
     for (String name : names)
