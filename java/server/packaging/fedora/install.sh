@@ -41,7 +41,7 @@ done
 # install if no --service OR if avisd not already installed
 if [ $install_service == 0 ] || [ ! -e $prefix/sbin/avisd ]; then
   install -DCp -m 0755 -o root -g root $root/sbin/avisd $prefix/sbin/avisd && \
-  install -DCp -m 0644 -o root -g root $root/lib/avisd.jar $prefix/lib/avisd.jar && \
+  install -DCp -m 0644 -o root -g root $root/lib/avis-router.jar $prefix/lib/avis-router.jar && \
   install -DCp -m 0644 -o root -g root $root/etc/avis/avisd.config $prefix/etc/avis/avisd.config
 fi
 
