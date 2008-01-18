@@ -12,16 +12,19 @@
 
   <!-- The formal version number in major.minor form -->
   <property name="version"
-            value="${avis.version.major}.${avis.version.minor}" />
+            value="${avis.version.major}.${avis.version.minor}.${avis.version.patch}" />
 
   <property name="release" value="${avis.release}" />
 
   <!-- The release name: typically the version number followed by a
-       release tag e.g. 1.0.2dev or 1.1.dev. -->
-  <property name="release-name" value="${version}.${release}" />
+       release tag e.g. 1.0.2dev or 1.1.0. -->
+  <property name="release-name" value="${version}${release}" />
 
   <property name="server" value="${basedir}" />
+  
   <property name="common" value="${server}/../common" />
+  <property name="client" value="${server}/../client" />
+  
   <property name="avis-root" value="${server}/../.." />
 
   <property name="src-zip" value="build/avis-src-${release-name}.zip" />
@@ -90,7 +93,7 @@
   <target name="clean" description="Clean built artifacts">
     <ant antfile="${common}/build-common.xml" target="clean" inheritall="true" />
     
-    <delete file="lib/avisd.jar" includeemptydirs="true" />
+    <delete file="lib/avis-router.jar" includeemptydirs="true" />
   </target>
 
   <target name="clean-javacc" description="Clean JavaCC-generated files">
@@ -113,32 +116,33 @@
             target="src/main/org/avis/subscription/parser/SubscriptionParser.jj" />
   </target>
 
-  <target name="avisd-jar-uptodate">
+  <target name="avis-router-jar-uptodate">
     <dependset>
       <srcfileset dir="${common}/classes/main" includes="**/*.class" />
       <srcfileset dir="classes/main" includes="**/*.class" />
       
       <targetfileset dir="build">
-        <include name="avisd.jar" />
+        <include name="avis-router.jar" />
       </targetfileset>
     </dependset>
       
-    <condition property="avisd-jar-uptodate">
+    <condition property="avis-router-jar-uptodate">
       <and>
-        <available file="build/avisd.jar" />
+        <available file="build/avis-router.jar" />
       </and>
     </condition>
   </target>
     
-  <target name="jar-server" depends="compile,avisd-jar-uptodate,properties"
-          description="Build avisd.jar" unless="avisd-jar-uptodate">
+  <target name="jar-server" description="Build avis-router.jar" 
+          depends="compile,avis-router-jar-uptodate,properties"
+          unless="avis-router-jar-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
              classpath="${common}/lib/jarx.jar" />
 
     <mkdir dir="build" />
       
-    <jarx archive="build/avisd.jar"
+    <jarx archive="build/avis-router.jar"
           mainClass="org.avis.router.Main"
           classpathref="classpath">
       
@@ -146,7 +150,7 @@
     </jarx>
     
     <mkdir dir="lib" />
-    <copy file="build/avisd.jar" todir="lib" />
+    <copy file="build/avis-router.jar" todir="lib" />
   </target>
 
   <target name="jar-fastutil-subset"
@@ -381,7 +385,12 @@
 
   </target>
   
-  <target name="dist-fedora" depends="jar-server"
+  <target name="jar-tools">
+    <ant dir="${client}" target="jar-tools"
+         inheritall="false" inheritrefs="false" />
+  </target>
+    
+  <target name="dist-fedora" depends="jar-server,jar-tools"
           description="Build the Red Hat Fedora Core RPM distro">
 
     <property name="root" value="${basedir}/build/tmp/rpm_root" />
@@ -393,24 +402,26 @@
     <mkdir dir="${root}/SRPMS" />
     <mkdir dir="${root}/SPECS" />
 
-    <!-- NOTE: src dist must expand to avis-$version directory for RPM -->
-    <antcall target="dist-source">
-      <param name="ziproot" value="avis-${version}" />
-      <param name="src_zip" value="${root}/SOURCES/avis-src-${version}.zip" />
-    </antcall>
- 
-    <exec executable="rpmbuild">
+    <tstamp>
+      <format property="release-date" pattern="yyyyMMdd" />
+    </tstamp>
+
+    <exec executable="rpmbuild" failonerror="true">
       <arg value="-bb" />
       <arg value="--define" />
       <arg value="_topdir ${root}" />
       <arg value="--define" />
       <arg value="_avis_version ${version}" />
       <arg value="--define" />
-      <arg value="_avis_release ${release}" />
-      <arg value="${basedir}/packaging/fedora/avis.spec" />
+      <arg value="_avis_release ${release-date}${release}" />
+      <arg value="--define" />
+      <arg value="_avis_server ${server}" />
+      <arg value="--define" />
+      <arg value="_avis_client ${client}" />
+      <arg value="${server}/packaging/fedora/avis.spec" />
     </exec>
 
-    <copy file="${root}/RPMS/noarch/avis-${version}-${release}.noarch.rpm"
+    <copy file="${root}/RPMS/noarch/avis-${version}-${release-date}${release}.noarch.rpm"
           tofile="build/avis-${release-name}.rpm" />
 
     <delete dir="${root}" />
@@ -456,7 +467,7 @@
           description="Build the Windows self-installer distro">
     <mkdir dir="build" />
     
-    <filter token="release" value="${release-name}" />
+    <filter token="release-name" value="${release-name}" />
     <filter token="version" value="${version}" />
     
     <copy file="packaging/windows/installer/avis.iss.in"
@@ -479,8 +490,8 @@
     <copy file="bin/avisd"
           tofile="${root}/sbin/avisd"
           preservelastmodified="true" />
-    <copy file="lib/avisd.jar"
-          tofile="${root}/lib/avisd.jar"
+    <copy file="lib/avis-router.jar"
+          tofile="${root}/lib/avis-router.jar"
           preservelastmodified="true" />
     <copy file="etc/avisd.config"
           tofile="${root}/etc/avis/avisd.config"
