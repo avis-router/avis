@@ -85,13 +85,11 @@ which are bundled with the router to subscribe to and generate
 notifications from the command line.
 
   [from shell #1]
-  > cd bin
-  > ./ec -e elvin://localhost "require (Hello-World)"
+  > ec -e elvin://localhost "require (Hello-World)"
   ec: Connected to server elvin:4.0/tcp,none,xdr/localhost:2917
 
   [from shell #2]
-  > cd bin
-  > ./ep -e elvin://localhost
+  > ep -e elvin://localhost
   Hello-World: 1
   ^D
   ep: Closing connection
