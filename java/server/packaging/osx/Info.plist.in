@@ -26,8 +26,6 @@
 	<true/>
 	<key>IFPkgFlagInstallFat</key>
 	<false/>
-	<key>IFPkgFlagInstalledSize</key>
-	<integer>320</integer>
 	<key>IFPkgFlagIsRequired</key>
 	<false/>
 	<key>IFPkgFlagOverwritePermissions</key>
