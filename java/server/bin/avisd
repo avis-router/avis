@@ -3,9 +3,20 @@
 set -e
 
 daemon=0
-avisd_opts=""
+avis_opts=""
 logfile=/dev/null
-avisd_jar=$(dirname "$0")/../lib/avisd.jar
+
+# find avis-router.jar in either lib or libexec/avis
+avisd_jar=$(dirname "$0")/../lib/avis-router.jar
+
+if [ ! -f $avisd_jar ]; then
+  avisd_jar=$(dirname "$0")/../libexec/avis/avis-router.jar
+fi
+
+if [ ! -e "$avisd_jar" ]; then
+  echo "Cannot find avis-router.jar"
+  exit 1
+fi
 
 usage ()
 {
@@ -25,26 +36,21 @@ usage ()
   echo "$help" >&2
 }
 
-if [ ! -e "$avisd_jar" ]; then
-  echo "Cannot find avisd.jar"
-  exit 1
-fi
-
 while [ $# -gt 0 ]; do
   case $1 in
     -pidfile) pidfile=$2; shift 2;;
     -daemon)  daemon=1; shift;;
     -logfile) logfile=$2; shift 2;;
-    -v|-vv)   avisd_opts="$avisd_opts $1"; shift;;
-    -p|-c)    avisd_opts="$avisd_opts $1 $2"; shift;
+    -v|-vv)   avis_opts="$avis_opts $1"; shift;;
+    -p|-c)    avis_opts="$avis_opts $1 $2"; shift;
   	      if [ ! -z $1 ]; then shift; fi;;
     *)        usage; exit 1;;
   esac
 done
 
-jvm_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
+java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
 
-command="java $jvm_options -jar $avisd_jar $avisd_opts"
+command="java $java_options -jar $avisd_jar $avis_opts"
 
 if [ $daemon == 1 ]; then
   ( exec $command < /dev/null > $logfile 2>&1 ) &
