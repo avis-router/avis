@@ -1,6 +1,5 @@
 Name:         avis
 Summary:      Event Router
-URL:          http://avis.sourceforge.net/
 Vendor:       Matthew Phillips
 Packager:     Avis Project <avis@mattp.name>
 Distribution: Sourceforge
@@ -8,15 +7,16 @@ Group:        System/Servers
 License:      GPL
 Version:      %{_avis_version}
 Release:      %{_avis_release}
+URL:          http://avis.sourceforge.net/
 
 #   build information
 Prefix:       %{_prefix}
 BuildRoot:    %{_topdir}
-# Requires:     java >= 0:1.5
-Requires:     jdk >= 0:1.5
 AutoReq:      no
 AutoReqProv:  no
 BuildArchitectures: noarch
+# Requires:     java >= 0:1.5
+# Requires:     jdk >= 0:1.5
 
 %description
     Avis is a multicast event bus. It provides a fast, publish/subscribe
@@ -87,11 +87,3 @@ BuildArchitectures: noarch
      /etc/init.d/avisd
      %config /etc/avis/avisd.config
      %config /etc/avis/avis-router.keystore
-
-    #   determine installation files
-#    %{l_rpmtool} files -v -ofiles -r$RPM_BUILD_ROOT \
-#        %{l_files_std} \
-#        '%config %{_prefix}/etc/avis/avisd.config' \
-#        '%dir %attr(-,%{l_rusr},%{l_rgrp}) %{_prefix}/var/avis'
-
-#%files -f files
