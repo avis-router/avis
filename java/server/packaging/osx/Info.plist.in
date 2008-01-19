@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>@release@, Copyright (C) 2007 Matthew Phillips</string>
+	<string>@release@, Copyright (C) 2008 Matthew Phillips</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.avis.avisd</string>
 	<key>CFBundleShortVersionString</key>
