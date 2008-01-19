@@ -292,7 +292,7 @@
     <property name="temp" value="${basedir}/build/tmp/osx_package" />
     <property name="root" value="${temp}/root" />
     <property name="resources" value="${temp}/resources" />
-    <property name="startup" value="${root}/Library/StartupItems/Avis" />
+    <property name="startup" value="${root}/Library/LaunchDaemons" />
     <property name="package" value="Avis-${release-name}.pkg" />
 
     <filter token="release" value="${release-name}" />
@@ -305,9 +305,9 @@
     </antcall>
 
     <!-- copy startup items -->
-    <copy file="packaging/osx/avisd_launcher"
-          tofile="${startup}/Avis" preservelastmodified="true" />
-    <copy file="packaging/osx/StartupParameters.plist"
+    <mkdir dir="${startup}"/>
+    
+    <copy file="packaging/osx/org.avis.avisd.plist"
           todir="${startup}" preservelastmodified="true" />
     
     <!-- copy package items -->
@@ -338,9 +338,9 @@
       <fileset dir="${root}/usr/local/bin" />
     </chmod>
     
-    <chmod perm="0755" file="${startup}/Avis" />
-    <chmod perm="0644" file="${startup}/StartupParameters.plist" />
     <chmod perm="1775" dir="${root}/Library" />
+    <chmod perm="0755" dir="${startup}" />
+    <chmod perm="0644" file="${startup}/*.plist" />
  
     <antcall target="fn:set-unix-admin-ownership">
       <param name="root" value="${root}" />
