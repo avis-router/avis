@@ -94,13 +94,16 @@ To configure: The Avis configuration is in
 `/usr/local/etc/avis/avisd.config`.
 
 To start Avis, open a Terminal window and, as an admin user, run the
-command:
+command to instruct [launchd][] to load and start it as a system
+daemon:
 
-    > sudo SystemStarter start Avis
+    > sudo launchctl load \
+        /Library/LaunchDaemons/org.avis.avisd.plist
 
 To stop Avis:
 
-    > sudo SystemStarter stop Avis
+    > sudo launchctl unload \
+        /Library/LaunchDaemons/org.avis.avisd.plist
 
 To uninstall: Mac OS X unfortunately does not have a standard way to
 uninstall installer package (`.pkg`) files. You can however use a
@@ -125,3 +128,4 @@ See `etc/avisd.config` for configuration options.
 [sun_java]: http://java.sun.com/javase/downloads
 [apple_java]: http://developer.apple.com/java/download
 [desinstaller]: http://krugazor.free.fr/software/desinstaller/DesInstaller.php
+[launchd]: http://en.wikipedia.org/wiki/Launchd
