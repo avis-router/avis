@@ -57,7 +57,7 @@ if [ $daemon == 1 ]; then
     logfile=/dev/null
   fi
   
-  ( exec $command < /dev/null > $logfile 2>&1 ) &
+  ( exec $command < /dev/null >> $logfile 2>&1 ) &
   
   if [ "x$pidfile" != "x" ]; then echo $! > "$pidfile"; fi
 else
@@ -66,6 +66,6 @@ else
   if [ -z $logfile ]; then
     exec $command
   else
-    exec $command > $logfile 2>&1
+    exec $command >> $logfile 2>&1
   fi
 fi
