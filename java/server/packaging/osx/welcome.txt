@@ -2,6 +2,6 @@ Welcome to the Avis installer. This will install Avis as a system service on you
 
 After installation, you can start Avis using the command:
 
-  sudo SystemStarter start Avis
+  sudo launchctl load /Library/LaunchDaemons/org.avis.avisd.plist
 
 See http://avis.sourceforge.net/installation.html for more information.
