@@ -4,7 +4,6 @@ set -e
 
 daemon=0
 avis_opts=""
-logfile=/dev/null
 
 # find avis-router.jar in either lib or libexec/avis
 avisd_jar=$(dirname "$0")/../lib/avis-router.jar
@@ -53,11 +52,20 @@ java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
 command="java $java_options -jar $avisd_jar $avis_opts"
 
 if [ $daemon == 1 ]; then
+
+  if [ -z $logfile ]; then
+    logfile=/dev/null
+  fi
+  
   ( exec $command < /dev/null > $logfile 2>&1 ) &
   
   if [ "x$pidfile" != "x" ]; then echo $! > "$pidfile"; fi
 else
   if [ "x$pidfile" != "x" ]; then echo $$ > "$pidfile"; fi
   
-  exec $command
+  if [ -z $logfile ]; then
+    exec $command
+  else
+    exec $command > $logfile 2>&1
+  fi
 fi
