@@ -298,6 +298,7 @@
     <filter token="release" value="${release-name}" />
     <filter token="major_version" value="${avis.version.major}" />
     <filter token="minor_version" value="${avis.version.minor}" />
+    <filter token="version" value="${version}" />
     
     <!-- clean temp area -->
     <antcall target="fn:rm-as-root">
