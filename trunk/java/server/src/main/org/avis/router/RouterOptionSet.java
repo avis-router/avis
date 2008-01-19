@@ -24,7 +24,7 @@ public class RouterOptionSet extends OptionSet
     add ("IO.Idle-Connection-Timeout", 1, 15, Integer.MAX_VALUE);
     add ("IO.Use-Direct-Buffers", true);
     add ("TLS.Keystore", new OptionTypeURI (), uri ("avis-router.keystore"));
-    add ("TLS.Keystore-Passphrase", "");
+    add ("TLS.Keystore-Passphrase", "avis-router");
     add ("Require-Authenticated", 
          new OptionTypeFromString (InetAddressFilter.class), Filter.MATCH_NONE);
     
