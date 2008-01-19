@@ -16,6 +16,19 @@ LicenseFile=license.rtf
 ; Make a backup of wrapper config
 Source: "{app}\config\wrapper.conf"; DestDir: "{app}\config\wrapper.conf.orig"; Flags: external skipifsourcedoesntexist
 
+; Router
+Source: "..\..\lib\avis-router.jar"; DestDir: "{app}\lib"
+Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
+Source: "..\..\etc\avis-router.keystore"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
+Source: "..\..\doc\LICENSE.txt"; DestDir: "{app}"
+
+; Client utilities
+Source: "..\..\..\client\lib\avis-client.jar"; DestDir: "{app}\lib"
+Source: "..\..\..\client\lib\avis-tools.jar"; DestDir: "{app}\lib"
+Source: "..\..\..\client\bin\ec.cmd"; DestDir: "{app}\bin"
+Source: "..\..\..\client\bin\ep.cmd"; DestDir: "{app}\bin"
+
+; Service wrapper
 Source: "service\lib\wrapper.jar"; DestDir: "{app}\lib"
 Source: "service\lib\wrapper.dll"; DestDir: "{app}\lib"
 Source: "service\bin\wrapper.exe"; DestDir: "{app}\bin"
@@ -24,12 +37,8 @@ Source: "service\bin\install_avis_service.cmd"; DestDir: "{app}\bin"
 Source: "service\bin\uninstall_avis_service.cmd"; DestDir: "{app}\bin"
 Source: "service\bin\start_avis_service.cmd"; DestDir: "{app}\bin"
 Source: "service\bin\stop_avis_service.cmd"; DestDir: "{app}\bin"
-Source: "service\config\wrapper.conf"; DestDir: "{app}\config"
+Source: "service\config\wrapper.conf"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
 Source: "service\logs\empty.log"; DestDir: "{app}\logs"; DestName: "avis.log"; Flags: onlyifdoesntexist
-Source: "..\..\lib\avis-router.jar"; DestDir: "{app}\lib"
-Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
-Source: "..\..\etc\avis-router.keystore"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
-Source: "..\..\doc\LICENSE.txt"; DestDir: "{app}"
 
 ; JRE Files
 ; Source: "@jre_installer@"; DestDir: "{app}"; DestName: "jre.exe"; Flags: deleteafterinstall
