@@ -36,7 +36,7 @@ BuildArchitectures: noarch
         $RPM_BUILD_ROOT/etc/avis \
         $RPM_BUILD_ROOT/etc/init.d
 
-    # install avis and ec/ep libs
+   # install client and server libs
    install -c -m 644 \
         %{_avis_server}/lib/avis-router.jar \
         %{_avis_client}/lib/avis-client.jar \
@@ -50,21 +50,11 @@ BuildArchitectures: noarch
         $RPM_BUILD_ROOT/etc/avis/
 
     # install ec/ep
-    ( echo "#!/bin/sh"
-      echo "exec %{_prefix}/bin/java -Xverify:none \\%{nil}"
-      echo "    -cp %{_prefix}/libexec/avis/avis-tools.jar:%{_prefix}/libexec/avis/avis-client.jar \\%{nil}"
-      echo "    org.avis.tools.Ec \${1+\"\$@\"}"
-    ) > %{_tmppath}/ec
-
-    ( echo "#!/bin/sh"
-      echo "exec %{_prefix}/bin/java -Xverify:none \\%{nil}"
-      echo "    -cp %{_prefix}/libexec/avis/avis-tools.jar:%{_prefix}/libexec/avis/avis-client.jar \\%{nil}"
-      echo "    org.avis.tools.Ep \${1+\"\$@\"}"
-    ) > %{_tmppath}/ep
-
     install -c -m 755 \
-      %{_tmppath}/ec %{_tmppath}/ep $RPM_BUILD_ROOT%{_prefix}/bin/
+       %{_avis_client}/bin/ec %{_avis_client}/bin/ep \
+       $RPM_BUILD_ROOT%{_prefix}/bin/
 
+    # install avisd
     install -Dp -m 0755 \
       %{_avis_server}/bin/avisd \
       $RPM_BUILD_ROOT%{_prefix}/sbin/avisd
