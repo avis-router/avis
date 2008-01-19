@@ -48,8 +48,10 @@ Name: installservice; Description: "Install as a system service"
 Name: programicon; Description: "Create icons in the Programs menu"
 
 [Icons]
-Name: "{group}\Start Avis"; Filename: "{app}\bin\avis.cmd"; WorkingDir: "{app}\bin"; Tasks: programicon and not installservice
-Name: "{group}\Uninstall Avis"; Filename: "{app}\unins000.exe"; Tasks: programicon
+Name: "{group}\Run Avis In Console"; Filename: "{app}\bin\avis.cmd"; WorkingDir: "{app}\bin"; Tasks: programicon
+Name: "{group}\Start Avis Service"; Filename: "{app}\bin\start_avis_service.cmd"; WorkingDir: "{app}\bin"; Tasks: programicon
+Name: "{group}\Stop Avis Service"; Filename: "{app}\bin\stop_avis_service.cmd"; WorkingDir: "{app}\bin"; Tasks: programicon
+Name: "{group}\Avis Config File"; Filename: "{app}\config\avisd.config"; WorkingDir: "{app}\config"; Tasks: programicon
 
 [Run]
 Filename: "{app}\bin\uninstall_avis_service.cmd"; Description: "Install as a system service"; StatusMsg: "Uninstalling existing Avis service..."; Flags: runhidden; Tasks: installservice
