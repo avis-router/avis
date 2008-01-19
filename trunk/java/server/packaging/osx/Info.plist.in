@@ -7,7 +7,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>org.avis.avisd</string>
 	<key>CFBundleShortVersionString</key>
-	<string>@release@</string>
+	<string>@version@</string>
 	<key>IFMajorVersion</key>
 	<integer>@major_version@</integer>
 	<key>IFMinorVersion</key>
