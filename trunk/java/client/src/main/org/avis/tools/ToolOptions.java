@@ -35,7 +35,7 @@ import static org.avis.util.Text.dataToBytes;
 public abstract class ToolOptions extends CommandLineOptions
 {
   protected static final String COMMON_USAGE_SUMMARY =
-    "-e elvin [-x] [-X] [-C file] [-P file] [-k keystore passphrase]";
+    "-e elvin [option]...";
 
   protected static final String COMMON_USAGE_DETAIL =
     "  -e elvin       Set the Elvin URI e.g. elvin://host:port\n" +
