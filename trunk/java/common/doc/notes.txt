@@ -4,11 +4,11 @@ Releases
 Server 1.2
 
  * package tools with server
- * Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
+ * DONE: Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * switch to launchd for OS X http://developer.apple.com/macosx/launchd.html
   (10.4 only, but Java 5 only works there anyway). Put in 
   /Library/LaunchDaemons/. Look at 
-  /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist. 
+  /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist. Also log to /var/log/avis 
  * ?do we want clients trusted by CA's to be trusted
  * Test large frames with new heap sizes
  * ?thread pool size option
