@@ -11,10 +11,6 @@ if [ ! -f "$jar_dir/avis-tools.jar" ]; then
   exit 1
 fi
 
-client_jar=$jar_dir/avis-client.jar
-tools_jar=$jar_dir/avis-tools.jar
-
-java_opts="-Xverify:none"
-
-exec java -cp "$jar_dir/avis-client.jar:$jar_dir/avis-tools.jar" \
-  $java_opts org.avis.tools.Ep ${1+"$@"}
+exec java -Xverify:none \
+  -cp "$jar_dir/avis-client.jar:$jar_dir/avis-tools.jar" \
+  org.avis.tools.Ep ${1+"$@"}
