@@ -286,7 +286,7 @@
     <delete dir="${tmp}" />
   </target>
 
-  <target name="dist-osx" depends="jar-server"
+  <target name="dist-osx" depends="jar-server,jar-tools"
           description="Build the Mac OS X binary distro (OS X command line only)">
 
     <property name="temp" value="${basedir}/build/tmp/osx_package" />
@@ -335,6 +335,7 @@
 
     <chmod perm="0755">
       <fileset dir="${root}/usr/local/sbin" />
+      <fileset dir="${root}/usr/local/bin" />
     </chmod>
     
     <chmod perm="0755" file="${startup}/Avis" />
@@ -491,7 +492,7 @@
           tofile="${root}/sbin/avisd"
           preservelastmodified="true" />
     <copy file="lib/avis-router.jar"
-          tofile="${root}/lib/avis-router.jar"
+          tofile="${root}/libexec/avis/avis-router.jar"
           preservelastmodified="true" />
     <copy file="etc/avisd.config"
           tofile="${root}/etc/avis/avisd.config"
@@ -500,6 +501,15 @@
           tofile="${root}/etc/avis/avis-router.keystore"
           preservelastmodified="true" />
 
+    <copy file="${client}/lib/avis-client.jar" todir="${root}/libexec/avis"
+          preservelastmodified="true" />
+    <copy file="${client}/lib/avis-tools.jar" todir="${root}/libexec/avis"
+          preservelastmodified="true" />
+    <copy file="${client}/bin/ec" todir="${root}/bin"
+          preservelastmodified="true" />
+    <copy file="${client}/bin/ep" todir="${root}/bin"
+          preservelastmodified="true" />
+    
   </target>
 
   <!-- run "sudo rm -rf ${root}" -->
