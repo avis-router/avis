@@ -44,10 +44,10 @@ public class Ep
       System.exit (4);
     } catch (IOException ex)
     {
-      handleIOError ("ec", ex);
+      handleIOError ("ep", ex);
     } catch (Exception ex)
     {
-      handleError ("ec", USAGE, ex);
+      handleError ("ep", USAGE, ex);
     }
   }
 
