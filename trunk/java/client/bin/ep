@@ -1,17 +1,20 @@
 #!/bin/sh
 
-client_jar=$(dirname "$0")/../lib/avis-client.jar
-tools_jar=$(dirname "$0")/../lib/avis-tools.jar
-java_opts="-Xverify:none"
+jar_dir=$(dirname "$0")/../lib
 
-if [ ! -f "$tools_jar" ]; then
+if [ ! -f "$jar_dir/avis-tools.jar" ]; then
+  jar_dir=$(dirname "$0")/../libexec/avis
+fi
+
+if [ ! -f "$jar_dir/avis-tools.jar" ]; then
   echo "Cannot find avis-tools.jar"
   exit 1
 fi
 
-if [ ! -f "$client_jar" ]; then
-  echo "Cannot find avis-client.jar"
-  exit 1
-fi
+client_jar=$jar_dir/avis-client.jar
+tools_jar=$jar_dir/avis-tools.jar
 
-exec java -cp "$tools_jar:$client_jar" $java_opts org.avis.tools.Ep "$@"
+java_opts="-Xverify:none"
+
+exec java -cp "$jar_dir/avis-client.jar:$jar_dir/avis-tools.jar" \
+  $java_opts org.avis.tools.Ep ${1+"$@"}
