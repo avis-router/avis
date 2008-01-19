@@ -15,18 +15,24 @@ import org.apache.mina.common.ThreadModel;
 import org.apache.mina.filter.SSLFilter;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.ExceptionMonitorLogger;
 
-import org.junit.Test;
-
-import static org.avis.common.Common.DEFAULT_PORT;
-
 public class JUTestRouterTLS
 {
-  private static final int PORT = 29170;
+  private static final int DEFAULT_PORT = 29170;
   private static final int SECURE_PORT = 29171;
 
+  @Before
+  public void setup ()
+  {
+    // route MINA exceptions to log
+    ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
+  }
+  
   /*
    * Command to generate the test key store:
    *   keytool -genkey -alias test -keysize 512 -validity 3650 -keyalg RSA \
@@ -38,15 +44,13 @@ public class JUTestRouterTLS
   public void connect () 
     throws Exception
   {
-    // Log.enableLogging (Log.DIAGNOSTIC, true);
-    // route MINA exceptions to log
     ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
     
     RouterOptions options = new RouterOptions ();
     URI keystore = getClass ().getResource ("tls_test.ks").toURI ();
     
     options.set ("Listen", 
-                 "elvin://127.0.0.1:" + PORT + " " + 
+                 "elvin://127.0.0.1:" + DEFAULT_PORT + " " + 
                  "elvin:/secure/127.0.0.1:" + SECURE_PORT);
     options.set ("TLS.Keystore", keystore);
     options.set ("TLS.Keystore-Passphrase", "testing");
@@ -60,6 +64,31 @@ public class JUTestRouterTLS
     standardClient.connect ();
     
     standardClient.close ();
+    
+    SimpleClient secureClient = 
+      new SimpleClient (new InetSocketAddress ("127.0.0.1", SECURE_PORT), 
+                        createTLSConfig ());
+    
+    secureClient.connect ();
+    
+    secureClient.close ();
+    
+    router.close ();
+  }
+  
+  /**
+   * Test TLS connect using default keystore settings.
+   */
+  @Test
+  public void connectDefault () 
+    throws Exception
+  {
+    RouterOptions options = new RouterOptions ();
+    options.setRelativeDirectory ("etc"); // so we can load default keystore
+    
+    options.set ("Listen", "elvin:/secure/127.0.0.1:" + SECURE_PORT);
+   
+    Router router = new Router (options);
     
     SimpleClient secureClient = 
       new SimpleClient (new InetSocketAddress ("127.0.0.1", SECURE_PORT), 
