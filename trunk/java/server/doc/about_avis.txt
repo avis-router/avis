@@ -22,11 +22,11 @@ For more information on the Avis project please see:
 License
 ======================================================================
 
-Avis is Copyright (C) 2007 Matthew Phillips <avis@mattp.name>.
+Avis is Copyright (C) 2008 Matthew Phillips <avis@mattp.name>.
 
 Permission to distribute unmodified copies of the Avis distribution
 packages is granted.
 
-The source code to Avis is available under the terms of the GNU
-General Public License (GPL): see http://www.gnu.org/copyleft/gpl.html
-for the full text of the license.
+The source code to Avis is available under the terms of version 3 of
+the GNU General Public License (GPL): see
+http://www.gnu.org/copyleft/gpl.html for the full text of the license.
