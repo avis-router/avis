@@ -314,13 +314,15 @@ It is NOT a full Avis distribution: see http://avis.sourceforge.net.
     <copy file="build/avis-client.jar" todir="lib" /> 
   </target>
   
-  <target name="jar-tools" depends="compile,check-jars-uptodate"
+  <target name="jar-tools" depends="compile,jar-client,check-jars-uptodate"
           description="Build avis-tools.jar used by ec/ep"
           unless="jars-uptodate">
     
     <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
              classpath="${common}/lib/jarx.jar" />
 
+    <mkdir dir="build" />
+      
     <jarx archive="build/avis-tools.jar" classpathref="classpath">
 
       <include name="org/avis/tools/Ec.class" />
