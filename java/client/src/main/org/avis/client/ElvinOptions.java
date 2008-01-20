@@ -31,7 +31,10 @@ import static org.avis.util.Util.checkNotNull;
 public final class ElvinOptions implements Cloneable
 {
   /**
-   * The options sent to the router to negotiate connection parameters.
+   * The options sent to the router to negotiate connection
+   * parameters. After connection, these will be updated to include
+   * any extra values sent by the router, including the
+   * Vendor-Identification option.
    */
   public ConnectionOptions connectionOptions;
   
@@ -47,8 +50,8 @@ public final class ElvinOptions implements Cloneable
   
   /**
    * The keystore used for TLS/SSL secure connections. This may be
-   * null to use the default JVM TLS certificate chain. If it is set,
-   * the keystorePassphrase option must also be set.
+   * null to use the default JVM keystore. If it is set, the
+   * keystorePassphrase option must also be set.
    * 
    * @see #setKeystore(URL, String)
    */
