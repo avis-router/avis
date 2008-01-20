@@ -137,7 +137,9 @@
     <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
  
     <!-- create copy of source with license headers -->
-    <property name="header" value="src/avis_java_header.txt" />
+    <property name="client_header" value="src/avis_java_header.txt" />
+    <property name="server_header" 
+              value="${server}/src/avis_java_header.txt" />
 
     <copy todir="${src_tmp}/client">
       <fileset dir=".">
@@ -145,7 +147,7 @@
       </fileset>
       
       <filterchain>
-        <concatfilter prepend="${header}" />
+        <concatfilter prepend="${client_header}" />
       </filterchain>
     </copy>
 
@@ -155,9 +157,25 @@
       </fileset>
       
       <filterchain>
-        <concatfilter prepend="${header}" />
+        <concatfilter prepend="${client_header}" />
       </filterchain>
     </copy>
+    
+    <copy todir="${src_tmp}/server">
+      <fileset dir="${server}">
+        <include name="src/**/*.java"/>
+      </fileset>
+      
+      <filterchain>
+        <concatfilter prepend="${server_header}" />
+      </filterchain>
+    </copy>
+
+    <echo file="${src_tmp}/server/README.txt">
+This directory contains a minimal Avis router source distribution 
+intended to allow compilation and testing of the Avis client library.
+It is NOT a full Avis distribution: see http://avis.sourceforge.net.
+    </echo>
 
     <zip destfile="${src-zip}">
       
@@ -211,6 +229,13 @@
         <include name="lib/*.jar" />
       </zipfileset>
 
+      <zipfileset dir="${server}" prefix="${src-zip-root}/server">
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name=".settings/*" />
+        <include name="build.xml" />
+        <include name="lib/*.jar" />
+      </zipfileset>
     </zip>
     
     <!-- blow away temporary files -->
