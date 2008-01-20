@@ -19,7 +19,6 @@ Source: "{app}\config\wrapper.conf"; DestDir: "{app}\config\wrapper.conf.orig"; 
 ; Router
 Source: "..\..\lib\avis-router.jar"; DestDir: "{app}\lib"
 Source: "..\..\etc\avisd.config"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
-Source: "..\..\etc\avis-router.keystore"; DestDir: "{app}\config"; Flags: onlyifdoesntexist
 Source: "..\..\doc\LICENSE.txt"; DestDir: "{app}"
 
 ; Client utilities

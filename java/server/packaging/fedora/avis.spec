@@ -46,7 +46,6 @@ BuildArchitectures: noarch
     # install default server configuration
     install -c -m 644 \
         %{_avis_server}/etc/avisd.config \
-        %{_avis_server}/etc/avis-router.keystore \
         $RPM_BUILD_ROOT/etc/avis/
 
     # install ec/ep
@@ -76,4 +75,3 @@ BuildArchitectures: noarch
      %{_prefix}/libexec/avis/avis-client.jar
      /etc/init.d/avisd
      %config /etc/avis/avisd.config
-     %config /etc/avis/avis-router.keystore
