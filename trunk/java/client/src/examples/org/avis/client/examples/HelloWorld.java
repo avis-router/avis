@@ -1,15 +1,10 @@
 package org.avis.client.examples;
 
-import java.io.IOException;
-
 import org.avis.client.Elvin;
 import org.avis.client.Notification;
 import org.avis.client.NotificationEvent;
 import org.avis.client.NotificationListener;
 import org.avis.client.Subscription;
-
-import static org.avis.client.examples.ExampleOptions.USAGE;
-import static org.avis.util.CommandLineOptions.handleError;
 
 /*
  * This example demonstrates two Elvin clients, one sending the
@@ -28,21 +23,10 @@ public class HelloWorld
   public static void main (String [] args)
     throws Exception
   {
-    try
-    {
-      // todo simplify: just have a method that extracts the Elvin URI?
-      run (new ExampleOptions (args));
-    } catch (Exception ex)
-    {
-      handleError ("hello", USAGE, ex);
-    }
-  }
-  
-  private static void run (ExampleOptions options) 
-    throws IOException, InterruptedException
-  {
+    String elvinUri = args.length == 0 ? "elvin://localhost" : args [0];
+
     // create a client that listens for messages with a "Greeting" field
-    Elvin listeningClient = new Elvin (options.elvinUri);
+    Elvin listeningClient = new Elvin (elvinUri);
     
     final Subscription greetingSubscription =
       listeningClient.subscribe ("require (Greeting)");
@@ -64,7 +48,7 @@ public class HelloWorld
     });
     
     // create a client that sends a greeting
-    Elvin sendingClient = new Elvin (options.elvinUri);
+    Elvin sendingClient = new Elvin (elvinUri);
     
     Notification greeting = new Notification ();
     
