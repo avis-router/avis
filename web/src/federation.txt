@@ -62,12 +62,12 @@ The host that listens for incoming connections also needs a mapping
 from a remote host to a federation class to use for the
 connection. For example, to specify that connections from the host
 `public.elvin.org` should use the `Public` federation class, and that
-a host you manage called `hex.somewhere.org` uses the `Internal`
-class:
+any hosts you manage called in the `somewhere.org` domain use the
+`Internal` class:
 
 <pre>
-<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Public</span>] = @public.elvin.org
-<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Internal</span>] = @hex.somewhere.org
+<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Public</span>] = public.elvin.org
+<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Internal</span>] = *.somewhere.org
 </pre>
 
 You can also define a default mapping for hosts that do not match any
