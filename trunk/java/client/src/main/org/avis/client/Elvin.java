@@ -453,15 +453,19 @@ public final class Elvin implements Closeable
       
       elvinSessionEstablished = true;
       
+      Map<String, Object> acceptedOptions = convertLegacyToNew (connRply.options);
+      
       Map<String, Object> rejectedOptions =
-        options.connectionOptions.differenceFrom 
-          (convertLegacyToNew (connRply.options));
+        options.connectionOptions.differenceFrom (acceptedOptions);
       
       if (!rejectedOptions.isEmpty ())
       {
         throw new ConnectionOptionsException 
           (options.connectionOptions, rejectedOptions);
       }
+
+      // include any options the router has added that we didn't specify
+      options.updateConnectionOptions (acceptedOptions);
       
       successfullyConnected = true;
     } finally
