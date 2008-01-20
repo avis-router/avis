@@ -17,11 +17,11 @@ Router Release 2.0 (July 2008)
 Completed
 ----------------------------------------------------------------------
 
-Router Release 1.2 (January 2007)
+Router Release 1.2 (January 2008)
 
  * SSL/TLS encryption and authentication.
 
-Client Library Release 1.1 (January 2007)
+Client Library Release 1.1 (January 2008)
 
  * SSL/TLS encryption and authentication.
 
