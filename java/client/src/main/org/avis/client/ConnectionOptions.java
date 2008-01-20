@@ -13,6 +13,12 @@ import static org.avis.util.Util.valuesEqual;
 
 /**
  * Connection options sent by the client to the server.
+ * <p>
+ * 
+ * In addition to the options sent by the client to the router
+ * detailed below, the router may also add a "Vendor-Identification"
+ * option to its reply with a string identifying the router
+ * implementation, e.g. "Avis 1.2" or "elvind 4.4.0".
  * 
  * <h2>Standard Elvin Connection Options</h2>
  * 
