@@ -3,17 +3,19 @@ Releases
 
 Server 1.2
 
- * package tools with server
  * add Unix basic distro
+ * review todo's
+ * ?do we want clients trusted by CA's to be trusted
+ * Test large frames with new heap sizes
+ * ?thread pool size option
+ * DONE: if we package a known key in router keystore, does this make TLS
+   pointless?
+ * DONE: package tools with server
  * DONE: Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
  * DONE: switch to launchd for OS X http://developer.apple.com/macosx/launchd.html
   (10.4 only, but Java 5 only works there anyway). Put in 
   /Library/LaunchDaemons/. Look at 
   /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist. Also log to /var/log/avis 
- * ?do we want clients trusted by CA's to be trusted
- * Test large frames with new heap sizes
- * ?thread pool size option
- * review todo's
  * DONE: dump notifications in -vv mode
  * DONE: date in log messages: Dec 23 04:20:01
  * DONE: TLS web page
