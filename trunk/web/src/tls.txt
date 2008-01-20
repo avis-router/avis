@@ -50,7 +50,7 @@ a _keystore_, which is a binary archive, encrypted with a passphrase.
 
     > keytool -genkey -alias avis-router -keysize 512 \
        -validity 3650 -keyalg RSA \
-       -name "CN=Matthew Phillips, 
+       -dname "CN=Matthew Phillips, 
          OU=avis.sourceforge.net, \
          O=Avis Project, L=Adelaide, \
          S=South Australia, C=AU" \
@@ -88,7 +88,7 @@ First, generate a key for the router:
 
     > keytool -genkey -alias my-router-key -keysize 512 \
        -validity 3650 -keyalg RSA \
-       -name "CN=My Name, \
+       -dname "CN=My Name, \
          OU=my.organisation.unit, \
          O=My Organisation, L=My Location, \
          S=My State, C=My Country Code" \
