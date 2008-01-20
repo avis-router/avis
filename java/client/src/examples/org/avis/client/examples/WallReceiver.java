@@ -1,13 +1,8 @@
 package org.avis.client.examples;
 
-import java.io.IOException;
-
 import org.avis.client.Elvin;
 import org.avis.client.GeneralNotificationEvent;
 import org.avis.client.GeneralNotificationListener;
-
-import static org.avis.client.examples.ExampleOptions.USAGE;
-import static org.avis.util.CommandLineOptions.handleError;
 
 /*
  * This is the receiver part of the "wall" example. In this
@@ -22,19 +17,8 @@ public class WallReceiver
   public static void main (String [] args)
     throws Exception
   {
-    try
-    {
-      run (new ExampleOptions (args));
-    } catch (Exception ex)
-    {
-      handleError ("wall-receiver", USAGE, ex);
-    }
-  }
-  
-  private static void run (ExampleOptions options)
-    throws IOException
-  {
-    Elvin elvin = new Elvin (options.elvinUri);
+    Elvin elvin = 
+      new Elvin (args.length == 0 ? "elvin://localhost" : args [0]);
     
     elvin.closeOnExit ();
     
