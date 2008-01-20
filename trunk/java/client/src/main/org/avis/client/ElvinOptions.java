@@ -49,8 +49,9 @@ public final class ElvinOptions implements Cloneable
   public Keys subscriptionKeys;
   
   /**
-   * The keystore used for TLS/SSL secure connections. This may be
-   * null to use the default JVM keystore. If it is set, the
+   * The keystore used for TLS/SSL secure connections (i.e.
+   * connections via "elvin:/secure/..." URI's). This may be null to
+   * use the default JVM keystore. If it is set, the
    * keystorePassphrase option must also be set.
    * 
    * @see #setKeystore(URL, String)
