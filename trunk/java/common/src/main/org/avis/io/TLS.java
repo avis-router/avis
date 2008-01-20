@@ -27,6 +27,16 @@ public final class TLS
   {
     // zip
   }
+
+  /**
+   * Generate an array of characters for a passphrase, or null if
+   * passphrase is empty (i.e. allow empty string to stand for no
+   * passphrase).
+   */
+  public static char [] toPassphrase (String passphrase)
+  {
+    return passphrase.length () > 0 ? passphrase.toCharArray () : null;
+  }
   
   /**
    * Create a default SSL context with the default keystore and trust
@@ -80,7 +90,7 @@ public final class TLS
         KeyManagerFactory keyFactory = 
           KeyManagerFactory.getInstance ("SunX509");
         
-        keyFactory.init (keystore, keystorePassphrase.toCharArray ());
+        keyFactory.init (keystore, toPassphrase (keystorePassphrase));
         
         keyManagers = keyFactory.getKeyManagers ();
       }
