@@ -1594,7 +1594,8 @@ public final class Elvin implements Closeable
   
   protected void log (ElvinLogEvent.Type type, String message, Throwable error)
   {
-    logListeners.fire (new ElvinLogEvent (this, type, message, error));
+    if (logListeners.hasListeners ())
+      logListeners.fire (new ElvinLogEvent (this, type, message, error));
   }
   
   private class NotifyCallback implements Runnable
