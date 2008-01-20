@@ -38,7 +38,7 @@ Server 1.2
 Client 1.1
 
  * DONE: simplify examples
- * client source won't build in Eclipse without server. Need to add it
+ * DONE: client source won't build in Eclipse without server. Need to add it
    or deal with it otherwise.
  * DONE: review todo's
  * DONE: client should not log messages: events instead, esp
