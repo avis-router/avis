@@ -118,7 +118,7 @@ The Avis source distribution comes with precompiled binaries ready to
 run on any platform. Simply unzip the source distribution and run Avis
 from a bash command shell:
 
-     > cd avis-1.1.0/server
+     > cd avis-1.2.0/server
      > ./bin/avisd
 
 See `etc/avisd.config` for configuration options.
