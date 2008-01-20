@@ -819,7 +819,8 @@ public final class Elvin implements Closeable
   /**
    * Add a listener for log events emitted by the client. This
    * includes non-fatal messages, warnings and diagnostics of
-   * potential problems.
+   * potential problems. If no listeners are registered, the log event
+   * will be echoed to the standard error output.
    */
   public synchronized void addLogListener (ElvinLogListener listener)
   {
@@ -1479,7 +1480,7 @@ public final class Elvin implements Closeable
         break;
       default:
         close (REASON_PROTOCOL_VIOLATION, 
-               "Received unexpected message type" + message.name ());
+               "Received unexpected message type " + message.name ());
     }
   }
 
@@ -1595,7 +1596,20 @@ public final class Elvin implements Closeable
   protected void log (ElvinLogEvent.Type type, String message, Throwable error)
   {
     if (logListeners.hasListeners ())
+    {
       logListeners.fire (new ElvinLogEvent (this, type, message, error));
+    } else
+    {
+      System.err.println 
+        (getClass ().getName () + ": " + type + ": " + message);
+      
+      if (error != null)
+      {
+        System.err.println (error);
+        
+        error.printStackTrace ();
+      }
+    }
   }
   
   private class NotifyCallback implements Runnable
