@@ -69,17 +69,14 @@ import static org.avis.client.CloseEvent.REASON_ROUTER_SHUTDOWN_UNEXPECTEDLY;
 import static org.avis.client.CloseEvent.REASON_ROUTER_STOPPED_RESPONDING;
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
 import static org.avis.client.ConnectionOptions.convertLegacyToNew;
+import static org.avis.client.ElvinLogEvent.Type.DIAGNOSTIC;
+import static org.avis.client.ElvinLogEvent.Type.ERROR;
+import static org.avis.client.ElvinLogEvent.Type.WARNING;
 import static org.avis.client.SecureMode.ALLOW_INSECURE_DELIVERY;
 import static org.avis.common.ElvinURI.defaultProtocol;
 import static org.avis.common.ElvinURI.secureProtocol;
 import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.io.TLS.sslContextFor;
-import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.diagnostic;
-import static org.avis.logging.Log.internalError;
-import static org.avis.logging.Log.shouldLog;
-import static org.avis.logging.Log.trace;
-import static org.avis.logging.Log.warn;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
 import static org.avis.util.Util.checkNotNull;
@@ -183,6 +180,7 @@ public final class Elvin implements Closeable
   
   protected ListenerList<CloseListener> closeListeners;
   protected ListenerList<GeneralNotificationListener> notificationListeners;
+  protected ListenerList<ElvinLogListener> logListeners;
   
   /**
    * Create a new connection to an Elvin router.
@@ -421,8 +419,12 @@ public final class Elvin implements Closeable
       new ListenerList<GeneralNotificationListener> 
         (GeneralNotificationListener.class, "notificationReceived", 
          GeneralNotificationEvent.class);
+    this.logListeners =
+      new ListenerList<ElvinLogListener> 
+        (ElvinLogListener.class, "eventLogged", ElvinLogEvent.class);
+    
     this.replyLock = new Object ();
-    this.callbacks = new Callbacks (mutex ());
+    this.callbacks = new Callbacks (this);
     
     if (!routerUri.protocol.equals (defaultProtocol ()) &&
         !routerUri.protocol.equals (secureProtocol ()))
@@ -633,7 +635,7 @@ public final class Elvin implements Closeable
               sendAndReceive (new DisconnRqst ());
             } catch (Exception ex)
             {
-              diagnostic ("Failed to cleanly disconnect", this, ex);
+              log (DIAGNOSTIC, "Failed to cleanly disconnect", ex);
             }
           }
           
@@ -813,7 +815,26 @@ public final class Elvin implements Closeable
   {
     closeListeners.remove (listener);
   }
+
+  /**
+   * Add a listener for log events emitted by the client. This
+   * includes non-fatal messages, warnings and diagnostics of
+   * potential problems.
+   */
+  public synchronized void addLogListener (ElvinLogListener listener)
+  {
+    logListeners.add (listener);
+  }
   
+  /**
+   * Remove a {@linkplain #addLogListener(ElvinLogListener) previously
+   * added} log listener.
+   */
+  public synchronized void removeLogListener (ElvinLogListener listener)
+  {
+    logListeners.remove (listener);
+  }
+
   /**
    * Return the mutex used to synchronize access to this connection.
    * All methods on the connection that modify state or otherwise need
@@ -1287,9 +1308,6 @@ public final class Elvin implements Closeable
   {
     checkConnected ();
   
-    if (shouldLog (TRACE))
-      trace ("Client sent message: " + message, this);
-  
     connection.write (message);
   }
 
@@ -1417,16 +1435,12 @@ public final class Elvin implements Closeable
     {
       if (lastReply != null)
       {
-        if (!connectionOpen.get ())
-        {
-          /*
-           * Closing down in JUTestClient.multiThread () gets multiple
-           * SubReply's after connection shutdown. For now, we just
-           * bounce them.
-           */ 
-          diagnostic ("Ignored overflow " + reply.name () + 
-                      " after close", this);
-        } else
+        /*
+         * Closing down in JUTestClient.multiThread () gets multiple
+         * SubReply's after connection shutdown. For now, we just
+         * ignore them when the connection is not open.
+         */           
+        if (connectionOpen.get ())
         {
           throw new IllegalStateException 
             ("Reply buffer overflow: " + reply.name () + 
@@ -1454,9 +1468,8 @@ public final class Elvin implements Closeable
         handleDisconnect ((Disconn)message);
         break;
       case DropWarn.ID:
-        // todo should probably fire an event for this
-        warn ("Router sent a dropped packet warning: " +
-              "a message may have been discarded due to congestion", this);
+        log (WARNING, "Router sent a dropped packet warning: " +
+                      "a message may have been discarded due to congestion");
         break;
       case ErrorMessage.ID:
         handleErrorMessage ((ErrorMessage)message);
@@ -1465,8 +1478,8 @@ public final class Elvin implements Closeable
         close (REASON_ROUTER_STOPPED_RESPONDING, "Router stopped responding");
         break;
       default:
-        // todo should probably fire an event for this
-        warn ("Unexpected server message: " + message, this);
+        close (REASON_PROTOCOL_VIOLATION, 
+               "Received unexpected message type" + message.name ());
     }
   }
 
@@ -1574,6 +1587,16 @@ public final class Elvin implements Closeable
       throw new NotConnectedException ("Not connected to router");
   }
   
+  protected void log (ElvinLogEvent.Type type, String message)
+  {
+    log (type, message, null);
+  }
+  
+  protected void log (ElvinLogEvent.Type type, String message, Throwable error)
+  {
+    logListeners.fire (new ElvinLogEvent (this, type, message, error));
+  }
+  
   private class NotifyCallback implements Runnable
   {
     private Notification notification;
@@ -1652,13 +1675,13 @@ public final class Elvin implements Closeable
           close (REASON_IO_ERROR, "SSL error", cause);
       } else if (cause instanceof InterruptedException)
       {
-        diagnostic ("MINA I/O thread interrupted", this);
+        log (DIAGNOSTIC, "I/O thread interrupted");
       } else if (cause instanceof IOException)
       {
         close (REASON_IO_ERROR, "I/O error communicating with router", cause);
       } else
       {
-        internalError ("Unexpected exception in Elvin client", this, cause);
+        log (ERROR, "Unexpected exception in Elvin client", cause);
       }
     }
 
@@ -1669,9 +1692,6 @@ public final class Elvin implements Closeable
     public void messageReceived (IoSession session, Object message)
       throws Exception
     {
-      if (shouldLog (TRACE))
-        trace ("Client got message: " + message, this);
-     
       try
       {
         if (message instanceof XidMessage)
