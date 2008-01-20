@@ -75,31 +75,6 @@ public class JUTestRouterTLS
     
     router.close ();
   }
-  
-  /**
-   * Test TLS connect using default keystore settings.
-   */
-  @Test
-  public void connectDefault () 
-    throws Exception
-  {
-    RouterOptions options = new RouterOptions ();
-    options.setRelativeDirectory ("etc"); // so we can load default keystore
-    
-    options.set ("Listen", "elvin:/secure/127.0.0.1:" + SECURE_PORT);
-   
-    Router router = new Router (options);
-    
-    SimpleClient secureClient = 
-      new SimpleClient (new InetSocketAddress ("127.0.0.1", SECURE_PORT), 
-                        createTLSConfig ());
-    
-    secureClient.connect ();
-    
-    secureClient.close ();
-    
-    router.close ();
-  }
 
   private static SocketConnectorConfig createTLSConfig () 
     throws Exception

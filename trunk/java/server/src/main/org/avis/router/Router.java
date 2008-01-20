@@ -79,6 +79,7 @@ import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
+import static org.avis.io.TLS.toPassphrase;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -314,21 +315,27 @@ public class Router implements IoHandler, Closeable
   private KeyStore keystore () 
     throws IOException
   {
-    URI keystoreUri = (URI)routerOptions.get ("TLS.Keystore");
-    
-    if (keystore == null && keystoreUri.toString ().length () > 0)
+    if (keystore == null)
     {
+      URI keystoreUri = (URI)routerOptions.get ("TLS.Keystore");
+      
+      if (keystoreUri.toString ().length () == 0)
+      {
+        throw new IOException 
+          ("Cannot use TLS without a keystore: " +
+           "see TLS.Keystore configuration option");
+      }
+      
       InputStream keystoreStream = 
         routerOptions.toAbsoluteURI (keystoreUri).toURL ().openStream ();
-      
+
       try
       {
-        String passphrase = 
-          routerOptions.getString ("TLS.Keystore-Passphrase");
-        
         keystore = KeyStore.getInstance ("JKS");
         
-        keystore.load (keystoreStream, passphrase.toCharArray ());
+        keystore.load 
+          (keystoreStream, 
+           toPassphrase (routerOptions.getString ("TLS.Keystore-Passphrase")));
       } catch (GeneralSecurityException ex)
       {
         throw new IOException ("Failed to load TLS keystore: " + 
