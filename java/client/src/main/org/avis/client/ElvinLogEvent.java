@@ -26,16 +26,16 @@ public class ElvinLogEvent extends EventObject
   /**
    * The exception that triggered the message, if any (or null).
    */
-  public final Throwable error;
+  public final Throwable exception;
 
   public ElvinLogEvent (Elvin elvin, Type type, 
-                        String message, Throwable error)
+                        String message, Throwable exception)
   {
     super (elvin);
     
     this.type = type;
     this.message = message;
-    this.error = error;
+    this.exception = exception;
   }
   
   /**

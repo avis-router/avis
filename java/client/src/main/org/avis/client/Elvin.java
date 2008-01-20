@@ -413,7 +413,7 @@ public final class Elvin implements Closeable
          GeneralNotificationEvent.class);
     this.logListeners =
       new ListenerList<ElvinLogListener> 
-        (ElvinLogListener.class, "eventLogged", ElvinLogEvent.class);
+        (ElvinLogListener.class, "messageLogged", ElvinLogEvent.class);
     
     this.replyLock = new Object ();
     this.callbacks = new Callbacks (this);
