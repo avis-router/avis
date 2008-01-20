@@ -1,5 +1,7 @@
 package org.avis.client;
 
+import java.util.Map;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +14,6 @@ import java.security.KeyStore;
 import org.avis.security.Keys;
 
 import static org.avis.client.ConnectionOptions.EMPTY_OPTIONS;
-import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Streams.close;
 import static org.avis.util.Util.checkNotNull;
 
@@ -97,7 +98,7 @@ public final class ElvinOptions implements Cloneable
 
   public ElvinOptions ()
   {
-    this (EMPTY_OPTIONS, EMPTY_KEYS, EMPTY_KEYS);
+    this (new ConnectionOptions (), new Keys (), new Keys ());
   }
 
   public ElvinOptions (ConnectionOptions connectionOptions,
@@ -114,6 +115,20 @@ public final class ElvinOptions implements Cloneable
     this.requireAuthenticatedServer = false;
     this.receiveTimeout = 10000;
     this.livenessTimeout = 60000;
+  }
+  
+  /**
+   * Update connection options to include any new values from a given map.
+   */
+  protected void updateConnectionOptions (Map<String, Object> options)
+  {
+    if (options.size () > 0)
+    {
+      if (connectionOptions == EMPTY_OPTIONS)
+        connectionOptions = new ConnectionOptions ();
+      
+      connectionOptions.setAll (options);
+    }
   }
 
   /**
