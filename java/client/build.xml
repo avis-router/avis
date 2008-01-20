@@ -234,7 +234,7 @@ It is NOT a full Avis distribution: see http://avis.sourceforge.net.
         <include name=".classpath" />
         <include name=".settings/*" />
         <include name="build.xml" />
-        <include name="lib/*.jar" />
+        <include name="lib/fastutil-subset.jar" />
       </zipfileset>
     </zip>
     
