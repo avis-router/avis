@@ -11,9 +11,9 @@ Setting Up TLS
 ----------------------------------------------------------------------
 
 The simplest use of TLS is to encrypt communications between client
-and router without requiring authentication. To set up this sort of
-TLS-secured client endpoint, you just need to specify it as a secure
-endpoint URI in the `Listen` configuration option:
+and router without requiring authentication. To set up this sort TLS,
+you just need to specify it as a secure endpoint URI in the `Listen`
+configuration option:
 
 <pre>
 <span class="variable-name">Listen</span> = elvin:/secure/0.0.0.0:29170
@@ -22,7 +22,7 @@ endpoint URI in the `Listen` configuration option:
 This creates a TLS-secured endpoint on port 29170 ready for clients to
 connect to. This sort of TLS does not provide any authentication
 between the router and the client, but the TLS encryption it enables
-does greatly reduce the possibility of eavesdropping.
+greatly reduces the possibility of eavesdropping.
 
 Using TLS Authentication
 ----------------------------------------------------------------------
@@ -47,10 +47,6 @@ To generate a key for use in Avis, you will need to use the [`keytool`
 command][keytool] that ships with the Java Development Kit. The
 `keytool` utility stores and retrieves keys and certificate chains in
 a _keystore_, which is a binary archive, encrypted with a passphrase.
-
-As an example of using `keytool` to generate a new key inside a
-self-signed certificate, the command that was used to generate the key
-in the file `etc/avis-router.keystore` that ships with the router is:
 
     > keytool -genkey -alias avis-router -keysize 512 \
        -validity 3650 -keyalg RSA \
@@ -84,7 +80,6 @@ To list the keys in a keystore:
              MD5:  17:4C:C7:0E:5E:F3:CB:4F:8E:74:84:9E:B8:AF:64:16
              SHA1: FC:FD:F0:80:E1:FA:27:60:7A:E0:39:69:68:41:51:97:09:9B:BB:AE
 
-
 <a id="creating-trust" />
 Creating A Trust Relationship
 ----------------------------------------------------------------------
@@ -93,19 +88,20 @@ First, generate a key for the router:
 
     > keytool -genkey -alias my-router-key -keysize 512 \
        -validity 3650 -keyalg RSA \
-       -name "CN=My Name, 
+       -name "CN=My Name, \
          OU=my.organisation.unit, \
          O=My Organisation, L=My Location, \
-         S=My State, C=MY COUNTRY CODE" \
+         S=My State, C=My Country Code" \
        -keypass mypassword -storepass mypassword \
        -keystore my-router.keystore
 
 This creates a key called `my-router-key`<sup>[2][]</sup> in a
 keystore called `my-router.keystore` (obviously you should replace the
-"my-thing" placeholders with names appropriate to your usage). Put the
-keystore in the same directory as the `avisd.config` configuration
-file, and specify that Avis use it rather than the default using these
-lines in the configuration:
+"my-thing" placeholders with names appropriate to your usage).
+
+Put the keystore in the same directory as the `avisd.config`
+configuration file, and specify that Avis use it rather than the
+default using these lines in the configuration:
 
 <pre>
 <span class="variable-name">TLS.Keystore</span> = my-router.keystore
