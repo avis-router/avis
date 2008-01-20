@@ -1,7 +1,7 @@
 /*
  *  Avis event router.
  *  
- *  Copyright (C) 2007 Matthew Phillips <avis@mattp.name>
+ *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software: you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
