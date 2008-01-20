@@ -12,8 +12,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 
-import static org.avis.logging.Log.alarm;
-import static org.avis.logging.Log.warn;
+import static org.avis.client.ElvinLogEvent.Type.ERROR;
 
 /**
  * A single-threaded callback scheduler, which ensures callbacks are
@@ -29,23 +28,28 @@ import static org.avis.logging.Log.warn;
  */
 class Callbacks
 {
+  protected Elvin elvin;
   protected List<Runnable> callbacks;
   protected ScheduledExecutorService executor;
-  protected Object callbackMutex;
   protected Runnable callbackRunner;
   protected Future<?> callbackRunnerFuture;
   
   /**
    * Create a new instance.
-   * 
-   * @param callbackMutex The mutex that is acquired before executing
-   *                a callback.
    */
-  public Callbacks (Object callbackMutex)
+  public Callbacks (Elvin elvin)
   {
-    this.callbackMutex = callbackMutex;
-    this.executor = newScheduledThreadPool (1, THREAD_FACTORY);
+    this.elvin = elvin;
     this.callbacks = new ArrayList<Runnable> ();
+    
+    this.executor = newScheduledThreadPool (1, new ThreadFactory ()
+    {
+      public Thread newThread (Runnable target)
+      {
+        return new CallbackThread (Callbacks.this.elvin, target);
+      }
+    });
+    
     this.callbackRunner = new Runnable ()
     {
       public void run ()
@@ -60,7 +64,7 @@ class Callbacks
    */
   public void shutdown ()
   {
-    synchronized (callbackMutex)
+    synchronized (elvin.mutex ())
     {
       synchronized (this)
       {
@@ -125,31 +129,22 @@ class Callbacks
     
     if (callbacksToRun.size () > 0)
     {
-      synchronized (callbackMutex)
+      synchronized (elvin.mutex ())
       {
         for (Runnable callback : callbacksToRun)
         {
           try
           {
             callback.run ();
-          } catch (RuntimeException ex)
+          } catch (Throwable ex)
           {
-            alarm ("Unhandled exception in callback", this, ex);
+            elvin.log (ERROR, "Unhandled exception in callback", ex);
           }
         }
       }
     }
   }
 
-  private static final ThreadFactory THREAD_FACTORY =
-    new ThreadFactory ()
-    {
-      public Thread newThread (Runnable target)
-      {
-        return new CallbackThread (target);
-      }
-    };
-    
   /**
    * The thread used for all callbacks in the callbackExecutor.
    */
@@ -158,16 +153,20 @@ class Callbacks
   {
     private static final AtomicInteger counter = new AtomicInteger ();
     
-    public CallbackThread (Runnable target)
+    private Elvin elvin;
+    
+    public CallbackThread (Elvin elvin, Runnable target)
     {
       super (target, "Elvin callback thread " + counter.getAndIncrement ());
+      
+      this.elvin = elvin;
       
       setUncaughtExceptionHandler (this);
     }
     
     public void uncaughtException (Thread t, Throwable ex)
     {
-      warn ("Uncaught exception in Elvin callback", Elvin.class, ex);
+      elvin.log (ERROR, "Unhandled exception in callback", ex);
     }
   }
 }
