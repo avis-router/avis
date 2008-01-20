@@ -92,4 +92,11 @@ public final class LegacyConnectionOptions
     else
       return option;
   }
+
+  public static void setWithLegacy (Map<String,Object> options,
+                                    String option, Object value)
+  {
+    options.put (option, value);
+    options.put (newToLegacy (option), value);
+  }
 }
