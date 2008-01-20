@@ -97,7 +97,7 @@ public final class ConnectionOptions
     this (new HashMap<String, Object> ());
   }
   
-  private ConnectionOptions (Map<String, Object> values)
+  protected ConnectionOptions (Map<String, Object> values)
   {
     this.values = values;
     this.includeLegacy = true;
@@ -270,6 +270,15 @@ public final class ConnectionOptions
       values.put (name, value);
   }
   
+  /**
+   * Set a number of options at once.
+   */
+  public void setAll (Map<String, Object> options)
+  {
+    for (Map.Entry<String, Object> entry : options.entrySet ())
+      set (entry.getKey (), entry.getValue ());
+  }
+
   /**
    * Get the value for a connection option, or null if not defined.
    */
