@@ -90,6 +90,29 @@ public class JUTestClient
       // ok
     }
   }
+
+  /**
+   * Basic connect test.
+   */
+  @Test
+  public void connect ()
+    throws Exception
+  {
+    createServer ();
+    
+    ElvinOptions options = new ElvinOptions ();
+    
+    options.connectionOptions.set ("Packet.Max-Length", 8192);
+    
+    Elvin client = new Elvin (ELVIN_URI, options);
+    
+    assertTrue 
+      (options.connectionOptions.getString 
+         ("Vendor-Identification").startsWith ("Avis"));
+    
+    client.close ();
+    server.close ();
+  }
   
   /**
    * Test that client handles changing subs in a notification callback.

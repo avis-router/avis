@@ -1,6 +1,7 @@
 package org.avis.router;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -77,6 +78,7 @@ import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
+import static org.avis.io.LegacyConnectionOptions.setWithLegacy;
 import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.enableTcpNoDelay;
 import static org.avis.io.TLS.toPassphrase;
@@ -622,9 +624,11 @@ public class Router implements IoHandler, Closeable
       updateTcpSendImmediately (session, connection.options);
       updateQueueLength (session, connection);
       
-      // todo is this getting nuked by accepted () below?
-      connection.options.setWithLegacy
-        ("Vendor-Identification", "Avis " + ROUTER_VERSION);
+      Map<String, Object> options = connection.options.accepted ();
+
+      // add router ID
+      setWithLegacy (options, 
+                     "Vendor-Identification", "Avis " + ROUTER_VERSION);
       
       connection.lockWrite ();
       
@@ -632,7 +636,7 @@ public class Router implements IoHandler, Closeable
       {
         setConnection (session, connection);
         
-        send (session, new ConnRply (message, connection.options.accepted ()));
+        send (session, new ConnRply (message, options));
       } finally
       {
         connection.unlockWrite ();
