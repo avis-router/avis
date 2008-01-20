@@ -4,10 +4,11 @@ Releases
 Server 1.2
 
  * add Unix basic distro
- * review todo's
  * ?do we want clients trusted by CA's to be trusted
  * Test large frames with new heap sizes
  * ?thread pool size option
+ * DONE: review todo's
+ * DONE: fix Vendor-Identification
  * DONE: if we package a known key in router keystore, does this make TLS
    pointless?
  * DONE: package tools with server
@@ -35,11 +36,11 @@ Server 1.2
 
 Client 1.1
 
- * client should not log messages: events instead, esp
-   DropWarn. Will need a way to send these to log for testing.
  * client source won't build in Eclipse without server. Need to add it
    or deal with it otherwise.
- * review todo's
+ * DONE: review todo's
+ * DONE: client should not log messages: events instead, esp
+   DropWarn. Will need a way to send these to log for testing.
  * DONE: ec/ep options for TLS
  * NOT DONE: ep needs to handle empty lines 
  * DONE: --allow connection options in URI. merge with given options? --use
