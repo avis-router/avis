@@ -32,7 +32,7 @@
   <target name="changelog">
     <exec executable="${svn2cl}" searchpath="true">
       <env key="PATH" path="/bin:/usr/bin:/usr/local/bin:/opt/local/bin" />
-      <arg line="-r ${release_rev}:HEAD https://avis.svn.sourceforge.net/svnroot/avis/trunk/${component}" />
+      <arg line="-r ${release_rev}:HEAD https://avis.svn.sourceforge.net/svnroot/avis/trunk/java/${component}" />
     </exec>
   </target>
  
