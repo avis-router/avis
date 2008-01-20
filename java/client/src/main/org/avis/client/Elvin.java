@@ -1604,11 +1604,7 @@ public final class Elvin implements Closeable
         (getClass ().getName () + ": " + type + ": " + message);
       
       if (error != null)
-      {
-        System.err.println (error);
-        
         error.printStackTrace ();
-      }
     }
   }
   
