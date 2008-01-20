@@ -1,3 +1,37 @@
+Release 1.2.0 (January 21, 2008)
+----------------------------------------------------------------------
+
+This release adds support for TLS/SSL security. It also includes a
+number of improvements to router administration and installation.
+
+ * Added support for using TLS/SSL to encrypt and authenticate client
+   and federator connections.
+
+ * Improved logging: now adds date to log messages and logs
+   notifications in verbose mode.
+
+ * The binary distributions now contain the ec and ep commands.
+
+ * Cleaned up the RPM package and Unix layout.
+
+ * Improved shortcuts installed in Programs menu in Windows
+   distribution.
+
+ * Now uses launchd to manage router service on Mac OS X rather than
+   the deprecated StartupItem mechanism.
+
+ * Router now sends Vendor-Identification with router name and version
+   in connection options.
+
+ * Added option to use wildcards in Federation.Apply-Class and removed
+   option to match against federation ID (which is usually
+   router-dependent as well as dynamic). The use of "@" to distinguish
+   host names from federation ID's is no longer required, but
+   supported for compatibility with Avis 1.1.
+
+ * Fixed -logfile option when not daemonised.
+
+
 Release 1.1.4 (December 16, 2007)
 ----------------------------------------------------------------------
 
