@@ -20,7 +20,6 @@ import javax.net.ssl.SSLException;
 
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
-import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIOException;
@@ -33,7 +32,6 @@ import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
 import org.avis.common.RuntimeInterruptedException;
 import org.avis.io.ClientFrameCodec;
-import org.avis.io.ExceptionMonitorLogger;
 import org.avis.io.LivenessFilter;
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.ConnRqst;
@@ -151,12 +149,6 @@ import static org.avis.util.Util.checkNotNull;
  */
 public final class Elvin implements Closeable
 {
-  static
-  {
-    // route MINA exceptions to log
-    ExceptionMonitor.setInstance (ExceptionMonitorLogger.INSTANCE);
-  }
-
   protected ElvinURI routerUri;
   protected ElvinOptions options;
   protected IoSession connection;
@@ -453,7 +445,8 @@ public final class Elvin implements Closeable
       
       elvinSessionEstablished = true;
       
-      Map<String, Object> acceptedOptions = convertLegacyToNew (connRply.options);
+      Map<String, Object> acceptedOptions = 
+        convertLegacyToNew (connRply.options);
       
       Map<String, Object> rejectedOptions =
         options.connectionOptions.differenceFrom (acceptedOptions);
@@ -579,7 +572,7 @@ public final class Elvin implements Closeable
              !connection.containsAttribute ("sslException") &&
              currentTimeMillis () < finishAt)
       {
-        sleep (10);
+        sleep (50);
       }
 
       SSLException sslException = 
@@ -822,9 +815,9 @@ public final class Elvin implements Closeable
 
   /**
    * Add a listener for log events emitted by the client. This
-   * includes non-fatal messages, warnings and diagnostics of
-   * potential problems. If no listeners are registered, the log event
-   * will be echoed to the standard error output.
+   * includes non-fatal errors, warnings and diagnostics of potential
+   * problems. If no listeners are registered, log events will be
+   * echoed to the standard error output.
    */
   public synchronized void addLogListener (ElvinLogListener listener)
   {
