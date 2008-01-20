@@ -1,7 +1,7 @@
 License for Avis Elvin Client Library for Java
 -----------------------------------------------------------------------------
 
-Avis is Copyright (C) 2007 Matthew Phillips <avis@mattp.name>.
+Avis is Copyright (C) 2008 Matthew Phillips <avis@mattp.name>.
 
 The Avis client library is licensed under the GNU Lesser General
 Public License. This is essentially the GNU General Public License,
