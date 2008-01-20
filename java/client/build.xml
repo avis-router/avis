@@ -10,8 +10,11 @@
   
   <property file="avis-client.properties" />
   
-  <property name="release-name"
-            value="${avis.version.major}.${avis.version.minor}.${avis.release}" />
+  <property
+    name="version" 
+    value="${avis.version.major}.${avis.version.minor}.${avis.version.patch}" />
+      
+  <property name="release-name" value="${version}${avis.release}" />
   
   <property name="client" value="${basedir}" />
   <property name="common" value="${client}/../common" />
@@ -111,11 +114,10 @@
         <include name="org/avis/common/**"/>
         <include name="org/avis/security/**"/>
         <include name="org/avis/util/**"/>
-        <include name="org/avis/logging/**"/>
       </packageset>
       
       <doctitle><![CDATA[<h1>Avis Client Library</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; 2007 Matthew Phillips. All Rights Reserved.</i>]]></bottom>
+      <bottom><![CDATA[<i>Copyright &#169; 2008 Matthew Phillips. All Rights Reserved.</i>]]></bottom>
       
       <tag name="todo" scope="all" description="To do:"/>
       
