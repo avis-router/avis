@@ -26,7 +26,7 @@ public class SecureReceiver
     throws Exception
   {
     Elvin elvin = 
-      new Elvin (args.length == 0 ? "elvin://localhost" : args [0]);
+      new Elvin (System.getProperty ("elvin", "elvin://localhost"));
     
     elvin.closeOnExit ();
     

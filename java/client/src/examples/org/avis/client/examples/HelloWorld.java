@@ -23,7 +23,7 @@ public class HelloWorld
   public static void main (String [] args)
     throws Exception
   {
-    String elvinUri = args.length == 0 ? "elvin://localhost" : args [0];
+    String elvinUri = System.getProperty ("elvin", "elvin://localhost");
 
     // create a client that listens for messages with a "Greeting" field
     Elvin listeningClient = new Elvin (elvinUri);
