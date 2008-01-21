@@ -430,9 +430,9 @@
   </target>
 
   <!-- Create a tarball distro. Not part of standard set. -->
-  <target name="dist-fedora-tarball" depends="jar-server"
-          description="Build the Red Hat Fedora Core binary distro">
-    <property name="temp" value="${basedir}/build/tmp/fedora" />
+  <target name="dist-unix" depends="jar-server,jar-tools"
+          description="Build a Unix binary distro">
+    <property name="temp" value="${basedir}/build/tmp/unix" />
     <property name="root" value="${temp}/root" />
 
     <!-- clean temp area -->
@@ -444,19 +444,22 @@
     </antcall>
    
     <!-- add installer files -->
-    <copy file="packaging/fedora/init_script.in" todir="${temp}" />
-    <copy file="packaging/fedora/README.txt" todir="${temp}" />
-    <copy file="packaging/fedora/install.sh" todir="${temp}" />
+    <copy file="packaging/unix/README.txt" todir="${temp}" />
+    <copy file="packaging/unix/install.sh" todir="${temp}" />
 
     <!-- tar it up -->
-    <tar destfile="build/avis-fedora-${release-name}.tar.bz2"
+    <tar destfile="build/avis-${release-name}.tar.bz2"
          compression="bzip2">
       <tarfileset prefix="avis-${release-name}" dir="${temp}"
                   mode="0755">
         <include name="install.sh" />
+        <include name="root/bin/*" />
+        <include name="root/sbin/*" />
       </tarfileset>
       <tarfileset prefix="avis-${release-name}" dir="${temp}">
-        <exclude name="install.sh" />
+        <include name="root/libexec/avis/*.jar" />
+        <include name="root/etc/avis/*" />
+        <include name="README.txt" />
       </tarfileset>
     </tar>
 
