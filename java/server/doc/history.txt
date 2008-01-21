@@ -29,6 +29,10 @@ number of improvements to router administration and installation.
    host names from federation ID's is no longer required, but
    supported for compatibility with Avis 1.1.
 
+ * Added Federation.Default-Class option to specify a default
+   federation class to be used when none of the Federation.Apply-Class
+   filters match.
+
  * Fixed -logfile option when not daemonised.
 
 
