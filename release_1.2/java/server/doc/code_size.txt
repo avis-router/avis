@@ -1,0 +1,323 @@
+pre release 0.1
+
+Fri, Sep 29, 2006  11:32:39 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1         1        17        43         0 org.avis
+  2         3        27       294        17 org.avis.net
+  3        16        71       360         4 org.avis.net.messages
+  4         6        48       351         8 org.avis.net.server
+  5         6        42       170        18 org.avis.pubsub.ast
+  6        15       101       533         6 org.avis.pubsub.ast.nodes
+  7         8       121      2095        19 org.avis.pubsub.parser
+    --------- --------- --------- ---------
+           55       427      3846        72 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+     7.00     55.00    427.00   3846.00     72.00 | Project
+               7.86     61.00    549.43     10.29 | Package
+                         7.76     69.93      1.31 | Class
+                                   9.01      0.17 | Function
+
+release 0.3
+
+Sun, Oct 15, 2006  18:51:22 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1         1        17        47         0 org.avis
+  2         2        24       291        16 org.avis.net
+  3        21        94       465         6 org.avis.net.messages
+  4        10        71       582        41 org.avis.net.security
+  5         7        55       417        15 org.avis.net.server
+  6         9        64       273        22 org.avis.pubsub.ast
+  7        30       175       767        10 org.avis.pubsub.ast.nodes
+  8         8       132      2016        19 org.avis.pubsub.parser
+  9         2        17        72         3 org.avis.util
+    --------- --------- --------- ---------
+           90       649      4930       132 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+     9.00     90.00    649.00   4930.00    132.00 | Project
+              10.00     72.11    547.78     14.67 | Package
+                         7.21     54.78      1.47 | Class
+                                   7.60      0.20 | Function
+
+release 0.4
+
+Sun, Nov 05, 2006  12:32:02 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1         1        17        47         0 org.avis
+  2         2        24       303        16 org.avis.net
+  3        21        95       468         6 org.avis.net.messages
+  4        10        71       579        42 org.avis.net.security
+  5         8        68       572        26 org.avis.net.server
+  6         9        64       273        22 org.avis.pubsub.ast
+  7        30       175       767        10 org.avis.pubsub.ast.nodes
+  8         8       132      2016        19 org.avis.pubsub.parser
+  9         2        17        72         3 org.avis.util
+    --------- --------- --------- ---------
+           91       663      5097       144 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+     9.00     91.00    663.00   5097.00    144.00 | Project
+              10.11     73.67    566.33     16.00 | Package
+                         7.29     56.01      1.58 | Class
+                                   7.69      0.22 | Function
+release 0.5
+
+Generating report
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1         2        18        53         1 org.avis
+  2         3        46       478        31 org.avis.net
+  3        22        99       487         7 org.avis.net.messages
+  4        10        70       577        41 org.avis.net.security
+  5         7        56       475        19 org.avis.net.server
+  6         9        64       275        22 org.avis.pubsub.ast
+  7        30       175       777        11 org.avis.pubsub.ast.nodes
+  8         8       132      2016        19 org.avis.pubsub.parser
+  9         2        17        72         3 org.avis.util
+    --------- --------- --------- ---------
+           93       677      5210       154 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+     9.00     93.00    677.00   5210.00    154.00 | Project
+              10.33     75.22    578.89     17.11 | Package
+                         7.28     56.02      1.66 | Class
+                                   7.70      0.23 | Function
+
+release 0.6
+
+Generating report
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1         2        18        53         1 org.avis
+  2         3        49       490        36 org.avis.net
+  3        22        99       487         7 org.avis.net.messages
+  4        10        73       590        42 org.avis.net.security
+  5         7        61       509        21 org.avis.net.server
+  6         9        64       275        23 org.avis.pubsub.ast
+  7        30       175       777        11 org.avis.pubsub.ast.nodes
+  8         8       132      2016        19 org.avis.pubsub.parser
+  9         2        17        72         3 org.avis.util
+    --------- --------- --------- ---------
+           93       688      5269       163 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+     9.00     93.00    688.00   5269.00    163.00 | Project
+              10.33     76.44    585.44     18.11 | Package
+                         7.40     56.66      1.75 | Class
+                                   7.66      0.24 | Function
+
+release 0.7
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1         2        19        56         2 org.avis
+  2         4        38       439        24 org.avis.net
+  3        22        99       488         7 org.avis.net.messages
+  4        10        73       590        42 org.avis.net.security
+  5         8        68       551        22 org.avis.net.server
+  6         9        64       278        22 org.avis.pubsub.ast
+  7        30       175       777        11 org.avis.pubsub.ast.nodes
+  8         8       132      2016        19 org.avis.pubsub.parser
+  9         5        50       278        32 org.avis.util
+    --------- --------- --------- ---------
+           98       718      5473       181 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+     9.00     98.00    718.00   5473.00    181.00 | Project
+              10.89     79.78    608.11     20.11 | Package
+                         7.33     55.85      1.85 | Class
+                                   7.62      0.25 | Function
+
+Release 1.1.4
+
+Thu, Dec 20, 2007  12:29:34 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1        17       177      1414       109 org.avis.client
+  2         6         8       139         1 org.avis.client.examples
+  3         4        36       292        12 org.avis.common
+  4        10        73       505        44 org.avis.config
+  5        13       132      1423        42 org.avis.federation
+  6         4        16       502        13 org.avis.federation.io
+  7         5        28       114         0 org.avis.federation.io.messages
+  8        16       101       957        52 org.avis.io
+  9        27       127       592        16 org.avis.io.messages
+ 10         3        27       132        12 org.avis.logging
+ 11        26       175      1727        56 org.avis.router
+ 12        11        98       886        50 org.avis.security
+ 13        11        97       661        37 org.avis.subscription.ast
+ 14        31       181       852        12 org.avis.subscription.ast.nodes
+ 15        10       148      1970        21 org.avis.subscription.parser
+ 16         7        15       229        10 org.avis.tools
+ 17        16       122       818        84 org.avis.util
+    --------- --------- --------- ---------
+          217      1561     13213       571 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+    17.00    217.00   1561.00  13213.00    571.00 | Project
+              12.76     91.82    777.24     33.59 | Package
+                         7.19     60.89      2.63 | Class
+                                   8.46      0.37 | Function
+
+Release 1.1.4 (no tests)
+
+Thu, Dec 20, 2007  12:32:17 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1        15       146       898       109 org.avis.client
+  2         3        25       170        12 org.avis.common
+  3         9        68       385        44 org.avis.config
+  4         9       101       841        38 org.avis.federation
+  5         4        16       502        13 org.avis.federation.io
+  6         5        28       114         0 org.avis.federation.io.messages
+  7        10        80       724        48 org.avis.io
+  8        27       127       592        16 org.avis.io.messages
+  9         3        27       132        12 org.avis.logging
+ 10        14        92       756        47 org.avis.router
+ 11        10        86       657        49 org.avis.security
+ 12        10        72       308        24 org.avis.subscription.ast
+ 13        31       181       852        12 org.avis.subscription.ast.nodes
+ 14         9       134      1840        20 org.avis.subscription.parser
+ 15         7        15       229        10 org.avis.tools
+ 16        13       111       688        80 org.avis.util
+    --------- --------- --------- ---------
+          179      1309      9688       534 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+    16.00    179.00   1309.00   9688.00    534.00 | Project
+              11.19     81.81    605.50     33.38 | Package
+                         7.31     54.12      2.98 | Class
+                                   7.40      0.41 | Function
+
+Pre release 1.2
+
+Thu, Dec 20, 2007  12:28:31 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1        39       400      3294       244 org.avis.client
+  2        12        20       300         2 org.avis.client.examples
+  3         9        71       578        24 org.avis.common
+  4        11        80       561        47 org.avis.config
+  5        18       161      1670        47 org.avis.federation
+  6         4        16       502        13 org.avis.federation.io
+  7         5        29       116         0 org.avis.federation.io.messages
+  8        32       178      1856        91 org.avis.io
+  9        54       256      1189        32 org.avis.io.messages
+ 10         6        54       264        24 org.avis.logging
+ 11        27       189      1882        66 org.avis.router
+ 12        22       196      1772       100 org.avis.security
+ 13        11        97       661        37 org.avis.subscription.ast
+ 14        31       181       852        12 org.avis.subscription.ast.nodes
+ 15        10       148      1970        21 org.avis.subscription.parser
+ 16        13        32       443        19 org.avis.tools
+ 17        33       246      1663       167 org.avis.util
+    --------- --------- --------- ---------
+          337      2354     19573       946 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+    17.00    337.00   2354.00  19573.00    946.00 | Project
+              19.82    138.47   1151.35     55.65 | Package
+                         6.99     58.08      2.81 | Class
+                                   8.31      0.40 | Function
+Pre release 1.2 (no tests)	
+
+Thu, Dec 20, 2007  12:30:56 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1        18       173      1125       132 org.avis.client
+  2         4        26       174        13 org.avis.common
+  3        10        74       427        47 org.avis.config
+  4         9       111       870        41 org.avis.federation
+  5         4        16       502        13 org.avis.federation.io
+  6         5        29       116         0 org.avis.federation.io.messages
+  7        12        85       804        51 org.avis.io
+  8        27       130       605        16 org.avis.io.messages
+  9         3        27       132        12 org.avis.logging
+ 10        14       102       849        57 org.avis.router
+ 11        10        86       657        49 org.avis.security
+ 12        10        72       308        24 org.avis.subscription.ast
+ 13        31       181       852        12 org.avis.subscription.ast.nodes
+ 14         9       134      1840        20 org.avis.subscription.parser
+ 15         7        18       232        10 org.avis.tools
+ 16        14       113       707        80 org.avis.util
+    --------- --------- --------- ---------
+          187      1377     10200       577 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+    16.00    187.00   1377.00  10200.00    577.00 | Project
+              11.69     86.06    637.50     36.06 | Package
+                         7.36     54.55      3.09 | Class
+                                   7.41      0.42 | Function
+
+Release 1.2
+
+Mon, Jan 21, 2008  11:16:45 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1        26       248      1945       146 org.avis.client
+  2         5         5       108         0 org.avis.client.examples
+  3         5        37       296        13 org.avis.common
+  4        12        84       584        49 org.avis.config
+  5        18       165      1725        50 org.avis.federation
+  6         4        16       504        13 org.avis.federation.io
+  7         5        29       116         0 org.avis.federation.io.messages
+  8        20       111      1087        57 org.avis.io
+  9        27       130       605        16 org.avis.io.messages
+ 10         3        27       133        12 org.avis.logging
+ 11        29       209      1978        68 org.avis.router
+ 12        11        98       886        50 org.avis.security
+ 13        11        97       661        37 org.avis.subscription.ast
+ 14        31       180       826        11 org.avis.subscription.ast.nodes
+ 15        10       148      1971        21 org.avis.subscription.parser
+ 16         8        30       370        10 org.avis.tools
+ 17        21       143       983        95 org.avis.util
+    --------- --------- --------- ---------
+          246      1757     14778       648 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+    17.00    246.00   1757.00  14778.00    648.00 | Project
+              14.47    103.35    869.29     38.12 | Package
+                         7.14     60.07      2.63 | Class
+                                   8.41      0.37 | Function
+                                   
+Common cs Router (no tests)
+
+1.0
+
+Total: 5979
+
+1.1.4
+
+Common: 2963
+Server: 5616
+Total: 8579
+
+Client: 1109
+
+1.2 (pre)
+
+Common: 3079
+Server: 5782
+Total: 8861
+
+Client: 1339
+
+1.2
+
+Common: 3217
+Server: 5877
+Total: 9094
+
+Client: 1386
