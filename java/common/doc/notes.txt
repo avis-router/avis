@@ -3,10 +3,7 @@ Releases
 
 Server 1.2
 
- * add Unix basic distro
- * ?do we want clients trusted by CA's to be trusted
- * Test large frames with new heap sizes
- * ?thread pool size option
+ * DONE: add Unix basic distro
  * DONE: print full version on console
  * DONE: review todo's
  * DONE: fix Vendor-Identification
@@ -71,6 +68,9 @@ Client
 
 Server
 
+ * ?do we want clients trusted by CA's to be trusted
+ * Test large frames with new heap sizes
+ * ?thread pool size option
 * Password auth? Could use a KeyManager to use password auth? Not sure
   how X509KeyManager can be extended to do this. There may be an Elvin
   spec for this.
