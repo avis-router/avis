@@ -292,7 +292,7 @@ Nr.   Classes Functions      NCSS  Javadocs Package
                          7.14     60.07      2.63 | Class
                                    8.41      0.37 | Function
                                    
-Common cs Router
+Common cs Router (no tests)
 
 1.0
 
@@ -313,3 +313,11 @@ Server: 5782
 Total: 8861
 
 Client: 1339
+
+1.2
+
+Common: 3217
+Server: 5877
+Total: 9094
+
+Client: 1386
