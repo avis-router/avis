@@ -1,0 +1,430 @@
+Elvin Subscription Language
+----------------------------------------------------------------------
+
+Elvin operates in a client-server architecture. Clients register
+subscriptions with the server and/or send notifications to it. When
+the server receives a notification, it forwards it to all clients
+whose subscriptions match that notification. This document describes
+the Elvin Subscription Language and how expressions in this language
+are used to select notifications for delivery to clients.
+
+The Elvin server routes notifications to clients which have expressed
+interest in that notification. The client registers its interest with
+a subscription expression, written in the Elvin Subscription
+Language. The elvin server evaluates the subscription for each
+notification it receives and, if the result is true, delivers it to
+the client which registered that subscription. Here is an example of a
+subscription expression:
+
+    (Group == "elvin" || Group == "Chat") && 
+      ! regex (User, "[Ss]egall?")
+
+This subscription expression will match any notification whose `Group`
+field has the string value "elvin" or "Chat" except those whose User
+field also matches the regular expression "[Ss]egall?". This
+subscription would match the following notification example:
+
+    Group:      "Chat"
+    User:       "alice"
+    Message:    "hello sailor"
+    Timeout:    10
+    Message-Id: "07cf0b15003409-5i3N7XDKbPVaQ-28cf-22"
+
+but would not match:
+
+    Group:      "elvin"
+    User:       "bill@segall.net"
+    Message:    "release early"
+    Timeout:    10
+    Message-Id: "7c0b1f00540039-i357XNKbDPaQV-8c2f-22"
+
+The names are on the left and are immediately followed by a colon (eg:
+Group) and the values are on the right (eg: "Chat").
+
+The first notification would also match the following expression:
+
+    wildcard (Message, "*[Hh]ello*") && Timeout > 5
+
+Logic
+----------------------------------------------------------------------
+
+The evaluation of a subscription uses Lukasiewicz's tri-state logic
+that adds the value *bottom* (which represents "undecidable" or
+"indefinite") to the familiar true and false.
+
+<table border="1" cellpadding="4">
+
+<caption>Lukasiewicz tri-state logic table</caption>
+
+<tr>
+  <th>A</th> <th>B</th>
+  <th>!A</th> <th>A &amp;&amp; B</th> <th>A || B</th> <th>A ^^ B</th>
+</tr>
+
+<tr><td class="bool-true">true</td> <td class="bool-true">true</td> <td class="bool-false">false</td> <td class="bool-true">true</td> <td class="bool-true">true</td> <td class="bool-false">false</td></tr>
+
+<tr><td class="bool-true">true</td> <td class="bool-bottom">bottom</td> <td class="bool-false">false</td> <td class="bool-bottom">bottom</td> <td class="bool-true">true</td> <td class="bool-bottom">bottom</td></tr>
+
+<tr><td class="bool-true">true</td> <td class="bool-false">false</td> <td class="bool-false">false</td> <td class="bool-false">false</td> <td class="bool-true">true</td> <td class="bool-true">true</td></tr>
+
+<tr><td class="bool-bottom">bottom</td> <td class="bool-true">true</td> <td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td> <td class="bool-true">true</td> <td class="bool-bottom">bottom</td></tr>
+
+<tr><td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td></tr>
+
+<tr><td class="bool-bottom">bottom</td> <td class="bool-false">false</td> <td class="bool-bottom">bottom</td> <td class="bool-false">false</td> <td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td></tr>
+
+<tr><td class="bool-false">false</td> <td class="bool-true">true</td> <td class="bool-true">true</td> <td class="bool-false">false</td> <td class="bool-true">true</td> <td class="bool-true">true</td></tr>
+
+<tr><td class="bool-false">false</td> <td class="bool-bottom">bottom</td> <td class="bool-true">true</td> <td class="bool-false">false</td> <td class="bool-bottom">bottom</td> <td class="bool-bottom">bottom</td></tr>
+
+<tr><td class="bool-false">false</td> <td class="bool-false">false</td> <td class="bool-true">true</td> <td class="bool-false">false</td> <td class="bool-false">false</td> <td class="bool-false">false</td></tr>
+
+</table>
+
+Any subscription expression that refers to a name that is not present
+in the notification being evaluated results in *bottom*.
+
+In addition, many of the functions in Elvin have constraints on their
+parameters (ie. data type) and have an undefined result should these
+constraints not be met. For example, if `begins-with ()`, which
+expects a string parameter is provided with a 32-bit integer then the
+result of the function is *bottom*.
+
+Notifications are delivered only if the result of subscription
+evaluation is true.
+
+Names
+----------------------------------------------------------------------
+
+A name evaluates to its corresponding value in the notification. Where
+a name occurs in an expression, during evaluation of a notification,
+the value of the name is taken to be the value of the attribute with
+the matching name in the notification. If the name is not in the
+notification, its value becomes *bottom* (see the previous section on
+logic).
+
+Names may contain only printing ASCII characters (32-126) and are
+case-sensitive. Certain characters are treated as special and must be
+escaped using a backslash (`\`) if they are used in a name. If a name
+does not start with an alphabetic character or an underscore (_) then
+the name must start with the escape character followed by the desired
+first character.
+
+The following characters must be escaped when used in a name:
+
+<table style="margin-left: 1em" cellpadding="2">
+
+<tr><th>Character</th> <th>Symbol</th></tr>
+
+<tr><td>parentheses</td> <td><code>( )</code></td></tr>
+<tr><td>brackets</td> <td><code>[ ]</code></td></tr>
+<tr><td>apostrophe</td> <td><code>'</code></td></tr>
+<tr><td>quotes</td> <td><code>"</code></td></tr>
+<tr><td>backslash</td> <td><code>\</code></td></tr>
+<tr><td>space</td> <td><code> </code></td></tr>
+
+</table>
+
+The following are all valid names:
+
+    fnord
+    _underscore
+    \ we\ can\ have\ spaces
+    \1.0\ Contents
+    this:is:a:test:
+
+Note that certain operator characters are legal within a name. So
+"`pipe= > 20`" is a valid expression, with the equal-sign as the last
+character of the name. This allows most strings to be valid names. It
+does, however, have two important impacts. First, names, operators and
+literals must be separated by whitespace (as above) and "`pipe=>20`"
+is an error. Second, while names can contain whitespace, it must be
+escaped with a backslash, as in "`the\ pipe > 20`".
+
+Literals
+----------------------------------------------------------------------
+
+Within a subscription expression there are five kinds of literals.
+
+### int32
+
+32-bit integer literals may be written in octal, decimal or
+hexadecimal. Octal literals must begin with 0 and may only contain
+digits from 0 through 7. Hexadecimal literals begin with 0x and may
+contain any hexadecimal digit. All integers are signed. The following
+are legitimate 32-bit integers:
+
+    42
+    052
+    -0x2a
+
+### int64
+
+64-bit integers are written in the same way as 32-bit ones except that
+they have a trailing uppercase or lowercase "L". The following are
+valid 64-bit integers:
+
+    0l
+    0xDeadBeef1sF00dL
+
+### real64
+
+Floating point numbers must include a decimal point and at least one
+digit thereafter. An exponent is permitted after the decimal
+digits. Below are some examples of floating point numbers:
+
+    -3.14
+    6.023e23
+    6.67e-11
+
+### string
+
+Strings are any characters enclosed in single or double quotes. Here
+are some examples of strings:
+
+    "hello sailor"
+    "this isn't a \"number\""
+    'this isn\'t a "number"'
+
+### opaque
+
+Because no comparison operations which return meaningful results for
+opaques are defined in the subscription language, support for
+specifying opaque constants is neither necessary nor provided.
+
+Operators
+----------------------------------------------------------------------
+
+As alluded to in the examples, expressions may be combined using
+logical operators. The following logical operators (in order of
+precedence) are defined:
+
+<dl class="function-definition">
+
+<dt>!</dt>
+
+<dd>An expression may be negated by a preceding <code>!</code>. The
+negation of <em>bottom</em> is <em>bottom</em>.</dd>
+
+<dt>&amp;&amp;</dt>
+
+<dd>A conjunction of two or more expressions is constructed by placing
+<code>&amp;&amp;</code> between those expressions.</dd>
+
+<dt>^^</dt>
+
+<dd>The exclusive-disjunction (injunction?) of two or more expressions
+is constructed by placing <code>^^</code> between those
+expressions.</dd>
+
+<dt>||</dt>
+
+<dd>A disjunction of two or more expressions is constructed by placing
+<code>||</code> between those expressions.</dd>
+
+<dt>equality (== and !=)</dt>
+
+<dd>Two values may be compared for equality by placing <code>==</code>
+between them. Strings may be compared with other strings for
+equality. Numbers may be compared with other numbers for equality. No
+equality test is supported on opaque data.
+
+If a comparison is attempted between incomparable types or if either
+of the values being compared refers to a value not present in the
+notification, then the result is <em>bottom</em>. The != operator is the
+negation of the equality operator. <code>x != y</code> is functionally
+equivalent to <code>! (x == y)</code>.</dd>
+
+<dt>inequality (&lt;, &gt; and &lt;=, &gt;=)</dt>
+
+<dd>Two numeric values may be compared with other numbers by placing one
+of the inequality operators between the values. If either of the
+values is not a number (or not defined) then the result of the
+comparison is <em>bottom</em>.
+
+Simple arithmetic and logical operators are supported too, making
+subscriptions like the following possible:
+<pre>
+temp &gt; prev-temp + 5
+</pre>
+
+</dd>
+
+</dl>
+
+Arithmetic and logical operators include:
+
+<dl class="function-definition">
+
+<dt>*, / and %</dt>
+
+<dd>The multiplication, division and modulus operators have higher
+precedence than addition and subtraction but lower precedence than the
+bitwise operators. Values are promoted to from int32 to int64 to
+real64 as necessary to represent the result.</dd>
+
+<dt>+ and -</dt>
+
+<dd>The addition and subtraction operators have higher precedence than the
+logical operators.
+
+The bitwise operators are only defined on the two integer types. If
+they are applied to other types then the result is undefined which
+will result in the smallest enclosing logical evaluating to
+<em>bottom</em>.</dd>
+
+<dt>&lt;&lt;, &gt;&gt; and &gt;&gt;&gt;</dt>
+
+<dd>Shift operators the value on the left in the direction of the
+arrows by the value on the right number of bits. The
+<code>&gt;&gt;</code> operator does a signed right whereas
+<code>&gt;&gt;&gt;</code> does a logical right (it always shifts in
+zeros).</dd>
+
+<dt>&amp;, ^ and |</dt>
+
+<dd>In order of precedence, the bitwise &amp;, ^ and | operators operate on
+the values on either side of the operator.</dd>
+
+<dt>~</dt>
+
+<dd>Performs bitwise inversion.</dd>
+
+</dl>
+
+## Functions
+
+### Type Tests
+
+The following functions take one argument and return a logic value. If
+the value of name is of the given type, they evaluate to true, if name
+is not present in the notification, they evaluate to <em>bottom</em>,
+otherwise they evaluate to false.
+
+<dl class="function-definition">
+
+<dt>int32&nbsp;(name)</dt>
+
+<dd>True if name is an int32 value.</dd>
+
+<dt>int64&nbsp;(name)</dt>
+
+<dd>True if name is an int64 value.</dd>
+
+<dt>real64&nbsp;(name)</dt>
+
+<dd>True if name is an real64 value.</dd>
+
+<dt>string&nbsp;(name)</dt>
+
+<dd>True if name is a string value.</dd>
+
+<dt>opaque&nbsp;(name)</dt>
+
+<dd>True if name is an opaque value.</dd>
+
+<dt>nan&nbsp;(name)</dt>
+
+<dd>True if name equals the special real64 NaN (not a number)
+value.</dd>
+
+</dl>
+
+### String Comparisons
+
+The string comparison functions test strings in various ways. They
+test the first argument, which must either name a value in the
+notification or be a string-type function such as `fold-case (name)`,
+to see if it matches any of the subsequent arguments.
+
+To perform case-insensitive string matching, use the `fold-case ()`
+function, for example:
+
+    begins-with (fold-case (name), "foo")
+
+would match when the `name` field is "Foobar", "FOOBAR", "fOoBaR",
+etc.
+
+<dl class="function-definition">
+
+<dt>begins-with (name, string, ...)</dt>
+
+<dd>Returns true if the value of name is a string and begins with any
+of the string arguments, <em>bottom</em> if the value name is not a string or
+not present in the notification and false otherwise.</dd>
+
+<dt>contains (name, string, ...)</dt>
+
+<dd>Returns true if the value of name is a string and it contains any
+of the string arguments, <em>bottom</em> if the value name is not a string or
+not present in the notification and false otherwise.</dd>
+
+<dt>ends-with (name, string, ...)</dt>
+
+<dd>Returns true if the value of name is a string and ends with any of the
+string arguments, <em>bottom</em> if the value name is not a string or not
+present in the notification and false otherwise.</dd>
+
+<dt>wildcard (name, string, ...)</dt>
+
+<dd>The strings are interpreted as wildcard (a.k.a. glob, filename, or
+shell expansions) expressions as defined by the wildcard
+specification.</dd>
+
+<dt>regex (name, string, ...)</dt>
+
+<dd>The strings are interpreted as regular expressions. That's POSIX
+1003.2 regular expressions with UTR #18 Level 1 compatible extensions
+for Unicode.</dd>
+
+</dl>
+
+### String Transformations
+
+The following functions may be used perform a limited set of
+transformations in order to simplify string comparisons.
+
+<dl class="function-definition">
+
+<dt>fold-case (string)</dt>
+
+<dd>Transform string to folded case (typically the same as lower
+case).</dd>
+
+<dt>decompose (string)</dt>
+
+<dd>Performs <a
+href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">canonical
+decomposition</a> (NFD) of the string and returns the resulting string
+value.</dd>
+
+<dt>decompose-compat (value)</dt>
+
+<dd>Performs <a
+href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">compatible
+(and canonical) decomposition</a> (NFKD) of the string and returns the
+resulting string value.</dd>
+
+</dl>
+
+### Notification and Name Functions
+
+<dl class="function-definition">
+
+<dt>require (name)</dt>
+
+<dd>Returns true if name is present in the notification, <em>bottom</em>
+otherwise.</dd>
+
+<dt>equals (name, value, ...)</dt>
+
+<dd>Returns true if the name is equal to any of the values.</dd>
+
+<dt>size (name)</dt>
+
+<dd>If name is a string then <code>size ()</code> returns the number
+of characters in the string. If name is an opaque then it returns the
+number of bytes in the opaque. Returns <em>bottom</em> for all other
+data types.</dd>
+
+</dl>
