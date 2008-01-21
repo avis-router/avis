@@ -1,0 +1,51 @@
+Avis Client Library
+======================================================================
+
+The Avis Client Library provides a high level API for Java clients
+communicating with an Elvin router. It is based on the same
+foundations as the Avis router, but is made available under the terms
+of the GNU Lesser General Public License (LGPL) rather than the GPL
+used by the router.
+
+ * [Download the client library][download].
+
+ * [View Javadoc API documentation][javadoc] for the latest version of
+   the library.
+
+ * A description of the [Elvin subscription language][subscription].
+
+Examples
+----------------------------------------------------------------------
+
+
+The client library package contains a number of programming examples
+in `src/examples` and documentation on how to use them in
+`doc/examples.txt`. The examples are:
+
+  * [HelloWorld.java](client-library/examples/HelloWorld.java.html). A
+    single class creates two Elvin client connections, one sending the
+    traditional "Hello World" message as a greeting, the other one
+    listening for all greetings and printing them to the console.
+
+  * [WallBroadcaster.java](client-library/examples/WallBroadcaster.java.html)
+    and
+    [WallReceiver.java](client-library/examples/WallReceiver.java.html). This
+    example uses two console applications to simulate a simple Unix
+    "wall"-style command that broadcasts text to a number of consoles.
+
+  * [SecureSender.java](client-library/examples/SecureSender.java.html)
+    and
+    [SecureReceiver.java](client-library/examples/SecureReceiver.java.html). In
+    this example we set up a situation where a sender wants to ensure
+    that only receivers it trusts can see its messages.
+
+You can also see a demonstration of the client library in a realistic
+scenario at the [examples page][examples].
+
+[download]: https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
+
+[javadoc]: http://avis.sourceforge.net/client-library/javadoc/
+
+[examples]: examples.html
+
+[subscription]: subscription_language.html

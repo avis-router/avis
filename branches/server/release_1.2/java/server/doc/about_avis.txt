@@ -1,0 +1,32 @@
+About Avis
+======================================================================
+
+Avis is an event router service compatible with the commercial Elvin
+implementation developed by Mantara Software. Avis provides a
+general-purpose, fast and scalable publish/subscribe message bus using
+content-based subscriptions.
+
+Elvin event routers enable arbitrary messages, known as notifications,
+to be exchanged via a publish/subscribe model. Elvin clients subscribe
+to messages using expressions that match messages by their content, an
+approach that differs from many other message bus systems that operate
+by selecting messages published on pre-defined channels. This promotes
+an even higher level of decoupling between producers and consumers of
+events.
+
+For more information on the Avis project please see:
+
+  http://avis.sourceforge.net/
+
+
+License
+======================================================================
+
+Avis is Copyright (C) 2008 Matthew Phillips <avis@mattp.name>.
+
+Permission to distribute unmodified copies of the Avis distribution
+packages is granted.
+
+The source code to Avis is available under the terms of version 3 of
+the GNU General Public License (GPL): see
+http://www.gnu.org/copyleft/gpl.html for the full text of the license.
