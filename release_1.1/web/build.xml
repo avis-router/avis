@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<!--
+  ====================================================================== 
+  Avis Web Site
+  ======================================================================
+-->
+<project name="avis.web" default="website">
+  
+  <description>Avis web site</description>
+
+  <property name="avis-root" value="${basedir}/.." />
+  <property name="web" value="${avis-root}/web" />
+  <property name="client" value="${avis-root}/java/client" />
+  <property name="support" value="${avis-root}/support" />
+
+  <property name="sourceforge-web" 
+            value="sourceforge:/home/groups/a/av/avis/htdocs" />
+
+  <!-- Markdown 1.0.1: needed to build web page -->
+  <property name="markdown" 
+            value="${support}/markdown-1.0.1/Markdown.pl" />
+
+  <!-- Use arcane Ant-isms to build web page from text using Markdown -->
+  <target name="website" depends="htmlize-source-examples"
+          description="Build HTML files in web from sources">  
+    <antcall target="fn:make-html">
+      <param name="src" value="avis.txt" />
+      <param name="dest" value="index.html" />
+      <param name="web.title" value="Home" />
+    </antcall>
+  
+    <antcall target="fn:make-html">
+      <param name="src" value="examples.txt" />
+      <param name="dest" value="examples.html" />
+      <param name="web.title" value="Example" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="roadmap.txt" />
+      <param name="dest" value="roadmap.html" />
+      <param name="web.title" value="Roadmap" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="why_avis.txt" />
+      <param name="dest" value="why_avis.html" />
+      <param name="web.title" value="Why Choose Avis" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="installation.txt" />
+      <param name="dest" value="installation.html" />
+      <param name="web.title" value="Installation" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="federation.txt" />
+      <param name="dest" value="federation.html" />
+      <param name="web.title" value="Federation" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="client_library.txt" />
+      <param name="dest" value="client_library.html" />
+      <param name="web.title" value="Client Library" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="downloads.txt" />
+      <param name="dest" value="downloads.html" />
+      <param name="web.title" value="Downloads" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="subscription_language.txt" />
+      <param name="dest" value="subscription_language.html" />
+      <param name="web.title" value="Elvin Subscription Language" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="documentation.txt" />
+      <param name="dest" value="documentation.html" />
+      <param name="web.title" value="Documentation" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="tls.txt" />
+      <param name="dest" value="tls.html" />
+      <param name="web.title" value="TLS/SSL" />
+    </antcall>
+
+  </target>
+
+  <target name="deploy" depends="website"
+          description="Rsync web site to sourceforge">
+    <exec executable="rsync" dir="${web}/site">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg line="--include *.html" />
+      <arg line="--include *.png" />
+      <arg line="--include *.gif" />
+      <arg line="--include *.css" />
+      <arg line="--include client-library/examples/*.html" />
+      <arg line="--exclude client-library/javadoc" />
+      <arg line="--exclude */.svn" />
+      <arg line="--exclude .*" />
+      <arg value="." />
+      <arg value="${sourceforge-web}" />
+    </exec>
+  </target>
+
+  <target name="deploy-javadoc"
+          description="Rsync client library Javadoc to sourceforge web site">
+
+    <ant dir="${client}" target="javadoc"
+         inheritall="false" inheritrefs="false" />
+
+    <exec executable="rsync" dir="${client}/build/javadoc">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg value="." />
+      <arg value="${sourceforge-web}/client-library/javadoc/" />
+    </exec>
+  </target>
+  
+  <!-- Build a web page from text template using Markdown -->
+  <target name="fn:make-html" 
+          depends="check-html-uptodate" 
+          unless="uptodate-${dest}">
+    <property name="dest-html" value="${web}/site/${dest}" />
+
+    <concat destfile="${dest-html}" append="false">
+      <filelist dir="${web}/src" files="header.htmli" />
+    	
+      <filterchain>
+        <expandproperties />
+      </filterchain>
+    </concat>
+    
+    <exec executable="perl">
+      <arg value="${markdown}" />
+      <arg value="${web}/src/${src}" />
+      
+      <redirector append="true">
+        <outputmapper type="merge" to="${dest-html}" />
+      </redirector>
+    </exec>
+    
+    <concat destfile="${dest-html}" append="true">
+      <filelist dir="${web}/src" files="footer.htmli" />
+    </concat>
+  </target>
+
+  <target name="check-html-uptodate">
+    <dependset>
+      <srcfileset dir="src" includes="${src}" />
+
+      <targetfileset dir="site" includes="${dest}" />
+    </dependset>
+
+    <condition property="uptodate-${dest}">
+      <and>
+        <available file="site/${dest}" />
+      </and>
+    </condition>
+  </target>
+
+  <target name="htmlize-source-examples">
+
+    <taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask"
+             classpath="${support}/java_syntax_highlighting/syntax.jar" />
+
+    <mkdir dir="site/client-library/examples" />
+
+    <syntax srcDir="${client}/src/examples/org/avis/client/examples"
+            destDir="${web}/site/client-library/examples" 
+            css="../../client-examples.css" />
+  </target>
+
+  <target name="clean" description="Clean generated website files">
+    <delete>
+      <fileset dir="${web}/site">
+        <include name="*.html" />
+      </fileset>
+
+      <fileset dir="${web}/site/client-library/examples" />
+
+    </delete>
+  </target>
+
+</project>

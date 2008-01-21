@@ -1,0 +1,15 @@
+# CMake generated Testfile for 
+# Source directory: C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4
+# Build directory: C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32
+# 
+# This file replicates the SUBDIRS() and ADD_TEST() commands from the source
+# tree CMakeLists.txt file, skipping any SUBDIRS() or ADD_TEST() commands
+# that are excluded by CMake control structures, i.e. IF() commands.
+#
+# The next line is critical for Dart to work
+# Duh :-)
+
+ADD_TEST(pcre_test "cmd" "/C" "C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/RunTest.bat")
+ADD_TEST(pcrecpp_test "C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/$(OutDir)/pcrecpp_unittest.exe")
+ADD_TEST(pcre_scanner_test "C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/$(OutDir)/pcre_scanner_unittest.exe")
+ADD_TEST(pcre_stringpiece_test "C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/$(OutDir)/pcre_stringpiece_unittest.exe")
