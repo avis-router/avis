@@ -229,7 +229,7 @@ Nr.   Classes Functions      NCSS  Javadocs Package
               19.82    138.47   1151.35     55.65 | Package
                          6.99     58.08      2.81 | Class
                                    8.31      0.40 | Function
-Pre release 1.2 (no tests)
+Pre release 1.2 (no tests)	
 
 Thu, Dec 20, 2007  12:30:56 Australia/Adelaide
 
@@ -260,6 +260,38 @@ Nr.   Classes Functions      NCSS  Javadocs Package
                          7.36     54.55      3.09 | Class
                                    7.41      0.42 | Function
 
+Release 1.2
+
+Mon, Jan 21, 2008  11:16:45 Australia/Adelaide
+
+Nr.   Classes Functions      NCSS  Javadocs Package
+  1        26       248      1945       146 org.avis.client
+  2         5         5       108         0 org.avis.client.examples
+  3         5        37       296        13 org.avis.common
+  4        12        84       584        49 org.avis.config
+  5        18       165      1725        50 org.avis.federation
+  6         4        16       504        13 org.avis.federation.io
+  7         5        29       116         0 org.avis.federation.io.messages
+  8        20       111      1087        57 org.avis.io
+  9        27       130       605        16 org.avis.io.messages
+ 10         3        27       133        12 org.avis.logging
+ 11        29       209      1978        68 org.avis.router
+ 12        11        98       886        50 org.avis.security
+ 13        11        97       661        37 org.avis.subscription.ast
+ 14        31       180       826        11 org.avis.subscription.ast.nodes
+ 15        10       148      1971        21 org.avis.subscription.parser
+ 16         8        30       370        10 org.avis.tools
+ 17        21       143       983        95 org.avis.util
+    --------- --------- --------- ---------
+          246      1757     14778       648 Total
+
+ Packages   Classes Functions      NCSS  Javadocs | per
+-------------------------------------------------------------
+    17.00    246.00   1757.00  14778.00    648.00 | Project
+              14.47    103.35    869.29     38.12 | Package
+                         7.14     60.07      2.63 | Class
+                                   8.41      0.37 | Function
+                                   
 Common cs Router
 
 1.0
