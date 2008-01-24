@@ -4,6 +4,8 @@ Releases
 * add note about windows registry Java currentversion = 1.6 when 1.5
   installed.
 
+* router src distro needs ec/ep
+
 Server 1.2
 
  * DONE: add Unix basic distro
