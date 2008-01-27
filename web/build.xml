@@ -11,6 +11,7 @@
   <property name="avis-root" value="${basedir}/.." />
   <property name="web" value="${avis-root}/web" />
   <property name="client" value="${avis-root}/java/client" />
+  <property name="server" value="${avis-root}/java/server" />
   <property name="support" value="${avis-root}/support" />
 
   <property name="sourceforge-web" 
@@ -129,6 +130,18 @@
           unless="uptodate-${dest}">
     <property name="dest-html" value="${web}/site/${dest}" />
 
+    <!-- load server/client properties for release info -->
+    <property file="${client}/avis-client.properties" prefix="client." />
+    <property file="${server}/avis-server.properties" prefix="server." />
+
+    <!-- init properties available in web templates -->
+    <property name="client.version" 
+              value="${client.avis.version.major}.${client.avis.version.minor}.${client.avis.version.patch}" />
+
+    <property name="server.version" 
+              value="${server.avis.version.major}.${server.avis.version.minor}.${server.avis.version.patch}" />
+
+    <!-- header -->
     <concat destfile="${dest-html}" append="false">
       <filelist dir="${web}/src" files="header.htmli" />
     	
@@ -137,15 +150,21 @@
       </filterchain>
     </concat>
     
+    <!-- expand Markdown body -->
     <exec executable="perl">
       <arg value="${markdown}" />
       <arg value="${web}/src/${src}" />
       
       <redirector append="true">
         <outputmapper type="merge" to="${dest-html}" />
+
+        <outputfilterchain>
+          <expandproperties />
+        </outputfilterchain>
       </redirector>
     </exec>
     
+    <!-- footer -->
     <concat destfile="${dest-html}" append="true">
       <filelist dir="${web}/src" files="footer.htmli" />
     </concat>
