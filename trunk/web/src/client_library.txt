@@ -7,12 +7,22 @@ foundations as the Avis router, but is made available under the terms
 of the GNU Lesser General Public License (LGPL) rather than the GPL
 used by the router.
 
- * [Download the client library][download].
+ * [Download the client library][client_src] (latest stable version
+   ${client.version}: see the [Sourceforge download page][client_all]
+   for older releases).
 
- * [View Javadoc API documentation][javadoc] for the latest version of
-   the library.
+ * [Javadoc API documentation][javadoc] for the latest version of the
+   library.
 
  * A description of the [Elvin subscription language][subscription].
+
+[client_src]: http://downloads.sourceforge.net/avis/avis-client-${client.version}.zip
+
+[client_all]: https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
+
+[javadoc]: http://avis.sourceforge.net/client-library/javadoc/
+
+[subscription]: subscription_language.html
 
 Examples
 ----------------------------------------------------------------------
@@ -42,10 +52,4 @@ in `src/examples` and documentation on how to use them in
 You can also see a demonstration of the client library in a realistic
 scenario at the [examples page][examples].
 
-[download]: https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
-
-[javadoc]: http://avis.sourceforge.net/client-library/javadoc/
-
 [examples]: examples.html
-
-[subscription]: subscription_language.html
