@@ -61,7 +61,7 @@ Java and make it the default runtime.
 
 To install:
 
-    > sudo rpm -ivh avis-1.2.0.rpm
+    > sudo rpm -ivh avis-${server.version}.rpm
 
 Configuration options are in the file `/etc/avis/avisd.config`.
 
@@ -118,15 +118,15 @@ The Avis source distribution comes with precompiled binaries ready to
 run on any platform. Simply unzip the source distribution and run Avis
 from a bash command shell:
 
-     > cd avis-1.2.0/server
+     > cd avis-${server.version}/server
      > ./bin/avisd
 
 See `etc/avisd.config` for configuration options.
 
 There is also a smaller binary distribution intended for Unix systems:
-look for a download like `avis-1.2.0.tar.bz2`. This distribution can
-be installed using the included `install.sh` script or via [GNU
-stow][stow]. See the included README for more information.
+look for a download like `avis-${server.version}.tar.bz2`. This
+distribution can be installed using the included `install.sh` script
+or via [GNU stow][stow]. See the included README for more information.
 
 [downloads]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191
 [sun_java]: http://java.sun.com/javase/downloads
