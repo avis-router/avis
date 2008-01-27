@@ -1,16 +1,47 @@
 Avis Downloads
 ======================================================================
 
+The downloads listed here are for the latest stable version of the
+router (${server.version}) and client library (${client.version}). See
+the [Avis Sourceforge download page][all_downloads] for older
+releases.
+
 Avis Router
 ----------------------------------------------------------------------
 
 The Avis router is the core Avis server component that provides
 an Elvin publish/subscribe message router service.
 
-* **[Download the Avis router service from Sourceforge][router]**
-
 After you've downloaded the router, you may want to look at the
 [installation guide][install].
+
+### Installer Packages
+
+The installer packages contain precompiled Avis binaries packaged for
+various platforms. They contain the Avis router and the `ec` and `ep`
+utilities for consuming and producing Elvin notifications from the
+command line.
+
+* **[Download the Avis Windows installer][router_windows_exe]**. Can
+    optionally install Avis as a Windows system service.
+
+* **[Download the Avis RPM installer][router_fedora_rpm]**. This is a
+    platform-independent RPM developed for Redhat Fedora, but which
+    will likely work fine on any RPM-based Linux
+    distribution. Includes an `init.d` script to run Avis as a system
+    daemon.
+
+* **[Download the Avis Mac OS X installer][router_mac]** for Mac OS X
+    10.4 and 10.5. Includes a `launchd` profile to run as a startup
+    service.
+
+* **[Download the Avis Unix installer][router_unix]**. This is a
+    binary package ready to be installed on most Unix systems. See the
+    `README.txt` file that accompanies the distribution.
+
+### Source
+
+* **[Download the Avis router source][router_src]**.
 
 Avis Client Library
 ----------------------------------------------------------------------
@@ -18,12 +49,28 @@ Avis Client Library
 The [Avis client library][client_info] is a Java 5 API for programming
 clients that use an Elvin router.
 
-* **[Download the Avis Java client library from Sourceforge][client]**
+### Source
 
-[router]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191
+* **[Download the Avis Java client library][client_src]** (source and binary)
 
-[client]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
+[all_downloads]: http://sourceforge.net/project/showfiles.php?group_id=181381
+
+[router_all]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191
+
+[client_all]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
 
 [install]: installation.html
 
 [client_info]: client_library.html
+
+[router_src]: http://downloads.sourceforge.net/avis/avis-src-${server.version}.zip
+[router_windows_exe]: http://downloads.sourceforge.net/avis/avis-${server.version}.exe
+
+[router_fedora_rpm]: http://downloads.sourceforge.net/avis/avis-${server.version}.rpm
+
+[router_mac]: http://downloads.sourceforge.net/avis/Avis-${server.version}.tbz
+
+[router_unix]: http://downloads.sourceforge.net/avis/avis-${server.version}.tar.bz2
+
+[client_src]: http://downloads.sourceforge.net/avis/avis-client-${client.version}.zip
+
