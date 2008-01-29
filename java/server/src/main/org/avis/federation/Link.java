@@ -285,7 +285,7 @@ public class Link implements NotifyListener
 
   private void handleAck (Ack ack)
   {
-    if (ack.request instanceof FedSubReplace)
+    if (ack.request.getClass () == FedSubReplace.class)
       subscribed = true;
   }
 
