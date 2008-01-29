@@ -1389,8 +1389,8 @@ public final class Elvin implements Closeable
     {
       String message = 
         "Transaction ID mismatch in reply from router: " +
-         "reply " + className (reply) + " XID " + reply.xid + 
-         " != request " + className (request) + " XID " + request.xid;
+        "reply " + reply.name () + " XID " + reply.xid + 
+        " != request " + request.name () + " XID " + request.xid;
       
       close (REASON_PROTOCOL_VIOLATION, message);
       
@@ -1556,9 +1556,10 @@ public final class Elvin implements Closeable
       {
         Subscription subscription = subscriptions.get (id);
       
+        // see subscribe () for reason behind this
         if (subscription == null)
           subscription = subscriptions.get (0L);
-      
+
         if (subscription != null)
           subscriptionSet.add (subscription);
         else
@@ -1593,6 +1594,7 @@ public final class Elvin implements Closeable
       logListeners.fire (new ElvinLogEvent (this, type, message, error));
     } else
     {
+      // log to console if no log handler
       System.err.println 
         (getClass ().getName () + ": " + type + ": " + message);
       
