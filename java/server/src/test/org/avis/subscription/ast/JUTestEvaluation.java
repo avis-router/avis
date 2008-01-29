@@ -52,6 +52,7 @@ import static org.avis.subscription.ast.Node.BOTTOM;
 import static org.avis.subscription.ast.Node.EMPTY_NOTIFICATION;
 import static org.avis.subscription.ast.Node.FALSE;
 import static org.avis.subscription.ast.Node.TRUE;
+import static org.avis.subscription.ast.Nodes.unparse;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.Mode.DECOMPOSE;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.Mode.DECOMPOSE_COMPAT;
 import static org.junit.Assert.assertEquals;
@@ -536,7 +537,6 @@ public class JUTestEvaluation
     // test reduction to constant
     assertReducesTo ("1 == 1", "true");
     assertReducesTo ("1 != 1", "false");
-    assertReducesTo ("1 != 1", "false");
     assertReducesTo ("10 > 9", "true");
     assertReducesTo ("!(10 > 9)", "false");
     assertReducesTo ("1 == 1 ^^ 10 > 9", "false");
@@ -627,10 +627,8 @@ public class JUTestEvaluation
   private static void assertReducesTo (String subExpr, String treeExpr)
     throws ParseException
   {
-    // System.out.println ("tree: " +
-    //                     Nodes.unparse (parse (subExpr).expandConstants ()));
     assertEquals (treeExpr,
-                  Nodes.unparse (parse (subExpr).inlineConstants ()));
+                  unparse (parse (subExpr).inlineConstants ()));
   }
   
   private static Node parse (String expr)
@@ -647,13 +645,13 @@ public class JUTestEvaluation
    * @param b Right value
    * @param correct Correct result
    */
-  private static <NODE extends Node>
-    void checkBooleanOp (Class<NODE> opType,
+  private static <T extends Node>
+    void checkBooleanOp (Class<T> opType,
                          Boolean a, Boolean b,
                          Boolean correct)
     throws Exception
   {
-    NODE node = newLogicNodeInstance (opType, a, b);
+    T node = newLogicNodeInstance (opType, a, b);
     Object result = node.evaluate (EMPTY_NOTIFICATION);
     
     assertEquals ("Truth table check failed:" + node.name () + 
@@ -662,15 +660,15 @@ public class JUTestEvaluation
                   correct, result);
   }
   
-  private static <NODE extends Node>
-    void checkBooleanOp (Class<NODE> opType,
+  private static <T extends Node>
+    void checkBooleanOp (Class<T> opType,
                          Boolean a, 
                          Boolean b,
                          Boolean c,
                          Boolean correct)
     throws Exception
   {
-    NODE node = newLogicNodeInstance (opType, a, b, c);
+    T node = newLogicNodeInstance (opType, a, b, c);
     Object result = node.evaluate (EMPTY_NOTIFICATION);
     
     assertEquals ("Truth table check failed:" + node.name () + 
@@ -683,22 +681,22 @@ public class JUTestEvaluation
    * Create a new node instance for nodes taking two fixed value
    * boolean children.
    */
-  private static <NODE extends Node>
-    NODE newLogicNodeInstance (Class<NODE> nodeType, Boolean a, Boolean b)
-    throws Exception
+  private static <T extends Node>
+    T newLogicNodeInstance (Class<T> nodeType, Boolean a, Boolean b)
+      throws Exception
   {
-    Constructor<NODE> c =
+    Constructor<T> c =
       nodeType.getConstructor (Node.class, Node.class);
     
     return c.newInstance (new Const (a), new Const (b));
   }
   
-  private static <NODE extends Node>
-    NODE newLogicNodeInstance (Class<NODE> nodeType,
-                               Boolean a, Boolean b, Boolean c)
+  private static <T extends Node>
+    T newLogicNodeInstance (Class<T> nodeType,
+                            Boolean a, Boolean b, Boolean c)
     throws Exception
   {
-    Constructor<NODE> constructor =
+    Constructor<T> constructor =
       nodeType.getConstructor (Collection.class);
     
     ArrayList<Node> children = new ArrayList<Node> (3);
