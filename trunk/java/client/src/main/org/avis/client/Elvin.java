@@ -754,10 +754,6 @@ public final class Elvin implements Closeable
    */
   public synchronized void setReceiveTimeout (long receiveTimeout)
   {
-    if (receiveTimeout < 0)
-      throw new IllegalArgumentException
-        ("Timeout cannot be < 0: " + receiveTimeout);
-    
     LivenessFilter.setReceiveTimeoutFor (connection, receiveTimeout);
     
     options.receiveTimeout = receiveTimeout;
