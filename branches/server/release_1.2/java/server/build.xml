@@ -212,7 +212,7 @@
       </filterchain>
     </copy>
 
-    <copy todir="${src_tmp}/common/java">
+    <copy todir="${src_tmp}/common">
       <fileset dir="${common}">
         <include name="src/main/**/*.java"/>
         <include name="src/test/**/*.java"/>
@@ -250,7 +250,7 @@
         <include name="bin/avisd" />
       </zipfileset>
       
-      <zipfileset dir="${common}" prefix="${src-zip-root}/common/java">
+      <zipfileset dir="${common}" prefix="${src-zip-root}/common">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -274,12 +274,12 @@
     
     <ant dir="${tmp}/${src-zip-root}/server" target="clean"
          inheritall="false">
-      <property name="common" value="${common}" />
+      <property name="common" value="${tmp}/${src-zip-root}/common" />
     </ant>
     
     <ant dir="${tmp}/${src-zip-root}/server" target="dist-source"
          inheritall="false">
-      <property name="common" value="${common}" />
+      <property name="common" value="${tmp}/${src-zip-root}/common" />
     </ant>
     
     <delete dir="${tmp}" />
