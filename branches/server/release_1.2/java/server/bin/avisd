@@ -51,7 +51,7 @@ java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
 
 command="java $java_options -jar $avisd_jar $avis_opts"
 
-if [ $daemon == 1 ]; then
+if [ $daemon -eq 1 ]; then
 
   if [ -z $logfile ]; then
     logfile=/dev/null
