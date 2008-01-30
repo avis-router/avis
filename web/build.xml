@@ -8,10 +8,17 @@
   
   <description>Avis web site</description>
 
+  <!-- latest client and server release streams -->
+  <property name="client-release" value="1.1" />
+  <property name="server-release" value="1.2" />
+
   <property name="avis-root" value="${basedir}/.." />
   <property name="web" value="${avis-root}/web" />
-  <property name="client" value="${avis-root}/java/client" />
-  <property name="server" value="${avis-root}/java/server" />
+
+  <!-- base for released client and server -->
+  <property name="client" value="${avis-root}/../avis-client-${client-release}/java/client" />
+  <property name="server" value="${avis-root}/../avis-${server-release}/java/server" />
+  
   <property name="support" value="${avis-root}/support" />
 
   <property name="sourceforge-web" 
@@ -140,6 +147,8 @@
 
     <property name="server.version" 
               value="${server.avis.version.major}.${server.avis.version.minor}.${server.avis.version.patch}" />
+
+    <property name="server.release" value="${server.avis.release}" />
 
     <!-- header -->
     <concat destfile="${dest-html}" append="false">
