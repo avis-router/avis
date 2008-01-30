@@ -63,7 +63,7 @@ clients that use an Elvin router.
 
 [client_info]: client_library.html
 
-[router_src]: http://downloads.sourceforge.net/avis/avis-src-${server.version}.zip
+[router_src]: http://downloads.sourceforge.net/avis/avis-src-${server.version}${server.release}.zip
 [router_windows_exe]: http://downloads.sourceforge.net/avis/avis-${server.version}.exe
 
 [router_fedora_rpm]: http://downloads.sourceforge.net/avis/avis-${server.version}.rpm
