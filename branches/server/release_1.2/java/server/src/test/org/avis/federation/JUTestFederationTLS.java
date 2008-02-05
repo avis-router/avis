@@ -74,6 +74,7 @@ public class JUTestFederationTLS
     
     RouterOptions options = new RouterOptions (routerOptionSet);
     
+    options.set ("Listen", "elvin:/secure/127.0.0.1:" + PORT1);
     options.set ("TLS.Keystore", getClass ().getResource ("router.ks"));
     options.set ("TLS.Keystore-Passphrase", "testing");
     
