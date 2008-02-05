@@ -532,12 +532,14 @@ public class Router implements IoHandler, Closeable
   public void messageReceived (IoSession session, Object messageObject)
     throws Exception
   {
-    if (closing)
+    if (closing || connectionClosed (session))
       return;
     
     if (shouldLog (TRACE))
+    {
       trace ("Server got message from " + Text.idFor (session) +
              ": " + messageObject, this);
+    }
     
     Message message = (Message)messageObject;
 
@@ -1223,6 +1225,17 @@ public class Router implements IoHandler, Closeable
     return (Connection)session.getAttachment ();
   }
   
+  /**
+   * Test if connection is closed or underlying session is closing.
+   */
+  private static boolean connectionClosed (IoSession session)
+  {
+    Connection connection = peekConnectionFor (session);
+    
+    return session.isClosing () || 
+            (connection != null && !connection.isOpen ());
+  }
+
   public static boolean isSecure (IoSession session)
   {
     return session.getServiceConfig ().getFilterChain ().contains 
