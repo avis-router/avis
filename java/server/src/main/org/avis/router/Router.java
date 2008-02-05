@@ -927,7 +927,8 @@ public class Router implements IoHandler, Closeable
     if (diagnosticMessage == null)
       diagnosticMessage = "Frame format error";
     
-    warn ("Disconnecting client due to protocol violation: " +
+    warn ("Disconnecting client " + idFor (session) + 
+          " due to protocol violation: " +
           diagnosticMessage, Router.class);
 
     if (error != null)
