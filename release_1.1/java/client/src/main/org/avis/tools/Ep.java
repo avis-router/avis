@@ -57,6 +57,8 @@ public class Ep
     throws IOException, InvalidFormatException
   {
     this.elvin = new Elvin (options.elvinUri, options.clientOptions);
+
+    elvin.closeOnExit ();
     
     System.err.println ("ep: Connected to server " +
                         options.elvinUri.toCanonicalString ());
