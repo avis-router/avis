@@ -59,7 +59,9 @@ public class Ec
     throws IOException
   {
     this.elvin = new Elvin (options.elvinUri, options.clientOptions);
-    
+
+    elvin.closeOnExit ();
+
     System.err.println ("ec: Connected to server " +
                         options.elvinUri.toCanonicalString ());
     
