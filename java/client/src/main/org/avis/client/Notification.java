@@ -55,7 +55,7 @@ import static org.avis.util.Text.stripBackslashes;
 public final class Notification
   implements Cloneable, Iterable<Entry<String, Object>>
 {
-  Map<String, Object> attributes;
+  protected Map<String, Object> attributes;
   
   /**
    * Create an empty notification.

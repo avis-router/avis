@@ -34,16 +34,7 @@ public class Ec
   {
     try
     {
-      final Ec ec = new Ec (new EcOptions (args));
-      
-      Runtime.getRuntime ().addShutdownHook (new Thread ()
-      {
-        @Override
-        public void run ()
-        {
-          ec.close ();
-        }
-      });
+      new Ec (new EcOptions (args));
     } catch (IOException ex)
     {
       handleIOError ("ec", ex);
@@ -53,12 +44,10 @@ public class Ec
     }
   }
 
-  private Elvin elvin;
-  
   public Ec (EcOptions options)
     throws IOException
   {
-    this.elvin = new Elvin (options.elvinUri, options.clientOptions);
+    Elvin elvin = new Elvin (options.elvinUri, options.clientOptions);
 
     elvin.closeOnExit ();
 
@@ -85,11 +74,6 @@ public class Ec
     elvin.addNotificationListener (new Listener ());
   }
   
-  public void close ()
-  {
-    elvin.close ();
-  }
-
   static class Listener implements GeneralNotificationListener
   {
     private DateFormat iso8601Date;
