@@ -57,27 +57,6 @@ public final class Collections
   }
 
   /**
-   * Join a collection of items with a separator and append to a
-   * string builder.
-   */
-  public static void join (StringBuilder str,
-                           Iterable<?> items,
-                           char separator)
-  {
-    boolean first = true;
-
-    for (Object item : items)
-    {
-      if (!first)
-        str.append (separator);
-      
-      first = false;
-      
-      str.append (item);
-    }
-  }
-
-  /**
    * Compute the difference between set1 and set2. This is not
    * guaranteed to generate a new set instance.
    */

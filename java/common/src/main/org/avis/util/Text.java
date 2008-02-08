@@ -536,6 +536,27 @@ public final class Text
     
     return str.toString ();
   }
+  
+  /**
+   * Join a collection of items with a separator and append to a
+   * string builder.
+   */
+  public static void join (StringBuilder str,
+                           Iterable<?> items,
+                           char separator)
+  {
+    boolean first = true;
+  
+    for (Object item : items)
+    {
+      if (!first)
+        str.append (separator);
+      
+      first = false;
+      
+      str.append (item);
+    }
+  }
 
   /**
    * Generate human friendly string dump of a Map.
