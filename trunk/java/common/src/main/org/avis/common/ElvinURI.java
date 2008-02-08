@@ -14,8 +14,8 @@ import static java.util.Collections.emptyMap;
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
-import static org.avis.util.Collections.join;
 import static org.avis.util.Collections.list;
+import static org.avis.util.Text.join;
 
 /**
  * An Elvin URI identifying an Elvin router as described in the "Elvin
