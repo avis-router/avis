@@ -15,7 +15,7 @@ an Elvin publish/subscribe message router service.
 After you've downloaded the router, you may want to look at the
 [installation guide][install].
 
-### Installer Packages
+### Installer Binaries
 
 The installer packages contain precompiled Avis binaries packaged for
 various platforms. They contain the Avis router and the `ec` and `ep`
@@ -49,9 +49,22 @@ Avis Client Library
 The [Avis client library][client_info] is a Java 5 API for programming
 clients that use an Elvin router.
 
-### Source
-
 * **[Download the Avis Java client library][client_src]** (source and binary)
+
+Subversion
+----------------------------------------------------------------------
+
+You can get the latest Avis development stream from:
+
+    https://avis.svn.sourceforge.net/svnroot/avis/trunk
+
+To get a released version of the router:
+
+    https://avis.svn.sourceforge.net/svnroot/avis/branches/server/release_1.2
+
+To get a released version of the client library:
+
+    https://avis.svn.sourceforge.net/svnroot/avis/branches/client/release_1.1
 
 [all_downloads]: http://sourceforge.net/project/showfiles.php?group_id=181381
 
