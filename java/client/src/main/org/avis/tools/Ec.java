@@ -14,6 +14,7 @@ import org.avis.client.CloseListener;
 import org.avis.client.Elvin;
 import org.avis.client.GeneralNotificationEvent;
 import org.avis.client.GeneralNotificationListener;
+import org.avis.client.Subscription;
 
 import static org.avis.tools.EcOptions.USAGE;
 import static org.avis.tools.ToolOptions.handleIOError;
@@ -34,7 +35,9 @@ public class Ec
   {
     try
     {
-      new Ec (new EcOptions (args));
+      Ec ec = new Ec (new EcOptions (args));
+
+      ec.elvin.closeOnExit ();
     } catch (IOException ex)
     {
       handleIOError ("ec", ex);
@@ -44,12 +47,12 @@ public class Ec
     }
   }
 
+  private Elvin elvin;
+
   public Ec (EcOptions options)
     throws IOException
   {
-    Elvin elvin = new Elvin (options.elvinUri, options.clientOptions);
-
-    elvin.closeOnExit ();
+    elvin = new Elvin (options.elvinUri, options.clientOptions);
 
     System.err.println ("ec: Connected to server " +
                         options.elvinUri.toCanonicalString ());
@@ -69,9 +72,20 @@ public class Ec
       }
     });
     
-    elvin.subscribe (options.subscription, options.secureMode);
+    Subscription subscription = null;
     
-    elvin.addNotificationListener (new Listener ());
+    try
+    {
+      subscription = 
+        elvin.subscribe (options.subscription, options.secureMode);
+    
+      elvin.addNotificationListener (new Listener ());
+    } finally
+    {
+      // close connection if subscription failed
+      if (subscription == null)
+        elvin.close ();
+    }
   }
   
   static class Listener implements GeneralNotificationListener
@@ -126,5 +140,10 @@ public class Ec
     {
       output.write ('\n');
     }
+  }
+
+  public void close ()
+  {
+    elvin.close ();
   }
 }
