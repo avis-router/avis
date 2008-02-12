@@ -206,8 +206,7 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
        * avoid two hosts syncing their checks and doubling up on
        * messages.
        */
-      scheduleLivenessCheck 
-        (livenessTimeout - (long)(random () * livenessTimeout));
+      scheduleLivenessCheck ((long)(random () * livenessTimeout));
     }
     
     public LivenessFilter filter ()
