@@ -253,14 +253,13 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
     {
       if (livenessFuture == null)
       {
-        livenessFuture = executor.schedule 
-          (new Runnable ()
+        livenessFuture = executor.schedule (new Runnable ()
+        {
+          public void run ()
           {
-            public void run ()
-            {
-              checkLiveness ();
-            }
-          }, delay, MILLISECONDS);
+            checkLiveness ();
+          }
+        }, delay, MILLISECONDS);
       }
     }
 
@@ -290,14 +289,13 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
         
         session.write (TestConn.INSTANCE);
         
-        livenessFuture = executor.schedule 
-          (new Runnable ()
+        livenessFuture = executor.schedule (new Runnable ()
+        {
+          public void run ()
           {
-            public void run ()
-            {
-              checkConnReply ();
-            }
-          }, receiveTimeout, MILLISECONDS);
+            checkConnReply ();
+          }
+        }, receiveTimeout, MILLISECONDS);
       } else
       {
         scheduleLivenessCheck ();
