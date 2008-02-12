@@ -27,7 +27,10 @@ public class Ep
   {
     try
     {
-      new Ep (new EpOptions (args));
+      Ep ep = new Ep (new EpOptions (args));
+
+      ep.elvin.closeOnExit ();
+      
     } catch (InvalidFormatException ex)
     {
       System.err.println ("ep: Invalid notification: " + ex.getMessage ());
@@ -42,14 +45,15 @@ public class Ep
     }
   }
 
+  private Elvin elvin;
+
   public Ep (EpOptions options)
     throws IOException, InvalidFormatException
   {
-    Elvin elvin = new Elvin (options.elvinUri, options.clientOptions);
+    elvin = new Elvin (options.elvinUri, options.clientOptions);
 
     try
     {
-      elvin.closeOnExit ();
     
       System.err.println ("ep: Connected to server " +
                           options.elvinUri.toCanonicalString ());
