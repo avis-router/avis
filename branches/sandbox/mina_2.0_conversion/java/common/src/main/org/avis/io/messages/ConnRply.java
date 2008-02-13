@@ -2,7 +2,7 @@ package org.avis.io.messages;
 
 import java.util.Map;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.io.XdrCoding.getNameValues;
@@ -34,7 +34,7 @@ public class ConnRply extends XidMessage
   }
   
   @Override
-  public void encode (ByteBuffer out)
+  public void encode (IoBuffer out)
     throws ProtocolCodecException
   {
     super.encode (out);
@@ -43,7 +43,7 @@ public class ConnRply extends XidMessage
   }
   
   @Override
-  public void decode (ByteBuffer in)
+  public void decode (IoBuffer in)
     throws ProtocolCodecException
   {
     super.decode (in);

@@ -6,7 +6,7 @@ import java.util.Random;
 
 import java.io.IOException;
 
-import org.apache.mina.transport.socket.nio.SocketSessionConfig;
+import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

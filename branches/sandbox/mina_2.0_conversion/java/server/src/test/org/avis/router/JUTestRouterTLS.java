@@ -10,11 +10,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
-import org.apache.mina.common.ThreadModel;
-import org.apache.mina.filter.SSLFilter;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
-
+import org.apache.mina.filter.ssl.SslFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,8 +56,7 @@ public class JUTestRouterTLS
     Router router = new Router (options);
     
     SimpleClient standardClient = 
-      new SimpleClient (new InetSocketAddress ("127.0.0.1", DEFAULT_PORT), 
-                        createStandardConfig ());
+      new SimpleClient (new InetSocketAddress ("127.0.0.1", DEFAULT_PORT));
     
     standardClient.connect ();
     
@@ -67,7 +64,7 @@ public class JUTestRouterTLS
     
     SimpleClient secureClient = 
       new SimpleClient (new InetSocketAddress ("127.0.0.1", SECURE_PORT), 
-                        createTLSConfig ());
+                        createTLSFilters ());
     
     secureClient.connect ();
     
@@ -76,33 +73,21 @@ public class JUTestRouterTLS
     router.close ();
   }
 
-  private static SocketConnectorConfig createTLSConfig () 
+  private static DefaultIoFilterChainBuilder createTLSFilters () 
     throws Exception
   {
-    SocketConnectorConfig connectorConfig = createStandardConfig ();
+    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
     
     SSLContext sslContext = SSLContext.getInstance ("TLS");
     sslContext.init (null, new TrustManager [] {ACCEPT_ALL_MANAGER}, null);
     
-    SSLFilter sslFilter = new SSLFilter (sslContext);
+    SslFilter sslFilter = new SslFilter (sslContext);
     sslFilter.setUseClientMode (true);
     
-    connectorConfig.getFilterChain ().addFirst  ("ssl", sslFilter);
+    filters.addLast ("ssl", sslFilter);
+    filters.addLast  ("codec", ClientFrameCodec.FILTER);
                                 
-    return connectorConfig;
-  }
-  
-  private static SocketConnectorConfig createStandardConfig () 
-    throws Exception
-  {
-    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (10);
-    
-    connectorConfig.getFilterChain ().addLast 
-      ("codec", ClientFrameCodec.FILTER);
-    
-    return connectorConfig;
+    return filters;
   }
   
   static final X509TrustManager ACCEPT_ALL_MANAGER = new X509TrustManager ()

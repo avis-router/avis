@@ -10,9 +10,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import static java.nio.ByteBuffer.wrap;
 import static java.nio.CharBuffer.wrap;
 import static java.util.Collections.emptyMap;
 
@@ -104,14 +105,14 @@ public final class XdrCoding
     if (utf8Bytes.length == 0)
       return "";
     else
-      return UTF8_DECODER.get ().decode
-        (java.nio.ByteBuffer.wrap (utf8Bytes, offset, length)).toString ();
+      return UTF8_DECODER.get ().decode 
+               (wrap (utf8Bytes, offset, length)).toString ();
   }
   
   /**
    * Read a length-delimited 4-byte-aligned UTF-8 string.
    */
-  public static String getString (ByteBuffer in)
+  public static String getString (IoBuffer in)
     throws BufferUnderflowException, ProtocolCodecException
   {
     try
@@ -138,7 +139,7 @@ public final class XdrCoding
   /**
    * Write a length-delimited 4-byte-aligned UTF-8 string.
    */
-  public static void putString (ByteBuffer out, String string)
+  public static void putString (IoBuffer out, String string)
   {
     try
     {
@@ -171,7 +172,7 @@ public final class XdrCoding
   /**
    * Generate null padding to 4-byte pad out a block of a given length
    */
-  public static void putPadding (ByteBuffer out, int length)
+  public static void putPadding (IoBuffer out, int length)
   {
     for (int count = paddingFor (length); count > 0; count--)
       out.put ((byte)0);
@@ -190,7 +191,7 @@ public final class XdrCoding
   /**
    * Write a name/value set.
    */
-  public static void putNameValues (ByteBuffer out,
+  public static void putNameValues (IoBuffer out,
                                     Map<String, Object> nameValues)
     throws ProtocolCodecException
   {
@@ -206,7 +207,7 @@ public final class XdrCoding
   /**
    * Read a name/value set.
    */
-  public static Map<String, Object> getNameValues (ByteBuffer in)
+  public static Map<String, Object> getNameValues (IoBuffer in)
     throws ProtocolCodecException
   {
     int pairs = getPositiveInt (in);
@@ -222,7 +223,7 @@ public final class XdrCoding
     return nameValues;
   }
 
-  public static void putObjects (ByteBuffer out, Object [] objects)
+  public static void putObjects (IoBuffer out, Object [] objects)
     throws ProtocolCodecException
   {
     out.putInt (objects.length);
@@ -231,7 +232,7 @@ public final class XdrCoding
       putObject (out, object);
   }
   
-  public static Object [] getObjects (ByteBuffer in)
+  public static Object [] getObjects (IoBuffer in)
     throws ProtocolCodecException
   {
     Object [] objects = new Object [getPositiveInt (in)];
@@ -245,7 +246,7 @@ public final class XdrCoding
   /**
    * Put an object value in type_id/value format.
    */
-  public static void putObject (ByteBuffer out, Object value)
+  public static void putObject (IoBuffer out, Object value)
     throws ProtocolCodecException
   {
     if (value instanceof String)
@@ -281,7 +282,7 @@ public final class XdrCoding
   /**
    * Read an object in type_id/value format.
    */
-  public static Object getObject (ByteBuffer in)
+  public static Object getObject (IoBuffer in)
     throws ProtocolCodecException
   {
     int type = in.getInt ();
@@ -306,7 +307,7 @@ public final class XdrCoding
   /**
    * Write a length-delimited, 4-byte-aligned byte array.
    */
-  public static void putBytes (ByteBuffer out, byte [] bytes)
+  public static void putBytes (IoBuffer out, byte [] bytes)
   {
     out.putInt (bytes.length);
     out.put (bytes);
@@ -318,7 +319,7 @@ public final class XdrCoding
    * 
    * @throws ProtocolCodecException 
    */
-  public static byte [] getBytes (ByteBuffer in) 
+  public static byte [] getBytes (IoBuffer in) 
     throws ProtocolCodecException
   {
     return getBytes (in, getPositiveInt (in));
@@ -327,7 +328,7 @@ public final class XdrCoding
   /**
    * Read a length-delimited, 4-byte-aligned byte array with a given length.
    */
-  public static byte [] getBytes (ByteBuffer in, int length)
+  public static byte [] getBytes (IoBuffer in, int length)
   {
     byte [] bytes = new byte [length];
     
@@ -337,12 +338,12 @@ public final class XdrCoding
     return bytes;
   }
 
-  public static void putBool (ByteBuffer out, boolean value)
+  public static void putBool (IoBuffer out, boolean value)
   {
     out.putInt (value ? 1 : 0);
   }
   
-  public static boolean getBool (ByteBuffer in)
+  public static boolean getBool (IoBuffer in)
     throws ProtocolCodecException
   {
     int value = in.getInt ();
@@ -359,7 +360,7 @@ public final class XdrCoding
   /**
    * Read a length-demlimited array of longs.
    */
-  public static long [] getLongArray (ByteBuffer in)
+  public static long [] getLongArray (IoBuffer in)
     throws ProtocolCodecException
   {
     long [] longs = new long [getPositiveInt (in)];
@@ -373,7 +374,7 @@ public final class XdrCoding
   /**
    * Write a length-delimted array of longs.
    */
-  public static void putLongArray (ByteBuffer out, long [] longs)
+  public static void putLongArray (IoBuffer out, long [] longs)
   {
     out.putInt (longs.length);
     
@@ -384,7 +385,7 @@ public final class XdrCoding
   /**
    * Read a length-demlimited array of strings.
    */
-  public static String [] getStringArray (ByteBuffer in)
+  public static String [] getStringArray (IoBuffer in)
     throws BufferUnderflowException, ProtocolCodecException
   {
     String [] strings = new String [getPositiveInt (in)];
@@ -398,7 +399,7 @@ public final class XdrCoding
   /**
    * Write a length-delimted array of strings.
    */
-  public static void putStringArray (ByteBuffer out, String [] strings)
+  public static void putStringArray (IoBuffer out, String [] strings)
   {
     out.putInt (strings.length);
     
@@ -409,7 +410,7 @@ public final class XdrCoding
   /**
    * Read an int >= 0 or generate an exception.
    */
-  private static int getPositiveInt (ByteBuffer in) 
+  private static int getPositiveInt (IoBuffer in) 
     throws ProtocolCodecException
   {
     int value = in.getInt ();

@@ -10,12 +10,10 @@ import java.io.Writer;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.ThreadModel;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.transport.socket.SocketConnector;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,6 +28,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
+import org.avis.logging.Log;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -68,8 +67,8 @@ public class JUTestFederation
   @Before
   public void setup ()
   {
-    // enableLogging (TRACE, true);
-    // enableLogging (DIAGNOSTIC, true);
+     enableLogging (Log.TRACE, true);
+     enableLogging (Log.DIAGNOSTIC, true);
 
     oldLogInfoState = shouldLog (INFO);
     
@@ -178,7 +177,7 @@ public class JUTestFederation
     
     // connector
     TestingIoHandler listener = new TestingIoHandler ();
-    IoSession connectSession = connectFederation (server1, ewafURI, listener);
+    IoSession connectSession = connectFederation (ewafURI, listener);
 
     // incompatible version
     logTester.pause ();
@@ -193,10 +192,11 @@ public class JUTestFederation
     assertEquals (Nack.PROT_INCOMPAT, nack.error);
     
     connectSession.close ();
+    connectSession.getService ().dispose ();
     
     // bad server domain (same as acceptor's)
     listener = new TestingIoHandler ();
-    connectSession = connectFederation (server1, ewafURI, listener);
+    connectSession = connectFederation (ewafURI, listener);
     
     logTester.pause ();
     
@@ -211,13 +211,14 @@ public class JUTestFederation
     assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
     
     connectSession.close ();
+    connectSession.getService ().dispose ();
     
     // no federation class mapped
     
     classes.clear ();
     
     listener = new TestingIoHandler ();
-    connectSession = connectFederation (server1, ewafURI, listener);
+    connectSession = connectFederation (ewafURI, listener);
     
     logTester.pause ();
     
@@ -232,12 +233,13 @@ public class JUTestFederation
     assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
     
     connectSession.close ();
+    connectSession.getService ().dispose ();
     
     classes.map ("localhost", fedClass2);
     
     // bogus handshake
     listener = new TestingIoHandler ();
-    connectSession = connectFederation (server1, ewafURI, listener);
+    connectSession = connectFederation (ewafURI, listener);
     
     logTester.pause ();
     
@@ -246,7 +248,10 @@ public class JUTestFederation
     // acceptor should just abort connection
     listener.waitForClose (connectSession);
     
+    logTester.unpause ();
+
     connectSession.close ();
+    connectSession.getService ().dispose ();
     
     acceptor.close ();
     server1.close ();
@@ -657,27 +662,19 @@ public class JUTestFederation
   /**
    * Create a connection to federation listener.
    */
-  private static IoSession connectFederation (Router router,
-                                              EwafURI uri,
+  private static IoSession connectFederation (EwafURI uri,
                                               IoHandler listener)
+    throws InterruptedException
   {
-    SocketConnector connector = new SocketConnector (1, router.executor ());
-    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+    SocketConnector connector = new NioSocketConnector (1);
     
-    connector.setWorkerTimeout (0);
+    connector.setConnectTimeout (5);
     
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (20);
+    connector.getFilterChain ().addLast ("codec", FederationFrameCodec.FILTER);
     
-    connectorConfig.getFilterChain ().addLast   
-      ("codec", FederationFrameCodec.FILTER);
+    connector.setHandler (listener);
     
-    ConnectFuture future = 
-      connector.connect (new InetSocketAddress (uri.host, uri.port),
-                         listener, connectorConfig);
-    
-    future.join ();
-    
-    return future.getSession ();
+    return connector.connect 
+      (new InetSocketAddress (uri.host, uri.port)).await ().getSession ();
   }
 }

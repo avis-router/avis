@@ -3,7 +3,7 @@ package org.avis.federation.io;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.subscription.ast.IllegalChildException;
@@ -99,15 +99,15 @@ import static org.avis.util.Text.className;
 /**
  * Parser class for translating XDR-encoded AST's into Node-based AST's.
  * 
- * @see XdrAstCoding#decodeAST(ByteBuffer)
+ * @see XdrAstCoding#decodeAST(IoBuffer)
  *
  * @author Matthew Phillips
  */
 class XdrAstParser
 {
-  private ByteBuffer in;
+  private IoBuffer in;
 
-  public XdrAstParser (ByteBuffer in)
+  public XdrAstParser (IoBuffer in)
   {
     this.in = in;
   }

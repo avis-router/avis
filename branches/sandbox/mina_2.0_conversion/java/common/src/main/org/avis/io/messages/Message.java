@@ -1,6 +1,6 @@
 package org.avis.io.messages;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.util.Text.className;
@@ -38,10 +38,10 @@ public abstract class Message
    */
   public abstract int typeId ();
 
-  public abstract void encode (ByteBuffer out)
+  public abstract void encode (IoBuffer out)
     throws ProtocolCodecException;
 
-  public abstract void decode (ByteBuffer in)
+  public abstract void decode (IoBuffer in)
     throws ProtocolCodecException;
   
   @Override

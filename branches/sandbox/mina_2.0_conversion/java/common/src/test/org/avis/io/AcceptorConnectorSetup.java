@@ -1,7 +1,5 @@
 package org.avis.io;
 
-import java.util.concurrent.ExecutorService;
-
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -10,13 +8,10 @@ import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.ThreadModel;
-import org.apache.mina.transport.socket.nio.SocketAcceptor;
-import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
-
-import static java.util.concurrent.Executors.newCachedThreadPool;
+import org.apache.mina.transport.socket.SocketAcceptor;
+import org.apache.mina.transport.socket.SocketConnector;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 /**
  * Test setup that creates a connected SocketAcceptor/SocketConnector
@@ -27,53 +22,42 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 public class AcceptorConnectorSetup
 {
   public SocketAcceptor acceptor;
-  public SocketAcceptorConfig acceptorConfig;
   public IoSession session;
-  public ExecutorService executor;
   public SocketConnector connector;
-  public SocketConnectorConfig connectorConfig;
 
   public AcceptorConnectorSetup ()
     throws IOException
   {
-    executor = newCachedThreadPool ();
+    // acceptor
+    acceptor = new NioSocketAcceptor (1);
     
-    // listener
-    acceptor = new SocketAcceptor (1, executor);
-    acceptorConfig = new SocketAcceptorConfig ();
+    acceptor.setReuseAddress (true);
     
-    acceptorConfig.setReuseAddress (true);
-    acceptorConfig.setThreadModel (ThreadModel.MANUAL);
-    
-    DefaultIoFilterChainBuilder filterChainBuilder =
-      acceptorConfig.getFilterChain ();
+    DefaultIoFilterChainBuilder filterChainBuilder = acceptor.getFilterChain ();
 
     filterChainBuilder.addLast ("codec", ClientFrameCodec.FILTER);
     
     // connector
-    connector = new SocketConnector (1, executor);
-    connectorConfig = new SocketConnectorConfig ();
+    connector = new NioSocketConnector (1);
     
-    connector.setWorkerTimeout (0);
-    
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (20);
-    
-    connectorConfig.getFilterChain ().addLast   
-      ("codec", ClientFrameCodec.FILTER);
+    connector.setConnectTimeout (20);
+
+    connector.getFilterChain ().addLast ("codec", ClientFrameCodec.FILTER);
   }
   
   public void connect (IoHandler acceptorListener, IoHandler connectorListener)
-    throws IOException
+    throws Exception
   {
-    InetSocketAddress remoteAddress = new InetSocketAddress ("127.0.0.1", 29170);
+    InetSocketAddress remoteAddress = 
+      new InetSocketAddress ("127.0.0.1", 29170);
     
-    acceptor.bind (remoteAddress, acceptorListener, acceptorConfig);
+    acceptor.setHandler (acceptorListener);
+    acceptor.bind (remoteAddress);
     
-    ConnectFuture future = 
-      connector.connect (remoteAddress, connectorListener, connectorConfig);
+    connector.setHandler (connectorListener);
+    ConnectFuture future = connector.connect (remoteAddress);
     
-    future.join ();
+    future.await ();
     
     session = future.getSession ();
   }
@@ -82,7 +66,7 @@ public class AcceptorConnectorSetup
   public void close ()
   {
     session.close ();
-    acceptor.unbindAll ();
-    executor.shutdown ();
+    acceptor.dispose ();
+    connector.dispose ();
   }
 }

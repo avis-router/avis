@@ -1,5 +1,7 @@
 package org.avis.federation;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +16,7 @@ import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
-import org.apache.mina.transport.socket.nio.SocketAcceptor;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -30,7 +32,6 @@ import org.avis.util.Filter;
 
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
-
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
@@ -74,8 +75,10 @@ public class Acceptor implements IoHandler, Closeable
   protected FederationClasses federationClasses;
   protected Set<EwafURI> listenUris;
   protected Set<Link> links;
-  protected Set<InetSocketAddress> listenAddresses;
+  protected Collection<NioSocketAcceptor> acceptors;
+//  protected Set<InetSocketAddress> listenAddresses;
   protected volatile boolean closing;
+
 
   @SuppressWarnings("unchecked")
   public Acceptor (Router router,
@@ -89,7 +92,7 @@ public class Acceptor implements IoHandler, Closeable
     this.serverDomain = serverDomain;
     this.federationClasses = federationClasses;
     this.listenUris = uris;
-    this.listenAddresses = addressesFor (uris);
+//    this.listenAddresses = addressesFor (uris);
     this.options = options;
     this.links = new HashSet<Link> ();
     
@@ -107,7 +110,7 @@ public class Acceptor implements IoHandler, Closeable
     filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
-    router.bind 
+    this.acceptors = router.bind 
       (uris, this, filters, 
        (Filter<InetAddress>)options.get ("Federation.Require-Authenticated"));
 
@@ -133,17 +136,19 @@ public class Acceptor implements IoHandler, Closeable
     
     links.clear ();
 
-    SocketAcceptor socketAcceptor = router.socketAcceptor ();
+//    NioSocketAcceptor socketAcceptor = router.socketAcceptor ();
 
-    for (InetSocketAddress address : listenAddresses)
-    {
-      // wait for pending messages to be written
-      // todo check that this really flushes messages
-      for (IoSession session : socketAcceptor.getManagedSessions (address))
-        session.close ().join (10000);
-      
-      socketAcceptor.unbind (address);
-    }
+    for (NioSocketAcceptor acceptor : acceptors)
+      acceptor.dispose ();
+//    for (InetSocketAddress address : listenAddresses)
+//    {
+//      // wait for pending messages to be written
+//      // todo check that this really flushes messages
+//      for (IoSession session : socketAcceptor.getManagedSessions (address))
+//        session.close ().join (10000);
+//      
+//      socketAcceptor.unbind (address);
+//    }
   }
   
   public Set<EwafURI> listenURIs ()
@@ -151,31 +156,44 @@ public class Acceptor implements IoHandler, Closeable
     return listenUris;
   }
   
-  public Set<InetSocketAddress> listenAddresses ()
+  public Collection<InetSocketAddress> listenAddresses ()
   {
-    return listenAddresses;
+    ArrayList<InetSocketAddress> addresses = 
+      new ArrayList<InetSocketAddress> (acceptors.size ());
+    
+    for (NioSocketAcceptor acceptor : acceptors)
+      addresses.add (acceptor.getLocalAddress ());
+    
+    return addresses;
   }
-  
+
   /**
    * Simulate a hang by stopping all responses to messages.
    */
   public void hang ()
   {
-    for (InetSocketAddress address : listenAddresses)
+//    for (InetSocketAddress address : listenAddresses)
+//    {
+//      for (IoSession session : 
+//           router.socketAcceptor ().getManagedSessions (address))
+//      {
+//        session.getFilterChain ().remove ("requestTracker");
+//        session.getFilterChain ().remove ("liveness");
+//      }
+//    }
+    for (NioSocketAcceptor acceptor : acceptors)
     {
-      for (IoSession session : 
-           router.socketAcceptor ().getManagedSessions (address))
+      for (IoSession session : acceptor.getManagedSessions ())
       {
         session.getFilterChain ().remove ("requestTracker");
-        session.getFilterChain ().remove ("liveness");
+        session.getFilterChain ().remove ("liveness");        
       }
     }
     
     closing = true;
   }
   
-  private void handleMessage (IoSession session,
-                              Message message)
+  private void handleMessage (IoSession session, Message message)
   {
     switch (message.typeId ())
     {
@@ -315,7 +333,7 @@ public class Acceptor implements IoHandler, Closeable
     throws Exception
   {
     // federators have 20 seconds to send a FedConnRqst
-    session.setIdleTime (READER_IDLE, 20);
+    session.getConfig ().setIdleTime (READER_IDLE, 20);
     
     setMaxFrameLengthFor (session, options.getInt ("Packet.Max-Length"));
   }

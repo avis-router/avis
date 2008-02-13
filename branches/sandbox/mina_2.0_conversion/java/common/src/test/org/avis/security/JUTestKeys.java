@@ -1,6 +1,6 @@
 package org.avis.security;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.junit.Test;
 
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
@@ -19,7 +19,7 @@ public class JUTestKeys
   public void IO ()
     throws Exception
   {
-    ByteBuffer buff = ByteBuffer.allocate (1024);
+    IoBuffer buff = IoBuffer.allocate (1024);
     
     Keys keys = new Keys ();
     
