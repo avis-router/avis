@@ -6,6 +6,8 @@ import java.net.URL;
 
 import org.avis.util.IllegalConfigOptionException;
 
+import static org.avis.io.Net.uri;
+
 /**
  * A URI-valued option.
  * 
@@ -13,6 +15,8 @@ import org.avis.util.IllegalConfigOptionException;
  */
 public class OptionTypeURI extends OptionType
 {
+  public static final URI EMPTY_URI = uri ("");
+  
   @Override
   public Object convert (String option, Object value)
     throws IllegalConfigOptionException

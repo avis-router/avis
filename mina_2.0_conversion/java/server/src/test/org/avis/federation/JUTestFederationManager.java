@@ -84,7 +84,7 @@ public class JUTestFederationManager
     assertFalse (testClass.allowsNothing ());
     
     assertEquals (addressesFor (set (federationUri)),
-                  manager.acceptor.listenAddresses);
+                  manager.acceptor.listenAddresses ());
     
     assertEquals ("incoming", 
                   testClass.incomingAttributes.get ("Added-Incoming"));

@@ -5,10 +5,11 @@ import java.net.InetSocketAddress;
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.ThreadModel;
-import org.apache.mina.filter.SSLFilter;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.filter.ssl.SslFilter;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.avis.federation.io.FederationFrameCodec;
 import org.avis.federation.io.messages.FedConnRqst;
@@ -18,10 +19,6 @@ import org.avis.router.Router;
 import org.avis.router.RouterOptionSet;
 import org.avis.router.RouterOptions;
 import org.avis.util.LogFailTester;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
@@ -158,28 +155,25 @@ public class JUTestFederationTLS
                                                  IoHandler listener)
     throws Exception
   {
-    SocketConnector connector = new SocketConnector (1, router.executor ());
-    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+    NioSocketConnector connector = 
+      new NioSocketConnector (router.ioProcessor ());
     
-    connector.setWorkerTimeout (0);
+    connector.setConnectTimeout (20);
     
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (20);
-    
-    SSLFilter filter = new SSLFilter (defaultSSLContext ());
+    SslFilter filter = new SslFilter (defaultSSLContext ());
     
     filter.setUseClientMode (true);
     
-    connectorConfig.getFilterChain ().addFirst ("ssl", filter);   
+    connector.getFilterChain ().addFirst ("ssl", filter);   
     
-    connectorConfig.getFilterChain ().addLast   
-      ("codec", FederationFrameCodec.FILTER);
+    connector.getFilterChain ().addLast ("codec", FederationFrameCodec.FILTER);
+    
+    connector.setHandler (listener);
     
     ConnectFuture future = 
-      connector.connect (new InetSocketAddress (uri.host, uri.port),
-                         listener, connectorConfig);
+      connector.connect (new InetSocketAddress (uri.host, uri.port));
     
-    future.join ();
+    future.await ();
     
     return future.getSession ();
   }

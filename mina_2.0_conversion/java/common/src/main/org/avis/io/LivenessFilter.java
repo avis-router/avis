@@ -171,7 +171,7 @@ public class LivenessFilter extends IoFilterAdapter implements IoFilter
       trace ("Liveness confirmed: received ConfConn", this);
     } else if (message == TestConn.INSTANCE)
     {
-      if (session.getScheduledWriteRequests () == 0)
+      if (session.getScheduledWriteMessages () == 0)
       {
         session.write (ConfConn.INSTANCE);
         

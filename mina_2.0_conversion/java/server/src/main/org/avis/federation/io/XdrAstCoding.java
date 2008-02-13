@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.subscription.ast.IllegalChildException;
@@ -145,9 +145,9 @@ public final class XdrAstCoding
    * @param out The buffer to encode to.
    * @param node The root of the AST.
    * 
-   * @see #decodeAST(ByteBuffer)
+   * @see #decodeAST(IoBuffer)
    */
-  public static void encodeAST (ByteBuffer out, Node node)
+  public static void encodeAST (IoBuffer out, Node node)
     throws ProtocolCodecException
   {
     if (node instanceof Const)
@@ -225,7 +225,7 @@ public final class XdrAstCoding
   /**
    * Encode a constant value (leaf) node.
    */
-  private static void encodeConst (ByteBuffer out, Const node)
+  private static void encodeConst (IoBuffer out, Const node)
     throws ProtocolCodecException
   {
     Object value = node.value ();
@@ -273,9 +273,9 @@ public final class XdrAstCoding
    * 
    * @throws ProtocolCodecException if an error occurred reading the tree.
    * 
-   * @see #encodeAST(ByteBuffer, Node)
+   * @see #encodeAST(IoBuffer, Node)
    */
-  public static Node decodeAST (ByteBuffer in)
+  public static Node decodeAST (IoBuffer in)
     throws ProtocolCodecException
   {
     try

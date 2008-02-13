@@ -5,7 +5,7 @@ import java.util.List;
 
 import java.io.IOException;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 
 import org.avis.router.Router;
 import org.avis.util.LogFailTester;
@@ -51,7 +51,7 @@ public class JUTestFlooding
     
     logTester = new LogFailTester ();
     
-    ByteBuffer.setUseDirectBuffers (false);
+    IoBuffer.setUseDirectBuffer (false);
   }
   
   @After

@@ -10,6 +10,7 @@ import org.apache.mina.common.IoFilter;
 import org.apache.mina.common.IoFilterAdapter;
 import org.apache.mina.common.IoFilterChain;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.common.WriteRequest;
 
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
