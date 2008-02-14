@@ -225,38 +225,6 @@ public class Router implements IoHandler, Closeable
      Filter<InetAddress> authRequired) 
     throws IOException
   {
-//    SocketAcceptorConfig defaultAcceptorConfig = 
-//      createAcceptorConfig 
-//        (createStandardFilters (baseFilters, authRequired));
-//    SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
-//    
-//    for (ElvinURI uri : uris)
-//    {
-//      SocketAcceptorConfig bindConfig;
-//      
-//      if (uri.isSecure ())
-//      {
-//        if (secureAcceptorConfig == null)
-//        {
-//          secureAcceptorConfig = 
-//            createAcceptorConfig 
-//              (createSecureFilters (baseFilters, authRequired, false));
-//        }
-//        
-//        bindConfig = secureAcceptorConfig;
-//      } else
-//      {
-//        bindConfig = defaultAcceptorConfig;
-//      }
-//      
-//      for (InetSocketAddress address : addressesFor (uri))
-//        acceptor.bind (address, handler, bindConfig);
-//    }
-    //    SocketAcceptorConfig defaultAcceptorConfig = 
-    //      createAcceptorConfig 
-    //        (createStandardFilters (baseFilters, authRequired));
-    //    SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
-
     Collection<NioSocketAcceptor> uriAcceptors = 
       new ArrayList<NioSocketAcceptor> (uris.size ());
     
@@ -279,7 +247,6 @@ public class Router implements IoHandler, Closeable
           }
           
           acceptor.setFilterChainBuilder (secureFilters);
-//          createAcceptorConfig (acceptor, secureFilters);
         } else
         {
           acceptor.setFilterChainBuilder (baseFilters);
@@ -295,21 +262,6 @@ public class Router implements IoHandler, Closeable
     return uriAcceptors;
   }
 
-  /**
-   * Create default MINA config for incoming connections.
-   * 
-   * @param filters The base set of common filters.
-   * @param authRequired The set of hosts that must connect via
-   *                authenticated connections and should be
-   *                blacklisted from non authenticated access.
-   */
-//  private static void createAcceptorConfig 
-//    (NioSocketAcceptor acceptor, DefaultIoFilterChainBuilder filters)
-//  {
-//    acceptor.setReuseAddress (true);
-//    acceptor.setFilterChainBuilder (filters);
-//  }
-  
   /**
    * Create the filters used for standard, non secured links.
    * 
@@ -366,38 +318,35 @@ public class Router implements IoHandler, Closeable
   private KeyStore loadKeystore () 
     throws IOException
   {
-    if (keystore == null)
+    URI keystoreUri = (URI)routerOptions.get ("TLS.Keystore");
+    
+    if (keystoreUri.toString ().length () == 0)
     {
-      URI keystoreUri = (URI)routerOptions.get ("TLS.Keystore");
-      
-      if (keystoreUri.toString ().length () == 0)
-      {
-        throw new IOException 
-          ("Cannot use TLS without a keystore: " +
-           "see TLS.Keystore configuration option");
-      }
-      
-      InputStream keystoreStream = 
-        routerOptions.toAbsoluteURI (keystoreUri).toURL ().openStream ();
-
-      try
-      {
-        keystore = KeyStore.getInstance ("JKS");
-        
-        keystore.load 
-          (keystoreStream, 
-           toPassphrase (routerOptions.getString ("TLS.Keystore-Passphrase")));
-      } catch (GeneralSecurityException ex)
-      {
-        throw new IOException ("Failed to load TLS keystore: " + 
-                               ex.getMessage ());
-      } finally
-      {
-        keystoreStream.close ();
-      }
+      throw new IOException 
+        ("Cannot use TLS without a keystore: " +
+         "see TLS.Keystore configuration option");
     }
     
-    return keystore;
+    InputStream keystoreStream = 
+      routerOptions.toAbsoluteURI (keystoreUri).toURL ().openStream ();
+
+    try
+    {
+      KeyStore newKeystore = KeyStore.getInstance ("JKS");
+      
+      newKeystore.load 
+        (keystoreStream, 
+         toPassphrase (routerOptions.getString ("TLS.Keystore-Passphrase")));
+      
+      return newKeystore;
+    } catch (GeneralSecurityException ex)
+    {
+      throw new IOException ("Failed to load TLS keystore: " + 
+                             ex.getMessage ());
+    } finally
+    {
+      keystoreStream.close ();
+    }    
   }
   
   /**
@@ -492,14 +441,6 @@ public class Router implements IoHandler, Closeable
   {
     return executor;
   }
-  
-//  /**
-//   * The router's MINA socket acceptor. Plugins may share this.
-//   */
-//  public SocketAcceptor socketAcceptor ()
-//  {
-//    return acceptor;
-//  }
   
   /**
    * The router's MINA IO processor pool. Plugins may share this.
