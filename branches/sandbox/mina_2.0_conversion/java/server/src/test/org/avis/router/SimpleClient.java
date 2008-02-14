@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -32,6 +33,7 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
@@ -46,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Basic Avis test client.
  */
-public class SimpleClient implements IoHandler
+public class SimpleClient implements IoHandler, Closeable
 {
   protected static final int RECEIVE_TIMEOUT = 5000;
   
@@ -287,13 +289,25 @@ public class SimpleClient implements IoHandler
   }
 
   public void close ()
-    throws Exception
+    throws IOException
   {
-    close (RECEIVE_TIMEOUT);
+    try
+    {
+      close (RECEIVE_TIMEOUT);
+    } catch (NoConnectionException ex)
+    {
+      throw new IOException (ex.getMessage ());
+    } catch (MessageTimeoutException ex)
+    {
+      throw new IOException (ex.getMessage ());
+    } catch (InterruptedException ex)
+    {
+      currentThread ().interrupt ();
+    }
   }
   
-  public synchronized void close (long timeout)
-    throws Exception
+  public synchronized void close (long timeout) 
+    throws NoConnectionException, MessageTimeoutException, InterruptedException
   {
     if (clientSession == null)
       return;
