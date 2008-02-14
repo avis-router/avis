@@ -1,9 +1,9 @@
 package org.avis.federation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -156,15 +156,14 @@ public class Acceptor implements IoHandler, Closeable
     return listenUris;
   }
   
-  public Collection<InetSocketAddress> listenAddresses ()
+  public Set<InetSocketAddress> listenAddresses ()
   {
-    ArrayList<InetSocketAddress> addresses = 
-      new ArrayList<InetSocketAddress> (acceptors.size ());
+    Set<InetSocketAddress> addresses = new TreeSet<InetSocketAddress> ();
     
     for (NioSocketAcceptor acceptor : acceptors)
       addresses.add (acceptor.getLocalAddress ());
     
-    return addresses;
+    return addresses; 
   }
 
   /**
@@ -191,6 +190,15 @@ public class Acceptor implements IoHandler, Closeable
     }
     
     closing = true;
+  }
+  
+  /**
+   * NOTE: this does not fully unhang, just reverses hang enough to
+   * close properly.
+   */
+  public void unhang ()
+  {
+    closing = false;
   }
   
   private void handleMessage (IoSession session, Message message)
