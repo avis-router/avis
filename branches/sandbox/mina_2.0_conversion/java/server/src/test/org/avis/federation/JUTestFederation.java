@@ -149,8 +149,6 @@ public class JUTestFederation
     federation = new StandardFederatorSetup ();
     
     testTwoWayClientSendReceive (federation.client1, federation.client2);
-    
-    federation.close ();
   }
   
   /**
@@ -169,8 +167,6 @@ public class JUTestFederation
     classes2.map ("localHOSt", fedClass);
     
     federation = new StandardFederatorSetup (classes1, classes2);
-    
-    federation.close ();
   }
   
   /**
@@ -187,6 +183,7 @@ public class JUTestFederation
     classes.map ("localhost", fedClass2);
     
     Router server1 = new Router (PORT1);
+    
     autoClose (server1);
     
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
@@ -194,6 +191,7 @@ public class JUTestFederation
     
     Acceptor acceptor = 
       new Acceptor (server1, "server1", classes, set (ewafURI), options);
+
     autoClose (acceptor);
     
     // connector
@@ -268,12 +266,6 @@ public class JUTestFederation
     listener.waitForClose (connectSession);
     
     logTester.unpause ();
-
-    connectSession.close ();
-    connectSession.getService ().dispose ();
-    
-    acceptor.close ();
-    server1.close ();
   }
   
   @Test
@@ -699,7 +691,7 @@ public class JUTestFederation
    * Create a connection to federation listener.
    */
   private IoSession connectFederation (EwafURI uri,
-                                              IoHandler listener)
+                                       IoHandler listener)
     throws InterruptedException
   {
     SocketConnector connector = new NioSocketConnector (1);
