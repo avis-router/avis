@@ -64,7 +64,6 @@ public class Connector implements IoHandler, Closeable
   private Options options;
   private Router router;
   private NioSocketConnector connector;
-//  private InetSocketAddress remoteAddress;
   private IoSession session;
   private String serverDomain;
   private FederationClass federationClass;
@@ -82,35 +81,6 @@ public class Connector implements IoHandler, Closeable
     this.serverDomain = serverDomain;
     this.federationClass = federationClass;
     this.options = options;
-//    this.connector = new NioSocketConnector (router.ioProcessor ());
-//    this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
-//    
-//    long requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
-//    long keepaliveInterval = 
-//      options.getInt ("Federation.Keepalive-Interval") * 1000;
-//
-//    connector.setConnectTimeout ((int)(requestTimeout / 1000));
-//    
-//    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
-//    
-//    filters.addLast ("codec", FederationFrameCodec.FILTER);
-//    
-//    filters.addLast
-//      ("requestTracker", new RequestTrackingFilter (requestTimeout));
-//    
-//    filters.addLast
-//      ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
-//
-//    Filter<InetAddress> authRequired = 
-//      (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
-//    
-//    if (uri.isSecure ())
-//      filters = router.createSecureFilters (filters, authRequired, true);
-//    else
-//      filters = router.createStandardFilters (filters, authRequired);
-//    
-//    connector.setFilterChainBuilder (filters);
-//    connector.setHandler (this);
     
     connect ();
   }
@@ -302,12 +272,13 @@ public class Connector implements IoHandler, Closeable
       }
       
       link = null;
-      
-      if (connector != null)
-      {
-        connector.dispose ();
-        connector = null;
-      }
+    }
+    
+    // do this outside of sync block to allow IO threads access
+    if (connector != null)
+    {
+      connector.dispose ();
+      connector = null;
     }
   }
   
