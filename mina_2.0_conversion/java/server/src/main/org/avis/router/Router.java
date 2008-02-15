@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -28,6 +29,9 @@ import org.apache.mina.common.SimpleIoProcessorPool;
 import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.traffic.MessageSizeEstimator;
+import org.apache.mina.filter.traffic.ReadThrottleFilter;
+import org.apache.mina.filter.traffic.ReadThrottlePolicy;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
@@ -68,15 +72,17 @@ import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
 import org.avis.util.Text;
 
+import static java.lang.Math.max;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
 import static org.apache.mina.common.IoBuffer.setUseDirectBuffer;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
+
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
@@ -120,6 +126,7 @@ public class Router implements IoHandler, Closeable
   
   private RouterOptions routerOptions;
   private ExecutorService executor;
+  private ScheduledExecutorService filterExecutor;
   private IoProcessor<NioSession> processorPool;
   private Collection<NioSocketAcceptor> acceptors;
   private KeyStore keystore;
@@ -129,6 +136,7 @@ public class Router implements IoHandler, Closeable
 
   private ListenerList<NotifyListener> notifyListeners;
   private ListenerList<CloseListener> closeListeners;
+
 
   /**
    * Create an instance with default configuration.
@@ -176,6 +184,7 @@ public class Router implements IoHandler, Closeable
     this.routerOptions = options;
     this.sessions = new ConcurrentHashSet<IoSession> ();
     this.executor = newCachedThreadPool ();
+    this.filterExecutor = newScheduledThreadPool (0);
     this.processorPool = 
       new SimpleIoProcessorPool<NioSession> 
         (NioProcessor.class, executor, 
@@ -196,11 +205,26 @@ public class Router implements IoHandler, Closeable
     DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
 
     filters.addLast ("codec", ClientFrameCodec.FILTER);
+    
     filters.addLast ("threadPool", new ExecutorFilter (executor));
     
+    filters.addLast ("readThrottle", createReadThrottle ());
+
     this.acceptors = 
       bind (options.listenURIs (), this, filters, 
           (Filter<InetAddress>)routerOptions.get ("Require-Authenticated"));
+  }
+
+  private ReadThrottleFilter createReadThrottle ()
+  {
+    ReadThrottleFilter readThrottle = 
+      new ReadThrottleFilter (filterExecutor, ReadThrottlePolicy.BLOCK, 
+                              new AvisMessageSizeEstimator ());
+    
+    readThrottle.setMaxServiceBufferSize
+      (CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length"));
+    
+    return readThrottle;
   }
 
   /**
@@ -214,7 +238,8 @@ public class Router implements IoHandler, Closeable
    * @param authRequired Hosts matched by this filter must be
    *                successfully authenticated via TLS or will be
    *                refused access.
-   * @return 
+   *                
+   * @return The created acceptors.
    * 
    * @throws IOException if an error occurred during binding.
    */
@@ -400,6 +425,7 @@ public class Router implements IoHandler, Closeable
       acceptor.dispose ();
 
     executor.shutdown ();
+    filterExecutor.shutdown ();
     
     try
     {
@@ -426,8 +452,8 @@ public class Router implements IoHandler, Closeable
     
     if (!sessions.isEmpty ())
     {
-      warn ("Sessions took too long to close " +
-      		"(" + sessions.size () + " still open", this);
+      warn ("Sessions took too long to close: " +
+            sessions.size () + " still open", this);
     }
     
     sessions.clear ();
@@ -978,11 +1004,11 @@ public class Router implements IoHandler, Closeable
   private static void updateQueueLength (IoSession session,
                                          Connection connection)
   {
-//    ReadThrottleFilter readThrottle =
-//      (ReadThrottleFilter)session.getAttribute ("readThrottle");
-//    
-//    readThrottle.setMaxSessionBufferSize
-//      (connection.options.getInt ("Receive-Queue.Max-Length"));
+    ReadThrottleFilter readThrottle =
+      (ReadThrottleFilter)session.getFilterChain ().get (ReadThrottleFilter.class);
+    
+    readThrottle.setMaxSessionBufferSize
+      (connection.options.getInt ("Receive-Queue.Max-Length"));
   }
 
   /**
@@ -1109,21 +1135,11 @@ public class Router implements IoHandler, Closeable
       (READER_IDLE, 
        routerOptions.getInt ("IO.Idle-Connection-Timeout"));
     
-    // install read throttle
-//    ReadThrottleFilter readThrottle = new ReadThrottleFilter ();
-//    
-//    readThrottle.setMaximumConnectionBufferSize
-//      (CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length"));
-//    
-//    readThrottle.attach (session.getFilterChain ());
-    
-//    session.setAttribute ("readThrottle", readThrottle);
-    
     // set default max length for connectionless sessions
     setMaxFrameLengthFor
       (session,
        CONNECTION_OPTION_SET.defaults.getInt ("Packet.Max-Length"));
-    
+
     sessions.add (session);
   }
 
@@ -1239,5 +1255,13 @@ public class Router implements IoHandler, Closeable
   public static boolean isSecure (IoSession session)
   {
     return session.getFilterChain ().contains (SecurityFilter.class);
+  }
+  
+  protected static class AvisMessageSizeEstimator implements MessageSizeEstimator
+  {
+    public int estimateSize (Object message)
+    {
+      return max (0, ((Message)message).frameSize * 2);
+    }
   }
 }
