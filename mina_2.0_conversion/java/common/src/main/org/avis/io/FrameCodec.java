@@ -47,6 +47,8 @@ public abstract class FrameCodec
   
     int frameSize = buffer.position () - 4;
     
+    message.frameSize = frameSize;
+    
     // write frame size
     buffer.putInt (0, frameSize);
     
@@ -104,6 +106,8 @@ public abstract class FrameCodec
       
       if (frameSize > maxLength)
         throw new FrameTooLargeException (maxLength, frameSize);
+      
+      message.frameSize = frameSize;
       
       message.decode (in);
       

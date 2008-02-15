@@ -13,6 +13,19 @@ import static org.avis.util.Text.className;
 public abstract class Message
 {
   /**
+   * The frame size in bytes that this message occupies. This may not
+   * be set (in which case it is -1): it is usually only set for
+   * messages that have been decoded and thus have an easily known
+   * size.
+   */
+  public int frameSize;
+  
+  public Message ()
+  {
+    this.frameSize = -1;
+  }
+
+  /**
    * The message's unique type ID.<p>
    * 
    * Message ID's (from Elvin Client Protocol 4.0 draft):
