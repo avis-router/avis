@@ -124,6 +124,15 @@ public class Router implements IoHandler, Closeable
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
   
+  private static final MessageSizeEstimator MESSAGE_SIZE_ESTIMATOR = 
+    new MessageSizeEstimator ()
+  {
+    public int estimateSize (Object message)
+    {
+      return max (0, ((Message)message).frameSize * 2);
+    }
+  };
+
   private RouterOptions routerOptions;
   private ExecutorService executor;
   private ScheduledExecutorService filterExecutor;
@@ -219,7 +228,7 @@ public class Router implements IoHandler, Closeable
   {
     ReadThrottleFilter readThrottle = 
       new ReadThrottleFilter (filterExecutor, ReadThrottlePolicy.BLOCK, 
-                              new AvisMessageSizeEstimator ());
+                              MESSAGE_SIZE_ESTIMATOR);
     
     readThrottle.setMaxServiceBufferSize
       (CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length"));
@@ -1255,13 +1264,5 @@ public class Router implements IoHandler, Closeable
   public static boolean isSecure (IoSession session)
   {
     return session.getFilterChain ().contains (SecurityFilter.class);
-  }
-  
-  protected static class AvisMessageSizeEstimator implements MessageSizeEstimator
-  {
-    public int estimateSize (Object message)
-    {
-      return max (0, ((Message)message).frameSize * 2);
-    }
   }
 }
