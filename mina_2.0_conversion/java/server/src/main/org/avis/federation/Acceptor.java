@@ -124,31 +124,24 @@ public class Acceptor implements IoHandler, Closeable
     }
   }
 
-  public synchronized void close ()
+  public void close ()
   {
-    if (closing)
-      return;
-    
-    closing = true;
-    
-    for (Link link : links)
-      link.close ();
-    
-    links.clear ();
+    synchronized (this)
+    {
+      if (closing)
+        return;
+      
+      closing = true;
+      
+      for (Link link : links)
+        link.close ();
+      
+      links.clear ();      
+    }
 
-//    NioSocketAcceptor socketAcceptor = router.socketAcceptor ();
-
+    // do this outside of sync block to allow IO threads access
     for (NioSocketAcceptor acceptor : acceptors)
       acceptor.dispose ();
-//    for (InetSocketAddress address : listenAddresses)
-//    {
-//      // wait for pending messages to be written
-//      // todo check that this really flushes messages
-//      for (IoSession session : socketAcceptor.getManagedSessions (address))
-//        session.close ().join (10000);
-//      
-//      socketAcceptor.unbind (address);
-//    }
   }
   
   public Set<EwafURI> listenURIs ()
