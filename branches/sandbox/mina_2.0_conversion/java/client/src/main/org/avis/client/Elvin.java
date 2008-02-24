@@ -149,6 +149,7 @@ public final class Elvin implements Closeable
   protected ElvinURI routerUri;
   protected ElvinOptions options;
   protected IoSession connection;
+  protected NioSocketConnector connector;
   protected AtomicBoolean connectionOpen;
   protected boolean elvinSessionEstablished;
   protected Map<Long, Subscription> subscriptions;
@@ -170,7 +171,6 @@ public final class Elvin implements Closeable
   protected ListenerList<CloseListener> closeListeners;
   protected ListenerList<GeneralNotificationListener> notificationListeners;
   protected ListenerList<ElvinLogListener> logListeners;
-  protected NioSocketConnector connector;
   
   /**
    * Create a new connection to an Elvin router.
