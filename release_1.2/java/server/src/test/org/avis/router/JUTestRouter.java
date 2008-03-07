@@ -1,12 +1,11 @@
 package org.avis.router;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import java.io.Closeable;
 
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.ConnRply;
@@ -30,14 +29,20 @@ import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
 import org.avis.util.LogFailTester;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.logging.Log.ALARM;
 import static org.avis.logging.Log.WARNING;
+import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -55,6 +60,7 @@ public class JUTestRouter
   private Router router;
   private Random random;
   private LogFailTester logTester;
+  private ArrayList<Closeable> autoClose;
 
   @Before
   public void setup ()
@@ -64,6 +70,7 @@ public class JUTestRouter
     
     random = new Random ();
     logTester = new LogFailTester ();
+    autoClose = new ArrayList<Closeable> ();
   }
   
   @After
@@ -72,8 +79,20 @@ public class JUTestRouter
     if (router != null)
       router.close ();
     
+    for (int i = autoClose.size () - 1; i >= 0; i--)
+    {
+      try
+      {
+        autoClose.get (i).close ();
+      } catch (Throwable ex)
+      {
+        alarm ("Failed to close", this, ex);
+      }
+    }
+    
     logTester.assertOkAndDispose ();
   }
+
   
   @Test
   public void connect ()
@@ -738,6 +757,67 @@ public class JUTestRouter
     client.close ();
   }
   
+  /**
+   * Test events are delivered in the order they're sent.
+   */
+  @Test
+  public void inorder () 
+    throws Exception
+  {
+    router = new Router (PORT);
+
+    final SimpleClient client1 = new SimpleClient ("client1");
+    final SimpleClient client2 = new SimpleClient ("client2");
+    
+    autoClose.add (client1);
+    autoClose.add (client2);
+    
+    client1.connect ();
+    
+    client2.connect ();
+    client2.subscribe ("int32 (serial)");
+    
+    Thread notifyThread = new Thread ()
+    {
+      @Override
+      public void run ()
+      {
+        Map<String, Object> ntfn = new HashMap<String, Object> ();
+
+        try
+        {
+          for (int serial = 0; serial < 1000 && !isInterrupted (); serial++)
+          {
+            ntfn.put ("serial", serial);
+            
+            client1.sendNotify (ntfn);
+          }
+        } catch (Exception ex)
+        {
+          ex.printStackTrace ();
+        }
+      }
+    };
+    
+    notifyThread.start ();
+    
+    for (int i = 0; i < 1000 ; i++)
+    {
+      NotifyDeliver ntfn = (NotifyDeliver)client2.receive ();
+      
+      int serial = (Integer)ntfn.attributes.get ("serial");
+      
+      if (serial != i)
+      {
+        notifyThread.interrupt ();
+        notifyThread.join (10000);
+        
+        fail ("Events not in order: " +
+              "serial was " + serial + ", should have been " + i);
+      }
+    }
+  }
+
   private static String dummySubscription (int length)
   {
     StringBuilder str = new StringBuilder ("i == -1");
