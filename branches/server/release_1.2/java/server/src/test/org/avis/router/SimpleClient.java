@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -14,6 +15,7 @@ import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
 
@@ -47,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Basic Avis test client.
  */
-public class SimpleClient implements IoHandler
+public class SimpleClient implements IoHandler, Closeable
 {
   protected static final int RECEIVE_TIMEOUT = 5000;
   
@@ -294,9 +296,14 @@ public class SimpleClient implements IoHandler
   }
 
   public void close ()
-    throws Exception
   {
-    close (RECEIVE_TIMEOUT);
+    try
+    {
+      close (RECEIVE_TIMEOUT);
+    } catch (Exception ex)
+    {
+      throw new RuntimeIOException (ex);
+    }
   }
   
   public synchronized void close (long timeout)
