@@ -13,6 +13,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.apache.mina.common.IoSession;
@@ -46,39 +47,6 @@ public final class Net
     throws IOException
   {
     return InetAddress.getLocalHost ().getCanonicalHostName ();
-    /*
-     * todo select "best" host name here if InetAddress.localHostName ()
-     * doesn't produce anything useful. maybe choose address with most
-     * "false" values from output from DumpHostAddresses.
-     * 
-     * host name: hex.dsto.defence.gov.au
-     * loopback: false
-     * link local: false
-     * multicast: false
-     * site local: false
-     * -------
-     * host name: hex.local
-     * loopback: falselink local: true
-     * multicast: false
-     * site local: false
-     * -------
-     */
-//    for (Enumeration<NetworkInterface> i = 
-//        NetworkInterface.getNetworkInterfaces (); i.hasMoreElements (); )
-//    {
-//      NetworkInterface ni = i.nextElement ();
-//      
-//      for (Enumeration<InetAddress> j = ni.getInetAddresses ();
-//           j.hasMoreElements (); )
-//      {
-//        InetAddress address = j.nextElement ();
-//        
-//        if (!address.isLoopbackAddress () && !address.isSiteLocalAddress ())
-//          return address.getCanonicalHostName ();
-//      }
-//    }
-//    
-//    throw new IOException ("Cannot determine a valid local host name");
   }
   
   /**
@@ -95,13 +63,43 @@ public final class Net
    * @throws UnknownHostException
    */
   public static Set<InetSocketAddress>
-    addressesFor (Set<? extends ElvinURI> uris)
+    addressesFor (Iterable<? extends ElvinURI> uris)
       throws IOException, SocketException, UnknownHostException
   {
     Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
     
     for (ElvinURI uri : uris)
-      addAddressFor (addresses, uri);
+      addAddressFor (addresses, uri.host, uri.port);
+    
+    return addresses;
+  }
+  
+  /**
+   * Generate a set of socket addresses for a given set of URL's. This
+   * method allows interface names to be used rather than host names
+   * by prefixing the host name with "!".
+   * 
+   * @param urls The URL's to turn into addresses.
+   * @param defaultPort The default port to use if none specified.
+   * 
+   * @return The corresponding set of InetSocketAddress's for the URL's.
+   * 
+   * @throws IOException
+   * @throws SocketException
+   * @throws UnknownHostException
+   */
+  public static Set<InetSocketAddress> addressesFor (Iterable<URL> urls, 
+                                                     int defaultPort) 
+    throws IOException, SocketException, UnknownHostException
+  {
+    Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
+    
+    for (URL url : urls)
+    {
+      addAddressFor 
+        (addresses, url.getHost (), 
+         url.getPort () == -1 ? defaultPort : url.getPort ());
+    }
     
     return addresses;
   }
@@ -123,28 +121,28 @@ public final class Net
   {
     Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
     
-    addAddressFor (addresses, uri);
+    addAddressFor (addresses, uri.host, uri.port);
     
     return addresses;
   }
 
   private static void addAddressFor (Set<InetSocketAddress> addresses,
-                                     ElvinURI uri)
+                                     String host, int port)
     throws SocketException, IOException, UnknownHostException
   {
     Collection<InetAddress> inetAddresses;
     
-    if (uri.host.startsWith ("!"))
-      inetAddresses = addressesForInterface (uri.host.substring (1));
+    if (host.startsWith ("!"))
+      inetAddresses = addressesForInterface (host.substring (1));
     else
-      inetAddresses = addressesForHost (uri.host);
+      inetAddresses = addressesForHost (host);
     
     for (InetAddress address : inetAddresses)
     {
       if (address.isAnyLocalAddress ())
-        addresses.add (new InetSocketAddress (uri.port));
+        addresses.add (new InetSocketAddress (port));
       else if (!address.isLinkLocalAddress ())
-        addresses.add (new InetSocketAddress (address, uri.port));
+        addresses.add (new InetSocketAddress (address, port));
     }
   }
   
