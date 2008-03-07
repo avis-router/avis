@@ -12,6 +12,7 @@ import org.avis.federation.EwafURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptionSet;
 import org.avis.logging.Log;
+import org.avis.management.web.WebManagementManager;
 import org.avis.util.IllegalCommandLineOption;
 import org.avis.util.IllegalConfigOptionException;
 
@@ -73,23 +74,7 @@ public class Main
         }
       });
       
-      for (ElvinURI uri : router.listenURIs ())
-      {
-        for (InetSocketAddress address : addressesFor (uri))
-          info ("Router listening on " + address + " (" + uri + ")", Main.class);
-      }
-      
-      if (router.options ().getBoolean ("Federation.Activated"))
-      {
-        for (EwafURI uri : federationManagerFor (router).listenURIs ())
-        {
-          for (InetSocketAddress address : addressesFor (uri))
-          {
-            info ("Federator listening on " + address + " (" + uri + ")", 
-                  Main.class);
-          }
-        }
-      }
+      logStatus (router);
     } catch (Throwable ex)
     {
       if (ex instanceof IllegalArgumentException)
@@ -115,6 +100,31 @@ public class Main
           ex.printStackTrace ();
         
         exit (2);
+      }
+    }
+  }
+
+  /**
+   * Print router status to log. 
+   */
+  private static void logStatus (Router router)
+    throws IOException
+  {
+    for (ElvinURI uri : router.listenURIs ())
+    {
+      for (InetSocketAddress address : addressesFor (uri))
+        info ("Router listening on " + address + " (" + uri + ")", Main.class);
+    }
+    
+    if (router.options ().getBoolean ("Federation.Activated"))
+    {
+      for (EwafURI uri : federationManagerFor (router).listenURIs ())
+      {
+        for (InetSocketAddress address : addressesFor (uri))
+        {
+          info ("Federator listening on " + address + " (" + uri + ")", 
+                Main.class);
+        }
       }
     }
   }
@@ -146,6 +156,9 @@ public class Main
     
     if (config.getBoolean ("Federation.Activated"))
       new FederationManager (router, config);
+    
+    if (config.getBoolean ("WebManagement.Activated"))
+      new WebManagementManager (router, config);
 
     return router;
   }
