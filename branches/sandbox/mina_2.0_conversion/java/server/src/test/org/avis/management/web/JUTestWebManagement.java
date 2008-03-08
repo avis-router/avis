@@ -32,11 +32,11 @@ public class JUTestWebManagement
   public void tearDown ()
     throws Exception
   {
-    for (Closeable toClose : autoClose)
+    for (int i = autoClose.size () - 1; i >= 0; i--)
     {
       try
       {
-        toClose.close ();
+        autoClose.get (i).close ();
       } catch (Throwable ex)
       {
         alarm ("Failed to close", this, ex);
@@ -54,13 +54,15 @@ public class JUTestWebManagement
     
     options.set ("WebManagement.Listen", "http://127.0.0.1:" + (PORT1 + 1));
     
-    Router router1 = new Router (PORT1);
+    Router router = new Router (PORT1);
+    
+    autoClose.add (router);
     
     WebManagementManager manager = 
-      new WebManagementManager (router1, options);
+      new WebManagementManager (router, options);
     
     autoClose.add (manager);
     
-    Thread.sleep (Integer.MAX_VALUE);
+//    Thread.sleep (Integer.MAX_VALUE);
   }
 }
