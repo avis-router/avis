@@ -1,8 +1,11 @@
 package org.avis.router;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import java.io.Closeable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +37,7 @@ import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.logging.Log.ALARM;
 import static org.avis.logging.Log.WARNING;
+import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
@@ -55,6 +59,7 @@ public class JUTestRouter
   private Router router;
   private Random random;
   private LogFailTester logTester;
+  private ArrayList<Closeable> autoClose;
 
   @Before
   public void setup ()
@@ -64,14 +69,26 @@ public class JUTestRouter
     
     random = new Random ();
     logTester = new LogFailTester ();
+    autoClose = new ArrayList<Closeable> ();
   }
   
   @After
   public void tearDown ()
   {
+    for (int i = autoClose.size () - 1; i >= 0; i--)
+    {
+      try
+      {
+        autoClose.get (i).close ();
+      } catch (Throwable ex)
+      {
+        alarm ("Failed to close", this, ex);
+      }
+    }
+
     if (router != null)
       router.close ();
-    
+
     logTester.assertOkAndDispose ();
   }
   
@@ -111,11 +128,15 @@ public class JUTestRouter
     router = new Router (PORT);
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
+    int defaultReceiveQueueLength = 
+      CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length");
+
     HashMap<String, Object> options = new HashMap<String, Object> ();
     options.put ("Packet.Max-Length", 1024);
     options.put ("Subscription.Max-Count", 16);
     options.put ("Subscription.Max-Length", 1024);
     options.put ("Attribute.Opaque.Max-Length", 2048 * 1024);
+    options.put ("Receive-Queue.Max-Length", defaultReceiveQueueLength + 1024);
     options.put ("TCP.Send-Immediately", 1);
     options.put ("Bogus", "not valid");
     
@@ -128,8 +149,13 @@ public class JUTestRouter
     assertEquals (1024, connReply.options.get ("Packet.Max-Length"));
     assertEquals (16, connReply.options.get ("Subscription.Max-Count"));
     assertEquals (1024, connReply.options.get ("Subscription.Max-Length"));
+    
     assertNull (connReply.options.get ("Bogus"));
     
+    // router does not currently suppor per-session "Receive-Queue.Max-Length"
+    assertEquals (defaultReceiveQueueLength, 
+                  connReply.options.get ("Receive-Queue.Max-Length"));
+
     // try to send a frame bigger than 1K, check server rejects
     SecRqst secRqst = new SecRqst ();
     secRqst.addNtfnKeys = new Keys ();
@@ -736,6 +762,67 @@ public class JUTestRouter
     
     badClient.close ();
     client.close ();
+  }
+  
+  @Test
+  public void inorder () 
+    throws Exception
+  {
+    router = new Router (PORT);
+
+    final SimpleClient client1 = new SimpleClient ("client1");
+    final SimpleClient client2 = new SimpleClient ("client2");
+    
+    autoClose.add (client1);
+    autoClose.add (client2);
+    
+    client1.connect ();
+    
+    client2.connect ();
+    client2.subscribe ("int32 (serial)");
+    
+    Thread notifyThread = new Thread ()
+    {
+      @Override
+      public void run ()
+      {
+        Map<String, Object> ntfn = new HashMap<String, Object> ();
+
+        try
+        {
+          for (int serial = 0; serial < 1000 && !isInterrupted (); serial++)
+          {
+            ntfn.put ("serial", serial);
+            
+            client1.sendNotify (ntfn);
+          }
+        } catch (Exception ex)
+        {
+          ex.printStackTrace ();
+        }
+      }
+    };
+    
+    notifyThread.start ();
+    
+    for (int i = 0; i < 1000 ; i++)
+    {
+      NotifyDeliver ntfn = (NotifyDeliver)client2.receive ();
+      
+      int serial = (Integer)ntfn.attributes.get ("serial");
+      
+      if (serial != i)
+      {
+        notifyThread.interrupt ();
+        notifyThread.join (10000);
+        
+        fail ("Events not in order: " +
+              "serial was " + serial + ", should have been " + i);
+      }
+    }
+    
+    notifyThread.interrupt ();
+    notifyThread.join (10000);
   }
   
   private static String dummySubscription (int length)
