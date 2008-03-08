@@ -13,6 +13,7 @@ import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptionSet;
 import org.avis.logging.Log;
 import org.avis.management.web.WebManagementManager;
+import org.avis.management.web.WebManagementOptionSet;
 import org.avis.util.IllegalCommandLineOption;
 import org.avis.util.IllegalConfigOptionException;
 
@@ -145,8 +146,9 @@ public class Main
   {
     RouterOptionSet routerOptionSet = new RouterOptionSet ();
     
-    // add federation options to router's option set
+    // add federation/web management options to router's option set
     routerOptionSet.inheritFrom (FederationOptionSet.OPTION_SET);
+    routerOptionSet.inheritFrom (WebManagementOptionSet.OPTION_SET);
     
     RouterOptions config = new RouterOptions (routerOptionSet);
     
