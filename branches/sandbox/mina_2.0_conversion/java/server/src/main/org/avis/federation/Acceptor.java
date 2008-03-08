@@ -76,7 +76,6 @@ public class Acceptor implements IoHandler, Closeable
   protected Set<EwafURI> listenUris;
   protected Set<Link> links;
   protected Collection<NioSocketAcceptor> acceptors;
-//  protected Set<InetSocketAddress> listenAddresses;
   protected volatile boolean closing;
 
 
@@ -92,7 +91,6 @@ public class Acceptor implements IoHandler, Closeable
     this.serverDomain = serverDomain;
     this.federationClasses = federationClasses;
     this.listenUris = uris;
-//    this.listenAddresses = addressesFor (uris);
     this.options = options;
     this.links = new HashSet<Link> ();
     
@@ -164,15 +162,6 @@ public class Acceptor implements IoHandler, Closeable
    */
   public void hang ()
   {
-//    for (InetSocketAddress address : listenAddresses)
-//    {
-//      for (IoSession session : 
-//           router.socketAcceptor ().getManagedSessions (address))
-//      {
-//        session.getFilterChain ().remove ("requestTracker");
-//        session.getFilterChain ().remove ("liveness");
-//      }
-//    }
     for (NioSocketAcceptor acceptor : acceptors)
     {
       for (IoSession session : acceptor.getManagedSessions ())
@@ -345,7 +334,7 @@ public class Acceptor implements IoHandler, Closeable
     if (closing)
       session.close ();
     else
-      logSessionOpened (session, this);
+      logSessionOpened (session, "incoming", this);
   }
 
   public void messageReceived (IoSession session, Object theMessage)
@@ -356,7 +345,7 @@ public class Acceptor implements IoHandler, Closeable
     
     Message message = (Message)theMessage;
     
-    logMessageReceived (message, serverDomain, this);
+    logMessageReceived (message, session, this);
     
     Link link = linkFor (session);
     
