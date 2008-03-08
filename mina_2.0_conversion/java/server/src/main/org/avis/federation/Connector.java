@@ -372,7 +372,7 @@ public class Connector implements IoHandler, Closeable
   public void sessionOpened (IoSession theSession)
     throws Exception
   {
-    logSessionOpened (theSession, this);
+    logSessionOpened (theSession, "outgoing", this);
   }
   
   public void sessionClosed (IoSession theSession)
@@ -398,7 +398,7 @@ public class Connector implements IoHandler, Closeable
    
     Message message = (Message)theMessage;
     
-    logMessageReceived (message, serverDomain, this);
+    logMessageReceived (message, theSession, this);
     
     if (link == null)
       handleMessage (message);
