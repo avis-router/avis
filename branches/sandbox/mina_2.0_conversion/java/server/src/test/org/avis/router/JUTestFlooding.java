@@ -45,7 +45,13 @@ public class JUTestFlooding
     throws IOException
   {
     if (!USE_EXTERNAL_SERVER)
-      server = new Router (PORT);
+    {   
+      RouterOptions options = new RouterOptions ();
+      options.set ("Port", PORT);
+      // options.set ("IO.Use-Direct-Buffers", false);
+      
+      server = new Router (options);
+    }
     
     logTester = new LogFailTester ();
     
