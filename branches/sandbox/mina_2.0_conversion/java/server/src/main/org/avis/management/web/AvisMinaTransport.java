@@ -35,7 +35,7 @@ public class AvisMinaTransport implements Transport
                             IoProcessor<NioSession> processor)
   {
     this.addresses = addresses;
-    this.acceptor = new NioSocketAcceptor (executor, processor);
+    this.acceptor = new NioSocketAcceptor (processor);
     
     DefaultIoFilterChainBuilder chain = acceptor.getFilterChain ();
 
