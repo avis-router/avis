@@ -29,6 +29,7 @@ import org.apache.mina.common.SimpleIoProcessorPool;
 import org.apache.mina.common.WriteFuture;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.filter.traffic.MessageSizeEstimator;
 import org.apache.mina.filter.traffic.ReadThrottleFilter;
 import org.apache.mina.filter.traffic.ReadThrottlePolicy;
@@ -134,18 +135,20 @@ public class Router implements IoHandler, Closeable
   };
 
   private RouterOptions routerOptions;
-  private ExecutorService executor;
-  private ScheduledExecutorService filterExecutor;
-  private IoProcessor<NioSession> processorPool;
+  private ConcurrentHashSet<IoSession> sessions;
+
   private Collection<NioSocketAcceptor> acceptors;
+
+  private IoProcessor<NioSession> processorPool;
+  private ExecutorService ioExecutor;
+  private OrderedThreadPoolExecutor filterExecutor;
+  private ScheduledExecutorService throttleExecutor;
+  
   private KeyStore keystore;
   private volatile boolean closing;
   
-  private ConcurrentHashSet<IoSession> sessions;
-
   private ListenerList<NotifyListener> notifyListeners;
   private ListenerList<CloseListener> closeListeners;
-
 
   /**
    * Create an instance with default configuration.
@@ -192,11 +195,12 @@ public class Router implements IoHandler, Closeable
     
     this.routerOptions = options;
     this.sessions = new ConcurrentHashSet<IoSession> ();
-    this.executor = newCachedThreadPool ();
-    this.filterExecutor = newScheduledThreadPool (0);
+    this.ioExecutor = newCachedThreadPool ();
+    this.filterExecutor = new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
+    this.throttleExecutor = newScheduledThreadPool (1);
     this.processorPool = 
       new SimpleIoProcessorPool<NioSession> 
-        (NioProcessor.class, executor, 
+        (NioProcessor.class, ioExecutor, 
          getRuntime ().availableProcessors () + 1);
     
     if (options.get ("TLS.Keystore") != EMPTY_URI)
@@ -205,17 +209,17 @@ public class Router implements IoHandler, Closeable
     setUseDirectBuffer (options.getBoolean ("IO.Use-Direct-Buffers"));
     
     /*
-     * Setup IO filter chain with codec and then thread pool. NOTE:
-     * The read throttling system needs an ExecutorFilter to glom
-     * onto: it's not clear that we gain any other benefit from it
-     * since notification processing is non-blocking. See
+     * Setup IO filter chain. NOTE re thread pool: we do this in order
+     * to install the IO event queue throttle to handle spammy
+     * clients. It's not clear that we gain any other benefit from it
+     * since Avis notification processing is non-blocking. See
      * http://mina.apache.org/configuring-thread-model.html.
      */
     DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
 
     filters.addLast ("codec", ClientFrameCodec.FILTER);
     
-    filters.addLast ("threadPool", new ExecutorFilter (executor));
+    filters.addLast ("threadPool", new ExecutorFilter (filterExecutor));
     
     filters.addLast ("readThrottle", createReadThrottle ());
 
@@ -227,11 +231,11 @@ public class Router implements IoHandler, Closeable
   private ReadThrottleFilter createReadThrottle ()
   {
     ReadThrottleFilter readThrottle = 
-      new ReadThrottleFilter (filterExecutor, ReadThrottlePolicy.BLOCK, 
+      new ReadThrottleFilter (throttleExecutor, ReadThrottlePolicy.BLOCK, 
                               MESSAGE_SIZE_ESTIMATOR);
     
-    readThrottle.setMaxServiceBufferSize
-      (CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length"));
+    readThrottle.setMaxSessionBufferSize
+      (routerOptions.getInt ("Receive-Queue.Max-Length"));
     
     return readThrottle;
   }
@@ -433,12 +437,13 @@ public class Router implements IoHandler, Closeable
     for (NioSocketAcceptor acceptor : acceptors)
       acceptor.dispose ();
 
-    executor.shutdown ();
+    ioExecutor.shutdown ();
     filterExecutor.shutdown ();
+    throttleExecutor.shutdown ();
     
     try
     {
-      if (!executor.awaitTermination (15, SECONDS))
+      if (!ioExecutor.awaitTermination (15, SECONDS))
         warn ("Failed to cleanly shut down thread pool", this);
     } catch (InterruptedException ex)
     {
@@ -469,12 +474,13 @@ public class Router implements IoHandler, Closeable
   }
   
   /**
-   * The shared executor thread pool used by the router. Plugins may
-   * share this.
+   * The ordered executor thread pool used by the router's thread pool
+   * (ExecutorFilter). Plugins may share this for their own thread
+   * pooling.
    */
-  public ExecutorService executor ()
+  public OrderedThreadPoolExecutor filterExecutor ()
   {
-    return executor;
+    return filterExecutor;
   }
   
   /**
@@ -659,7 +665,9 @@ public class Router implements IoHandler, Closeable
     } else
     {
       updateTcpSendImmediately (session, connection.options);
-      updateQueueLength (session, connection);
+
+      // we don't support per-session Receive-Queue.Max-Length
+      connection.options.remove ("Receive-Queue.Max-Length");
       
       Map<String, Object> options = connection.options.accepted ();
 
@@ -1003,21 +1011,6 @@ public class Router implements IoHandler, Closeable
     {
       options.remove ("TCP.Send-Immediately"); 
     }
-  }
-  
-  /**
-   * Update the receive/send queue lengths based on connection
-   * options. Currently only implements Receive-Queue.Max-Length using
-   * MINA's ReadThrottleFilterBuilder filter.
-   */
-  private static void updateQueueLength (IoSession session,
-                                         Connection connection)
-  {
-    ReadThrottleFilter readThrottle =
-      (ReadThrottleFilter)session.getFilterChain ().get (ReadThrottleFilter.class);
-    
-    readThrottle.setMaxSessionBufferSize
-      (connection.options.getInt ("Receive-Queue.Max-Length"));
   }
 
   /**
