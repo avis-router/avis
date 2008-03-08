@@ -7,22 +7,20 @@ import java.io.IOException;
 
 import org.apache.mina.common.IoBuffer;
 
-import org.avis.router.Router;
-import org.avis.util.LogFailTester;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.avis.logging.Log.DIAGNOSTIC;
-import static org.avis.logging.Log.TRACE;
-import static org.avis.logging.Log.info;
-import static org.avis.logging.Log.enableLogging;
-import static org.avis.logging.Log.warn;
+import org.avis.util.LogFailTester;
 
 import static java.lang.Thread.sleep;
 
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.enableLogging;
+import static org.avis.logging.Log.info;
+import static org.avis.logging.Log.warn;
 import static org.avis.router.JUTestRouter.PORT;
 
 /**
@@ -37,7 +35,7 @@ public class JUTestFlooding
   private static final boolean USE_EXTERNAL_SERVER = false;
 
   /** Time in millis to run flood tests. */
-  private static final long FLOODING_TIME = 5 * 1000;
+  private static final long FLOODING_TIME = 20 * 1000;
   
   private Router server;
   private LogFailTester logTester;
@@ -77,41 +75,50 @@ public class JUTestFlooding
     enableLogging (TRACE, false);
     enableLogging (DIAGNOSTIC, false);
     
-    MaliciousClient badClient = new MaliciousClient ("Bad client", "localhost", PORT);
-    GoodClient goodClient1 = new GoodClient ("Good client 1", "localhost", PORT);
-    GoodClient goodClient2 = new GoodClient ("Good client 2", "localhost", PORT);
-    GoodClient goodClient3 = new GoodClient ("Good client 3", "localhost", PORT);
+    List<GoodClient> goodClients = new ArrayList<GoodClient> ();
+    List<MaliciousClient> badClients = new ArrayList<MaliciousClient> ();
     
-    badClient.startFlooding ();
-    goodClient1.startSending ();
-    goodClient2.startSending ();
-    goodClient3.startSending ();
-    
+    for (int i = 1; i <= 1; i++)
+      badClients.add (new MaliciousClient ("Bad client " + i, "localhost", PORT));
+
+    for (int i = 1; i <= 4; i++)
+      goodClients.add (new GoodClient ("Good client " + i, "localhost", PORT));
+
+    for (MaliciousClient badClient : badClients)
+      badClient.startFlooding ();      
+
+    for (GoodClient goodClient : goodClients)
+      goodClient.startSending ();
+
     info ("Waiting while clients do their thing...", this);
     
     sleep (FLOODING_TIME);
     
-    badClient.stopFlooding ();
-    goodClient1.stopSending ();
-    goodClient2.stopSending ();    
-    goodClient3.stopSending ();    
+    for (MaliciousClient badClient : badClients)
+      badClient.stopFlooding ();      
+
+    for (GoodClient goodClient : goodClients)
+      goodClient.stopSending ();
     
-    try
+    for (MaliciousClient badClient : badClients)
     {
-      badClient.close (20000);
-    } catch (MessageTimeoutException ex)
-    {
-      warn ("Bad client close () failed: " + ex.getMessage (), this);
+      try
+      {
+        badClient.close (20000);
+      } catch (MessageTimeoutException ex)
+      {
+        warn ("Bad client close () failed: " + ex.getMessage (), this);
+      }
     }
     
-    goodClient1.close (10000);
-    goodClient2.close (10000);
-    goodClient3.close (10000);
-    
-    info (badClient.report (), this);
-    info (goodClient1.report (), this);
-    info (goodClient2.report (), this);
-    info (goodClient3.report (), this);
+    for (GoodClient goodClient : goodClients)
+      goodClient.close (10000);
+
+    for (MaliciousClient badClient : badClients)
+      info (badClient.report (), this);
+
+    for (GoodClient goodClient : goodClients)
+      info (goodClient.report (), this);
   }
   
   /**
@@ -128,7 +135,7 @@ public class JUTestFlooding
     
     List<MaliciousClient> badClients = new ArrayList<MaliciousClient> ();
     
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 20; i++)
       badClients.add (new MaliciousClient ("Bad client " + i, "localhost", PORT));
     
     for (MaliciousClient client : badClients)
