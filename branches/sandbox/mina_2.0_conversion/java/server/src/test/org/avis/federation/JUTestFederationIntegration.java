@@ -1,10 +1,14 @@
 package org.avis.federation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import java.applet.AudioClip;
 
 import org.avis.io.messages.NotifyEmit;
 import org.avis.logging.Log;
@@ -24,6 +28,7 @@ import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.federation.TestUtils.MAX_WAIT;
 import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.util.Streams.close;
@@ -42,6 +47,7 @@ public class JUTestFederationIntegration
 {
   private LogFailTester logTester;
   private boolean oldLogInfoState;
+  private ArrayList<Closeable> autoClose;
   
   @Before
   public void setup ()
@@ -51,6 +57,7 @@ public class JUTestFederationIntegration
     enableLogging (INFO, false);
     
     logTester = new LogFailTester ();
+    autoClose = new ArrayList<Closeable> ();
   }
   
   @After
@@ -58,6 +65,17 @@ public class JUTestFederationIntegration
     throws Exception
   {
     enableLogging (INFO, oldLogInfoState);
+    
+    for (int i = autoClose.size () - 1; i >= 0; i--)
+    {
+      try
+      {
+        autoClose.get (i).close ();
+      } catch (Throwable ex)
+      {
+        alarm ("Failed to close", this, ex);
+      }
+    }
     
     logTester.assertOkAndDispose ();
   }
@@ -98,18 +116,22 @@ public class JUTestFederationIntegration
     );
 
     Log.enableLogging (Log.INFO, false);
-    // Log.enableLogging (Log.TRACE, true);
-    // Log.enableLogging (Log.DIAGNOSTIC, true);
+//     Log.enableLogging (Log.TRACE, true);
+//     Log.enableLogging (Log.DIAGNOSTIC, true);
 
-    Router router2 = startRouter (config2);
-    Router router3 = startRouter (config3);
+    startRouter (config2);
+    startRouter (config3);
     Router router1 = startRouter (config1);
+
+    assertEquals (2, federationManagerFor (router1).connectors ().size ());
 
     for (Connector connector : federationManagerFor (router1).connectors ())
       waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
+    autoClose.add (client1);
     SimpleClient client2 = new SimpleClient ("127.0.0.1", 29190);
+    autoClose.add (client2);
     
     client1.connect ();
     client1.subscribe ("test == 1");
@@ -124,13 +146,6 @@ public class JUTestFederationIntegration
     client2.send (new NotifyEmit ("test", 1));
     
     client1.receive ();
-    
-    client1.close ();
-    client2.close ();
-    
-    router1.close ();
-    router2.close ();
-    router3.close ();
   }
   
   /**
@@ -198,8 +213,8 @@ public class JUTestFederationIntegration
 //    Log.enableLogging (Log.TRACE, true);
 //    Log.enableLogging (Log.DIAGNOSTIC, true);
 
-    Router router2 = startRouter (config2);
-    Router router3 = startRouter (config3);
+    startRouter (config2);
+    startRouter (config3);
     Router router1 = startRouter (config1);
 
     Collection<Connector> connectors = 
@@ -211,7 +226,9 @@ public class JUTestFederationIntegration
       waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
+    autoClose.add (client1);
     SimpleClient client2 = new SimpleClient ("127.0.0.1", 29190);
+    autoClose.add (client2);
     
     client1.connect ();
     client1.subscribe ("test == 1");
@@ -249,10 +266,6 @@ public class JUTestFederationIntegration
     router5.close ();
     
     logTester.unpause ();
-    
-    router3.close ();
-    router2.close ();
-    router1.close ();
   }
 
   private static void assertFailsToConnect (Router router)
@@ -264,10 +277,14 @@ public class JUTestFederationIntegration
       assertFalse (connector.isConnected ());
   }
 
-  private static Router startRouter (File config) 
+  private Router startRouter (File config) 
     throws IllegalConfigOptionException, IOException
   {
-    return Main.start ("-c", config.getAbsolutePath ());
+    Router router = Main.start ("-c", config.getAbsolutePath ());
+    
+    autoClose.add (router);
+    
+    return router;
   }
 
   private static File configFile (String contents)
