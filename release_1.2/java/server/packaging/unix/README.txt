@@ -1,7 +1,7 @@
 This is a generic Avis install package for Unix systems not directly
 supported with native installation packages.
 
-Avis's requires a Java 1.5.0 (or later) runtime. See
+Avis requires a Java 1.5.0 (or later) runtime. See
 http://java.sun.com/javase/downloads.
 
 Installation
