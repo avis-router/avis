@@ -63,7 +63,7 @@ BuildArchitectures: noarch
       < %{_avis_server}/packaging/fedora/rc_init_script.in > %{_tmppath}/avisd
     
     install -Dp -m 0755 \
-      %{_tmppath}/avisd $RPM_BUILD_ROOT/etc/init.d/
+      %{_tmppath}/avisd $RPM_BUILD_ROOT/etc/init.d/avisd
 
 %files
      %defattr(-,root,root)
