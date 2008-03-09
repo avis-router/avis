@@ -129,7 +129,15 @@ public class SimpleClient implements IoHandler, Closeable
     throws NoConnectionException
   {
     checkConnected ();
-    clientSession.write (message).join (15000);
+  
+    /*
+     * todo under MINA 1.1.5 this joining-the-send-future malarkey has
+     * no effect: a close after a send can still eat the sent message.
+     * This only really affects UNotify because the others all use the
+     * Disconn sequence.
+     */
+    if (!clientSession.write (message).join (RECEIVE_TIMEOUT))
+      throw new RuntimeIOException ("Failed to send " + message.name ());    
   }
   
   public Message receive ()
@@ -318,9 +326,14 @@ public class SimpleClient implements IoHandler, Closeable
       receive (DisconnRply.class, timeout);
     }
 
-    clientSession.close ().join ();
-    
-    clientSession = null;
+    try
+    {
+      if (!clientSession.close ().join (5000))
+        throw new IOException ("Failed to close client session");
+    } finally
+    {
+      clientSession = null;
+    }
   }
   
   /**

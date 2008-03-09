@@ -33,6 +33,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.lang.Thread.sleep;
+
 import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.logging.Log.ALARM;
@@ -655,6 +657,7 @@ public class JUTestRouter
     throws Exception
   {
     router = new Router (PORT);
+
     SimpleClient client1 = new SimpleClient ("client1");
     SimpleClient client2 = new SimpleClient ("client2");
     
@@ -666,6 +669,10 @@ public class JUTestRouter
     ntfn.put ("client", "client 1");
     
     client1.send (new UNotify (4, 0, ntfn));
+    
+    // todo MINA close can eat messages in queue: fix this
+    sleep (1000);
+    
     client1.close ();
     
     NotifyDeliver reply = (NotifyDeliver)client2.receive ();
