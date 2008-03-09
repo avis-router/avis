@@ -10,10 +10,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
 /**
- * A generic event listener list. The list is thread safe, but does
- * not guarantee immediate visibility of changes: i.e. if thread1
- * executes a remove () and thread2 executes a fire () immediately
- * after, thread2 will not necessarily see the result of the remove ().
+ * A generic event listener list. The list is not thread safe w.r.t
+ * add and remove: corruption of the list is guaranteed not to happen,
+ * but add's in race mode may result in one add being ignored.
  * 
  * @author Matthew Phillips
  */
