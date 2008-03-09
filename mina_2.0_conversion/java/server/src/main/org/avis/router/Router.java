@@ -529,7 +529,10 @@ public class Router implements IoHandler, Closeable
    */
   public void addCloseListener (CloseListener listener)
   {
-    closeListeners.add (listener);
+    synchronized (closeListeners)
+    {      
+      closeListeners.add (listener);
+    }
   }
   
   /**
@@ -537,7 +540,10 @@ public class Router implements IoHandler, Closeable
    */
   public void removeCloseListener (CloseListener listener)
   {
-    closeListeners.remove (listener);
+    synchronized (closeListeners)
+    {
+      closeListeners.remove (listener);
+    }
   }
   
   /**
@@ -557,7 +563,10 @@ public class Router implements IoHandler, Closeable
    */
   public void addNotifyListener (NotifyListener listener)
   {
-    notifyListeners.add (listener);
+    synchronized (notifyListeners)
+    {
+      notifyListeners.add (listener);
+    }
   }
   
   /**
@@ -565,7 +574,10 @@ public class Router implements IoHandler, Closeable
    */
   public void removeNotifyListener (NotifyListener listener)
   {
-    notifyListeners.remove (listener);
+    synchronized (notifyListeners)
+    {
+      notifyListeners.remove (listener);
+    }
   }
   
   // IoHandler interface
