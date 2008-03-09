@@ -326,7 +326,7 @@ public class Acceptor implements IoHandler, Closeable
     if (closing)
       session.close ();
     else
-      logSessionOpened (session, this);
+      logSessionOpened (session, "incoming", this);
   }
 
   public void messageReceived (IoSession session, Object theMessage)
@@ -337,7 +337,7 @@ public class Acceptor implements IoHandler, Closeable
     
     Message message = (Message)theMessage;
     
-    logMessageReceived (message, serverDomain, this);
+    logMessageReceived (message, session, this);
     
     Link link = linkFor (session);
     
