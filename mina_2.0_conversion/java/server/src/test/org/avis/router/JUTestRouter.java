@@ -33,6 +33,11 @@ import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
 import org.avis.util.LogFailTester;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.logging.Log.ALARM;
@@ -42,10 +47,6 @@ import static org.avis.logging.Log.enableLogging;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Test the router server.
@@ -662,6 +663,7 @@ public class JUTestRouter
     throws Exception
   {
     router = new Router (PORT);
+
     SimpleClient client1 = new SimpleClient ("client1");
     SimpleClient client2 = new SimpleClient ("client2");
     
@@ -673,6 +675,10 @@ public class JUTestRouter
     ntfn.put ("client", "client 1");
     
     client1.send (new UNotify (4, 0, ntfn));
+    
+    // NOTE: MINA 1.1.5 close can eat messages in queue: 
+    // 2.0 does not seem to have this problem
+    
     client1.close ();
     
     NotifyDeliver reply = (NotifyDeliver)client2.receive ();
