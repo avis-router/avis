@@ -643,15 +643,21 @@ public final class Elvin implements Closeable
           
           connection.close ();
         }
+        
+        connection = null;
       }
       
-      if (connector != null)
-        connector.dispose ();
-
       // any callbacks will block until this sync section ends
       fireCloseEvent (reason, message, error);
       
       callbacks.shutdown ();
+    }
+    
+    // do this outside sync block to avoid deadlock in dispose
+    if (connector != null)
+    {
+      connector.dispose ();
+      connector = null;
     }
   }
   
