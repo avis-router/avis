@@ -16,6 +16,7 @@ import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.common.RuntimeIoException;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.io.ClientFrameCodec;
@@ -121,8 +122,16 @@ public class SimpleClient implements IoHandler, Closeable
     throws NoConnectionException
   {
     checkConnected ();
-    
-    clientSession.write (message).awaitUninterruptibly (15000);
+  
+    /*
+     * todo under MINA 1.1.5 this joining-the-send-future malarkey has
+     * no effect: a close after a send can still eat the sent message.
+     * This does not seem to be the case in 2.0 This only really
+     * affects UNotify because the others all use the Disconn
+     * sequence.
+     */
+     if (!clientSession.write (message).awaitUninterruptibly (RECEIVE_TIMEOUT))
+       throw new RuntimeIoException ("Failed to send " + message.name ());    
   }
   
   public Message receive ()
@@ -318,9 +327,14 @@ public class SimpleClient implements IoHandler, Closeable
       receive (DisconnRply.class, timeout);
     }
 
-    clientSession.close ().await ();
-    
-    clientSession = null;
+    try
+    {
+      if (!clientSession.close ().await (RECEIVE_TIMEOUT))
+        throw new RuntimeIoException ("Failed to close client session");
+    } finally
+    {
+      clientSession = null;
+    }
     
     connector.dispose ();
   }
