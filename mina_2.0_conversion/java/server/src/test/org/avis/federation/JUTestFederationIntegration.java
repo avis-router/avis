@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.applet.AudioClip;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.avis.io.messages.NotifyEmit;
 import org.avis.logging.Log;
@@ -18,11 +20,10 @@ import org.avis.router.SimpleClient;
 import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.LogFailTester;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import static java.lang.Thread.sleep;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.federation.TestUtils.MAX_WAIT;
@@ -32,9 +33,6 @@ import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.util.Streams.close;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 /**
  * Full federation integration test between three routers. Starts each
