@@ -1,3 +1,9 @@
+Release 1.2.1 (XXX, 2008)
+----------------------------------------------------------------------
+
+ * Fixed race condition that could cause delivery of federated
+   messages to fail when using multiple federation links.
+
 Release 1.2.0 (January 21, 2008)
 ----------------------------------------------------------------------
 
