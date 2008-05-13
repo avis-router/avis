@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 
 #include <elvin/elvin.h>
+#include "messages.h"
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          Elvin_Error *error);
@@ -32,7 +33,12 @@ bool elvin_open_url (Elvin *elvin, Elvin_URL *url, Elvin_Error *error)
   if (!open_socket (elvin, url->host, url->port, error))
     return false;
   
-  // todo send connection packet
+/*  ConnRqst connRqst;
+  connRqst->init (&connRqst);
+  
+  send_packet (connRqst); 
+  
+  connRqst->destroy (&connRqst);*/
   
   return true;
 }

@@ -12,6 +12,8 @@
 #include <stdint.h>
 
 #define DEFAULT_ELVIN_PORT 2917
+#define DEFAULT_CLIENT_PROTOCOL_MAJOR 4
+#define DEFAULT_CLIENT_PROTOCOL_MINOR 0
 
 typedef struct Elvin_t
 {
