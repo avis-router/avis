@@ -63,7 +63,7 @@ public class ConnectionOptionSet extends OptionSet
     add ("Subscription.Max-Count", 16, 2*K, 2*K);
     add ("Subscription.Max-Length", 1*K, 2*K, 4*K);
     
-    add ("Receive-Queue.Max-Length", 1*K, 1*MB, 1*MB);
+    add ("Receive-Queue.Max-Length", 1*K, 2*MB, 10*MB);
 
     // todo: enforce following queue-related options
     add ("Receive-Queue.Drop-Policy",

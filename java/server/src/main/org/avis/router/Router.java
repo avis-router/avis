@@ -1,9 +1,12 @@
 package org.avis.router;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -20,14 +23,19 @@ import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.ExceptionMonitor;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
+import org.apache.mina.common.IoProcessor;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.ThreadModel;
+import org.apache.mina.common.SimpleIoProcessorPool;
 import org.apache.mina.common.WriteFuture;
-import org.apache.mina.filter.ReadThrottleFilterBuilder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.executor.ExecutorFilter;
-import org.apache.mina.transport.socket.nio.SocketAcceptor;
-import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
+import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
+import org.apache.mina.filter.traffic.MessageSizeEstimator;
+import org.apache.mina.filter.traffic.ReadThrottleFilter;
+import org.apache.mina.filter.traffic.ReadThrottlePolicy;
+import org.apache.mina.transport.socket.nio.NioProcessor;
+import org.apache.mina.transport.socket.nio.NioSession;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 import org.avis.common.ElvinURI;
 import org.avis.config.Options;
@@ -65,18 +73,21 @@ import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
 import org.avis.util.Text;
 
+import static java.lang.Math.max;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.mina.common.ByteBuffer.setUseDirectBuffers;
 import static org.apache.mina.common.IdleStatus.READER_IDLE;
+import static org.apache.mina.common.IoBuffer.setUseDirectBuffer;
 import static org.apache.mina.common.IoFutureListener.CLOSE;
 
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
+import static org.avis.config.OptionTypeURI.EMPTY_URI;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.LegacyConnectionOptions.setWithLegacy;
 import static org.avis.io.Net.addressesFor;
@@ -114,14 +125,28 @@ public class Router implements IoHandler, Closeable
   private static final String ROUTER_VERSION =
     System.getProperty ("avis.router.version", "<unknown>");
   
+  private static final MessageSizeEstimator MESSAGE_SIZE_ESTIMATOR = 
+    new MessageSizeEstimator ()
+  {
+    public int estimateSize (Object message)
+    {
+      return max (0, ((Message)message).frameSize * 2);
+    }
+  };
+
   private RouterOptions routerOptions;
-  private ExecutorService executor;
-  private SocketAcceptor acceptor;
+  private ConcurrentHashSet<IoSession> sessions;
+
+  private Collection<NioSocketAcceptor> acceptors;
+
+  private IoProcessor<NioSession> processorPool;
+  private ExecutorService ioExecutor;
+  private OrderedThreadPoolExecutor filterExecutor;
+  private ScheduledExecutorService throttleExecutor;
+  
   private KeyStore keystore;
   private volatile boolean closing;
   
-  private ConcurrentHashSet<IoSession> sessions;
-
   private ListenerList<NotifyListener> notifyListeners;
   private ListenerList<CloseListener> closeListeners;
 
@@ -170,27 +195,49 @@ public class Router implements IoHandler, Closeable
     
     this.routerOptions = options;
     this.sessions = new ConcurrentHashSet<IoSession> ();
-    this.executor = newCachedThreadPool ();
-    this.acceptor =
-      new SocketAcceptor (getRuntime ().availableProcessors () + 1,
-                          executor);
+    this.ioExecutor = newCachedThreadPool ();
+    this.filterExecutor = new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
+    this.throttleExecutor = newScheduledThreadPool (1);
+    this.processorPool = 
+      new SimpleIoProcessorPool<NioSession> 
+        (NioProcessor.class, ioExecutor, 
+         getRuntime ().availableProcessors () + 1);
     
-    setUseDirectBuffers (options.getBoolean ("IO.Use-Direct-Buffers"));
+    if (options.get ("TLS.Keystore") != EMPTY_URI)
+      this.keystore = loadKeystore ();
+    
+    setUseDirectBuffer (options.getBoolean ("IO.Use-Direct-Buffers"));
     
     /*
-     * Setup IO filter chain with codec and then thread pool. NOTE:
-     * The read throttling system needs an ExecutorFilter to glom
-     * onto: it's not clear that we gain any other benefit from it
-     * since notification processing is non-blocking. See
+     * Setup IO filter chain. NOTE re thread pool: we do this in order
+     * to install the IO event queue throttle to handle spammy
+     * clients. It's not clear that we gain any other benefit from it
+     * since Avis notification processing is non-blocking. See
      * http://mina.apache.org/configuring-thread-model.html.
      */
     DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
 
     filters.addLast ("codec", ClientFrameCodec.FILTER);
-    filters.addLast ("threadPool", new ExecutorFilter (executor));
     
-    bind (options.listenURIs (), this, filters, 
+    filters.addLast ("threadPool", new ExecutorFilter (filterExecutor));
+    
+    filters.addLast ("readThrottle", createReadThrottle ());
+
+    this.acceptors = 
+      bind (options.listenURIs (), this, filters, 
           (Filter<InetAddress>)routerOptions.get ("Require-Authenticated"));
+  }
+
+  private ReadThrottleFilter createReadThrottle ()
+  {
+    ReadThrottleFilter readThrottle = 
+      new ReadThrottleFilter (throttleExecutor, ReadThrottlePolicy.BLOCK, 
+                              MESSAGE_SIZE_ESTIMATOR);
+    
+    readThrottle.setMaxSessionBufferSize
+      (routerOptions.getInt ("Receive-Queue.Max-Length"));
+    
+    return readThrottle;
   }
 
   /**
@@ -204,63 +251,55 @@ public class Router implements IoHandler, Closeable
    * @param authRequired Hosts matched by this filter must be
    *                successfully authenticated via TLS or will be
    *                refused access.
+   *                
+   * @return The created acceptors.
    * 
    * @throws IOException if an error occurred during binding.
    */
-  public void bind (Set<? extends ElvinURI> uris, IoHandler handler,
-                    DefaultIoFilterChainBuilder baseFilters, 
-                    Filter<InetAddress> authRequired) 
+  public Collection<NioSocketAcceptor> bind 
+    (Set<? extends ElvinURI> uris, 
+     IoHandler handler,
+     DefaultIoFilterChainBuilder baseFilters, 
+     Filter<InetAddress> authRequired) 
     throws IOException
   {
-    SocketAcceptorConfig defaultAcceptorConfig = 
-      createAcceptorConfig 
-        (createStandardFilters (baseFilters, authRequired));
-    SocketAcceptorConfig secureAcceptorConfig = null; // lazy init'ed
+    Collection<NioSocketAcceptor> uriAcceptors = 
+      new ArrayList<NioSocketAcceptor> (uris.size ());
     
+    DefaultIoFilterChainBuilder secureFilters = null; // lazy init
+
     for (ElvinURI uri : uris)
     {
-      SocketAcceptorConfig bindConfig;
-      
-      if (uri.isSecure ())
+      for (InetSocketAddress address : addressesFor (uri))
       {
-        if (secureAcceptorConfig == null)
+        NioSocketAcceptor acceptor = new NioSocketAcceptor (processorPool);
+        
+        acceptor.setReuseAddress (true);
+
+        if (uri.isSecure ())
         {
-          secureAcceptorConfig = 
-            createAcceptorConfig 
-              (createSecureFilters (baseFilters, authRequired, false));
+          if (secureFilters == null)
+          {
+            secureFilters = 
+              createSecureFilters (baseFilters, authRequired, false);
+          }
+          
+          acceptor.setFilterChainBuilder (secureFilters);
+        } else
+        {
+          acceptor.setFilterChainBuilder (baseFilters);
         }
         
-        bindConfig = secureAcceptorConfig;
-      } else
-      {
-        bindConfig = defaultAcceptorConfig;
+        acceptor.setHandler (handler);
+        acceptor.bind (address);
+        
+        uriAcceptors.add (acceptor);
       }
-      
-      for (InetSocketAddress address : addressesFor (uri))
-        acceptor.bind (address, handler, bindConfig);
     }
+    
+    return uriAcceptors;
   }
 
-  /**
-   * Create default MINA config for incoming connections.
-   * 
-   * @param filters The base set of common filters.
-   * @param authRequired The set of hosts that must connect via
-   *                authenticated connections and should be
-   *                blacklisted from non authenticated access.
-   */
-  private SocketAcceptorConfig createAcceptorConfig 
-    (DefaultIoFilterChainBuilder filters)
-  {
-    SocketAcceptorConfig defaultAcceptorConfig = new SocketAcceptorConfig ();
-    
-    defaultAcceptorConfig.setReuseAddress (true);
-    defaultAcceptorConfig.setThreadModel (ThreadModel.MANUAL);
-    defaultAcceptorConfig.setFilterChainBuilder (filters);
-    
-    return defaultAcceptorConfig;
-  }
-  
   /**
    * Create the filters used for standard, non secured links.
    * 
@@ -276,7 +315,7 @@ public class Router implements IoHandler, Closeable
   {
     if (authRequired != Filter.MATCH_NONE)
     {
-      commonFilters = (DefaultIoFilterChainBuilder)commonFilters.clone (); 
+      commonFilters = new DefaultIoFilterChainBuilder (commonFilters); 
       
       commonFilters.addFirst ("blacklist", new BlacklistFilter (authRequired));
     }
@@ -297,14 +336,14 @@ public class Router implements IoHandler, Closeable
   public DefaultIoFilterChainBuilder createSecureFilters 
     (DefaultIoFilterChainBuilder commonFilters, 
      Filter<InetAddress> authRequired, 
-     boolean clientMode) throws IOException
+     boolean clientMode) 
   {
     DefaultIoFilterChainBuilder secureFilters = 
-      (DefaultIoFilterChainBuilder)commonFilters.clone ();
+      new DefaultIoFilterChainBuilder (commonFilters);
     
     secureFilters.addFirst 
       ("security", 
-       new SecurityFilter (keystore (), 
+       new SecurityFilter (keystore, 
                            routerOptions.getString ("TLS.Keystore-Passphrase"), 
                            authRequired, clientMode));
     
@@ -314,41 +353,38 @@ public class Router implements IoHandler, Closeable
   /**
    * Lazy load the router's keystore.
    */
-  private KeyStore keystore () 
+  private KeyStore loadKeystore () 
     throws IOException
   {
-    if (keystore == null)
+    URI keystoreUri = (URI)routerOptions.get ("TLS.Keystore");
+    
+    if (keystoreUri.toString ().length () == 0)
     {
-      URI keystoreUri = (URI)routerOptions.get ("TLS.Keystore");
-      
-      if (keystoreUri.toString ().length () == 0)
-      {
-        throw new IOException 
-          ("Cannot use TLS without a keystore: " +
-           "see TLS.Keystore configuration option");
-      }
-      
-      InputStream keystoreStream = 
-        routerOptions.toAbsoluteURI (keystoreUri).toURL ().openStream ();
-
-      try
-      {
-        keystore = KeyStore.getInstance ("JKS");
-        
-        keystore.load 
-          (keystoreStream, 
-           toPassphrase (routerOptions.getString ("TLS.Keystore-Passphrase")));
-      } catch (GeneralSecurityException ex)
-      {
-        throw new IOException ("Failed to load TLS keystore: " + 
-                               ex.getMessage ());
-      } finally
-      {
-        keystoreStream.close ();
-      }
+      throw new IOException 
+        ("Cannot use TLS without a keystore: " +
+         "see TLS.Keystore configuration option");
     }
     
-    return keystore;
+    InputStream keystoreStream = 
+      routerOptions.toAbsoluteURI (keystoreUri).toURL ().openStream ();
+
+    try
+    {
+      KeyStore newKeystore = KeyStore.getInstance ("JKS");
+      
+      newKeystore.load 
+        (keystoreStream, 
+         toPassphrase (routerOptions.getString ("TLS.Keystore-Passphrase")));
+      
+      return newKeystore;
+    } catch (GeneralSecurityException ex)
+    {
+      throw new IOException ("Failed to load TLS keystore: " + 
+                             ex.getMessage ());
+    } finally
+    {
+      keystoreStream.close ();
+    }    
   }
   
   /**
@@ -396,14 +432,18 @@ public class Router implements IoHandler, Closeable
       }
     }
     
-    waitForAllSessionsClosed ();
+    waitForAllSessionsToClose ();
     
-    acceptor.unbindAll ();
-    executor.shutdown ();
+    for (NioSocketAcceptor acceptor : acceptors)
+      acceptor.dispose ();
+
+    ioExecutor.shutdown ();
+    filterExecutor.shutdown ();
+    throttleExecutor.shutdown ();
     
     try
     {
-      if (!executor.awaitTermination (15, SECONDS))
+      if (!ioExecutor.awaitTermination (15, SECONDS))
         warn ("Failed to cleanly shut down thread pool", this);
     } catch (InterruptedException ex)
     {
@@ -411,7 +451,7 @@ public class Router implements IoHandler, Closeable
     }
   }
 
-  private void waitForAllSessionsClosed ()
+  private void waitForAllSessionsToClose ()
   {
     long finish = currentTimeMillis () + 20000;
     
@@ -426,30 +466,31 @@ public class Router implements IoHandler, Closeable
     
     if (!sessions.isEmpty ())
     {
-      warn ("Sessions took too long to close " +
-      		"(" + sessions.size () + " still open", this);
+      warn ("Sessions took too long to close: " +
+            sessions.size () + " still open", this);
     }
     
     sessions.clear ();
   }
   
   /**
-   * The shared executor thread pool used by the router. Plugins may
-   * share this.
+   * The ordered executor thread pool used by the router's thread pool
+   * (ExecutorFilter). Plugins may share this for their own thread
+   * pooling.
    */
-  public ExecutorService executor ()
+  public OrderedThreadPoolExecutor filterExecutor ()
   {
-    return executor;
+    return filterExecutor;
   }
   
   /**
-   * The router's MINA socket acceptor. Plugins may share this.
+   * The router's MINA IO processor pool. Plugins may share this.
    */
-  public SocketAcceptor socketAcceptor ()
+  public IoProcessor<NioSession> ioProcessor ()
   {
-    return acceptor;
+    return processorPool;
   }
-  
+
   public Set<ElvinURI> listenURIs ()
   {
     return routerOptions.listenURIs ();
@@ -488,7 +529,10 @@ public class Router implements IoHandler, Closeable
    */
   public void addCloseListener (CloseListener listener)
   {
-    closeListeners.add (listener);
+    synchronized (closeListeners)
+    {      
+      closeListeners.add (listener);
+    }
   }
   
   /**
@@ -496,7 +540,10 @@ public class Router implements IoHandler, Closeable
    */
   public void removeCloseListener (CloseListener listener)
   {
-    closeListeners.remove (listener);
+    synchronized (closeListeners)
+    {
+      closeListeners.remove (listener);
+    }
   }
   
   /**
@@ -516,7 +563,10 @@ public class Router implements IoHandler, Closeable
    */
   public void addNotifyListener (NotifyListener listener)
   {
-    notifyListeners.add (listener);
+    synchronized (notifyListeners)
+    {
+      notifyListeners.add (listener);
+    }
   }
   
   /**
@@ -524,7 +574,10 @@ public class Router implements IoHandler, Closeable
    */
   public void removeNotifyListener (NotifyListener listener)
   {
-    notifyListeners.remove (listener);
+    synchronized (notifyListeners)
+    {
+      notifyListeners.remove (listener);
+    }
   }
   
   // IoHandler interface
@@ -624,7 +677,9 @@ public class Router implements IoHandler, Closeable
     } else
     {
       updateTcpSendImmediately (session, connection.options);
-      updateQueueLength (session, connection);
+
+      // we don't support per-session Receive-Queue.Max-Length
+      connection.options.remove ("Receive-Queue.Max-Length");
       
       Map<String, Object> options = connection.options.accepted ();
 
@@ -878,7 +933,7 @@ public class Router implements IoHandler, Closeable
   private static void handleTestConn (IoSession session)
   {
     // if no other outgoing messages are waiting, send a confirm message
-    if (session.getScheduledWriteRequests () == 0)
+    if (session.getScheduledWriteMessages () == 0)
       send (session, ConfConn.INSTANCE);
   }
   
@@ -968,21 +1023,6 @@ public class Router implements IoHandler, Closeable
     {
       options.remove ("TCP.Send-Immediately"); 
     }
-  }
-  
-  /**
-   * Update the receive/send queue lengths based on connection
-   * options. Currently only implements Receive-Queue.Max-Length using
-   * MINA's ReadThrottleFilterBuilder filter.
-   */
-  private static void updateQueueLength (IoSession session,
-                                         Connection connection)
-  {
-    ReadThrottleFilterBuilder readThrottle =
-      (ReadThrottleFilterBuilder)session.getAttribute ("readThrottle");
-    
-    readThrottle.setMaximumConnectionBufferSize
-      (connection.options.getInt ("Receive-Queue.Max-Length"));
   }
 
   /**
@@ -1105,25 +1145,15 @@ public class Router implements IoHandler, Closeable
     throws Exception
   {
     // client has this long to connect or UNotify
-    session.setIdleTime
+    session.getConfig ().setIdleTime
       (READER_IDLE, 
        routerOptions.getInt ("IO.Idle-Connection-Timeout"));
-    
-    // install read throttle
-    ReadThrottleFilterBuilder readThrottle = new ReadThrottleFilterBuilder ();
-    
-    readThrottle.setMaximumConnectionBufferSize
-      (CONNECTION_OPTION_SET.defaults.getInt ("Receive-Queue.Max-Length"));
-    
-    readThrottle.attach (session.getFilterChain ());
-    
-    session.setAttribute ("readThrottle", readThrottle);
     
     // set default max length for connectionless sessions
     setMaxFrameLengthFor
       (session,
        CONNECTION_OPTION_SET.defaults.getInt ("Packet.Max-Length"));
-    
+
     sessions.add (session);
   }
 
@@ -1153,7 +1183,7 @@ public class Router implements IoHandler, Closeable
   private static void setConnection (IoSession session,
                                      Connection connection)
   {
-    session.setAttachment (connection);
+    session.setAttribute ("connection", connection);
     
     setMaxFrameLengthFor
       (session, connection.options.getInt ("Packet.Max-Length"));
@@ -1166,7 +1196,7 @@ public class Router implements IoHandler, Closeable
   private static Connection connectionFor (IoSession session)
     throws NoConnectionException
   {
-    Connection connection = (Connection)session.getAttachment ();
+    Connection connection = (Connection)session.getAttribute ("connection");
     
     if (connection == null)
       throw new NoConnectionException ("No connection established for session");
@@ -1222,7 +1252,7 @@ public class Router implements IoHandler, Closeable
    */
   private static Connection peekConnectionFor (IoSession session)
   {
-    return (Connection)session.getAttachment ();
+    return (Connection)session.getAttribute ("connection");
   }
   
   /**
@@ -1238,7 +1268,6 @@ public class Router implements IoHandler, Closeable
 
   public static boolean isSecure (IoSession session)
   {
-    return session.getServiceConfig ().getFilterChain ().contains 
-      (SecurityFilter.class);
+    return session.getFilterChain ().contains (SecurityFilter.class);
   }
 }

@@ -1,6 +1,7 @@
 package org.avis.federation.io;
 
 import org.apache.mina.common.IoFilter;
+import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -28,13 +29,13 @@ public class FederationFrameCodec
   
   public static final IoFilter FILTER = new ProtocolCodecFilter (INSTANCE);
 
-  public ProtocolEncoder getEncoder ()
+  public ProtocolEncoder getEncoder (IoSession session)
     throws Exception
   {
     return INSTANCE;
   }
   
-  public ProtocolDecoder getDecoder ()
+  public ProtocolDecoder getDecoder (IoSession session)
     throws Exception
   {
     return INSTANCE;

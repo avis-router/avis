@@ -5,7 +5,7 @@ import java.util.Map;
 
 import java.lang.reflect.Array;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.io.XdrCoding;
@@ -24,7 +24,7 @@ public class JUTestXdrCoding
   public void stringIO ()
     throws Exception
   {
-    ByteBuffer buff = ByteBuffer.allocate (1024);
+    IoBuffer buff = IoBuffer.allocate (1024);
     
     XdrCoding.putString (buff, "");
     
@@ -58,7 +58,7 @@ public class JUTestXdrCoding
   private void roundtrip (String str)
     throws ProtocolCodecException
   {
-    ByteBuffer buff = ByteBuffer.allocate (1024);
+    IoBuffer buff = IoBuffer.allocate (1024);
     
     XdrCoding.putString (buff, str);
     
@@ -71,7 +71,7 @@ public class JUTestXdrCoding
   public void nameValueIO ()
     throws Exception
   {
-    ByteBuffer buff = ByteBuffer.allocate (1024);
+    IoBuffer buff = IoBuffer.allocate (1024);
     HashMap<String, Object> nameValues = new HashMap<String, Object> ();
     
     XdrCoding.putNameValues (buff, nameValues);
@@ -92,7 +92,7 @@ public class JUTestXdrCoding
   public void objectsIO ()
     throws Exception
   {
-    ByteBuffer buff = ByteBuffer.allocate (1024);
+    IoBuffer buff = IoBuffer.allocate (1024);
     Object [] objects = new Object [] {"hello", Integer.valueOf (42)};
     
     XdrCoding.putObjects (buff, objects);

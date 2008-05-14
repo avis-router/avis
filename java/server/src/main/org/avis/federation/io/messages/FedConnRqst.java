@@ -1,6 +1,6 @@
 package org.avis.federation.io.messages;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.io.messages.RequestMessage;
@@ -43,7 +43,7 @@ public class FedConnRqst extends RequestMessage<FedConnRply>
   }
   
   @Override
-  public void encode (ByteBuffer out)
+  public void encode (IoBuffer out)
     throws ProtocolCodecException
   {
     super.encode (out);
@@ -54,7 +54,7 @@ public class FedConnRqst extends RequestMessage<FedConnRply>
   }
   
   @Override
-  public void decode (ByteBuffer in)
+  public void decode (IoBuffer in)
     throws ProtocolCodecException
   {
     super.decode (in);

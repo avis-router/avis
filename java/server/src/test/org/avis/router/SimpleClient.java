@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -11,11 +12,12 @@ import java.net.InetSocketAddress;
 import junit.framework.AssertionFailedError;
 
 import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.common.RuntimeIoException;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.io.ClientFrameCodec;
 import org.avis.io.messages.ConnRply;
@@ -32,6 +34,7 @@ import org.avis.io.messages.XidMessage;
 import org.avis.security.Keys;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
@@ -40,23 +43,24 @@ import static org.avis.logging.Log.trace;
 import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Basic Avis test client.
  */
-public class SimpleClient implements IoHandler
+public class SimpleClient implements IoHandler, Closeable
 {
   protected static final int RECEIVE_TIMEOUT = 5000;
   
+  protected NioSocketConnector connector;
   protected IoSession clientSession;
   protected boolean connected;
   protected BlockingQueue<Message> incomingMessages =
     new LinkedBlockingQueue<Message> ();
 
   public String clientName;
+
   
   public SimpleClient ()
     throws IOException
@@ -79,47 +83,38 @@ public class SimpleClient implements IoHandler
   public SimpleClient (String clientName, String hostname, int port)
     throws IOException
   {
-    this.clientName = clientName;
+    this (new InetSocketAddress (hostname, port));
     
-    SocketConnector connector = new SocketConnector ();
-
-    /* Change the worker timeout to 1 second to make the I/O thread
-     * quit soon when there's no connection to manage. */
-    connector.setWorkerTimeout (1);
-    
-    SocketConnectorConfig cfg = new SocketConnectorConfig ();
-    cfg.setConnectTimeout (10);
-    
-    cfg.getFilterChain ().addLast ("codec", ClientFrameCodec.FILTER);
-    ConnectFuture future =
-      connector.connect (new InetSocketAddress (hostname, port),
-                         this, cfg);
-                                     
-    future.join ();
-    clientSession = future.getSession ();
+    this.clientName = clientName;    
+  }
+  
+  public SimpleClient (InetSocketAddress address)
+  {
+    this (address, defaultFilters ());
   }
   
   public SimpleClient (InetSocketAddress address, 
-                       SocketConnectorConfig cfg)
+                       DefaultIoFilterChainBuilder filters)
   {
-    this ("client", address, cfg);
+    this ("client", address, filters);
   }
   
   public SimpleClient (String clientName,
                        InetSocketAddress address, 
-                       SocketConnectorConfig cfg)
+                       DefaultIoFilterChainBuilder filters)
   {
     this.clientName = clientName;
     
-    SocketConnector connector = new SocketConnector ();
+    connector = new NioSocketConnector ();
 
-    /* Change the worker timeout to 1 second to make the I/O thread
-     * quit soon when there's no connection to manage. */
-    connector.setWorkerTimeout (1);
-    
-    ConnectFuture future = connector.connect (address, this, cfg);
+    connector.setFilterChainBuilder (filters);
+   
+    connector.setHandler (this);
+
+    ConnectFuture future = connector.connect (address);
                                      
-    future.join ();
+    future.awaitUninterruptibly ();
+    
     clientSession = future.getSession ();
   }
   
@@ -127,7 +122,16 @@ public class SimpleClient implements IoHandler
     throws NoConnectionException
   {
     checkConnected ();
-    clientSession.write (message).join (15000);
+  
+    /*
+     * todo under MINA 1.1.5 this joining-the-send-future malarkey has
+     * no effect: a close after a send can still eat the sent message.
+     * This does not seem to be the case in 2.0 This only really
+     * affects UNotify because the others all use the Disconn
+     * sequence.
+     */
+     if (!clientSession.write (message).awaitUninterruptibly (RECEIVE_TIMEOUT))
+       throw new RuntimeIoException ("Failed to send " + message.name ());    
   }
   
   public Message receive ()
@@ -294,13 +298,25 @@ public class SimpleClient implements IoHandler
   }
 
   public void close ()
-    throws Exception
+    throws IOException
   {
-    close (RECEIVE_TIMEOUT);
+    try
+    {
+      close (RECEIVE_TIMEOUT);
+    } catch (NoConnectionException ex)
+    {
+      throw new IOException (ex.getMessage ());
+    } catch (MessageTimeoutException ex)
+    {
+      throw new IOException (ex.getMessage ());
+    } catch (InterruptedException ex)
+    {
+      currentThread ().interrupt ();
+    }
   }
   
-  public synchronized void close (long timeout)
-    throws Exception
+  public synchronized void close (long timeout) 
+    throws NoConnectionException, MessageTimeoutException, InterruptedException
   {
     if (clientSession == null)
       return;
@@ -311,9 +327,16 @@ public class SimpleClient implements IoHandler
       receive (DisconnRply.class, timeout);
     }
 
-    clientSession.close ().join ();
+    try
+    {
+      if (!clientSession.close ().await (RECEIVE_TIMEOUT))
+        throw new RuntimeIoException ("Failed to close client session");
+    } finally
+    {
+      clientSession = null;
+    }
     
-    clientSession = null;
+    connector.dispose ();
   }
   
   /**
@@ -324,6 +347,7 @@ public class SimpleClient implements IoHandler
     connected = false;
     clientSession.close ();
     clientSession = null;
+    connector.dispose ();
   }
 
   // IoHandler interface
@@ -366,5 +390,14 @@ public class SimpleClient implements IoHandler
   public void sessionOpened (IoSession session) throws Exception
   {
     // zip
+  }
+  
+    private static DefaultIoFilterChainBuilder defaultFilters ()
+  {
+    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
+    
+    filters.addLast ("codec", ClientFrameCodec.FILTER);
+    
+    return filters;
   }
 }

@@ -1,21 +1,17 @@
 package org.avis.router;
 
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.common.IoFutureListener;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.ThreadModel;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import static java.lang.Thread.sleep;
-import static java.util.concurrent.Executors.newCachedThreadPool;
 
 /**
  * Fuzz tests an Elvin router by writing message frames with random payloads.
@@ -29,23 +25,19 @@ public class Fuzz
      64, 80, 81, 82, 83};
   
   public static void main (String [] args)
-    throws InterruptedException
+    throws Exception
   {
     new Fuzz ((args.length > 0 ? args [0] : "127.0.0.1")).run ();
   }
 
-  private SocketConnector connector;
-  private ExecutorService executor;
+  private NioSocketConnector connector;
   private InetSocketAddress remoteAddress;
   private Random random;
   
   public Fuzz (String host)
   {
-    executor = newCachedThreadPool ();
-    
     // connector
-    connector = new SocketConnector (1, executor);
-    connector.setWorkerTimeout (0);
+    connector = new NioSocketConnector (1);
     
     remoteAddress = new InetSocketAddress (host, 2917);
     
@@ -53,14 +45,13 @@ public class Fuzz
   }
 
   public void run ()
-    throws InterruptedException
+    throws Exception
   {
     while (true)
     {
       IoSession session = connect ();
      
-      ByteBuffer buffer = ByteBuffer.allocate (128 * 1024);
-      buffer.acquire ();
+      IoBuffer buffer = IoBuffer.allocate (128 * 1024);
       
       int bytes = random.nextInt (buffer.capacity () - 8);
       
@@ -83,18 +74,15 @@ public class Fuzz
     }
   }
   
-  private IoSession connect ()
+  private IoSession connect () 
+    throws Exception
   {
-    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+    connector.setConnectTimeout (20);
+    connector.setHandler (new IoHandlerAdapter ());
     
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (20);
+    ConnectFuture future = connector.connect (remoteAddress);
     
-    ConnectFuture future = 
-      connector.connect (remoteAddress, new IoHandlerAdapter (),
-                         connectorConfig);
-    
-    future.join ();
+    future.await ();
     
     return future.getSession ();
   }

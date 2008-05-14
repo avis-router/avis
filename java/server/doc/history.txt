@@ -1,3 +1,19 @@
+Release 1.2.1 (March 9, 2008)
+----------------------------------------------------------------------
+
+This release fixes an error that could occur when using multiple
+federation links from a single router.
+
+ * Fixed race condition that could cause delivery of federated
+   messages to fail when using multiple federation links.
+
+ * Improved trace log output for federation.
+
+ * Fixed packaging error that broke source distribution.
+
+ * Removed bash-specific code from avisd script
+
+
 Release 1.2.0 (January 21, 2008)
 ----------------------------------------------------------------------
 

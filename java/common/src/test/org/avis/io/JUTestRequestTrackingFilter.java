@@ -27,8 +27,7 @@ public class JUTestRequestTrackingFilter
     
     RequestTrackingFilter filter = new RequestTrackingFilter (2000);
     
-    testSetup.connectorConfig.getFilterChain ().addLast 
-      ("tracker", filter);
+    testSetup.connector.getFilterChain ().addLast ("tracker", filter);
     
     TestingIoHandler connectListener = new TestingIoHandler ();
     

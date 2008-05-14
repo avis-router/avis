@@ -2,7 +2,7 @@ package org.avis.io;
 
 import java.nio.BufferUnderflowException;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
@@ -17,8 +17,8 @@ import org.avis.io.messages.XidMessage;
 /**
  * Base class for Elvin XDR frame codecs. Reads/writes messages
  * to/from the Elvin XDR frame format with the help of
- * {@link Message#decode(ByteBuffer)} and
- * {@link Message#encode(ByteBuffer)}. Understood message sets are
+ * {@link Message#decode(IoBuffer)} and
+ * {@link Message#encode(IoBuffer)}. Understood message sets are
  * effectively defined by the subclasses' implementation of
  * {@link #newMessage(int, int)}.
  * 
@@ -32,7 +32,7 @@ public abstract class FrameCodec
     throws Exception
   {
     // buffer is auto deallocated
-    ByteBuffer buffer = ByteBuffer.allocate (4096); 
+    IoBuffer buffer = IoBuffer.allocate (4096); 
     buffer.setAutoExpand (true);
     
     // leave room for frame size
@@ -46,6 +46,8 @@ public abstract class FrameCodec
     message.encode (buffer);
   
     int frameSize = buffer.position () - 4;
+    
+    message.frameSize = frameSize;
     
     // write frame size
     buffer.putInt (0, frameSize);
@@ -72,7 +74,7 @@ public abstract class FrameCodec
   }
 
   @Override
-  protected boolean doDecode (IoSession session, ByteBuffer in,
+  protected boolean doDecode (IoSession session, IoBuffer in,
                               ProtocolDecoderOutput out)
     throws Exception
   {
@@ -104,6 +106,8 @@ public abstract class FrameCodec
       
       if (frameSize > maxLength)
         throw new FrameTooLargeException (maxLength, frameSize);
+      
+      message.frameSize = frameSize;
       
       message.decode (in);
       
@@ -162,7 +166,7 @@ public abstract class FrameCodec
   protected abstract Message newMessage (int messageType, int frameSize)
     throws ProtocolCodecException;
   
-  private static boolean haveFullFrame (IoSession session, ByteBuffer in)
+  private static boolean haveFullFrame (IoSession session, IoBuffer in)
   {
     // need frame size and type before we do anything
     if (in.remaining () < 8)
