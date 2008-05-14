@@ -1,0 +1,604 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C906FBE30DD3FB0200375E7D /* basic_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C906FBD70DD3FA0800375E7D /* basic_test.c */; };
+		C906FBF00DD3FBBD00375E7D /* libelvin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libelvin.dylib */; };
+		C906FBF50DD3FC3900375E7D /* elvin.h in Headers */ = {isa = PBXBuildFile; fileRef = C906FBF30DD3FC3900375E7D /* elvin.h */; };
+		C906FBF60DD3FC3900375E7D /* elvin.c in Sources */ = {isa = PBXBuildFile; fileRef = C906FBF40DD3FC3900375E7D /* elvin.c */; };
+		C906FD6F0DD44F2200375E7D /* libelvin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libelvin.dylib */; };
+		C9B465D80DD82A9800A1C448 /* messages.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B465D60DD82A9800A1C448 /* messages.h */; };
+		C9B465D90DD82A9800A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465D70DD82A9800A1C448 /* messages.c */; };
+		C9B466040DD92F3700A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465EA0DD92D6B00A1C448 /* messages.c */; };
+		C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B466750DD9374900A1C448 /* libcheck.dylib */; };
+		C9B4669A0DD9383200A1C448 /* check.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B4665D0DD9373700A1C448 /* check.c */; };
+		C9B4669B0DD9383200A1C448 /* check_error.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B466600DD9373700A1C448 /* check_error.c */; };
+		C9B4669C0DD9383200A1C448 /* check_list.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B466630DD9373700A1C448 /* check_list.c */; };
+		C9B4669D0DD9383200A1C448 /* check_log.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B466650DD9373700A1C448 /* check_log.c */; };
+		C9B4669E0DD9383200A1C448 /* check_msg.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B466670DD9373700A1C448 /* check_msg.c */; };
+		C9B4669F0DD9383200A1C448 /* check_pack.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B466690DD9373700A1C448 /* check_pack.c */; };
+		C9B466A00DD9383200A1C448 /* check_print.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B4666B0DD9373700A1C448 /* check_print.c */; };
+		C9B466A10DD9383200A1C448 /* check_run.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B4666D0DD9373700A1C448 /* check_run.c */; };
+		C9B466A20DD9383200A1C448 /* check_str.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B4666E0DD9373700A1C448 /* check_str.c */; };
+		C9B467100DD9541700A1C448 /* named_values.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B4670E0DD9541700A1C448 /* named_values.h */; };
+		C9B467110DD9541700A1C448 /* named_values.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B4670F0DD9541700A1C448 /* named_values.c */; };
+		C9B467190DD9554E00A1C448 /* keys.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B467180DD9554E00A1C448 /* keys.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C906FC820DD40E9900375E7D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C906FBEC0DD3FBB300375E7D;
+			remoteInfo = "Elvin Client";
+		};
+		C906FD8F0DD44FCA00375E7D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C906FBEC0DD3FBB300375E7D;
+			remoteInfo = "Elvin Client";
+		};
+		C9B466880DD9378100A1C448 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9B466740DD9374900A1C448 /* check */;
+			remoteInfo = check;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		C906FBD70DD3FA0800375E7D /* basic_test.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = basic_test.c; path = ../../src/test/basic_test.c; sourceTree = SOURCE_ROOT; };
+		C906FBED0DD3FBB300375E7D /* libelvin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libelvin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C906FBF30DD3FC3900375E7D /* elvin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = elvin.h; path = ../../src/include/elvin/elvin.h; sourceTree = SOURCE_ROOT; };
+		C906FBF40DD3FC3900375E7D /* elvin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin.c; path = ../../src/lib/elvin.c; sourceTree = SOURCE_ROOT; };
+		C906FBFE0DD3FD0000375E7D /* Test.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = Test.o; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9B465D60DD82A9800A1C448 /* messages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messages.h; path = ../../src/lib/messages.h; sourceTree = "<group>"; };
+		C9B465D70DD82A9800A1C448 /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/lib/messages.c; sourceTree = "<group>"; };
+		C9B465EA0DD92D6B00A1C448 /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/test/messages.c; sourceTree = SOURCE_ROOT; };
+		C9B4665D0DD9373700A1C448 /* check.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check.c; path = "../../../support/check-0.9.5/src/check.c"; sourceTree = SOURCE_ROOT; };
+		C9B466600DD9373700A1C448 /* check_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_error.c; path = "../../../support/check-0.9.5/src/check_error.c"; sourceTree = SOURCE_ROOT; };
+		C9B466630DD9373700A1C448 /* check_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_list.c; path = "../../../support/check-0.9.5/src/check_list.c"; sourceTree = SOURCE_ROOT; };
+		C9B466650DD9373700A1C448 /* check_log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_log.c; path = "../../../support/check-0.9.5/src/check_log.c"; sourceTree = SOURCE_ROOT; };
+		C9B466670DD9373700A1C448 /* check_msg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_msg.c; path = "../../../support/check-0.9.5/src/check_msg.c"; sourceTree = SOURCE_ROOT; };
+		C9B466690DD9373700A1C448 /* check_pack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_pack.c; path = "../../../support/check-0.9.5/src/check_pack.c"; sourceTree = SOURCE_ROOT; };
+		C9B4666B0DD9373700A1C448 /* check_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_print.c; path = "../../../support/check-0.9.5/src/check_print.c"; sourceTree = SOURCE_ROOT; };
+		C9B4666D0DD9373700A1C448 /* check_run.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_run.c; path = "../../../support/check-0.9.5/src/check_run.c"; sourceTree = SOURCE_ROOT; };
+		C9B4666E0DD9373700A1C448 /* check_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_str.c; path = "../../../support/check-0.9.5/src/check_str.c"; sourceTree = SOURCE_ROOT; };
+		C9B466750DD9374900A1C448 /* libcheck.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcheck.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9B466850DD9377200A1C448 /* Untitled */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Untitled; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9B4670E0DD9541700A1C448 /* named_values.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = named_values.h; path = ../../src/include/elvin/named_values.h; sourceTree = SOURCE_ROOT; };
+		C9B4670F0DD9541700A1C448 /* named_values.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = named_values.c; path = ../../src/lib/named_values.c; sourceTree = SOURCE_ROOT; };
+		C9B467180DD9554E00A1C448 /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../../src/include/elvin/keys.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C906FBDC0DD3FAD100375E7D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C906FBF00DD3FBBD00375E7D /* libelvin.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C906FBEB0DD3FBB300375E7D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C906FD690DD44F1100375E7D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */,
+				C906FD6F0DD44F2200375E7D /* libelvin.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B466730DD9374900A1C448 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* Elvin Client */ = {
+			isa = PBXGroup;
+			children = (
+				C9B4665C0DD936D000A1C448 /* Check library */,
+				C906FBDA0DD3FA3B00375E7D /* Test */,
+				08FB7795FE84155DC02AAC07 /* Library */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = "Elvin Client";
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				C9B465D60DD82A9800A1C448 /* messages.h */,
+				C9B465D70DD82A9800A1C448 /* messages.c */,
+				C906FBF30DD3FC3900375E7D /* elvin.h */,
+				C906FBF40DD3FC3900375E7D /* elvin.c */,
+				C9B4670E0DD9541700A1C448 /* named_values.h */,
+				C9B4670F0DD9541700A1C448 /* named_values.c */,
+				C9B467180DD9554E00A1C448 /* keys.h */,
+			);
+			name = Library;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C906FBED0DD3FBB300375E7D /* libelvin.dylib */,
+				C9B466750DD9374900A1C448 /* libcheck.dylib */,
+				C906FBFE0DD3FD0000375E7D /* Test.o */,
+				C9B466850DD9377200A1C448 /* Untitled */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C906FBDA0DD3FA3B00375E7D /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				C906FBD70DD3FA0800375E7D /* basic_test.c */,
+				C9B465EA0DD92D6B00A1C448 /* messages.c */,
+			);
+			name = Test;
+			sourceTree = "<group>";
+		};
+		C9B4665C0DD936D000A1C448 /* Check library */ = {
+			isa = PBXGroup;
+			children = (
+				C9B4665D0DD9373700A1C448 /* check.c */,
+				C9B466600DD9373700A1C448 /* check_error.c */,
+				C9B466630DD9373700A1C448 /* check_list.c */,
+				C9B466650DD9373700A1C448 /* check_log.c */,
+				C9B466670DD9373700A1C448 /* check_msg.c */,
+				C9B466690DD9373700A1C448 /* check_pack.c */,
+				C9B4666B0DD9373700A1C448 /* check_print.c */,
+				C9B4666D0DD9373700A1C448 /* check_run.c */,
+				C9B4666E0DD9373700A1C448 /* check_str.c */,
+			);
+			name = "Check library";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		C906FBE90DD3FBB300375E7D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C906FBF50DD3FC3900375E7D /* elvin.h in Headers */,
+				C9B465D80DD82A9800A1C448 /* messages.h in Headers */,
+				C9B467100DD9541700A1C448 /* named_values.h in Headers */,
+				C9B467190DD9554E00A1C448 /* keys.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B466710DD9374900A1C448 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		C906FBDD0DD3FAD100375E7D /* Test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C906FBE80DD3FB4200375E7D /* Build configuration list for PBXNativeTarget "Test" */;
+			buildPhases = (
+				C906FBDB0DD3FAD100375E7D /* Sources */,
+				C906FBDC0DD3FAD100375E7D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C906FC830DD40E9900375E7D /* PBXTargetDependency */,
+			);
+			name = Test;
+			productName = Test;
+			productReference = C906FBFE0DD3FD0000375E7D /* Test.o */;
+			productType = "com.apple.product-type.objfile";
+		};
+		C906FBEC0DD3FBB300375E7D /* Elvin Client */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C906FBF10DD3FBDE00375E7D /* Build configuration list for PBXNativeTarget "Elvin Client" */;
+			buildPhases = (
+				C906FBE90DD3FBB300375E7D /* Headers */,
+				C906FBEA0DD3FBB300375E7D /* Sources */,
+				C906FBEB0DD3FBB300375E7D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Elvin Client";
+			productName = elvin;
+			productReference = C906FBED0DD3FBB300375E7D /* libelvin.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		C906FD6A0DD44F1100375E7D /* tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C906FD890DD44FA500375E7D /* Build configuration list for PBXNativeTarget "tests" */;
+			buildPhases = (
+				C906FD680DD44F1100375E7D /* Sources */,
+				C906FD690DD44F1100375E7D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C906FD900DD44FCA00375E7D /* PBXTargetDependency */,
+				C9B466890DD9378100A1C448 /* PBXTargetDependency */,
+			);
+			name = tests;
+			productName = Untitled;
+			productReference = C9B466850DD9377200A1C448 /* Untitled */;
+			productType = "com.apple.product-type.tool";
+		};
+		C9B466740DD9374900A1C448 /* check */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9B466810DD9375500A1C448 /* Build configuration list for PBXNativeTarget "check" */;
+			buildPhases = (
+				C9B466710DD9374900A1C448 /* Headers */,
+				C9B466720DD9374900A1C448 /* Sources */,
+				C9B466730DD9374900A1C448 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = check;
+			productName = check;
+			productReference = C9B466750DD9374900A1C448 /* libcheck.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "Elvin Client" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* Elvin Client */;
+			projectDirPath = "";
+			projectRoot = ../..;
+			targets = (
+				C906FBDD0DD3FAD100375E7D /* Test */,
+				C906FBEC0DD3FBB300375E7D /* Elvin Client */,
+				C906FD6A0DD44F1100375E7D /* tests */,
+				C9B466740DD9374900A1C448 /* check */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C906FBDB0DD3FAD100375E7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C906FBE30DD3FB0200375E7D /* basic_test.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C906FBEA0DD3FBB300375E7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C906FBF60DD3FC3900375E7D /* elvin.c in Sources */,
+				C9B465D90DD82A9800A1C448 /* messages.c in Sources */,
+				C9B467110DD9541700A1C448 /* named_values.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C906FD680DD44F1100375E7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9B466040DD92F3700A1C448 /* messages.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B466720DD9374900A1C448 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9B4669A0DD9383200A1C448 /* check.c in Sources */,
+				C9B4669B0DD9383200A1C448 /* check_error.c in Sources */,
+				C9B4669C0DD9383200A1C448 /* check_list.c in Sources */,
+				C9B4669D0DD9383200A1C448 /* check_log.c in Sources */,
+				C9B4669E0DD9383200A1C448 /* check_msg.c in Sources */,
+				C9B4669F0DD9383200A1C448 /* check_pack.c in Sources */,
+				C9B466A00DD9383200A1C448 /* check_print.c in Sources */,
+				C9B466A10DD9383200A1C448 /* check_run.c in Sources */,
+				C9B466A20DD9383200A1C448 /* check_str.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C906FC830DD40E9900375E7D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C906FBEC0DD3FBB300375E7D /* Elvin Client */;
+			targetProxy = C906FC820DD40E9900375E7D /* PBXContainerItemProxy */;
+		};
+		C906FD900DD44FCA00375E7D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C906FBEC0DD3FBB300375E7D /* Elvin Client */;
+			targetProxy = C906FD8F0DD44FCA00375E7D /* PBXContainerItemProxy */;
+		};
+		C9B466890DD9378100A1C448 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9B466740DD9374900A1C448 /* check */;
+			targetProxy = C9B466880DD9378100A1C448 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB914F08733D8E0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				USER_HEADER_SEARCH_PATHS = ../../src/include;
+			};
+			name = Debug;
+		};
+		1DEB915008733D8E0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				USER_HEADER_SEARCH_PATHS = "../../../support/check-0.9.5/** ../../build/check/include ../../src/include";
+			};
+			name = Release;
+		};
+		C906FBDF0DD3FAD100375E7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Release\"",
+				);
+				MACH_O_TYPE = mh_execute;
+				PREBINDING = NO;
+				PRODUCT_NAME = Test;
+			};
+			name = Debug;
+		};
+		C906FBE00DD3FAD100375E7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/build/Release\"",
+				);
+				MACH_O_TYPE = mh_execute;
+				PREBINDING = NO;
+				PRODUCT_NAME = Test;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C906FBEE0DD3FBB300375E7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = elvin;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C906FBEF0DD3FBB300375E7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = elvin;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C906FD6D0DD44F1100375E7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../build/check/lib\"",
+					"\"$(SRCROOT)/build/Release\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Untitled;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C906FD6E0DD44F1100375E7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../build/check/lib\"",
+					"\"$(SRCROOT)/build/Release\"",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Untitled;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C9B4667F0DD9374A00A1C448 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = check;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C9B466800DD9374A00A1C448 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = check;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "Elvin Client" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB914F08733D8E0010E9CD /* Debug */,
+				1DEB915008733D8E0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C906FBE80DD3FB4200375E7D /* Build configuration list for PBXNativeTarget "Test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C906FBDF0DD3FAD100375E7D /* Debug */,
+				C906FBE00DD3FAD100375E7D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C906FBF10DD3FBDE00375E7D /* Build configuration list for PBXNativeTarget "Elvin Client" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C906FBEE0DD3FBB300375E7D /* Debug */,
+				C906FBEF0DD3FBB300375E7D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C906FD890DD44FA500375E7D /* Build configuration list for PBXNativeTarget "tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C906FD6D0DD44F1100375E7D /* Debug */,
+				C906FD6E0DD44F1100375E7D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9B466810DD9375500A1C448 /* Build configuration list for PBXNativeTarget "check" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9B4667F0DD9374A00A1C448 /* Debug */,
+				C9B466800DD9374A00A1C448 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
