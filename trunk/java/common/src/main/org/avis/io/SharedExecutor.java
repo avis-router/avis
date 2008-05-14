@@ -43,7 +43,7 @@ public final class SharedExecutor
   {
     synchronized (SharedExecutor.class)
     {
-      if (executor == sharedExecutor)
+      if (sharedExecutor != null && executor == sharedExecutor)
       {
         if (shareCount == 0)
           throw new IllegalStateException ("Too many release calls");

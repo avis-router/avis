@@ -1,21 +1,24 @@
 package org.avis.federation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.ConnectFuture;
+import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.ThreadModel;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.transport.socket.SocketConnector;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,6 +48,7 @@ import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.TestUtils.waitForAsyncConnect;
 import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
@@ -64,13 +68,16 @@ public class JUTestFederation
   private LogFailTester logTester;
   private StandardFederatorSetup federation;
   private boolean oldLogInfoState;
+  private List<Closeable> autoClose;
   
   @Before
   public void setup ()
   {
-    // enableLogging (TRACE, true);
-    // enableLogging (DIAGNOSTIC, true);
+    // enableLogging (Log.TRACE, true);
+    // enableLogging (Log.DIAGNOSTIC, true);
 
+    autoClose = new ArrayList<Closeable> ();
+    
     oldLogInfoState = shouldLog (INFO);
     
     enableLogging (INFO, false);
@@ -88,6 +95,17 @@ public class JUTestFederation
     {
       federation.close ();
       federation = null;
+    }
+    
+    for (Closeable toClose : autoClose)
+    {
+      try
+      {
+        toClose.close ();
+      } catch (Throwable ex)
+      {
+        alarm ("Failed to close", this, ex);
+      }
     }
 
     logTester.assertOkAndDispose ();
@@ -131,8 +149,6 @@ public class JUTestFederation
     federation = new StandardFederatorSetup ();
     
     testTwoWayClientSendReceive (federation.client1, federation.client2);
-    
-    federation.close ();
   }
   
   /**
@@ -151,8 +167,6 @@ public class JUTestFederation
     classes2.map ("localHOSt", fedClass);
     
     federation = new StandardFederatorSetup (classes1, classes2);
-    
-    federation.close ();
   }
   
   /**
@@ -169,17 +183,21 @@ public class JUTestFederation
     classes.map ("localhost", fedClass2);
     
     Router server1 = new Router (PORT1);
-
+    
+    autoClose (server1);
+    
     EwafURI ewafURI = new EwafURI ("ewaf://localhost:" + (PORT1 + 1));
     Options options = new Options (FederationOptionSet.OPTION_SET);
     
     Acceptor acceptor = 
       new Acceptor (server1, "server1", classes, set (ewafURI), options);
+
+    autoClose (acceptor);
     
     // connector
     TestingIoHandler listener = new TestingIoHandler ();
-    IoSession connectSession = connectFederation (server1, ewafURI, listener);
-
+    IoSession connectSession = connectFederation (ewafURI, listener);
+    
     // incompatible version
     logTester.pause ();
     
@@ -196,7 +214,7 @@ public class JUTestFederation
     
     // bad server domain (same as acceptor's)
     listener = new TestingIoHandler ();
-    connectSession = connectFederation (server1, ewafURI, listener);
+    connectSession = connectFederation (ewafURI, listener);
     
     logTester.pause ();
     
@@ -217,7 +235,7 @@ public class JUTestFederation
     classes.clear ();
     
     listener = new TestingIoHandler ();
-    connectSession = connectFederation (server1, ewafURI, listener);
+    connectSession = connectFederation (ewafURI, listener);
     
     logTester.pause ();
     
@@ -232,12 +250,13 @@ public class JUTestFederation
     assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
     
     connectSession.close ();
+    connectSession.getService ().dispose ();
     
     classes.map ("localhost", fedClass2);
     
     // bogus handshake
     listener = new TestingIoHandler ();
-    connectSession = connectFederation (server1, ewafURI, listener);
+    connectSession = connectFederation (ewafURI, listener);
     
     logTester.pause ();
     
@@ -246,10 +265,7 @@ public class JUTestFederation
     // acceptor should just abort connection
     listener.waitForClose (connectSession);
     
-    connectSession.close ();
-    
-    acceptor.close ();
-    server1.close ();
+    logTester.unpause ();
   }
   
   @Test
@@ -290,8 +306,6 @@ public class JUTestFederation
     assertEquals ("client2", notification.attributes.get ("from"));
     assertEquals ("incoming", notification.attributes.get ("Incoming"));
     assertNull (notification.attributes.get ("Outgoing"));
-    
-    federation.close ();
   }
   
   /**
@@ -329,8 +343,6 @@ public class JUTestFederation
     assertEquals (1, notification.secureMatches.length);
     assertEquals (0, notification.insecureMatches.length);
     assertEquals ("client1", notification.attributes.get ("from"));
-    
-    federation.close ();
   }
 
   /**
@@ -345,6 +357,9 @@ public class JUTestFederation
     Router server1 = new Router (PORT1);
     Router server2 = new Router (PORT2);
 
+    autoClose (server1);
+    autoClose (server2);
+    
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
@@ -360,18 +375,16 @@ public class JUTestFederation
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
     
+    autoClose (connector);
+    
     waitForAsyncConnect (connector);
     
     Acceptor acceptor = 
       new Acceptor (server2, "server2", classes, set (ewafURI), options);
     
+    autoClose (acceptor);
+    
     waitForConnect (connector);
-    
-    connector.close ();
-    acceptor.close ();
-    
-    server1.close ();
-    server2.close ();
   }
   
   /**
@@ -384,6 +397,9 @@ public class JUTestFederation
     Router server1 = new Router (PORT1);
     Router server2 = new Router (PORT2);
 
+    autoClose (server1);
+    autoClose (server2);
+    
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
@@ -400,11 +416,15 @@ public class JUTestFederation
 
     Acceptor acceptor = 
       new Acceptor (server2, "server2", classes, set (ewafURI), options);
-
+    
+    autoClose (acceptor);
+    
     Connector connector = 
       new Connector (server1, "server1", ewafURI, 
                      fedClass, options);
 
+    autoClose (connector);
+    
     waitForConnect (connector);
     
     acceptor.close ();
@@ -414,13 +434,9 @@ public class JUTestFederation
     acceptor = 
       new Acceptor (server2, "server2", classes, set (ewafURI), options);
     
+    autoClose (acceptor);
+    
     waitForConnect (connector);
-    
-    connector.close ();
-    acceptor.close ();
-    
-    server1.close ();
-    server2.close ();
   }
   
   @Test
@@ -430,6 +446,9 @@ public class JUTestFederation
     Router server1 = new Router (PORT1);
     Router server2 = new Router (PORT2);
 
+    autoClose (server1);
+    autoClose (server2);
+    
     FederationClass fedClass =
       new FederationClass ("require (federated)", "require (federated)");
     
@@ -447,11 +466,14 @@ public class JUTestFederation
 
     Acceptor acceptor = 
       new Acceptor (server2, "server2", classes, set (ewafURI), options);
-
+    
+    autoClose (acceptor);
+    
     Connector connector = 
-      new Connector (server1, "server1", ewafURI, 
-                     fedClass, options);
+      new Connector (server1, "server1", ewafURI, fedClass, options);
 
+    autoClose (connector);
+    
     waitForConnect (connector);
     
     // "crash" link at acceptor end
@@ -464,11 +486,7 @@ public class JUTestFederation
     
     logTester.unpause ();
     
-    connector.close ();
-    acceptor.close ();
-    
-    server1.close ();
-    server2.close ();
+    acceptor.unhang ();
   }
 
   private static boolean runElvind = true;
@@ -493,7 +511,8 @@ public class JUTestFederation
                                  "require (federated)", "require (federated)");
     
     Router server = new Router (PORT2);
-
+    autoClose (server);
+    
     Options options = new Options (FederationOptionSet.OPTION_SET);
     
     FederationClass fedClass =
@@ -503,10 +522,15 @@ public class JUTestFederation
       new Connector (server, "avis", ewafURI, 
                                fedClass, options);
     
+    autoClose (connector);
+
     waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
+    
+    autoClose (client1);
+    autoClose (client2);
     
     client1.connect ();
     client2.connect ();
@@ -515,13 +539,6 @@ public class JUTestFederation
     client2.subscribe ("require (federated) && from == 'client1'");
 
     testTwoWayClientSendReceive (client1, client2);
-    
-    client1.close ();
-    client2.close ();
-    
-    connector.close ();
-    
-    server.close ();
     
     if (elvind != null)
       elvind.destroy ();
@@ -551,7 +568,8 @@ public class JUTestFederation
       elvind = runMantaraElvind (ewafURI, require, "TRUE");
     
     Router server = new Router (PORT2);
-
+    autoClose (server);
+    
     Options options = new Options (FederationOptionSet.OPTION_SET);
     
     FederationClass fedClass =
@@ -562,10 +580,15 @@ public class JUTestFederation
       new Connector (server, "avis", ewafURI, 
                                fedClass, options);
     
+    autoClose (connector);
+    
     waitForConnect (connector);
     
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
+    
+    autoClose (client1);
+    autoClose (client2);
     
     client1.connect ();
     client2.connect ();
@@ -574,13 +597,6 @@ public class JUTestFederation
     client2.subscribe ("require (federated) && from == 'client1'");
 
     testTwoWayClientSendReceive (client1, client2);
-    
-    client1.close ();
-    client2.close ();
-    
-    connector.close ();
-    
-    server.close ();
     
     if (elvind != null)
       elvind.destroy ();
@@ -654,30 +670,43 @@ public class JUTestFederation
     return map;
   }
   
+  private void autoClose (Closeable toClose)
+  {
+    autoClose.add (toClose);
+  }
+  
+  private void autoClose (final IoConnector connector)
+  {
+    autoClose (new Closeable ()
+    {
+      public void close ()
+        throws IOException
+      {
+        connector.dispose ();
+      }
+    });
+  }
+  
   /**
    * Create a connection to federation listener.
    */
-  private static IoSession connectFederation (Router router,
-                                              EwafURI uri,
-                                              IoHandler listener)
+  private IoSession connectFederation (EwafURI uri,
+                                       IoHandler listener)
+    throws InterruptedException
   {
-    SocketConnector connector = new SocketConnector (1, router.executor ());
-    SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+    SocketConnector connector = new NioSocketConnector (1);
     
-    connector.setWorkerTimeout (0);
+    connector.setConnectTimeout (5);
     
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout (20);
+    connector.getFilterChain ().addLast ("codec", FederationFrameCodec.FILTER);
     
-    connectorConfig.getFilterChain ().addLast   
-      ("codec", FederationFrameCodec.FILTER);
+    connector.setHandler (listener);
     
-    ConnectFuture future = 
-      connector.connect (new InetSocketAddress (uri.host, uri.port),
-                         listener, connectorConfig);
+    autoClose (connector);
     
-    future.join ();
+    IoSession session = connector.connect 
+      (new InetSocketAddress (uri.host, uri.port)).await ().getSession ();
     
-    return future.getSession ();
+    return session;
   }
 }

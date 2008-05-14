@@ -1,6 +1,6 @@
 package org.avis.io.messages;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.util.Text.className;
@@ -12,6 +12,19 @@ import static org.avis.util.Text.className;
  */
 public abstract class Message
 {
+  /**
+   * The frame size in bytes that this message occupies. This may not
+   * be set (in which case it is -1): it is usually only set for
+   * messages that have been decoded and thus have an easily known
+   * size.
+   */
+  public int frameSize;
+  
+  public Message ()
+  {
+    this.frameSize = -1;
+  }
+
   /**
    * The message's unique type ID.<p>
    * 
@@ -38,10 +51,10 @@ public abstract class Message
    */
   public abstract int typeId ();
 
-  public abstract void encode (ByteBuffer out)
+  public abstract void encode (IoBuffer out)
     throws ProtocolCodecException;
 
-  public abstract void decode (ByteBuffer in)
+  public abstract void decode (IoBuffer in)
     throws ProtocolCodecException;
   
   @Override

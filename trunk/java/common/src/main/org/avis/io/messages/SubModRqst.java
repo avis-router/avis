@@ -1,6 +1,6 @@
 package org.avis.io.messages;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.security.Keys;
@@ -66,7 +66,7 @@ public class SubModRqst extends RequestMessage<SubRply>
   }
   
   @Override
-  public void encode (ByteBuffer out)
+  public void encode (IoBuffer out)
     throws ProtocolCodecException
   {
     super.encode (out);
@@ -79,7 +79,7 @@ public class SubModRqst extends RequestMessage<SubRply>
   }
   
   @Override
-  public void decode (ByteBuffer in)
+  public void decode (IoBuffer in)
     throws ProtocolCodecException
   {
     super.decode (in);

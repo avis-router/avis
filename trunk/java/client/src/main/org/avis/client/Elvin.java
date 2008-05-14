@@ -22,11 +22,9 @@ import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.RuntimeIOException;
-import org.apache.mina.common.ThreadModel;
+import org.apache.mina.common.RuntimeIoException;
 import org.apache.mina.filter.SSLFilter;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
@@ -57,7 +55,6 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 import static java.util.Collections.emptySet;
-import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import static org.avis.client.CloseEvent.REASON_CLIENT_SHUTDOWN;
 import static org.avis.client.CloseEvent.REASON_IO_ERROR;
@@ -152,6 +149,7 @@ public final class Elvin implements Closeable
   protected ElvinURI routerUri;
   protected ElvinOptions options;
   protected IoSession connection;
+  protected NioSocketConnector connector;
   protected AtomicBoolean connectionOpen;
   protected boolean elvinSessionEstablished;
   protected Map<Long, Subscription> subscriptions;
@@ -160,7 +158,7 @@ public final class Elvin implements Closeable
   /**
    * A multi-thread pool for handling MINA I/O.
    */
-  protected ExecutorService ioExecutor;
+//  protected ExecutorService ioExecutor;
 
   /**
    * lastReply is effectively a single-item queue for handling
@@ -427,8 +425,6 @@ public final class Elvin implements Closeable
          ": " + routerUri);
     }
     
-    this.ioExecutor = newCachedThreadPool ();
-    
     boolean successfullyConnected = false;
     
     try
@@ -476,17 +472,24 @@ public final class Elvin implements Closeable
   {
     try
     {
-      SocketConnector connector = new SocketConnector (1, ioExecutor);
+//      SocketConnector connector = new NioSocketConnector (1, ioExecutor);
+//      SimpleIoProcessorPool<NioSession> processorPool = 
+//        new SimpleIoProcessorPool<NioSession> (NioProcessor.class, ioExecutor, 1);
+      connector = new NioSocketConnector (1);
 
+      connector.setHandler (new IoHandler ());
+      
+      // http://www.nabble.com/Another-question-on-transition-to13900854s16868.html#a13948955
       /* Change the worker timeout to make the I/O thread quit soon
        * when there's no connection to manage. */
-      connector.setWorkerTimeout (0);
+//      connector.setWorkerTimeout (0);
       
-      SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
-      connectorConfig.setThreadModel (ThreadModel.MANUAL);
-      connectorConfig.setConnectTimeout ((int)(options.receiveTimeout / 1000));
+//      SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
+//      connectorConfig.setConnectTimeout ((int)(options.receiveTimeout / 1000));
 
-      DefaultIoFilterChainBuilder filters = connectorConfig.getFilterChain ();
+      connector.setConnectTimeout ((int)(options.receiveTimeout / 1000));
+      
+      DefaultIoFilterChainBuilder filters = connector.getFilterChain ();
       
       filters.addLast ("codec", ClientFrameCodec.FILTER);
       
@@ -498,10 +501,9 @@ public final class Elvin implements Closeable
       
       ConnectFuture connectFuture =
         connector.connect
-          (new InetSocketAddress (routerUri.host, routerUri.port),
-           new IoHandler (), connectorConfig);
+          (new InetSocketAddress (routerUri.host, routerUri.port));
                         
-      if (!connectFuture.join (options.receiveTimeout))
+      if (!connectFuture.await (options.receiveTimeout))
         throw new IOException ("Timed out connecting to router " + routerUri);
       
       connection = connectFuture.getSession ();
@@ -513,7 +515,7 @@ public final class Elvin implements Closeable
         (connection, 
          options.connectionOptions.getBoolean ("TCP.Send-Immediately", false));
       
-    } catch (RuntimeIOException ex)
+    } catch (RuntimeIoException ex)
     {
       // unwrap MINA's RuntimeIOException
       throw (IOException)ex.getCause ();
@@ -525,6 +527,9 @@ public final class Elvin implements Closeable
       newEx.initCause (ex);
       
       throw newEx;
+    } catch (InterruptedException ex)
+    {
+      currentThread ().interrupt ();
     }
   }
   
@@ -638,16 +643,21 @@ public final class Elvin implements Closeable
           
           connection.close ();
         }
-
+        
         connection = null;
       }
-
+      
       // any callbacks will block until this sync section ends
       fireCloseEvent (reason, message, error);
       
-      ioExecutor.shutdown ();
-
       callbacks.shutdown ();
+    }
+    
+    // do this outside sync block to avoid deadlock in dispose
+    if (connector != null)
+    {
+      connector.dispose ();
+      connector = null;
     }
   }
   

@@ -26,8 +26,7 @@ public class JUTestLivenessFilter
     
     LivenessFilter filter = new LivenessFilter (1000, 1000);
     
-    testSetup.connectorConfig.getFilterChain ().addLast 
-      ("liveness", filter);
+    testSetup.connector.getFilterChain ().addLast ("liveness", filter);
     
     TestingIoHandler acceptorListener = new TestingIoHandler ();
     TestingIoHandler connectListener = new TestingIoHandler ();

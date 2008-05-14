@@ -15,10 +15,8 @@ import org.apache.mina.common.IoFuture;
 import org.apache.mina.common.IoFutureListener;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
-import org.apache.mina.common.RuntimeIOException;
-import org.apache.mina.common.ThreadModel;
-import org.apache.mina.transport.socket.nio.SocketConnector;
-import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
+import org.apache.mina.common.RuntimeIoException;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -65,9 +63,7 @@ public class Connector implements IoHandler, Closeable
   private EwafURI uri;
   private Options options;
   private Router router;
-  private SocketConnector connector;
-  private SocketConnectorConfig connectorConfig;
-  private InetSocketAddress remoteAddress;
+  private NioSocketConnector connector;
   private IoSession session;
   private String serverDomain;
   private FederationClass federationClass;
@@ -75,7 +71,6 @@ public class Connector implements IoHandler, Closeable
   private Timer asyncConnectTimer;
   protected volatile boolean closing;
   
-  @SuppressWarnings("unchecked")
   public Connector (Router router, String serverDomain,
                     EwafURI uri, FederationClass federationClass,
                     Options options) 
@@ -86,40 +81,6 @@ public class Connector implements IoHandler, Closeable
     this.serverDomain = serverDomain;
     this.federationClass = federationClass;
     this.options = options;
-    this.connector = new SocketConnector (1, router.executor ());
-    this.connectorConfig = new SocketConnectorConfig ();
-    this.remoteAddress = new InetSocketAddress (uri.host, uri.port);
-    
-    long requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
-    long keepaliveInterval = 
-      options.getInt ("Federation.Keepalive-Interval") * 1000;
-
-    /* Change the worker timeout to make the I/O thread quit soon
-     * when there's no connection to manage. */
-    connector.setWorkerTimeout (0);
-    
-    connectorConfig.setThreadModel (ThreadModel.MANUAL);
-    connectorConfig.setConnectTimeout ((int)(requestTimeout / 1000));
-    
-    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
-    
-    filters.addLast ("codec", FederationFrameCodec.FILTER);
-    
-    filters.addLast
-      ("requestTracker", new RequestTrackingFilter (requestTimeout));
-    
-    filters.addLast
-      ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
-
-    Filter<InetAddress> authRequired = 
-      (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
-    
-    if (uri.isSecure ())
-      filters = router.createSecureFilters (filters, authRequired, true);
-    else
-      filters = router.createStandardFilters (filters, authRequired);
-    
-    connectorConfig.setFilterChainBuilder (filters);
     
     connect ();
   }
@@ -146,21 +107,51 @@ public class Connector implements IoHandler, Closeable
   /**
    * Kick off a connection attempt.
    */
-  synchronized void connect ()
+  @SuppressWarnings("unchecked")
+  synchronized void connect () 
   {
     closing = false;
     
     cancelAsyncConnect ();
     
+    connector = new NioSocketConnector (router.ioProcessor ());
+    
+    long requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
+    long keepaliveInterval = 
+      options.getInt ("Federation.Keepalive-Interval") * 1000;
+
+    connector.setConnectTimeout ((int)(requestTimeout / 1000));
+    
+    DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
+    
+    filters.addLast ("codec", FederationFrameCodec.FILTER);
+    
+    filters.addLast
+      ("requestTracker", new RequestTrackingFilter (requestTimeout));
+    
+    filters.addLast
+      ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
+
+    Filter<InetAddress> authRequired = 
+      (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
+    
+    if (uri.isSecure ())
+      filters = router.createSecureFilters (filters, authRequired, true);
+    else
+      filters = router.createStandardFilters (filters, authRequired);
+    
+    connector.setFilterChainBuilder (filters);
+    connector.setHandler (this);
+    
     connector.connect 
-      (remoteAddress, this, connectorConfig).addListener 
-        (new IoFutureListener ()
-        {
-          public void operationComplete (IoFuture future)
-          {
-            connectFutureComplete (future);
-          }
-        });
+      (new InetSocketAddress (uri.host, uri.port)).addListener 
+        (new IoFutureListener<IoFuture> ()
+    {
+      public void operationComplete (IoFuture future)
+      {
+        connectFutureComplete (future);
+      }
+    });
   }
   
   /**
@@ -183,7 +174,7 @@ public class Connector implements IoHandler, Closeable
       {
         open (future.getSession ());
       }
-    } catch (RuntimeIOException ex)
+    } catch (RuntimeIoException ex)
     {
       diagnostic ("Failed to connect to federator at " + uri + ", retrying: " + 
                   shortException (ex.getCause ()), this, ex);
@@ -282,6 +273,13 @@ public class Connector implements IoHandler, Closeable
       
       link = null;
     }
+    
+    // do this outside of sync block to allow IO threads access
+    if (connector != null)
+    {
+      connector.dispose ();
+      connector = null;
+    }
   }
   
   private void reopen ()
@@ -354,11 +352,14 @@ public class Connector implements IoHandler, Closeable
           hostIdFor (session) + "\", remote server domain \"" + 
           remoteServerDomain + "\"", this);
     
+    InetAddress remoteAddress = 
+      ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
+    
     link =
       new Link (router, session,
                 federationClass, serverDomain, 
                 remoteServerDomain, 
-                remoteAddress.getAddress ().getCanonicalHostName ());
+                remoteAddress.getCanonicalHostName ());
   }
   
   private void send (Message message)
@@ -371,7 +372,7 @@ public class Connector implements IoHandler, Closeable
   public void sessionOpened (IoSession theSession)
     throws Exception
   {
-    logSessionOpened (theSession, this);
+    logSessionOpened (theSession, "outgoing", this);
   }
   
   public void sessionClosed (IoSession theSession)
@@ -397,7 +398,7 @@ public class Connector implements IoHandler, Closeable
    
     Message message = (Message)theMessage;
     
-    logMessageReceived (message, serverDomain, this);
+    logMessageReceived (message, theSession, this);
     
     if (link == null)
       handleMessage (message);

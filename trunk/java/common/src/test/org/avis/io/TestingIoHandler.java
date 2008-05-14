@@ -58,7 +58,7 @@ public class TestingIoHandler
 
   public synchronized void waitForClose (IoSession session)
   {
-    if (session.isClosing ())
+    if (!session.isConnected ())
       return;
     
     try
@@ -69,7 +69,7 @@ public class TestingIoHandler
       throw new Error (ex);
     }
     
-    if (!session.isClosing ())
+    if (session.isConnected () && !session.isClosing ())
       throw new AssertionFailedError ("Session not closed");
   }
   
@@ -77,6 +77,7 @@ public class TestingIoHandler
   public synchronized void sessionClosed (IoSession session)
     throws Exception
   {
+    System.out.println ("*** closed");
     notifyAll ();
   }
 }

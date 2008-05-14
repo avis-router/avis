@@ -7,7 +7,7 @@ import org.avis.io.InetAddressFilter;
 import org.avis.util.Filter;
 
 import static org.avis.common.Common.DEFAULT_PORT;
-import static org.avis.io.Net.uri;
+import static org.avis.config.OptionTypeURI.EMPTY_URI;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 
 /**
@@ -22,8 +22,8 @@ public class RouterOptionSet extends OptionSet
     add ("Port", 1, DEFAULT_PORT, 65535);
     add ("Listen", "elvin://0.0.0.0");
     add ("IO.Idle-Connection-Timeout", 1, 15, Integer.MAX_VALUE);
-    add ("IO.Use-Direct-Buffers", true);
-    add ("TLS.Keystore", new OptionTypeURI (), uri (""));
+    add ("IO.Use-Direct-Buffers", false);
+    add ("TLS.Keystore", new OptionTypeURI (), EMPTY_URI);
     add ("TLS.Keystore-Passphrase", "");
     add ("Require-Authenticated", 
          new OptionTypeFromString (InetAddressFilter.class), Filter.MATCH_NONE);

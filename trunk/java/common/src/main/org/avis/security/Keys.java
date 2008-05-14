@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.io.XdrCoding.getBytes;
@@ -428,7 +428,7 @@ public class Keys
     return false;
   }
   
-  public void encode (ByteBuffer out)
+  public void encode (IoBuffer out)
   {
     // number of key schemes in the list
     out.putInt (keySets.size ());
@@ -458,7 +458,7 @@ public class Keys
     }
   }
 
-  public static Keys decode (ByteBuffer in)
+  public static Keys decode (IoBuffer in)
     throws ProtocolCodecException
   {
     int length = in.getInt ();
@@ -503,7 +503,7 @@ public class Keys
     }
   }
   
-  private static void encodeKeys (ByteBuffer out, Set<Key> keys)
+  private static void encodeKeys (IoBuffer out, Set<Key> keys)
   {
     out.putInt (keys.size ());
     
@@ -511,7 +511,7 @@ public class Keys
       putBytes (out, key.data);
   }
   
-  private static void decodeKeys (ByteBuffer in, Set<Key> keys) 
+  private static void decodeKeys (IoBuffer in, Set<Key> keys) 
     throws ProtocolCodecException
   {
     for (int keysetCount = in.getInt (); keysetCount > 0; keysetCount--)

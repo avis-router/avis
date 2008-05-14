@@ -3,7 +3,7 @@ package org.avis.router;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.IoBuffer;
 
 import org.avis.io.messages.NotifyEmit;
 
@@ -20,7 +20,7 @@ public class MemoryLeak
   public static void main ()
     throws Exception
   {
-    ByteBuffer.setUseDirectBuffers (true);
+    IoBuffer.setUseDirectBuffer (true);
     
     Router router = new Router (29170);
     SimpleClient client = new SimpleClient ();

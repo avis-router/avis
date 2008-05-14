@@ -47,9 +47,8 @@ public final class Federation
   {
     if (shouldLog (TRACE))
     {
-      trace ("Federator for domain \"" + serverDomain + "\" sent: " +  
-             message, Federation.class);
-    }
+      trace ("Federation session " + idFor (session) + " sent " + 
+             message.name (), Federation.class);    }
     
     return session.write (message);
   }
@@ -57,13 +56,13 @@ public final class Federation
   /**
    * Log a trace on message receipt.
    */
-  public static void logMessageReceived (Message message, String serverDomain, 
+  public static void logMessageReceived (Message message, IoSession session, 
                                          Object source)
   {
     if (shouldLog (TRACE))
     {
-      trace ("Federator for domain \"" + serverDomain + "\" " + 
-             "received " + message.name (), source);
+      trace ("Federation session " + idFor (session) + " received " + 
+             message.name (), source);
     }
   }
   
@@ -91,10 +90,15 @@ public final class Federation
     }
   }
 
-  public static void logSessionOpened (IoSession session, Object source)
+  public static void logSessionOpened (IoSession session, String direction,
+                                       Object source)
   {
-    diagnostic ("Federation session " + idFor (session) + 
-                " opened for connection on " + session.getServiceAddress () + 
-                (Router.isSecure (session) ? " (using TLS)" : ""), source);
+    if (shouldLog (TRACE))
+    {
+      trace ("Federation session " + idFor (session) + 
+             " opened for " + direction + " connection on " + 
+             session.getServiceAddress () + 
+             (Router.isSecure (session) ? " (using TLS)" : ""), source);
+    }
   }
 }
