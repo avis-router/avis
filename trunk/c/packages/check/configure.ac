@@ -114,4 +114,6 @@ AC_CONFIG_FILES([check.pc
                  src/Makefile
                  tests/Makefile])
 
+AM_PROG_CC_C_O
+
 AC_OUTPUT
