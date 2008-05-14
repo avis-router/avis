@@ -1,7 +1,7 @@
-This is check.info, produced by makeinfo version 4.7 from check.texi.
+This is check.info, produced by makeinfo version 4.8 from check.texi.
 
-   This manual is for Check (version 0.9.5, 21 November 2006), a unit
-test framework for C programs.
+   This manual is for Check (version 0.9.5, 14 May 2008), a unit test
+framework for C programs.
 
    Copyright (C) 2001-2006 Arien Malec, Chris Pickett, Fredrik
 Hugosson, and Robert Lemmen.
@@ -24,7 +24,7 @@ File: check.info,  Node: Top,  Next: Introduction,  Prev: (dir),  Up: (dir)
 Check
 *****
 
-This manual is for Check (version 0.9.5, 21 November 2006), a unit test
+This manual is for Check (version 0.9.5, 14 May 2008), a unit test
 framework for C programs.
 
    Copyright (C) 2001-2006 Arien Malec, Chris Pickett, Fredrik
@@ -437,8 +437,8 @@ Patterns approach to software development and OO design).
 
    Here are the changes to `check_money.c' for our first unit test:
 
-     --- tests/check_money.1.c	2006-11-21 18:06:36.726270880 -0500
-     +++ tests/check_money.2.c	2006-11-21 18:06:36.760265712 -0500
+     --- tests/check_money.1.c	2008-05-14 15:07:14.000000000 +0930
+     +++ tests/check_money.2.c	2008-05-14 15:07:15.000000000 +0930
      @@ -1,3 +1,18 @@
      +#include <check.h>
      +#include "../src/money.h"
@@ -516,8 +516,8 @@ progress, guided by the unit tests, so that's what we will now do.
 
    We will patch our header `money.h' as follows:
 
-     --- src/money.1.h	2006-11-21 18:06:37.554145024 -0500
-     +++ src/money.2.h	2006-11-21 18:06:37.620134992 -0500
+     --- src/money.1.h	2008-05-14 15:07:19.000000000 +0930
+     +++ src/money.2.h	2008-05-14 15:07:20.000000000 +0930
      @@ -1,4 +1,11 @@
       #ifndef MONEY_H
       #define MONEY_H
@@ -548,8 +548,8 @@ overhead, but it is mostly one-off.  Here's a diff for the new version
 of `check_money.c'.  Note that we include stdlib.h to get the
 definitions of `EXIT_SUCCESS' and `EXIT_FAILURE'.
 
-     --- tests/check_money.2.c	2006-11-21 18:06:36.760265712 -0500
-     +++ tests/check_money.3.c	2006-11-21 18:06:36.825255832 -0500
+     --- tests/check_money.2.c	2008-05-14 15:07:15.000000000 +0930
+     +++ tests/check_money.3.c	2008-05-14 15:07:15.000000000 +0930
      @@ -1,3 +1,4 @@
      +#include <stdlib.h>
       #include <check.h>
@@ -620,8 +620,8 @@ the `money.h' interface hasn't been created yet.  Let's go with the
 fastest solution possible and implement stubs for each of the functions
 in `money.c':
 
-     --- src/money.1.c	2006-11-21 18:06:37.357174968 -0500
-     +++ src/money.3.c	2006-11-21 18:06:37.457159768 -0500
+     --- src/money.1.c	2008-05-14 15:07:18.000000000 +0930
+     +++ src/money.3.c	2008-05-14 15:07:19.000000000 +0930
      @@ -0,0 +1,26 @@
      +#include <stdlib.h>
      +#include "money.h"
@@ -730,8 +730,8 @@ the `check_money' program failed, and the bug-report address given in
 its tests.  We first have to create a Money structure to hold the
 amount, and then implement the function to return the correct amount:
 
-     --- src/money.3.c	2006-11-21 18:06:37.457159768 -0500
-     +++ src/money.4.c	2006-11-21 18:06:37.490154752 -0500
+     --- src/money.3.c	2008-05-14 15:07:19.000000000 +0930
+     +++ src/money.4.c	2008-05-14 15:07:19.000000000 +0930
      @@ -1,6 +1,11 @@
       #include <stdlib.h>
       #include "money.h"
@@ -782,8 +782,8 @@ call to `fail_unless()', `fail()', or the special function
 that, the symmetric `money_free()', and `money_currency()' too, in
 order to make our unit test pass again:
 
-     --- src/money.4.c	2006-11-21 18:06:37.490154752 -0500
-     +++ src/money.5.c	2006-11-21 18:06:37.522149888 -0500
+     --- src/money.4.c	2008-05-14 15:07:19.000000000 +0930
+     +++ src/money.5.c	2008-05-14 15:07:19.000000000 +0930
      @@ -4,12 +4,21 @@
       struct Money
       {
@@ -856,8 +856,8 @@ limits, we should also test what happens when we create `Money' where
 `amount == 0'.  Let's put these in a separate test case called "Limits"
 so that `money_suite' is changed like so:
 
-     --- tests/check_money.3.c	2006-11-21 18:06:36.825255832 -0500
-     +++ tests/check_money.6.c	2006-11-21 18:06:36.892245648 -0500
+     --- tests/check_money.3.c	2008-05-14 15:07:15.000000000 +0930
+     +++ tests/check_money.6.c	2008-05-14 15:07:15.000000000 +0930
      @@ -14,6 +14,23 @@
       }
       END_TEST
@@ -900,8 +900,8 @@ in the "Core" test case will be reported as "Core", and errors in the
 "Limits" test case will be reported as "Limits", giving you additional
 information about where things broke.
 
-     --- src/money.5.c	2006-11-21 18:06:37.522149888 -0500
-     +++ src/money.6.c	2006-11-21 18:06:37.588139856 -0500
+     --- src/money.5.c	2008-05-14 15:07:19.000000000 +0930
+     +++ src/money.6.c	2008-05-14 15:07:19.000000000 +0930
      @@ -10,6 +10,11 @@
       Money *
       money_create (int amount, char *currency)
@@ -1003,8 +1003,8 @@ We create a test fixture in Check as follows:
 named `setup()' and `teardown()', but they must take `void' and return
 `void'.  We'll update `check_money.c' as follows:
 
-     --- tests/check_money.6.c	2006-11-21 18:06:36.892245648 -0500
-     +++ tests/check_money.7.c	2006-11-21 18:06:36.925240632 -0500
+     --- tests/check_money.6.c	2008-05-14 15:07:15.000000000 +0930
+     +++ tests/check_money.7.c	2008-05-14 15:07:16.000000000 +0930
      @@ -2,15 +2,26 @@
       #include <check.h>
       #include "../src/money.h"
@@ -1902,33 +1902,33 @@ Index
 
 
 Tag Table:
-Node: Top775
-Node: Introduction2546
-Node: Unit Testing in C4682
-Node: Other Frameworks for C6451
-Node: Tutorial9304
-Node: How to Write a Test10079
-Node: Setting Up the Money Build10730
-Node: Test a Little15979
-Node: Creating a Suite20590
-Node: SRunner Output24775
-Node: Advanced Features30016
-Node: Running Multiple Cases30582
-Node: No Fork Mode32805
-Node: Test Fixtures33821
-Node: Test Fixture Examples35355
-Node: Checked vs Unchecked Fixtures37517
-Node: Multiple Suites in one SRunner39237
-Node: Testing Signal Handling40881
-Node: Looping Tests41501
-Node: Test Timeouts43188
-Node: Determining Test Coverage44005
-Node: Test Logging46480
-Node: XML Logging47653
-Node: Conclusion and References49418
-Node: AM_PATH_CHECK50200
-Node: Copying This Manual51640
-Node: GNU Free Documentation License51876
-Node: Index74285
+Node: Top770
+Node: Introduction2536
+Node: Unit Testing in C4672
+Node: Other Frameworks for C6441
+Node: Tutorial9294
+Node: How to Write a Test10069
+Node: Setting Up the Money Build10720
+Node: Test a Little15969
+Node: Creating a Suite20580
+Node: SRunner Output24765
+Node: Advanced Features30006
+Node: Running Multiple Cases30572
+Node: No Fork Mode32795
+Node: Test Fixtures33811
+Node: Test Fixture Examples35345
+Node: Checked vs Unchecked Fixtures37507
+Node: Multiple Suites in one SRunner39227
+Node: Testing Signal Handling40871
+Node: Looping Tests41491
+Node: Test Timeouts43178
+Node: Determining Test Coverage43995
+Node: Test Logging46470
+Node: XML Logging47643
+Node: Conclusion and References49408
+Node: AM_PATH_CHECK50190
+Node: Copying This Manual51630
+Node: GNU Free Documentation License51866
+Node: Index74275
 
 End Tag Table
