@@ -1,12 +1,3 @@
-/*
- *  messages.c
- *  Elvin Client
- *
- *  Created by Matthew Phillips on 13/05/08.
- *  Copyright 2008 __MyCompanyName__. All rights reserved.
- *
- */
-
 #include <stdlib.h>
 #include <check.h>
 
@@ -22,7 +13,7 @@ START_TEST (test_fields)
 {
   Message *connRqst = 
     ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, DEFAULT_CLIENT_PROTOCOL_MINOR,
-	                 EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+                     EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
 
   int32_t version_major = connRqst->fields[0].value.value_int32;
   
