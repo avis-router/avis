@@ -57,16 +57,12 @@ typedef struct
   Keys *subscription_keys;
 } ConnRqst;
 
-void *message_read (Byte_Buffer *buffer, Elvin_Error *error);
+bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error);
 
 bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error);
 
 ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
                            Named_Values *connection_options,
                            Keys *notification_keys, Keys *subscription_keys);
-
-ConnRqst *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error);
-
-bool ConnRqst_write (ConnRqst *connRqst, Elvin_Error *error);
 
 #endif // ELVIN_MESSAGES_H
