@@ -2,6 +2,7 @@
 #include <check.h>
 
 #include <elvin/elvin.h>
+#include <elvin/errors.h>
 #include <elvin/named_values.h>
 #include <elvin/keys.h>
 
@@ -12,20 +13,12 @@ Suite *messages_suite (void);
 
 START_TEST (test_fields)
 {
-//  Message *connRqst = 
-//    ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, DEFAULT_CLIENT_PROTOCOL_MINOR,
-//                     EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
-//
-//  int32_t version_major = connRqst->fields[0].value.value_int32;
-//  
-//  fail_unless (version_major == DEFAULT_CLIENT_PROTOCOL_MAJOR,
-//               "Version major incorrect");
   ConnRqst *connRqst = 
     ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, DEFAULT_CLIENT_PROTOCOL_MINOR,
 	                   EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
 
-  Elvin_Error error;
-  Byte_Buffer *buffer = byte_buffer_alloc ();
+  Elvin_Error error = error_create ();
+  Byte_Buffer *buffer = byte_buffer_create ();
   
   message_write (buffer, connRqst, &error);
 
@@ -33,11 +26,15 @@ START_TEST (test_fields)
   
   fail_unless (byte_buffer_len (buffer) == 12, "Size incorrect");
   
-  ConnRqst *connRqst2 = (ConnRqst *)message_read (buffer, &error);
+  ConnRqst *connRqst2;
+  
+  message_read (buffer, (void *)&connRqst2, &error);
   
   fail_on_error (&error);
   
   fail_unless (connRqst2->type == MESSAGE_CONN_RQST, "Type incorrect");
+  
+  byte_buffer_destroy (buffer);
 }
 END_TEST
 

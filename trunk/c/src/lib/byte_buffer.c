@@ -2,7 +2,7 @@
 
 #define INIT_LENGTH 1024
 
-Byte_Buffer *byte_buffer_alloc ()
+Byte_Buffer *byte_buffer_create ()
 {
   Byte_Buffer *buffer = malloc (sizeof (Byte_Buffer));
   
@@ -12,7 +12,7 @@ Byte_Buffer *byte_buffer_alloc ()
   return buffer;
 }
 
-void byte_buffer_dealloc (Byte_Buffer *buffer)
+void byte_buffer_destroy (Byte_Buffer *buffer)
 {
   free (buffer->data);
 }
