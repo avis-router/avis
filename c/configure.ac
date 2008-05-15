@@ -4,15 +4,15 @@
 AC_PREREQ([1.0])
 AC_INIT([Elvin Client], [1.0], [phillipsm@sourceforge.net])
 
+# fairly severe build strictness
+# change foreign to gnu or gnits to comply with gnu standards
+AM_INIT_AUTOMAKE([-Wall -Werror foreign 1.9.6])
+
 # unique source file --- primitive safety check 
 #AC_CONFIG_SRCDIR([src/money.c])
 
 # place to put some extra build scripts installed
 #AC_CONFIG_AUX_DIR([build-aux])
-
-# fairly severe build strictness
-# change foreign to gnu or gnits to comply with gnu standards
-AM_INIT_AUTOMAKE([-Wall -Werror foreign 1.9.6])
 
 # Checks for programs.
 AC_PROG_CC
@@ -42,8 +42,6 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile src/lib/Makefile src/test/Makefile])
 
 SUBDIRS=src packages/check
-
-AM_PROG_CC_C_O
 
 # Call check's ./configure script recursively.
 AC_CONFIG_SUBDIRS([packages/check])
