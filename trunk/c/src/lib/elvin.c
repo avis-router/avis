@@ -71,42 +71,6 @@ bool elvin_url_from_string (Elvin_URL *url, const char *url_string,
   return true;
 }
 
-void elvin_perror (const char *tag, Elvin_Error *error)
-{
-  printf ("%s: %s", tag, error->message);
-}
-
-bool elvin_error_set (Elvin_Error *error, int code, const char *message)
-{
-  error->code = code;
-  error->message = message;
-  
-  return false;
-}
-
-bool elvin_error_from_errno (Elvin_Error *error)
-{
-  error->code = errno;
-  error->message = strerror (errno);
-  
-  return false;
-}
-
-bool elvin_error_assert (Elvin_Error *error, bool condition, 
-                         int code, const char *message)
-{
-  if (condition)
-  { 
-    return true;
-  } else
-  {
-    error->message = message;
-    error->code = code;
-    
-    return false;
-  }
-}
-
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          Elvin_Error *error)
 {
