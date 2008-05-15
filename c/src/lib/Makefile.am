@@ -12,6 +12,4 @@ include_HEADERS = $(public_inc)/elvin.h \
 	          $(public_inc)/keys.h \
 	          $(public_inc)/named_values.h
 
-# TODO work out why AM_INIT_AUTOMAKE([-Wall -Werror) doesn't work
-
-AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/lib -Wall -Werror
+AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/lib
