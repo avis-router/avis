@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <elvin/errors.h>
+
 #include "messages.h"
+#include "byte_buffer.h"
 
 typedef struct
 {
@@ -26,7 +29,8 @@ bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
   error_return (byte_buffer_read_int32 (buffer, &frame_length, error));
   
   // todo check frame size
-  byte_buffer_set_capacity (buffer, frame_length);
+  byte_buffer_ensure_capacity (buffer, frame_length);
+  byte_buffer_set_max_length (buffer, frame_length);
   
   error_return (byte_buffer_read_int32 (buffer, &type, error));
   
@@ -48,17 +52,16 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
   if (writer == NULL)
     return elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Unknown message type");
 
-  byte_buffer_allow_auto_resize (buffer, true);
-  byte_buffer_skip (buffer, 4);
-  byte_buffer_write_int32 (buffer, type);
+  byte_buffer_skip (buffer, 4, error);
+  byte_buffer_write_int32 (buffer, type, error);
   
   if (!(*writer) (buffer, message, error))
     return false;
   
   size_t frame_size = byte_buffer_position (buffer) - 4;
   
-  byte_buffer_position (buffer, 0);
-  byte_buffer_write_int32 (buffer, frame_size);
+  error_return (byte_buffer_set_position (buffer, 0, error));
+  error_return (byte_buffer_write_int32 (buffer, frame_size, error));
   
   return true; 
 }
