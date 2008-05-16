@@ -14,6 +14,8 @@ typedef struct
 
 Byte_Buffer *byte_buffer_create ();
 
+Byte_Buffer *byte_buffer_create_sized (size_t initial_size);
+
 void byte_buffer_destroy (Byte_Buffer *buffer);
 
 bool byte_buffer_read_int32 (Byte_Buffer *buffer, uint32_t *value, 
