@@ -11,10 +11,14 @@
 #include <arpa/inet.h>
 
 #include <elvin/elvin.h>
+#include <elvin/errors.h>
+
 #include "messages.h"
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          Elvin_Error *error);
+
+static bool send_message (int sockfd, void *message, Elvin_Error *error);
 
 bool elvin_open (Elvin *elvin, const char *router_url, Elvin_Error *error)
 {
@@ -33,14 +37,16 @@ bool elvin_open_url (Elvin *elvin, Elvin_URL *url, Elvin_Error *error)
   if (!open_socket (elvin, url->host, url->port, error))
     return false;
   
-/*  ConnRqst connRqst;
-  connRqst->init (&connRqst);
+  ConnRqst *connRqst = 
+      ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                       DEFAULT_CLIENT_PROTOCOL_MINOR,
+                       EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
   
-  send_packet (connRqst); 
+  bool sent = send_message (elvin->socket, connRqst, error);
   
-  connRqst->destroy (&connRqst);*/
+  ConnRqst_destroy (connRqst);
   
-  return true;
+  return sent;
 }
 
 bool elvin_close (Elvin *elvin)
@@ -103,4 +109,42 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   {
     return elvin_error_from_errno (error);
   }
+}
+
+bool send_message (int socket, void *message, Elvin_Error *error)
+{
+  Byte_Buffer *buffer = byte_buffer_create ();
+  
+  // todo set max size
+  
+  error_return (message_write (buffer, message, error));
+  
+  bool success = false;
+  size_t position = 0;
+
+  for (;;)
+  {
+    size_t written = send (socket, buffer->data + position, 
+                           buffer->position - position, 0);
+    
+    if (written == -1)
+    {
+      elvin_error_from_errno (error);
+      
+      break;
+    } else
+    {
+      position += written;
+      
+      if (position >= buffer->position)
+      {
+        success = true;
+        break;
+      }
+    }
+  }
+  
+  byte_buffer_destroy (buffer);
+  
+  return success;
 }
