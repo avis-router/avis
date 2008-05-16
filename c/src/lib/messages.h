@@ -13,7 +13,9 @@
 typedef enum
 {
   MESSAGE_ID_CONN_RQST = 49,
-  MESSAGE_ID_CONN_RPLY = 50
+  MESSAGE_ID_CONN_RPLY = 50,
+  MESSAGE_ID_DISCONN_RQST = 51,
+  MESSAGE_ID_DISCONN_RPLY = 52
 } Message_Id;
 
 typedef struct
@@ -34,9 +36,30 @@ typedef struct
   Named_Values *options;
 } ConnRply;
 
+typedef struct
+{
+  Message_Id type;
+  uint32_t reason;
+  const char *message;
+} Disconn;
+
+typedef struct
+{
+  Message_Id type;
+  uint32_t xid;
+} DisconnRqst;
+
+typedef struct
+{
+  Message_Id type;
+  uint32_t xid;
+} DisconnRply;
+
 bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error);
 
 bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error);
+
+void message_destroy (void *message);
 
 ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
                            Named_Values *connection_options,
@@ -47,5 +70,9 @@ void ConnRqst_destroy (ConnRqst *connRqst);
 ConnRply *ConnRply_create (Named_Values *connection_options);
 
 void ConnRply_destroy (ConnRply *connRply);
+
+void DisconnRqst_init (DisconnRqst *disconnRqst);
+
+void DisconnRply_init (DisconnRply *disconnRply);
 
 #endif // ELVIN_MESSAGES_H
