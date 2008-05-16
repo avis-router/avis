@@ -41,6 +41,12 @@ bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
   
   *message = (*reader) (buffer, error);
   
+  // fill in type field
+  ((Message *)*message)->type = type;
+  
+  if (buffer->position != frame_length + 4)
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
+  
   return elvin_error_ok (error);
 }
 
@@ -52,16 +58,18 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
   if (writer == NULL)
     return elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Unknown message type");
 
-  byte_buffer_skip (buffer, 4, error);
-  byte_buffer_write_int32 (buffer, type, error);
+  error_return (byte_buffer_skip (buffer, 4, error));
+  error_return (byte_buffer_write_int32 (buffer, type, error));
   
   if (!(*writer) (buffer, message, error))
     return false;
   
   size_t frame_size = byte_buffer_position (buffer) - 4;
   
-  error_return (byte_buffer_set_position (buffer, 0, error));
-  error_return (byte_buffer_write_int32 (buffer, frame_size, error));
+  byte_buffer_set_position (buffer, 0, error);
+  byte_buffer_write_int32 (buffer, frame_size, error);
+  
+  byte_buffer_set_position (buffer, frame_size + 4, error);
   
   return true; 
 }
@@ -70,21 +78,47 @@ ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
                            Named_Values *connection_options,
                            Keys *notification_keys, Keys *subscription_keys)
 {
-  // todo
-  return NULL;  
+  ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
+  
+  connRqst->type = MESSAGE_CONN_RQST;
+  connRqst->version_major = version_major;
+  connRqst->version_major = version_minor;
+  connRqst->connection_options = connection_options;
+  connRqst->subscription_keys = subscription_keys;
+  connRqst->notification_keys = notification_keys;
+  
+  return connRqst;
 }
 
 bool ConnRqst_write (Byte_Buffer *buffer,
                      void *connRqst, Elvin_Error *error)
 {
-  // todo
+  error_return (byte_buffer_write_int32 
+                 (buffer, ((ConnRqst *)connRqst)->version_major, error));
+  error_return (byte_buffer_write_int32 
+                   (buffer, ((ConnRqst *)connRqst)->version_minor, error));
+  
+  // TODO options, keys
+  byte_buffer_write_int32 (buffer, 0, error);
+  byte_buffer_write_int32 (buffer, 0, error);
+  byte_buffer_write_int32 (buffer, 0, error);
+  
   return true;
 }
 
 void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
 {
-  // todo
-  return NULL;
+  ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
+  
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((ConnRqst *)connRqst)->version_major, error));
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((ConnRqst *)connRqst)->version_minor, error));
+  
+  // TODO options, keys
+  byte_buffer_skip (buffer, 4 * 3, error);
+  
+  return connRqst;
 }
 
 Message_Write_Func lookup_write_function (Message_Type type)
