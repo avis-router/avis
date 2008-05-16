@@ -17,14 +17,6 @@ import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.transport.socket.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
-/**
- * A <code>Transport</code> implementation which receives requests
- * and sends responses using non-blocking selector based IO.
- * 
- * @author The Apache MINA Project (dev@mina.apache.org)
- * @version $Rev: 627904 $, $Date: 2008-02-15 09:36:00 +1030 (Fri, 15
- *          Feb 2008) $
- */
 public class AvisMinaTransport implements Transport
 {
   private static final int DEFAULT_PORT = 9012;
