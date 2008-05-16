@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <check.h>
+#include <stdio.h>
 
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
@@ -62,37 +63,57 @@ START_TEST (test_xdr_io)
   free (bytes);
   free (read_bytes);
   
+  // read/write ints
+  byte_buffer_set_position (buffer, 0, &error);
+  
+  for (int i = 0; i < 10; i++)
+  {
+    byte_buffer_write_int32 (buffer, i, &error);
+    fail_on_error (&error);
+  }
+  
+  byte_buffer_set_position (buffer, 0, &error);
+    
+  for (int i = 0; i < 10; i++)
+  {
+    uint32_t value;
+    byte_buffer_read_int32 (buffer, &value, &error);
+    fail_on_error (&error);
+    fail_unless (value == i, "Value not the same");
+  }
+  
   byte_buffer_destroy (buffer);
 }
 END_TEST
 
-//START_TEST (test_message_io)
-//{
-//  ConnRqst *connRqst = 
-//    ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, 
-//                     DEFAULT_CLIENT_PROTOCOL_MINOR,
-//	                   EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
-//
-//  Elvin_Error error = error_create ();
-//  Byte_Buffer *buffer = byte_buffer_create ();
-//  
-//  message_write (buffer, connRqst, &error);
-//
-//  fail_on_error (&error);
-//  
-//  fail_unless (byte_buffer_len (buffer) == 12, "Size incorrect");
-//  
-//  ConnRqst *connRqst2;
-//  
-//  message_read (buffer, (void *)&connRqst2, &error);
-//  
-//  fail_on_error (&error);
-//  
-//  fail_unless (connRqst2->type == MESSAGE_CONN_RQST, "Type incorrect");
-//  
-//  byte_buffer_destroy (buffer);
-//}
-//END_TEST
+START_TEST (test_message_io)
+{
+  ConnRqst *connRqst = 
+    ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                     DEFAULT_CLIENT_PROTOCOL_MINOR,
+	                   EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+
+  Elvin_Error error = error_create ();
+  Byte_Buffer *buffer = byte_buffer_create ();
+  
+  message_write (buffer, connRqst, &error);
+
+  fail_on_error (&error);
+  
+  fail_unless (byte_buffer_position (buffer) == 28, "Message length incorrect");
+  
+  ConnRqst *connRqst2;
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  message_read (buffer, (void *)&connRqst2, &error);
+  
+  fail_on_error (&error);
+  
+  fail_unless (connRqst2->type == MESSAGE_CONN_RQST, "Type incorrect");
+  
+  byte_buffer_destroy (buffer);
+}
+END_TEST
 
 Suite *messages_suite (void)
 {
@@ -102,7 +123,7 @@ Suite *messages_suite (void)
   TCase *tc_core = tcase_create ("test_message_io");
   // tcase_add_checked_fixture (tc_core, setup, teardown);
   tcase_add_test (tc_core, test_xdr_io);
-  // tcase_add_test (tc_core, test_message_io);
+  tcase_add_test (tc_core, test_message_io);
   suite_add_tcase (s, tc_core);
 
   return s;

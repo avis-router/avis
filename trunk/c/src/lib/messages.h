@@ -50,8 +50,8 @@ typedef enum
 typedef struct
 {
   Message_Type type;
-  uint8_t version_major;
-  uint8_t version_minor;
+  uint32_t version_major;
+  uint32_t version_minor;
   Named_Values *connection_options;
   Keys *notification_keys;
   Keys *subscription_keys;
