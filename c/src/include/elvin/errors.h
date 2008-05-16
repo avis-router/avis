@@ -34,6 +34,7 @@ bool elvin_error_set (Elvin_Error *error, int code, const char *message);
 bool elvin_error_assert (Elvin_Error *error, bool condition, 
                          int code, const char *message);
 
-#define elvin_error_ok(error) (error->code == ELVIN_ERROR_NONE)
+#define elvin_error_ok(error) ((error)->code == ELVIN_ERROR_NONE)
+#define elvin_error_reset(error) ((error)->code = ELVIN_ERROR_NONE)
 
 #endif /*ERRORS_H_*/
