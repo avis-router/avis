@@ -110,7 +110,7 @@ START_TEST (test_message_io)
   
   fail_on_error (&error);
   
-  fail_unless (connRqst2->type == MESSAGE_CONN_RQST, "Type incorrect");
+  fail_unless (connRqst2->type == MESSAGE_ID_CONN_RQST, "Type incorrect");
   
   byte_buffer_destroy (buffer);
 }
