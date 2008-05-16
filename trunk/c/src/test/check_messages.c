@@ -17,6 +17,7 @@ START_TEST (test_xdr_io)
 {
   Elvin_Error error = error_create ();
   Byte_Buffer *buffer = byte_buffer_create ();
+  byte_buffer_set_max_length (buffer, 1024);
   
   byte_buffer_write_int32 (buffer, 42, &error);
   fail_on_error (&error);
@@ -30,6 +31,38 @@ START_TEST (test_xdr_io)
   fail_on_error (&error);
   
   fail_unless (value == 42, "Value incorrect: %u", value);
+  
+  // test resize
+  byte_buffer_set_position (buffer, 0, &error);
+  
+  size_t bytes_len = 20 * 1024;
+  uint8_t *bytes = malloc (bytes_len);
+  
+  for (int i = 0; i < bytes_len; i++)
+    bytes [i] = (uint8_t)i;
+  
+  // try to write beyond max
+  byte_buffer_write_bytes (buffer, bytes, bytes_len, &error);
+  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
+  
+  // exand max, retry
+  byte_buffer_set_max_length (buffer, bytes_len);
+  byte_buffer_write_bytes (buffer, bytes, bytes_len, &error);
+  fail_on_error (&error);
+    
+  uint8_t *read_bytes = malloc (bytes_len);
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  byte_buffer_read_bytes (buffer, read_bytes, bytes_len, &error);
+  fail_on_error (&error);
+  
+  for (int i = 0; i < bytes_len; i++)
+    fail_unless (bytes [i] == read_bytes [i], "Bytes differ at %u", i);
+  
+  free (bytes);
+  free (read_bytes);
+  
+  byte_buffer_destroy (buffer);
 }
 END_TEST
 
