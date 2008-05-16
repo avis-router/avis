@@ -13,37 +13,46 @@ typedef struct
 } Message;
 
 typedef bool(*Message_Write_Func) (Byte_Buffer *, void *, Elvin_Error *);
+
 typedef void *(*Message_Read_Func) (Byte_Buffer *, Elvin_Error *);
 
 static Message_Write_Func lookup_write_function (Message_Id type);
+
 static Message_Read_Func lookup_read_function (Message_Id type);
 
 static void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error);
+
 static bool ConnRqst_write (Byte_Buffer *buffer,
                             void *connRqst, Elvin_Error *error);
+
+static void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error);
+
+static bool ConnRply_write (Byte_Buffer *buffer,
+                            void *connRply, Elvin_Error *error);
 
 static uint32_t global_xid_counter = 0;
 
 // todo this is not thread safe
 #define next_xid() (++global_xid_counter)
 
+/**
+ * Read a message from a buffer. The buffer's max length must be primed with
+ * the amount of data expected to be read and the position set to the start
+ * of the data.
+ */
 bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
 {
-  uint32_t frame_length;
   uint32_t type;
-  
-  error_return (byte_buffer_read_int32 (buffer, &frame_length, error));
-  
-  // todo check frame size
-  byte_buffer_ensure_capacity (buffer, frame_length + 4);
-  byte_buffer_set_max_length (buffer, frame_length + 4);
   
   error_return (byte_buffer_read_int32 (buffer, &type, error));
   
   Message_Read_Func reader = lookup_read_function (type);
   
   if (reader == NULL)
-    return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Unknown message type");
+  {
+    return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                            "Unknown message type");
+  }
   
   void *new_message = (*reader) (buffer, error);
   
@@ -68,7 +77,10 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
   Message_Write_Func writer = lookup_write_function (type);
   
   if (writer == NULL)
-    return elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Unknown message type");
+  {
+    return elvin_error_set (error, ELVIN_ERROR_INTERNAL, 
+                            "Unknown message type");
+  }
 
   error_return (byte_buffer_skip (buffer, 4, error));
   error_return (byte_buffer_write_int32 (buffer, type, error));
@@ -77,7 +89,8 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
     return false;
   
   size_t frame_size = byte_buffer_position (buffer) - 4;
-  
+
+  // write frame length
   byte_buffer_set_position (buffer, 0, error);
   byte_buffer_write_int32 (buffer, frame_size, error);
   
@@ -85,6 +98,34 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
   
   return true; 
 }
+
+Message_Write_Func lookup_write_function (Message_Id type)
+{
+  switch (type)
+  {
+  case MESSAGE_ID_CONN_RQST:
+    return ConnRqst_write;
+  case MESSAGE_ID_CONN_RPLY:
+    return ConnRply_write;
+  default:
+    return NULL;
+  }
+}
+
+Message_Read_Func lookup_read_function (Message_Id type)
+{
+  switch (type)
+  {
+  case MESSAGE_ID_CONN_RQST:
+    return ConnRqst_read;
+  case MESSAGE_ID_CONN_RPLY:
+    return ConnRply_read;
+  default:
+    return NULL;
+  }
+}
+
+//////
 
 ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
                            Named_Values *connection_options,
@@ -187,32 +228,4 @@ void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
   byte_buffer_skip (buffer, 4, error);
   
   return connRply;
-}
-
-////////
-
-Message_Write_Func lookup_write_function (Message_Id type)
-{
-  switch (type)
-  {
-  case MESSAGE_ID_CONN_RQST:
-    return ConnRqst_write;
-  case MESSAGE_ID_CONN_RPLY:
-      return ConnRply_write;
-  default:
-    return NULL;
-  }
-}
-
-Message_Read_Func lookup_read_function (Message_Id type)
-{
-  switch (type)
-  {
-  case MESSAGE_ID_CONN_RQST:
-    return ConnRqst_read;
-  case MESSAGE_ID_CONN_RPLY:
-        return ConnRply_read;
-  default:
-    return NULL;
-  }
 }

@@ -120,10 +120,9 @@ bool send_message (int socket, void *message, Elvin_Error *error)
   
   error_return (message_write (buffer, message, error));
   
-  bool success = false;
   size_t position = 0;
 
-  for (;;)
+  while (position < buffer->position)
   {
     size_t written = send (socket, buffer->data + position, 
                            buffer->position - position, 0);
@@ -135,27 +134,17 @@ bool send_message (int socket, void *message, Elvin_Error *error)
       break;
     } else
     {
-      position += written;
-      
-      if (position >= buffer->position)
-      {
-        success = true;
-        break;
-      }
+      position += written;      
     }
   }
   
   byte_buffer_destroy (buffer);
   
-  return success;
+  return elvin_error_ok (error);
 }
 
 void *receive_message (int socket, Elvin_Error *error)
 {
-  // todo move frame length code out of message_read
-  
-  Byte_Buffer *buffer = byte_buffer_create ();
-
   uint32_t frame_size;
   
   size_t bytes_read = recv (socket, &frame_size, 4, 0);
@@ -167,17 +156,15 @@ void *receive_message (int socket, Elvin_Error *error)
     return NULL;
   }
   
-  // todo check size
+  // todo check size is not too big
   frame_size = ntohl (frame_size);
 
-  byte_buffer_set_max_length (buffer, frame_size + 4);
-  byte_buffer_ensure_capacity (buffer, frame_size + 4);
-  byte_buffer_write_int32 (buffer, frame_size, error);
+  Byte_Buffer *buffer = byte_buffer_create_sized (frame_size);
   
-  size_t position = buffer->position;
+  size_t position = 0;
   void *message = NULL;
   
-  for (;;)
+  while (position < buffer->max_data_length)
   {
     bytes_read = 
       recv (socket, buffer->data + position, 
@@ -191,17 +178,11 @@ void *receive_message (int socket, Elvin_Error *error)
     } else
     {
       position += bytes_read;
-      
-      if (position >= buffer->max_data_length)
-      {
-        byte_buffer_set_position (buffer, 0, error);
-        
-        message_read (buffer, &message, error);
-        
-        break;
-      }
     }
   }
-  
+
+  if (elvin_error_ok (error))
+    message_read (buffer, &message, error);
+
   return message;
 }

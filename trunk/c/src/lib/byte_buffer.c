@@ -30,6 +30,21 @@ Byte_Buffer *byte_buffer_create ()
   return buffer;
 }
 
+/**
+ * Create an instance with an initial max, fixed size.
+ */
+Byte_Buffer *byte_buffer_create_sized (size_t initial_size)
+{
+  Byte_Buffer *buffer = malloc (sizeof (Byte_Buffer));
+    
+  buffer->data_length = initial_size;
+  buffer->max_data_length = initial_size;
+  buffer->data = malloc (initial_size);
+  buffer->position = 0;
+  
+  return buffer;
+}
+
 void byte_buffer_destroy (Byte_Buffer *buffer)
 {
   if (buffer->data)

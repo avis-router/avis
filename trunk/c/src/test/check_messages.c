@@ -89,30 +89,48 @@ END_TEST
 
 START_TEST (test_message_io)
 {
-  ConnRqst *connRqst = 
-    ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, 
-                     DEFAULT_CLIENT_PROTOCOL_MINOR,
-	                   EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
-
   Elvin_Error error = error_create ();
   Byte_Buffer *buffer = byte_buffer_create ();
   
+  // write message out
+  ConnRqst *connRqst = 
+    ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                     DEFAULT_CLIENT_PROTOCOL_MINOR,
+                     EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+
   message_write (buffer, connRqst, &error);
 
   fail_on_error (&error);
   
-  fail_unless (byte_buffer_position (buffer) == 32, "Message length incorrect");
+  fail_unless (byte_buffer_position (buffer) == 32, 
+               "Message length incorrect");
   
   ConnRqst *connRqst2;
   
+  // read message back
   byte_buffer_set_position (buffer, 0, &error);
+  uint32_t frame_size;
+  
+  byte_buffer_read_int32 (buffer, &frame_size, &error);
+  fail_on_error (&error);
+  
+  byte_buffer_set_max_length (buffer, frame_size + 4);
+  byte_buffer_ensure_capacity (buffer, frame_size + 4);
+    
   message_read (buffer, (void *)&connRqst2, &error);
   
   fail_on_error (&error);
   
   fail_unless (connRqst2->type == MESSAGE_ID_CONN_RQST, "Type incorrect");
+  fail_unless (connRqst2->version_major == connRqst->version_major,
+               "Major version incorrect");
+  fail_unless (connRqst2->version_minor == connRqst->version_minor,
+               "Minor version incorrect");
   
   byte_buffer_destroy (buffer);
+  
+  ConnRqst_destroy (connRqst);
+  ConnRqst_destroy (connRqst2);
 }
 END_TEST
 
@@ -123,8 +141,6 @@ START_TEST (test_connect)
     
   elvin_open (&elvin, "elvin://localhost", &error);
   fail_on_error (&error);
-  
-//  sleep (3);
   
   elvin_close (&elvin);
 }
