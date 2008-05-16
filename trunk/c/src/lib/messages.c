@@ -7,6 +7,9 @@
 #include "messages.h"
 #include "byte_buffer.h"
 
+/**
+ * Generic type for a message to access its type field.
+ */
 typedef struct
 {
   Message_Id type;
@@ -15,6 +18,7 @@ typedef struct
 typedef bool(*Message_Write_Func) (Byte_Buffer *, void *, Elvin_Error *);
 
 typedef void *(*Message_Read_Func) (Byte_Buffer *, Elvin_Error *);
+
 
 static Message_Write_Func lookup_write_function (Message_Id type);
 
@@ -30,10 +34,29 @@ static void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error);
 static bool ConnRply_write (Byte_Buffer *buffer,
                             void *connRply, Elvin_Error *error);
 
+static void *DisconnRply_read (Byte_Buffer *buffer, Elvin_Error *error);
+
+static bool DisconnRply_write (Byte_Buffer *buffer,
+                               void *message, Elvin_Error *error);
+
+static void *DisconnRqst_read (Byte_Buffer *buffer, Elvin_Error *error);
+
+static bool DisconnRqst_write (Byte_Buffer *buffer,
+                               void *message, Elvin_Error *error);
+
+
 static uint32_t global_xid_counter = 0;
 
 // todo this is not thread safe
 #define next_xid() (++global_xid_counter)
+
+/**
+ * Destroy a message. Will not free any child data.
+ */
+void message_destroy (void *message)
+{
+  free (message);
+}
 
 /**
  * Read a message from a buffer. The buffer's max length must be primed with
@@ -107,6 +130,10 @@ Message_Write_Func lookup_write_function (Message_Id type)
     return ConnRqst_write;
   case MESSAGE_ID_CONN_RPLY:
     return ConnRply_write;
+  case MESSAGE_ID_DISCONN_RQST:
+    return DisconnRqst_write;
+  case MESSAGE_ID_DISCONN_RPLY:
+    return DisconnRply_write;
   default:
     return NULL;
   }
@@ -120,6 +147,10 @@ Message_Read_Func lookup_read_function (Message_Id type)
     return ConnRqst_read;
   case MESSAGE_ID_CONN_RPLY:
     return ConnRply_read;
+  case MESSAGE_ID_DISCONN_RQST:
+    return DisconnRqst_read;
+  case MESSAGE_ID_DISCONN_RPLY:
+    return DisconnRply_read;
   default:
     return NULL;
   }
@@ -228,4 +259,56 @@ void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
   byte_buffer_skip (buffer, 4, error);
   
   return connRply;
+}
+
+///////
+
+void DisconnRqst_init (DisconnRqst *disconnRqst)
+{
+  disconnRqst->type = MESSAGE_ID_DISCONN_RQST;
+  disconnRqst->xid = next_xid ();
+}
+
+void *DisconnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
+{
+  DisconnRqst *message = (DisconnRqst *)malloc (sizeof (DisconnRqst));
+    
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((DisconnRqst *)message)->xid, error));
+
+  return message;
+}
+
+bool DisconnRqst_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
+{
+  error_return (byte_buffer_write_int32 
+                   (buffer, ((DisconnRqst *)message)->xid, error));
+  
+  return true;
+}
+
+//////
+
+void DisconnRply_init (DisconnRply *disconnRply)
+{
+  disconnRply->type = MESSAGE_ID_DISCONN_RPLY;
+  disconnRply->xid = 0;
+}
+
+void *DisconnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
+{
+  DisconnRply *message = (DisconnRply *)malloc (sizeof (DisconnRply));
+    
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((DisconnRply *)message)->xid, error));
+
+  return message;
+}
+
+bool DisconnRply_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
+{
+  error_return (byte_buffer_write_int32 
+                   (buffer, ((DisconnRply *)message)->xid, error));
+  
+  return true;
 }

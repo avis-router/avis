@@ -52,7 +52,10 @@ bool elvin_open_url (Elvin *elvin, Elvin_URL *url, Elvin_Error *error)
   
   if (!reply)
     return false;
-  
+
+  // todo check message reply
+  message_destroy (reply);
+
   return sent;
 }
 
@@ -60,6 +63,20 @@ bool elvin_close (Elvin *elvin)
 {
   if (elvin->socket == -1)
     return false;
+  
+  Elvin_Error error = error_create ();
+  
+  DisconnRqst disconnRqst;
+  DisconnRqst_init (&disconnRqst);
+  
+  if (send_message (elvin->socket, &disconnRqst, &error))
+  {
+    void *reply = receive_message (elvin->socket, &error);
+    
+    // todo check reply type
+    if (reply)
+      message_destroy (reply);
+  }
   
   close (elvin->socket); // TODO use closesocket () for Windows
 
