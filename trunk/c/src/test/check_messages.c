@@ -13,8 +13,6 @@
 #include <byte_buffer.h>
 #include "check_ext.h"
 
-Suite *messages_suite (void);
-
 START_TEST (test_xdr_io)
 {
   Elvin_Error error = error_create ();
@@ -146,7 +144,7 @@ START_TEST (test_connect)
 }
 END_TEST
 
-Suite *messages_suite (void)
+Suite *messages_suite ()
 {
   Suite *s = suite_create ("Messages");
 
@@ -161,7 +159,7 @@ Suite *messages_suite (void)
   return s;
 }
 
-int main (void)
+int main ()
 {
   int number_failed;
   Suite *s = messages_suite ();
@@ -169,5 +167,6 @@ int main (void)
   srunner_run_all (sr, CK_NORMAL);
   number_failed = srunner_ntests_failed (sr);
   srunner_free (sr);
+
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
