@@ -104,18 +104,13 @@ bool byte_buffer_read_int32 (Byte_Buffer *buffer, uint32_t *value,
 {
   error_return (check_remaining (buffer, 4, error));
   
-  uint32_t v = *(uint32_t *)buffer->data + buffer->position;
+  uint32_t v = *(uint32_t *)(buffer->data + buffer->position);
   
   *value = ntohl (v);
   
   buffer->position += 4;
   
   return true;
-//  o = *offset;
-//     cp = &buffer[o];
-//     up = (uint32_t *) cp;
-//     u = *up;
-//     *lp = (int32_t) elvin_ntohl(u);
 }
 
 bool byte_buffer_write_int32 (Byte_Buffer *buffer, uint32_t value, 
