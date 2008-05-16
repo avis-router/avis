@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <check.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
@@ -100,7 +101,7 @@ START_TEST (test_message_io)
 
   fail_on_error (&error);
   
-  fail_unless (byte_buffer_position (buffer) == 28, "Message length incorrect");
+  fail_unless (byte_buffer_position (buffer) == 32, "Message length incorrect");
   
   ConnRqst *connRqst2;
   
@@ -115,6 +116,20 @@ START_TEST (test_message_io)
 }
 END_TEST
 
+START_TEST (test_connect)
+{
+  Elvin elvin;
+  Elvin_Error error = error_create ();
+    
+  elvin_open (&elvin, "elvin://localhost", &error);
+  fail_on_error (&error);
+  
+//  sleep (3);
+  
+  elvin_close (&elvin);
+}
+END_TEST
+
 Suite *messages_suite (void)
 {
   Suite *s = suite_create ("Messages");
@@ -124,6 +139,7 @@ Suite *messages_suite (void)
   // tcase_add_checked_fixture (tc_core, setup, teardown);
   tcase_add_test (tc_core, test_xdr_io);
   tcase_add_test (tc_core, test_message_io);
+  tcase_add_test (tc_core, test_connect);
   suite_add_tcase (s, tc_core);
 
   return s;
