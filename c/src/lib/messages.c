@@ -1,4 +1,5 @@
-#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
 #include <stdbool.h>
 
 #include <elvin/errors.h>
@@ -34,8 +35,8 @@ bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
   error_return (byte_buffer_read_int32 (buffer, &frame_length, error));
   
   // todo check frame size
-  byte_buffer_ensure_capacity (buffer, frame_length);
-  byte_buffer_set_max_length (buffer, frame_length);
+  byte_buffer_ensure_capacity (buffer, frame_length + 4);
+  byte_buffer_set_max_length (buffer, frame_length + 4);
   
   error_return (byte_buffer_read_int32 (buffer, &type, error));
   
@@ -44,13 +45,19 @@ bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
   if (reader == NULL)
     return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Unknown message type");
   
-  *message = (*reader) (buffer, error);
+  void *new_message = (*reader) (buffer, error);
   
+  if (!elvin_error_ok (error))
+    return false;
+    
   // fill in type field
-  ((Message *)*message)->type = type;
+  ((Message *)new_message)->type = type;
+
+  *message = new_message;  
   
-  if (buffer->position != frame_length + 4)
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
+  // todo
+//  if (buffer->position < buffer->max_data_length)
+//    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
   
   return elvin_error_ok (error);
 }
@@ -88,7 +95,7 @@ ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
   connRqst->xid = next_xid ();
   connRqst->type = MESSAGE_CONN_RQST;
   connRqst->version_major = version_major;
-  connRqst->version_major = version_minor;
+  connRqst->version_minor = version_minor;
   connRqst->connection_options = connection_options;
   connRqst->subscription_keys = subscription_keys;
   connRqst->notification_keys = notification_keys;
@@ -138,12 +145,60 @@ void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
   return connRqst;
 }
 
+/////////
+
+ConnRply *ConnRply_create (Named_Values *connection_options)
+{
+  ConnRply *connRply = (ConnRply *)malloc (sizeof (ConnRply));
+  
+  connRply->xid = 0;
+  connRply->type = MESSAGE_CONN_RPLY;
+  connRply->options = connection_options;
+  
+  return connRply;
+}
+
+void ConnRply_destroy (ConnRply *connRply)
+{
+  free (connRply);
+  
+  // todo free sub-fields?
+}
+
+bool ConnRply_write (Byte_Buffer *buffer,
+                     void *connRply, Elvin_Error *error)
+{
+  error_return (byte_buffer_write_int32 
+                   (buffer, ((ConnRply *)connRply)->xid, error));
+
+  // TODO options
+  byte_buffer_write_int32 (buffer, 0, error);
+  
+  return true;
+}
+
+void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
+{
+  ConnRply *connRply = (ConnRply *)malloc (sizeof (ConnRply));
+  
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((ConnRply *)connRply)->xid, error));
+  // TODO options
+  byte_buffer_skip (buffer, 4, error);
+  
+  return connRply;
+}
+
+////////
+
 Message_Write_Func lookup_write_function (Message_Type type)
 {
   switch (type)
   {
   case MESSAGE_CONN_RQST:
     return ConnRqst_write;
+  case MESSAGE_CONN_RPLY:
+      return ConnRply_write;
   default:
     return NULL;
   }
@@ -155,50 +210,9 @@ Message_Read_Func lookup_read_function (Message_Type type)
   {
   case MESSAGE_CONN_RQST:
     return ConnRqst_read;
+  case MESSAGE_CONN_RPLY:
+        return ConnRply_read;
   default:
     return NULL;
   }
 }
-
-//#define field_int32(_value) (Field){.type = FIELD_INT32, .value = {.value_int32 = _value}}
-//#define field_named_values(_value) (Field){.type = FIELD_NAMED_VALUES, .value = {.value_named_values = _value}}
-//#define field_keys(_value) (Field){.type = FIELD_KEYS, .value = {.value_keys = _value}}
-//
-//static Message *message_alloc (Message_Type type);
-//static int field_count (Message_Type type);
-//
-//Message *ConnRqst_create (short version_major, short version_minor,
-//					      Named_Values *connection_options,
-//						  Keys *notification_keys, Keys *subscription_keys)
-//{
-//  Message *message = message_alloc (MESSAGE_CONN_RQST);
-//  
-//  message->fields [0] = field_int32 (version_major);
-//  message->fields [1] = field_int32 (version_minor);
-//  message->fields [2] = field_named_values (connection_options);
-//  message->fields [3] = field_keys (notification_keys);
-//  message->fields [4] = field_keys (subscription_keys);
-//    
-//  return message;
-//}
-//
-//static Message *message_alloc (Message_Type type)
-//{
-//  Message *message = malloc (sizeof (Message));
-//
-//  message->type = type;  
-//  message->fields = (Field *)malloc (field_count (type) * sizeof (Field));
-//  
-//  return message;
-//}
-//
-//static int field_count (Message_Type type)
-//{
-//  switch (type)
-//  {
-//    case MESSAGE_CONN_RQST:
-//	  return 5;
-//    default:
-//	  abort ();
-//  }
-//}
