@@ -67,7 +67,7 @@ START_TEST (test_xdr_io)
   // read/write ints
   byte_buffer_set_position (buffer, 0, &error);
   
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 1000; i++)
   {
     byte_buffer_write_int32 (buffer, i, &error);
     fail_on_error (&error);
@@ -75,7 +75,7 @@ START_TEST (test_xdr_io)
   
   byte_buffer_set_position (buffer, 0, &error);
     
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 1000; i++)
   {
     uint32_t value;
     byte_buffer_read_int32 (buffer, &value, &error);
