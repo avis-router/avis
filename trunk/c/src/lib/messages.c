@@ -9,14 +9,14 @@
 
 typedef struct
 {
-  Message_Type type;
+  Message_Id type;
 } Message;
 
 typedef bool(*Message_Write_Func) (Byte_Buffer *, void *, Elvin_Error *);
 typedef void *(*Message_Read_Func) (Byte_Buffer *, Elvin_Error *);
 
-static Message_Write_Func lookup_write_function (Message_Type type);
-static Message_Read_Func lookup_read_function (Message_Type type);
+static Message_Write_Func lookup_write_function (Message_Id type);
+static Message_Read_Func lookup_read_function (Message_Id type);
 
 static void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error);
 static bool ConnRqst_write (Byte_Buffer *buffer,
@@ -64,7 +64,7 @@ bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
 
 bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
 {
-  Message_Type type = ((Message *)message)->type;
+  Message_Id type = ((Message *)message)->type;
   Message_Write_Func writer = lookup_write_function (type);
   
   if (writer == NULL)
@@ -93,7 +93,7 @@ ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
   ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
   
   connRqst->xid = next_xid ();
-  connRqst->type = MESSAGE_CONN_RQST;
+  connRqst->type = MESSAGE_ID_CONN_RQST;
   connRqst->version_major = version_major;
   connRqst->version_minor = version_minor;
   connRqst->connection_options = connection_options;
@@ -152,7 +152,7 @@ ConnRply *ConnRply_create (Named_Values *connection_options)
   ConnRply *connRply = (ConnRply *)malloc (sizeof (ConnRply));
   
   connRply->xid = 0;
-  connRply->type = MESSAGE_CONN_RPLY;
+  connRply->type = MESSAGE_ID_CONN_RPLY;
   connRply->options = connection_options;
   
   return connRply;
@@ -191,26 +191,26 @@ void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
 
 ////////
 
-Message_Write_Func lookup_write_function (Message_Type type)
+Message_Write_Func lookup_write_function (Message_Id type)
 {
   switch (type)
   {
-  case MESSAGE_CONN_RQST:
+  case MESSAGE_ID_CONN_RQST:
     return ConnRqst_write;
-  case MESSAGE_CONN_RPLY:
+  case MESSAGE_ID_CONN_RPLY:
       return ConnRply_write;
   default:
     return NULL;
   }
 }
 
-Message_Read_Func lookup_read_function (Message_Type type)
+Message_Read_Func lookup_read_function (Message_Id type)
 {
   switch (type)
   {
-  case MESSAGE_CONN_RQST:
+  case MESSAGE_ID_CONN_RQST:
     return ConnRqst_read;
-  case MESSAGE_CONN_RPLY:
+  case MESSAGE_ID_CONN_RPLY:
         return ConnRply_read;
   default:
     return NULL;
