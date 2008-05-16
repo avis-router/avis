@@ -111,7 +111,7 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
   if (!(*writer) (buffer, message, error))
     return false;
   
-  size_t frame_size = byte_buffer_position (buffer) - 4;
+  size_t frame_size = buffer->position - 4;
 
   // write frame length
   byte_buffer_set_position (buffer, 0, error);
