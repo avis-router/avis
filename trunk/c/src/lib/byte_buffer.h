@@ -18,13 +18,21 @@ void byte_buffer_destroy (Byte_Buffer *buffer);
 
 bool byte_buffer_read_int32 (Byte_Buffer *buffer, uint32_t *value, 
                              Elvin_Error *error);
+
 bool byte_buffer_write_int32 (Byte_Buffer *buffer, uint32_t value, 
                               Elvin_Error *error);
+
+bool byte_buffer_read_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
+                             size_t bytes_len, Elvin_Error *error);
+
+bool byte_buffer_write_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
+                              size_t bytes_len, Elvin_Error *error);
 
 bool byte_buffer_set_position (Byte_Buffer *buffer, size_t position,
                                Elvin_Error *error);
 
 void byte_buffer_set_max_length (Byte_Buffer *buffer, int max_capacity);
+
 void byte_buffer_ensure_capacity (Byte_Buffer *buffer, size_t capacity);
 
 #define byte_buffer_len(buffer) (buffer->data_length)

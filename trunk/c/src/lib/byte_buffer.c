@@ -124,3 +124,27 @@ bool byte_buffer_write_int32 (Byte_Buffer *buffer, uint32_t value,
   
   return true;
 }
+
+bool byte_buffer_read_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
+                             size_t bytes_len, Elvin_Error *error)
+{
+  error_return (check_remaining (buffer, bytes_len, error));
+  
+  memcpy ((void *)bytes, (void *)(buffer->data + buffer->position), bytes_len);
+    
+  buffer->position += bytes_len;
+    
+  return true;
+}
+
+bool byte_buffer_write_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
+                              size_t bytes_len, Elvin_Error *error)
+{
+  error_return (auto_resize_to_fit (buffer, buffer->position + bytes_len, error));
+  
+  memcpy ((void *)(buffer->data + buffer->position), (void *)bytes, bytes_len);
+  
+  buffer->position += bytes_len;
+  
+  return true;
+}
