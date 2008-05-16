@@ -3,6 +3,12 @@
 
 #include <elvin/errors.h>
 
-void fail_on_error (Elvin_Error *error);
+#define fail_on_error(error) \
+  (fail_unless ((error)->code == ELVIN_ERROR_NONE, \
+      "Elvin error: %s", (error)->message))
+
+#define fail_unless_error_code(error,expected_code) \
+  (fail_unless ((error)->code == (expected_code), \
+      "Expected elvin error"), elvin_error_reset (error))
 
 #endif /*CHECK_EXT_H_*/
