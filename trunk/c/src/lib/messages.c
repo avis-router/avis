@@ -21,6 +21,11 @@ static void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error);
 static bool ConnRqst_write (Byte_Buffer *buffer,
                             void *connRqst, Elvin_Error *error);
 
+static uint32_t global_xid_counter = 0;
+
+// todo this is not thread safe
+#define next_xid() (++global_xid_counter)
+
 bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
 {
   uint32_t frame_length;
@@ -80,6 +85,7 @@ ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
 {
   ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
   
+  connRqst->xid = next_xid ();
   connRqst->type = MESSAGE_CONN_RQST;
   connRqst->version_major = version_major;
   connRqst->version_major = version_minor;
@@ -90,9 +96,18 @@ ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
   return connRqst;
 }
 
+void ConnRqst_destroy (ConnRqst *connRqst)
+{
+  free (connRqst);
+  
+  // todo free sub-fields?
+}
+
 bool ConnRqst_write (Byte_Buffer *buffer,
                      void *connRqst, Elvin_Error *error)
 {
+  error_return (byte_buffer_write_int32 
+                   (buffer, ((ConnRqst *)connRqst)->xid, error));
   error_return (byte_buffer_write_int32 
                  (buffer, ((ConnRqst *)connRqst)->version_major, error));
   error_return (byte_buffer_write_int32 
@@ -110,6 +125,8 @@ void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
 {
   ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
   
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((ConnRqst *)connRqst)->xid, error));
   error_return (byte_buffer_read_int32 
                  (buffer, &((ConnRqst *)connRqst)->version_major, error));
   error_return (byte_buffer_read_int32 

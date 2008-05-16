@@ -50,6 +50,7 @@ typedef enum
 typedef struct
 {
   Message_Type type;
+  uint32_t xid;
   uint32_t version_major;
   uint32_t version_minor;
   Named_Values *connection_options;
@@ -64,5 +65,7 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error);
 ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
                            Named_Values *connection_options,
                            Keys *notification_keys, Keys *subscription_keys);
+
+void ConnRqst_destroy (ConnRqst *connRqst);
 
 #endif // ELVIN_MESSAGES_H
