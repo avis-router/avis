@@ -20,6 +20,8 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 
 static bool send_message (int sockfd, void *message, Elvin_Error *error);
 
+static void *receive_message (int socket, Elvin_Error *error);
+
 bool elvin_open (Elvin *elvin, const char *router_url, Elvin_Error *error)
 {
   Elvin_URL url;
@@ -46,6 +48,11 @@ bool elvin_open_url (Elvin *elvin, Elvin_URL *url, Elvin_Error *error)
   
   ConnRqst_destroy (connRqst);
   
+  void *reply = receive_message (elvin->socket, error);
+  
+  if (!reply)
+    return false;
+  
   return sent;
 }
 
@@ -53,12 +60,6 @@ bool elvin_close (Elvin *elvin)
 {
   if (elvin->socket == -1)
     return false;
-  
-//  if (elvin_error_assert (elvin->socket != 0, ELVIN_ERROR_CONNECTION_CLOSED, 
-//                          "Socket not open"))
-//  {
-//    return false;
-//  }
   
   close (elvin->socket); // TODO use closesocket () for Windows
 
@@ -147,4 +148,60 @@ bool send_message (int socket, void *message, Elvin_Error *error)
   byte_buffer_destroy (buffer);
   
   return success;
+}
+
+void *receive_message (int socket, Elvin_Error *error)
+{
+  // todo move frame length code out of message_read
+  
+  Byte_Buffer *buffer = byte_buffer_create ();
+
+  uint32_t frame_size;
+  
+  size_t bytes_read = recv (socket, &frame_size, 4, 0);
+    
+  if (bytes_read != 4)
+  {
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Failed to read frame size");
+    
+    return NULL;
+  }
+  
+  // todo check size
+  frame_size = ntohl (frame_size);
+
+  byte_buffer_set_max_length (buffer, frame_size + 4);
+  byte_buffer_ensure_capacity (buffer, frame_size + 4);
+  byte_buffer_write_int32 (buffer, frame_size, error);
+  
+  size_t position = buffer->position;
+  void *message = NULL;
+  
+  for (;;)
+  {
+    bytes_read = 
+      recv (socket, buffer->data + position, 
+            buffer->max_data_length - position, 0);
+   
+    if (bytes_read == -1)
+    {
+      elvin_error_from_errno (error);
+      
+      break;
+    } else
+    {
+      position += bytes_read;
+      
+      if (position >= buffer->max_data_length)
+      {
+        byte_buffer_set_position (buffer, 0, error);
+        
+        message_read (buffer, &message, error);
+        
+        break;
+      }
+    }
+  }
+  
+  return message;
 }
