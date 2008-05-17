@@ -55,15 +55,25 @@ typedef struct
   uint32_t xid;
 } DisconnRply;
 
+typedef struct
+{
+  Message_Id type;
+  uint32_t xid;
+} XidMessage;
+
 bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error);
 
 bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error);
 
 void message_destroy (void *message);
 
-ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
-                           Named_Values *connection_options,
-                           Keys *notification_keys, Keys *subscription_keys);
+#define message_type_of(message) (((XidMessage *)message)->type)
+#define xid_of(message) (((XidMessage *)message)->xid)
+
+ConnRqst *ConnRqst_init (ConnRqst *connRqst,
+                         uint8_t version_major, uint8_t version_minor,
+                         Named_Values *connection_options,
+                         Keys *notification_keys, Keys *subscription_keys);
 
 void ConnRqst_destroy (ConnRqst *connRqst);
 
