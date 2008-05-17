@@ -18,6 +18,9 @@
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          Elvin_Error *error);
 
+static void *send_and_receive (int socket, void *request_message, 
+                               Message_Id reply_type, Elvin_Error *error);
+
 static bool send_message (int sockfd, void *message, Elvin_Error *error);
 
 static void *receive_message (int socket, Elvin_Error *error);
@@ -39,24 +42,22 @@ bool elvin_open_url (Elvin *elvin, Elvin_URL *url, Elvin_Error *error)
   if (!open_socket (elvin, url->host, url->port, error))
     return false;
   
-  ConnRqst *connRqst = 
-      ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, 
-                       DEFAULT_CLIENT_PROTOCOL_MINOR,
-                       EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+  ConnRqst connRqst;
   
-  bool sent = send_message (elvin->socket, connRqst, error);
+  ConnRqst_init (&connRqst, DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                 DEFAULT_CLIENT_PROTOCOL_MINOR,
+                 EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
   
-  ConnRqst_destroy (connRqst);
+  ConnRply *reply;
   
-  void *reply = receive_message (elvin->socket, error);
+  error_return 
+    (reply = send_and_receive (elvin->socket, &connRqst, 
+                               MESSAGE_ID_CONN_RPLY, error));
   
-  if (!reply)
-    return false;
-
-  // todo check message reply
+  // todo check message reply options
   message_destroy (reply);
-
-  return sent;
+  
+  return true;
 }
 
 bool elvin_close (Elvin *elvin)
@@ -64,23 +65,24 @@ bool elvin_close (Elvin *elvin)
   if (elvin->socket == -1)
     return false;
   
-  Elvin_Error error = error_create ();
+  Elvin_Error error = elvin_error_create ();
   
   DisconnRqst disconnRqst;
   DisconnRqst_init (&disconnRqst);
   
-  if (send_message (elvin->socket, &disconnRqst, &error))
-  {
-    void *reply = receive_message (elvin->socket, &error);
+  DisconnRply *reply;
     
-    // todo check reply type
-    if (reply)
-      message_destroy (reply);
-  }
-  
+  reply = send_and_receive (elvin->socket, &disconnRqst, 
+                            MESSAGE_ID_DISCONN_RPLY, &error);
+
+  if (reply)
+    message_destroy (reply);
+
   close (elvin->socket); // TODO use closesocket () for Windows
 
   elvin->socket = -1;
+  
+  elvin_error_destroy (&error);
   
   return true;
 }
@@ -127,6 +129,38 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   {
     return elvin_error_from_errno (error);
   }
+}
+
+void *send_and_receive (int socket, void *request_message, 
+                        Message_Id reply_type, Elvin_Error *error)
+{
+  // todo could share the buffer for this
+  if (!send_message (socket, request_message, error))
+    return NULL;
+  
+  void *reply = receive_message (socket, error);
+  
+  if (!reply)
+    return NULL;
+  
+  if (message_type_of (reply) != reply_type)
+  {
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                     "Unexpected reply from router");
+  } else if (xid_of (request_message) != xid_of (reply))
+  {
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                     "Mismatched transaction ID in reply from router");
+  }
+  
+  if (elvin_error_occurred (error))
+  {
+    message_destroy (reply);
+    
+    reply = NULL;
+  }
+  
+  return reply;
 }
 
 bool send_message (int socket, void *message, Elvin_Error *error)
