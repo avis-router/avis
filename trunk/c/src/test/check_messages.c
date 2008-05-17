@@ -13,9 +13,22 @@
 #include <byte_buffer.h>
 #include "check_ext.h"
 
-START_TEST (test_xdr_io)
+static Elvin_Error error = elvin_error_create ();
+
+static void setup ()
 {
-  Elvin_Error error = error_create ();
+}
+
+static void teardown ()
+{
+  elvin_error_destroy (&error);
+}
+
+/**
+ * Basic byte buffer IO.
+ */
+START_TEST (test_byte_buffer_io)
+{
   Byte_Buffer *buffer = byte_buffer_create ();
   byte_buffer_set_max_length (buffer, 1024);
   
@@ -85,18 +98,29 @@ START_TEST (test_xdr_io)
 }
 END_TEST
 
+/**
+ * More advanced XDR IO.
+ */
+START_TEST (test_xdr_io)
+{
+//  Byte_Buffer *buffer = byte_buffer_create ();
+  
+  
+}
+END_TEST
+
 START_TEST (test_message_io)
 {
-  Elvin_Error error = error_create ();
   Byte_Buffer *buffer = byte_buffer_create ();
   
   // write message out
-  ConnRqst *connRqst = 
-    ConnRqst_create (DEFAULT_CLIENT_PROTOCOL_MAJOR, 
-                     DEFAULT_CLIENT_PROTOCOL_MINOR,
-                     EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+  ConnRqst connRqst;
+  
+  ConnRqst_init (&connRqst, DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                  DEFAULT_CLIENT_PROTOCOL_MINOR,
+                  EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
 
-  message_write (buffer, connRqst, &error);
+  message_write (buffer, &connRqst, &error);
 
   fail_on_error (&error);
   
@@ -120,53 +144,24 @@ START_TEST (test_message_io)
   fail_on_error (&error);
   
   fail_unless (connRqst2->type == MESSAGE_ID_CONN_RQST, "Type incorrect");
-  fail_unless (connRqst2->version_major == connRqst->version_major,
+  fail_unless (connRqst2->version_major == connRqst.version_major,
                "Major version incorrect");
-  fail_unless (connRqst2->version_minor == connRqst->version_minor,
+  fail_unless (connRqst2->version_minor == connRqst.version_minor,
                "Minor version incorrect");
   
   byte_buffer_destroy (buffer);
   
-  ConnRqst_destroy (connRqst);
-  ConnRqst_destroy (connRqst2);
+  message_destroy (connRqst2);
 }
 END_TEST
 
-START_TEST (test_connect)
+TCase *messages_tests ()
 {
-  Elvin elvin;
-  Elvin_Error error = error_create ();
-    
-  elvin_open (&elvin, "elvin://localhost", &error);
-  fail_on_error (&error);
-  
-  elvin_close (&elvin);
-}
-END_TEST
-
-Suite *messages_suite ()
-{
-  Suite *s = suite_create ("Messages");
-
-  /* Core test case */
   TCase *tc_core = tcase_create ("test_message_io");
-  // tcase_add_checked_fixture (tc_core, setup, teardown);
+  tcase_add_checked_fixture (tc_core, setup, teardown);
+  tcase_add_test (tc_core, test_byte_buffer_io);
   tcase_add_test (tc_core, test_xdr_io);
   tcase_add_test (tc_core, test_message_io);
-  tcase_add_test (tc_core, test_connect);
-  suite_add_tcase (s, tc_core);
 
-  return s;
-}
-
-int main ()
-{
-  int number_failed;
-  Suite *s = messages_suite ();
-  SRunner *sr = srunner_create (s);
-  srunner_run_all (sr, CK_NORMAL);
-  number_failed = srunner_ntests_failed (sr);
-  srunner_free (sr);
-
-  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+  return tc_core;
 }
