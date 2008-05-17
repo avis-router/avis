@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <assert.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -155,7 +156,7 @@ void *send_and_receive (int socket, void *request_message,
   
   if (elvin_error_occurred (error))
   {
-    message_destroy (reply);
+    message_free (reply);
     
     reply = NULL;
   }
@@ -167,9 +168,10 @@ bool send_message (int socket, void *message, Elvin_Error *error)
 {
   Byte_Buffer *buffer = byte_buffer_create ();
   
+  // message_write () should only fail if an internal error
+  assert (message_write (buffer, message, error));
+    
   // todo set max size
-  
-  error_return (message_write (buffer, message, error));
   
   size_t position = 0;
 

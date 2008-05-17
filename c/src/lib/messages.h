@@ -67,6 +67,9 @@ bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error);
 
 void message_destroy (void *message);
 
+// destroy and free () message
+#define message_free(message) (message_destroy (message), free (message))
+
 #define message_type_of(message) (((XidMessage *)message)->type)
 #define xid_of(message) (((XidMessage *)message)->xid)
 
