@@ -19,7 +19,9 @@ typedef struct
 
 #define ELVIN_ERROR_NONE ELVIN_ERROR_BASE
 
-#define error_create() {.code = ELVIN_ERROR_NONE, .message = NULL}
+#define elvin_error_create() {.code = ELVIN_ERROR_NONE, .message = NULL}
+#define elvin_error_destroy(error)
+
 #define error_return(expr) {if (!(expr)) return false;}
 
 /*
@@ -35,6 +37,7 @@ bool elvin_error_assert (Elvin_Error *error, bool condition,
                          int code, const char *message);
 
 #define elvin_error_ok(error) ((error)->code == ELVIN_ERROR_NONE)
+#define elvin_error_occurred(error) (!elvin_error_ok (error))
 #define elvin_error_reset(error) ((error)->code = ELVIN_ERROR_NONE)
 
 #endif /*ERRORS_H_*/
