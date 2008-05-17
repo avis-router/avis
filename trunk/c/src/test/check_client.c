@@ -13,10 +13,20 @@
 #include <byte_buffer.h>
 #include "check_ext.h"
 
+static Elvin_Error error = elvin_error_create ();
+
+static void setup ()
+{
+}
+
+static void teardown ()
+{
+  elvin_error_destroy (&error);
+}
+
 START_TEST (test_connect)
 {
   Elvin elvin;
-  Elvin_Error error = elvin_error_create ();
     
   elvin_open (&elvin, "elvin://localhost", &error);
   fail_on_error (&error);
@@ -29,6 +39,8 @@ TCase *client_tests ()
 {
   TCase *tc_core = tcase_create ("client");
   tcase_add_test (tc_core, test_connect);
-  
+ 
+  tcase_add_checked_fixture (tc_core, setup, teardown);
+
   return tc_core;
 }
