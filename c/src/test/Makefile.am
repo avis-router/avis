@@ -1,10 +1,9 @@
-bin_PROGRAMS=check_messages
+bin_PROGRAMS=tests
 
-check_messages_SOURCES=check_messages.c \
-		       check_ext.c
+tests_SOURCES=tests.c check_ext.c check_messages.c check_client.c
 
-check_messages_LDADD=$(top_srcdir)/src/lib/libelvin.la \
-                     $(top_srcdir)/packages/check/src/libcheck.la
+tests_LDADD=$(top_srcdir)/src/lib/libelvin.la \
+            $(top_srcdir)/packages/check/src/libcheck.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
               -I$(top_srcdir)/packages/check/src $(all_includes) \
