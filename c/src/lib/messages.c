@@ -56,6 +56,8 @@ static uint32_t global_xid_counter = 0;
 void message_destroy (void *message)
 {
   free (message);
+  
+  // todo destroy subfields
 }
 
 /**
@@ -158,12 +160,11 @@ Message_Read_Func lookup_read_function (Message_Id type)
 
 //////
 
-ConnRqst *ConnRqst_create (uint8_t version_major, uint8_t version_minor,
-                           Named_Values *connection_options,
-                           Keys *notification_keys, Keys *subscription_keys)
+ConnRqst *ConnRqst_init (ConnRqst *connRqst,
+                         uint8_t version_major, uint8_t version_minor,
+                         Named_Values *connection_options,
+                         Keys *notification_keys, Keys *subscription_keys)
 {
-  ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
-  
   connRqst->xid = next_xid ();
   connRqst->type = MESSAGE_ID_CONN_RQST;
   connRqst->version_major = version_major;
@@ -179,7 +180,7 @@ void ConnRqst_destroy (ConnRqst *connRqst)
 {
   free (connRqst);
   
-  // todo free sub-fields?
+  // todo free sub-fields
 }
 
 bool ConnRqst_write (Byte_Buffer *buffer,
@@ -219,10 +220,8 @@ void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
 
 /////////
 
-ConnRply *ConnRply_create (Named_Values *connection_options)
+ConnRply *ConnRply_init (ConnRply *connRply, Named_Values *connection_options)
 {
-  ConnRply *connRply = (ConnRply *)malloc (sizeof (ConnRply));
-  
   connRply->xid = 0;
   connRply->type = MESSAGE_ID_CONN_RPLY;
   connRply->options = connection_options;
@@ -234,7 +233,7 @@ void ConnRply_destroy (ConnRply *connRply)
 {
   free (connRply);
   
-  // todo free sub-fields?
+  // todo free sub-fields
 }
 
 bool ConnRply_write (Byte_Buffer *buffer,
