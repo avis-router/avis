@@ -13,7 +13,7 @@
 #include <byte_buffer.h>
 #include "check_ext.h"
 
-static Elvin_Error error = elvin_error_create ();
+static ElvinError error = elvin_error_create ();
 
 static void setup ()
 {

@@ -17,18 +17,18 @@
 #include "messages.h"
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
-                         Elvin_Error *error);
+                         ElvinError *error);
 
 static void *send_and_receive (int socket, void *request_message, 
-                               Message_Id reply_type, Elvin_Error *error);
+                               Message_Id reply_type, ElvinError *error);
 
-static bool send_message (int sockfd, void *message, Elvin_Error *error);
+static bool send_message (int sockfd, void *message, ElvinError *error);
 
-static void *receive_message (int socket, Elvin_Error *error);
+static void *receive_message (int socket, ElvinError *error);
 
-bool elvin_open (Elvin *elvin, const char *router_url, Elvin_Error *error)
+bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
 {
-  Elvin_URL url;
+  ElvinURL url;
   
   if (!elvin_url_from_string (&url, router_url, error))
     return false;
@@ -36,7 +36,7 @@ bool elvin_open (Elvin *elvin, const char *router_url, Elvin_Error *error)
   return elvin_open_url (elvin, &url, error);
 }
 
-bool elvin_open_url (Elvin *elvin, Elvin_URL *url, Elvin_Error *error)
+bool elvin_open_url (Elvin *elvin, ElvinURL *url, ElvinError *error)
 {
   elvin->socket = -1;
   
@@ -66,7 +66,7 @@ bool elvin_close (Elvin *elvin)
   if (elvin->socket == -1)
     return false;
   
-  Elvin_Error error = elvin_error_create ();
+  ElvinError error = elvin_error_create ();
   
   DisconnRqst disconnRqst;
   DisconnRqst_init (&disconnRqst);
@@ -88,8 +88,8 @@ bool elvin_close (Elvin *elvin)
   return true;
 }
 
-bool elvin_url_from_string (Elvin_URL *url, const char *url_string, 
-                            Elvin_Error *error)
+bool elvin_url_from_string (ElvinURL *url, const char *url_string, 
+                            ElvinError *error)
 {
   // TODO
   url->host = "localhost";
@@ -99,7 +99,7 @@ bool elvin_url_from_string (Elvin_URL *url, const char *url_string,
 }
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
-                         Elvin_Error *error)
+                         ElvinError *error)
 {
   struct hostent *host_info = gethostbyname (host);
   
@@ -133,7 +133,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 }
 
 void *send_and_receive (int socket, void *request_message, 
-                        Message_Id reply_type, Elvin_Error *error)
+                        Message_Id reply_type, ElvinError *error)
 {
   // todo could share the buffer for this
   if (!send_message (socket, request_message, error))
@@ -165,9 +165,9 @@ void *send_and_receive (int socket, void *request_message,
   return reply;
 }
 
-bool send_message (int socket, void *message, Elvin_Error *error)
+bool send_message (int socket, void *message, ElvinError *error)
 {
-  Byte_Buffer *buffer = byte_buffer_create ();
+  ByteBuffer *buffer = byte_buffer_create ();
   
   // message_write () should only fail if an internal error
   assert (message_write (buffer, message, error));
@@ -197,7 +197,7 @@ bool send_message (int socket, void *message, Elvin_Error *error)
   return elvin_error_ok (error);
 }
 
-void *receive_message (int socket, Elvin_Error *error)
+void *receive_message (int socket, ElvinError *error)
 {
   uint32_t frame_size;
   
@@ -213,7 +213,7 @@ void *receive_message (int socket, Elvin_Error *error)
   // todo check size is not too big
   frame_size = ntohl (frame_size);
 
-  Byte_Buffer *buffer = byte_buffer_create_sized (frame_size);
+  ByteBuffer *buffer = byte_buffer_create_sized (frame_size);
   
   size_t position = 0;
   void *message = NULL;

@@ -13,7 +13,7 @@
 #include <byte_buffer.h>
 #include "check_ext.h"
 
-static Elvin_Error error = elvin_error_create ();
+static ElvinError error = elvin_error_create ();
 
 static void setup ()
 {
@@ -29,7 +29,7 @@ static void teardown ()
  */
 START_TEST (test_byte_buffer_io)
 {
-  Byte_Buffer *buffer = byte_buffer_create ();
+  ByteBuffer *buffer = byte_buffer_create ();
   byte_buffer_set_max_length (buffer, 1024);
   
   byte_buffer_write_int32 (buffer, 42, &error);
@@ -103,7 +103,7 @@ END_TEST
  */
 START_TEST (test_xdr_io)
 {
-//  Byte_Buffer *buffer = byte_buffer_create ();
+//  ByteBuffer *buffer = byte_buffer_create ();
   
   
 }
@@ -111,7 +111,7 @@ END_TEST
 
 START_TEST (test_message_io)
 {
-  Byte_Buffer *buffer = byte_buffer_create ();
+  ByteBuffer *buffer = byte_buffer_create ();
   
   // write message out
   ConnRqst connRqst;

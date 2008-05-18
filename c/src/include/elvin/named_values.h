@@ -15,6 +15,6 @@
 
 typedef struct 
 {
-} Named_Values;
+} NamedValues;
 
 #endif // ELVIN_NAMED_VALUES_H

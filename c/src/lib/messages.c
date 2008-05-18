@@ -15,34 +15,34 @@ typedef struct
   Message_Id type;
 } Message;
 
-typedef bool(*Message_Write_Func) (Byte_Buffer *, void *, Elvin_Error *);
+typedef bool(*Message_Write_Func) (ByteBuffer *, void *, ElvinError *);
 
-typedef void *(*Message_Read_Func) (Byte_Buffer *, Elvin_Error *);
+typedef void *(*Message_Read_Func) (ByteBuffer *, ElvinError *);
 
 
 static Message_Write_Func lookup_write_function (Message_Id type);
 
 static Message_Read_Func lookup_read_function (Message_Id type);
 
-static void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error);
+static void *ConnRqst_read (ByteBuffer *buffer, ElvinError *error);
 
-static bool ConnRqst_write (Byte_Buffer *buffer,
-                            void *connRqst, Elvin_Error *error);
+static bool ConnRqst_write (ByteBuffer *buffer,
+                            void *connRqst, ElvinError *error);
 
-static void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error);
+static void *ConnRply_read (ByteBuffer *buffer, ElvinError *error);
 
-static bool ConnRply_write (Byte_Buffer *buffer,
-                            void *connRply, Elvin_Error *error);
+static bool ConnRply_write (ByteBuffer *buffer,
+                            void *connRply, ElvinError *error);
 
-static void *DisconnRply_read (Byte_Buffer *buffer, Elvin_Error *error);
+static void *DisconnRply_read (ByteBuffer *buffer, ElvinError *error);
 
-static bool DisconnRply_write (Byte_Buffer *buffer,
-                               void *message, Elvin_Error *error);
+static bool DisconnRply_write (ByteBuffer *buffer,
+                               void *message, ElvinError *error);
 
-static void *DisconnRqst_read (Byte_Buffer *buffer, Elvin_Error *error);
+static void *DisconnRqst_read (ByteBuffer *buffer, ElvinError *error);
 
-static bool DisconnRqst_write (Byte_Buffer *buffer,
-                               void *message, Elvin_Error *error);
+static bool DisconnRqst_write (ByteBuffer *buffer,
+                               void *message, ElvinError *error);
 
 
 static uint32_t global_xid_counter = 0;
@@ -65,7 +65,7 @@ void message_destroy (void *message)
  * the amount of data expected to be read and the position set to the start
  * of the data.
  */
-bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
+bool message_read (ByteBuffer *buffer, void **message, ElvinError *error)
 {
   uint32_t type;
   
@@ -96,7 +96,7 @@ bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error)
   return elvin_error_ok (error);
 }
 
-bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
+bool message_write (ByteBuffer *buffer, void *message, ElvinError *error)
 {
   Message_Id type = ((Message *)message)->type;
   Message_Write_Func writer = lookup_write_function (type);
@@ -162,7 +162,7 @@ Message_Read_Func lookup_read_function (Message_Id type)
 
 ConnRqst *ConnRqst_init (ConnRqst *connRqst,
                          uint8_t version_major, uint8_t version_minor,
-                         Named_Values *connection_options,
+                         NamedValues *connection_options,
                          Keys *notification_keys, Keys *subscription_keys)
 {
   connRqst->xid = next_xid ();
@@ -181,8 +181,8 @@ void ConnRqst_destroy (ConnRqst *connRqst)
   // todo free sub-fields
 }
 
-bool ConnRqst_write (Byte_Buffer *buffer,
-                     void *connRqst, Elvin_Error *error)
+bool ConnRqst_write (ByteBuffer *buffer,
+                     void *connRqst, ElvinError *error)
 {
   error_return (byte_buffer_write_int32 
                    (buffer, ((ConnRqst *)connRqst)->xid, error));
@@ -199,7 +199,7 @@ bool ConnRqst_write (Byte_Buffer *buffer,
   return true;
 }
 
-void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
+void *ConnRqst_read (ByteBuffer *buffer, ElvinError *error)
 {
   ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
   
@@ -218,7 +218,7 @@ void *ConnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
 
 /////////
 
-ConnRply *ConnRply_init (ConnRply *connRply, Named_Values *connection_options)
+ConnRply *ConnRply_init (ConnRply *connRply, NamedValues *connection_options)
 {
   connRply->xid = 0;
   connRply->type = MESSAGE_ID_CONN_RPLY;
@@ -232,8 +232,8 @@ void ConnRply_destroy (ConnRply *connRply)
   // todo free sub-fields
 }
 
-bool ConnRply_write (Byte_Buffer *buffer,
-                     void *connRply, Elvin_Error *error)
+bool ConnRply_write (ByteBuffer *buffer,
+                     void *connRply, ElvinError *error)
 {
   error_return (byte_buffer_write_int32 
                    (buffer, ((ConnRply *)connRply)->xid, error));
@@ -244,7 +244,7 @@ bool ConnRply_write (Byte_Buffer *buffer,
   return true;
 }
 
-void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
+void *ConnRply_read (ByteBuffer *buffer, ElvinError *error)
 {
   ConnRply *connRply = (ConnRply *)malloc (sizeof (ConnRply));
 
@@ -265,7 +265,7 @@ void DisconnRqst_init (DisconnRqst *disconnRqst)
   disconnRqst->xid = next_xid ();
 }
 
-void *DisconnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
+void *DisconnRqst_read (ByteBuffer *buffer, ElvinError *error)
 {
   DisconnRqst *message = (DisconnRqst *)malloc (sizeof (DisconnRqst));
   
@@ -276,7 +276,7 @@ void *DisconnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
   return message;
 }
 
-bool DisconnRqst_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
+bool DisconnRqst_write (ByteBuffer *buffer, void *message, ElvinError *error)
 {
   error_return (byte_buffer_write_int32 
                    (buffer, ((DisconnRqst *)message)->xid, error));
@@ -292,7 +292,7 @@ void DisconnRply_init (DisconnRply *disconnRply)
   disconnRply->xid = 0;
 }
 
-void *DisconnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
+void *DisconnRply_read (ByteBuffer *buffer, ElvinError *error)
 {
   DisconnRply *message = (DisconnRply *)malloc (sizeof (DisconnRply));
     
@@ -303,7 +303,7 @@ void *DisconnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
   return message;
 }
 
-bool DisconnRply_write (Byte_Buffer *buffer, void *message, Elvin_Error *error)
+bool DisconnRply_write (ByteBuffer *buffer, void *message, ElvinError *error)
 {
   error_return (byte_buffer_write_int32 
                    (buffer, ((DisconnRply *)message)->xid, error));

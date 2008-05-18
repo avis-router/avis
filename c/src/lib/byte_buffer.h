@@ -10,32 +10,32 @@ typedef struct
   size_t max_data_length;
   size_t position;
   uint8_t *data;
-} Byte_Buffer;
+} ByteBuffer;
 
-Byte_Buffer *byte_buffer_create ();
+ByteBuffer *byte_buffer_create ();
 
-Byte_Buffer *byte_buffer_create_sized (size_t initial_size);
+ByteBuffer *byte_buffer_create_sized (size_t initial_size);
 
-void byte_buffer_destroy (Byte_Buffer *buffer);
+void byte_buffer_destroy (ByteBuffer *buffer);
 
-bool byte_buffer_read_int32 (Byte_Buffer *buffer, uint32_t *value, 
-                             Elvin_Error *error);
+bool byte_buffer_read_int32 (ByteBuffer *buffer, uint32_t *value, 
+                             ElvinError *error);
 
-bool byte_buffer_write_int32 (Byte_Buffer *buffer, uint32_t value, 
-                              Elvin_Error *error);
+bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value, 
+                              ElvinError *error);
 
-bool byte_buffer_read_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
-                             size_t bytes_len, Elvin_Error *error);
+bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
+                             size_t bytes_len, ElvinError *error);
 
-bool byte_buffer_write_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
-                              size_t bytes_len, Elvin_Error *error);
+bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes, 
+                              size_t bytes_len, ElvinError *error);
 
-bool byte_buffer_set_position (Byte_Buffer *buffer, size_t position,
-                               Elvin_Error *error);
+bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
+                               ElvinError *error);
 
-void byte_buffer_set_max_length (Byte_Buffer *buffer, int max_capacity);
+void byte_buffer_set_max_length (ByteBuffer *buffer, int max_capacity);
 
-void byte_buffer_ensure_capacity (Byte_Buffer *buffer, size_t capacity);
+void byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t capacity);
 
 #define byte_buffer_len(buffer) (buffer->data_length)
 #define byte_buffer_position(buffer) (buffer->position)
