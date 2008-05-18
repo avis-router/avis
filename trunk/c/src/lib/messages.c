@@ -178,8 +178,6 @@ ConnRqst *ConnRqst_init (ConnRqst *connRqst,
 
 void ConnRqst_destroy (ConnRqst *connRqst)
 {
-  free (connRqst);
-  
   // todo free sub-fields
 }
 
@@ -231,8 +229,6 @@ ConnRply *ConnRply_init (ConnRply *connRply, Named_Values *connection_options)
 
 void ConnRply_destroy (ConnRply *connRply)
 {
-  free (connRply);
-  
   // todo free sub-fields
 }
 
@@ -251,7 +247,8 @@ bool ConnRply_write (Byte_Buffer *buffer,
 void *ConnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
 {
   ConnRply *connRply = (ConnRply *)malloc (sizeof (ConnRply));
-  
+
+  // todo dealloc on error
   error_return (byte_buffer_read_int32 
                  (buffer, &((ConnRply *)connRply)->xid, error));
   // TODO options
@@ -271,7 +268,8 @@ void DisconnRqst_init (DisconnRqst *disconnRqst)
 void *DisconnRqst_read (Byte_Buffer *buffer, Elvin_Error *error)
 {
   DisconnRqst *message = (DisconnRqst *)malloc (sizeof (DisconnRqst));
-    
+  
+  // todo dealloc on error
   error_return (byte_buffer_read_int32 
                  (buffer, &((DisconnRqst *)message)->xid, error));
 
@@ -298,6 +296,7 @@ void *DisconnRply_read (Byte_Buffer *buffer, Elvin_Error *error)
 {
   DisconnRply *message = (DisconnRply *)malloc (sizeof (DisconnRply));
     
+  // todo dealloc on error
   error_return (byte_buffer_read_int32 
                  (buffer, &((DisconnRply *)message)->xid, error));
 

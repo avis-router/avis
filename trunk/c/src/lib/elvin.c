@@ -146,6 +146,7 @@ void *send_and_receive (int socket, void *request_message,
   
   if (message_type_of (reply) != reply_type)
   {
+    // todo handle NACK properly
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
                      "Unexpected reply from router");
   } else if (xid_of (request_message) != xid_of (reply))
