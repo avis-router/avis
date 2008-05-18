@@ -12,11 +12,21 @@
 
 typedef enum
 {
+  MESSAGE_ID_NACK = 48,
   MESSAGE_ID_CONN_RQST = 49,
   MESSAGE_ID_CONN_RPLY = 50,
   MESSAGE_ID_DISCONN_RQST = 51,
   MESSAGE_ID_DISCONN_RPLY = 52
 } Message_Id;
+
+typedef struct
+{
+  Message_Id type;
+  uint32_t xid;
+  uint32_t error;
+  const char *message;
+  void **args;
+} Nack;
 
 typedef struct
 {
