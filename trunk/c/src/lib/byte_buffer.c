@@ -10,17 +10,17 @@
 #define INIT_LENGTH 1024
 #define MAX_LENGTH (2 * 1024 * 1024)
 
-static bool check_remaining (Byte_Buffer *buffer, size_t required_remaining, 
-                             Elvin_Error *error);
+static bool check_remaining (ByteBuffer *buffer, size_t required_remaining, 
+                             ElvinError *error);
 
-static bool auto_resize_to_fit (Byte_Buffer *buffer, size_t min_length,
-                                Elvin_Error *error);
+static bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
+                                ElvinError *error);
 
-static void expand_buffer (Byte_Buffer *buffer, size_t new_length);
+static void expand_buffer (ByteBuffer *buffer, size_t new_length);
 
-Byte_Buffer *byte_buffer_create ()
+ByteBuffer *byte_buffer_create ()
 {
-  Byte_Buffer *buffer = malloc (sizeof (Byte_Buffer));
+  ByteBuffer *buffer = malloc (sizeof (ByteBuffer));
   
   buffer->data_length = INIT_LENGTH;
   buffer->max_data_length = MAX_LENGTH;
@@ -33,9 +33,9 @@ Byte_Buffer *byte_buffer_create ()
 /**
  * Create an instance with an initial max, fixed size.
  */
-Byte_Buffer *byte_buffer_create_sized (size_t initial_size)
+ByteBuffer *byte_buffer_create_sized (size_t initial_size)
 {
-  Byte_Buffer *buffer = malloc (sizeof (Byte_Buffer));
+  ByteBuffer *buffer = malloc (sizeof (ByteBuffer));
     
   buffer->data_length = initial_size;
   buffer->max_data_length = initial_size;
@@ -45,7 +45,7 @@ Byte_Buffer *byte_buffer_create_sized (size_t initial_size)
   return buffer;
 }
 
-void byte_buffer_destroy (Byte_Buffer *buffer)
+void byte_buffer_destroy (ByteBuffer *buffer)
 {
   if (buffer->data)
   {
@@ -55,8 +55,8 @@ void byte_buffer_destroy (Byte_Buffer *buffer)
   }
 }
 
-bool byte_buffer_set_position (Byte_Buffer *buffer, size_t position,
-                               Elvin_Error *error)
+bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
+                               ElvinError *error)
 {
   error_return (auto_resize_to_fit (buffer, position, error));
     
@@ -65,8 +65,8 @@ bool byte_buffer_set_position (Byte_Buffer *buffer, size_t position,
   return true;
 }
 
-bool auto_resize_to_fit (Byte_Buffer *buffer, size_t min_length,
-                         Elvin_Error *error)
+bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
+                         ElvinError *error)
 {
   if (buffer->data_length < min_length)
   {
@@ -86,7 +86,7 @@ bool auto_resize_to_fit (Byte_Buffer *buffer, size_t min_length,
   return true;
 }
 
-void expand_buffer (Byte_Buffer *buffer, size_t new_length)
+void expand_buffer (ByteBuffer *buffer, size_t new_length)
 {
   uint8_t *new_data = malloc (new_length);
   uint8_t *old_data = buffer->data;
@@ -99,14 +99,14 @@ void expand_buffer (Byte_Buffer *buffer, size_t new_length)
   free (old_data);
 }
 
-void byte_buffer_ensure_capacity (Byte_Buffer *buffer, size_t capacity)
+void byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t capacity)
 {
   if (buffer->data_length < capacity)
     expand_buffer (buffer, capacity);
 }
 
-bool check_remaining (Byte_Buffer *buffer, size_t required_remaining, 
-                      Elvin_Error *error)
+bool check_remaining (ByteBuffer *buffer, size_t required_remaining, 
+                      ElvinError *error)
 {
   if (buffer->data_length - buffer->position < required_remaining)
     return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Buffer underflow");
@@ -114,8 +114,8 @@ bool check_remaining (Byte_Buffer *buffer, size_t required_remaining,
     return true;
 }
 
-bool byte_buffer_read_int32 (Byte_Buffer *buffer, uint32_t *value, 
-                             Elvin_Error *error)
+bool byte_buffer_read_int32 (ByteBuffer *buffer, uint32_t *value, 
+                             ElvinError *error)
 {
   error_return (check_remaining (buffer, 4, error));
   
@@ -128,8 +128,8 @@ bool byte_buffer_read_int32 (Byte_Buffer *buffer, uint32_t *value,
   return true;
 }
 
-bool byte_buffer_write_int32 (Byte_Buffer *buffer, uint32_t value, 
-                              Elvin_Error *error)
+bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value, 
+                              ElvinError *error)
 {
   error_return (auto_resize_to_fit (buffer, buffer->position + 4, error));
   
@@ -140,8 +140,8 @@ bool byte_buffer_write_int32 (Byte_Buffer *buffer, uint32_t value,
   return true;
 }
 
-bool byte_buffer_read_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
-                             size_t bytes_len, Elvin_Error *error)
+bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
+                             size_t bytes_len, ElvinError *error)
 {
   error_return (check_remaining (buffer, bytes_len, error));
   
@@ -152,8 +152,8 @@ bool byte_buffer_read_bytes (Byte_Buffer *buffer, uint8_t *bytes,
   return true;
 }
 
-bool byte_buffer_write_bytes (Byte_Buffer *buffer, uint8_t *bytes, 
-                              size_t bytes_len, Elvin_Error *error)
+bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes, 
+                              size_t bytes_len, ElvinError *error)
 {
   error_return (auto_resize_to_fit (buffer, buffer->position + bytes_len, error));
   

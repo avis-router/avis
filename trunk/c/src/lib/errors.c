@@ -5,12 +5,12 @@
 
 #include <elvin/errors.h>
 
-void elvin_perror (const char *tag, Elvin_Error *error)
+void elvin_perror (const char *tag, ElvinError *error)
 {
   printf ("%s: %s", tag, error->message);
 }
 
-bool elvin_error_set (Elvin_Error *error, int code, const char *message)
+bool elvin_error_set (ElvinError *error, int code, const char *message)
 {
   error->code = code;
   error->message = message;
@@ -18,7 +18,7 @@ bool elvin_error_set (Elvin_Error *error, int code, const char *message)
   return false;
 }
 
-bool elvin_error_from_errno (Elvin_Error *error)
+bool elvin_error_from_errno (ElvinError *error)
 {
   error->code = errno;
   error->message = (const char *)strerror (errno);
@@ -26,7 +26,7 @@ bool elvin_error_from_errno (Elvin_Error *error)
   return false;
 }
 
-bool elvin_error_assert (Elvin_Error *error, bool condition, 
+bool elvin_error_assert (ElvinError *error, bool condition, 
                          int code, const char *message)
 {
   if (condition)

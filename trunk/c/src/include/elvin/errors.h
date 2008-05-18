@@ -7,7 +7,7 @@ typedef struct
 {
   int code;
   const char *message;
-} Elvin_Error;
+} ElvinError;
 
 
 #define ELVIN_HOST_ERROR_BASE 10000
@@ -30,10 +30,10 @@ typedef struct
  */
 #define HOST_TO_ELVIN_ERROR(code) (ELVIN_HOST_ERROR_BASE + code)
 
-void elvin_perror (const char *tag, Elvin_Error *error);
-bool elvin_error_from_errno (Elvin_Error *error);
-bool elvin_error_set (Elvin_Error *error, int code, const char *message);
-bool elvin_error_assert (Elvin_Error *error, bool condition, 
+void elvin_perror (const char *tag, ElvinError *error);
+bool elvin_error_from_errno (ElvinError *error);
+bool elvin_error_set (ElvinError *error, int code, const char *message);
+bool elvin_error_assert (ElvinError *error, bool condition, 
                          int code, const char *message);
 
 #define elvin_error_ok(error) ((error)->code == ELVIN_ERROR_NONE)

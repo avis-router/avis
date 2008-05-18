@@ -24,7 +24,7 @@ typedef struct
   uint32_t xid;
   uint32_t version_major;
   uint32_t version_minor;
-  Named_Values *connection_options;
+  NamedValues *connection_options;
   Keys *notification_keys;
   Keys *subscription_keys;
 } ConnRqst;
@@ -33,7 +33,7 @@ typedef struct
 {
   Message_Id type;
   uint32_t xid;
-  Named_Values *options;
+  NamedValues *options;
 } ConnRply;
 
 typedef struct
@@ -55,15 +55,19 @@ typedef struct
   uint32_t xid;
 } DisconnRply;
 
+/**
+ * The general header of a message, including XID (which is not present on
+ * all messages. This is only intended to be used internally. 
+ */
 typedef struct
 {
   Message_Id type;
   uint32_t xid;
 } XidMessage;
 
-bool message_read (Byte_Buffer *buffer, void **message, Elvin_Error *error);
+bool message_read (ByteBuffer *buffer, void **message, ElvinError *error);
 
-bool message_write (Byte_Buffer *buffer, void *message, Elvin_Error *error);
+bool message_write (ByteBuffer *buffer, void *message, ElvinError *error);
 
 void message_destroy (void *message);
 
@@ -75,12 +79,12 @@ void message_destroy (void *message);
 
 ConnRqst *ConnRqst_init (ConnRqst *connRqst,
                          uint8_t version_major, uint8_t version_minor,
-                         Named_Values *connection_options,
+                         NamedValues *connection_options,
                          Keys *notification_keys, Keys *subscription_keys);
 
 void ConnRqst_destroy (ConnRqst *connRqst);
 
-ConnRply *ConnRply_create (Named_Values *connection_options);
+ConnRply *ConnRply_create (NamedValues *connection_options);
 
 void ConnRply_destroy (ConnRply *connRply);
 
