@@ -44,6 +44,9 @@ static void *DisconnRqst_read (ByteBuffer *buffer, ElvinError *error);
 static bool DisconnRqst_write (ByteBuffer *buffer,
                                void *message, ElvinError *error);
 
+static void *Nack_read (ByteBuffer *buffer, ElvinError *error);
+
+static bool Nack_write (ByteBuffer *buffer, void *message, ElvinError *error);
 
 static uint32_t global_xid_counter = 0;
 
@@ -128,6 +131,8 @@ Message_Write_Func lookup_write_function (Message_Id type)
 {
   switch (type)
   {
+  case MESSAGE_ID_NACK:
+      return Nack_write;
   case MESSAGE_ID_CONN_RQST:
     return ConnRqst_write;
   case MESSAGE_ID_CONN_RPLY:
@@ -145,6 +150,8 @@ Message_Read_Func lookup_read_function (Message_Id type)
 {
   switch (type)
   {
+  case MESSAGE_ID_NACK:
+        return Nack_read;
   case MESSAGE_ID_CONN_RQST:
     return ConnRqst_read;
   case MESSAGE_ID_CONN_RPLY:
@@ -307,6 +314,47 @@ bool DisconnRply_write (ByteBuffer *buffer, void *message, ElvinError *error)
 {
   error_return (byte_buffer_write_int32 
                    (buffer, ((DisconnRply *)message)->xid, error));
+  
+  return true;
+}
+
+//////
+
+void Nack_init (Nack *nack, uint32_t error, const char *message)
+{
+  nack->type = MESSAGE_ID_NACK;
+  nack->xid = 0;
+  nack->error = error;
+  nack->message = message;
+  nack->args = NULL;
+}
+
+void *Nack_read (ByteBuffer *buffer, ElvinError *error)
+{
+  Nack *message = malloc (sizeof (Nack));
+    
+  // todo dealloc on error
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((Nack *)message)->xid, error));
+  error_return (byte_buffer_read_int32 
+                 (buffer, &((Nack *)message)->error, error));
+
+  // todo message and args
+  byte_buffer_skip (buffer, 4, error);
+
+  return message;
+}
+
+bool Nack_write (ByteBuffer *buffer, void *message, ElvinError *error)
+{
+  error_return (byte_buffer_write_int32 
+                   (buffer, ((Nack *)message)->xid, error));
+  error_return (byte_buffer_write_int32 
+                   (buffer, ((Nack *)message)->xid, error));
+  
+  // todo message and args
+  error_return (byte_buffer_write_int32 (buffer, 0, error));
+  error_return (byte_buffer_write_int32 (buffer, 0, error));
   
   return true;
 }
