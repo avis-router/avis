@@ -67,7 +67,7 @@ typedef struct
 
 /**
  * The general header of a message, including XID (which is not present on
- * all messages. This is only intended to be used internally. 
+ * all messages). This is only intended to be used internally. 
  */
 typedef struct
 {
@@ -81,10 +81,13 @@ bool message_write (ByteBuffer *buffer, void *message, ElvinError *error);
 
 void message_destroy (void *message);
 
-// destroy and free () message
+/// Destroy and free () message
 #define message_free(message) (message_destroy (message), free (message))
 
+/// The message's type ID.
 #define message_type_of(message) (((XidMessage *)message)->type)
+
+/// The message's transaction ID.
 #define xid_of(message) (((XidMessage *)message)->xid)
 
 ConnRqst *ConnRqst_init (ConnRqst *connRqst,
