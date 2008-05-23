@@ -191,36 +191,49 @@ void ConnRqst_destroy (ConnRqst *connRqst)
 bool ConnRqst_write (ByteBuffer *buffer,
                      void *connRqst, ElvinError *error)
 {
-  error_return (byte_buffer_write_int32 
-                   (buffer, ((ConnRqst *)connRqst)->xid, error));
-  error_return (byte_buffer_write_int32 
-                 (buffer, ((ConnRqst *)connRqst)->version_major, error));
-  error_return (byte_buffer_write_int32 
-                   (buffer, ((ConnRqst *)connRqst)->version_minor, error));
-  
-  // TODO options, keys
-  byte_buffer_write_int32 (buffer, 0, error);
-  byte_buffer_write_int32 (buffer, 0, error);
-  byte_buffer_write_int32 (buffer, 0, error);
-  
-  return true;
+  return
+    byte_buffer_write_int32 
+      (buffer, ((ConnRqst *)connRqst)->xid, error) &&
+    byte_buffer_write_int32 
+      (buffer, ((ConnRqst *)connRqst)->version_major, error) &&
+    byte_buffer_write_int32 
+      (buffer, ((ConnRqst *)connRqst)->version_minor, error) &&
+    named_values_write
+      (buffer, ((ConnRqst *)connRqst)->connection_options, error) &&
+    keys_write
+      (buffer, ((ConnRqst *)connRqst)->notification_keys, error) &&
+    keys_write 
+      (buffer, ((ConnRqst *)connRqst)->subscription_keys, error);
 }
 
 void *ConnRqst_read (ByteBuffer *buffer, ElvinError *error)
 {
-  ConnRqst *connRqst = (ConnRqst *)malloc (sizeof (ConnRqst));
+  ConnRqst *connRqst = malloc (sizeof (ConnRqst));
   
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((ConnRqst *)connRqst)->xid, error));
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((ConnRqst *)connRqst)->version_major, error));
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((ConnRqst *)connRqst)->version_minor, error));
-  
-  // TODO options, keys
-  byte_buffer_skip (buffer, 4 * 3, error);
-  
-  return connRqst;
+  if 
+  (
+    byte_buffer_read_int32 
+     (buffer, &((ConnRqst *)connRqst)->xid, error) &&
+    byte_buffer_read_int32 
+     (buffer, &((ConnRqst *)connRqst)->version_major, error) &&
+    byte_buffer_read_int32 
+     (buffer, &((ConnRqst *)connRqst)->version_minor, error) &&
+    byte_buffer_read_int32 
+      (buffer, &((ConnRqst *)connRqst)->version_minor, error) &&
+    named_values_read 
+      (buffer, &((ConnRqst *)connRqst)->connection_options, error) &&
+    keys_read 
+      (buffer, &((ConnRqst *)connRqst)->notification_keys, error) &&
+    keys_read 
+      (buffer, &((ConnRqst *)connRqst)->subscription_keys, error))
+  {
+    return connRqst;
+  } else
+  {
+    free (connRqst);
+    
+    return NULL;
+  }
 }
 
 /////////
@@ -253,15 +266,19 @@ bool ConnRply_write (ByteBuffer *buffer,
 
 void *ConnRply_read (ByteBuffer *buffer, ElvinError *error)
 {
-  ConnRply *connRply = (ConnRply *)malloc (sizeof (ConnRply));
+  ConnRply *connRply = malloc (sizeof (ConnRply));
 
-  // todo dealloc on error
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((ConnRply *)connRply)->xid, error));
-  // TODO options
-  byte_buffer_skip (buffer, 4, error);
-  
-  return connRply;
+  if (
+    byte_buffer_read_int32 (buffer, &((ConnRply *)connRply)->xid, error) &&
+    named_values_read (buffer, &((ConnRply *)connRply)->options, error))
+  {
+    return connRply;
+  } else
+  {
+    free (connRply);
+    
+    return NULL;
+  }
 }
 
 ///////
@@ -274,7 +291,7 @@ void DisconnRqst_init (DisconnRqst *disconnRqst)
 
 void *DisconnRqst_read (ByteBuffer *buffer, ElvinError *error)
 {
-  DisconnRqst *message = (DisconnRqst *)malloc (sizeof (DisconnRqst));
+  DisconnRqst *message = malloc (sizeof (DisconnRqst));
   
   // todo dealloc on error
   error_return (byte_buffer_read_int32 
