@@ -9,7 +9,6 @@ typedef struct
   const char *message;
 } ElvinError;
 
-
 #define ELVIN_HOST_ERROR_BASE 10000
 #define ELVIN_ERROR_BASE 20000
 

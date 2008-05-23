@@ -12,17 +12,17 @@
  */
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
 } Message;
 
-typedef bool(*Message_Write_Func) (ByteBuffer *, void *, ElvinError *);
+typedef bool(*MessageWriteFunc) (ByteBuffer *, void *, ElvinError *);
 
-typedef void *(*Message_Read_Func) (ByteBuffer *, ElvinError *);
+typedef void *(*MessageReadFunc) (ByteBuffer *, ElvinError *);
 
 
-static Message_Write_Func lookup_write_function (Message_Id type);
+static MessageWriteFunc lookup_write_function (MessageID type);
 
-static Message_Read_Func lookup_read_function (Message_Id type);
+static MessageReadFunc lookup_read_function (MessageID type);
 
 static void *ConnRqst_read (ByteBuffer *buffer, ElvinError *error);
 
@@ -74,7 +74,7 @@ bool message_read (ByteBuffer *buffer, void **message, ElvinError *error)
   
   error_return (byte_buffer_read_int32 (buffer, &type, error));
   
-  Message_Read_Func reader = lookup_read_function (type);
+  MessageReadFunc reader = lookup_read_function (type);
   
   if (reader == NULL)
   {
@@ -101,8 +101,8 @@ bool message_read (ByteBuffer *buffer, void **message, ElvinError *error)
 
 bool message_write (ByteBuffer *buffer, void *message, ElvinError *error)
 {
-  Message_Id type = ((Message *)message)->type;
-  Message_Write_Func writer = lookup_write_function (type);
+  MessageID type = ((Message *)message)->type;
+  MessageWriteFunc writer = lookup_write_function (type);
   
   if (writer == NULL)
   {
@@ -127,7 +127,7 @@ bool message_write (ByteBuffer *buffer, void *message, ElvinError *error)
   return true; 
 }
 
-Message_Write_Func lookup_write_function (Message_Id type)
+MessageWriteFunc lookup_write_function (MessageID type)
 {
   switch (type)
   {
@@ -146,7 +146,7 @@ Message_Write_Func lookup_write_function (Message_Id type)
   }
 }
 
-Message_Read_Func lookup_read_function (Message_Id type)
+MessageReadFunc lookup_read_function (MessageID type)
 {
   switch (type)
   {
@@ -323,7 +323,7 @@ bool DisconnRply_write (ByteBuffer *buffer, void *message, ElvinError *error)
 void Nack_init (Nack *nack, uint32_t error, const char *message)
 {
   nack->type = MESSAGE_ID_NACK;
-  nack->xid = 0;
+  nack->xid = next_xid ();
   nack->error = error;
   nack->message = message;
   nack->args = NULL;

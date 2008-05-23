@@ -20,7 +20,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
 
 static void *send_and_receive (int socket, void *request_message, 
-                               Message_Id reply_type, ElvinError *error);
+                               MessageID reply_type, ElvinError *error);
 
 static bool send_message (int sockfd, void *message, ElvinError *error);
 
@@ -133,7 +133,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 }
 
 void *send_and_receive (int socket, void *request_message, 
-                        Message_Id reply_type, ElvinError *error)
+                        MessageID reply_type, ElvinError *error)
 {
   // todo could share the buffer for this
   if (!send_message (socket, request_message, error))

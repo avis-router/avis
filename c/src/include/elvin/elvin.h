@@ -16,10 +16,10 @@
 /// The default port for Elvin client connections.
 #define DEFAULT_ELVIN_PORT 2917
 
-/// The default client protocol major version supporte by this library.
+/// The default client protocol major version supported by this library.
 #define DEFAULT_CLIENT_PROTOCOL_MAJOR 4
 
-/// The default client protocol minor version supporte by this library.
+/// The default client protocol minor version supported by this library.
 #define DEFAULT_CLIENT_PROTOCOL_MINOR 0
 
 /*

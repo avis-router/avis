@@ -17,11 +17,11 @@ typedef enum
   MESSAGE_ID_CONN_RPLY = 50,
   MESSAGE_ID_DISCONN_RQST = 51,
   MESSAGE_ID_DISCONN_RPLY = 52
-} Message_Id;
+} MessageID;
 
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
   uint32_t xid;
   uint32_t error;
   const char *message;
@@ -30,7 +30,7 @@ typedef struct
 
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
   uint32_t xid;
   uint32_t version_major;
   uint32_t version_minor;
@@ -41,27 +41,27 @@ typedef struct
 
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
   uint32_t xid;
   NamedValues *options;
 } ConnRply;
 
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
   uint32_t reason;
   const char *message;
 } Disconn;
 
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
   uint32_t xid;
 } DisconnRqst;
 
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
   uint32_t xid;
 } DisconnRply;
 
@@ -71,7 +71,7 @@ typedef struct
  */
 typedef struct
 {
-  Message_Id type;
+  MessageID type;
   uint32_t xid;
 } XidMessage;
 
