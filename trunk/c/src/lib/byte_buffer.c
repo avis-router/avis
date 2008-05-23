@@ -145,7 +145,7 @@ bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes,
 {
   error_return (check_remaining (buffer, bytes_len, error));
   
-  memcpy ((void *)bytes, (void *)(buffer->data + buffer->position), bytes_len);
+  memcpy (bytes, buffer->data + buffer->position, bytes_len);
     
   buffer->position += bytes_len;
     
@@ -155,9 +155,10 @@ bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes,
 bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes, 
                               size_t bytes_len, ElvinError *error)
 {
-  error_return (auto_resize_to_fit (buffer, buffer->position + bytes_len, error));
+  error_return (auto_resize_to_fit (buffer, 
+                                    buffer->position + bytes_len, error));
   
-  memcpy ((void *)(buffer->data + buffer->position), (void *)bytes, bytes_len);
+  memcpy (buffer->data + buffer->position, bytes, bytes_len);
   
   buffer->position += bytes_len;
   
