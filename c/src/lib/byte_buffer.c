@@ -68,6 +68,8 @@ bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
 bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
                          ElvinError *error)
 {
+  size_t new_length;
+  
   if (buffer->data_length < min_length)
   {
     if (min_length > buffer->max_data_length)
@@ -75,7 +77,7 @@ bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
 
     // new length = min_length rounded up to nearest ^ 2
     // TODO could do this more efficiently
-    size_t new_length = buffer->data_length;
+    new_length = buffer->data_length;
     
     while (new_length < min_length)
       new_length *= 2;
@@ -117,11 +119,13 @@ bool check_remaining (ByteBuffer *buffer, size_t required_remaining,
 bool byte_buffer_read_int32 (ByteBuffer *buffer, uint32_t *value, 
                              ElvinError *error)
 {
+  uint32_t xdr_value;
+  
   error_return (check_remaining (buffer, 4, error));
   
-  uint32_t v = *(uint32_t *)(buffer->data + buffer->position);
+  xdr_value = *(uint32_t *)(buffer->data + buffer->position);
   
-  *value = ntohl (v);
+  *value = ntohl (xdr_value);
   
   buffer->position += 4;
   
