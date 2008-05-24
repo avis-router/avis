@@ -114,20 +114,21 @@ START_TEST (test_message_io)
   ByteBuffer *buffer = byte_buffer_create ();
   
   // write message out
-  ConnRqst connRqst;
+  Message connRqst = message_alloca ();
   
-  ConnRqst_init (&connRqst, DEFAULT_CLIENT_PROTOCOL_MAJOR, 
-                  DEFAULT_CLIENT_PROTOCOL_MINOR,
-                  EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+  message_init (connRqst, MESSAGE_ID_CONN_RQST,
+                DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                DEFAULT_CLIENT_PROTOCOL_MINOR,
+                EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
 
-  message_write (buffer, &connRqst, &error);
-
+  message_write (buffer, connRqst, &error);
+  
   fail_on_error (&error);
   
   fail_unless (byte_buffer_position (buffer) == 32, 
                "Message length incorrect");
   
-  ConnRqst *connRqst2;
+  Message connRqst2;
   
   // read message back
   byte_buffer_set_position (buffer, 0, &error);
@@ -135,18 +136,22 @@ START_TEST (test_message_io)
   
   byte_buffer_read_int32 (buffer, &frame_size, &error);
   fail_on_error (&error);
+
+  fail_unless (frame_size == 28, "Frame size not sent correctly");
   
   byte_buffer_set_max_length (buffer, frame_size + 4);
   byte_buffer_ensure_capacity (buffer, frame_size + 4);
     
-  message_read (buffer, (void *)&connRqst2, &error);
+  connRqst2 = message_read (buffer, &error);
   
   fail_on_error (&error);
   
-  fail_unless (connRqst2->type == MESSAGE_ID_CONN_RQST, "Type incorrect");
-  fail_unless (connRqst2->version_major == connRqst.version_major,
-               "Major version incorrect");
-  fail_unless (connRqst2->version_minor == connRqst.version_minor,
+  fail_unless (message_type_of (connRqst2) == MESSAGE_ID_CONN_RQST, 
+               "Type incorrect");
+  
+  fail_unless (*(uint32_t *)(connRqst2 + 8) == DEFAULT_CLIENT_PROTOCOL_MAJOR,
+               "Major version incorrect");  
+  fail_unless (*(uint32_t *)(connRqst2 + 12) == DEFAULT_CLIENT_PROTOCOL_MINOR,
                "Minor version incorrect");
   
   byte_buffer_destroy (buffer);
