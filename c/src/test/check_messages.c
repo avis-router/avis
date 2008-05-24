@@ -9,8 +9,11 @@
 #include <elvin/named_values.h>
 #include <elvin/keys.h>
 
-#include <messages.h>
-#include <byte_buffer.h>
+#include "messages.h"
+#include "byte_buffer.h"
+
+#include "named_values_private.h"
+
 #include "check_ext.h"
 
 static ElvinError error = elvin_error_create ();
@@ -103,9 +106,30 @@ END_TEST
  */
 START_TEST (test_xdr_io)
 {
-//  ByteBuffer *buffer = byte_buffer_create ();
+  ByteBuffer *buffer = byte_buffer_create ();
   
+  NamedValues *values = named_values_create ();
   
+  named_values_set_int32 (values, "int32", 42);
+  
+  fail_unless (named_values_get_int32 (values, "int32") == 42, 
+               "Failed to set value: %u", 
+               named_values_get_int32 (values, "int32"));
+  
+  named_values_write (buffer, values, &error);
+  fail_on_error (&error);
+  
+  NamedValues *values2 = named_values_create ();
+  
+  named_values_read (buffer, values2, &error);
+  fail_on_error (&error);
+  
+  fail_unless (named_values_get_int32 (values2, "int32") == 42, 
+               "Failed to deserialize");
+  
+  named_values_destroy (values);
+  named_values_destroy (values2);
+  byte_buffer_destroy (buffer);
 }
 END_TEST
 
