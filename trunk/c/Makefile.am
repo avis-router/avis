@@ -1,1 +1,1 @@
-SUBDIRS = packages/check src
+SUBDIRS = packages . src
