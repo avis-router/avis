@@ -38,25 +38,26 @@ bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
 
 bool elvin_open_url (Elvin *elvin, ElvinURL *url, ElvinError *error)
 {
+  Message connRqst;
+  Message reply;
+  
   elvin->socket = -1;
   
   if (!open_socket (elvin, url->host, url->port, error))
     return false;
   
-  Message connRqst = message_alloca ();
+  connRqst = message_alloca ();
   
   message_init (connRqst, MESSAGE_ID_CONN_RQST, 
                 DEFAULT_CLIENT_PROTOCOL_MAJOR, 
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
                 EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
   
-  Message reply;
-  
   error_return 
     (reply = send_and_receive (elvin->socket, connRqst, 
                                MESSAGE_ID_CONN_RPLY, error));
   
-  // todo check message reply options
+  /* todo check message reply options */
   message_destroy (reply);
   
   return true;
@@ -64,22 +65,24 @@ bool elvin_open_url (Elvin *elvin, ElvinURL *url, ElvinError *error)
 
 bool elvin_close (Elvin *elvin)
 {
+  ElvinError error = elvin_error_create ();
+  Message disconnRqst;
+  Message reply;
+  
   if (elvin->socket == -1)
     return false;
   
-  ElvinError error = elvin_error_create ();
-  
-  Message disconnRqst = message_alloca ();
+  disconnRqst = message_alloca ();
   message_init (disconnRqst, MESSAGE_ID_DISCONN_RQST);
   
-  Message reply = 
+  reply = 
     send_and_receive (elvin->socket, disconnRqst, 
                       MESSAGE_ID_DISCONN_RPLY, &error);
 
   if (reply)
     message_destroy (reply);
 
-  close (elvin->socket); // TODO use closesocket () for Windows
+  close (elvin->socket); /* TODO use closesocket () for Windows */
 
   elvin->socket = -1;
   
@@ -91,7 +94,7 @@ bool elvin_close (Elvin *elvin)
 bool elvin_url_from_string (ElvinURL *url, const char *url_string, 
                             ElvinError *error)
 {
-  // TODO
+  /* TODO */
   url->host = "localhost";
   url->port = DEFAULT_ELVIN_PORT;
   
@@ -102,6 +105,8 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error)
 {
   struct hostent *host_info = gethostbyname (host);
+  struct sockaddr_in router_addr;
+  int sockfd;
   
   if (host_info == NULL) 
   {
@@ -109,13 +114,12 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                             HOST_TO_ELVIN_ERROR (h_errno), hstrerror (h_errno));
   }
   
-  struct sockaddr_in router_addr;
   router_addr.sin_family = AF_INET;
   router_addr.sin_port = htons (port);
   router_addr.sin_addr = *((struct in_addr *)host_info->h_addr);
   memset (router_addr.sin_zero, '\0', sizeof router_addr.sin_zero);
   
-  int sockfd = socket (PF_INET, SOCK_STREAM, 0);
+  sockfd = socket (PF_INET, SOCK_STREAM, 0);
   
   if (sockfd == -1)
     return elvin_error_from_errno (error);
@@ -135,18 +139,20 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 Message send_and_receive (int socket, Message request, 
                           MessageTypeID reply_type, ElvinError *error)
 {
-  // todo could share the buffer for this
+  Message reply;
+  
+  /* todo could share the buffer for this */
   if (!send_message (socket, request, error))
     return NULL;
   
-  Message reply = receive_message (socket, error);
+  reply = receive_message (socket, error);
   
   if (!reply)
     return NULL;
   
   if (message_type_of (reply) != reply_type)
   {
-    // todo handle NACK properly
+    /* todo handle NACK properly */
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
                      "Unexpected reply from router");
   } else if (xid_of (request) != xid_of (reply))
@@ -171,10 +177,10 @@ bool send_message (int socket, Message message, ElvinError *error)
   size_t position = 0;
   size_t written;
   
-  // message_write () should only fail if an internal error
+  /* message_write () should only fail if an internal error */
   assert (message_write (buffer, message, error));
     
-  // todo set max size
+  /* todo set max size */
 
   while (position < buffer->position)
   {
@@ -214,7 +220,7 @@ Message receive_message (int socket, ElvinError *error)
     return NULL;
   }
   
-  // todo check size is not too big
+  /* todo check size is not too big */
   frame_size = ntohl (frame_size);
 
   buffer = byte_buffer_create_sized (frame_size);

@@ -10,11 +10,12 @@
 #ifndef ELVIN_NAMED_VALUES_H
 #define ELVIN_NAMED_VALUES_H
 
-// TODO
+/* TODO */
 #define EMPTY_NAMED_VALUES NULL
 
 typedef struct 
 {
+  int dummy;
 } NamedValues;
 
-#endif // ELVIN_NAMED_VALUES_H
+#endif /* ELVIN_NAMED_VALUES_H */

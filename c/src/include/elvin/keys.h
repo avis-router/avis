@@ -10,11 +10,12 @@
 #ifndef ELVIN_KEYS_H
 #define ELVIN_KEYS_H
 
-// TODO
+/* TODO */
 #define EMPTY_KEYS NULL
 
 typedef struct
 {
+  int dummy;
 } Keys;
 
-#endif // ELVIN_KEYS_H
+#endif /* ELVIN_KEYS_H */

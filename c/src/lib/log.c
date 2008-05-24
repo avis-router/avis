@@ -9,7 +9,7 @@ void elvin_log (int level, const char *message, ...)
   
   va_start (args, message);
   
-  // todo
+  /* todo */
   fprintf (stderr, "log: ");
   vfprintf (stderr, message, args);
   fprintf (stderr, "\n");
