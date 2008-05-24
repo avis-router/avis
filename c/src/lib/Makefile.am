@@ -6,10 +6,12 @@ libelvin_la_SOURCES = elvin.c \
                       messages.c \
                       named_values.c \
                       byte_buffer.c \
-                      errors.c
+                      errors.c \
+                      log.c
                       
 include_HEADERS = $(public_inc)/elvin.h \
 	          $(public_inc)/keys.h \
-	          $(public_inc)/named_values.h
+	          $(public_inc)/named_values.h \
+	          $(public_inc)/log.h	          
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/lib -Wall -Werror
