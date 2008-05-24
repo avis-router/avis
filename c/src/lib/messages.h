@@ -10,6 +10,9 @@
 
 #include "byte_buffer.h"
 
+/// Max size of an in-memory decoded message
+#define MAX_MESSAGE_SIZE (16 * sizeof (int *))
+
 typedef enum
 {
   MESSAGE_ID_NACK = 48,
@@ -17,92 +20,27 @@ typedef enum
   MESSAGE_ID_CONN_RPLY = 50,
   MESSAGE_ID_DISCONN_RQST = 51,
   MESSAGE_ID_DISCONN_RPLY = 52
-} MessageID;
+} MessageTypeID;
 
-typedef struct
-{
-  MessageID type;
-  uint32_t xid;
-  uint32_t error;
-  const char *message;
-  void **args;
-} Nack;
+typedef uint8_t * Message;
 
-typedef struct
-{
-  MessageID type;
-  uint32_t xid;
-  uint32_t version_major;
-  uint32_t version_minor;
-  NamedValues *connection_options;
-  Keys *notification_keys;
-  Keys *subscription_keys;
-} ConnRqst;
+Message message_read (ByteBuffer *buffer, ElvinError *error);
 
-typedef struct
-{
-  MessageID type;
-  uint32_t xid;
-  NamedValues *options;
-} ConnRply;
+bool message_write (ByteBuffer *buffer, Message message, ElvinError *error);
 
-typedef struct
-{
-  MessageID type;
-  uint32_t reason;
-  const char *message;
-} Disconn;
+void message_destroy (Message message);
 
-typedef struct
-{
-  MessageID type;
-  uint32_t xid;
-} DisconnRqst;
+#define message_alloca() ((Message)alloca (MAX_MESSAGE_SIZE))
 
-typedef struct
-{
-  MessageID type;
-  uint32_t xid;
-} DisconnRply;
-
-/**
- * The general header of a message, including XID (which is not present on
- * all messages). This is only intended to be used internally. 
- */
-typedef struct
-{
-  MessageID type;
-  uint32_t xid;
-} XidMessage;
-
-bool message_read (ByteBuffer *buffer, void **message, ElvinError *error);
-
-bool message_write (ByteBuffer *buffer, void *message, ElvinError *error);
-
-void message_destroy (void *message);
+Message message_init (Message message, MessageTypeID type, ...);
 
 /// Destroy and free () message
 #define message_free(message) (message_destroy (message), free (message))
 
 /// The message's type ID.
-#define message_type_of(message) (((XidMessage *)message)->type)
+#define message_type_of(message) (*(uint32_t *)(message))
 
 /// The message's transaction ID.
-#define xid_of(message) (((XidMessage *)message)->xid)
-
-ConnRqst *ConnRqst_init (ConnRqst *connRqst,
-                         uint8_t version_major, uint8_t version_minor,
-                         NamedValues *connection_options,
-                         Keys *notification_keys, Keys *subscription_keys);
-
-void ConnRqst_destroy (ConnRqst *connRqst);
-
-ConnRply *ConnRply_create (NamedValues *connection_options);
-
-void ConnRply_destroy (ConnRply *connRply);
-
-void DisconnRqst_init (DisconnRqst *disconnRqst);
-
-void DisconnRply_init (DisconnRply *disconnRply);
+#define xid_of(message) (*(uint32_t *)((message) + 4))
 
 #endif // ELVIN_MESSAGES_H

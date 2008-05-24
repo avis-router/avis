@@ -1,62 +1,138 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <stdbool.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <assert.h>
 
 #include <elvin/errors.h>
+#include <elvin/named_values.h>
+#include <elvin/log.h>
 
 #include "messages.h"
 #include "byte_buffer.h"
 
-/**
- * Generic type for a message to access its type field.
- */
 typedef struct
 {
-  MessageID type;
-} Message;
+  MessageTypeID id;
+  const char *field_types;
+  const char *field_names [16];
+} MessageFormat;
 
-typedef bool(*MessageWriteFunc) (ByteBuffer *, void *, ElvinError *);
+/* 
+ * XI = XID
+ * I4 = int 32
+ * I8 = int 64
+ * R8 = real 64
+ * ST = string
+ * VA = value array
+ * NV = named values
+ * KY = keys
+ */ 
+static MessageFormat message_formats [] = 
+{
+  {MESSAGE_ID_NACK,
+    "XI I4 ST VA ", {"xid", "error", "message", "args"}},
+  {MESSAGE_ID_CONN_RQST,
+    "XI I4 I4 NV KY KY ", 
+    {"xid", "version_major", "version_minor",
+     "connection_options", "notification_keys" "subscription_keys"}},
+  {MESSAGE_ID_CONN_RPLY,
+    "XI NV ", {"xid", "connection_options"}},
+  {MESSAGE_ID_DISCONN_RQST,
+    "XI ", {"xid"}},
+  {MESSAGE_ID_DISCONN_RPLY,
+    "XI ", {"xid"}},
+  {-1, "", {}}
+};
 
-typedef void *(*MessageReadFunc) (ByteBuffer *, ElvinError *);
+/// Create an integer ID from a two-letter field type
+#define field_id_of(field) ((field [0] << 8) + field [1])
 
+/// Create a constant integer field ID from a two-letter field type
+#define field_id(c1,c2) ((c1 << 8) + c2)
 
-static MessageWriteFunc lookup_write_function (MessageID type);
+#define FIELD_TYPE_INT32        (field_id ('I', '4'))
+#define FIELD_TYPE_INT64        (field_id ('I', '8'))
+#define FIELD_TYPE_REAL64       (field_id ('R', '8'))
+#define FIELD_TYPE_VALUE_ARRAY  (field_id ('V', 'A'))
+#define FIELD_TYPE_NAMED_VALUES (field_id ('N', 'V'))
+#define FIELD_TYPE_KEYS         (field_id ('K', 'Y'))
+#define FIELD_TYPE_STRING       (field_id ('S', 'T'))
+#define FIELD_TYPE_XID          (field_id ('X', 'I'))
 
-static MessageReadFunc lookup_read_function (MessageID type);
+static MessageFormat *message_format_for (MessageTypeID type);
 
-static void *ConnRqst_read (ByteBuffer *buffer, ElvinError *error);
+static Message read_using_format (ByteBuffer *buffer, 
+                                  Message message,
+                                  MessageFormat *format, 
+                                  ElvinError *error);
 
-static bool ConnRqst_write (ByteBuffer *buffer,
-                            void *connRqst, ElvinError *error);
-
-static void *ConnRply_read (ByteBuffer *buffer, ElvinError *error);
-
-static bool ConnRply_write (ByteBuffer *buffer,
-                            void *connRply, ElvinError *error);
-
-static void *DisconnRply_read (ByteBuffer *buffer, ElvinError *error);
-
-static bool DisconnRply_write (ByteBuffer *buffer,
-                               void *message, ElvinError *error);
-
-static void *DisconnRqst_read (ByteBuffer *buffer, ElvinError *error);
-
-static bool DisconnRqst_write (ByteBuffer *buffer,
-                               void *message, ElvinError *error);
-
-static void *Nack_read (ByteBuffer *buffer, ElvinError *error);
-
-static bool Nack_write (ByteBuffer *buffer, void *message, ElvinError *error);
+static bool write_using_format (ByteBuffer *buffer, 
+                                MessageFormat *format,
+                                Message message,
+                                ElvinError *error);
 
 static uint32_t global_xid_counter = 0;
 
 // todo this is not thread safe
 #define next_xid() (++global_xid_counter)
 
+Message message_init (Message message, MessageTypeID type, ...)
+{
+  MessageFormat *format = message_format_for (type);
+  va_list args;
+  const char *field;
+
+  assert (format != NULL);
+
+  message_type_of (message) = type;
+  
+  message += 4;  
+  
+  va_start (args, type);
+  
+  for (field = format->field_types; *field; field += 3)
+  {
+    switch (field_id_of (field))
+    {
+    case FIELD_TYPE_INT32:
+      *(uint32_t *)message = va_arg (args, uint32_t);
+      message += 4;
+      break;
+    case FIELD_TYPE_XID:
+      *(uint32_t *)message = next_xid ();
+      message += 4;
+      break;
+    case FIELD_TYPE_STRING:
+      // todo
+      va_arg (args, char *);
+      message += sizeof (char *);
+      break;
+    case FIELD_TYPE_NAMED_VALUES:
+      // todo
+      va_arg (args, NamedValues *);
+      message += sizeof (NamedValues *);
+      break;
+    case FIELD_TYPE_KEYS:
+      // todo
+      va_arg (args, Keys *);
+      message += sizeof (Keys *);
+      break;
+    default:
+      // todo
+      abort ();
+    }
+  }
+  
+  va_end (args);
+  
+  return message;
+}
+
 /**
  * Destroy a message. Will not free any child data.
  */
-void message_destroy (void *message)
+void message_destroy (Message message)
 {
   free (message);
   
@@ -68,56 +144,60 @@ void message_destroy (void *message)
  * the amount of data expected to be read and the position set to the start
  * of the data.
  */
-bool message_read (ByteBuffer *buffer, void **message, ElvinError *error)
+Message message_read (ByteBuffer *buffer, ElvinError *error)
 {
   uint32_t type;
+  Message message;
+  MessageFormat *format;
   
   error_return (byte_buffer_read_int32 (buffer, &type, error));
   
-  MessageReadFunc reader = lookup_read_function (type);
+  format = message_format_for (type);
   
-  if (reader == NULL)
+  if (format == NULL)
   {
-    return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                            "Unknown message type");
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Unknown message type");
+    
+    return NULL;
   }
   
-  void *new_message = (*reader) (buffer, error);
+  message = malloc (MAX_MESSAGE_SIZE);
+  
+  // fill in type field
+  message_type_of (message) = type;
+    
+  read_using_format (buffer, message + 4, format, error);
   
   if (!elvin_error_ok (error))
-    return false;
+  {
+    free (message);
     
-  // fill in type field
-  ((Message *)new_message)->type = type;
+    return NULL;
+  }
 
-  *message = new_message;  
-  
   // todo
 //  if (buffer->position < buffer->max_data_length)
 //    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
   
-  return elvin_error_ok (error);
+  return message;
 }
 
-bool message_write (ByteBuffer *buffer, void *message, ElvinError *error)
+bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  MessageID type = ((Message *)message)->type;
-  MessageWriteFunc writer = lookup_write_function (type);
+  size_t frame_size;
+  MessageFormat *format = message_format_for (message_type_of (message));
   
-  if (writer == NULL)
-  {
-    return elvin_error_set (error, ELVIN_ERROR_INTERNAL, 
-                            "Unknown message type");
-  }
+  assert (format != NULL);
 
   error_return (byte_buffer_skip (buffer, 4, error));
-  error_return (byte_buffer_write_int32 (buffer, type, error));
+  error_return (byte_buffer_write_int32 (buffer, message_type_of (message), 
+                                         error));
   
-  if (!(*writer) (buffer, message, error))
+  if (!write_using_format (buffer, format, message + 4, error))
     return false;
   
-  size_t frame_size = buffer->position - 4;
-
+  frame_size = buffer->position - 4;
+  
   // write frame length
   byte_buffer_set_position (buffer, 0, error);
   byte_buffer_write_int32 (buffer, frame_size, error);
@@ -127,251 +207,117 @@ bool message_write (ByteBuffer *buffer, void *message, ElvinError *error)
   return true; 
 }
 
-MessageWriteFunc lookup_write_function (MessageID type)
+Message read_using_format (ByteBuffer *buffer, 
+                           Message message,
+                           MessageFormat *format, 
+                           ElvinError *error)
 {
-  switch (type)
+  const char *field;
+  void *message_field = message;
+  bool ok = true;
+   
+  for (field = format->field_types; ok && *field; field += 3)
   {
-  case MESSAGE_ID_NACK:
-      return Nack_write;
-  case MESSAGE_ID_CONN_RQST:
-    return ConnRqst_write;
-  case MESSAGE_ID_CONN_RPLY:
-    return ConnRply_write;
-  case MESSAGE_ID_DISCONN_RQST:
-    return DisconnRqst_write;
-  case MESSAGE_ID_DISCONN_RPLY:
-    return DisconnRply_write;
-  default:
-    return NULL;
+    switch (field_id_of (field))
+    {
+    case FIELD_TYPE_INT32:
+      ok = byte_buffer_read_int32 (buffer, message_field, error);
+      message_field += 4;
+      break;
+    case FIELD_TYPE_XID:
+      if (byte_buffer_read_int32 (buffer, message_field, error))
+      {
+        if (*(uint32_t *)message_field <= 0)
+        {
+          elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "XID cannot be <= 0");
+          ok = false;
+        }
+      }
+      message_field += 4;
+      
+      break;
+    case FIELD_TYPE_STRING:
+      // todo
+      ok = byte_buffer_skip (buffer, 4, error);
+      message_field += sizeof (char *);
+      break;
+    case FIELD_TYPE_NAMED_VALUES:
+      // todo
+      ok = byte_buffer_skip (buffer, 4, error);
+      message_field += sizeof (NamedValues *);
+      break;
+    case FIELD_TYPE_KEYS:
+      // todo
+      ok = byte_buffer_skip (buffer, 4, error);
+      message_field += sizeof (Keys *);
+      break;
+    default:
+      abort ();
+    }
   }
-}
-
-MessageReadFunc lookup_read_function (MessageID type)
-{
-  switch (type)
-  {
-  case MESSAGE_ID_NACK:
-        return Nack_read;
-  case MESSAGE_ID_CONN_RQST:
-    return ConnRqst_read;
-  case MESSAGE_ID_CONN_RPLY:
-    return ConnRply_read;
-  case MESSAGE_ID_DISCONN_RQST:
-    return DisconnRqst_read;
-  case MESSAGE_ID_DISCONN_RPLY:
-    return DisconnRply_read;
-  default:
-    return NULL;
-  }
-}
-
-//////
-
-ConnRqst *ConnRqst_init (ConnRqst *connRqst,
-                         uint8_t version_major, uint8_t version_minor,
-                         NamedValues *connection_options,
-                         Keys *notification_keys, Keys *subscription_keys)
-{
-  connRqst->xid = next_xid ();
-  connRqst->type = MESSAGE_ID_CONN_RQST;
-  connRqst->version_major = version_major;
-  connRqst->version_minor = version_minor;
-  connRqst->connection_options = connection_options;
-  connRqst->subscription_keys = subscription_keys;
-  connRqst->notification_keys = notification_keys;
   
-  return connRqst;
-}
-
-void ConnRqst_destroy (ConnRqst *connRqst)
-{
-  // todo free sub-fields
-}
-
-bool ConnRqst_write (ByteBuffer *buffer,
-                     void *connRqst, ElvinError *error)
-{
-  return
-    byte_buffer_write_int32 
-      (buffer, ((ConnRqst *)connRqst)->xid, error) &&
-    byte_buffer_write_int32 
-      (buffer, ((ConnRqst *)connRqst)->version_major, error) &&
-    byte_buffer_write_int32 
-      (buffer, ((ConnRqst *)connRqst)->version_minor, error) &&
-    named_values_write
-      (buffer, ((ConnRqst *)connRqst)->connection_options, error) &&
-    keys_write
-      (buffer, ((ConnRqst *)connRqst)->notification_keys, error) &&
-    keys_write 
-      (buffer, ((ConnRqst *)connRqst)->subscription_keys, error);
-}
-
-void *ConnRqst_read (ByteBuffer *buffer, ElvinError *error)
-{
-  ConnRqst *connRqst = malloc (sizeof (ConnRqst));
-  
-  if 
-  (
-    byte_buffer_read_int32 
-     (buffer, &((ConnRqst *)connRqst)->xid, error) &&
-    byte_buffer_read_int32 
-     (buffer, &((ConnRqst *)connRqst)->version_major, error) &&
-    byte_buffer_read_int32 
-     (buffer, &((ConnRqst *)connRqst)->version_minor, error) &&
-    byte_buffer_read_int32 
-      (buffer, &((ConnRqst *)connRqst)->version_minor, error) &&
-    named_values_read 
-      (buffer, &((ConnRqst *)connRqst)->connection_options, error) &&
-    keys_read 
-      (buffer, &((ConnRqst *)connRqst)->notification_keys, error) &&
-    keys_read 
-      (buffer, &((ConnRqst *)connRqst)->subscription_keys, error))
+  if (ok)
   {
-    return connRqst;
+    return message;
   } else
   {
-    free (connRqst);
+    free (message);
     
     return NULL;
   }
 }
 
-/////////
-
-ConnRply *ConnRply_init (ConnRply *connRply, NamedValues *connection_options)
+bool write_using_format (ByteBuffer *buffer, 
+                         MessageFormat *format,
+                         Message message,
+                         ElvinError *error)
 {
-  connRply->xid = 0;
-  connRply->type = MESSAGE_ID_CONN_RPLY;
-  connRply->options = connection_options;
+  const char *field;
+  bool ok = true;
   
-  return connRply;
-}
-
-void ConnRply_destroy (ConnRply *connRply)
-{
-  // todo free sub-fields
-}
-
-bool ConnRply_write (ByteBuffer *buffer,
-                     void *connRply, ElvinError *error)
-{
-  error_return (byte_buffer_write_int32 
-                   (buffer, ((ConnRply *)connRply)->xid, error));
-
-  // TODO options
-  byte_buffer_write_int32 (buffer, 0, error);
-  
-  return true;
-}
-
-void *ConnRply_read (ByteBuffer *buffer, ElvinError *error)
-{
-  ConnRply *connRply = malloc (sizeof (ConnRply));
-
-  if (
-    byte_buffer_read_int32 (buffer, &((ConnRply *)connRply)->xid, error) &&
-    named_values_read (buffer, &((ConnRply *)connRply)->options, error))
+  for (field = format->field_types; ok && *field; field += 3)
   {
-    return connRply;
-  } else
-  {
-    free (connRply);
-    
-    return NULL;
+    switch (field_id_of (field))
+    {
+    case FIELD_TYPE_INT32:
+    case FIELD_TYPE_XID:
+      ok = byte_buffer_write_int32 (buffer, *(uint32_t *)message, error);
+      message += 4;      
+      break;
+    case FIELD_TYPE_STRING:
+      // todo
+      ok = byte_buffer_write_int32 (buffer, 0, error);
+      message += sizeof (char *);
+      break;
+    case FIELD_TYPE_NAMED_VALUES:
+      // todo
+      ok = byte_buffer_write_int32 (buffer, 0, error);
+      message += sizeof (NamedValues *);
+      break;
+    case FIELD_TYPE_KEYS:
+      // todo
+      ok = byte_buffer_write_int32 (buffer, 0, error);
+      message += sizeof (Keys *);
+      break;
+    default:
+      abort ();
+    }
   }
+
+  return ok;
 }
 
-///////
-
-void DisconnRqst_init (DisconnRqst *disconnRqst)
+MessageFormat *message_format_for (MessageTypeID type)
 {
-  disconnRqst->type = MESSAGE_ID_DISCONN_RQST;
-  disconnRqst->xid = next_xid ();
-}
-
-void *DisconnRqst_read (ByteBuffer *buffer, ElvinError *error)
-{
-  DisconnRqst *message = malloc (sizeof (DisconnRqst));
+  int i;
   
-  // todo dealloc on error
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((DisconnRqst *)message)->xid, error));
-
-  return message;
-}
-
-bool DisconnRqst_write (ByteBuffer *buffer, void *message, ElvinError *error)
-{
-  error_return (byte_buffer_write_int32 
-                   (buffer, ((DisconnRqst *)message)->xid, error));
+  for (i = 0; message_formats [i].id != -1; i++)
+  {
+    if (message_formats [i].id == type)
+      return &message_formats [i];
+  }
   
-  return true;
-}
-
-//////
-
-void DisconnRply_init (DisconnRply *disconnRply)
-{
-  disconnRply->type = MESSAGE_ID_DISCONN_RPLY;
-  disconnRply->xid = 0;
-}
-
-void *DisconnRply_read (ByteBuffer *buffer, ElvinError *error)
-{
-  DisconnRply *message = (DisconnRply *)malloc (sizeof (DisconnRply));
-    
-  // todo dealloc on error
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((DisconnRply *)message)->xid, error));
-
-  return message;
-}
-
-bool DisconnRply_write (ByteBuffer *buffer, void *message, ElvinError *error)
-{
-  error_return (byte_buffer_write_int32 
-                   (buffer, ((DisconnRply *)message)->xid, error));
+  DIAGNOSTIC1 ("Failed to lookup info for message type %i", type);
   
-  return true;
-}
-
-//////
-
-void Nack_init (Nack *nack, uint32_t error, const char *message)
-{
-  nack->type = MESSAGE_ID_NACK;
-  nack->xid = next_xid ();
-  nack->error = error;
-  nack->message = message;
-  nack->args = NULL;
-}
-
-void *Nack_read (ByteBuffer *buffer, ElvinError *error)
-{
-  Nack *message = malloc (sizeof (Nack));
-    
-  // todo dealloc on error
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((Nack *)message)->xid, error));
-  error_return (byte_buffer_read_int32 
-                 (buffer, &((Nack *)message)->error, error));
-
-  // todo message and args
-  byte_buffer_skip (buffer, 4, error);
-
-  return message;
-}
-
-bool Nack_write (ByteBuffer *buffer, void *message, ElvinError *error)
-{
-  error_return (byte_buffer_write_int32 
-                   (buffer, ((Nack *)message)->xid, error));
-  error_return (byte_buffer_write_int32 
-                   (buffer, ((Nack *)message)->xid, error));
-  
-  // todo message and args
-  error_return (byte_buffer_write_int32 (buffer, 0, error));
-  error_return (byte_buffer_write_int32 (buffer, 0, error));
-  
-  return true;
+  return NULL;
 }
