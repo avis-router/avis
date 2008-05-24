@@ -39,7 +39,8 @@ AC_FUNC_MALLOC
 # Output files
 AC_CONFIG_HEADERS([config.h])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/lib/Makefile src/test/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/lib/Makefile src/test/Makefile
+                 packages/Makefile packages/hashtable/Makefile])
 
 SUBDIRS=src packages/check
 
