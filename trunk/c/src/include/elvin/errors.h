@@ -18,7 +18,7 @@ typedef struct
 
 #define ELVIN_ERROR_NONE ELVIN_ERROR_BASE
 
-#define elvin_error_create() {.code = ELVIN_ERROR_NONE, .message = NULL}
+#define elvin_error_create() {ELVIN_ERROR_NONE, NULL}
 #define elvin_error_destroy(error)
 
 #define error_return(expr) {if (!(expr)) return false;}

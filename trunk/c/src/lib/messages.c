@@ -42,13 +42,13 @@ static MessageFormat message_formats [] =
     "XI ", {"xid"}},
   {MESSAGE_ID_DISCONN_RPLY,
     "XI ", {"xid"}},
-  {-1, "", {}}
+  {-1, "", {"none"}}
 };
 
-/// Create an integer ID from a two-letter field type
+/** Create an integer ID from a two-letter field type */
 #define field_id_of(field) ((field [0] << 8) + field [1])
 
-/// Create a constant integer field ID from a two-letter field type
+/** Create a constant integer field ID from a two-letter field type */
 #define field_id(c1,c2) ((c1 << 8) + c2)
 
 #define FIELD_TYPE_INT32        (field_id ('I', '4'))
@@ -74,7 +74,7 @@ static bool write_using_format (ByteBuffer *buffer,
 
 static uint32_t global_xid_counter = 0;
 
-// todo this is not thread safe
+/* todo this is not thread safe */
 #define next_xid() (++global_xid_counter)
 
 Message message_init (Message message, MessageTypeID type, ...)
@@ -104,22 +104,22 @@ Message message_init (Message message, MessageTypeID type, ...)
       message += 4;
       break;
     case FIELD_TYPE_STRING:
-      // todo
+      /* TODO */
       va_arg (args, char *);
       message += sizeof (char *);
       break;
     case FIELD_TYPE_NAMED_VALUES:
-      // todo
+      /* TODO */
       va_arg (args, NamedValues *);
       message += sizeof (NamedValues *);
       break;
     case FIELD_TYPE_KEYS:
-      // todo
+      /* TODO */
       va_arg (args, Keys *);
       message += sizeof (Keys *);
       break;
     default:
-      // todo
+      /* TODO */
       abort ();
     }
   }
@@ -136,7 +136,7 @@ void message_destroy (Message message)
 {
   free (message);
   
-  // todo destroy subfields
+  /* todo destroy subfields */
 }
 
 /**
@@ -163,7 +163,7 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
   
   message = malloc (MAX_MESSAGE_SIZE);
   
-  // fill in type field
+  /* fill in type field */
   message_type_of (message) = type;
     
   read_using_format (buffer, message + 4, format, error);
@@ -175,9 +175,9 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
     return NULL;
   }
 
-  // todo
-//  if (buffer->position < buffer->max_data_length)
-//    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
+  /* TODO */
+/*  if (buffer->position < buffer->max_data_length)
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow"); */
   
   return message;
 }
@@ -198,7 +198,7 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   
   frame_size = buffer->position - 4;
   
-  // write frame length
+  /* write frame length */
   byte_buffer_set_position (buffer, 0, error);
   byte_buffer_write_int32 (buffer, frame_size, error);
   
@@ -213,7 +213,7 @@ Message read_using_format (ByteBuffer *buffer,
                            ElvinError *error)
 {
   const char *field;
-  void *message_field = message;
+  Message message_field = message;
   bool ok = true;
    
   for (field = format->field_types; ok && *field; field += 3)
@@ -221,11 +221,11 @@ Message read_using_format (ByteBuffer *buffer,
     switch (field_id_of (field))
     {
     case FIELD_TYPE_INT32:
-      ok = byte_buffer_read_int32 (buffer, message_field, error);
+      ok = byte_buffer_read_int32 (buffer, (uint32_t *)message_field, error);
       message_field += 4;
       break;
     case FIELD_TYPE_XID:
-      if (byte_buffer_read_int32 (buffer, message_field, error))
+      if (byte_buffer_read_int32 (buffer, (uint32_t *)message_field, error))
       {
         if (*(uint32_t *)message_field <= 0)
         {
@@ -237,17 +237,17 @@ Message read_using_format (ByteBuffer *buffer,
       
       break;
     case FIELD_TYPE_STRING:
-      // todo
+      /* TODO */
       ok = byte_buffer_skip (buffer, 4, error);
       message_field += sizeof (char *);
       break;
     case FIELD_TYPE_NAMED_VALUES:
-      // todo
+      /* TODO */
       ok = byte_buffer_skip (buffer, 4, error);
       message_field += sizeof (NamedValues *);
       break;
     case FIELD_TYPE_KEYS:
-      // todo
+      /* TODO */
       ok = byte_buffer_skip (buffer, 4, error);
       message_field += sizeof (Keys *);
       break;
@@ -285,17 +285,17 @@ bool write_using_format (ByteBuffer *buffer,
       message += 4;      
       break;
     case FIELD_TYPE_STRING:
-      // todo
+      /* TODO */
       ok = byte_buffer_write_int32 (buffer, 0, error);
       message += sizeof (char *);
       break;
     case FIELD_TYPE_NAMED_VALUES:
-      // todo
+      /* TODO */
       ok = byte_buffer_write_int32 (buffer, 0, error);
       message += sizeof (NamedValues *);
       break;
     case FIELD_TYPE_KEYS:
-      // todo
+      /* TODO */
       ok = byte_buffer_write_int32 (buffer, 0, error);
       message += sizeof (Keys *);
       break;

@@ -75,8 +75,8 @@ bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
     if (min_length > buffer->max_data_length)
       return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Buffer overflow");
 
-    // new length = min_length rounded up to nearest ^ 2
-    // TODO could do this more efficiently
+    /* new length = min_length rounded up to nearest ^ 2 */
+    /* TODO could do this more efficiently */
     new_length = buffer->data_length;
     
     while (new_length < min_length)

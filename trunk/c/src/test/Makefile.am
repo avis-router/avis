@@ -1,12 +1,14 @@
+## Process this file with automake to produce Makefile.in
+
+AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
+              -I$(top_srcdir)/packages/check/src $(all_includes) \
+              -Wall -Werror
+
+AM_CFLAGS = -Wall -std=c99 -pedantic
+
 bin_PROGRAMS=tests
 
 tests_SOURCES=tests.c check_ext.c check_messages.c check_client.c
 
 tests_LDADD=$(top_srcdir)/src/lib/libelvin.la \
             $(top_srcdir)/packages/check/src/libcheck.la
-
-AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
-              -I$(top_srcdir)/packages/check/src $(all_includes) \
-              -Wall -Werror
-
-AM_CFLAGS = -std=c99
