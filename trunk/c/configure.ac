@@ -2,7 +2,7 @@
 
 # Prelude.
 AC_PREREQ([1.0])
-AC_INIT([Elvin Client], [1.0], [phillipsm@sourceforge.net])
+AC_INIT([Avis Client], [1.0], [phillipsm@sourceforge.net])
 
 # fairly severe build strictness
 # change foreign to gnu or gnits to comply with gnu standards
