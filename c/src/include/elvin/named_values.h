@@ -40,4 +40,6 @@ void named_values_set_int32 (NamedValues *values, const char *name,
 
 uint32_t named_values_get_int32 (NamedValues *values, const char *name);
 
+#define named_values_size(values) (hashtable_count ((values)->table))
+
 #endif /* ELVIN_NAMED_VALUES_H */
