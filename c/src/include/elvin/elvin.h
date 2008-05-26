@@ -8,9 +8,7 @@
 #ifndef ELVIN_H
 #define ELVIN_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
 /** The default port for Elvin client connections. */

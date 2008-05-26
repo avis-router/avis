@@ -10,9 +10,7 @@
 #ifndef ELVIN_NAMED_VALUES_H
 #define ELVIN_NAMED_VALUES_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
 struct hashtable;

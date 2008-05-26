@@ -1,7 +1,7 @@
 #ifndef ERRORS_H_
 #define ERRORS_H_
 
-#include <stdbool.h>
+#include <elvin/stdtypes.h>
 
 typedef struct
 {
