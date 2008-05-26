@@ -18,11 +18,17 @@ ByteBuffer *byte_buffer_create_sized (size_t initial_size);
 
 void byte_buffer_destroy (ByteBuffer *buffer);
 
+/* TODO this should return the int32 not bool */
 bool byte_buffer_read_int32 (ByteBuffer *buffer, uint32_t *value, 
                              ElvinError *error);
 
 bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value, 
                               ElvinError *error);
+
+bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
+                               ElvinError *error);
+
+const char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error);
 
 bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
                              size_t bytes_len, ElvinError *error);
