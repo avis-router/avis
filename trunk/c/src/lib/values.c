@@ -49,18 +49,71 @@ void value_free (Value *value)
 
 Value *value_read (ByteBuffer *buffer, ElvinError *error)
 {
-  uint32_t type;
+  ValueType type;
+  Value *value;
   
   on_error_return (type = byte_buffer_read_int32 (buffer, error), NULL);
   
-/*  switch (type)
+  value = malloc (sizeof (Value));
+  
+  value->type = type;
+  
+  switch (type)
   {
   case TYPE_INT32:
-    value = value_create_int32()
-  }*/
+    value->value.int32 = byte_buffer_read_int32 (buffer, error);
+    break;
+  case TYPE_INT64:
+    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    break;
+  case TYPE_REAL64:
+    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    break;
+  case TYPE_STRING:
+    value->value.int32 = byte_buffer_read_int32 (buffer, error);
+    break;
+  case TYPE_OPAQUE:
+    /* TODO byte_buffer_read_bytes_var (buffer, error);*/
+    break;
+  default:
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid value type");
+  }
+  
+  if (elvin_error_occurred (error))
+  {
+    free (value);
+    
+    value = NULL;
+  }
+  
+  return value;
 }
 
 bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
 {
+  on_error_return_false
+    (byte_buffer_write_int32 (buffer, value->type, error));
   
+  switch (value->type)
+  {
+  case TYPE_INT32:
+    byte_buffer_write_int32 (buffer, value->value.int32, error);
+    break;
+  case TYPE_INT64:
+    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    break;
+  case TYPE_REAL64:
+    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    break;
+  case TYPE_STRING:
+    value->value.int32 = byte_buffer_read_int32 (buffer, error);
+    break;
+  case TYPE_OPAQUE:
+    /* TODO byte_buffer_read_bytes_var (buffer, error);*/
+    break;
+  default:
+    abort ();
+  }
+  
+  return true;
 }
