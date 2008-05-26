@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <string.h>
 #include <netinet/in.h>
 
@@ -142,6 +144,48 @@ bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value,
   buffer->position += 4;
   
   return true;
+}
+
+bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
+                               ElvinError *error)
+{
+  uint32_t length = strlen (string);
+  
+  error_return 
+    (auto_resize_to_fit (buffer, buffer->position + length + 4, error));
+  
+  byte_buffer_write_int32 (buffer, length, error);
+  
+  return byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error);
+}
+
+const char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
+{
+  uint32_t length;
+  char *string;
+  
+  error_return (byte_buffer_read_int32 (buffer, &length, error));
+  
+  string = malloc (length + 1);
+  
+  if (string == NULL)
+  {
+    elvin_error_set (error, ERRNO_TO_ELVIN_ERROR (errno), 
+                     "Not enough memory to allocate string");
+    
+    return NULL;
+  }
+  
+  if (!byte_buffer_read_bytes (buffer, (uint8_t *)string, length, error))
+  {
+    free (string);
+    
+    return NULL;
+  }
+  
+  string [length] = '\0';
+  
+  return string;
 }
 
 bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
