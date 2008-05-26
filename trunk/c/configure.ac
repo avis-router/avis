@@ -30,6 +30,8 @@ AC_PROG_LIBTOOL
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h])
+AC_CHECK_HEADERS([stdint.h])
+AC_CHECK_HEADERS([stdbool.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
