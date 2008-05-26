@@ -1,7 +1,7 @@
 #ifndef VALUES_H_
 #define VALUES_H_
 
-#include <stdint.h>
+#include <elvin/stdtypes.h>
 
 typedef double real64_t;
 
