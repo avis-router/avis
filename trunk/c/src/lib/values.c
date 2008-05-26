@@ -3,6 +3,9 @@
 #include <stdlib.h>
 
 #include <elvin/values.h>
+#include <elvin/errors.h>
+
+#include "byte_buffer.h"
 
 Value *value_init (Value *value, ValueType type, ...)
 {
@@ -42,4 +45,22 @@ void value_free (Value *value)
     free (value->value.str);
   else if (value->type == TYPE_OPAQUE)
     free (value->value.bytes);
+}
+
+Value *value_read (ByteBuffer *buffer, ElvinError *error)
+{
+  uint32_t type;
+  
+  error_return (byte_buffer_read_int32 (buffer, &type, error));
+  
+/*  switch (type)
+  {
+  case TYPE_INT32:
+    value = value_create_int32()
+  }*/
+}
+
+bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
+{
+  
 }
