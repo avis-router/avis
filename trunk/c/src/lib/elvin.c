@@ -1,16 +1,21 @@
 #include <stdlib.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <netdb.h>
-#include <unistd.h>
 #include <assert.h>
+
+#ifdef WIN32
+#include <winsock2.h>
+#else //WIN32
+#include <unistd.h>
+#include <netdb.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif //WIN32
 
+#include <elvin/stdtypes.h>
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
 
@@ -82,7 +87,11 @@ bool elvin_close (Elvin *elvin)
   if (reply)
     message_destroy (reply);
 
-  close (elvin->socket); /* TODO use closesocket () for Windows */
+#ifdef WIN32
+  closesocket (elvin->socket);
+#else //WIN32
+  close (elvin->socket);
+#endif //WIN32
 
   elvin->socket = -1;
   
@@ -110,8 +119,14 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   
   if (host_info == NULL) 
   {
+	const char *errorstring;
+#ifdef WIN32
+	errorstring = "Host lookup error ";
+#else //WIN32
+	errorstring = hstrerror (h_errno);
+#endif //WIN32
     return elvin_error_set (error, 
-                            HOST_TO_ELVIN_ERROR (h_errno), hstrerror (h_errno));
+                            HOST_TO_ELVIN_ERROR (h_errno), errorstring);
   }
   
   router_addr.sin_family = AF_INET;

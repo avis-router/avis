@@ -1,7 +1,7 @@
 #ifndef BYTE_BUFFER_H_
 #define BYTE_BUFFER_H_
 
-#include <stdint.h>
+#include <elvin/stdtypes.h>
 #include <stdlib.h>
 
 typedef struct

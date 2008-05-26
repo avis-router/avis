@@ -1,9 +1,9 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
 
+#include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 #include <elvin/named_values.h>
 #include <elvin/log.h>
