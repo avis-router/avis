@@ -28,6 +28,7 @@ typedef struct
  * an error code. 
  */
 #define HOST_TO_ELVIN_ERROR(code) (ELVIN_HOST_ERROR_BASE + code)
+#define ERRNO_TO_ELVIN_ERROR(code) (code)
 
 void elvin_perror (const char *tag, ElvinError *error);
 bool elvin_error_from_errno (ElvinError *error);
