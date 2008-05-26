@@ -144,7 +144,8 @@ START_TEST (test_named_values_io)
   named_values_write (buffer, values, &error);
   fail_on_error (&error);
   
-  NamedValues *values2 = named_values_create ();
+  byte_buffer_set_position (buffer, 0, &error);
+  NamedValues *values2 = named_values_create ();  
   
   named_values_read (buffer, values2, &error);
   fail_on_error (&error);
