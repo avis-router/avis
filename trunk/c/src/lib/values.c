@@ -51,7 +51,7 @@ Value *value_read (ByteBuffer *buffer, ElvinError *error)
 {
   uint32_t type;
   
-  error_return (byte_buffer_read_int32 (buffer, &type, error));
+  on_error_return (type = byte_buffer_read_int32 (buffer, error), NULL);
   
 /*  switch (type)
   {

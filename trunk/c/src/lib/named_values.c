@@ -54,9 +54,9 @@ bool named_values_write (ByteBuffer *buffer, NamedValues *values,
   const char *name;
   Value *value;
   struct hashtable_itr *i;
-  bool ok;
   
-  ok = byte_buffer_write_int32 (buffer, named_values_size (values), error);
+  on_error_return_false 
+    (byte_buffer_write_int32 (buffer, named_values_size (values), error));
   
   if (hashtable_count (values->table) > 0)
   {
@@ -67,14 +67,15 @@ bool named_values_write (ByteBuffer *buffer, NamedValues *values,
       name = hashtable_iterator_key (i);
       value = hashtable_iterator_value (i);
       
-      ok = byte_buffer_write_string (buffer, name, error) &&
-           value_write (buffer, value, error);
-    } while (ok && hashtable_iterator_advance (i));
+      byte_buffer_write_string (buffer, name, error) 
+      &&
+      value_write (buffer, value, error);
+    } while (elvin_error_ok (error) && hashtable_iterator_advance (i));
     
     free (i);
   }
       
-  return ok;
+  return elvin_error_ok (error);
 }
 
 bool named_values_read (ByteBuffer *buffer, NamedValues *values, 
@@ -83,17 +84,17 @@ bool named_values_read (ByteBuffer *buffer, NamedValues *values,
   uint32_t count;
   const char *name;
   Value *value;
-  bool ok;
   
-  ok = byte_buffer_read_int32 (buffer, &count, error);
+  count = byte_buffer_read_int32 (buffer, error);
   
-  for ( ; ok && count > 0; count--)
+  for ( ; elvin_error_ok (error) && count > 0; count--)
   {
-    ok = (name = byte_buffer_read_string (buffer, error)) &&
-         (value = value_read (buffer, error));
+    (name = byte_buffer_read_string (buffer, error)) 
+    &&
+    (value = value_read (buffer, error));
   }
   
-  return ok;
+  return elvin_error_ok (error);
 }
 
 /*

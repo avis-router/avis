@@ -53,7 +53,7 @@ bool elvin_open_url (Elvin *elvin, ElvinURL *url, ElvinError *error)
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
                 EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
   
-  error_return 
+  on_error_return_false 
     (reply = send_and_receive (elvin->socket, connRqst, 
                                MESSAGE_ID_CONN_RPLY, error));
   

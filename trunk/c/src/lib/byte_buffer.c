@@ -60,7 +60,7 @@ void byte_buffer_destroy (ByteBuffer *buffer)
 bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
                                ElvinError *error)
 {
-  error_return (auto_resize_to_fit (buffer, position, error));
+  on_error_return_false (auto_resize_to_fit (buffer, position, error));
     
   buffer->position = position;
 
@@ -118,26 +118,28 @@ bool check_remaining (ByteBuffer *buffer, size_t required_remaining,
     return true;
 }
 
-bool byte_buffer_read_int32 (ByteBuffer *buffer, uint32_t *value, 
-                             ElvinError *error)
+uint32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error)
 {
-  uint32_t xdr_value;
+  uint32_t value;
   
-  error_return (check_remaining (buffer, 4, error));
+  if (!check_remaining (buffer, 4, error))
+    return 0;
   
-  xdr_value = *(uint32_t *)(buffer->data + buffer->position);
+  value = *(uint32_t *)(buffer->data + buffer->position);
   
-  *value = ntohl (xdr_value);
+  /* XDR -> native endianness */
+  value = ntohl (value);
   
   buffer->position += 4;
   
-  return true;
+  return value;
 }
 
 bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value, 
                               ElvinError *error)
 {
-  error_return (auto_resize_to_fit (buffer, buffer->position + 4, error));
+  on_error_return_false 
+    (auto_resize_to_fit (buffer, buffer->position + 4, error));
   
   *(uint32_t *)(buffer->data + buffer->position) = htonl (value); 
   
@@ -151,10 +153,11 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
 {
   uint32_t length = strlen (string);
   
-  error_return 
+  on_error_return_false 
     (auto_resize_to_fit (buffer, buffer->position + length + 4, error));
   
-  byte_buffer_write_int32 (buffer, length, error);
+  on_error_return_false 
+    (byte_buffer_write_int32 (buffer, length, error));
   
   return byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error);
 }
@@ -164,7 +167,7 @@ const char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
   uint32_t length;
   char *string;
   
-  error_return (byte_buffer_read_int32 (buffer, &length, error));
+  on_error_return (length = byte_buffer_read_int32 (buffer, error), NULL);
   
   string = malloc (length + 1);
   
@@ -191,7 +194,7 @@ const char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
 bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
                              size_t bytes_len, ElvinError *error)
 {
-  error_return (check_remaining (buffer, bytes_len, error));
+  on_error_return_false (check_remaining (buffer, bytes_len, error));
   
   memcpy (bytes, buffer->data + buffer->position, bytes_len);
     
@@ -203,8 +206,8 @@ bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes,
 bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes, 
                               size_t bytes_len, ElvinError *error)
 {
-  error_return (auto_resize_to_fit (buffer, 
-                                    buffer->position + bytes_len, error));
+  on_error_return_false 
+    (auto_resize_to_fit (buffer, buffer->position + bytes_len, error));
   
   memcpy (buffer->data + buffer->position, bytes, bytes_len);
   
