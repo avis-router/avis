@@ -2,6 +2,7 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/lib \
               -I$(top_srcdir)/packages/hashtable
+              
 AM_CFLAGS   = -Wall -std=c89 -pedantic
 
 public_inc = $(top_srcdir)/src/include/elvin
