@@ -28,6 +28,10 @@ hashtable_iterator(struct hashtable *h);
 /* hashtable_iterator_key
  * - return the value of the (key,value) pair at the current position */
 
+/* Added by MPP to allow compilation under C89. */
+#define hashtable_iterator_key(i) ((i)->e->k)
+#define hashtable_iterator_value(i) ((i)->e->v)
+
 /*extern inline void *
 hashtable_iterator_key(struct hashtable_itr *i)
 {
