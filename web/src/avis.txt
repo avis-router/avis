@@ -1,13 +1,13 @@
 About Avis
 ======================================================================
 
-Avis is a multicast event bus. It provides a fast, publish/subscribe
+Avis is a multicast event bus. It provides a fast publish/subscribe
 event routing service compatible with the commercial Elvin
 implementation developed by [Mantara Software][mantara].
 
 Elvin routers can be federated together to form wide-area event
 notification networks. Clients can exchange events with other clients
-anywhere on the bus, subscribing to messages using pattern-matching
+anywhere on the bus by subscribing to messages using pattern-matching
 expressions that select messages based on their content.
 
 
@@ -33,12 +33,8 @@ Current Status
 
 Avis is a compatible drop-in replacement for Mantara's commercial
 `elvind` if quenching (for discovery of subscriptions) is not
-required. As of release 1.1, Avis supports federation with other
+required. As of release 1.1, Avis supports [federation][] with other
 Elvin-compatible routers.
-
-Although Avis has not yet had the extensive optimisation and tuning
-that Mantara's commercial implementation has, for the majority
-applications this will not be an issue.
 
 See the [roadmap page][roadmap] for more information on what's planned
 for Avis.
@@ -83,6 +79,7 @@ mattp.name` or `phillipsm at users.sourceforge.net` (replace "at" with
 [AuTM]: http://www.dsto.defence.gov.au/publications/2595/ "AuTM technical report"
 [tickertape.org]: http://tickertape.org "tickertape.org web site"
 [examples]: examples.html "Avis examples"
+[federation]: federation.html "Avis federation"
 [roadmap]: roadmap.html "Avis roadmap" 
 [why_avis]: why_avis.html "Why choose Avis"
 [mantara]: http://mantara.com "Mantara web site"
