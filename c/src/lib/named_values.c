@@ -2,10 +2,12 @@
 #include <string.h>
 
 #include <hashtable.h>
+#include <hashtable_itr.h>
 
 #include <elvin/values.h>
 #include <elvin/named_values.h>
 
+#include "values_private.h"
 #include "named_values_private.h"
 
 static unsigned int string_hash (void *string);
@@ -49,15 +51,49 @@ uint32_t named_values_get_int32 (NamedValues *values, const char *name)
 bool named_values_write (ByteBuffer *buffer, NamedValues *values, 
                          ElvinError *error)
 {
-  /* TODO */
-  return false;
+  const char *name;
+  Value *value;
+  struct hashtable_itr *i;
+  bool ok;
+  
+  ok = byte_buffer_write_int32 (buffer, named_values_size (values), error);
+  
+  if (hashtable_count (values->table) > 0)
+  {
+    i = hashtable_iterator (values->table);
+    
+    do
+    {
+      name = hashtable_iterator_key (i);
+      value = hashtable_iterator_value (i);
+      
+      ok = byte_buffer_write_string (buffer, name, error) &&
+           value_write (buffer, value, error);
+    } while (ok && hashtable_iterator_advance (i));
+    
+    free (i);
+  }
+      
+  return ok;
 }
 
 bool named_values_read (ByteBuffer *buffer, NamedValues *values, 
                         ElvinError *error)
 {
-  /* TODO */
-  return false;
+  uint32_t count;
+  const char *name;
+  Value *value;
+  bool ok;
+  
+  ok = byte_buffer_read_int32 (buffer, &count, error);
+  
+  for ( ; ok && count > 0; count--)
+  {
+    ok = (name = byte_buffer_read_string (buffer, error)) &&
+         (value = value_read (buffer, error));
+  }
+  
+  return ok;
 }
 
 /*
