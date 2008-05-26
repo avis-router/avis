@@ -32,10 +32,25 @@ void named_values_free (NamedValues *values)
   }
 }
 
+unsigned int named_values_size (NamedValues *values)
+{
+  return hashtable_count (values->table);
+}
+
+void named_values_set (NamedValues *values, const char *name, Value *value)
+{
+  hashtable_insert (values->table, strdup (name), value);
+}
+
+Value *named_values_get (NamedValues *values, const char *name)
+{
+  return hashtable_search (values->table, (void *)name);
+}
+
 void named_values_set_int32 (NamedValues *values, const char *name, 
                              uint32_t value)
 {
-  hashtable_insert (values->table, strdup (name), value_create_int32 (value));
+  named_values_set (values, name, value_create_int32 (value));
 }
 
 uint32_t named_values_get_int32 (NamedValues *values, const char *name)
@@ -63,13 +78,12 @@ bool named_values_write (ByteBuffer *buffer, NamedValues *values,
     i = hashtable_iterator (values->table);
     
     do
-    {
+    {      
       name = hashtable_iterator_key (i);
       value = hashtable_iterator_value (i);
       
-      byte_buffer_write_string (buffer, name, error) 
-      &&
-      value_write (buffer, value, error);
+      if (byte_buffer_write_string (buffer, name, error)) 
+        value_write (buffer, value, error);
     } while (elvin_error_ok (error) && hashtable_iterator_advance (i));
     
     free (i);
@@ -86,12 +100,14 @@ bool named_values_read (ByteBuffer *buffer, NamedValues *values,
   Value *value;
   
   count = byte_buffer_read_int32 (buffer, error);
-  
+
   for ( ; elvin_error_ok (error) && count > 0; count--)
   {
-    (name = byte_buffer_read_string (buffer, error)) 
-    &&
-    (value = value_read (buffer, error));
+    if ((name = byte_buffer_read_string (buffer, error)) &&
+        (value = value_read (buffer, error)))
+    {
+      named_values_set (values, name, value);
+    }
   }
   
   return elvin_error_ok (error);
