@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <check.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <elvin/elvin.h>
@@ -102,9 +103,33 @@ START_TEST (test_byte_buffer_io)
 END_TEST
 
 /**
- * More advanced XDR IO.
+ * String IO.
  */
-START_TEST (test_xdr_io)
+START_TEST (test_string_io)
+{
+  ByteBuffer *buffer = byte_buffer_create ();
+  const char *string2;
+  
+  byte_buffer_write_string (buffer, "hello world", &error);
+  fail_on_error (&error);
+  
+  fail_unless (buffer->position == 15, "Length incorrect");
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  
+  string2 = byte_buffer_read_string (buffer, &error);
+  fail_on_error (&error);
+  
+  fail_unless (strcmp (string2, "hello world") == 0, "Strings not equal");
+  
+  byte_buffer_destroy (buffer);
+}
+END_TEST
+
+/**
+ * Named values IO.
+ */
+START_TEST (test_named_values_io)
 {
   ByteBuffer *buffer = byte_buffer_create ();
   
@@ -189,7 +214,8 @@ TCase *messages_tests ()
   TCase *tc_core = tcase_create ("test_message_io");
   tcase_add_checked_fixture (tc_core, setup, teardown);
   tcase_add_test (tc_core, test_byte_buffer_io);
-  tcase_add_test (tc_core, test_xdr_io);
+  tcase_add_test (tc_core, test_string_io);
+  tcase_add_test (tc_core, test_named_values_io);
   tcase_add_test (tc_core, test_message_io);
 
   return tc_core;
