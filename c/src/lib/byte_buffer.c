@@ -1,10 +1,14 @@
-#include <stdint.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <netinet/in.h>
 
+#ifdef WIN32
+#include <winsock.h>
+#else //WIN32
+#include <netinet/in.h>
+#endif //!WIN32
+
+#include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
 #include "byte_buffer.h"

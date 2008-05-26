@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <errno.h>
 #include <string.h>
 
+#include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
 void elvin_perror (const char *tag, ElvinError *error)

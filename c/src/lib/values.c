@@ -1,7 +1,7 @@
-#include <stdint.h>
 #include <stdarg.h>
 #include <stdlib.h>
 
+#include <elvin/stdtypes.h>
 #include <elvin/values.h>
 #include <elvin/errors.h>
 
