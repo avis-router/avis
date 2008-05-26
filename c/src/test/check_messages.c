@@ -44,7 +44,7 @@ START_TEST (test_byte_buffer_io)
   
   uint32_t value;
   
-  byte_buffer_read_int32 (buffer, &value, &error);
+  value = byte_buffer_read_int32 (buffer, &error);
   fail_on_error (&error);
   
   fail_unless (value == 42, "Value incorrect: %u", value);
@@ -93,7 +93,7 @@ START_TEST (test_byte_buffer_io)
   for (int i = 0; i < 1000; i++)
   {
     uint32_t value;
-    byte_buffer_read_int32 (buffer, &value, &error);
+    value = byte_buffer_read_int32 (buffer, &error);
     fail_on_error (&error);
     fail_unless (value == i, "Value not the same");
   }
@@ -183,7 +183,7 @@ START_TEST (test_message_io)
   byte_buffer_set_position (buffer, 0, &error);
   uint32_t frame_size;
   
-  byte_buffer_read_int32 (buffer, &frame_size, &error);
+  frame_size = byte_buffer_read_int32 (buffer, &error);
   fail_on_error (&error);
 
   fail_unless (frame_size == 28, "Frame size not sent correctly");

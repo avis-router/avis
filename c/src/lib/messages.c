@@ -150,7 +150,7 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
   Message message;
   MessageFormat *format;
   
-  error_return (byte_buffer_read_int32 (buffer, &type, error));
+  on_error_return (type = byte_buffer_read_int32 (buffer, error), NULL);
   
   format = message_format_for (type);
   
@@ -168,7 +168,7 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
     
   read_using_format (buffer, message + 4, format, error);
   
-  if (!elvin_error_ok (error))
+  if (elvin_error_occurred (error))
   {
     free (message);
     
@@ -188,10 +188,11 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   MessageFormat *format = message_format_for (message_type_of (message));
   
   assert (format != NULL);
-
-  error_return (byte_buffer_skip (buffer, 4, error));
-  error_return (byte_buffer_write_int32 (buffer, message_type_of (message), 
-                                         error));
+  
+  on_error_return_false
+    (byte_buffer_skip (buffer, 4, error));
+  on_error_return_false
+    (byte_buffer_write_int32 (buffer, message_type_of (message), error));
   
   if (!write_using_format (buffer, format, message + 4, error))
     return false;
@@ -214,41 +215,40 @@ Message read_using_format (ByteBuffer *buffer,
 {
   const char *field;
   Message message_field = message;
-  bool ok = true;
    
-  for (field = format->field_types; ok && *field; field += 3)
+  for (field = format->field_types; 
+       elvin_error_ok (error) && *field; field += 3)
   {
     switch (field_id_of (field))
     {
     case FIELD_TYPE_INT32:
-      ok = byte_buffer_read_int32 (buffer, (uint32_t *)message_field, error);
+      *(uint32_t *)message_field = byte_buffer_read_int32 (buffer, error);
       message_field += 4;
       break;
     case FIELD_TYPE_XID:
-      if (byte_buffer_read_int32 (buffer, (uint32_t *)message_field, error))
+      *(uint32_t *)message_field = byte_buffer_read_int32 (buffer, error);
+      
+      if (elvin_error_ok (error))
       {
         if (*(uint32_t *)message_field <= 0)
-        {
           elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "XID cannot be <= 0");
-          ok = false;
-        }
       }
       message_field += 4;
       
       break;
     case FIELD_TYPE_STRING:
       /* TODO */
-      ok = byte_buffer_skip (buffer, 4, error);
+      byte_buffer_skip (buffer, 4, error);
       message_field += sizeof (char *);
       break;
     case FIELD_TYPE_NAMED_VALUES:
       /* TODO */
-      ok = byte_buffer_skip (buffer, 4, error);
+      byte_buffer_skip (buffer, 4, error);
       message_field += sizeof (NamedValues *);
       break;
     case FIELD_TYPE_KEYS:
       /* TODO */
-      ok = byte_buffer_skip (buffer, 4, error);
+      byte_buffer_skip (buffer, 4, error);
       message_field += sizeof (Keys *);
       break;
     default:
@@ -256,7 +256,7 @@ Message read_using_format (ByteBuffer *buffer,
     }
   }
   
-  if (ok)
+  if (elvin_error_ok (error))
   {
     return message;
   } else
@@ -273,30 +273,30 @@ bool write_using_format (ByteBuffer *buffer,
                          ElvinError *error)
 {
   const char *field;
-  bool ok = true;
   
-  for (field = format->field_types; ok && *field; field += 3)
+  for (field = format->field_types; 
+       elvin_error_ok (error) && *field; field += 3)
   {
     switch (field_id_of (field))
     {
     case FIELD_TYPE_INT32:
     case FIELD_TYPE_XID:
-      ok = byte_buffer_write_int32 (buffer, *(uint32_t *)message, error);
+      byte_buffer_write_int32 (buffer, *(uint32_t *)message, error);
       message += 4;      
       break;
     case FIELD_TYPE_STRING:
       /* TODO */
-      ok = byte_buffer_write_int32 (buffer, 0, error);
+      byte_buffer_write_int32 (buffer, 0, error);
       message += sizeof (char *);
       break;
     case FIELD_TYPE_NAMED_VALUES:
       /* TODO */
-      ok = byte_buffer_write_int32 (buffer, 0, error);
+      byte_buffer_write_int32 (buffer, 0, error);
       message += sizeof (NamedValues *);
       break;
     case FIELD_TYPE_KEYS:
       /* TODO */
-      ok = byte_buffer_write_int32 (buffer, 0, error);
+      byte_buffer_write_int32 (buffer, 0, error);
       message += sizeof (Keys *);
       break;
     default:
@@ -304,7 +304,7 @@ bool write_using_format (ByteBuffer *buffer,
     }
   }
 
-  return ok;
+  return elvin_error_ok (error);
 }
 
 MessageFormat *message_format_for (MessageTypeID type)
