@@ -189,17 +189,19 @@ Message send_and_receive (int socket, Message request,
 
 bool send_message (int socket, Message message, ElvinError *error)
 {
-  ByteBuffer *buffer = byte_buffer_create ();
+  ByteBuffer buffer;
   size_t position = 0;
   
-  message_write (buffer, message, error);
+  byte_buffer_init (&buffer);
+  
+  message_write (&buffer, message, error);
 
   /* todo set max size */
 
-  while (position < buffer->position && elvin_error_ok (error))
+  while (position < buffer.position && elvin_error_ok (error))
   {
-    size_t written = send (socket, buffer->data + position, 
-                           buffer->position - position, 0);
+    size_t written = send (socket, buffer.data + position, 
+                           buffer.position - position, 0);
     
     if (written == -1)
       elvin_error_from_errno (error);
@@ -207,14 +209,14 @@ bool send_message (int socket, Message message, ElvinError *error)
       position += written;      
   }
   
-  byte_buffer_destroy (buffer);
+  byte_buffer_free (&buffer);
   
   return elvin_error_ok (error);
 }
 
 Message receive_message (int socket, ElvinError *error)
 {
-  ByteBuffer *buffer;
+  ByteBuffer buffer;
   Message message = NULL;
   uint32_t frame_size;
   size_t position = 0;
@@ -229,16 +231,16 @@ Message receive_message (int socket, ElvinError *error)
     return NULL;
   }
   
-  /* todo check size is not too big */
   frame_size = ntohl (frame_size);
 
-  buffer = byte_buffer_create_sized (frame_size);
+  /* todo check size is not too big */
+  byte_buffer_init_sized (&buffer, frame_size);
 
-  while (position < buffer->max_data_length && elvin_error_ok (error))
+  while (position < buffer.max_data_length && elvin_error_ok (error))
   {
     bytes_read = 
-      recv (socket, buffer->data + position, 
-            buffer->max_data_length - position, 0);
+      recv (socket, buffer.data + position, 
+            buffer.max_data_length - position, 0);
    
     if (bytes_read == -1)
       elvin_error_from_errno (error);
@@ -247,7 +249,9 @@ Message receive_message (int socket, ElvinError *error)
   }
 
   if (elvin_error_ok (error))
-    message = message_read (buffer, error);
+    message = message_read (&buffer, error);
+  
+  byte_buffer_free (&buffer);
 
   return message;
 }
