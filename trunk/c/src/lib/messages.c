@@ -11,23 +11,29 @@
 #include "messages.h"
 #include "byte_buffer.h"
 
+/** 
+ * Defines the format of an Elvin message.
+ * 
+ * id: The message type ID.
+ * field_types: The fields of the message, represented as a string of 
+ * two-letter value types, separated by spaces. 
+ *   XI = XID
+ *   I4 = int 32
+ *   I8 = int 64
+ *   R8 = real 64
+ *   ST = string
+ *   VA = value array
+ *   NV = named values
+ *   KY = keys
+ * field_names: The names of the fields, in the same order as field_types.
+ */ 
 typedef struct
 {
   MessageTypeID id;
   const char *field_types;
-  const char *field_names [16];
+  const char *field_names [32];
 } MessageFormat;
 
-/* 
- * XI = XID
- * I4 = int 32
- * I8 = int 64
- * R8 = real 64
- * ST = string
- * VA = value array
- * NV = named values
- * KY = keys
- */ 
 static MessageFormat MESSAGE_FORMATS [] = 
 {
   {MESSAGE_ID_NACK,
@@ -72,10 +78,10 @@ static bool write_using_format (ByteBuffer *buffer,
                                 Message message,
                                 ElvinError *error);
 
-static uint32_t global_xid_counter = 0;
+static uint32_t xid_counter = 1;
 
 /* todo this is not thread safe */
-#define next_xid() (++global_xid_counter)
+#define next_xid() (xid_counter++)
 
 Message message_init (Message message, MessageTypeID type, ...)
 {
