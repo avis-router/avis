@@ -23,7 +23,7 @@
 /*
  * A client's connection to an Elvin router.
  * 
- * See elvin_open() and elvin_open_url().
+ * See elvin_open() and elvin_open_uri().
  */
 typedef struct
 {
@@ -33,7 +33,7 @@ typedef struct
 /**
  * A URL referring to an Elvin router.
  * 
- * See elvin_url_from_string() and elvin_open_url().
+ * See elvin_url_from_string() and elvin_open_uri().
  */
 typedef struct
 {
@@ -42,7 +42,7 @@ typedef struct
 } ElvinURI;
 
 bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error);
-bool elvin_open_url (Elvin *elvin, ElvinURI *url, ElvinError *error);
+bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error);
 bool elvin_close (Elvin *elvin);
 
 bool elvin_url_from_string (ElvinURI *url, const char *url_string, 

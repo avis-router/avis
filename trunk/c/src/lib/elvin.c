@@ -38,10 +38,10 @@ bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
   if (!elvin_url_from_string (&url, router_url, error))
     return false;
 
-  return elvin_open_url (elvin, &url, error);
+  return elvin_open_uri (elvin, &url, error);
 }
 
-bool elvin_open_url (Elvin *elvin, ElvinURI *url, ElvinError *error)
+bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
 {
   Message connRqst;
   Message reply;
@@ -87,11 +87,11 @@ bool elvin_close (Elvin *elvin)
   if (reply)
     message_destroy (reply);
 
-#ifdef WIN32
-  closesocket (elvin->socket);
-#else //WIN32
-  close (elvin->socket);
-#endif //WIN32
+  #ifdef WIN32
+    closesocket (elvin->socket);
+  #else
+    close (elvin->socket);
+  #endif
 
   elvin->socket = -1;
   
@@ -119,20 +119,21 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   
   if (host_info == NULL) 
   {
-	const char *errorstring;
-#ifdef WIN32
-	errorstring = "Host lookup error ";
-#else //WIN32
-	errorstring = hstrerror (h_errno);
-#endif //WIN32
-    return elvin_error_set (error, 
-                            HOST_TO_ELVIN_ERROR (h_errno), errorstring);
+	  const char *message;
+	 
+    #ifdef WIN32
+	    message = "Host lookup error";
+    #else
+	    message = hstrerror (h_errno);
+    #endif
+    
+  	return elvin_error_set (error, HOST_TO_ELVIN_ERROR (h_errno), message);
   }
   
   router_addr.sin_family = AF_INET;
   router_addr.sin_port = htons (port);
   router_addr.sin_addr = *((struct in_addr *)host_info->h_addr);
-  memset (router_addr.sin_zero, '\0', sizeof router_addr.sin_zero);
+  memset (router_addr.sin_zero, '\0', sizeof (router_addr.sin_zero));
   
   sockfd = socket (PF_INET, SOCK_STREAM, 0);
   
@@ -140,7 +141,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
     return elvin_error_from_errno (error);
   
   if (connect (sockfd, (struct sockaddr *)&router_addr, 
-               sizeof router_addr) == 0)
+               sizeof (router_addr)) == 0)
   {
     elvin->socket = sockfd;
     
@@ -190,27 +191,20 @@ bool send_message (int socket, Message message, ElvinError *error)
 {
   ByteBuffer *buffer = byte_buffer_create ();
   size_t position = 0;
-  size_t written;
   
-  /* message_write () should only fail if an internal error */
-  assert (message_write (buffer, message, error));
-    
+  message_write (buffer, message, error);
+
   /* todo set max size */
 
-  while (position < buffer->position)
+  while (position < buffer->position && elvin_error_ok (error))
   {
-    written = send (socket, buffer->data + position, 
-                    buffer->position - position, 0);
+    size_t written = send (socket, buffer->data + position, 
+                           buffer->position - position, 0);
     
     if (written == -1)
-    {
       elvin_error_from_errno (error);
-      
-      break;
-    } else
-    {
+    else
       position += written;      
-    }
   }
   
   byte_buffer_destroy (buffer);
@@ -239,22 +233,17 @@ Message receive_message (int socket, ElvinError *error)
   frame_size = ntohl (frame_size);
 
   buffer = byte_buffer_create_sized (frame_size);
-    
-  while (position < buffer->max_data_length)
+
+  while (position < buffer->max_data_length && elvin_error_ok (error))
   {
     bytes_read = 
       recv (socket, buffer->data + position, 
             buffer->max_data_length - position, 0);
    
     if (bytes_read == -1)
-    {
       elvin_error_from_errno (error);
-      
-      break;
-    } else
-    {
+    else
       position += bytes_read;
-    }
   }
 
   if (elvin_error_ok (error))
