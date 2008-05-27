@@ -28,7 +28,7 @@ typedef struct
  * NV = named values
  * KY = keys
  */ 
-static MessageFormat message_formats [] = 
+static MessageFormat MESSAGE_FORMATS [] = 
 {
   {MESSAGE_ID_NACK,
     "XI I4 ST VA ", {"xid", "error", "message", "args"}},
@@ -215,9 +215,10 @@ Message read_using_format (ByteBuffer *buffer,
 {
   const char *field;
   Message message_field = message;
-   
+
+  /* loop through 2 character (plus space) field types in format */
   for (field = format->field_types; 
-       elvin_error_ok (error) && *field; field += 3)
+       *field && elvin_error_ok (error); field += 3)
   {
     switch (field_id_of (field))
     {
@@ -256,15 +257,14 @@ Message read_using_format (ByteBuffer *buffer,
     }
   }
   
-  if (elvin_error_ok (error))
-  {
-    return message;
-  } else
+  if (elvin_error_occurred (error))
   {
     free (message);
     
-    return NULL;
+    message = NULL;
   }
+  
+  return message;
 }
 
 bool write_using_format (ByteBuffer *buffer, 
@@ -274,8 +274,9 @@ bool write_using_format (ByteBuffer *buffer,
 {
   const char *field;
   
+  /* loop through 2 character (plus space) field types in format */
   for (field = format->field_types; 
-       elvin_error_ok (error) && *field; field += 3)
+       *field && elvin_error_ok (error); field += 3)
   {
     switch (field_id_of (field))
     {
@@ -309,12 +310,12 @@ bool write_using_format (ByteBuffer *buffer,
 
 MessageFormat *message_format_for (MessageTypeID type)
 {
-  int i;
+  MessageFormat *format;
   
-  for (i = 0; message_formats [i].id != -1; i++)
+  for (format = MESSAGE_FORMATS; format->id != -1; format++)
   {
-    if (message_formats [i].id == type)
-      return &message_formats [i];
+    if (format->id == type)
+      return format;
   }
   
   DIAGNOSTIC1 ("Failed to lookup info for message type %i", type);
