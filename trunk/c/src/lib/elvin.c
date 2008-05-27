@@ -33,7 +33,7 @@ static Message receive_message (int socket, ElvinError *error);
 
 bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
 {
-  ElvinURL url;
+  ElvinURI url;
   
   if (!elvin_url_from_string (&url, router_url, error))
     return false;
@@ -41,7 +41,7 @@ bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
   return elvin_open_url (elvin, &url, error);
 }
 
-bool elvin_open_url (Elvin *elvin, ElvinURL *url, ElvinError *error)
+bool elvin_open_url (Elvin *elvin, ElvinURI *url, ElvinError *error)
 {
   Message connRqst;
   Message reply;
@@ -100,7 +100,7 @@ bool elvin_close (Elvin *elvin)
   return true;
 }
 
-bool elvin_url_from_string (ElvinURL *url, const char *url_string, 
+bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
                             ElvinError *error)
 {
   /* TODO */
