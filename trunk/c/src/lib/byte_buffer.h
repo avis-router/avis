@@ -12,11 +12,15 @@ typedef struct
   uint8_t *data;
 } ByteBuffer;
 
-ByteBuffer *byte_buffer_create ();
+#define byte_buffer_create() (byte_buffer_init (malloc (sizeof (ByteBuffer))))
 
-ByteBuffer *byte_buffer_create_sized (size_t initial_size);
+ByteBuffer *byte_buffer_init (ByteBuffer *buffer);
 
-void byte_buffer_destroy (ByteBuffer *buffer);
+ByteBuffer *byte_buffer_init_sized (ByteBuffer *buffer, size_t initial_size);
+
+#define byte_buffer_destroy(buffer) (byte_buffer_free (buffer), free (buffer))
+
+void byte_buffer_free (ByteBuffer *buffer);
 
 uint32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error);
 

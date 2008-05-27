@@ -2,12 +2,6 @@
 #include <errno.h>
 #include <string.h>
 
-#ifdef WIN32
-#include <winsock.h>
-#else //WIN32
-#include <netinet/in.h>
-#endif //!WIN32
-
 #include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
@@ -24,10 +18,8 @@ static bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
 
 static void expand_buffer (ByteBuffer *buffer, size_t new_length);
 
-ByteBuffer *byte_buffer_create ()
+ByteBuffer *byte_buffer_init (ByteBuffer *buffer)
 {
-  ByteBuffer *buffer = malloc (sizeof (ByteBuffer));
-  
   buffer->data_length = INIT_LENGTH;
   buffer->max_data_length = MAX_LENGTH;
   buffer->data = malloc (INIT_LENGTH);
@@ -36,13 +28,8 @@ ByteBuffer *byte_buffer_create ()
   return buffer;
 }
 
-/**
- * Create an instance with an initial max, fixed size.
- */
-ByteBuffer *byte_buffer_create_sized (size_t initial_size)
+ByteBuffer *byte_buffer_init_sized (ByteBuffer *buffer, size_t initial_size)
 {
-  ByteBuffer *buffer = malloc (sizeof (ByteBuffer));
-    
   buffer->data_length = initial_size;
   buffer->max_data_length = initial_size;
   buffer->data = malloc (initial_size);
@@ -51,11 +38,12 @@ ByteBuffer *byte_buffer_create_sized (size_t initial_size)
   return buffer;
 }
 
-void byte_buffer_destroy (ByteBuffer *buffer)
+void byte_buffer_free (ByteBuffer *buffer)
 {
   if (buffer->data)
   {
     free (buffer->data);
+    
     buffer->data = NULL;
     buffer->data_length = -1;
   }
@@ -73,11 +61,11 @@ bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
 
 bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
                          ElvinError *error)
-{
-  size_t new_length;
-  
+{  
   if (buffer->data_length < min_length)
   {
+    size_t new_length;
+    
     if (min_length > buffer->max_data_length)
       return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Buffer overflow");
 
@@ -129,10 +117,8 @@ uint32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error)
   if (!check_remaining (buffer, 4, error))
     return 0;
   
-  value = *(uint32_t *)(buffer->data + buffer->position);
-  
-  /* XDR -> native endianness */
-  value = ntohl (value);
+  /* read and convert XDR -> native endianness */
+  value = ntohl (*(uint32_t *)(buffer->data + buffer->position));
   
   buffer->position += 4;
   
