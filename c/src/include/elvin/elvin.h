@@ -39,13 +39,13 @@ typedef struct
 {
   const char *host;
   uint16_t port;
-} ElvinURL;
+} ElvinURI;
 
 bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error);
-bool elvin_open_url (Elvin *elvin, ElvinURL *url, ElvinError *error);
+bool elvin_open_url (Elvin *elvin, ElvinURI *url, ElvinError *error);
 bool elvin_close (Elvin *elvin);
 
-bool elvin_url_from_string (ElvinURL *url, const char *url_string, 
+bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
                             ElvinError *error);
 
 #endif ELVIN_H
