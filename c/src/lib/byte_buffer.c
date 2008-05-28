@@ -2,6 +2,11 @@
 #include <errno.h>
 #include <string.h>
 
+/* For definition of ntohl */
+#ifdef WIN32
+  #include <winsock2.h>
+#endif
+
 #include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
