@@ -8,7 +8,7 @@
 int main (int argc, const char * argv[]) 
 {
   Elvin elvin;
-  ElvinError error;
+  ElvinError error = elvin_error_create ();
   
   if (!elvin_open (&elvin, "elvin://localhost", &error))
   {

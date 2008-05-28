@@ -7,7 +7,10 @@
 
 void elvin_perror (const char *tag, ElvinError *error)
 {
-  printf ("%s: %s", tag, error->message);
+  if (error->message == NULL)
+    fprintf (stderr, "elvin_perror () called with no message\n");
+  else
+    printf ("%s: %s\n", tag, error->message);
 }
 
 bool elvin_error_set (ElvinError *error, int code, const char *message)

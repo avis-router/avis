@@ -11,6 +11,10 @@
 #include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
+#ifdef WIN32
+  #include <winsock2.h>
+#endif
+
 /** The default port for Elvin client connections. */
 #define DEFAULT_ELVIN_PORT 2917
 
@@ -27,7 +31,7 @@
  */
 typedef struct
 {
-  int socket;
+  SOCKET socket;
 } Elvin;
 
 /**

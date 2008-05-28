@@ -24,12 +24,16 @@
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
 
-static Message send_and_receive (int socket, Message request, 
+static Message send_and_receive (SOCKET socket, Message request, 
                                  MessageTypeID reply_type, ElvinError *error);
 
-static bool send_message (int sockfd, Message message, ElvinError *error);
+static bool send_message (SOCKET sockfd, Message message, ElvinError *error);
 
-static Message receive_message (int socket, ElvinError *error);
+static Message receive_message (SOCKET socket, ElvinError *error);
+
+#ifdef WIN32
+  static void initWindowsSockets (ElvinError *error);
+#endif
 
 bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
 {
@@ -89,6 +93,8 @@ bool elvin_close (Elvin *elvin)
 
   #ifdef WIN32
     closesocket (elvin->socket);
+
+    WSACleanup ();
   #else
     close (elvin->socket);
   #endif
@@ -115,16 +121,21 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 {
   struct hostent *host_info = gethostbyname (host);
   struct sockaddr_in router_addr;
-  int sockfd;
+  SOCKET sockfd;
   
+  #ifdef WIN32
+    on_error_return_false (initWindowsSockets (error));
+  #endif
+
   if (host_info == NULL) 
   {
-	  const char *message;
+	const char *message;
 	 
     #ifdef WIN32
-	    message = "Host lookup error";
+      printf ("error code: %i\n", WSAGetLastError ());
+      message = "Host name lookup error";
     #else
-	    message = hstrerror (h_errno);
+      message = hstrerror (h_errno);
     #endif
     
   	return elvin_error_set (error, HOST_TO_ELVIN_ERROR (h_errno), message);
@@ -152,7 +163,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   }
 }
 
-Message send_and_receive (int socket, Message request, 
+Message send_and_receive (SOCKET socket, Message request, 
                           MessageTypeID reply_type, ElvinError *error)
 {
   Message reply;
@@ -187,7 +198,7 @@ Message send_and_receive (int socket, Message request,
   return reply;
 }
 
-bool send_message (int socket, Message message, ElvinError *error)
+bool send_message (SOCKET socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
@@ -200,8 +211,8 @@ bool send_message (int socket, Message message, ElvinError *error)
 
   while (position < buffer.position && elvin_error_ok (error))
   {
-    size_t written = send (socket, buffer.data + position, 
-                           buffer.position - position, 0);
+    int written = send (socket, buffer.data + position, 
+                        buffer.position - position, 0);
     
     if (written == -1)
       elvin_error_from_errno (error);
@@ -214,7 +225,7 @@ bool send_message (int socket, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-Message receive_message (int socket, ElvinError *error)
+Message receive_message (SOCKET socket, ElvinError *error)
 {
   ByteBuffer buffer;
   Message message = NULL;
@@ -255,3 +266,26 @@ Message receive_message (int socket, ElvinError *error)
 
   return message;
 }
+
+#ifdef WIN32
+
+void initWindowsSockets (ElvinError *error)
+{
+  WSADATA wsaData;
+  int err;
+ 
+  err = WSAStartup (MAKEWORD (2, 2), &wsaData);
+  
+  if ( err != 0 )
+  {
+    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to init Winsock");
+  } else if ( LOBYTE (wsaData.wVersion) != 2 ||
+              HIBYTE (wsaData.wVersion) != 2 ) 
+  {
+    WSACleanup ();
+
+    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to init Winsock to 2.2");
+  }
+}
+
+#endif
