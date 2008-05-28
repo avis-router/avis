@@ -119,13 +119,15 @@ bool elvin_url_from_string (ElvinURI *url, const char *url_string,
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error)
 {
-  struct hostent *host_info = gethostbyname (host);
+  struct hostent *host_info;
   struct sockaddr_in router_addr;
   SOCKET sockfd;
   
   #ifdef WIN32
     on_error_return_false (initWindowsSockets (error));
   #endif
+
+  host_info = gethostbyname (host);
 
   if (host_info == NULL) 
   {
