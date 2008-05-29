@@ -5,15 +5,15 @@
 #include <assert.h>
 
 #ifdef WIN32
-#include <winsock2.h>
-#else //WIN32
-#include <unistd.h>
-#include <netdb.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif //WIN32
+  #include <winsock2.h>
+#else
+  #include <unistd.h>
+  #include <netdb.h>
+  #include <sys/socket.h>
+  #include <sys/types.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#endif
 
 #include <elvin/stdtypes.h>
 #include <elvin/elvin.h>
@@ -127,6 +127,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
     on_error_return_false (initWindowsSockets (error));
   #endif
 
+  /* TODO this does not resolve IP addresses on Windows (other?). */
   host_info = gethostbyname (host);
 
   if (host_info == NULL) 
@@ -134,7 +135,6 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 	const char *message;
 	 
     #ifdef WIN32
-      printf ("error code: %i\n", WSAGetLastError ());
       message = "Host name lookup error";
     #else
       message = hstrerror (h_errno);
@@ -280,13 +280,13 @@ void initWindowsSockets (ElvinError *error)
   
   if ( err != 0 )
   {
-    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to init Winsock");
+    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to init winsock library");
   } else if ( LOBYTE (wsaData.wVersion) != 2 ||
               HIBYTE (wsaData.wVersion) != 2 ) 
   {
     WSACleanup ();
 
-    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to init Winsock to 2.2");
+    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to find winsock 2.2");
   }
 }
 
