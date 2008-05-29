@@ -5,9 +5,15 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
 
 AM_CFLAGS = -Wall -std=c99 -pedantic
 
-bin_PROGRAMS=tests
+bin_PROGRAMS=tests basic_test
 
-tests_SOURCES=tests.c check_ext.c check_messages.c check_client.c
+tests_SOURCES = tests.c check_ext.c check_messages.c check_client.c
 
-tests_LDADD=$(top_srcdir)/src/lib/libelvin.la \
-            $(top_srcdir)/packages/check/src/libcheck.la
+tests_LDADD = \
+  $(top_srcdir)/src/lib/libelvin.la \
+  $(top_srcdir)/packages/check/src/libcheck.la
+            
+basic_test_SOURCES = basic_test.c
+
+basic_test_LDADD = \
+  $(top_srcdir)/src/lib/libelvin.la
