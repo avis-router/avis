@@ -18,6 +18,7 @@
 #include <elvin/stdtypes.h>
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
+#include <elvin/log.h>
 
 #include "messages.h"
 
@@ -30,6 +31,10 @@ static Message send_and_receive (socket_t socket, Message request,
 static bool send_message (socket_t sockfd, Message message, ElvinError *error);
 
 static Message receive_message (socket_t socket, ElvinError *error);
+
+static bool resolve_address (struct sockaddr_in *router_addr,
+                             const char *host, uint16_t port, 
+                             ElvinError *error);
 
 #ifdef WIN32
   static void initWindowsSockets (ElvinError *error);
@@ -119,34 +124,14 @@ bool elvin_url_from_string (ElvinURI *url, const char *url_string,
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error)
 {
-  struct hostent *host_info;
   struct sockaddr_in router_addr;
   socket_t sockfd;
   
   #ifdef WIN32
     on_error_return_false (initWindowsSockets (error));
-  #endif
-
-  /* TODO this does not resolve IP addresses on Windows (other?). */
-  host_info = gethostbyname (host);
-
-  if (host_info == NULL) 
-  {
-	const char *message;
-	 
-    #ifdef WIN32
-      message = "Host name lookup error";
-    #else
-      message = hstrerror (h_errno);
-    #endif
-    
-  	return elvin_error_set (error, HOST_TO_ELVIN_ERROR (h_errno), message);
-  }
+  #endif  
   
-  router_addr.sin_family = AF_INET;
-  router_addr.sin_port = htons (port);
-  router_addr.sin_addr = *((struct in_addr *)host_info->h_addr);
-  memset (router_addr.sin_zero, '\0', sizeof (router_addr.sin_zero));
+  on_error_return_false (resolve_address (&router_addr, host, port, error));
   
   sockfd = socket (PF_INET, SOCK_STREAM, 0);
   
@@ -163,6 +148,43 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   {
     return elvin_error_from_errno (error);
   }
+}
+
+bool resolve_address (struct sockaddr_in *router_addr,
+                      const char *host, uint16_t port, 
+                      ElvinError *error)
+{
+  struct addrinfo hints;
+  struct addrinfo *address_info;
+  int error_code;
+  
+  memset (&hints, '\0', sizeof (struct addrinfo));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+
+  if ((error_code = getaddrinfo (host, NULL, &hints, &address_info)) != 0)
+  {
+    return elvin_error_set (error, HOST_TO_ELVIN_ERROR (error_code), 
+                            gai_strerror (error_code));
+  }
+  
+  memcpy (router_addr, address_info->ai_addr, address_info->ai_addrlen);  
+  memset (router_addr->sin_zero, '\0', sizeof (router_addr->sin_zero));
+  router_addr->sin_port = htons (port);
+    
+  #if LOGGING (LOG_LEVEL_DIAGNOSTIC)
+  {
+    char ip [46];
+
+    inet_ntop (address_info->ai_family, &router_addr->sin_addr, 
+               ip, sizeof (ip));
+    DIAGNOSTIC2 ("Resolved router address %s = %s\n", host, ip);
+  }
+  #endif
+  
+  freeaddrinfo (address_info);
+
+  return true;
 }
 
 Message send_and_receive (socket_t socket, Message request, 
