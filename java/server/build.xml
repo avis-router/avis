@@ -49,6 +49,7 @@
     
     <fileset dir="lib">
       <include name="fastutil-subset.jar" />
+      <include name="asyncweb*.jar" />
     </fileset>
           
     <pathelement path="classes/main" />
