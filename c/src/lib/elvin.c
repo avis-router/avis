@@ -235,7 +235,7 @@ Message receive_message (socket_t socket, ElvinError *error)
   size_t position = 0;
   size_t bytes_read;
     
-  bytes_read = recv (socket, &frame_size, 4, 0);
+  bytes_read = recv (socket, (void *)&frame_size, 4, 0);
   
   if (bytes_read != 4)
   {

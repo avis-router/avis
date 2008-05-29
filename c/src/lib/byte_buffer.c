@@ -146,7 +146,7 @@ bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value,
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
                                ElvinError *error)
 {
-  uint32_t length = strlen (string);
+  uint32_t length = (uint32_t)strlen (string);
   
   on_error_return_false 
     (auto_resize_to_fit (buffer, buffer->position + length + 4, error));

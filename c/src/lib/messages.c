@@ -207,7 +207,7 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   
   /* write frame length */
   byte_buffer_set_position (buffer, 0, error);
-  byte_buffer_write_int32 (buffer, frame_size, error);
+  byte_buffer_write_int32 (buffer, (uint32_t)frame_size, error);
   
   byte_buffer_set_position (buffer, frame_size + 4, error);
   
