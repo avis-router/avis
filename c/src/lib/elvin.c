@@ -38,7 +38,7 @@ static bool resolve_address (struct sockaddr_in *router_addr,
                              ElvinError *error);
 
 #ifdef WIN32
-  static void initWindowsSockets (ElvinError *error);
+  static void init_windows_sockets (ElvinError *error);
 #endif
 
 bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
@@ -129,7 +129,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   socket_t sockfd;
   
   #ifdef WIN32
-    on_error_return_false (initWindowsSockets (error));
+    on_error_return_false (init_windows_sockets (error));
   #endif  
   
   on_error_return_false (resolve_address (&router_addr, host, port, error));
@@ -294,7 +294,7 @@ Message receive_message (socket_t socket, ElvinError *error)
 
 #ifdef WIN32
 
-void initWindowsSockets (ElvinError *error)
+void init_windows_sockets (ElvinError *error)
 {
   WSADATA wsaData;
   int err;
