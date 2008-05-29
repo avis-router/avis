@@ -6,6 +6,7 @@
 
 #ifdef WIN32
   #include <winsock2.h>
+  #include <ws2tcpip.h>
 #else
   #include <unistd.h>
   #include <netdb.h>
