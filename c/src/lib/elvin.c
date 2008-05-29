@@ -24,12 +24,12 @@
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
 
-static Message send_and_receive (SOCKET socket, Message request, 
+static Message send_and_receive (socket_t socket, Message request, 
                                  MessageTypeID reply_type, ElvinError *error);
 
-static bool send_message (SOCKET sockfd, Message message, ElvinError *error);
+static bool send_message (socket_t sockfd, Message message, ElvinError *error);
 
-static Message receive_message (SOCKET socket, ElvinError *error);
+static Message receive_message (socket_t socket, ElvinError *error);
 
 #ifdef WIN32
   static void initWindowsSockets (ElvinError *error);
@@ -121,7 +121,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 {
   struct hostent *host_info;
   struct sockaddr_in router_addr;
-  SOCKET sockfd;
+  socket_t sockfd;
   
   #ifdef WIN32
     on_error_return_false (initWindowsSockets (error));
@@ -165,7 +165,7 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   }
 }
 
-Message send_and_receive (SOCKET socket, Message request, 
+Message send_and_receive (socket_t socket, Message request, 
                           MessageTypeID reply_type, ElvinError *error)
 {
   Message reply;
@@ -200,7 +200,7 @@ Message send_and_receive (SOCKET socket, Message request,
   return reply;
 }
 
-bool send_message (SOCKET socket, Message message, ElvinError *error)
+bool send_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
@@ -227,7 +227,7 @@ bool send_message (SOCKET socket, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-Message receive_message (SOCKET socket, ElvinError *error)
+Message receive_message (socket_t socket, ElvinError *error)
 {
   ByteBuffer buffer;
   Message message = NULL;

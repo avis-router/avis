@@ -13,6 +13,10 @@
 
 #ifdef WIN32
   #include <winsock2.h>
+
+  typedef SOCKET socket_t;
+#else
+  typedef int socket_t;
 #endif
 
 /** The default port for Elvin client connections. */
@@ -31,7 +35,7 @@
  */
 typedef struct
 {
-  SOCKET socket;
+  socket_t socket;
 } Elvin;
 
 /**
