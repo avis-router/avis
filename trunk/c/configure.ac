@@ -6,7 +6,7 @@ AC_INIT([Avis Client], [1.0], [phillipsm@sourceforge.net])
 
 # fairly severe build strictness
 # change foreign to gnu or gnits to comply with gnu standards
-AM_INIT_AUTOMAKE([-Wall foreign 1.9.6])
+AM_INIT_AUTOMAKE([-Wall foreign 1.9.5])
 
 # unique source file --- primitive safety check 
 #AC_CONFIG_SRCDIR([src/money.c])
