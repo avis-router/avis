@@ -104,7 +104,7 @@ bool named_values_write (ByteBuffer *buffer, NamedValues *values,
       
       if (byte_buffer_write_string (buffer, name, error)) 
         value_write (buffer, value, error);
-    } while (elvin_error_ok (error) && hashtable_iterator_advance (i));
+    } while (hashtable_iterator_advance (i) && elvin_error_ok (error));
     
     free (i);
   }
