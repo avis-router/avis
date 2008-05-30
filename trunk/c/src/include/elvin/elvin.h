@@ -8,6 +8,7 @@
 #ifndef ELVIN_H
 #define ELVIN_H
 
+#include <elvin/named_values.h>
 #include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 
@@ -51,6 +52,7 @@ typedef struct
 
 bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error);
 bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error);
+bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
 bool elvin_close (Elvin *elvin);
 
 bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
