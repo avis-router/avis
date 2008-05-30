@@ -4,6 +4,7 @@
 #include <elvin/stdtypes.h>
 #include <elvin/values.h>
 #include <elvin/errors.h>
+#include <elvin/log.h>
 
 #include "byte_buffer.h"
 
@@ -65,9 +66,11 @@ Value *value_read (ByteBuffer *buffer, ElvinError *error)
     break;
   case TYPE_INT64:
     /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    byte_buffer_skip (buffer, 8, error);
     break;
   case TYPE_REAL64:
     /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    byte_buffer_skip (buffer, 8, error);
     break;
   case TYPE_STRING:
     value->value.str = byte_buffer_read_string (buffer, error);
@@ -76,6 +79,8 @@ Value *value_read (ByteBuffer *buffer, ElvinError *error)
     /* TODO byte_buffer_read_bytes_var (buffer, error);*/
     break;
   default:
+    DIAGNOSTIC1 ("Invalid value type found %u", type);
+    
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid value type");
   }
   
