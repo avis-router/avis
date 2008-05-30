@@ -2,9 +2,7 @@
 
 AM_CFLAGS = -Wall -std=c89 -pedantic
 
-lib_LTLIBRARIES = libhashtable.la
+noinst_LTLIBRARIES = libhashtable.la
 
 libhashtable_la_SOURCES = hashtable.c \
                           hashtable_itr.c
-
-# noinst_LTLIBRARIES = libhashtable.la
