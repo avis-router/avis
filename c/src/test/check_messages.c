@@ -113,7 +113,7 @@ START_TEST (test_string_io)
   byte_buffer_write_string (buffer, "hello world", &error);
   fail_on_error (&error);
   
-  fail_unless (buffer->position == 15, "Length incorrect");
+  fail_unless (buffer->position == 16, "Length incorrect");
   
   byte_buffer_set_position (buffer, 0, &error);
   
@@ -132,8 +132,25 @@ END_TEST
 START_TEST (test_named_values_io)
 {
   ByteBuffer *buffer = byte_buffer_create ();
+  NamedValues *values2;
+  NamedValues *values;
   
-  NamedValues *values = named_values_create ();
+  // empty values
+  named_values_write (buffer, EMPTY_NAMED_VALUES, &error);
+  fail_on_error (&error);
+    
+  byte_buffer_set_position (buffer, 0, &error);
+  values2 = named_values_create ();
+  named_values_read (buffer, values2, &error);
+  fail_on_error (&error);
+  
+  fail_unless (named_values_size (values2) == 0, "Empty values failed");
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  named_values_destroy (values2);
+  
+  // non empty values
+  values = named_values_create ();
   
   named_values_set_int32 (values, "int32", 42);
   named_values_set_string (values, "string", "hello world");
@@ -150,7 +167,7 @@ START_TEST (test_named_values_io)
   fail_on_error (&error);
   
   byte_buffer_set_position (buffer, 0, &error);
-  NamedValues *values2 = named_values_create ();  
+  values2 = named_values_create ();  
   
   named_values_read (buffer, values2, &error);
   fail_on_error (&error);
