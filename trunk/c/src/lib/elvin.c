@@ -120,9 +120,7 @@ bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT, 
                 notification, true, EMPTY_KEYS);
   
-  send_message (elvin->socket, notify_emit, error);
-  
-  return elvin_error_ok (error);
+  return send_message (elvin->socket, notify_emit, error);
 }
 
 bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
