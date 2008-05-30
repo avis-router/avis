@@ -178,9 +178,8 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
     return NULL;
   }
 
-  /* TODO */
-/*  if (buffer->position < buffer->max_data_length)
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow"); */
+  if (buffer->position < buffer->max_data_length)
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
   
   return message;
 }
@@ -232,11 +231,13 @@ Message read_using_format (ByteBuffer *buffer,
       message_field += 4;
       break;
     case FIELD_TYPE_XID:
-      *(uint32_t *)message_field = byte_buffer_read_int32 (buffer, error);
+      int_value = byte_buffer_read_int32 (buffer, error);
       
       if (elvin_error_ok (error))
       {
-        if (*(uint32_t *)message_field <= 0)
+        *(uint32_t *)message_field = int_value;
+        
+        if (int_value <= 0)
           elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "XID cannot be <= 0");
       }
       message_field += 4;
@@ -256,8 +257,7 @@ Message read_using_format (ByteBuffer *buffer,
       
       break;
     case FIELD_TYPE_STRING:
-      /* TODO */
-      byte_buffer_skip (buffer, 4, error);
+      *(char **)message_field = byte_buffer_read_string (buffer, error);
       message_field += sizeof (char *);
       break;
     case FIELD_TYPE_NAMED_VALUES:
@@ -311,8 +311,7 @@ bool write_using_format (ByteBuffer *buffer,
       message += 4;      
       break;
     case FIELD_TYPE_STRING:
-      /* TODO */
-      byte_buffer_write_int32 (buffer, 0, error);
+      byte_buffer_write_string (buffer, *(char **)message, error);
       message += sizeof (char *);
       break;
     case FIELD_TYPE_NAMED_VALUES:
