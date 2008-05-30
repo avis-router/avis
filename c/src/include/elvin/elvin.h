@@ -46,7 +46,7 @@ typedef struct
  */
 typedef struct
 {
-  const char *host;
+  char *host;
   uint16_t port;
 } ElvinURI;
 
@@ -55,7 +55,9 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error);
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
 bool elvin_close (Elvin *elvin);
 
-bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
+bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string, 
                             ElvinError *error);
+
+void elvin_uri_free (ElvinURI *uri);
 
 #endif /* ELVIN_H */
