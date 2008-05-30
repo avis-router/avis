@@ -24,6 +24,31 @@ static void teardown ()
   elvin_error_destroy (&error);
 }
 
+#define check_invalid_uri(uri_string)\
+{\
+  elvin_uri_from_string (&uri, uri_string, &error);\
+  fail_unless_error_code (&error, ELVIN_ERROR_INVALID_URI);\
+}
+
+START_TEST (test_uri)
+{
+  ElvinURI uri;
+  
+  elvin_uri_from_string (&uri, "elvin://host", &error);
+  fail_on_error (&error);
+  
+  fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
+  
+  check_invalid_uri ("hello://localhost");  
+  check_invalid_uri ("elvin://");
+  check_invalid_uri ("elvin:/");
+  check_invalid_uri ("elvin::/");
+  check_invalid_uri ("elvin:");
+  check_invalid_uri ("elvin");
+  check_invalid_uri ("");
+}
+END_TEST
+
 START_TEST (test_connect)
 {
   Elvin elvin;
@@ -59,6 +84,7 @@ END_TEST
 TCase *client_tests ()
 {
   TCase *tc_core = tcase_create ("client");
+  tcase_add_test (tc_core, test_uri);
   tcase_add_test (tc_core, test_connect);
   tcase_add_test (tc_core, test_notify);
  

@@ -41,14 +41,28 @@ static bool resolve_address (struct sockaddr_in *router_addr,
   static void init_windows_sockets (ElvinError *error);
 #endif
 
-bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
+bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error)
 {
-  ElvinURI url;
+  ElvinURI uri;
   
-  if (!elvin_url_from_string (&url, router_url, error))
+  if (!elvin_uri_from_string (&uri, router_uri, error))
     return false;
 
-  return elvin_open_uri (elvin, &url, error);
+  elvin_open_uri (elvin, &uri, error);
+  
+  elvin_uri_free (&uri);
+  
+  return elvin_error_ok (error);
+}
+
+void elvin_uri_free (ElvinURI *uri)
+{
+  if (uri->host)
+  {
+    free (uri->host);
+    
+    uri->host = NULL;
+  }
 }
 
 bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
@@ -123,12 +137,57 @@ bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
   return send_message (elvin->socket, notify_emit, error);
 }
 
-bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
+#define parse_fail(expr,message) \
+  if (expr) \
+  {\
+    elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);\
+    return false;\
+  }
+
+bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string, 
                             ElvinError *error)
 {
-  /* TODO */
-  url->host = "localhost";
-  url->port = DEFAULT_ELVIN_PORT;
+  const char *index1 = uri_string;
+  const char *index2;
+  
+  uri->host = NULL;
+  uri->port = DEFAULT_ELVIN_PORT;
+  
+  /* elvin://host*/
+  /* elvin://host:port*/
+  /* elvin:/xdr,none,ssl/host:port*/
+  /* elvin:4.1/xdr,none,ssl/host:port*/
+  /* elvin:4.1/xdr,none,ssl/host:port?n1=v1;n2=v2*/
+  
+  index2 = strchr (index1, ':');
+  
+  parse_fail (index2 == NULL, "No URI scheme present");
+  parse_fail (memcmp ("elvin", index1, index2 - index1) != 0, 
+              "Not an Elvin URI");
+  
+  /* first slash */
+  index1 = strchr (index2 + 1, '/');
+  parse_fail (index1 == NULL, "No host name present");
+  
+  if (index1 != index2 + 1)
+  {
+    /* TODO parse version */
+  }
+
+  /* second slash */
+  index2 = strchr (index1 + 1, '/');
+  parse_fail (index2 == NULL, "Missing second /");
+  
+  if (index2 != index1 + 1)
+  {
+    /* TODO parse protocol stack */
+  }
+  
+  index2++;
+  
+  parse_fail (*index2 == '\0', "Missing hostname");
+  
+  uri->host = strdup (index2);
   
   return true;
 }
