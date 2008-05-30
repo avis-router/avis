@@ -14,7 +14,6 @@ typedef struct
 
 extern NamedValues _empty_named_values;
 
-/* TODO */
 #define EMPTY_NAMED_VALUES (&_empty_named_values)
 
 #define named_values_create() \
