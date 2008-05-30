@@ -1,7 +1,11 @@
 #ifndef ELVIN_MESSAGES_H
 #define ELVIN_MESSAGES_H
 
-#include <alloca.h>
+#ifdef WIN32
+  #include <malloc.h>
+#else
+  #include <alloca.h>
+#endif
 
 #include <elvin/stdtypes.h>
 #include <elvin/named_values.h>
