@@ -63,6 +63,22 @@ uint32_t named_values_get_int32 (NamedValues *values, const char *name)
     return 0;
 }
 
+void named_values_set_string (NamedValues *values, 
+                              const char *name, const char *value)
+{
+  named_values_set (values, name, value_create_string (value));
+}
+
+const char *named_values_get_string (NamedValues *values, const char *name)
+{
+  Value *value = hashtable_search (values->table, (void *)name);
+    
+  if (value && value->type == TYPE_STRING)
+    return value->value.str;
+  else
+    return NULL;
+}
+
 bool named_values_write (ByteBuffer *buffer, NamedValues *values, 
                          ElvinError *error)
 {
