@@ -35,10 +35,32 @@ START_TEST (test_connect)
 }
 END_TEST
 
+START_TEST (test_notify)
+{
+  Elvin elvin;
+    
+  elvin_open (&elvin, "elvin://localhost", &error);
+  fail_on_error (&error);
+  
+  NamedValues *ntfn = named_values_create ();
+  
+  named_values_set_int32 (ntfn, "int32", 42);
+  named_values_set_string (ntfn, "string", "paydirt");
+  
+  elvin_send (&elvin, ntfn, &error);
+  fail_on_error (&error);
+  
+  named_values_destroy (ntfn);
+  
+  elvin_close (&elvin);
+}
+END_TEST
+
 TCase *client_tests ()
 {
   TCase *tc_core = tcase_create ("client");
   tcase_add_test (tc_core, test_connect);
+  tcase_add_test (tc_core, test_notify);
  
   tcase_add_checked_fixture (tc_core, setup, teardown);
 
