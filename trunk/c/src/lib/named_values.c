@@ -10,6 +10,10 @@
 #include "values_private.h"
 #include "named_values_private.h"
 
+static struct hashtable _empty_hashtable = {0, NULL, 0, 0, 0, NULL, NULL};
+
+NamedValues _empty_named_values = {&_empty_hashtable};
+
 static unsigned int string_hash (void *string);
 
 static int string_equals (void *string1, void *string2);
@@ -112,17 +116,16 @@ bool named_values_read (ByteBuffer *buffer, NamedValues *values,
                         ElvinError *error)
 {
   uint32_t count;
-  const char *name;
+  char *name;
   Value *value;
   
-  count = byte_buffer_read_int32 (buffer, error);
-
-  for ( ; elvin_error_ok (error) && count > 0; count--)
+  for (count = byte_buffer_read_int32 (buffer, error); 
+       count > 0 && elvin_error_ok (error); count--)
   {
     if ((name = byte_buffer_read_string (buffer, error)) &&
         (value = value_read (buffer, error)))
     {
-      named_values_set (values, name, value);
+      hashtable_insert (values->table, name, value);
     }
   }
   
