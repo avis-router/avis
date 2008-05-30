@@ -53,7 +53,7 @@ bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error)
 
 bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
 {
-  Message connRqst;
+  Message conn_rqst;
   Message reply;
   
   elvin->socket = -1;
@@ -61,16 +61,17 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
   if (!open_socket (elvin, url->host, url->port, error))
     return false;
   
-  connRqst = message_alloca ();
+  conn_rqst = message_alloca ();
   
-  message_init (connRqst, MESSAGE_ID_CONN_RQST, 
+  message_init (conn_rqst, MESSAGE_ID_CONN_RQST, 
                 DEFAULT_CLIENT_PROTOCOL_MAJOR, 
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
                 EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
   
   on_error_return_false 
-    (reply = send_and_receive (elvin->socket, connRqst, 
+    (reply = send_and_receive (elvin->socket, conn_rqst, 
                                MESSAGE_ID_CONN_RPLY, error));
+  
   
   /* todo check message reply options */
   message_destroy (reply);
@@ -81,17 +82,17 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
 bool elvin_close (Elvin *elvin)
 {
   ElvinError error = elvin_error_create ();
-  Message disconnRqst;
+  Message disconn_rqst;
   Message reply;
   
   if (elvin->socket == -1)
     return false;
   
-  disconnRqst = message_alloca ();
-  message_init (disconnRqst, MESSAGE_ID_DISCONN_RQST);
+  disconn_rqst = message_alloca ();
+  message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
   
   reply = 
-    send_and_receive (elvin->socket, disconnRqst, 
+    send_and_receive (elvin->socket, disconn_rqst, 
                       MESSAGE_ID_DISCONN_RPLY, &error);
 
   if (reply)
@@ -110,6 +111,18 @@ bool elvin_close (Elvin *elvin)
   elvin_error_destroy (&error);
   
   return true;
+}
+
+bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
+{
+  Message notify_emit = message_alloca ();
+
+  message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT, 
+                notification, true, EMPTY_KEYS);
+  
+  send_message (elvin->socket, notify_emit, error);
+  
+  return elvin_error_ok (error);
 }
 
 bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
@@ -214,11 +227,7 @@ Message send_and_receive (socket_t socket, Message request,
   }
   
   if (elvin_error_occurred (error))
-  {
-    message_free (reply);
-    
-    reply = NULL;
-  }
+    message_destroy (reply);
   
   return reply;
 }
