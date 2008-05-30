@@ -226,7 +226,7 @@ Message send_and_receive (socket_t socket, Message request,
 bool send_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
-  size_t position = 0;
+  uint32_t position = 0;
   
   byte_buffer_init (&buffer);
   
@@ -236,13 +236,13 @@ bool send_message (socket_t socket, Message message, ElvinError *error)
 
   while (position < buffer.position && elvin_error_ok (error))
   {
-    int written = send (socket, buffer.data + position, 
-                        buffer.position - position, 0);
+    size_t bytes_written = send (socket, buffer.data + position, 
+                                 buffer.position - position, 0);
     
-    if (written == -1)
+    if (bytes_written == -1)
       elvin_error_from_errno (error);
     else
-      position += written;      
+      position += bytes_written;      
   }
   
   byte_buffer_free (&buffer);
@@ -255,14 +255,15 @@ Message receive_message (socket_t socket, ElvinError *error)
   ByteBuffer buffer;
   Message message = NULL;
   uint32_t frame_size;
-  size_t position = 0;
+  uint32_t position = 0;
   size_t bytes_read;
     
   bytes_read = recv (socket, (void *)&frame_size, 4, 0);
   
   if (bytes_read != 4)
   {
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Failed to read frame size");
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                     "Failed to read frame size");
     
     return NULL;
   }
@@ -274,9 +275,8 @@ Message receive_message (socket_t socket, ElvinError *error)
 
   while (position < buffer.max_data_length && elvin_error_ok (error))
   {
-    bytes_read = 
-      recv (socket, buffer.data + position, 
-            buffer.max_data_length - position, 0);
+    bytes_read = recv (socket, buffer.data + position, 
+                       buffer.max_data_length - position, 0);
    
     if (bytes_read == -1)
       elvin_error_from_errno (error);
@@ -301,15 +301,17 @@ void init_windows_sockets (ElvinError *error)
  
   err = WSAStartup (MAKEWORD (2, 2), &wsaData);
   
-  if ( err != 0 )
+  if (err != 0)
   {
-    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to init winsock library");
-  } else if ( LOBYTE (wsaData.wVersion) != 2 ||
-              HIBYTE (wsaData.wVersion) != 2 ) 
+    elvin_error_set (error, ELVIN_ERROR_INTERNAL, 
+                     "Failed to init winsock library");
+  } else if (LOBYTE (wsaData.wVersion) != 2 ||
+             HIBYTE (wsaData.wVersion) != 2) 
   {
     WSACleanup ();
 
-    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "Failed to find winsock 2.2");
+    elvin_error_set (error, ELVIN_ERROR_INTERNAL, 
+                     "Failed to find winsock 2.2");
   }
 }
 
