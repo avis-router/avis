@@ -33,4 +33,4 @@ typedef double real64_t;
   #define false 0
 #endif
 
-#endif //ELVIN_STDTYPES_H
+#endif /* ELVIN_STDTYPES_H */

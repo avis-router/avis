@@ -12,7 +12,7 @@ AC_CONFIG_SRCDIR([src/check.c])
 AC_CONFIG_AUX_DIR([build-aux])
 
 # really severe build strictness
-AM_INIT_AUTOMAKE([-Wall -Werror gnits 1.9.6])
+AM_INIT_AUTOMAKE([-Wall -Werror gnits 1.9.5])
 
 # FIXME: find the other places this stuff is used
 
