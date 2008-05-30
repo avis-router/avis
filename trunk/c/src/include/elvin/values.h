@@ -44,7 +44,7 @@ Value *value_init (Value *value, ValueType type, ...);
 
 void value_free (Value *value);
 
-#define value_destroy(value) (value_free (value), free (value))
+#define value_destroy(value) (value_free (value), free (value), value = NULL)
 
 /** Allocate and init an int32 value. Use value_destroy () when done. */
 #define value_create_int32(value) \
