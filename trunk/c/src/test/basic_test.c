@@ -10,8 +10,9 @@ int main (int argc, const char * argv[])
   Elvin elvin;
   ElvinError error = elvin_error_create ();
   NamedValues *ntfn;
-
-  if (!elvin_open (&elvin, "elvin://localhost", &error))
+  const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
+  
+  if (!elvin_open (&elvin, uri, &error))
   {
     elvin_perror ("open", &error);
     exit (1);
