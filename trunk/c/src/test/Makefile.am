@@ -3,7 +3,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
               -I$(top_srcdir)/packages/check/src $(all_includes)
 
-AM_CFLAGS = -Wall -std=c99 -pedantic
+AM_CFLAGS = -Wall -std=c99 -pedantic -lm
 
 bin_PROGRAMS=tests basic_test
 
