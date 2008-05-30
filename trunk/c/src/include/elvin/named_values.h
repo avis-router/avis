@@ -5,10 +5,10 @@
 #include <elvin/errors.h>
 #include <elvin/values.h>
 
-struct hashtable;
-
 /* TODO */
 #define EMPTY_NAMED_VALUES NULL
+
+struct hashtable;
 
 typedef struct 
 {
