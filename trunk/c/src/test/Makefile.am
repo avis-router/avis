@@ -12,7 +12,7 @@ tests_SOURCES = tests.c check_ext.c check_messages.c check_client.c
 tests_LDADD = \
   $(top_srcdir)/src/lib/libelvin.la \
   $(top_srcdir)/packages/check/src/libcheck.la
-            
+
 basic_test_SOURCES = basic_test.c
 
 basic_test_LDADD = \
