@@ -15,6 +15,8 @@
 #define INIT_LENGTH 1024
 #define MAX_LENGTH (2 * 1024 * 1024)
 
+#define padding_for(length) ((4 - (length & 3)) & 3)
+
 static bool check_remaining (ByteBuffer *buffer, size_t required_remaining, 
                              ElvinError *error);
 
@@ -22,6 +24,9 @@ static bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
                                 ElvinError *error);
 
 static void expand_buffer (ByteBuffer *buffer, size_t new_length);
+
+static bool write_padding_for (ByteBuffer *buffer, uint32_t length, 
+                               ElvinError *error);
 
 ByteBuffer *byte_buffer_init (ByteBuffer *buffer)
 {
@@ -57,10 +62,13 @@ void byte_buffer_free (ByteBuffer *buffer)
 bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
                                ElvinError *error)
 {
-  on_error_return_false (auto_resize_to_fit (buffer, position, error));
+  if (buffer->position != position)
+  {
+    on_error_return_false (auto_resize_to_fit (buffer, position, error));
     
-  buffer->position = position;
-
+    buffer->position = position;
+  }
+  
   return true;
 }
 
@@ -154,7 +162,10 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
   on_error_return_false 
     (byte_buffer_write_int32 (buffer, length, error));
   
-  return byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error);
+  on_error_return_false 
+    (byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error));
+  
+  return write_padding_for (buffer, length, error);
 }
 
 char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
@@ -174,7 +185,8 @@ char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
     return NULL;
   }
   
-  if (!byte_buffer_read_bytes (buffer, (uint8_t *)string, length, error))
+  if (!(byte_buffer_read_bytes (buffer, (uint8_t *)string, length, error) &&
+        byte_buffer_skip (buffer, padding_for (length), error)))
   {
     free (string);
     
@@ -207,6 +219,23 @@ bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes,
   memcpy (buffer->data + buffer->position, bytes, bytes_len);
   
   buffer->position += bytes_len;
+  
+  return true;
+}
+
+bool write_padding_for (ByteBuffer *buffer, uint32_t length, ElvinError *error)
+{
+  uint32_t padding = padding_for (length);
+
+  if (padding > 0)
+  {
+    on_error_return_false 
+      (byte_buffer_ensure_capacity (buffer, buffer->position + padding));
+    
+    memset (buffer->data + buffer->position, 0, padding);
+    
+    buffer->position += padding;
+  }
   
   return true;
 }
