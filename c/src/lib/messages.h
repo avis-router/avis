@@ -1,9 +1,7 @@
 #ifndef ELVIN_MESSAGES_H
 #define ELVIN_MESSAGES_H
 
-#ifdef WIN32
-  #define alloca _alloca
-#endif
+#include <alloca.h>
 
 #include <elvin/stdtypes.h>
 #include <elvin/named_values.h>
