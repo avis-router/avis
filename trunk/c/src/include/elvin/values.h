@@ -1,7 +1,7 @@
 #ifndef VALUES_H_
 #define VALUES_H_
 
-#include <strings.h>
+#include <string.h>
 
 #include <elvin/stdtypes.h>
 
