@@ -1,1 +1,1 @@
-SUBDIRS=hashtable
+SUBDIRS=hashtable check
