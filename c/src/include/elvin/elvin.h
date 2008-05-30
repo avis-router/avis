@@ -58,4 +58,4 @@ bool elvin_close (Elvin *elvin);
 bool elvin_url_from_string (ElvinURI *url, const char *url_string, 
                             ElvinError *error);
 
-#endif ELVIN_H
+#endif /* ELVIN_H */
