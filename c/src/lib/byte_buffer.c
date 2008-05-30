@@ -157,7 +157,7 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
   return byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error);
 }
 
-const char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
+char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
 {
   uint32_t length;
   char *string;

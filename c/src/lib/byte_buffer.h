@@ -30,7 +30,7 @@ bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value,
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
                                ElvinError *error);
 
-const char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error);
+char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error);
 
 bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
                              size_t bytes_len, ElvinError *error);

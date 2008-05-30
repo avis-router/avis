@@ -36,4 +36,9 @@ void named_values_set_int32 (NamedValues *values, const char *name,
 
 uint32_t named_values_get_int32 (NamedValues *values, const char *name);
 
+void named_values_set_string (NamedValues *values, 
+                              const char *name, const char *value);
+
+const char *named_values_get_string (NamedValues *values, const char *name);
+
 #endif /* ELVIN_NAMED_VALUES_H */

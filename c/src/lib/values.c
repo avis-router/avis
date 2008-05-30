@@ -70,7 +70,7 @@ Value *value_read (ByteBuffer *buffer, ElvinError *error)
     /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
     break;
   case TYPE_STRING:
-    value->value.int32 = byte_buffer_read_int32 (buffer, error);
+    value->value.str = byte_buffer_read_string (buffer, error);
     break;
   case TYPE_OPAQUE:
     /* TODO byte_buffer_read_bytes_var (buffer, error);*/
@@ -106,7 +106,7 @@ bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
     /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
     break;
   case TYPE_STRING:
-    value->value.int32 = byte_buffer_read_int32 (buffer, error);
+    byte_buffer_write_string (buffer, value->value.str, error);
     break;
   case TYPE_OPAQUE:
     /* TODO byte_buffer_read_bytes_var (buffer, error);*/
