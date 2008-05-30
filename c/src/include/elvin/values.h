@@ -3,8 +3,6 @@
 
 #include <elvin/stdtypes.h>
 
-typedef double real64_t;
-
 /**
  * The type tag for polymorphic values. These are the same as the type codes 
  * from the client protocol spec.
