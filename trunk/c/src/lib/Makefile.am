@@ -13,6 +13,7 @@ lib_LTLIBRARIES = libelvin.la
 
 libelvin_la_SOURCES = \
   elvin.c \
+  elvin_uri.c \
   messages.c \
   named_values.c \
   byte_buffer.c \
@@ -25,6 +26,8 @@ libelvin_la_LIBADD = \
 
 include_HEADERS = \
   $(public_inc)/elvin.h \
+  $(public_inc)/elvin_uri.h \
   $(public_inc)/keys.h \
+  $(public_inc)/values.h \
   $(public_inc)/named_values.h \
   $(public_inc)/log.h
