@@ -86,12 +86,10 @@ const char *named_values_get_string (NamedValues *values, const char *name)
 bool named_values_write (ByteBuffer *buffer, NamedValues *values, 
                          ElvinError *error)
 {
-  const char *name;
-  Value *value;
   struct hashtable_itr *i;
   
   on_error_return_false 
-    (byte_buffer_write_int32 (buffer, named_values_size (values), error));
+    (byte_buffer_write_int32 (buffer, hashtable_count (values->table), error));
   
   if (hashtable_count (values->table) > 0)
   {
@@ -99,11 +97,8 @@ bool named_values_write (ByteBuffer *buffer, NamedValues *values,
     
     do
     {      
-      name = hashtable_iterator_key (i);
-      value = hashtable_iterator_value (i);
-      
-      if (byte_buffer_write_string (buffer, name, error)) 
-        value_write (buffer, value, error);
+      if (byte_buffer_write_string (buffer, hashtable_iterator_key (i), error)) 
+        value_write (buffer, hashtable_iterator_value (i), error);
     } while (hashtable_iterator_advance (i) && elvin_error_ok (error));
     
     free (i);
@@ -128,7 +123,7 @@ bool named_values_read (ByteBuffer *buffer, NamedValues *values,
       hashtable_insert (values->table, name, value);
     }
   }
-  
+
   return elvin_error_ok (error);
 }
 
