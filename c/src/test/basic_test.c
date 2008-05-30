@@ -9,14 +9,15 @@ int main (int argc, const char * argv[])
 {
   Elvin elvin;
   ElvinError error = elvin_error_create ();
-  
+  NamedValues *ntfn;
+
   if (!elvin_open (&elvin, "elvin://localhost", &error))
   {
     elvin_perror ("open", &error);
     exit (1);
   }
 
-  NamedValues *ntfn = named_values_create ();
+  ntfn = named_values_create ();
     
   named_values_set_int32 (ntfn, "favourite number", 42);
   named_values_set_string (ntfn, "some text", "paydirt");
