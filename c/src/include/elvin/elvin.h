@@ -10,6 +10,7 @@
 
 #include <elvin/named_values.h>
 #include <elvin/stdtypes.h>
+#include <elvin/elvin_uri.h>
 #include <elvin/errors.h>
 
 #ifdef WIN32
@@ -39,25 +40,9 @@ typedef struct
   socket_t socket;
 } Elvin;
 
-/**
- * A URL referring to an Elvin router.
- * 
- * See elvin_url_from_string() and elvin_open_uri().
- */
-typedef struct
-{
-  char *host;
-  uint16_t port;
-} ElvinURI;
-
 bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error);
 bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error);
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
 bool elvin_close (Elvin *elvin);
-
-bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string, 
-                            ElvinError *error);
-
-void elvin_uri_free (ElvinURI *uri);
 
 #endif /* ELVIN_H */
