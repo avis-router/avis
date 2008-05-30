@@ -5,6 +5,8 @@
 #ifndef ELVIN_STDTYPES_H
 #define ELVIN_STDTYPES_H
 
+typedef double real64_t;
+
 #ifdef HAVE_CONFIG_H
   #include <config.h>
 #endif
