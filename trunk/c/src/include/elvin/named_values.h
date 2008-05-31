@@ -7,6 +7,14 @@
 
 struct hashtable;
 
+/**
+ * A map of string names to polymorphic Value instances. This is used as the 
+ * payload for notification messages (see elvin_send()) and for specifying
+ * connection options to the router (see elvin_open()).
+ * 
+ * @see named_values_init()
+ * @see Value
+ */
 typedef struct 
 {
   struct hashtable *table;
