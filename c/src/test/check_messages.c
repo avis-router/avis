@@ -80,7 +80,8 @@ START_TEST (test_byte_buffer_io)
   free (read_bytes);
   
   // read/write ints
-  byte_buffer_set_position (buffer, 0, &error);
+  byte_buffer_destroy (buffer);
+  buffer = byte_buffer_create ();
   
   for (int i = 0; i < 1000; i++)
   {
@@ -108,7 +109,7 @@ END_TEST
 START_TEST (test_string_io)
 {
   ByteBuffer *buffer = byte_buffer_create ();
-  const char *string2;
+  char *string2;
   
   byte_buffer_write_string (buffer, "hello world", &error);
   fail_on_error (&error);
@@ -123,6 +124,8 @@ START_TEST (test_string_io)
   fail_unless (strcmp (string2, "hello world") == 0, "Strings not equal");
   
   byte_buffer_destroy (buffer);
+  
+  free (string2);
 }
 END_TEST
 
@@ -215,7 +218,6 @@ START_TEST (test_message_io)
   fail_unless (frame_size == 28, "Frame size not sent correctly");
   
   byte_buffer_set_max_length (buffer, frame_size + 4);
-  byte_buffer_ensure_capacity (buffer, frame_size + 4);
     
   connRqst2 = message_read (buffer, &error);
   

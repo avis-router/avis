@@ -22,8 +22,8 @@ typedef struct
   
   union
   {
-    uint32_t  int32;
-    uint64_t  int64;
+    int32_t   int32;
+    int64_t   int64;
     real64_t  real64;
     char *    str;
     uint8_t * bytes;

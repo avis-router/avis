@@ -33,9 +33,9 @@ void named_values_set (NamedValues *values, const char *name, Value *value);
 Value *named_values_get (NamedValues *values, const char *name);
 
 void named_values_set_int32 (NamedValues *values, const char *name, 
-                             uint32_t value);
+                             int32_t value);
 
-uint32_t named_values_get_int32 (NamedValues *values, const char *name);
+int32_t named_values_get_int32 (NamedValues *values, const char *name);
 
 void named_values_set_string (NamedValues *values, 
                               const char *name, const char *value);

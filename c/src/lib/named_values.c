@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "hashtable.h"
-#include <hashtable_itr.h>
+#include "hashtable_itr.h"
 
 #include <elvin/values.h>
 #include <elvin/named_values.h>
@@ -52,12 +52,12 @@ Value *named_values_get (NamedValues *values, const char *name)
 }
 
 void named_values_set_int32 (NamedValues *values, const char *name, 
-                             uint32_t value)
+                             int32_t value)
 {
   named_values_set (values, name, value_create_int32 (value));
 }
 
-uint32_t named_values_get_int32 (NamedValues *values, const char *name)
+int32_t named_values_get_int32 (NamedValues *values, const char *name)
 {
   Value *value = hashtable_search (values->table, (void *)name);
   
