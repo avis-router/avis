@@ -30,6 +30,8 @@ static void teardown ()
   fail_unless_error_code (&error, ELVIN_ERROR_INVALID_URI);\
 }
 
+#define reset_uri(uri) (uri.host = NULL, uri.port = 0)
+
 START_TEST (test_uri)
 {
   ElvinURI uri;
@@ -39,17 +41,21 @@ START_TEST (test_uri)
   
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
   
+  reset_uri (uri);
   elvin_uri_from_string (&uri, "elvin://host:1234", &error);
   fail_on_error (&error);
   
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
   fail_unless (uri.port == 1234, "Bad port: %s", uri.port);
-    
+  
+  reset_uri (uri);
   elvin_uri_from_string 
-    (&uri, "elvin:4.1/xdr,none,ssl/host?name1=value1;name2=value2", &error);
+    (&uri, "elvin:4.1/xdr,none,ssl/host:4567?name1=value1;name2=value2", 
+     &error);
   fail_on_error (&error);
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
+  fail_unless (uri.port == 4567, "Bad port: %s", uri.port);
   
   check_invalid_uri ("hello://host");  
   check_invalid_uri ("elvin://host:1234567890");  
