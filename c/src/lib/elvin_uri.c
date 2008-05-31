@@ -34,12 +34,6 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   uri->host = NULL;
   uri->port = DEFAULT_ELVIN_PORT;
   
-  /* elvin://host*/
-  /* elvin://host:port*/
-  /* elvin:/xdr,none,ssl/host:port*/
-  /* elvin:4.1/xdr,none,ssl/host:port*/
-  /* elvin:4.1/xdr,none,ssl/host:port?n1=v1;n2=v2*/
-  
   index2 = strchr (index1, ':');
   
   parse_fail (index2 == NULL, "No URI scheme present");
@@ -99,6 +93,9 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   return true;
 }
 
+/**
+ * Like strchr(), but find the first occurrence of any character in chars.
+ */
 const char *stranychr (const char *start, const char *chars)
 {
   const char *c;
@@ -115,6 +112,9 @@ const char *stranychr (const char *start, const char *chars)
   return NULL;
 }
 
+/**
+ * Create a substring between start (inclusive) and end (exclusive).
+ */
 char *substring (const char *start, const char *end)
 {
   size_t length = end - start;
