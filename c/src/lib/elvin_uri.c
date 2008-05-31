@@ -5,6 +5,7 @@
 #include <elvin/elvin_uri.h>
 
 static char *substring (const char *start, const char *end);
+const char *stranychr (const char *start, const char *chars);
 
 #define parse_fail(expr,message) \
   if (expr) \
@@ -28,6 +29,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 {
   const char *index1 = uri_string;
   const char *index2;
+  unsigned long port;
   
   uri->host = NULL;
   uri->port = DEFAULT_ELVIN_PORT;
@@ -66,19 +68,51 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   
   parse_fail (*index1 == '\0', "Missing hostname");
   
-  index2 = strchr (index1 + 1, '?');
+  index2 = stranychr (index1 + 1, ":?");
   
   if (index2 == NULL)
   {
     uri->host = strdup (index1);
   } else
   {
-    /* TODO parse name/values */
-    
     uri->host = substring (index1, index2);
+    
+    if (*index2 == ':')
+    {
+      index1 = index2 + 1;
+      
+      port = strtoul (index1, (char **)&index2, 10);
+      
+      parse_fail (index1 == index2 || port > 65535, "Invalid port number");
+      
+      uri->port = (uint16_t)port;
+      
+      index1 = index2;
+    }
+    
+    if (*index1 == '?')
+    {
+      /* TODO parse name/values */
+    }
   }
   
   return true;
+}
+
+const char *stranychr (const char *start, const char *chars)
+{
+  const char *c;
+  
+  for ( ; *start; start++)
+  {  
+    for (c = chars; *c; c++)
+    {
+      if (*c == *start)
+        return start;
+    }   
+  }
+  
+  return NULL;
 }
 
 char *substring (const char *start, const char *end)

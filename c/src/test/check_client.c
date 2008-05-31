@@ -39,13 +39,21 @@ START_TEST (test_uri)
   
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
   
+  elvin_uri_from_string (&uri, "elvin://host:1234", &error);
+  fail_on_error (&error);
+  
+  fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
+  fail_unless (uri.port == 1234, "Bad port: %s", uri.port);
+    
   elvin_uri_from_string 
     (&uri, "elvin:4.1/xdr,none,ssl/host?name1=value1;name2=value2", &error);
   fail_on_error (&error);
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
   
-  check_invalid_uri ("hello://localhost");  
+  check_invalid_uri ("hello://host");  
+  check_invalid_uri ("elvin://host:1234567890");  
+  check_invalid_uri ("elvin://host:hello");  
   check_invalid_uri ("elvin://");
   check_invalid_uri ("elvin:/");
   check_invalid_uri ("elvin::/");
