@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <assert.h>
 
 /* For definition of ntohl */
 #ifdef WIN32
@@ -15,7 +17,7 @@
 #define INIT_LENGTH 1024
 #define MAX_LENGTH (2 * 1024 * 1024)
 
-#define padding_for(length) ((4 - (length & 3)) & 3)
+#define padding_for(length) ((4 - ((length) & 3)) & 3)
 
 static bool check_remaining (ByteBuffer *buffer, size_t required_remaining, 
                              ElvinError *error);
@@ -100,7 +102,13 @@ void expand_buffer (ByteBuffer *buffer, size_t new_length)
   uint8_t *new_data = malloc (new_length);
   uint8_t *old_data = buffer->data;
   
-  memcpy ((void *)new_data, (void *)old_data, buffer->position);
+  assert (new_length > buffer->data_length);
+  
+  memcpy ((void *)new_data, (void *)old_data, buffer->data_length);
+  
+  /* TODO this may not be necessary: does malloc guarantee zeroed memory? */
+  memset ((void *)(new_data + buffer->data_length), 0, 
+          new_length - buffer->data_length);
   
   buffer->data = new_data;
   buffer->data_length = new_length;
@@ -157,7 +165,7 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
   uint32_t length = (uint32_t)strlen (string);
   
   on_error_return_false 
-    (auto_resize_to_fit (buffer, buffer->position + length + 4, error));
+    (auto_resize_to_fit (buffer, buffer->position + length + 8, error));
   
   on_error_return_false 
     (byte_buffer_write_int32 (buffer, length, error));
