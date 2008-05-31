@@ -3,6 +3,19 @@
 
 #include <elvin/stdtypes.h>
 
+/**
+ * Error reporting information for functions that may fail.
+ * The Avis Client Library uses this as a sort of simple
+ * exception mechanism to report errors encountered when calling subroutines.
+ * Functions that can fail on error take a pointer to an error instance as 
+ * their last parameter, and the error will be loaded with an error code and
+ * message if the the function (or a sub function) fails. Functions which
+ * would otherwise be void will often return true/false also as a convenience.
+ * 
+ * @see elvin_error_ok()
+ * @see on_error_return_false()
+ * @see on_error_return()
+ */
 typedef struct
 {
   int code;
@@ -58,8 +71,14 @@ bool elvin_error_set (ElvinError *error, int code, const char *message);
 bool elvin_error_assert (ElvinError *error, bool condition, 
                          int code, const char *message);
 
+/** True if no error has occurred. */
 #define elvin_error_ok(error) ((error)->code == ELVIN_ERROR_NONE)
+
+/** True if an error has occurred. */
 #define elvin_error_occurred(error) (!elvin_error_ok (error))
-#define elvin_error_reset(error) ((error)->code = ELVIN_ERROR_NONE)
+
+/** Reset the error info back to OK state. */
+#define elvin_error_reset(error) \
+  ((error)->code = ELVIN_ERROR_NONE, (error)->message = NULL)
 
 #endif /*ERRORS_H_*/

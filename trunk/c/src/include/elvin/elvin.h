@@ -24,13 +24,13 @@
 /** The default port for Elvin client connections. */
 #define DEFAULT_ELVIN_PORT 2917
 
-/* The default client protocol major version supported by this library. */
+/** The default client protocol major version supported by this library. */
 #define DEFAULT_CLIENT_PROTOCOL_MAJOR 4
 
 /** The default client protocol minor version supported by this library. */
 #define DEFAULT_CLIENT_PROTOCOL_MINOR 0
 
-/*
+/**
  * A client's connection to an Elvin router.
  * 
  * See elvin_open() and elvin_open_uri().
@@ -40,7 +40,28 @@ typedef struct
   socket_t socket;
 } Elvin;
 
-bool elvin_open (Elvin *elvin, const char *router_url, ElvinError *error);
+/**
+ * Open a connection to an Elvin router.
+ * 
+ * @param elvin The Elvin connection instance.
+ * @param router_uri The URI for the router endpoint.
+ * @param error The error info.
+ * 
+ * @return true if the connection succeeded.
+ * 
+ * @see elvin_open_uri().
+ */
+bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
+
+/**
+ * Open a connection to an Elvin router.
+ * 
+ * @param elvin The Elvin connection instance.
+ * @param router_uri The URI for the router endpoint..
+ * @param error The error info.
+ * 
+ * @return true if the connection succeeded.
+ */
 bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error);
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
 bool elvin_close (Elvin *elvin);

@@ -42,15 +42,21 @@ typedef struct
  */
 Value *value_init (Value *value, ValueType type, ...);
 
+/**
+ * Free any resources held by a value instance.
+ */
 void value_free (Value *value);
 
+/**
+ * Destroy (free and NULL) a value instance.
+ */
 #define value_destroy(value) (value_free (value), free (value), value = NULL)
 
-/** Allocate and init an int32 value. Use value_destroy () when done. */
+/** Allocate and init an int32 value. Use value_destroy() when done. */
 #define value_create_int32(value) \
   (value_init (malloc (sizeof (Value)), TYPE_INT32, value))
 
-/** Allocate and init a string value. Use value_destroy () when done. */
+/** Allocate and init a string value. Use value_destroy() when done. */
 #define value_create_string(value) \
   (value_init (malloc (sizeof (Value)), TYPE_STRING, strdup (value)))
 
