@@ -15,7 +15,10 @@ typedef enum
   TYPE_STRING = 4, TYPE_OPAQUE = 5
 } ValueType;
 
-/** A polymorphic value: int32, int64, real64, string or opaque. */
+/** 
+ * A polymorphic value: either an int32, int64, real64, string or opaque 
+ * (an array of bytes). 
+ * */
 typedef struct
 {
   ValueType type;
@@ -26,7 +29,7 @@ typedef struct
     int64_t   int64;
     real64_t  real64;
     char *    str;
-    uint8_t * bytes;
+    uint8_t * bytes; /* TODO this also needs a length parameter */
   } value;
 } Value;
 

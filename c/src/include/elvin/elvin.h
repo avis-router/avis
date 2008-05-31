@@ -57,12 +57,12 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
  * Open a connection to an Elvin router.
  * 
  * @param elvin The Elvin connection instance.
- * @param router_uri The URI for the router endpoint..
+ * @param uri The URI for the router endpoint.
  * @param error The error info.
  * 
  * @return true if the connection succeeded.
  */
-bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error);
+bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
 bool elvin_close (Elvin *elvin);
 
