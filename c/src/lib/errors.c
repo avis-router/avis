@@ -13,6 +13,7 @@ void elvin_perror (const char *tag, ElvinError *error)
     printf ("%s: %s\n", tag, error->message);
 }
 
+/* TODO should this allow later errors to override earlier ones? */
 bool elvin_error_set (ElvinError *error, int code, const char *message)
 {
   error->code = code;
