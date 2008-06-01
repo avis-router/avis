@@ -93,12 +93,12 @@ static MessageFormat MESSAGE_FORMATS [] =
 
 static MessageFormat *message_format_for (MessageTypeID type);
 
-static Message read_using_format (ByteBuffer *buffer, 
-                                  Message message,
-                                  MessageFormat *format, 
-                                  ElvinError *error);
+static void read_using_format (ByteBuffer *buffer, 
+                               Message message,
+                               MessageFormat *format, 
+                               ElvinError *error);
 
-static bool write_using_format (ByteBuffer *buffer, 
+static void write_using_format (ByteBuffer *buffer, 
                                 MessageFormat *format,
                                 Message message,
                                 ElvinError *error);
@@ -205,7 +205,9 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   on_error_return_false
     (byte_buffer_write_int32 (buffer, message_type_of (message), error));
   
-  if (!write_using_format (buffer, format, message + 4, error))
+  write_using_format (buffer, format, message + 4, error);
+  
+  if (elvin_error_occurred (error))
     return false;
   
   frame_size = buffer->position - 4;
@@ -219,27 +221,18 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   return true; 
 }
 
-Message read_using_format (ByteBuffer *buffer, 
-                           Message message,
-                           MessageFormat *format, 
-                           ElvinError *error)
+void  read_using_format (ByteBuffer *buffer, 
+                         Message message,
+                         MessageFormat *format, 
+                        ElvinError *error)
 {
   FieldFormat *field;
   
   for (field = format->fields; field->read && elvin_error_ok (error); field++)
     message = (*field->read) (buffer, message, error);
-
-  if (elvin_error_occurred (error))
-  {
-    free (message);
-    
-    message = NULL;
-  }
-  
-  return message;
 }
 
-bool write_using_format (ByteBuffer *buffer, 
+void write_using_format (ByteBuffer *buffer, 
                          MessageFormat *format,
                          Message message,
                          ElvinError *error)
@@ -248,8 +241,6 @@ bool write_using_format (ByteBuffer *buffer,
     
   for (field = format->fields; field->write && elvin_error_ok (error); field++)
     message = (*field->write) (buffer, message, error);
-
-  return elvin_error_ok (error);
 }
 
 MessageFormat *message_format_for (MessageTypeID type)
@@ -315,17 +306,18 @@ Message read_string (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   *(char **)message = byte_buffer_read_string (buffer, error);
   
-  return message += sizeof (char *);
+  return message + sizeof (char *);
 }
 
 Message write_string (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   byte_buffer_write_string (buffer, *(char **)message, error);
     
-  return message += sizeof (char *);
+  return message + sizeof (char *);
 }
 
-Message read_named_values (ByteBuffer *buffer, Message message, ElvinError *error)
+Message read_named_values (ByteBuffer *buffer, Message message, 
+                           ElvinError *error)
 {
   NamedValues *named_values = named_values_create ();
         
@@ -339,7 +331,8 @@ Message read_named_values (ByteBuffer *buffer, Message message, ElvinError *erro
   return message + sizeof (NamedValues *);
 }
 
-Message write_named_values (ByteBuffer *buffer, Message message, ElvinError *error)
+Message write_named_values (ByteBuffer *buffer, Message message, 
+                            ElvinError *error)
 {
   named_values_write (buffer, *(NamedValues **)message, error);
   
