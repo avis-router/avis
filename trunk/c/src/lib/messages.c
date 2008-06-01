@@ -12,64 +12,84 @@
 #include "byte_buffer.h"
 #include "named_values_private.h"
 
-/** 
- * Defines the format of an Elvin message.
- * 
- * id: The message type ID.
- * field_types: The fields of the message, represented as a string of 
- * two-letter value types, separated by spaces. 
- *   XI = XID
- *   I4 = int 32
- *   I8 = int 64
- *   R8 = real 64
- *   BO = boolean
- *   ST = string
- *   VA = value array
- *   NV = named values
- *   KY = keys
- * field_names: The names of the fields, in the same order as field_types.
- */ 
+typedef Message (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
+                 ElvinError *error);
+
+static Message read_int32 (ByteBuffer *buffer, Message message, 
+                           ElvinError *error);
+static Message write_int32 (ByteBuffer *buffer, Message message, 
+                            ElvinError *error);
+
+static Message read_bool (ByteBuffer *buffer, Message message, 
+                          ElvinError *error);
+
+static Message read_xid (ByteBuffer *buffer, Message message, 
+                         ElvinError *error);
+
+static Message read_string (ByteBuffer *buffer, Message message, 
+                            ElvinError *error);
+static Message write_string (ByteBuffer *buffer, Message message, 
+                             ElvinError *error);
+
+static Message read_named_values (ByteBuffer *buffer, Message message, 
+                                  ElvinError *error);
+static Message write_named_values (ByteBuffer *buffer, Message message, 
+                                   ElvinError *error);
+
+static Message read_values (ByteBuffer *buffer, Message message, 
+                            ElvinError *error);
+static Message write_values (ByteBuffer *buffer, Message message, 
+                             ElvinError *error);
+
+static Message read_keys (ByteBuffer *buffer, Message message, 
+                          ElvinError *error);
+static Message write_keys (ByteBuffer *buffer, Message message, 
+                           ElvinError *error);
+
+typedef enum {FIELD_INT32, FIELD_XID, FIELD_POINTER} FieldType;
+
+typedef struct
+{
+  FieldType type;
+  MessageIOFunction read;
+  MessageIOFunction write;
+} FieldFormat;
+
 typedef struct
 {
   MessageTypeID id;
-  const char *field_types;
+  FieldFormat fields [32];
   const char *field_names [32];
 } MessageFormat;
+
+#define I4  {FIELD_INT32, read_int32, write_int32}
+#define STR {FIELD_POINTER, read_string, write_string}
+#define NV  {FIELD_POINTER, read_named_values, write_named_values}
+#define BO  {FIELD_INT32, read_bool, write_int32}
+#define XID {FIELD_XID, read_xid, write_int32}
+#define VA  {FIELD_POINTER, read_values, write_values}
+#define KY  {FIELD_POINTER, read_keys, write_keys}
+
+#define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL}
 
 static MessageFormat MESSAGE_FORMATS [] = 
 {
   {MESSAGE_ID_NACK,
-    "XI I4 ST VA ", {"xid", "error", "message", "args"}},
+    {XID, I4, STR, NV, VA, END}, {"xid", "error", "message", "args"}},
   {MESSAGE_ID_CONN_RQST,
-    "XI I4 I4 NV KY KY ", 
+    {XID, I4, I4, NV, KY, KY, END}, 
     {"xid", "version_major", "version_minor",
      "connection_options", "notification_keys" "subscription_keys"}},
   {MESSAGE_ID_CONN_RPLY,
-    "XI NV ", {"xid", "connection_options"}},
+    {XID, NV, END}, {"xid", "connection_options"}},
   {MESSAGE_ID_DISCONN_RQST,
-    "XI ", {"xid"}},
+    {XID, END}, {"xid"}},
   {MESSAGE_ID_DISCONN_RPLY,
-    "XI ", {"xid"}},
+    {XID, END}, {"xid"}},
   {MESSAGE_ID_NOTIFY_EMIT,
-    "NV BO KY ", {"attributes", "deliverInsecure", "keys"}},
-  {-1, "", {"none"}}
+    {NV, BO, KY, END}, {"attributes", "deliverInsecure", "keys"}},
+  {-1, {END}, {"none"}}
 };
-
-/** Create an integer ID from a two-letter field type */
-#define field_id_of(field) ((field [0] << 8) + field [1])
-
-/** Create a constant integer field ID from a two-letter field type */
-#define field_id(c1,c2) ((c1 << 8) + c2)
-
-#define FIELD_TYPE_INT32        (field_id ('I', '4'))
-#define FIELD_TYPE_INT64        (field_id ('I', '8'))
-#define FIELD_TYPE_REAL64       (field_id ('R', '8'))
-#define FIELD_TYPE_BOOL         (field_id ('B', 'O'))
-#define FIELD_TYPE_XID          (field_id ('X', 'I'))
-#define FIELD_TYPE_VALUE_ARRAY  (field_id ('V', 'A'))
-#define FIELD_TYPE_NAMED_VALUES (field_id ('N', 'V'))
-#define FIELD_TYPE_KEYS         (field_id ('K', 'Y'))
-#define FIELD_TYPE_STRING       (field_id ('S', 'T'))
 
 static MessageFormat *message_format_for (MessageTypeID type);
 
@@ -97,8 +117,8 @@ Message message_init (Message message, MessageTypeID type, ...)
 {
   MessageFormat *format = message_format_for (type);
   va_list args;
-  const char *field;
-
+  FieldFormat *field;
+  
   assert (format != NULL);
 
   message_type_of (message) = type;
@@ -107,36 +127,25 @@ Message message_init (Message message, MessageTypeID type, ...)
   
   va_start (args, type);
   
-  for (field = format->field_types; *field; field += 3)
+  for (field = format->fields; field->read; field++)
   {
-    switch (field_id_of (field))
+    switch (field->type)
     {
-    case FIELD_TYPE_INT32:
-    case FIELD_TYPE_BOOL:
-      *(uint32_t *)message = va_arg (args, uint32_t);
-      message += 4;
+    case FIELD_INT32:
+      *(int32_t *)message = va_arg (args, int32_t);
+      message += sizeof (int32_t);
       break;
-    case FIELD_TYPE_XID:
+    case FIELD_XID:
       *(uint32_t *)message = next_xid ();
-      message += 4;
+      message += sizeof (uint32_t);
       break;
-    case FIELD_TYPE_STRING:
-      *(char **)message = va_arg (args, char *);
-      message += sizeof (char *);
+    case FIELD_POINTER:
+      *(void **)message = va_arg (args, void *);
+      message += sizeof (void *);
       break;
-    case FIELD_TYPE_NAMED_VALUES:
-      *(NamedValues **)message = va_arg (args, NamedValues *);
-      message += sizeof (NamedValues *);
-      break;
-    case FIELD_TYPE_KEYS:
-      *(Keys **)message = va_arg (args, Keys *);
-      message += sizeof (Keys *);
-      break;
-    default:
-      abort ();
     }
   }
-  
+
   va_end (args);
   
   return message;
@@ -215,77 +224,16 @@ Message read_using_format (ByteBuffer *buffer,
                            MessageFormat *format, 
                            ElvinError *error)
 {
-  const char *field;
-  Message message_field = message;
-  uint32_t int_value;
-  NamedValues *named_values = NULL;
+  FieldFormat *field;
   
-  /* loop through 2 character (plus space) field types in format */
-  for (field = format->field_types; 
-       *field && elvin_error_ok (error); field += 3)
-  {
-    switch (field_id_of (field))
-    {
-    case FIELD_TYPE_INT32:
-      *(uint32_t *)message_field = byte_buffer_read_int32 (buffer, error);
-      message_field += 4;
-      break;
-    case FIELD_TYPE_XID:
-      int_value = byte_buffer_read_int32 (buffer, error);
-      
-      if (elvin_error_ok (error))
-      {
-        *(uint32_t *)message_field = int_value;
-        
-        if (int_value <= 0)
-          elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "XID cannot be <= 0");
-      }
-      message_field += 4;
-      
-      break;
-    case FIELD_TYPE_BOOL:
-      int_value = byte_buffer_read_int32 (buffer, error);
-      
-      if (elvin_error_ok (error))
-      {
-        *(uint32_t *)message_field = int_value;
-        
-        if (int_value < 0 || int_value > 1)
-          elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid boolean");
-      }
-      message_field += 4;
-      
-      break;
-    case FIELD_TYPE_STRING:
-      *(char **)message_field = byte_buffer_read_string (buffer, error);
-      message_field += sizeof (char *);
-      break;
-    case FIELD_TYPE_NAMED_VALUES:
-      named_values = named_values_create ();
-      
-      named_values_read (buffer, named_values, error);
-      
-      *(NamedValues **)message_field = named_values;
-      
-      message_field += sizeof (NamedValues *);
-      break;
-    case FIELD_TYPE_KEYS:
-      /* TODO */
-      byte_buffer_skip (buffer, 4, error);
-      message_field += sizeof (Keys *);
-      break;
-    default:
-      abort ();
-    }
-  }
-  
+  for (field = format->fields; field->read && elvin_error_ok (error); field++)
+    message = (*field->read) (buffer, message, error);
+
   if (elvin_error_occurred (error))
   {
     free (message);
+    
     message = NULL;
-     
-    if (named_values != NULL)
-      named_values_free (named_values);
   }
   
   return message;
@@ -296,37 +244,10 @@ bool write_using_format (ByteBuffer *buffer,
                          Message message,
                          ElvinError *error)
 {
-  const char *field;
-  
-  /* loop through 2 character (plus space) field types in format */
-  for (field = format->field_types; 
-       *field && elvin_error_ok (error); field += 3)
-  {
-    switch (field_id_of (field))
-    {
-    case FIELD_TYPE_INT32:
-    case FIELD_TYPE_XID:
-    case FIELD_TYPE_BOOL:
-      byte_buffer_write_int32 (buffer, *(uint32_t *)message, error);
-      message += 4;      
-      break;
-    case FIELD_TYPE_STRING:
-      byte_buffer_write_string (buffer, *(char **)message, error);
-      message += sizeof (char *);
-      break;
-    case FIELD_TYPE_NAMED_VALUES:
-      named_values_write (buffer, *(NamedValues **)message, error);
-      message += sizeof (NamedValues *);
-      break;
-    case FIELD_TYPE_KEYS:
-      /* TODO */
-      byte_buffer_write_int32 (buffer, 0, error);
-      message += sizeof (Keys *);
-      break;
-    default:
-      abort ();
-    }
-  }
+  FieldFormat *field;
+    
+  for (field = format->fields; field->write && elvin_error_ok (error); field++)
+    message = (*field->write) (buffer, message, error);
 
   return elvin_error_ok (error);
 }
@@ -344,4 +265,111 @@ MessageFormat *message_format_for (MessageTypeID type)
   DIAGNOSTIC1 ("Failed to lookup info for message type %i", type);
   
   return NULL;
+}
+
+Message read_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  *(int32_t *)message = byte_buffer_read_int32 (buffer, error);
+  
+  return message + sizeof (int32_t);
+}
+
+Message write_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  byte_buffer_write_int32 (buffer, *(int32_t *)message, error);
+    
+  return message + sizeof (int32_t);
+}
+
+Message read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  int32_t value = byte_buffer_read_int32 (buffer, error);
+  
+  if (elvin_error_ok (error))
+  {
+    if (value == 0 || value == 1)
+      *(int32_t *)message = value;
+    else
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid boolean");
+  }
+  
+  return message + sizeof (int32_t);
+}
+
+Message read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  uint32_t value = byte_buffer_read_int32 (buffer, error);
+    
+  if (elvin_error_ok (error))
+  {
+    if (value > 0)
+      *(uint32_t *)message = value;
+    else
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid XID");
+  }
+  
+  return message + sizeof (uint32_t);
+}
+
+Message read_string (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  *(char **)message = byte_buffer_read_string (buffer, error);
+  
+  return message += sizeof (char *);
+}
+
+Message write_string (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  byte_buffer_write_string (buffer, *(char **)message, error);
+    
+  return message += sizeof (char *);
+}
+
+Message read_named_values (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  NamedValues *named_values = named_values_create ();
+        
+  named_values_read (buffer, named_values, error);
+
+  if (elvin_error_ok (error))
+    *(NamedValues **)message = named_values;
+  else
+    free (named_values);  
+  
+  return message + sizeof (NamedValues *);
+}
+
+Message write_named_values (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  named_values_write (buffer, *(NamedValues **)message, error);
+  
+  return message + sizeof (NamedValues *);
+}
+
+Message read_keys (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  /* TODO */
+  byte_buffer_skip (buffer, 4, error);
+  
+  return message + sizeof (Keys *);
+}
+
+Message write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  /* TODO */ 
+  byte_buffer_write_int32 (buffer, 0, error);
+  
+  return message + sizeof (Keys *);
+}
+
+Message read_values (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  /* TODO */
+  abort ();
+}
+
+Message write_values (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  /* TODO */
+  abort ();
 }
