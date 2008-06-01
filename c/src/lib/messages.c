@@ -180,15 +180,18 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
     
   read_using_format (buffer, message + 4, format, error);
   
+  if (buffer->position < buffer->max_data_length &&
+      elvin_error_ok (error))
+  {
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
+  }
+  
   if (elvin_error_occurred (error))
   {
     free (message);
     
-    return NULL;
+    message = NULL;
   }
-
-  if (buffer->position < buffer->max_data_length)
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
   
   return message;
 }
