@@ -12,9 +12,6 @@
 #include "byte_buffer.h"
 #include "named_values_private.h"
 
-typedef Message (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
-                 ElvinError *error);
-
 static Message read_int32 (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
 static Message write_int32 (ByteBuffer *buffer, Message message, 
@@ -47,6 +44,9 @@ static Message write_keys (ByteBuffer *buffer, Message message,
                            ElvinError *error);
 
 typedef enum {FIELD_INT32, FIELD_XID, FIELD_POINTER} FieldType;
+
+typedef Message (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
+                 ElvinError *error);
 
 typedef struct
 {
