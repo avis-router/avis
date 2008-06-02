@@ -205,6 +205,7 @@ bool resolve_address (struct sockaddr_in *router_addr,
   struct addrinfo *address_info;
   int error_code;
   
+  /* TODO this does not appear to work with IPv6 */
   memset (&hints, '\0', sizeof (struct addrinfo));
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
