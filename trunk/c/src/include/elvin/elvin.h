@@ -8,6 +8,7 @@
 #ifndef ELVIN_H
 #define ELVIN_H
 
+#include <elvin/keys.h>
 #include <elvin/named_values.h>
 #include <elvin/stdtypes.h>
 #include <elvin/elvin_uri.h>
@@ -40,6 +41,28 @@ typedef struct
   socket_t socket;
 } Elvin;
 
+typedef enum 
+{
+  REQUIRE_SECURE_DELIVERY, 
+  ALLOW_INSECURE_DELIVERY
+} SecureMode;
+
+typedef struct
+{
+  Elvin *elvin;
+  const char *subscription_expr;
+  uint64_t id;
+  Keys keys;
+  SecureMode security;
+} Subscription;
+
+typedef struct
+{
+  NamedValues attributes;
+} Notification;
+
+typedef void (*SubscriptionListener) (Subscription *subscription, 
+                                      Notification *notification); 
 /**
  * Open a connection to an Elvin router.
  * 
@@ -63,7 +86,17 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
  * @return true if the connection succeeded.
  */
 bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
+
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
+
+bool elvin_subscribe (Elvin *elvin, Subscription *subscription, 
+                      ElvinError *error);
+
+void elvin_add_subscription_listener (Subscription *subscription, 
+                                      SubscriptionListener listener);
+
 bool elvin_close (Elvin *elvin);
 
+void elvin_subscription_init (Subscription *subscription, 
+                              const char *subscription_expr);
 #endif /* ELVIN_H */

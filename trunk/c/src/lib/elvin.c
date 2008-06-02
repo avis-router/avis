@@ -156,6 +156,42 @@ static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   }
 }
 
+void elvin_subscription_init (Subscription *subscription, 
+                              const char *subscription_expr)
+{
+  subscription->elvin = NULL;
+  subscription->id = 0;
+  subscription->security = ALLOW_INSECURE_DELIVERY;
+  subscription->subscription_expr = subscription_expr;
+  elvin_keys_init (&subscription->keys);
+}
+
+bool elvin_subscribe (Elvin *elvin, Subscription *subscription, 
+                      ElvinError *error)
+{
+  Message sub_add_rqst = message_alloca ();
+  Message sub_reply;
+  
+  message_init (sub_add_rqst,
+                MESSAGE_ID_SUB_ADD_RQST, subscription->subscription_expr,
+                subscription->security == ALLOW_INSECURE_DELIVERY,
+                &subscription->keys);
+  
+  sub_reply = send_and_receive (elvin->socket, sub_add_rqst, 
+                                MESSAGE_ID_SUB_RPLY, error);
+  
+  if (sub_reply)
+  {
+    /* TODO register etc */
+  
+    printf ("sub ID = %lu\n", *(uint64_t *)(sub_reply + 8));
+    return true;
+  } else
+  {
+    return false;
+  }
+}
+
 bool resolve_address (struct sockaddr_in *router_addr,
                       const char *host, uint16_t port, 
                       ElvinError *error)
