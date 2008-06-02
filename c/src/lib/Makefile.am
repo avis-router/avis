@@ -19,6 +19,7 @@ libelvin_la_SOURCES = \
   byte_buffer.c \
   errors.c \
   values.c \
+  keys.c \
   log.c
 
 libelvin_la_LIBADD = \
