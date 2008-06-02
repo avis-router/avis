@@ -110,6 +110,9 @@
 				RelativePath="..\..\..\src\lib\elvin.c">
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\elvin_uri.c">
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\errors.c">
 			</File>
 			<File
