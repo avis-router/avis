@@ -39,6 +39,8 @@ int main (int argc, const char * argv[])
   }
  */
   
+  elvin_close (&elvin);
+  
   return 0;
 }
 

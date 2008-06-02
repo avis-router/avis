@@ -18,6 +18,10 @@
   #include "config.h"
 #endif
 
+/*
+ * The following shenaningans defines htonll() and ntohll() macros that
+ * handle network/host endianness conversion for int64 values. 
+ */
 #ifdef HAVE_ARCHITECTURE_BYTE_ORDER_H
 
   /* Mac OS X & BSD (?) */
