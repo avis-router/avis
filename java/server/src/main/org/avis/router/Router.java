@@ -111,6 +111,7 @@ import static org.avis.logging.Log.warn;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
+import static org.avis.util.Text.className;
 import static org.avis.util.Text.formatNotification;
 import static org.avis.util.Text.idFor;
 
@@ -962,6 +963,9 @@ public class Router implements IoHandler, Closeable
     } else
     {
       message = errorMessage.error.getMessage ();
+      
+      if (message == null)
+        message = "Exception: " + className (errorMessage.error);
     }
     
     disconnectProtocolViolation (session, errorMessage.cause, message, null);
