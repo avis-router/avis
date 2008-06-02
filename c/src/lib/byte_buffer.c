@@ -4,8 +4,8 @@
 #include <string.h>
 #include <assert.h>
 
-/* For definition of ntohl */
 #ifdef WIN32
+  /* For definition of ntohl */
   #include <winsock2.h>
 #endif
 
@@ -13,6 +13,50 @@
 #include <elvin/errors.h>
 
 #include "byte_buffer.h"
+
+#ifdef _HAVE_CONFIG_H
+  #include "config.h"
+#endif
+
+#ifdef HAVE_ARCHITECTURE_BYTE_ORDER_H
+
+  /* Mac OS X & BSD (?) */
+  #include <architecture/byte_order.h>
+
+  #define htonll(i) (NXSwapHostLongLongToBig(i))
+  #define ntohll(i) (NXSwapBigLongLongToHost(i))
+
+#else
+
+  #ifdef HAVE_ENDIAN_H
+    /* GNU glibc */
+    #include <byte_order.h>
+  #elif defined(WIN32)
+    #include <rpcndr.h>
+
+    #if (NDR_LOCAL_ENDIAN == NDR_LITTLE_ENDIAN) 
+      #define __LITTLE_ENDIAN 1
+    #else
+      #define __BIG_ENDIAN 1
+    #endif
+  #else
+    #error "Unknown endianness" 
+  #endif
+
+  #ifdef __LITTLE_ENDIAN
+    #define HI(i) (i >> 32L)
+    #define LO(i) (i & 0x00000000FFFFFFFFL)
+
+    #define htonll(i) \
+      (((uint64_t)(htonl (LO (i))) << 32) | (uint64_t)htonl (HI (i)))
+    #define ntohll(i) \
+      (((uint64_t)(ntohl (HI (i))) | ((uint64_t)ntohl (LO (i)) << 32)))
+  #else
+    #define htonll(i) (i)
+    #define ntohll(i) (i)
+  #endif
+
+#endif
 
 #define INIT_LENGTH 1024
 #define MAX_LENGTH (2 * 1024 * 1024)
@@ -131,30 +175,57 @@ bool check_remaining (ByteBuffer *buffer, size_t required_remaining,
     return true;
 }
 
-uint32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error)
+int32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error)
 {
-  uint32_t value;
+  int32_t value;
   
   if (!check_remaining (buffer, 4, error))
     return 0;
   
   /* read and convert XDR -> native endianness */
-  value = ntohl (*(uint32_t *)(buffer->data + buffer->position));
+  value = ntohl (*(int32_t *)(buffer->data + buffer->position));
   
   buffer->position += 4;
   
   return value;
 }
 
-bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value, 
+bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value, 
                               ElvinError *error)
 {
   on_error_return_false 
     (auto_resize_to_fit (buffer, buffer->position + 4, error));
   
-  *(uint32_t *)(buffer->data + buffer->position) = htonl (value); 
+  *(int32_t *)(buffer->data + buffer->position) = htonl (value); 
   
   buffer->position += 4;
+  
+  return true;
+}
+
+int64_t byte_buffer_read_int64 (ByteBuffer *buffer, ElvinError *error)
+{
+  int64_t value;
+  
+  if (!check_remaining (buffer, 8, error))
+    return 0;
+  
+  value = ntohll (*(int64_t *)(buffer->data + buffer->position));
+
+  buffer->position += 8;
+  
+  return value;
+}
+
+bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value, 
+                              ElvinError *error)
+{
+  on_error_return_false 
+    (auto_resize_to_fit (buffer, buffer->position + 8, error));
+  
+  *(int64_t *)(buffer->data + buffer->position) = htonll (value); 
+  
+  buffer->position += 8;
   
   return true;
 }

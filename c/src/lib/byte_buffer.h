@@ -22,9 +22,14 @@ ByteBuffer *byte_buffer_init_sized (ByteBuffer *buffer, size_t initial_size);
 
 void byte_buffer_free (ByteBuffer *buffer);
 
-uint32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error);
+int32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error);
 
-bool byte_buffer_write_int32 (ByteBuffer *buffer, uint32_t value, 
+bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value, 
+                              ElvinError *error);
+
+int64_t byte_buffer_read_int64 (ByteBuffer *buffer, ElvinError *error);
+
+bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value, 
                               ElvinError *error);
 
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 

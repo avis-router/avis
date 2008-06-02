@@ -99,6 +99,17 @@ START_TEST (test_byte_buffer_io)
     fail_unless (value == i, "Value not the same");
   }
   
+  // int64
+  byte_buffer_set_position (buffer, 0, &error);
+  byte_buffer_write_int64 (buffer, 123456790L, &error);
+  fail_on_error (&error);
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  int64_t value64 = byte_buffer_read_int64 (buffer, &error);
+  fail_on_error (&error);
+
+  fail_unless (value64 == 123456790L, "Value not the same: %lu\n", value64);
+  
   byte_buffer_destroy (buffer);
 }
 END_TEST
