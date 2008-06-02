@@ -17,6 +17,11 @@ static Message read_int32 (ByteBuffer *buffer, Message message,
 static Message write_int32 (ByteBuffer *buffer, Message message, 
                             ElvinError *error);
 
+static Message read_int64 (ByteBuffer *buffer, Message message, 
+                           ElvinError *error);
+static Message write_int64 (ByteBuffer *buffer, Message message, 
+                            ElvinError *error);
+
 static Message read_bool (ByteBuffer *buffer, Message message, 
                           ElvinError *error);
 
@@ -43,7 +48,7 @@ static Message read_keys (ByteBuffer *buffer, Message message,
 static Message write_keys (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
 
-typedef enum {FIELD_INT32, FIELD_XID, FIELD_POINTER} FieldType;
+typedef enum {FIELD_INT32, FIELD_INT64, FIELD_XID, FIELD_POINTER} FieldType;
 
 typedef Message (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
                  ElvinError *error);
@@ -63,6 +68,7 @@ typedef struct
 } MessageFormat;
 
 #define I4  {FIELD_INT32, read_int32, write_int32}
+#define I8  {FIELD_INT64, read_int64, write_int64}
 #define STR {FIELD_POINTER, read_string, write_string}
 #define NV  {FIELD_POINTER, read_named_values, write_named_values}
 #define BO  {FIELD_INT32, read_bool, write_int32}
@@ -88,6 +94,11 @@ static MessageFormat MESSAGE_FORMATS [] =
     {XID, END}, {"xid"}},
   {MESSAGE_ID_NOTIFY_EMIT,
     {NV, BO, KY, END}, {"attributes", "deliverInsecure", "keys"}},
+  {MESSAGE_ID_SUB_ADD_RQST,
+    {XID, STR, BO, KY, END}, {"xid", "expr", "deliverInsecure", "keys"}},
+  {MESSAGE_ID_SUB_RPLY,
+    {XID, I8, END}, {"xid"}},
+
   {-1, {END}, {"none"}}
 };
 
@@ -273,6 +284,20 @@ Message write_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
   byte_buffer_write_int32 (buffer, *(int32_t *)message, error);
     
   return message + sizeof (int32_t);
+}
+
+Message read_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  *(int64_t *)message = byte_buffer_read_int64 (buffer, error);
+  
+  return message + sizeof (int64_t);
+}
+
+Message write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  byte_buffer_write_int64 (buffer, *(int64_t *)message, error);
+    
+  return message + sizeof (int64_t);
 }
 
 Message read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
