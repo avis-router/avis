@@ -32,6 +32,8 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([stdint.h])
 AC_CHECK_HEADERS([stdbool.h])
+AC_CHECK_HEADERS([endian.h])
+AC_CHECK_HEADERS([architecture/byte_order.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
