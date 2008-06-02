@@ -354,7 +354,7 @@ Message read_named_values (ByteBuffer *buffer, Message message,
   if (elvin_error_ok (error))
     *(NamedValues **)message = named_values;
   else
-    free (named_values);  
+    named_values_destroy (named_values);  
   
   return message + sizeof (NamedValues *);
 }
