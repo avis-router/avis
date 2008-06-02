@@ -38,7 +38,10 @@
   #elif defined(WIN32)
     #include <rpcndr.h>
 
-    #if (NDR_LOCAL_ENDIAN == NDR_LITTLE_ENDIAN) 
+    static const unsigned long WIN32_LITTLE_ENDIAN = 
+      NDR_LOCAL_ENDIAN == NDR_LITTLE_ENDIAN;
+
+    #if WIN32_LITTLE_ENDIAN
       #define __LITTLE_ENDIAN 1
     #else
       #define __BIG_ENDIAN 1
