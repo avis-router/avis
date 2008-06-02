@@ -8,10 +8,14 @@
   #include <winsock2.h>
   #include <ws2tcpip.h>
 #else
+
+  /* For Linux */
+  #define __USE_POSIX
+
   #include <unistd.h>
-  #include <netdb.h>
-  #include <sys/socket.h>
   #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <netdb.h>
   #include <netinet/in.h>
   #include <arpa/inet.h>
 #endif

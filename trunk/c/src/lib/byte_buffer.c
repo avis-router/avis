@@ -30,7 +30,7 @@
 
   #ifdef HAVE_ENDIAN_H
     /* GNU glibc */
-    #include <byte_order.h>
+    #include <endian.h>
   #elif defined(WIN32)
     #include <rpcndr.h>
 
