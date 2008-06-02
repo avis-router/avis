@@ -12,6 +12,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basic_test", "basic_test.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhashtable", "libhashtable.vcproj", "{1A40555A-C90F-44AA-BBFD-DCB96C4620E0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "event_loop_test", "event_loop_test.vcproj", "{66832999-E646-4630-9D2B-59D4988DF1D8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{677652D5-C265-4E8B-BE09-1C1F261D0793} = {677652D5-C265-4E8B-BE09-1C1F261D0793}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -30,6 +35,10 @@ Global
 		{1A40555A-C90F-44AA-BBFD-DCB96C4620E0}.Debug|Win32.Build.0 = Debug|Win32
 		{1A40555A-C90F-44AA-BBFD-DCB96C4620E0}.Release|Win32.ActiveCfg = Release|Win32
 		{1A40555A-C90F-44AA-BBFD-DCB96C4620E0}.Release|Win32.Build.0 = Release|Win32
+		{66832999-E646-4630-9D2B-59D4988DF1D8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{66832999-E646-4630-9D2B-59D4988DF1D8}.Debug|Win32.Build.0 = Debug|Win32
+		{66832999-E646-4630-9D2B-59D4988DF1D8}.Release|Win32.ActiveCfg = Release|Win32
+		{66832999-E646-4630-9D2B-59D4988DF1D8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
