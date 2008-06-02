@@ -178,7 +178,7 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   
   message_init (sub_add_rqst,
                 MESSAGE_ID_SUB_ADD_RQST, subscription->subscription_expr,
-                subscription->security == ALLOW_INSECURE_DELIVERY,
+                ALLOW_INSECURE_DELIVERY,
                 &subscription->keys);
   
   sub_reply = send_and_receive (elvin->socket, sub_add_rqst, 
@@ -186,9 +186,10 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   
   if (sub_reply)
   {
-    /* TODO register etc */
+    /* TODO register sub etc */
   
-    printf ("sub ID = %lu\n", *(uint64_t *)(sub_reply + 8));
+    message_destroy (sub_reply);
+
     return true;
   } else
   {

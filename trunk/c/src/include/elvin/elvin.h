@@ -43,8 +43,8 @@ typedef struct
 
 typedef enum 
 {
-  REQUIRE_SECURE_DELIVERY, 
-  ALLOW_INSECURE_DELIVERY
+  REQUIRE_SECURE_DELIVERY = 0,
+  ALLOW_INSECURE_DELIVERY = 1
 } SecureMode;
 
 typedef struct
