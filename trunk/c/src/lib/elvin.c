@@ -168,6 +168,7 @@ void elvin_subscription_init (Subscription *subscription,
   subscription->id = 0;
   subscription->security = ALLOW_INSECURE_DELIVERY;
   subscription->subscription_expr = subscription_expr;
+  subscription->listeners = NULL;
   elvin_keys_init (&subscription->keys);
 }
 
