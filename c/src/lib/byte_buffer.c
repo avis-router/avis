@@ -73,8 +73,8 @@
 static bool check_remaining (ByteBuffer *buffer, size_t required_remaining, 
                              ElvinError *error);
 
-static bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
-                                ElvinError *error);
+static bool auto_resize (ByteBuffer *buffer, size_t min_length,
+                         ElvinError *error);
 
 static void expand_buffer (ByteBuffer *buffer, size_t new_length);
 
@@ -117,7 +117,7 @@ bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
 {
   if (buffer->position != position)
   {
-    on_error_return_false (auto_resize_to_fit (buffer, position, error));
+    on_error_return_false (auto_resize (buffer, position, error));
     
     buffer->position = position;
   }
@@ -125,8 +125,7 @@ bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
   return true;
 }
 
-bool auto_resize_to_fit (ByteBuffer *buffer, size_t min_length,
-                         ElvinError *error)
+bool auto_resize (ByteBuffer *buffer, size_t min_length, ElvinError *error)
 {  
   if (buffer->data_length < min_length)
   {
@@ -201,7 +200,7 @@ bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value,
                               ElvinError *error)
 {
   on_error_return_false 
-    (auto_resize_to_fit (buffer, buffer->position + 4, error));
+    (auto_resize (buffer, buffer->position + 4, error));
   
   *(int32_t *)(buffer->data + buffer->position) = htonl (value); 
   
@@ -228,7 +227,7 @@ bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
                               ElvinError *error)
 {
   on_error_return_false 
-    (auto_resize_to_fit (buffer, buffer->position + 8, error));
+    (auto_resize (buffer, buffer->position + 8, error));
   
   *(int64_t *)(buffer->data + buffer->position) = htonll (value); 
   
@@ -243,7 +242,7 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
   uint32_t length = (uint32_t)strlen (string);
   
   on_error_return_false 
-    (auto_resize_to_fit (buffer, buffer->position + length + 8, error));
+    (auto_resize (buffer, buffer->position + length + 8, error));
   
   on_error_return_false 
     (byte_buffer_write_int32 (buffer, length, error));
@@ -300,7 +299,7 @@ bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes,
                               size_t bytes_len, ElvinError *error)
 {
   on_error_return_false 
-    (auto_resize_to_fit (buffer, buffer->position + bytes_len, error));
+    (auto_resize (buffer, buffer->position + bytes_len, error));
   
   memcpy (buffer->data + buffer->position, bytes, bytes_len);
   

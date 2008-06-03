@@ -53,7 +53,10 @@ static Message read_keys (ByteBuffer *buffer, Message message,
 static Message write_keys (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
 
-typedef enum {FIELD_INT32, FIELD_INT64, FIELD_XID, FIELD_POINTER} FieldType;
+typedef enum 
+{
+  FIELD_INT32, FIELD_INT64, FIELD_XID, FIELD_POINTER
+} FieldType;
 
 typedef Message (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
                  ElvinError *error);
@@ -68,18 +71,18 @@ typedef struct
 typedef struct
 {
   MessageTypeID id;
-  FieldFormat fields [32];
-  const char *field_names [32];
+  FieldFormat fields [MAX_MESSAGE_FIELDS];
+  const char *field_names [MAX_MESSAGE_FIELDS];
 } MessageFormat;
 
 #define I4  {FIELD_INT32, read_int32, write_int32}
 #define I8  {FIELD_INT64, read_int64, write_int64}
+#define I8A {FIELD_POINTER, read_int64_array, write_int64_array}
 #define STR {FIELD_POINTER, read_string, write_string}
 #define NV  {FIELD_POINTER, read_named_values, write_named_values}
 #define BO  {FIELD_INT32, read_bool, write_int32}
 #define XID {FIELD_XID, read_xid, write_int32}
 #define VA  {FIELD_POINTER, read_values, write_values}
-#define LA  {FIELD_POINTER, read_int64_array, write_int64_array}
 #define KY  {FIELD_POINTER, read_keys, write_keys}
 
 #define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL}
@@ -103,7 +106,8 @@ static MessageFormat MESSAGE_FORMATS [] =
   {MESSAGE_ID_NOTIFY_EMIT,
     {NV, BO, KY, END}, {"attributes", "deliverInsecure", "keys"}},
   {MESSAGE_ID_NOTIFY_DELIVER,
-    {NV, LA, LA, END}, {"attributes", "secureMatches", "insecureMatches"}},
+    {NV, I8A, I8A, END}, 
+    {"attributes", "secureMatches", "insecureMatches"}},
   {MESSAGE_ID_SUB_ADD_RQST,
     {XID, STR, BO, KY, END}, {"xid", "expr", "deliverInsecure", "keys"}},
   {MESSAGE_ID_SUB_RPLY,
@@ -252,7 +256,7 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
 void  read_using_format (ByteBuffer *buffer, 
                          Message message,
                          MessageFormat *format, 
-                        ElvinError *error)
+                         ElvinError *error)
 {
   FieldFormat *field;
   
