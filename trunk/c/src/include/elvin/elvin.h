@@ -98,7 +98,11 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
 void elvin_add_subscription_listener (Subscription *subscription, 
                                       SubscriptionListener listener);
 
+bool elvin_is_open (Elvin *elvin);
+
 bool elvin_close (Elvin *elvin);
+
+void elvin_poll (Elvin *elvin, ElvinError *error);
 
 void elvin_subscription_init (Subscription *subscription, 
                               const char *subscription_expr);

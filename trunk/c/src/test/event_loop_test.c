@@ -32,11 +32,10 @@ int main (int argc, const char * argv[])
   
   elvin_add_subscription_listener (&sub, sub_listener);
   
-/*  while (elvin_is_open (&elvin))
+  while (elvin_is_open (&elvin) && elvin_error_ok (&error))
   {
-    elvin_poll (&elvin);
+    elvin_poll (&elvin, &error);
   }
-  */
   
   elvin_close (&elvin);
   

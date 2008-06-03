@@ -88,6 +88,11 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
   return true;
 }
 
+bool elvin_is_open (Elvin *elvin)
+{
+  return elvin->socket != -1;
+}
+
 bool elvin_close (Elvin *elvin)
 {
   ElvinError error = elvin_error_create ();
@@ -120,6 +125,25 @@ bool elvin_close (Elvin *elvin)
   elvin_error_destroy (&error);
   
   return true;
+}
+
+void elvin_poll (Elvin *elvin, ElvinError *error)
+{
+  Message message = receive_message (elvin->socket, error);
+  
+  switch (message_type_of (message))
+  {
+  case MESSAGE_ID_NOTIFY_DELIVER:
+    /* TODO */
+    printf ("notify!\n");
+    break;
+  case MESSAGE_ID_DISCONN:
+    /* TODO */
+    break;
+  default:
+    /* TODO protocol violation */
+    break;
+  }
 }
 
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
