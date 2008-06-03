@@ -13,6 +13,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhashtable", "libhashtabl
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "event_loop_test", "event_loop_test.vcproj", "{58812AB2-33E7-46F9-AC1B-3A91BD317298}"
+	ProjectSection(ProjectDependencies) = postProject
+		{677652D5-C265-4E8B-BE09-1C1F261D0793} = {677652D5-C265-4E8B-BE09-1C1F261D0793}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
@@ -34,6 +39,10 @@ Global
 		{1A40555A-C90F-44AA-BBFD-DCB96C4620E0}.Debug.Build.0 = Debug|Win32
 		{1A40555A-C90F-44AA-BBFD-DCB96C4620E0}.Release.ActiveCfg = Release|Win32
 		{1A40555A-C90F-44AA-BBFD-DCB96C4620E0}.Release.Build.0 = Release|Win32
+		{58812AB2-33E7-46F9-AC1B-3A91BD317298}.Debug.ActiveCfg = Debug|Win32
+		{58812AB2-33E7-46F9-AC1B-3A91BD317298}.Debug.Build.0 = Debug|Win32
+		{58812AB2-33E7-46F9-AC1B-3A91BD317298}.Release.ActiveCfg = Release|Win32
+		{58812AB2-33E7-46F9-AC1B-3A91BD317298}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
