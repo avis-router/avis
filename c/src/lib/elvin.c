@@ -144,6 +144,8 @@ void elvin_poll (Elvin *elvin, ElvinError *error)
     /* TODO protocol violation */
     break;
   }
+  
+  message_destroy (message);
 }
 
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
