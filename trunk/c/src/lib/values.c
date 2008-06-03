@@ -123,10 +123,10 @@ bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
   return true;
 }
 
-Array *array_init (Array *array, size_t length)
+Array *array_init (Array *array, unsigned item_count, size_t item_length)
 {
-  array->length = length;
-  array->items = malloc (length);
+  array->item_count = item_count;
+  array->items = malloc (item_count * item_length);
 
   return array;
 }
@@ -138,6 +138,6 @@ void array_free (Array *array)
     free (array->items);
     
     array->items = NULL;
-    array->length = -1;
+    array->item_count = -1;
   }
 }

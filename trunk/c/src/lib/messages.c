@@ -317,14 +317,14 @@ Message write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
 Message read_int64_array (ByteBuffer *buffer, Message message, 
                           ElvinError *error)
 {
-  uint32_t length = byte_buffer_read_int32 (buffer, error);
+  uint32_t item_count = byte_buffer_read_int32 (buffer, error);
   
   if (elvin_error_ok (error))
   {
-    Array *array = array_create (int64_t, length); 
+    Array *array = array_create (int64_t, item_count); 
     int64_t *items = (int64_t *)array->items;
   
-    for ( ; length > 0 && elvin_error_ok (error); length--, items++)
+    for ( ; item_count > 0 && elvin_error_ok (error); item_count--, items++)
       *items = byte_buffer_read_int64 (buffer, error);
     
     if (elvin_error_ok (error))
@@ -339,12 +339,12 @@ Message read_int64_array (ByteBuffer *buffer, Message message,
 Message write_int64_array (ByteBuffer *buffer, Message message,
                            ElvinError *error)
 {
-  uint32_t length = (*(Array **)message)->length;
+  uint32_t item_count = (*(Array **)message)->item_count;
   int64_t *items = (int64_t *)(*(Array **)message)->items;
   
-  byte_buffer_write_int32 (buffer, length, error);
+  byte_buffer_write_int32 (buffer, item_count, error);
   
-  for ( ; length > 0 && elvin_error_ok (error); length--, items++)
+  for ( ; item_count > 0 && elvin_error_ok (error); item_count--, items++)
     byte_buffer_write_int64 (buffer, *items, error);
   
   return message + sizeof (Array *);

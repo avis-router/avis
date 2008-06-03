@@ -17,7 +17,7 @@ typedef enum
 
 typedef struct
 {
-  size_t length; 
+  size_t item_count; 
   void *items;
 } Array;
 
@@ -56,7 +56,7 @@ Value *value_init (Value *value, ValueType type, ...);
  */
 void value_free (Value *value);
 
-Array *array_init (Array *array, size_t length);
+Array *array_init (Array *array, unsigned item_count, size_t item_length);
 
 void array_free (Array *array);
 
@@ -75,7 +75,7 @@ void array_free (Array *array);
   (value_init (malloc (sizeof (Value)), TYPE_STRING, strdup (value)))
 
 #define array_create(item_type, item_count) \
-  (array_init (malloc (sizeof (Array)), sizeof (item_type) * (item_count)))
+  (array_init (malloc (sizeof (Array)), item_count, sizeof (item_type)))
 
 #define array_destroy(value) \
   (array_free (value), free (value), value = NULL)
