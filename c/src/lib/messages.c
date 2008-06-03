@@ -22,6 +22,11 @@ static Message read_int64 (ByteBuffer *buffer, Message message,
 static Message write_int64 (ByteBuffer *buffer, Message message, 
                             ElvinError *error);
 
+static Message read_int64_array (ByteBuffer *buffer, Message message, 
+                                 ElvinError *error);
+static Message write_int64_array (ByteBuffer *buffer, Message message, 
+                                  ElvinError *error);
+
 static Message read_bool (ByteBuffer *buffer, Message message, 
                           ElvinError *error);
 
@@ -74,6 +79,7 @@ typedef struct
 #define BO  {FIELD_INT32, read_bool, write_int32}
 #define XID {FIELD_XID, read_xid, write_int32}
 #define VA  {FIELD_POINTER, read_values, write_values}
+#define LA  {FIELD_POINTER, read_int64_array, write_int64_array}
 #define KY  {FIELD_POINTER, read_keys, write_keys}
 
 #define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL}
@@ -92,8 +98,12 @@ static MessageFormat MESSAGE_FORMATS [] =
     {XID, END}, {"xid"}},
   {MESSAGE_ID_DISCONN_RPLY,
     {XID, END}, {"xid"}},
+  {MESSAGE_ID_DISCONN,
+    {I4, STR, END}, {"reason", "arguments"}},
   {MESSAGE_ID_NOTIFY_EMIT,
     {NV, BO, KY, END}, {"attributes", "deliverInsecure", "keys"}},
+  {MESSAGE_ID_NOTIFY_DELIVER,
+    {NV, LA, LA, END}, {"attributes", "secureMatches", "insecureMatches"}},
   {MESSAGE_ID_SUB_ADD_RQST,
     {XID, STR, BO, KY, END}, {"xid", "expr", "deliverInsecure", "keys"}},
   {MESSAGE_ID_SUB_RPLY,
@@ -145,6 +155,10 @@ Message message_init (Message message, MessageTypeID type, ...)
     case FIELD_INT32:
       *(int32_t *)message = va_arg (args, int32_t);
       message += sizeof (int32_t);
+      break;
+    case FIELD_INT64:
+      *(int64_t *)message = va_arg (args, int64_t);
+      message += sizeof (int64_t);
       break;
     case FIELD_XID:
       *(uint32_t *)message = next_xid ();
@@ -298,6 +312,44 @@ Message write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
   byte_buffer_write_int64 (buffer, *(int64_t *)message, error);
     
   return message + sizeof (int64_t);
+}
+
+Message read_int64_array (ByteBuffer *buffer, Message message, 
+                          ElvinError *error)
+{
+  uint32_t length = byte_buffer_read_int32 (buffer, error);
+  
+  if (elvin_error_ok (error))
+  {
+    Array *array = array_create (int64_t, length); 
+    uint32_t i;
+  
+    for (i = 0; i < length && elvin_error_ok (error); i++)
+    {  
+      *(((int64_t *)array->items) + i) = byte_buffer_read_int64 (buffer, error);
+    }
+    
+    if (elvin_error_ok (error))
+      *(Array **)message = array;
+    else
+      array_destroy (array);
+  }
+  
+  return message + sizeof (Array *);
+}
+
+Message write_int64_array (ByteBuffer *buffer, Message message,
+                           ElvinError *error)
+{
+  uint32_t length = (*(Array **)message)->length;
+  int64_t *items = (int64_t *)(*(Array **)message)->items;
+  
+  byte_buffer_write_int32 (buffer, length, error);
+  
+  for ( ; length > 0 && elvin_error_ok (error); length--, items++)
+    byte_buffer_write_int64 (buffer, *items, error);
+  
+  return message + sizeof (Array *);
 }
 
 Message read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
