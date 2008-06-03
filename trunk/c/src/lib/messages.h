@@ -14,8 +14,11 @@
 
 #include "byte_buffer.h"
 
+/** Max number of fields in a message. */
+#define MAX_MESSAGE_FIELDS 8
+
 /** Max size of an in-memory decoded message */
-#define MAX_MESSAGE_SIZE (16 * sizeof (int *))
+#define MAX_MESSAGE_SIZE (MAX_MESSAGE_FIELDS * sizeof (int *))
 
 typedef enum
 {
