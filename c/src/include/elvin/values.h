@@ -15,6 +15,12 @@ typedef enum
   TYPE_STRING = 4, TYPE_OPAQUE = 5
 } ValueType;
 
+typedef struct
+{
+  size_t length; 
+  void *items;
+} Array;
+
 /** 
  * A polymorphic value: either an int32, int64, real64, string or opaque 
  * (an array of bytes). 
@@ -29,7 +35,7 @@ typedef struct
     int64_t   int64;
     real64_t  real64;
     char *    str;
-    uint8_t * bytes; /* TODO this also needs a length parameter */
+    Array     bytes;
   } value;
 } Value;
 
@@ -50,10 +56,15 @@ Value *value_init (Value *value, ValueType type, ...);
  */
 void value_free (Value *value);
 
+Array *array_init (Array *array, size_t length);
+
+void array_free (Array *array);
+
 /**
  * Destroy (free and NULL) a value instance.
  */
-#define value_destroy(value) (value_free (value), free (value), value = NULL)
+#define value_destroy(value) \
+  (value_free (value), free (value), value = NULL)
 
 /** Allocate and init an int32 value. Use value_destroy() when done. */
 #define value_create_int32(value) \
@@ -62,5 +73,11 @@ void value_free (Value *value);
 /** Allocate and init a string value. Use value_destroy() when done. */
 #define value_create_string(value) \
   (value_init (malloc (sizeof (Value)), TYPE_STRING, strdup (value)))
+
+#define array_create(item_type, item_count) \
+  (array_init (malloc (sizeof (Array)), sizeof (item_type) * (item_count)))
+
+#define array_destroy(value) \
+  (array_free (value), free (value), value = NULL)
 
 #endif /*VALUES_H_*/

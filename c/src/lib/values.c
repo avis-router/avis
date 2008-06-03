@@ -31,7 +31,7 @@ Value *value_init (Value *value, ValueType type, ...)
     value->value.str = va_arg (args, char *);
     break;
   case TYPE_OPAQUE:
-    value->value.bytes = va_arg (args, uint8_t *);
+    value->value.bytes = va_arg (args, Array);
     break;
   }
   
@@ -45,7 +45,7 @@ void value_free (Value *value)
   if (value->type == TYPE_STRING)
     free (value->value.str);
   else if (value->type == TYPE_OPAQUE)
-    free (value->value.bytes);
+    array_free (&value->value.bytes);
 }
 
 Value *value_read (ByteBuffer *buffer, ElvinError *error)
@@ -121,4 +121,23 @@ bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
   }
   
   return true;
+}
+
+Array *array_init (Array *array, size_t length)
+{
+  array->length = length;
+  array->items = malloc (length);
+
+  return array;
+}
+
+void array_free (Array *array)
+{
+  if (array->items)
+  {
+    free (array->items);
+    
+    array->items = NULL;
+    array->length = -1;
+  }
 }
