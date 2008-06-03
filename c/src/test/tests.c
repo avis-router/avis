@@ -12,6 +12,7 @@ Suite *suite ()
 
   suite_add_tcase (s, messages_tests ());
   suite_add_tcase (s, client_tests ());
+  suite_add_tcase (s, array_list_tests ());
 
   return s;
 }

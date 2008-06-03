@@ -7,7 +7,12 @@ AM_CFLAGS = -Wall -std=c99 -pedantic -lm
 
 bin_PROGRAMS=tests basic_test event_loop_test
 
-tests_SOURCES = tests.c check_ext.c check_messages.c check_client.c
+tests_SOURCES = \
+  tests.c \
+  check_ext.c \
+  check_messages.c \
+  check_client.c \
+  check_array_list.c
 
 tests_LDADD = \
   $(top_srcdir)/src/lib/libelvin.la \
