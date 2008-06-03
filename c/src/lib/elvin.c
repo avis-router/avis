@@ -26,6 +26,7 @@
 #include <elvin/log.h>
 
 #include "messages.h"
+#include "array_list.h"
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
@@ -195,6 +196,18 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   {
     return false;
   }
+}
+
+void elvin_add_subscription_listener (Subscription *subscription, 
+                                      SubscriptionListener listener)
+{
+  if (subscription->listeners == NULL)
+  {
+    subscription->listeners = 
+      array_list_create (sizeof (SubscriptionListener), 5);
+  }
+  
+  array_list_add_func (subscription->listeners, listener);
 }
 
 bool resolve_address (struct sockaddr_in *router_addr,
