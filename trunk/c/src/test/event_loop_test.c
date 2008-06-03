@@ -30,13 +30,13 @@ int main (int argc, const char * argv[])
     exit (1);
   }
   
-/*  elvin_add_subscription_listener (sub, sub_listener);
+  elvin_add_subscription_listener (&sub, sub_listener);
   
-  while (elvin->is_connected ())
+/*  while (elvin_is_open (&elvin))
   {
-    elvin->event_loop_poll ();
+    elvin_poll (&elvin);
   }
- */
+  */
   
   elvin_close (&elvin);
   
