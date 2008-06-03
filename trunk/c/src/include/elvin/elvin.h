@@ -47,6 +47,8 @@ typedef enum
   ALLOW_INSECURE_DELIVERY = 1
 } SecureMode;
 
+struct ArrayList;
+
 typedef struct
 {
   Elvin *elvin;
@@ -54,6 +56,7 @@ typedef struct
   uint64_t id;
   Keys keys;
   SecureMode security;
+  struct ArrayList *listeners;
 } Subscription;
 
 typedef struct
