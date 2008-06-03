@@ -56,7 +56,7 @@ libelvin_la_DEPENDENCIES =  \
 	$(top_srcdir)/packages/hashtable/libhashtable.la
 am_libelvin_la_OBJECTS = elvin.lo elvin_uri.lo messages.lo \
 	named_values.lo byte_buffer.lo errors.lo values.lo keys.lo \
-	log.lo
+	log.lo array_list.lo
 libelvin_la_OBJECTS = $(am_libelvin_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -200,7 +200,8 @@ libelvin_la_SOURCES = \
   errors.c \
   values.c \
   keys.c \
-  log.c
+  log.c \
+  array_list.c
 
 libelvin_la_LIBADD = \
   $(top_srcdir)/packages/hashtable/libhashtable.la
@@ -282,6 +283,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/array_list.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/byte_buffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elvin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elvin_uri.Plo@am__quote@

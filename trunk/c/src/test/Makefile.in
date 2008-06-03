@@ -53,7 +53,8 @@ am_event_loop_test_OBJECTS = event_loop_test.$(OBJEXT)
 event_loop_test_OBJECTS = $(am_event_loop_test_OBJECTS)
 event_loop_test_DEPENDENCIES = $(top_srcdir)/src/lib/libelvin.la
 am_tests_OBJECTS = tests.$(OBJEXT) check_ext.$(OBJEXT) \
-	check_messages.$(OBJEXT) check_client.$(OBJEXT)
+	check_messages.$(OBJEXT) check_client.$(OBJEXT) \
+	check_array_list.$(OBJEXT)
 tests_OBJECTS = $(am_tests_OBJECTS)
 tests_DEPENDENCIES = $(top_srcdir)/src/lib/libelvin.la \
 	$(top_srcdir)/packages/check/src/libcheck.la
@@ -186,7 +187,13 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
               -I$(top_srcdir)/packages/check/src $(all_includes)
 
 AM_CFLAGS = -Wall -std=c99 -pedantic -lm
-tests_SOURCES = tests.c check_ext.c check_messages.c check_client.c
+tests_SOURCES = \
+  tests.c \
+  check_ext.c \
+  check_messages.c \
+  check_client.c \
+  check_array_list.c
+
 tests_LDADD = \
   $(top_srcdir)/src/lib/libelvin.la \
   $(top_srcdir)/packages/check/src/libcheck.la
@@ -277,6 +284,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basic_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_array_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_ext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_messages.Po@am__quote@

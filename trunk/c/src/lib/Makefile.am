@@ -20,7 +20,8 @@ libelvin_la_SOURCES = \
   errors.c \
   values.c \
   keys.c \
-  log.c
+  log.c \
+  array_list.c
 
 libelvin_la_LIBADD = \
   $(top_srcdir)/packages/hashtable/libhashtable.la
