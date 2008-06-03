@@ -322,12 +322,10 @@ Message read_int64_array (ByteBuffer *buffer, Message message,
   if (elvin_error_ok (error))
   {
     Array *array = array_create (int64_t, length); 
-    uint32_t i;
+    int64_t *items = (int64_t *)array->items;
   
-    for (i = 0; i < length && elvin_error_ok (error); i++)
-    {  
-      *(((int64_t *)array->items) + i) = byte_buffer_read_int64 (buffer, error);
-    }
+    for ( ; length > 0 && elvin_error_ok (error); length--, items++)
+      *items = byte_buffer_read_int64 (buffer, error);
     
     if (elvin_error_ok (error))
       *(Array **)message = array;
