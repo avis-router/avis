@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "array_list.h"
+#include "array_list_private.h"
 
 static void auto_resize (ArrayList *list, size_t min_item_count, 
                          size_t item_size);
@@ -28,11 +28,18 @@ void array_list_free (ArrayList *list)
   }
 }
 
-void array_list_add_func (ArrayList *list, void (*func) ())
+void array_list_add_ptr (ArrayList *list, void *item)
+{
+  auto_resize (list, list->item_count + 1, sizeof (void *));
+  
+  ((void **)list->items) [list->item_count++] = item;
+}
+
+void array_list_add_func (ArrayList *list, FuncPtr func)
 {
   auto_resize (list, list->item_count + 1, sizeof (FuncPtr));
   
-  ((void (**) ())list->items) [list->item_count++] = func;
+  ((FuncPtr *)list->items) [list->item_count++] = func;
 }
 
 void array_list_add_int (ArrayList *list, int value)
@@ -54,6 +61,13 @@ FuncPtr array_list_get_func (ArrayList *list, size_t index)
   assert (index >= 0 && index < list->item_count);
   
   return ((void (**) ())list->items) [index];
+}
+
+void *array_list_get_ptr (ArrayList *list, size_t index)
+{
+  assert (index >= 0 && index < list->item_count);
+  
+  return ((void **)list->items) [index];
 }
 
 void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
