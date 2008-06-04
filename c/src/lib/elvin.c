@@ -23,10 +23,11 @@
 #include <elvin/stdtypes.h>
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
+#include <elvin/values.h>
 #include <elvin/log.h>
 
 #include "messages.h"
-#include "array_list.h"
+#include "array_list_private.h"
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
@@ -41,6 +42,15 @@ static Message receive_message (socket_t socket, ElvinError *error);
 static bool resolve_address (struct sockaddr_in *router_addr,
                              const char *host, uint16_t port, 
                              ElvinError *error);
+
+static void handle_notify_deliver (Elvin *elvin, Message message, 
+                                   ElvinError *error);
+
+static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
+
+static void deliver_notification (Elvin *elvin, Array *ids, 
+                                  Notification *notification,
+                                  ElvinError *error);
 
 #ifdef WIN32
   static void init_windows_sockets (ElvinError *error);
@@ -66,6 +76,7 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
   Message reply;
   
   elvin->socket = -1;
+  array_list_init (&elvin->subscriptions, sizeof (Subscription *), 5);
   
   if (!open_socket (elvin, url->host, url->port, error))
     return false;
@@ -134,8 +145,7 @@ void elvin_poll (Elvin *elvin, ElvinError *error)
   switch (message_type_of (message))
   {
   case MESSAGE_ID_NOTIFY_DELIVER:
-    /* TODO */
-    printf ("notify!\n");
+    handle_notify_deliver (elvin, message, error);
     break;
   case MESSAGE_ID_DISCONN:
     /* TODO */
@@ -158,8 +168,8 @@ bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
   return send_message (elvin->socket, notify_emit, error);
 }
 
-static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
-                         ElvinError *error)
+bool open_socket (Elvin *elvin, const char *host, uint16_t port,
+                  ElvinError *error)
 {
   struct sockaddr_in router_addr;
   socket_t sockfd;
@@ -194,7 +204,7 @@ void elvin_subscription_init (Subscription *subscription,
   subscription->id = 0;
   subscription->security = ALLOW_INSECURE_DELIVERY;
   subscription->subscription_expr = subscription_expr;
-  subscription->listeners = NULL;
+  array_list_init (&subscription->listeners, sizeof (SubscriptionListener), 5);
   elvin_keys_init (&subscription->keys);
 }
 
@@ -214,8 +224,10 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   
   if (sub_reply)
   {
-    /* TODO register sub etc */
-  
+    subscription->id = int64_at_offset (sub_reply, 4);
+    
+    array_list_add_ptr (&elvin->subscriptions, subscription);
+
     message_destroy (sub_reply);
 
     return true;
@@ -228,10 +240,7 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
 void elvin_add_subscription_listener (Subscription *subscription, 
                                       SubscriptionListener listener)
 {
-  if (subscription->listeners == NULL)
-    subscription->listeners = array_list_create (SubscriptionListener, 5);
-  
-  array_list_add_func (subscription->listeners, listener);
+  array_list_add_func (&subscription->listeners, listener);
 }
 
 bool resolve_address (struct sockaddr_in *router_addr,
@@ -370,6 +379,66 @@ Message receive_message (socket_t socket, ElvinError *error)
   byte_buffer_free (&buffer);
 
   return message;
+}
+
+void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
+{
+  NamedValues *attributes = ptr_at_offset (message, 0);
+  Array *secure_matches = ptr_at_offset (message, sizeof (NamedValues *));
+  Array *insecure_matches = ptr_at_offset (message, sizeof (NamedValues *) + sizeof (Array *));
+  Notification notification;
+  
+  notification.attributes = *attributes;
+  notification.secure = true;
+  
+  deliver_notification (elvin, secure_matches, &notification, error);
+  
+  if (elvin_error_occurred (error))
+    return;
+  
+  notification.secure = false;
+  deliver_notification (elvin, insecure_matches, &notification, error);
+}
+
+void deliver_notification (Elvin *elvin, Array *ids,
+                           Notification *notification, 
+                           ElvinError *error)
+{
+  int i, j;
+  int64_t *id = ids->items;
+  SubscriptionListener **listener;
+  
+  for (i = ids->item_count; i > 0; i--, id++)
+  {
+    Subscription *subscription = subscription_with_id (elvin, *id);
+    
+    if (subscription == NULL)
+    {
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                       "Invalid subscription ID from router");
+      
+      break;
+    }
+    
+    listener = subscription->listeners.items;
+    
+    for (j = subscription->listeners.item_count; j > 0; j--, listener++)
+      (**listener) (subscription, notification);
+  }
+}
+
+Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
+{
+  Subscription **subscription = elvin->subscriptions.items;
+  int i = elvin->subscriptions.item_count;
+ 
+  for ( ; i > 0; i--, subscription++)
+  {
+    if ((*subscription)->id == id)
+      return *subscription;
+  }
+  
+  return NULL;
 }
 
 #ifdef WIN32
