@@ -96,7 +96,7 @@ bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
 bool elvin_subscribe (Elvin *elvin, Subscription *subscription, 
                       ElvinError *error);
 
-void elvin_add_subscription_listener (Subscription *subscription, 
+void elvin_subscription_add_listener (Subscription *subscription, 
                                       SubscriptionListener listener);
 
 bool elvin_is_open (Elvin *elvin);

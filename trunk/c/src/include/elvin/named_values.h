@@ -15,6 +15,7 @@ struct hashtable;
  * @see named_values_init()
  * @see Value
  */
+/* TODO NamedValues can just be an alias for hashtable */
 typedef struct 
 {
   struct hashtable *table;
