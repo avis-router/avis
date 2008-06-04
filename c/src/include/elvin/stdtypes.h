@@ -6,9 +6,15 @@
 #define ELVIN_STDTYPES_H
 
 typedef double real64_t;
-
+  
 #ifdef HAVE_CONFIG_H
-  #include <config.h>
+  #include "config.h"
+#elif defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__)
+
+  /* On Mac OS X under XCode, hardwire which includes are available */
+  #define HAVE_STDINT_H
+  #define HAVE_STDBOOL_H
+  #define HAVE_ARCHITECTURE_BYTE_ORDER_H
 #endif
 
 #ifdef HAVE_STDINT_H
