@@ -4,6 +4,7 @@
 #include <errno.h>
 
 #include <elvin/elvin.h>
+#include <elvin/named_values.h>
 
 void sub_listener (Subscription *sub, Notification *notification);
 
@@ -22,7 +23,7 @@ int main (int argc, const char * argv[])
   
   /* TODO handle Ctrl+C */
   
-  elvin_subscription_init (&sub, "require (test)");
+  elvin_subscription_init (&sub, "require (test) && string (message)");
   
   if (!elvin_subscribe (&elvin, &sub, &error))
   {
@@ -30,7 +31,7 @@ int main (int argc, const char * argv[])
     exit (1);
   }
   
-  elvin_add_subscription_listener (&sub, sub_listener);
+  elvin_subscription_add_listener (&sub, sub_listener);
   
   while (elvin_is_open (&elvin) && elvin_error_ok (&error))
   {
@@ -47,5 +48,6 @@ int main (int argc, const char * argv[])
 
 void sub_listener (Subscription *sub, Notification *notification)
 {
-  printf ("Notified!\n");
+  printf ("Notified! Message = %s\n", 
+          named_values_get_string (&notification->attributes, "message"));
 }
