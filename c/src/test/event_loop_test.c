@@ -37,6 +37,9 @@ int main (int argc, const char * argv[])
     elvin_poll (&elvin, &error);
   }
   
+  if (elvin_error_occurred (&error))
+    elvin_perror ("receive", &error);
+  
   elvin_close (&elvin);
   
   return 0;
