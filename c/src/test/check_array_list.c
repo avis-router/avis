@@ -11,7 +11,7 @@ TCase *array_list_tests ();
 
 START_TEST (test_array_list)
 {
-  ArrayList *list = array_list_create (sizeof (int), 5);
+  ArrayList *list = array_list_create (int, 5);
  
   for (int i = 0; i < 1000; i++)
     array_list_add_int (list, i);

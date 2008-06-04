@@ -229,10 +229,7 @@ void elvin_add_subscription_listener (Subscription *subscription,
                                       SubscriptionListener listener)
 {
   if (subscription->listeners == NULL)
-  {
-    subscription->listeners = 
-      array_list_create (sizeof (SubscriptionListener), 5);
-  }
+    subscription->listeners = array_list_create (SubscriptionListener, 5);
   
   array_list_add_func (subscription->listeners, listener);
 }

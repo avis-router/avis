@@ -14,8 +14,9 @@ typedef struct ArrayList
   size_t item_count;
 } ArrayList;
 
-#define array_list_create(item_size, initial_size) \
-  (array_list_init (malloc (sizeof (ArrayList)), item_size, initial_size))
+#define array_list_create(item_type, initial_item_count) \
+  (array_list_init (malloc (sizeof (ArrayList)), \
+   sizeof (item_type), initial_item_count))
 
 #define array_list_destroy(list) \
   (array_list_free (list), free (list), list = NULL)
