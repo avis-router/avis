@@ -237,7 +237,7 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   }
 }
 
-void elvin_add_subscription_listener (Subscription *subscription, 
+void elvin_subscription_add_listener (Subscription *subscription, 
                                       SubscriptionListener listener)
 {
   array_list_add_func (&subscription->listeners, listener);
@@ -408,7 +408,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 {
   int i, j;
   int64_t *id = ids->items;
-  SubscriptionListener *listener;
+  SubscriptionListener *listeners;
   
   for (i = ids->item_count; i > 0; i--, id++)
   {
@@ -422,22 +422,22 @@ void deliver_notification (Elvin *elvin, Array *ids,
       return;
     }
     
-    listener = subscription->listeners.items;
+    listeners = subscription->listeners.items;
     
-    for (j = subscription->listeners.item_count; j > 0; j--, listener++)
-      (*listener) (subscription, notification);
+    for (j = subscription->listeners.item_count; j > 0; j--, listeners++)
+      (*listeners) (subscription, notification);
   }
 }
 
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 {
-  Subscription **subscription = elvin->subscriptions.items;
-  int i = elvin->subscriptions.item_count;
+  Subscription **subscriptions = elvin->subscriptions.items;
+  int i;
  
-  for ( ; i > 0; i--, subscription++)
+  for (i = elvin->subscriptions.item_count; i > 0; i--, subscriptions++)
   {
-    if ((*subscription)->id == id)
-      return *subscription;
+    if ((*subscriptions)->id == id)
+      return *subscriptions;
   }
   
   return NULL;
