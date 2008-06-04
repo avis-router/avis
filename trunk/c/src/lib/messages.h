@@ -53,6 +53,11 @@ void message_free (Message message);
 #define message_type_of(message) (*(uint32_t *)(message))
 
 /** The message's transaction ID. */
-#define xid_of(message) (*(uint32_t *)((message) + 4))
+#define xid_of(message) (int32_at_offset(message, 0))
+
+#define int32_at_offset(message, offset) (*(int32_t *)((message) + ((offset) + 4)))
+#define int64_at_offset(message, offset) (*(int64_t *)((message) + ((offset) + 4)))
+#define int64s_at_offset(message, offset) (*(int64_t **)(message + ((offset) + 4)))
+#define ptr_at_offset(message, offset) (*(void **)(message + ((offset) + 4)))
 
 #endif /* ELVIN_MESSAGES_H */
