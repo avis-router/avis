@@ -13,6 +13,7 @@
 #include <elvin/stdtypes.h>
 #include <elvin/elvin_uri.h>
 #include <elvin/errors.h>
+#include <elvin/array_list.h>
 
 #ifdef WIN32
   #include <winsock2.h>
@@ -39,6 +40,7 @@
 typedef struct
 {
   socket_t socket;
+  ArrayList subscriptions;
 } Elvin;
 
 typedef enum 
@@ -47,8 +49,6 @@ typedef enum
   ALLOW_INSECURE_DELIVERY = 1
 } SecureMode;
 
-struct ArrayList;
-
 typedef struct
 {
   Elvin *elvin;
@@ -56,12 +56,13 @@ typedef struct
   uint64_t id;
   Keys keys;
   SecureMode security;
-  struct ArrayList *listeners;
+  ArrayList listeners;
 } Subscription;
 
 typedef struct
 {
   NamedValues attributes;
+  bool secure;
 } Notification;
 
 typedef void (*SubscriptionListener) (Subscription *subscription, 
