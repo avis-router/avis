@@ -26,7 +26,7 @@ START_TEST (test_array_list)
   
   for (int i = 0; i < 1000; i++)
   {
-    array_list_remove (list, 0);
+    array_list_remove (list, 0, int);
     
     if (i < 999)
     {

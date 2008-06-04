@@ -12,7 +12,6 @@ typedef struct ArrayList
   void *items;
   size_t items_length;
   size_t item_count;
-  unsigned item_size;
 } ArrayList;
 
 #define array_list_create(item_size, initial_size) \
@@ -23,8 +22,8 @@ typedef struct ArrayList
 
 #define array_list_size(list) ((list)->item_count)
 
-ArrayList *array_list_init (ArrayList *list, unsigned item_size, 
-                            size_t initial_size);
+ArrayList *array_list_init (ArrayList *list, size_t item_size, 
+                            size_t initial_item_count);
 
 void array_list_free (ArrayList *list);
 
@@ -36,7 +35,10 @@ int array_list_get_int (ArrayList *list, size_t index);
 
 FuncPtr array_list_get_func (ArrayList *list, size_t index);
 
-void array_list_remove (ArrayList *list, size_t index);
+#define array_list_remove(list, index, item_type) \
+  (array_list_remove_item (list, index, sizeof (item_type)))
+
+void array_list_remove_item (ArrayList *list, size_t index, size_t item_size);
 
 int array_list_find_int (ArrayList *list, int int_value);
 
