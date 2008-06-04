@@ -17,7 +17,7 @@ typedef enum
 
 typedef struct
 {
-  size_t item_count; 
+  int item_count; 
   void *items;
 } Array;
 
@@ -38,6 +38,12 @@ typedef struct
     Array     bytes;
   } value;
 } Value;
+
+#define array_create(item_type, item_count) \
+  (array_init (malloc (sizeof (Array)), item_count, sizeof (item_type)))
+
+#define array_destroy(value) \
+  (array_free (value), free (value), value = NULL)
 
 /** 
  * Initialise a polymorphic value.
@@ -60,6 +66,9 @@ Array *array_init (Array *array, unsigned item_count, size_t item_length);
 
 void array_free (Array *array);
 
+#define array_get(array, index, item_type) \
+  (((item_type *)array->items) [index])
+
 /**
  * Destroy (free and NULL) a value instance.
  */
@@ -73,11 +82,5 @@ void array_free (Array *array);
 /** Allocate and init a string value. Use value_destroy() when done. */
 #define value_create_string(value) \
   (value_init (malloc (sizeof (Value)), TYPE_STRING, strdup (value)))
-
-#define array_create(item_type, item_count) \
-  (array_init (malloc (sizeof (Array)), item_count, sizeof (item_type)))
-
-#define array_destroy(value) \
-  (array_free (value), free (value), value = NULL)
 
 #endif /*VALUES_H_*/
