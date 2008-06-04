@@ -5,7 +5,7 @@
 #include <elvin/elvin_uri.h>
 
 static char *substring (const char *start, const char *end);
-const char *stranychr (const char *start, const char *chars);
+static const char *stranychr (const char *start, const char *chars);
 
 #define parse_fail(expr,message) \
   if (expr) \
