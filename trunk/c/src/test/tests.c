@@ -5,6 +5,7 @@
 
 TCase *messages_tests ();
 TCase *client_tests ();
+TCase *array_list_tests ();
 
 Suite *suite ()
 {
