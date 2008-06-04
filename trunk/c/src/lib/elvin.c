@@ -384,8 +384,10 @@ Message receive_message (socket_t socket, ElvinError *error)
 void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
 {
   NamedValues *attributes = ptr_at_offset (message, 0);
-  Array *secure_matches = ptr_at_offset (message, sizeof (NamedValues *));
-  Array *insecure_matches = ptr_at_offset (message, sizeof (NamedValues *) + sizeof (Array *));
+  Array *secure_matches = 
+    ptr_at_offset (message, sizeof (NamedValues *));
+  Array *insecure_matches = 
+    ptr_at_offset (message, sizeof (NamedValues *) + sizeof (Array *));
   Notification notification;
   
   notification.attributes = *attributes;
@@ -406,7 +408,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 {
   int i, j;
   int64_t *id = ids->items;
-  SubscriptionListener **listener;
+  SubscriptionListener *listener;
   
   for (i = ids->item_count; i > 0; i--, id++)
   {
@@ -417,13 +419,13 @@ void deliver_notification (Elvin *elvin, Array *ids,
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
                        "Invalid subscription ID from router");
       
-      break;
+      return;
     }
     
     listener = subscription->listeners.items;
     
     for (j = subscription->listeners.item_count; j > 0; j--, listener++)
-      (**listener) (subscription, notification);
+      (*listener) (subscription, notification);
   }
 }
 
