@@ -1,0 +1,4 @@
+TODO
+
+* use valgrid to pick up errors
+* rename Elvin client lib refs to Avis, including headers
