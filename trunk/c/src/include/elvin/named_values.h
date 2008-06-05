@@ -45,13 +45,10 @@ extern NamedValues _empty_named_values;
 
 #define EMPTY_NAMED_VALUES (&_empty_named_values)
 
-#define named_values_create() \
-  (named_values_init (malloc (sizeof (NamedValues))))
-
 #define named_values_destroy(values) \
   (named_values_free (values), values = NULL)
 
-NamedValues *named_values_init (NamedValues *values);
+NamedValues *named_values_create ();
 
 void named_values_free (NamedValues *values);
 
