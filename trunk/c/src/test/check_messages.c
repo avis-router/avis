@@ -93,7 +93,7 @@ START_TEST (test_byte_buffer_io)
     
   for (int i = 0; i < 1000; i++)
   {
-    uint32_t value;
+    int32_t value;
     value = byte_buffer_read_int32 (buffer, &error);
     fail_on_error (&error);
     fail_unless (value == i, "Value not the same");
