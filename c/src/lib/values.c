@@ -138,6 +138,6 @@ void array_free (Array *array)
     free (array->items);
     
     array->items = NULL;
-    array->item_count = -1;
+    array->item_count = 0;
   }
 }

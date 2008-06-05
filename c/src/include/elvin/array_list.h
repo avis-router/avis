@@ -3,11 +3,11 @@
 
 #include <stdlib.h>
 
-typedef struct ArrayList
+typedef struct
 {
   void *items;
   size_t items_length;
-  unsigned item_count;
+  size_t item_count;
 } ArrayList;
 
 #endif /*ARRAY_LIST_H_*/
