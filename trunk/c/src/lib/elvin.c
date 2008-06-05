@@ -32,13 +32,13 @@
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
 
-static bool send_and_receive (socket_t socket, Message request, 
+static bool send_and_receive (socket_t socketfd, Message request, 
                               Message reply, MessageTypeID reply_type, 
                               ElvinError *error);
 
-static bool send_message (socket_t sockfd, Message message, ElvinError *error);
+static bool send_message (socket_t socketfd, Message message, ElvinError *error);
 
-static bool receive_message (socket_t socket, Message message, 
+static bool receive_message (socket_t socketfd, Message message, 
                              ElvinError *error);
 
 static bool resolve_address (struct sockaddr_in *router_addr,
@@ -290,13 +290,13 @@ bool resolve_address (struct sockaddr_in *router_addr,
   return true;
 }
 
-bool send_and_receive (socket_t socket, Message request, 
+bool send_and_receive (socket_t socketfd, Message request, 
                        Message reply, MessageTypeID reply_type, 
                        ElvinError *error)
 {
   /* todo could share the buffer for this */
-  if (!(send_message (socket, request, error) && 
-        receive_message (socket, reply, error)))
+  if (!(send_message (socketfd, request, error) && 
+        receive_message (socketfd, reply, error)))
   {
     return false;
   }
@@ -323,7 +323,7 @@ bool send_and_receive (socket_t socket, Message request,
   }
 }
 
-bool send_message (socket_t socket, Message message, ElvinError *error)
+bool send_message (socket_t socketfd, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
@@ -336,8 +336,8 @@ bool send_message (socket_t socket, Message message, ElvinError *error)
 
   while (position < buffer.position && elvin_error_ok (error))
   {
-    size_t bytes_written = send (socket, buffer.data + position, 
-                                 buffer.position - position, 0);
+    int bytes_written = send (socketfd, buffer.data + position, 
+							                buffer.position - position, 0);
     
     if (bytes_written == -1)
       elvin_error_from_errno (error);
@@ -350,14 +350,14 @@ bool send_message (socket_t socket, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-bool receive_message (socket_t socket, Message message, ElvinError *error)
+bool receive_message (socket_t socketfd, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   uint32_t frame_size;
   size_t position = 0;
-  size_t bytes_read;
+  int bytes_read;
     
-  bytes_read = recv (socket, (void *)&frame_size, 4, 0);
+  bytes_read = recv (socketfd, (void *)&frame_size, 4, 0);
   
   if (bytes_read != 4)
   {
@@ -374,7 +374,7 @@ bool receive_message (socket_t socket, Message message, ElvinError *error)
 
   while (position < buffer.max_data_length && elvin_error_ok (error))
   {
-    bytes_read = recv (socket, buffer.data + position, 
+    bytes_read = recv (socketfd, buffer.data + position, 
                        buffer.max_data_length - position, 0);
    
     if (bytes_read == -1)
