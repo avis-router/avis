@@ -123,7 +123,7 @@ bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
   return true;
 }
 
-Array *array_init (Array *array, unsigned item_count, size_t item_length)
+Array *array_init (Array *array, size_t item_count, size_t item_length)
 {
   array->item_count = item_count;
   array->items = malloc (item_count * item_length);

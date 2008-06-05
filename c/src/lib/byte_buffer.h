@@ -6,10 +6,10 @@
 
 typedef struct
 {
-  size_t data_length;
-  size_t max_data_length;
-  size_t position;
-  uint8_t *data;
+  uint8_t * data;
+  size_t    data_length;
+  size_t    max_data_length;
+  size_t    position;
 } ByteBuffer;
 
 #define byte_buffer_create() (byte_buffer_init (malloc (sizeof (ByteBuffer))))
