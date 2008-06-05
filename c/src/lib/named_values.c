@@ -16,11 +16,9 @@ static unsigned int string_hash (void *string);
 
 static int string_equals (void *string1, void *string2);
 
-NamedValues *named_values_init (NamedValues *values)
+NamedValues *named_values_create (NamedValues *values)
 {
-  values = create_hashtable (16, string_hash, string_equals);
-  
-  return values;
+  return create_hashtable (16, string_hash, string_equals);
 }
 
 void named_values_free (NamedValues *values)
