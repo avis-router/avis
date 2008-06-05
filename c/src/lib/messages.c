@@ -190,7 +190,7 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   uint32_t type;
   MessageFormat *format;
   
-  on_error_return (type = byte_buffer_read_int32 (buffer, error), NULL);
+  on_error_return_false (type = byte_buffer_read_int32 (buffer, error));
   
   format = message_format_for (type);
   
@@ -198,7 +198,7 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   {
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Unknown message type");
     
-    return NULL;
+    return false;
   }
 
   /* fill in type field */
@@ -333,7 +333,7 @@ Message read_int64_array (ByteBuffer *buffer, Message message,
 Message write_int64_array (ByteBuffer *buffer, Message message,
                            ElvinError *error)
 {
-  uint32_t item_count = (*(Array **)message)->item_count;
+  size_t item_count = (*(Array **)message)->item_count;
   int64_t *items = (int64_t *)(*(Array **)message)->items;
   
   byte_buffer_write_int32 (buffer, item_count, error);

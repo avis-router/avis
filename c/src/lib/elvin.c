@@ -364,7 +364,7 @@ bool receive_message (socket_t socket, Message message, ElvinError *error)
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
                      "Failed to read frame size");
     
-    return NULL;
+    return false;
   }
   
   frame_size = ntohl (frame_size);
@@ -416,7 +416,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
                            Notification *notification, 
                            ElvinError *error)
 {
-  int i, j;
+  size_t i, j;
   int64_t *id = ids->items;
   SubscriptionListener *listeners;
   
@@ -442,7 +442,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 {
   Subscription **subscriptions = elvin->subscriptions.items;
-  int i;
+  size_t i;
  
   for (i = elvin->subscriptions.item_count; i > 0; i--, subscriptions++)
   {
