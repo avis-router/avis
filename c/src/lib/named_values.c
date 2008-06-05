@@ -33,18 +33,13 @@ unsigned int named_values_size (NamedValues *values)
 
 void named_values_set (NamedValues *values, const char *name, Value *value)
 {
+  /* TODO delete old value if any */
   hashtable_insert (values, strdup (name), value);
 }
 
 Value *named_values_get (NamedValues *values, const char *name)
 {
   return hashtable_search (values, (void *)name);
-}
-
-void named_values_set_int32 (NamedValues *values, const char *name, 
-                             int32_t value)
-{
-  named_values_set (values, name, value_create_int32 (value));
 }
 
 int32_t named_values_get_int32 (NamedValues *values, const char *name)
@@ -55,12 +50,6 @@ int32_t named_values_get_int32 (NamedValues *values, const char *name)
     return value->value.int32;
   else
     return 0;
-}
-
-void named_values_set_string (NamedValues *values, 
-                              const char *name, const char *value)
-{
-  named_values_set (values, name, value_create_string (value));
 }
 
 const char *named_values_get_string (NamedValues *values, const char *name)
