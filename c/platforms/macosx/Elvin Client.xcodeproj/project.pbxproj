@@ -98,7 +98,7 @@
 		C906FBF40DD3FC3900375E7D /* elvin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin.c; path = ../../src/lib/elvin.c; sourceTree = SOURCE_ROOT; };
 		C906FBFE0DD3FD0000375E7D /* Test.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = Test.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		C931A0130DF640F200313558 /* array_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array_list.c; path = ../../src/lib/array_list.c; sourceTree = SOURCE_ROOT; };
-		C931A0140DF640F200313558 /* array_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array_list.h; path = ../../src/lib/array_list.h; sourceTree = SOURCE_ROOT; };
+		C931A0140DF640F200313558 /* array_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array_list.h; path = ../../src/include/elvin/array_list.h; sourceTree = SOURCE_ROOT; };
 		C931A03E0DF6422A00313558 /* check_array_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_array_list.c; path = ../../src/test/check_array_list.c; sourceTree = SOURCE_ROOT; };
 		C931A03F0DF6422A00313558 /* check_client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_client.c; path = ../../src/test/check_client.c; sourceTree = SOURCE_ROOT; };
 		C931A0400DF6422A00313558 /* check_ext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_ext.c; path = ../../src/test/check_ext.c; sourceTree = SOURCE_ROOT; };
@@ -122,6 +122,9 @@
 		C931A0BC0DF642E500313558 /* check_run.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_run.c; path = ../../packages/check/src/check_run.c; sourceTree = SOURCE_ROOT; };
 		C931A0BD0DF642E500313558 /* check_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_str.c; path = ../../packages/check/src/check_str.c; sourceTree = SOURCE_ROOT; };
 		C931A0BE0DF642E500313558 /* check_str.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = check_str.h; path = ../../packages/check/src/check_str.h; sourceTree = SOURCE_ROOT; };
+		C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avis_client_config.h; sourceTree = "<group>"; };
+		C97363CC0DF7CF2F00DCE905 /* array_list_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array_list_private.h; path = ../../src/lib/array_list_private.h; sourceTree = SOURCE_ROOT; };
+		C97363F70DF7D04900DCE905 /* stdtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdtypes.h; path = ../../src/include/elvin/stdtypes.h; sourceTree = SOURCE_ROOT; };
 		C9B465D60DD82A9800A1C448 /* messages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messages.h; path = ../../src/lib/messages.h; sourceTree = "<group>"; };
 		C9B465D70DD82A9800A1C448 /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/lib/messages.c; sourceTree = "<group>"; };
 		C9B466750DD9374900A1C448 /* libcheck.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcheck.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -205,6 +208,9 @@
 		08FB7795FE84155DC02AAC07 /* Client Library */ = {
 			isa = PBXGroup;
 			children = (
+				C97363F70DF7D04900DCE905 /* stdtypes.h */,
+				C97363CC0DF7CF2F00DCE905 /* array_list_private.h */,
+				C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */,
 				C931A0130DF640F200313558 /* array_list.c */,
 				C931A0140DF640F200313558 /* array_list.h */,
 				FA4D5B4E0DF420DE0098EE7D /* byte_buffer.c */,
