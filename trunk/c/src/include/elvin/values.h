@@ -17,8 +17,8 @@ typedef enum
 
 typedef struct
 {
-  int item_count; 
   void *items;
+  size_t item_count; 
 } Array;
 
 /** 

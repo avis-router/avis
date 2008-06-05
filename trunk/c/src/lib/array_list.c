@@ -24,7 +24,7 @@ void array_list_free (ArrayList *list)
     free (list->items);
     
     list->items = NULL;
-    list->item_count = -1;
+    list->item_count = 0;
   }
 }
 
@@ -87,7 +87,7 @@ void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
 
 int array_list_find_int (ArrayList *list, int int_value)
 {
-  unsigned index;
+  size_t index;
   
   for (index = 0; index < list->item_count; index++)
   {
@@ -100,7 +100,7 @@ int array_list_find_int (ArrayList *list, int int_value)
 
 int array_list_find_func (ArrayList *list, void (*func) ())
 {
-  unsigned index;
+  size_t index;
     
   for (index = 0; index < list->item_count; index++)
   {
