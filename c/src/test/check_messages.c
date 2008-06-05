@@ -217,7 +217,7 @@ START_TEST (test_message_io)
   fail_unless (byte_buffer_position (buffer) == 32, 
                "Message length incorrect");
   
-  Message connRqst2;
+  Message connRqst2 = message_alloca ();
   
   // read message back
   byte_buffer_set_position (buffer, 0, &error);
@@ -229,8 +229,8 @@ START_TEST (test_message_io)
   fail_unless (frame_size == 28, "Frame size not sent correctly");
   
   byte_buffer_set_max_length (buffer, frame_size + 4);
-    
-  connRqst2 = message_read (buffer, &error);
+  
+  message_read (buffer, connRqst2, &error);
   
   fail_on_error (&error);
   
@@ -244,7 +244,7 @@ START_TEST (test_message_io)
   
   byte_buffer_destroy (buffer);
   
-  message_destroy (connRqst2);
+  message_free (connRqst2);
 }
 END_TEST
 

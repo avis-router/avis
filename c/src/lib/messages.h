@@ -36,18 +36,18 @@ typedef enum
 
 typedef uint8_t * Message;
 
-Message message_read (ByteBuffer *buffer, ElvinError *error);
-
-bool message_write (ByteBuffer *buffer, Message message, ElvinError *error);
-
 #define message_alloca() ((Message)alloca (MAX_MESSAGE_SIZE))
+
+Message message_init (Message message, MessageTypeID type, ...);
 
 #define message_destroy(message) \
   (message_free (message), free (message), message = NULL)
 
-Message message_init (Message message, MessageTypeID type, ...);
-
 void message_free (Message message);
+
+bool message_read (ByteBuffer *buffer, Message message, ElvinError *error);
+
+bool message_write (ByteBuffer *buffer, Message message, ElvinError *error);
 
 /** The message's type ID. */
 #define message_type_of(message) (*(uint32_t *)(message))
