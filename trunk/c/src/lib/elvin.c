@@ -315,7 +315,7 @@ Message send_and_receive (socket_t socket, Message request,
 bool send_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
-  uint32_t position = 0;
+  size_t position = 0;
   
   byte_buffer_init (&buffer);
   
@@ -344,7 +344,7 @@ Message receive_message (socket_t socket, ElvinError *error)
   ByteBuffer buffer;
   Message message = NULL;
   uint32_t frame_size;
-  uint32_t position = 0;
+  size_t position = 0;
   size_t bytes_read;
     
   bytes_read = recv (socket, (void *)&frame_size, 4, 0);
