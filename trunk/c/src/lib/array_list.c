@@ -92,7 +92,7 @@ int array_list_find_int (ArrayList *list, int int_value)
   for (index = 0; index < list->item_count; index++)
   {
     if (((int *)list->items) [index] == int_value)
-      return index;
+      return (int)index;
   }
   
   return -1;
@@ -105,7 +105,7 @@ int array_list_find_func (ArrayList *list, void (*func) ())
   for (index = 0; index < list->item_count; index++)
   {
     if (((void (**) ())list->items) [index] == func)
-      return index;
+      return (int)index;
   }
   
   return -1;
