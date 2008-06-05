@@ -11,6 +11,12 @@ if [ ! -f "$jar_dir/avis-tools.jar" ]; then
   exit 1
 fi
 
+if [ $OSTYPE = "cygwin" ]  ||  [ $OSTYPE = "cygwin32" ] ; then
+  pathsep=";"
+else
+  pathsep=":"
+fi
+
 exec java -Xverify:none \
-  -cp "$jar_dir/avis-client.jar:$jar_dir/avis-tools.jar" \
+  -cp "${jar_dir}/avis-client.jar${pathsep}${jar_dir}/avis-tools.jar" \
   org.avis.tools.Ec ${1+"$@"}
