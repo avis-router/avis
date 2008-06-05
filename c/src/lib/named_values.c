@@ -10,9 +10,7 @@
 #include "values_private.h"
 #include "named_values_private.h"
 
-static struct hashtable _empty_hashtable = {0, NULL, 0, 0, 0, NULL, NULL};
-
-NamedValues _empty_named_values = {&_empty_hashtable};
+NamedValues _empty_named_values = {0, NULL, 0, 0, 0, NULL, NULL};
 
 static unsigned int string_hash (void *string);
 
@@ -20,35 +18,29 @@ static int string_equals (void *string1, void *string2);
 
 NamedValues *named_values_init (NamedValues *values)
 {
-  values->table = create_hashtable (16, string_hash, string_equals);
+  values = create_hashtable (16, string_hash, string_equals);
   
   return values;
 }
 
 void named_values_free (NamedValues *values)
 {
-  if (values->table)
-  {
-    /* TODO: dealloc strings and opaques */
-    hashtable_destroy (values->table, 1);
-    
-    values->table = NULL;
-  }
+  hashtable_destroy (values, 1);
 }
 
 unsigned int named_values_size (NamedValues *values)
 {
-  return hashtable_count (values->table);
+  return hashtable_count (values);
 }
 
 void named_values_set (NamedValues *values, const char *name, Value *value)
 {
-  hashtable_insert (values->table, strdup (name), value);
+  hashtable_insert (values, strdup (name), value);
 }
 
 Value *named_values_get (NamedValues *values, const char *name)
 {
-  return hashtable_search (values->table, (void *)name);
+  return hashtable_search (values, (void *)name);
 }
 
 void named_values_set_int32 (NamedValues *values, const char *name, 
@@ -59,7 +51,7 @@ void named_values_set_int32 (NamedValues *values, const char *name,
 
 int32_t named_values_get_int32 (NamedValues *values, const char *name)
 {
-  Value *value = hashtable_search (values->table, (void *)name);
+  Value *value = hashtable_search (values, (void *)name);
   
   if (value && value->type == TYPE_INT32)
     return value->value.int32;
@@ -75,7 +67,7 @@ void named_values_set_string (NamedValues *values,
 
 const char *named_values_get_string (NamedValues *values, const char *name)
 {
-  Value *value = hashtable_search (values->table, (void *)name);
+  Value *value = hashtable_search (values, (void *)name);
     
   if (value && value->type == TYPE_STRING)
     return value->value.str;
@@ -89,11 +81,11 @@ bool named_values_write (ByteBuffer *buffer, NamedValues *values,
   struct hashtable_itr *i;
   
   on_error_return_false 
-    (byte_buffer_write_int32 (buffer, hashtable_count (values->table), error));
+    (byte_buffer_write_int32 (buffer, hashtable_count (values), error));
   
-  if (hashtable_count (values->table) > 0)
+  if (hashtable_count (values) > 0)
   {
-    i = hashtable_iterator (values->table);
+    i = hashtable_iterator (values);
     
     do
     {      
@@ -120,7 +112,7 @@ bool named_values_read (ByteBuffer *buffer, NamedValues *values,
     if ((name = byte_buffer_read_string (buffer, error)) &&
         (value = value_read (buffer, error)))
     {
-      hashtable_insert (values->table, name, value);
+      hashtable_insert (values, name, value);
     }
   }
 
