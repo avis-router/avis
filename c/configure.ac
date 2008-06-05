@@ -4,19 +4,19 @@
 AC_PREREQ([1.0])
 AC_INIT([Avis Client], [1.0], [phillipsm@sourceforge.net])
 
-# fairly severe build strictness
-# change foreign to gnu or gnits to comply with gnu standards
-AM_INIT_AUTOMAKE([-Wall foreign 1.9.5])
-
 # unique source file --- primitive safety check 
 #AC_CONFIG_SRCDIR([src/money.c])
 
 # place to put some extra build scripts installed
-#AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_AUX_DIR([automake])
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_LIBTOOL
+
+# fairly severe build strictness
+# change foreign to gnu or gnits to comply with gnu standards
+AM_INIT_AUTOMAKE([-Wall foreign 1.9.5])
 
 # Checks for libraries.
 
@@ -41,7 +41,7 @@ AC_CHECK_HEADERS([architecture/byte_order.h])
 AC_FUNC_MALLOC
 
 # Output files
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([platforms/gnu_automake/avis_client_config.h])
 
 AC_CONFIG_FILES([Makefile src/Makefile src/lib/Makefile src/test/Makefile
                  packages/Makefile packages/hashtable/Makefile])
