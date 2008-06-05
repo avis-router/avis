@@ -148,7 +148,6 @@ void auto_resize (ArrayList *list, size_t min_item_count, size_t item_size)
   if (list->items_length < min_length)
   {
     void *old_items = list->items;
-    void *new_items;
     
     /* new size is double old size */
     do   
@@ -156,10 +155,8 @@ void auto_resize (ArrayList *list, size_t min_item_count, size_t item_size)
       list->items_length *= 2;
     } while (list->items_length < min_length);
  
-    new_items = malloc (list->items_length);
+    list->items = malloc (list->items_length);
     
-    memcpy (new_items, old_items, list->item_count * item_size);
-    
-    list->items = new_items;
+    memcpy (list->items, old_items, list->item_count * item_size);
   }
 }
