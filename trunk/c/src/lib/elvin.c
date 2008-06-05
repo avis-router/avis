@@ -32,12 +32,14 @@
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
 
-static Message send_and_receive (socket_t socket, Message request, 
-                                 MessageTypeID reply_type, ElvinError *error);
+static bool send_and_receive (socket_t socket, Message request, 
+                              Message reply, MessageTypeID reply_type, 
+                              ElvinError *error);
 
 static bool send_message (socket_t sockfd, Message message, ElvinError *error);
 
-static Message receive_message (socket_t socket, ElvinError *error);
+static bool receive_message (socket_t socket, Message message, 
+                             ElvinError *error);
 
 static bool resolve_address (struct sockaddr_in *router_addr,
                              const char *host, uint16_t port, 
@@ -72,8 +74,8 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error)
 
 bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
 {
-  Message conn_rqst;
-  Message reply;
+  Message conn_rqst = message_alloca ();
+  Message reply = message_alloca ();
   
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription *), 5);
@@ -81,20 +83,18 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
   if (!open_socket (elvin, url->host, url->port, error))
     return false;
   
-  conn_rqst = message_alloca ();
-  
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST, 
                 DEFAULT_CLIENT_PROTOCOL_MAJOR, 
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
                 EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
   
   on_error_return_false 
-    (reply = send_and_receive (elvin->socket, conn_rqst, 
-                               MESSAGE_ID_CONN_RPLY, error));
+    (send_and_receive (elvin->socket, conn_rqst, reply,
+                       MESSAGE_ID_CONN_RPLY, error));
   
   
   /* todo check message reply options */
-  message_destroy (reply);
+  message_free (reply);
   
   return true;
 }
@@ -107,21 +107,19 @@ bool elvin_is_open (Elvin *elvin)
 bool elvin_close (Elvin *elvin)
 {
   ElvinError error = elvin_error_create ();
-  Message disconn_rqst;
-  Message reply;
+  Message disconn_rqst = message_alloca ();
+  Message reply = message_alloca ();
   
   if (elvin->socket == -1)
     return false;
   
-  disconn_rqst = message_alloca ();
   message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
   
-  reply = 
-    send_and_receive (elvin->socket, disconn_rqst, 
-                      MESSAGE_ID_DISCONN_RPLY, &error);
+  send_and_receive (elvin->socket, disconn_rqst, reply,
+                    MESSAGE_ID_DISCONN_RPLY, &error);
 
-  if (reply)
-    message_destroy (reply);
+  if (!elvin_error_occurred (&error))
+    message_free (reply);
 
   #ifdef WIN32
     closesocket (elvin->socket);
@@ -138,9 +136,11 @@ bool elvin_close (Elvin *elvin)
   return true;
 }
 
-void elvin_poll (Elvin *elvin, ElvinError *error)
+bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
-  Message message = receive_message (elvin->socket, error);
+  Message message = message_alloca (); 
+    
+  on_error_return_false (receive_message (elvin->socket, message, error));
   
   switch (message_type_of (message))
   {
@@ -155,7 +155,9 @@ void elvin_poll (Elvin *elvin, ElvinError *error)
     break;
   }
   
-  message_destroy (message);
+  message_free (message);
+  
+  return true;
 }
 
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
@@ -212,31 +214,26 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
                       ElvinError *error)
 {
   Message sub_add_rqst = message_alloca ();
-  Message sub_reply;
+  Message sub_reply = message_alloca ();
   
   message_init (sub_add_rqst,
                 MESSAGE_ID_SUB_ADD_RQST, subscription->subscription_expr,
                 ALLOW_INSECURE_DELIVERY,
                 &subscription->keys);
   
-  sub_reply = send_and_receive (elvin->socket, sub_add_rqst, 
-                                MESSAGE_ID_SUB_RPLY, error);
+  on_error_return_false 
+   (send_and_receive (elvin->socket, sub_add_rqst, sub_reply,
+                      MESSAGE_ID_SUB_RPLY, error));
   
   /* TODO handle NACK due to invalid expression */
   
-  if (sub_reply)
-  {
-    subscription->id = int64_at_offset (sub_reply, 4);
-    
-    array_list_add_ptr (&elvin->subscriptions, subscription);
+  subscription->id = int64_at_offset (sub_reply, 4);
+  
+  array_list_add_ptr (&elvin->subscriptions, subscription);
 
-    message_destroy (sub_reply);
+  message_free (sub_reply);
 
-    return true;
-  } else
-  {
-    return false;
-  }
+  return true;
 }
 
 bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription, 
@@ -293,19 +290,16 @@ bool resolve_address (struct sockaddr_in *router_addr,
   return true;
 }
 
-Message send_and_receive (socket_t socket, Message request, 
-                          MessageTypeID reply_type, ElvinError *error)
+bool send_and_receive (socket_t socket, Message request, 
+                       Message reply, MessageTypeID reply_type, 
+                       ElvinError *error)
 {
-  Message reply;
-  
   /* todo could share the buffer for this */
-  if (!send_message (socket, request, error))
-    return NULL;
-  
-  reply = receive_message (socket, error);
-  
-  if (!reply)
-    return NULL;
+  if (!(send_message (socket, request, error) && 
+        receive_message (socket, reply, error)))
+  {
+    return false;
+  }
   
   if (message_type_of (reply) != reply_type)
   {
@@ -318,10 +312,15 @@ Message send_and_receive (socket_t socket, Message request,
                      "Mismatched transaction ID in reply from router");
   }
   
-  if (elvin_error_occurred (error))
-    message_destroy (reply);
-  
-  return reply;
+  if (elvin_error_ok (error))
+  {
+    return true;
+  } else
+  {
+    message_free (reply);
+    
+    return false;
+  }
 }
 
 bool send_message (socket_t socket, Message message, ElvinError *error)
@@ -351,10 +350,9 @@ bool send_message (socket_t socket, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-Message receive_message (socket_t socket, ElvinError *error)
+bool receive_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
-  Message message = NULL;
   uint32_t frame_size;
   size_t position = 0;
   size_t bytes_read;
@@ -386,11 +384,11 @@ Message receive_message (socket_t socket, ElvinError *error)
   }
 
   if (elvin_error_ok (error))
-    message = message_read (&buffer, error);
+    message_read (&buffer, message, error);
   
   byte_buffer_free (&buffer);
 
-  return message;
+  return elvin_error_ok (error);
 }
 
 void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)

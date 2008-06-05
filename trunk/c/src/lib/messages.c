@@ -185,10 +185,9 @@ Message message_init (Message message, MessageTypeID type, ...)
  * the amount of data expected to be read and the position set to the start
  * of the data.
  */
-Message message_read (ByteBuffer *buffer, ElvinError *error)
+bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t type;
-  Message message;
   MessageFormat *format;
   
   on_error_return (type = byte_buffer_read_int32 (buffer, error), NULL);
@@ -201,9 +200,7 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
     
     return NULL;
   }
-  
-  message = malloc (MAX_MESSAGE_SIZE);
-  
+
   /* fill in type field */
   message_type_of (message) = type;
     
@@ -215,14 +212,7 @@ Message message_read (ByteBuffer *buffer, ElvinError *error)
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
   }
   
-  if (elvin_error_occurred (error))
-  {
-    free (message);
-    
-    message = NULL;
-  }
-  
-  return message;
+  return elvin_error_ok (error);
 }
 
 bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
