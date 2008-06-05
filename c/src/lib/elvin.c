@@ -222,6 +222,8 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   sub_reply = send_and_receive (elvin->socket, sub_add_rqst, 
                                 MESSAGE_ID_SUB_RPLY, error);
   
+  /* TODO handle NACK due to invalid expression */
+  
   if (sub_reply)
   {
     subscription->id = int64_at_offset (sub_reply, 4);
@@ -236,6 +238,16 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
     return false;
   }
 }
+
+bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription, 
+                        ElvinError *error)
+{
+  /* TODO */
+  
+  return false;
+}
+
+/* TODO support adding general listeners */
 
 void elvin_subscription_add_listener (Subscription *subscription, 
                                       SubscriptionListener listener)
