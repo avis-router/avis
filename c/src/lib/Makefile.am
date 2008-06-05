@@ -5,7 +5,8 @@ public_inc = $(top_srcdir)/src/include/elvin
 AM_CPPFLAGS = \
   -I$(top_srcdir)/src/include \
   -I$(top_srcdir)/lib \
-  -I$(top_srcdir)/packages/hashtable
+  -I$(top_srcdir)/packages/hashtable \
+  -DAVIS_SHARED_LIB
 
 AM_CFLAGS   = -Wall -std=c89 -pedantic
 
