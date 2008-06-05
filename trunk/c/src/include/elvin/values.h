@@ -89,8 +89,8 @@ void value_free (Value *value);
  * Initialise an array.
  * 
  * @param array The array to initialise.
- * @param The initial item count.
- * @param The length of an item.
+ * @param item_count The initial item count.
+ * @param item_length The length of an item.
  * 
  * @see array_create()
  */
