@@ -7,7 +7,7 @@ typedef struct ArrayList
 {
   void *items;
   size_t items_length;
-  int item_count;
+  unsigned item_count;
 } ArrayList;
 
 #endif /*ARRAY_LIST_H_*/
