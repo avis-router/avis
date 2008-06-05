@@ -160,6 +160,54 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
   return true;
 }
 
+void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
+{
+  NamedValues *attributes = ptr_at_offset (message, 0);
+  Array *secure_matches = 
+    ptr_at_offset (message, sizeof (NamedValues *));
+  Array *insecure_matches = 
+    ptr_at_offset (message, sizeof (NamedValues *) + sizeof (Array *));
+  Notification notification;
+  
+  notification.attributes = *attributes;
+  notification.secure = true;
+  
+  deliver_notification (elvin, secure_matches, &notification, error);
+  
+  if (elvin_error_occurred (error))
+    return;
+  
+  notification.secure = false;
+  deliver_notification (elvin, insecure_matches, &notification, error);
+}
+
+void deliver_notification (Elvin *elvin, Array *ids,
+                           Notification *notification, 
+                           ElvinError *error)
+{
+  size_t i, j;
+  int64_t *id = ids->items;
+  SubscriptionListener *listeners;
+  
+  for (i = ids->item_count; i > 0; i--, id++)
+  {
+    Subscription *subscription = subscription_with_id (elvin, *id);
+    
+    if (subscription == NULL)
+    {
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                       "Invalid subscription ID from router");
+      
+      return;
+    }
+    
+    listeners = subscription->listeners.items;
+    
+    for (j = subscription->listeners.item_count; j > 0; j--, listeners++)
+      (*listeners) (subscription, notification);
+  }
+}
+
 bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
 {
   Message notify_emit = message_alloca ();
@@ -168,35 +216,6 @@ bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
                 notification, true, EMPTY_KEYS);
   
   return send_message (elvin->socket, notify_emit, error);
-}
-
-bool open_socket (Elvin *elvin, const char *host, uint16_t port,
-                  ElvinError *error)
-{
-  struct sockaddr_in router_addr;
-  socket_t sockfd;
-  
-  #ifdef WIN32
-    on_error_return_false (init_windows_sockets (error));
-  #endif  
-  
-  on_error_return_false (resolve_address (&router_addr, host, port, error));
-  
-  sockfd = socket (PF_INET, SOCK_STREAM, 0);
-  
-  if (sockfd == -1)
-    return elvin_error_from_errno (error);
-  
-  if (connect (sockfd, (struct sockaddr *)&router_addr, 
-               sizeof (router_addr)) == 0)
-  {
-    elvin->socket = sockfd;
-    
-    return true;
-  } else
-  {
-    return elvin_error_from_errno (error);
-  }
 }
 
 void elvin_subscription_init (Subscription *subscription, 
@@ -250,44 +269,6 @@ void elvin_subscription_add_listener (Subscription *subscription,
                                       SubscriptionListener listener)
 {
   array_list_add_func (&subscription->listeners, listener);
-}
-
-bool resolve_address (struct sockaddr_in *router_addr,
-                      const char *host, uint16_t port, 
-                      ElvinError *error)
-{
-  struct addrinfo hints;
-  struct addrinfo *address_info;
-  int error_code;
-  
-  /* TODO this does not appear to work with IPv6 */
-  memset (&hints, '\0', sizeof (struct addrinfo));
-  hints.ai_family = AF_INET;
-  hints.ai_socktype = SOCK_STREAM;
-
-  if ((error_code = getaddrinfo (host, NULL, &hints, &address_info)) != 0)
-  {
-    return elvin_error_set (error, HOST_TO_ELVIN_ERROR (error_code), 
-                            gai_strerror (error_code));
-  }
-  
-  memcpy (router_addr, address_info->ai_addr, address_info->ai_addrlen);  
-  memset (router_addr->sin_zero, '\0', sizeof (router_addr->sin_zero));
-  router_addr->sin_port = htons (port);
-    
-  #if LOGGING (LOG_LEVEL_DIAGNOSTIC)
-  {
-    char ip [46];
-
-    inet_ntop (address_info->ai_family, &router_addr->sin_addr, 
-               ip, sizeof (ip));
-    DIAGNOSTIC2 ("Resolved router address %s = %s\n", host, ip);
-  }
-  #endif
-  
-  freeaddrinfo (address_info);
-
-  return true;
 }
 
 bool send_and_receive (socket_t socketfd, Message request, 
@@ -391,54 +372,6 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
-{
-  NamedValues *attributes = ptr_at_offset (message, 0);
-  Array *secure_matches = 
-    ptr_at_offset (message, sizeof (NamedValues *));
-  Array *insecure_matches = 
-    ptr_at_offset (message, sizeof (NamedValues *) + sizeof (Array *));
-  Notification notification;
-  
-  notification.attributes = *attributes;
-  notification.secure = true;
-  
-  deliver_notification (elvin, secure_matches, &notification, error);
-  
-  if (elvin_error_occurred (error))
-    return;
-  
-  notification.secure = false;
-  deliver_notification (elvin, insecure_matches, &notification, error);
-}
-
-void deliver_notification (Elvin *elvin, Array *ids,
-                           Notification *notification, 
-                           ElvinError *error)
-{
-  size_t i, j;
-  int64_t *id = ids->items;
-  SubscriptionListener *listeners;
-  
-  for (i = ids->item_count; i > 0; i--, id++)
-  {
-    Subscription *subscription = subscription_with_id (elvin, *id);
-    
-    if (subscription == NULL)
-    {
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                       "Invalid subscription ID from router");
-      
-      return;
-    }
-    
-    listeners = subscription->listeners.items;
-    
-    for (j = subscription->listeners.item_count; j > 0; j--, listeners++)
-      (*listeners) (subscription, notification);
-  }
-}
-
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 {
   Subscription **subscriptions = elvin->subscriptions.items;
@@ -451,6 +384,73 @@ Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
   }
   
   return NULL;
+}
+
+bool open_socket (Elvin *elvin, const char *host, uint16_t port,
+                  ElvinError *error)
+{
+  struct sockaddr_in router_addr;
+  socket_t sockfd;
+  
+  #ifdef WIN32
+    on_error_return_false (init_windows_sockets (error));
+  #endif  
+  
+  on_error_return_false (resolve_address (&router_addr, host, port, error));
+  
+  sockfd = socket (PF_INET, SOCK_STREAM, 0);
+  
+  if (sockfd == -1)
+    return elvin_error_from_errno (error);
+  
+  if (connect (sockfd, (struct sockaddr *)&router_addr, 
+               sizeof (router_addr)) == 0)
+  {
+    elvin->socket = sockfd;
+    
+    return true;
+  } else
+  {
+    return elvin_error_from_errno (error);
+  }
+}
+
+bool resolve_address (struct sockaddr_in *router_addr,
+                      const char *host, uint16_t port, 
+                      ElvinError *error)
+{
+  struct addrinfo hints;
+  struct addrinfo *address_info;
+  int error_code;
+  
+  /* TODO this does not appear to work with IPv6 */
+  memset (&hints, '\0', sizeof (struct addrinfo));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+
+  if ((error_code = getaddrinfo (host, NULL, &hints, &address_info)) != 0)
+  {
+    return elvin_error_set (error, HOST_TO_ELVIN_ERROR (error_code), 
+                            gai_strerror (error_code));
+  }
+  
+  memcpy (router_addr, address_info->ai_addr, address_info->ai_addrlen);  
+  memset (router_addr->sin_zero, '\0', sizeof (router_addr->sin_zero));
+  router_addr->sin_port = htons (port);
+    
+  #if LOGGING (LOG_LEVEL_DIAGNOSTIC)
+  {
+    char ip [46];
+
+    inet_ntop (address_info->ai_family, &router_addr->sin_addr, 
+               ip, sizeof (ip));
+    DIAGNOSTIC2 ("Resolved router address %s = %s\n", host, ip);
+  }
+  #endif
+  
+  freeaddrinfo (address_info);
+
+  return true;
 }
 
 #ifdef WIN32
