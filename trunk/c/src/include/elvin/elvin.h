@@ -203,8 +203,10 @@ bool elvin_close (Elvin *elvin);
  * 
  * This method should be called in an event loop by clients that
  * subscribe to notifications.
+ * 
+ * @return True if no error occurred.
  */
-void elvin_poll (Elvin *elvin, ElvinError *error);
+bool elvin_poll (Elvin *elvin, ElvinError *error);
 
 /**
  * Initialise a subscription instance. After initialisation of the required
