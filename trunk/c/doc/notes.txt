@@ -2,3 +2,5 @@ TODO
 
 * use valgrid to pick up errors
 * rename Elvin client lib refs to Avis, including headers
+* Universal binary for Mac OS X: 
+  http://developer.apple.com/documentation/Porting/Conceptual/PortingUnix/compiling/chapter_4_section_3.html
