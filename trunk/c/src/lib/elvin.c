@@ -264,6 +264,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
 }
 
 /* TODO support adding general listeners */
+/* TODO support client data pointer */
 
 void elvin_subscription_add_listener (Subscription *subscription, 
                                       SubscriptionListener listener)
@@ -315,7 +316,7 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
 
   /* todo set max size */
 
-  while (position < buffer.position && elvin_error_ok (error))
+  do
   {
     int bytes_written = send (socketfd, buffer.data + position, 
 							                buffer.position - position, 0);
@@ -324,7 +325,7 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
       elvin_error_from_errno (error);
     else
       position += bytes_written;      
-  }
+  } while (position < buffer.position && elvin_error_ok (error));
   
   byte_buffer_free (&buffer);
   
@@ -350,10 +351,10 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
   
   frame_size = ntohl (frame_size);
 
-  /* todo check size is not too big */
+  /* todo check size is not too big or < 4 */
   byte_buffer_init_sized (&buffer, frame_size);
 
-  while (position < buffer.max_data_length && elvin_error_ok (error))
+  do
   {
     bytes_read = recv (socketfd, buffer.data + position, 
                        buffer.max_data_length - position, 0);
@@ -362,7 +363,7 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
       elvin_error_from_errno (error);
     else
       position += bytes_read;
-  }
+  } while (position < buffer.max_data_length && elvin_error_ok (error));
 
   if (elvin_error_ok (error))
     message_read (&buffer, message, error);
@@ -390,7 +391,6 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                   ElvinError *error)
 {
   struct sockaddr_in router_addr;
-  socket_t sockfd;
   
   #ifdef WIN32
     on_error_return_false (init_windows_sockets (error));
@@ -398,16 +398,12 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   
   on_error_return_false (resolve_address (&router_addr, host, port, error));
   
-  sockfd = socket (PF_INET, SOCK_STREAM, 0);
+  elvin->socket = socket (PF_INET, SOCK_STREAM, 0);
   
-  if (sockfd == -1)
-    return elvin_error_from_errno (error);
-  
-  if (connect (sockfd, (struct sockaddr *)&router_addr, 
+  if (elvin->socket != -1 && 
+      connect (elvin->socket, (struct sockaddr *)&router_addr, 
                sizeof (router_addr)) == 0)
   {
-    elvin->socket = sockfd;
-    
     return true;
   } else
   {
