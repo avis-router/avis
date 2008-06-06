@@ -23,7 +23,22 @@ NamedValues *named_values_create (NamedValues *values)
 
 void named_values_free (NamedValues *values)
 {
-  hashtable_destroy (values, 1);
+  /* free entries */
+  if (hashtable_count (values) > 0)
+  {
+    struct hashtable_itr *i = hashtable_iterator (values);
+
+    do
+    {      
+      free (hashtable_iterator_key (i));
+      
+      value_destroy (hashtable_iterator_value (i));
+    } while (hashtable_iterator_advance (i));
+    
+    free (i);
+  }
+
+  hashtable_free (values, 0);
 }
 
 unsigned int named_values_size (NamedValues *values)
@@ -33,13 +48,22 @@ unsigned int named_values_size (NamedValues *values)
 
 void named_values_set (NamedValues *values, const char *name, Value *value)
 {
-  /* TODO delete old value if any */
+  Value *old_value = named_values_remove (values, name);
+  
+  if (old_value)
+    value_destroy (old_value);
+  
   hashtable_insert (values, strdup (name), value);
 }
 
 Value *named_values_get (NamedValues *values, const char *name)
 {
   return hashtable_search (values, (void *)name);
+}
+
+Value *named_values_remove (NamedValues *values, const char *name)
+{
+  return hashtable_remove (values, (void *)name);
 }
 
 int32_t named_values_get_int32 (NamedValues *values, const char *name)
@@ -64,16 +88,14 @@ const char *named_values_get_string (NamedValues *values, const char *name)
 
 bool named_values_write (ByteBuffer *buffer, NamedValues *values, 
                          ElvinError *error)
-{
-  struct hashtable_itr *i;
-  
+{  
   on_error_return_false 
     (byte_buffer_write_int32 (buffer, hashtable_count (values), error));
   
   if (hashtable_count (values) > 0)
   {
-    i = hashtable_iterator (values);
-    
+    struct hashtable_itr *i = hashtable_iterator (values);
+
     do
     {      
       if (byte_buffer_write_string (buffer, hashtable_iterator_key (i), error)) 
