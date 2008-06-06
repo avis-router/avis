@@ -308,6 +308,50 @@ bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes,
   return true;
 }
 
+bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
+                                  ElvinError *error)
+{
+  uint32_t length;
+  uint8_t *bytes;
+  
+  on_error_return_false (length = byte_buffer_read_int32 (buffer, error));
+  
+  bytes = malloc (length);
+  
+  if (bytes == NULL)
+  {
+    elvin_error_set (error, ERRNO_TO_ELVIN_ERROR (errno), 
+                     "Not enough memory to allocate opaque");
+    
+    return false;
+  }
+  
+  if (!(byte_buffer_read_bytes (buffer, bytes, length, error) &&
+        byte_buffer_skip (buffer, padding_for (length), error)))
+  {
+    free (bytes);
+    
+    return false;
+  }
+  
+  array->items = bytes;
+  array->item_count = length;
+  
+  return true;
+}
+
+bool byte_buffer_write_byte_array (ByteBuffer *buffer, Array *array,
+                                   ElvinError *error)
+{
+  on_error_return_false 
+    (byte_buffer_write_int32 (buffer, array->item_count, error));
+  
+  on_error_return_false 
+    (byte_buffer_write_bytes (buffer, array->items, array->item_count, error));
+  
+  return write_padding_for (buffer, array->item_count, error);
+}
+
 bool write_padding_for (ByteBuffer *buffer, uint32_t length, ElvinError *error)
 {
   uint32_t padding = padding_for (length);

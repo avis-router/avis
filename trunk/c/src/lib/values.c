@@ -65,18 +65,18 @@ Value *value_read (ByteBuffer *buffer, ElvinError *error)
     value->value.int32 = byte_buffer_read_int32 (buffer, error);
     break;
   case TYPE_INT64:
-    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    value->value.int64 = byte_buffer_read_int64 (buffer, error);
     byte_buffer_skip (buffer, 8, error);
     break;
   case TYPE_REAL64:
-    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    /* TODO  */
     byte_buffer_skip (buffer, 8, error);
     break;
   case TYPE_STRING:
     value->value.str = byte_buffer_read_string (buffer, error);
     break;
   case TYPE_OPAQUE:
-    /* TODO byte_buffer_read_bytes_var (buffer, error);*/
+    byte_buffer_read_byte_array (buffer, &value->value.bytes, error);
     break;
   default:
     DIAGNOSTIC1 ("Invalid value type found %u", type);
@@ -105,16 +105,16 @@ bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
     byte_buffer_write_int32 (buffer, value->value.int32, error);
     break;
   case TYPE_INT64:
-    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    byte_buffer_write_int64 (buffer, value->value.int64, error);
     break;
   case TYPE_REAL64:
-    /* TODO value->value.int32 = byte_buffer_read_int32 (buffer, error); */
+    /* TODO */
     break;
   case TYPE_STRING:
     byte_buffer_write_string (buffer, value->value.str, error);
     break;
   case TYPE_OPAQUE:
-    /* TODO byte_buffer_read_bytes_var (buffer, error);*/
+    byte_buffer_write_byte_array (buffer, &value->value.bytes, error);
     break;
   default:
     abort ();

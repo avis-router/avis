@@ -2,6 +2,7 @@
 #define BYTE_BUFFER_H_
 
 #include <elvin/stdtypes.h>
+#include <elvin/values.h>
 #include <stdlib.h>
 
 typedef struct
@@ -42,6 +43,12 @@ bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes,
 
 bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes, 
                               size_t bytes_len, ElvinError *error);
+
+bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
+                                  ElvinError *error);
+
+bool byte_buffer_write_byte_array (ByteBuffer *buffer, Array *array,
+                                   ElvinError *error);
 
 bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
                                ElvinError *error);
