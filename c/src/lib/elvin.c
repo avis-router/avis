@@ -250,17 +250,19 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   
   array_list_add_ptr (&elvin->subscriptions, subscription);
 
-  message_free (sub_reply);
-
   return true;
 }
 
 bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription, 
                         ElvinError *error)
 {
-  /* TODO */
+  Message sub_del_rqst = message_alloca ();
+  Message sub_reply = message_alloca ();
+    
+  message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
   
-  return false;
+  return send_and_receive (elvin->socket, sub_del_rqst, sub_reply,
+                           MESSAGE_ID_SUB_RPLY, error);
 }
 
 /* TODO support adding general listeners */
@@ -344,7 +346,7 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
   if (bytes_read != 4)
   {
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Failed to read frame size");
+                     "Failed to read router message");
     
     return false;
   }
