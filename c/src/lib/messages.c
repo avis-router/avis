@@ -6,6 +6,7 @@
 #include <elvin/stdtypes.h>
 #include <elvin/errors.h>
 #include <elvin/named_values.h>
+#include <elvin/values.h>
 #include <elvin/log.h>
 
 #include "messages.h"
@@ -53,19 +54,26 @@ static Message read_keys (ByteBuffer *buffer, Message message,
 static Message write_keys (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
 
+static void values_free (Array *values);
+
+static void keys_free (Array *keys);
+
 typedef enum 
 {
-  FIELD_INT32, FIELD_INT64, FIELD_XID, FIELD_POINTER
+  FIELD_XID, FIELD_INT32, FIELD_INT64, FIELD_POINTER
 } FieldType;
 
 typedef Message (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
                  ElvinError *error);
+
+typedef void (*DeallocFunction) ();
 
 typedef struct
 {
   FieldType type;
   MessageIOFunction read;
   MessageIOFunction write;
+  DeallocFunction free;
 } FieldFormat;
 
 typedef struct
@@ -75,17 +83,17 @@ typedef struct
   const char *field_names [MAX_MESSAGE_FIELDS];
 } MessageFormat;
 
-#define I4  {FIELD_INT32, read_int32, write_int32}
-#define I8  {FIELD_INT64, read_int64, write_int64}
-#define I8A {FIELD_POINTER, read_int64_array, write_int64_array}
-#define STR {FIELD_POINTER, read_string, write_string}
-#define NV  {FIELD_POINTER, read_named_values, write_named_values}
-#define BO  {FIELD_INT32, read_bool, write_int32}
-#define XID {FIELD_XID, read_xid, write_int32}
-#define VA  {FIELD_POINTER, read_values, write_values}
-#define KY  {FIELD_POINTER, read_keys, write_keys}
+#define I4  {FIELD_INT32, read_int32, write_int32, NULL}
+#define I8  {FIELD_INT64, read_int64, write_int64, NULL}
+#define I8A {FIELD_POINTER, read_int64_array, write_int64_array, array_free}
+#define STR {FIELD_POINTER, read_string, write_string, NULL}
+#define NV  {FIELD_POINTER, read_named_values, write_named_values, named_values_free}
+#define BO  {FIELD_INT32, read_bool, write_int32, NULL}
+#define XID {FIELD_XID, read_xid, write_int32, NULL}
+#define VA  {FIELD_POINTER, read_values, write_values, values_free}
+#define KY  {FIELD_POINTER, read_keys, write_keys, keys_free}
 
-#define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL}
+#define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL, NULL}
 
 static MessageFormat MESSAGE_FORMATS [] = 
 {
@@ -132,13 +140,7 @@ static void write_using_format (ByteBuffer *buffer,
 
 static uint32_t xid_counter = 1;
 
-/* todo this is not thread safe */
 #define next_xid() (xid_counter++)
-
-void message_free (Message message)
-{
-  /* TODO free subfields */
-}
 
 Message message_init (Message message, MessageTypeID type, ...)
 {
@@ -182,11 +184,39 @@ Message message_init (Message message, MessageTypeID type, ...)
   return message;
 }
 
-/**
- * Read a message from a buffer. The buffer's max length must be primed with
- * the amount of data expected to be read and the position set to the start
- * of the data.
- */
+void message_free (Message message)
+{
+  MessageFormat *format = message_format_for (message_type_of (message));
+  FieldFormat *field;
+  
+  assert (format != NULL);
+  
+  /* skip type */
+  message += 4;
+  
+  for (field = format->fields; field->read; field++)
+  {
+    switch (field->type)
+    {
+    case FIELD_POINTER:
+      if (field->free)
+        (*field->free) (*(void **)message);
+      
+      free (*(void **)message);
+      
+      message += sizeof (void *);
+      break;
+    case FIELD_INT32:
+    case FIELD_XID:
+      message += 4;
+      break;
+    case FIELD_INT64:
+      message += 8;
+      break;
+    }
+  }
+}
+
 bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t type;
@@ -418,6 +448,8 @@ Message read_keys (ByteBuffer *buffer, Message message, ElvinError *error)
   /* TODO */
   byte_buffer_skip (buffer, 4, error);
   
+  *(Keys **)message = malloc (sizeof (Keys));
+  
   return message + sizeof (Keys *);
 }
 
@@ -429,6 +461,11 @@ Message write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
   return message + sizeof (Keys *);
 }
 
+void keys_free (Array *keys)
+{
+  /* TODO */
+}
+
 Message read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   /* TODO */
@@ -436,6 +473,12 @@ Message read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 }
 
 Message write_values (ByteBuffer *buffer, Message message, ElvinError *error)
+{
+  /* TODO */
+  abort ();
+}
+
+void values_free (Array *values)
 {
   /* TODO */
   abort ();
