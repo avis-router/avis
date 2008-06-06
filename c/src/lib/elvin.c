@@ -337,6 +337,7 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
+/* TODO close connection on protocol violation */
 bool receive_message (socket_t socketfd, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
@@ -356,7 +357,7 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
   
   frame_size = ntohl (frame_size);
 
-  /* todo check size is not too big or < 4 */
+  /* TODO check size is not too big or < 4 */
   byte_buffer_init_sized (&buffer, frame_size);
 
   do
