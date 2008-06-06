@@ -147,7 +147,10 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
     handle_disconn (elvin, message, error);
     break;
   default:
-    /* TODO protocol violation */
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                     "Unexpected message type from router");
+      
+    close_socket (elvin);
     break;
   }
   
