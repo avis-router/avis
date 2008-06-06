@@ -44,8 +44,18 @@ Message message_init (Message message, MessageTypeID type, ...);
 #define message_destroy(message) \
   (message_free (message), free (message), message = NULL)
 
+/**
+ * Free memory allocated to a message dynamically allocated by message_read().
+ */
 void message_free (Message message);
 
+/**
+ * Read a message from a buffer. The buffer's max length must be primed with
+ * the amount of data expected to be read and the position set to the start
+ * of the data.
+ * 
+ * @see message_free()
+ */
 bool message_read (ByteBuffer *buffer, Message message, ElvinError *error);
 
 bool message_write (ByteBuffer *buffer, Message message, ElvinError *error);
