@@ -33,6 +33,11 @@ int64_t byte_buffer_read_int64 (ByteBuffer *buffer, ElvinError *error);
 bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value, 
                               ElvinError *error);
 
+real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error);
+
+bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t value, 
+                               ElvinError *error);
+
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
                                ElvinError *error);
 

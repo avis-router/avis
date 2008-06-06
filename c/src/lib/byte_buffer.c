@@ -236,6 +236,21 @@ bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
   return true;
 }
 
+real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error)
+{
+  int64_t value = byte_buffer_read_int64 (buffer, error);
+ 
+  /* We're assuming the system's double type is already in IEEE 754 format. */
+  return *(real64_t *)&value;
+}
+
+bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t value, 
+                               ElvinError *error)
+{
+  /* We're assuming the system's double type is already in IEEE 754 format. */
+  return byte_buffer_write_int64 (buffer, *(int64_t *)&value, error);
+}
+
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
                                ElvinError *error)
 {

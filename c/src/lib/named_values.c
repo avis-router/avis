@@ -86,6 +86,16 @@ int64_t named_values_get_int64 (NamedValues *values, const char *name)
     return 0;
 }
 
+real64_t named_values_get_real64 (NamedValues *values, const char *name)
+{
+  Value *value = hashtable_search (values, (void *)name);
+  
+  if (value && value->type == TYPE_REAL64)
+    return value->value.real64;
+  else
+    return 0;
+}
+
 const char *named_values_get_string (NamedValues *values, const char *name)
 {
   Value *value = hashtable_search (values, (void *)name);

@@ -110,7 +110,19 @@ START_TEST (test_byte_buffer_io)
   fail_on_error (&error);
 
   fail_unless (value64 == 123456790L, "Value not the same: %lu\n", value64);
+
+  // real64
+  byte_buffer_set_position (buffer, 0, &error);
+  byte_buffer_write_real64 (buffer, 3.1415, &error);
+  fail_on_error (&error);
   
+  byte_buffer_set_position (buffer, 0, &error);
+  real64_t value_real64 = byte_buffer_read_real64 (buffer, &error);
+  fail_on_error (&error);
+
+  fail_unless (value_real64 == 3.1415, 
+               "Value not the same: %d\n", value_real64);
+
   byte_buffer_destroy (buffer);
 }
 END_TEST

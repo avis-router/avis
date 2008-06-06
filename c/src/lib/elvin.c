@@ -156,7 +156,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
   
   message_free (message);
   
-  return true;
+  return elvin_error_ok (error);
 }
 
 void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
