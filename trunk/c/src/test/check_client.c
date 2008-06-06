@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include <math.h>
 
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
@@ -129,6 +130,7 @@ START_TEST (test_subscribe)
   
   named_values_set_int32 (ntfn, "test", 1);
   named_values_set_real64 (ntfn, "pi", 3.1415);
+  named_values_set_real64 (ntfn, "nan", NAN);
   named_values_set_string (ntfn, "message", "hello world");
   
   elvin_send (&elvin, ntfn, &error);
@@ -168,6 +170,10 @@ void test_subscribe_sub_listener (Subscription *sub,
    * IEEE 754 for double precision floats. */
   fail_unless 
     (named_values_get_real64 (&notification->attributes, "pi") == 3.1415, 
+     "Invalid notification");
+  
+  fail_unless 
+    (isnan (named_values_get_real64 (&notification->attributes, "nan")), 
      "Invalid notification");
   
   test_subscribe_received_ntfn = true;
