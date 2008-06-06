@@ -33,7 +33,9 @@
 #define DEFAULT_CLIENT_PROTOCOL_MINOR 0
 
 /**
- * A client's connection to an Elvin router.
+ * A client connection to an Elvin router. Typically a client creates a
+ * connection (elvin_open()) and then subscribes to notifications 
+ * (elvin_subscribe()) and/or sends them (elvin_send()).
  * 
  * See elvin_open() and elvin_open_uri().
  */
@@ -107,7 +109,23 @@ typedef void (*SubscriptionListener) (Subscription *subscription,
  * 
  * @return true if the connection succeeded.
  * 
- * @see elvin_open_uri().
+ * Example:
+ * <pre>
+ * Elvin elvin;
+ * ElvinError error;
+ * 
+ * if (!elvin_open (&elvin, "elvin://public.elvin.org", &error))
+ * {
+ *   elvin_perror ("open", &error);
+ *   exit (1);
+ * }
+ * 
+ * elvin_close (&elvin);
+ * </pre>
+ * 
+ * @see elvin_open_uri()
+ * @see elvin_close()
+ * @see elvin_is_open()
  */
 bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
 
@@ -119,6 +137,8 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
  * @param error The error info.
  * 
  * @return true if the connection succeeded.
+ * 
+ * @see elvin_open()
  */
 bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
 
@@ -130,6 +150,20 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
  * @param error The error info.
  * 
  * @return True if the send succeeded.
+ * 
+ * Example:
+ * <pre>
+ * Elvin *elvin = ...
+ * ElvinError *error = ...
+ * NamedValues *notification = named_values_create ();
+ * 
+ * named_values_set_int32 (notification, "favourite number", 42);
+ * named_values_set_string (notification, "message", "hello world");
+ *  
+ * elvin_send (elvin, notification, error);
+ *
+ * named_values_destroy (ntfn);
+ * </pre>
  * 
  * @see elvin_subscribe()
  */
@@ -148,6 +182,23 @@ bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
  * @param error The error info.
  * 
  * @return True if the subscription succeeded.
+ * 
+ * Example:
+ * <pre>
+ * Elvin *elvin = ...
+ * ElvinError *error = ...
+ * Subscription subscription;
+ * 
+ * elvin_subscription_init (&subscription, "string (message)");
+ *
+ * if (!elvin_subscribe (elvin, &sub, error))
+ * {
+ *   elvin_perror ("subscribe", error);
+ *   exit (1);
+ * }
+ * 
+ * elvin_unsubscribe (elvin, &subscription, error);
+ * </pre>
  * 
  * @see elvin_send()
  * @see elvin_unsubscribe()
@@ -202,8 +253,8 @@ bool elvin_close (Elvin *elvin);
 
 /**
  * Poll an Elvin connection for incoming messages from the router. This will 
- * block until a notification or disconnect notification is received from the 
- * router. On receipt of a notification, any listener to the notification
+ * block until a notification or disconnect signal is received from the 
+ * router. On receipt of a notification, any listeners to the notification
  * will be called from this function.
  * 
  * This method should be called in an event loop by clients that
