@@ -610,9 +610,11 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Release\"",
 				);
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				MACH_O_TYPE = mh_execute;
 				PREBINDING = NO;
 				PRODUCT_NAME = Test;
+				USER_HEADER_SEARCH_PATHS = ../../src/include;
 			};
 			name = Debug;
 		};
@@ -628,9 +630,11 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Release\"",
 				);
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				MACH_O_TYPE = mh_execute;
 				PREBINDING = NO;
 				PRODUCT_NAME = Test;
+				USER_HEADER_SEARCH_PATHS = ../../src/include;
 				ZERO_LINK = NO;
 			};
 			name = Release;
