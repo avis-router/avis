@@ -76,12 +76,32 @@ int32_t named_values_get_int32 (NamedValues *values, const char *name)
     return 0;
 }
 
+int64_t named_values_get_int64 (NamedValues *values, const char *name)
+{
+  Value *value = hashtable_search (values, (void *)name);
+  
+  if (value && value->type == TYPE_INT64)
+    return value->value.int64;
+  else
+    return 0;
+}
+
 const char *named_values_get_string (NamedValues *values, const char *name)
 {
   Value *value = hashtable_search (values, (void *)name);
     
   if (value && value->type == TYPE_STRING)
     return value->value.str;
+  else
+    return NULL;
+}
+
+Array *named_values_get_opaque (NamedValues *values, const char *name)
+{
+  Value *value = hashtable_search (values, (void *)name);
+    
+  if (value && value->type == TYPE_OPAQUE)
+    return &value->value.bytes;
   else
     return NULL;
 }

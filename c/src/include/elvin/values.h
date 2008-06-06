@@ -72,9 +72,17 @@ void value_free (Value *value);
 #define value_destroy(value) \
   (value_free (value), free (value), value = NULL)
 
-/** Allocate and init an int32 value. Use value_destroy() when done. */
+/** 
+ * Allocate and init an int32 value. Use value_destroy() when done.
+ */
 #define value_create_int32(value) \
   (value_init (malloc (sizeof (Value)), TYPE_INT32, value))
+
+/** 
+ * Allocate and init an int64 value. Use value_destroy() when done.
+ */
+#define value_create_int64(value) \
+  (value_init (malloc (sizeof (Value)), TYPE_INT64, value))
 
 /** 
  * Allocate and init a string value. Use value_destroy() when done. The
@@ -84,6 +92,16 @@ void value_free (Value *value);
  */
 #define value_create_string(value) \
   (value_init (malloc (sizeof (Value)), TYPE_STRING, strdup (value)))
+
+/** 
+ * Allocate and init an opaque value. Use value_destroy() when done.
+ * Unlike string values, this will NOT be copied before being added to the 
+ * set.
+ * 
+ * @see value_init()
+ */
+#define value_create_opaque(value) \
+  (value_init (malloc (sizeof (Value)), TYPE_OPAQUE, value))
 
 /**
  * Initialise an array.
@@ -125,5 +143,10 @@ void array_free (Array *array);
  */
 #define array_get(array, index, item_type) \
   (((item_type *)array->items) [index])
+
+/**
+ * Test if two arrays are bitwise identical.
+ */
+bool array_equals (Array *array1, Array *array2);
 
 #endif /*VALUES_H_*/

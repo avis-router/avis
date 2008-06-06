@@ -141,3 +141,9 @@ void array_free (Array *array)
     array->item_count = 0;
   }
 }
+
+bool array_equals (Array *array1, Array *array2)
+{
+  return array1->item_count == array2->item_count && 
+         memcmp (array1->items, array2->items, array1->item_count) == 0;
+}
