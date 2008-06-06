@@ -50,6 +50,8 @@ static bool resolve_address (struct sockaddr_in *router_addr,
 static void handle_notify_deliver (Elvin *elvin, Message message, 
                                    ElvinError *error);
 
+static void handleNack (Message message, ElvinError *error);
+
 static void handle_disconn (Elvin *elvin, Message message, ElvinError *error);
 
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
@@ -122,9 +124,6 @@ bool elvin_close (Elvin *elvin)
   send_and_receive (elvin->socket, disconn_rqst, reply,
                     MESSAGE_ID_DISCONN_RPLY, &error);
 
-  if (!elvin_error_occurred (&error))
-    message_free (reply);
-
   close_socket (elvin);
   
   elvin_error_destroy (&error);
@@ -161,6 +160,34 @@ void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
 {
   /* TODO support close listener */
   close_socket (elvin);
+}
+
+/* TODO include message from router */
+void handleNack (Message message, ElvinError *error)
+{
+  uint32_t error_code = int32_at_offset (message, 4);
+  
+  /* 21xx NACK code => subscription error */
+  if (error_code / 100 == 21)
+  {
+    if (error_code == NACK_PARSE_ERROR)
+    {
+      elvin_error_set (error, ELVIN_ERROR_SYNTAX, 
+                       "Syntax error in subscription expression");
+    } else if (error_code == NACK_EXP_IS_TRIVIAL)
+    {
+      elvin_error_set (error, ELVIN_ERROR_TRIVIAL_EXPRESSION,
+                       "Expression is trivial");
+    } else
+    {
+      elvin_error_set (error, ELVIN_ERROR_SYNTAX,
+                       "Invalid subscription expression");
+    }
+  } else
+  {
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                     "Unexpected NACK from router");
+  }
 }
 
 void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
@@ -288,15 +315,20 @@ bool send_and_receive (socket_t socketfd, Message request,
     return false;
   }
   
-  if (message_type_of (reply) != reply_type)
-  {
-    /* todo handle NACK properly */
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Unexpected reply from router");
-  } else if (xid_of (request) != xid_of (reply))
+  if (xid_of (request) != xid_of (reply))
   {
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
                      "Mismatched transaction ID in reply from router");
+  } else if (message_type_of (reply) != reply_type)
+  {
+    if (message_type_of (reply) == MESSAGE_ID_NACK)
+    {
+      handleNack (reply, error);
+    } else
+    {
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                       "Unexpected reply from router");
+    }
   }
   
   if (elvin_error_ok (error))
