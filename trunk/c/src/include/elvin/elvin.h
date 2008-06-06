@@ -87,7 +87,12 @@ typedef struct
  * A listener for notifications received via a subscription.
  * 
  * @param subscription The subscription that matched the notification.
- * @param notification The notification from the router.
+ * @param notification The notification from the router. Note that this 
+ * notification and its associated attributes is only valid for the duration
+ * of the callback -- it will be freed by the connection after the callback 
+ * returns. If you want to refer to any part of the notification 
+ * outside callback scope, you will need to copy the relevant parts before
+ * returning.
  * 
  * @see elvin_subscription_add_listener()
  */
