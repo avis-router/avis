@@ -9,6 +9,7 @@
 #include <elvin/errors.h>
 #include <elvin/named_values.h>
 #include <elvin/keys.h>
+#include <elvin/stdtypes.h>
 
 #include "messages.h"
 #include "byte_buffer.h"
@@ -148,6 +149,11 @@ START_TEST (test_named_values_io)
   ByteBuffer *buffer = byte_buffer_create ();
   NamedValues *values2;
   NamedValues *values;
+  Array some_bytes;
+  
+  array_init (&some_bytes, 128, 1);
+  
+  memset (some_bytes.items, 42, 128);
   
   // empty values
   named_values_write (buffer, EMPTY_NAMED_VALUES, &error);
@@ -167,15 +173,9 @@ START_TEST (test_named_values_io)
   values = named_values_create ();
   
   named_values_set_int32 (values, "int32", 42);
+  named_values_set_int64 (values, "int64", 0xDEADBEEFF00DL);
+  named_values_set_opaque (values, "opaque", some_bytes);
   named_values_set_string (values, "string", "hello world");
-  
-  fail_unless (named_values_get_int32 (values, "int32") == 42, 
-               "Failed to set value: %u", 
-               named_values_get_int32 (values, "int32"));
-  
-  fail_unless 
-    (strcmp (named_values_get_string (values, "string"), "hello world") == 0, 
-     "Failed to set string");
   
   named_values_write (buffer, values, &error);
   fail_on_error (&error);
@@ -187,10 +187,19 @@ START_TEST (test_named_values_io)
   fail_on_error (&error);
   
   fail_unless (named_values_get_int32 (values2, "int32") == 42, 
-               "Failed to deserialize int32");
+               "Failed to serialize value: %u", 
+               named_values_get_int32 (values, "int32"));
+  
+  fail_unless (named_values_get_int64 (values2, "int64") == 0xDEADBEEFF00DL, 
+               "Failed to serialize value: %lu", 
+               named_values_get_int64 (values2, "int64"));
+
+  fail_unless (array_equals (named_values_get_opaque (values2, "opaque"), 
+               &some_bytes), "Failed to serialize opaque");
+  
   fail_unless 
     (strcmp (named_values_get_string (values2, "string"), "hello world") == 0, 
-        "Failed to deserialize string");
+     "Failed to serialize string");
 
   named_values_destroy (values);
   named_values_destroy (values2);

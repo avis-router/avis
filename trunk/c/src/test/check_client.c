@@ -94,6 +94,7 @@ START_TEST (test_notify)
   NamedValues *ntfn = named_values_create ();
   
   named_values_set_int32 (ntfn, "int32", 42);
+  named_values_set_int64 (ntfn, "int64", 0xDEADBEEFF00DL);
   named_values_set_string (ntfn, "string", "paydirt");
   
   elvin_send (&elvin, ntfn, &error);

@@ -136,6 +136,31 @@ Value *named_values_remove (NamedValues *values, const char *name);
 int32_t named_values_get_int32 (NamedValues *values, const char *name);
 
 /**
+ * Convenience to set an int64 value.
+ * 
+ * @param values The values to update.
+ * @param name The name to use. This will be copied before being put into
+ * the set.
+ * @param value The value to associate with name.
+ * 
+ * @see named_values_set()
+ */
+#define named_values_set_int64(values, name, value) \
+  (named_values_set (values, name, value_create_int64 (value)))
+
+/**
+ * Convenience to get an int64 value.
+ * 
+ * @param values The values to read from.
+ * @param name The name to use.
+ * @return The integer associated with name, or 0 if not set or value
+ * is not an integer.
+ * 
+ * @see named_values_get()
+ */
+int64_t named_values_get_int64 (NamedValues *values, const char *name);
+
+/**
  * Convenience to set a string value.
  * 
  * @param values The values to update.
@@ -160,5 +185,21 @@ int32_t named_values_get_int32 (NamedValues *values, const char *name);
  * @see named_values_get()
  */
 const char *named_values_get_string (NamedValues *values, const char *name);
+
+/**
+ * Convenience to set an opaque value.
+ * 
+ * @param values The values to update.
+ * @param name The name to use. This will be copied before being put into
+ * the set.
+ * @param value The value to associate with name. Unlike string values, 
+ * this will NOT be copied before being added to the set.
+ * 
+ * @see named_values_set()
+ */
+#define named_values_set_opaque(values, name, value) \
+  (named_values_set (values, name, value_create_opaque (value)))
+
+Array *named_values_get_opaque (NamedValues *values, const char *name);
 
 #endif /* ELVIN_NAMED_VALUES_H */
