@@ -32,6 +32,8 @@
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
 
+static void close_socket (Elvin *elvin);
+
 static bool send_and_receive (socket_t socketfd, Message request, 
                               Message reply, MessageTypeID reply_type, 
                               ElvinError *error);
@@ -47,6 +49,8 @@ static bool resolve_address (struct sockaddr_in *router_addr,
 
 static void handle_notify_deliver (Elvin *elvin, Message message, 
                                    ElvinError *error);
+
+static void handle_disconn (Elvin *elvin, Message message, ElvinError *error);
 
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 
@@ -121,15 +125,7 @@ bool elvin_close (Elvin *elvin)
   if (!elvin_error_occurred (&error))
     message_free (reply);
 
-  #ifdef WIN32
-    closesocket (elvin->socket);
-
-    WSACleanup ();
-  #else
-    close (elvin->socket);
-  #endif
-
-  elvin->socket = -1;
+  close_socket (elvin);
   
   elvin_error_destroy (&error);
   
@@ -140,7 +136,8 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
   Message message = message_alloca (); 
     
-  on_error_return_false (receive_message (elvin->socket, message, error));
+  if (!receive_message (elvin->socket, message, error))
+    return false;
   
   switch (message_type_of (message))
   {
@@ -148,7 +145,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
     handle_notify_deliver (elvin, message, error);
     break;
   case MESSAGE_ID_DISCONN:
-    /* TODO */
+    handle_disconn (elvin, message, error);
     break;
   default:
     /* TODO protocol violation */
@@ -158,6 +155,12 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
   message_free (message);
   
   return true;
+}
+
+void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
+{
+  /* TODO support close listener */
+  close_socket (elvin);
 }
 
 void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
@@ -411,6 +414,19 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   {
     return elvin_error_from_errno (error);
   }
+}
+
+void close_socket (Elvin *elvin)
+{
+  #ifdef WIN32
+    closesocket (elvin->socket);
+  
+    WSACleanup ();
+  #else
+    close (elvin->socket);
+  #endif
+  
+  elvin->socket = -1;
 }
 
 bool resolve_address (struct sockaddr_in *router_addr,
