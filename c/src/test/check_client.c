@@ -129,7 +129,7 @@ START_TEST (test_subscribe)
   NamedValues *ntfn = named_values_create ();
   
   named_values_set_int32 (ntfn, "test", 1);
-  named_values_set_real64 (ntfn, "pi", 3.1415);
+  named_values_set_real64 (ntfn, "pi", M_PI);
   named_values_set_real64 (ntfn, "nan", NAN);
   named_values_set_string (ntfn, "message", "hello world");
   
@@ -169,7 +169,7 @@ void test_subscribe_sub_listener (Subscription *sub,
   /* check the real64 made the roundtrip in case this system is not using 
    * IEEE 754 for double precision floats. */
   fail_unless 
-    (named_values_get_real64 (&notification->attributes, "pi") == 3.1415, 
+    (named_values_get_real64 (&notification->attributes, "pi") == M_PI, 
      "Invalid notification");
   
   fail_unless 
