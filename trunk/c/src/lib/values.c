@@ -69,8 +69,7 @@ Value *value_read (ByteBuffer *buffer, ElvinError *error)
     byte_buffer_skip (buffer, 8, error);
     break;
   case TYPE_REAL64:
-    /* TODO  */
-    byte_buffer_skip (buffer, 8, error);
+    value->value.real64 = byte_buffer_read_real64 (buffer, error);
     break;
   case TYPE_STRING:
     value->value.str = byte_buffer_read_string (buffer, error);
@@ -108,7 +107,7 @@ bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
     byte_buffer_write_int64 (buffer, value->value.int64, error);
     break;
   case TYPE_REAL64:
-    /* TODO */
+    byte_buffer_write_real64 (buffer, value->value.real64, error);
     break;
   case TYPE_STRING:
     byte_buffer_write_string (buffer, value->value.str, error);

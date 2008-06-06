@@ -161,6 +161,31 @@ int32_t named_values_get_int32 (NamedValues *values, const char *name);
 int64_t named_values_get_int64 (NamedValues *values, const char *name);
 
 /**
+ * Convenience to set a real64 value.
+ * 
+ * @param values The values to update.
+ * @param name The name to use. This will be copied before being put into
+ * the set.
+ * @param value The value to associate with name.
+ * 
+ * @see named_values_set()
+ */
+#define named_values_set_real64(values, name, value) \
+  (named_values_set (values, name, value_create_real64 (value)))
+
+/**
+ * Convenience to get a real64 value.
+ * 
+ * @param values The values to read from.
+ * @param name The name to use.
+ * @return The real64  associated with name, or 0 if not set or value
+ * is not an real64 value.
+ * 
+ * @see named_values_get()
+ */
+real64_t named_values_get_real64 (NamedValues *values, const char *name);
+
+/**
  * Convenience to set a string value.
  * 
  * @param values The values to update.

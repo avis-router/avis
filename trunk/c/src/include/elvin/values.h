@@ -85,6 +85,12 @@ void value_free (Value *value);
   (value_init (malloc (sizeof (Value)), TYPE_INT64, value))
 
 /** 
+ * Allocate and init a real64 value. Use value_destroy() when done.
+ */
+#define value_create_real64(value) \
+  (value_init (malloc (sizeof (Value)), TYPE_REAL64, value))
+
+/** 
  * Allocate and init a string value. Use value_destroy() when done. The
  * string is duplicated before being added.
  * 

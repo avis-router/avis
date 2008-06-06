@@ -128,6 +128,7 @@ START_TEST (test_subscribe)
   NamedValues *ntfn = named_values_create ();
   
   named_values_set_int32 (ntfn, "test", 1);
+  named_values_set_real64 (ntfn, "pi", 3.1415);
   named_values_set_string (ntfn, "message", "hello world");
   
   elvin_send (&elvin, ntfn, &error);
@@ -162,6 +163,12 @@ void test_subscribe_sub_listener (Subscription *sub,
   fail_unless 
     (strcmp (named_values_get_string (&notification->attributes, "message"), 
              "hello world") == 0, "Invalid notification");
+  
+  /* check the real64 made the roundtrip in case this system is not using 
+   * IEEE 754 for double precision floats. */
+  fail_unless 
+    (named_values_get_real64 (&notification->attributes, "pi") == 3.1415, 
+     "Invalid notification");
   
   test_subscribe_received_ntfn = true;
 }
