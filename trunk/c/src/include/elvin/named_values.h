@@ -31,6 +31,7 @@
   };
 #endif
 
+/* TODO this does not document properly */
 /**
  * A map of string names to polymorphic Value instances. This is used as the 
  * payload for notification messages (see elvin_send()) and for specifying
@@ -101,7 +102,9 @@ Value *named_values_get (NamedValues *values, const char *name);
 /**
  * Remove the value mapped to a name.
  * 
+ * @param values The values to modify.
  * @param name The name to remove.
+ * 
  * @return The value associated with name, or NULL if no value. This value
  * must be deallocated by the caller with value_destroy() when no longer 
  * needed.
