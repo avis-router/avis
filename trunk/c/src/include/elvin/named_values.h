@@ -74,7 +74,8 @@ void named_values_free (NamedValues *values);
 unsigned int named_values_size (NamedValues *values);
 
 /**
- * Set the value mapped to a name.
+ * Set the value mapped to a name. If an existing value exists, it will be
+ * replaced and deleted.
  * 
  * @param values The values to update.
  * @param name The name to use. This will be copied before being put into
@@ -82,6 +83,7 @@ unsigned int named_values_size (NamedValues *values);
  * @param value The value to associate with name.
  * 
  * @see named_values_get()
+ * @see named_values_remove()
  */
 void named_values_set (NamedValues *values, const char *name, Value *value);
 
@@ -95,6 +97,18 @@ void named_values_set (NamedValues *values, const char *name, Value *value);
  * @see named_values_set()
  */
 Value *named_values_get (NamedValues *values, const char *name);
+
+/**
+ * Remove the value mapped to a name.
+ * 
+ * @param name The name to remove.
+ * @return The value associated with name, or NULL if no value. This value
+ * must be deallocated by the caller with value_destroy() when no longer 
+ * needed.
+ * 
+ * @see named_values_set()
+ */
+Value *named_values_remove (NamedValues *values, const char *name);
 
 /**
  * Convenience to set an int32 value.
@@ -114,7 +128,7 @@ Value *named_values_get (NamedValues *values, const char *name);
  * 
  * @param values The values to read from.
  * @param name The name to use.
- * @param value The integer associated with name, or 0 if not set or value
+ * @return The integer associated with name, or 0 if not set or value
  * is not an integer.
  * 
  * @see named_values_get()
@@ -140,7 +154,7 @@ int32_t named_values_get_int32 (NamedValues *values, const char *name);
  * 
  * @param values The values to read from.
  * @param name The name to use.
- * @param value The string associated with name, or NULL if not set or value
+ * @return The string associated with name, or NULL if not set or value
  * is not a string.
  * 
  * @see named_values_get()
