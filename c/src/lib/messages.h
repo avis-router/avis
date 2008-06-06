@@ -35,6 +35,17 @@ typedef enum
   MESSAGE_ID_SUB_RPLY = 61
 } MessageTypeID;
 
+typedef enum
+{
+  NACK_PROT_INCOMPAT  = 0001,
+  NACK_PROT_ERROR     = 1001,
+  NACK_NO_SUCH_SUB    = 1002,
+  NACK_IMPL_LIMIT     = 2006,
+  NACK_NOT_IMPL       = 2007,
+  NACK_PARSE_ERROR    = 2101,
+  NACK_EXP_IS_TRIVIAL = 2110
+} NackCode;
+
 typedef uint8_t * Message;
 
 #define message_alloca() ((Message)alloca (MAX_MESSAGE_SIZE))

@@ -98,7 +98,7 @@ typedef struct
 static MessageFormat MESSAGE_FORMATS [] = 
 {
   {MESSAGE_ID_NACK,
-    {XID, I4, STR, NV, VA, END}, {"xid", "error", "message", "args"}},
+    {XID, I4, STR, VA, END}, {"xid", "error", "message", "args"}},
   {MESSAGE_ID_CONN_RQST,
     {XID, I4, I4, NV, KY, KY, END}, 
     {"xid", "version_major", "version_minor",
