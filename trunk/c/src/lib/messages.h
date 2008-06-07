@@ -8,7 +8,7 @@
 #endif
 
 #include <elvin/stdtypes.h>
-#include <elvin/named_values.h>
+#include <elvin/attributes.h>
 #include <elvin/keys.h>
 #include <elvin/elvin.h>
 

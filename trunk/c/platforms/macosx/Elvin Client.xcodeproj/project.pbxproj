@@ -39,20 +39,18 @@
 		C9B465D80DD82A9800A1C448 /* messages.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B465D60DD82A9800A1C448 /* messages.h */; };
 		C9B465D90DD82A9800A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465D70DD82A9800A1C448 /* messages.c */; };
 		C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B466750DD9374900A1C448 /* libcheck.dylib */; };
-		C9B467100DD9541700A1C448 /* named_values.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B4670E0DD9541700A1C448 /* named_values.h */; };
-		C9B467110DD9541700A1C448 /* named_values.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B4670F0DD9541700A1C448 /* named_values.c */; };
 		C9B467190DD9554E00A1C448 /* keys.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B467180DD9554E00A1C448 /* keys.h */; };
 		C9E7FF330DF9533B00F0210C /* libelvin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libelvin.dylib */; };
 		C9E7FF390DF9535700F0210C /* event_loop_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E7FF020DF951D800F0210C /* event_loop_test.c */; };
 		C9E7FF420DF9538300F0210C /* libelvin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libelvin.dylib */; };
 		C9E7FF480DF9539700F0210C /* basic_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C906FBD70DD3FA0800375E7D /* basic_test.c */; };
+		C9ED37330DFA358A00FB55CE /* attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = C9ED37320DFA358A00FB55CE /* attributes.c */; };
 		FA4D5B570DF420DE0098EE7D /* byte_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B4E0DF420DE0098EE7D /* byte_buffer.c */; };
 		FA4D5B580DF420DE0098EE7D /* byte_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FA4D5B4F0DF420DE0098EE7D /* byte_buffer.h */; };
 		FA4D5B590DF420DE0098EE7D /* elvin_uri.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B500DF420DE0098EE7D /* elvin_uri.c */; };
 		FA4D5B5A0DF420DE0098EE7D /* errors.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B510DF420DE0098EE7D /* errors.c */; };
 		FA4D5B5B0DF420DE0098EE7D /* keys.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B520DF420DE0098EE7D /* keys.c */; };
 		FA4D5B5C0DF420DE0098EE7D /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B530DF420DE0098EE7D /* log.c */; };
-		FA4D5B5D0DF420DE0098EE7D /* named_values_private.h in Headers */ = {isa = PBXBuildFile; fileRef = FA4D5B540DF420DE0098EE7D /* named_values_private.h */; };
 		FA4D5B5E0DF420DE0098EE7D /* values.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B550DF420DE0098EE7D /* values.c */; };
 		FA4D5B5F0DF420DE0098EE7D /* values_private.h in Headers */ = {isa = PBXBuildFile; fileRef = FA4D5B560DF420DE0098EE7D /* values_private.h */; };
 		FA4D5B800DF422270098EE7D /* hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B7B0DF422270098EE7D /* hashtable.c */; };
@@ -137,20 +135,17 @@
 		C9B465D70DD82A9800A1C448 /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/lib/messages.c; sourceTree = "<group>"; };
 		C9B466750DD9374900A1C448 /* libcheck.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcheck.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B466850DD9377200A1C448 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9B4670E0DD9541700A1C448 /* named_values.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = named_values.h; path = ../../src/include/elvin/named_values.h; sourceTree = SOURCE_ROOT; };
-		C9B4670F0DD9541700A1C448 /* named_values.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = named_values.c; path = ../../src/lib/named_values.c; sourceTree = SOURCE_ROOT; };
 		C9B467180DD9554E00A1C448 /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../../src/include/elvin/keys.h; sourceTree = SOURCE_ROOT; };
 		C9E7FF020DF951D800F0210C /* event_loop_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = event_loop_test.c; path = ../../src/test/event_loop_test.c; sourceTree = SOURCE_ROOT; };
-		C9E7FF220DF9533000F0210C /* event_loop_test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "event_loop_test-Info.plist"; sourceTree = "<group>"; };
 		C9E7FF370DF9533B00F0210C /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9E7FF460DF9538300F0210C /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9ED37320DFA358A00FB55CE /* attributes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = attributes.c; path = ../../src/lib/attributes.c; sourceTree = SOURCE_ROOT; };
 		FA4D5B4E0DF420DE0098EE7D /* byte_buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = byte_buffer.c; path = ../../src/lib/byte_buffer.c; sourceTree = SOURCE_ROOT; };
 		FA4D5B4F0DF420DE0098EE7D /* byte_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = byte_buffer.h; path = ../../src/lib/byte_buffer.h; sourceTree = SOURCE_ROOT; };
 		FA4D5B500DF420DE0098EE7D /* elvin_uri.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin_uri.c; path = ../../src/lib/elvin_uri.c; sourceTree = SOURCE_ROOT; };
 		FA4D5B510DF420DE0098EE7D /* errors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = errors.c; path = ../../src/lib/errors.c; sourceTree = SOURCE_ROOT; };
 		FA4D5B520DF420DE0098EE7D /* keys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = keys.c; path = ../../src/lib/keys.c; sourceTree = SOURCE_ROOT; };
 		FA4D5B530DF420DE0098EE7D /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = log.c; path = ../../src/lib/log.c; sourceTree = SOURCE_ROOT; };
-		FA4D5B540DF420DE0098EE7D /* named_values_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = named_values_private.h; path = ../../src/lib/named_values_private.h; sourceTree = SOURCE_ROOT; };
 		FA4D5B550DF420DE0098EE7D /* values.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = values.c; path = ../../src/lib/values.c; sourceTree = SOURCE_ROOT; };
 		FA4D5B560DF420DE0098EE7D /* values_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = values_private.h; path = ../../src/lib/values_private.h; sourceTree = SOURCE_ROOT; };
 		FA4D5B770DF421FB0098EE7D /* libhashtable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhashtable.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -221,7 +216,6 @@
 				C9B4665C0DD936D000A1C448 /* Check library */,
 				08FB7795FE84155DC02AAC07 /* Client Library */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				C9E7FF220DF9533000F0210C /* event_loop_test-Info.plist */,
 			);
 			name = "Elvin Client";
 			sourceTree = "<group>";
@@ -229,6 +223,7 @@
 		08FB7795FE84155DC02AAC07 /* Client Library */ = {
 			isa = PBXGroup;
 			children = (
+				C9ED37320DFA358A00FB55CE /* attributes.c */,
 				C97363F70DF7D04900DCE905 /* stdtypes.h */,
 				C97363CC0DF7CF2F00DCE905 /* array_list_private.h */,
 				C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */,
@@ -240,15 +235,12 @@
 				FA4D5B510DF420DE0098EE7D /* errors.c */,
 				FA4D5B520DF420DE0098EE7D /* keys.c */,
 				FA4D5B530DF420DE0098EE7D /* log.c */,
-				FA4D5B540DF420DE0098EE7D /* named_values_private.h */,
 				FA4D5B550DF420DE0098EE7D /* values.c */,
 				FA4D5B560DF420DE0098EE7D /* values_private.h */,
 				C9B465D60DD82A9800A1C448 /* messages.h */,
 				C9B465D70DD82A9800A1C448 /* messages.c */,
 				C906FBF30DD3FC3900375E7D /* elvin.h */,
 				C906FBF40DD3FC3900375E7D /* elvin.c */,
-				C9B4670E0DD9541700A1C448 /* named_values.h */,
-				C9B4670F0DD9541700A1C448 /* named_values.c */,
 				C9B467180DD9554E00A1C448 /* keys.h */,
 			);
 			name = "Client Library";
@@ -334,10 +326,8 @@
 			files = (
 				C906FBF50DD3FC3900375E7D /* elvin.h in Headers */,
 				C9B465D80DD82A9800A1C448 /* messages.h in Headers */,
-				C9B467100DD9541700A1C448 /* named_values.h in Headers */,
 				C9B467190DD9554E00A1C448 /* keys.h in Headers */,
 				FA4D5B580DF420DE0098EE7D /* byte_buffer.h in Headers */,
-				FA4D5B5D0DF420DE0098EE7D /* named_values_private.h in Headers */,
 				FA4D5B5F0DF420DE0098EE7D /* values_private.h in Headers */,
 				C931A0160DF640F200313558 /* array_list.h in Headers */,
 			);
@@ -505,7 +495,6 @@
 			files = (
 				C906FBF60DD3FC3900375E7D /* elvin.c in Sources */,
 				C9B465D90DD82A9800A1C448 /* messages.c in Sources */,
-				C9B467110DD9541700A1C448 /* named_values.c in Sources */,
 				FA4D5B570DF420DE0098EE7D /* byte_buffer.c in Sources */,
 				FA4D5B590DF420DE0098EE7D /* elvin_uri.c in Sources */,
 				FA4D5B5A0DF420DE0098EE7D /* errors.c in Sources */,
@@ -513,6 +502,7 @@
 				FA4D5B5C0DF420DE0098EE7D /* log.c in Sources */,
 				FA4D5B5E0DF420DE0098EE7D /* values.c in Sources */,
 				C931A0150DF640F200313558 /* array_list.c in Sources */,
+				C9ED37330DFA358A00FB55CE /* attributes.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,7 @@
 
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
-#include <elvin/named_values.h>
+#include <elvin/attributes.h>
 #include <elvin/keys.h>
 
 #include <messages.h>
@@ -92,16 +92,16 @@ START_TEST (test_notify)
   elvin_open (&elvin, "elvin://localhost", &error);
   fail_on_error (&error);
   
-  NamedValues *ntfn = named_values_create ();
+  Attributes *ntfn = attributes_create ();
   
-  named_values_set_int32 (ntfn, "int32", 42);
-  named_values_set_int64 (ntfn, "int64", 0xDEADBEEFF00DL);
-  named_values_set_string (ntfn, "string", "paydirt");
+  attributes_set_int32 (ntfn, "int32", 42);
+  attributes_set_int64 (ntfn, "int64", 0xDEADBEEFF00DL);
+  attributes_set_string (ntfn, "string", "paydirt");
   
   elvin_send (&elvin, ntfn, &error);
   fail_on_error (&error);
   
-  named_values_destroy (ntfn);
+  attributes_destroy (ntfn);
   
   elvin_close (&elvin);
 }
@@ -126,17 +126,17 @@ START_TEST (test_subscribe)
   
   elvin_subscription_add_listener (&sub, test_subscribe_sub_listener);
   
-  NamedValues *ntfn = named_values_create ();
+  Attributes *ntfn = attributes_create ();
   
-  named_values_set_int32 (ntfn, "test", 1);
-  named_values_set_real64 (ntfn, "pi", M_PI);
-  named_values_set_real64 (ntfn, "nan", NAN);
-  named_values_set_string (ntfn, "message", "hello world");
+  attributes_set_int32 (ntfn, "test", 1);
+  attributes_set_real64 (ntfn, "pi", M_PI);
+  attributes_set_real64 (ntfn, "nan", NAN);
+  attributes_set_string (ntfn, "message", "hello world");
   
   elvin_send (&elvin, ntfn, &error);
   fail_on_error (&error);
   
-  named_values_destroy (ntfn);
+  attributes_destroy (ntfn);
 
   elvin_poll (&elvin, &error);
   fail_on_error (&error);
@@ -163,17 +163,17 @@ void test_subscribe_sub_listener (Subscription *sub,
                                   Notification *notification)
 {
   fail_unless 
-    (strcmp (named_values_get_string (&notification->attributes, "message"), 
+    (strcmp (attributes_get_string (&notification->attributes, "message"), 
              "hello world") == 0, "Invalid notification");
   
   /* check the real64 made the roundtrip in case this system is not using 
    * IEEE 754 for double precision floats. */
   fail_unless 
-    (named_values_get_real64 (&notification->attributes, "pi") == M_PI, 
+    (attributes_get_real64 (&notification->attributes, "pi") == M_PI, 
      "Invalid notification");
   
   fail_unless 
-    (isnan (named_values_get_real64 (&notification->attributes, "nan")), 
+    (isnan (attributes_get_real64 (&notification->attributes, "nan")), 
      "Invalid notification");
   
   test_subscribe_received_ntfn = true;

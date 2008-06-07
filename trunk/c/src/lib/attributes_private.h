@@ -3,10 +3,10 @@
 
 #include "byte_buffer.h"
 
-bool named_values_write (ByteBuffer *buffer, NamedValues *values, 
+bool attributes_write (ByteBuffer *buffer, Attributes *attributes, 
                          ElvinError *error);
 
-bool named_values_read (ByteBuffer *buffer, NamedValues *values, 
+bool attributes_read (ByteBuffer *buffer, Attributes *attributes, 
                         ElvinError *error);
 
 #endif /*NAMED_VALUES_INT_H_*/

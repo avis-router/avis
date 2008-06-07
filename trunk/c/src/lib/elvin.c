@@ -195,11 +195,11 @@ void handleNack (Message message, ElvinError *error)
 
 void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
 {
-  NamedValues *attributes = ptr_at_offset (message, 0);
+  Attributes *attributes = ptr_at_offset (message, 0);
   Array *secure_matches = 
-    ptr_at_offset (message, sizeof (NamedValues *));
+    ptr_at_offset (message, sizeof (Attributes *));
   Array *insecure_matches = 
-    ptr_at_offset (message, sizeof (NamedValues *) + sizeof (Array *));
+    ptr_at_offset (message, sizeof (Attributes *) + sizeof (Array *));
   Notification notification;
   
   notification.attributes = *attributes;
@@ -241,7 +241,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
   }
 }
 
-bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error)
+bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error)
 {
   Message notify_emit = message_alloca ();
 
