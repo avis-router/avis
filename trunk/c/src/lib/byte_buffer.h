@@ -19,7 +19,8 @@ ByteBuffer *byte_buffer_init (ByteBuffer *buffer);
 
 ByteBuffer *byte_buffer_init_sized (ByteBuffer *buffer, size_t initial_size);
 
-#define byte_buffer_destroy(buffer) (byte_buffer_free (buffer), free (buffer))
+#define byte_buffer_destroy(buffer) \
+  (byte_buffer_free (buffer), free (buffer), buffer = NULL)
 
 void byte_buffer_free (ByteBuffer *buffer);
 
