@@ -21,4 +21,6 @@ extern Keys _empty_keys;
 
 Keys * elvin_keys_init (Keys *keys);
 
+void elvin_keys_free (Keys *keys);
+
 #endif /* ELVIN_KEYS_H */
