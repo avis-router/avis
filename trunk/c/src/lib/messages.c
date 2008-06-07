@@ -3,11 +3,11 @@
 #include <stdarg.h>
 #include <assert.h>
 
-#include <elvin/stdtypes.h>
-#include <elvin/errors.h>
-#include <elvin/attributes.h>
-#include <elvin/values.h>
-#include <elvin/log.h>
+#include <avis/stdtypes.h>
+#include <avis/errors.h>
+#include <avis/attributes.h>
+#include <avis/values.h>
+#include <avis/log.h>
 
 #include "messages.h"
 #include "byte_buffer.h"

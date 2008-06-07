@@ -1,8 +1,8 @@
 #ifndef VALUES_PRIVATE_H_
 #define VALUES_PRIVATE_H_
 
-#include <elvin/errors.h>
-#include <elvin/values.h>
+#include <avis/errors.h>
+#include <avis/values.h>
 
 #include "byte_buffer.h"
 

@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <elvin/elvin.h>
-#include <elvin/elvin_uri.h>
+#include <avis/elvin.h>
+#include <avis/elvin_uri.h>
 
 static char *substring (const char *start, const char *end);
 static const char *stranychr (const char *start, const char *chars);

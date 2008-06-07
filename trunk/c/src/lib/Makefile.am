@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-public_inc = $(top_srcdir)/src/include/elvin
+public_inc = $(top_srcdir)/src/include/avis
 
 AM_CPPFLAGS = \
   -I$(top_srcdir)/src/include \

@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 
-#include <elvin/array_list.h>
-#include <elvin/stdtypes.h>
+#include <avis/array_list.h>
+#include <avis/stdtypes.h>
 
 typedef void (*FuncPtr) ();
 

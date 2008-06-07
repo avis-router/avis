@@ -20,11 +20,11 @@
   #include <arpa/inet.h>
 #endif
 
-#include <elvin/stdtypes.h>
-#include <elvin/elvin.h>
-#include <elvin/errors.h>
-#include <elvin/values.h>
-#include <elvin/log.h>
+#include <avis/stdtypes.h>
+#include <avis/elvin.h>
+#include <avis/errors.h>
+#include <avis/values.h>
+#include <avis/log.h>
 
 #include "messages.h"
 #include "array_list_private.h"
