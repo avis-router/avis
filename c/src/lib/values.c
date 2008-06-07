@@ -48,14 +48,11 @@ void value_free (Value *value)
     array_free (&value->value.bytes);
 }
 
-Value *value_read (ByteBuffer *buffer, ElvinError *error)
+bool value_read (ByteBuffer *buffer, Value *value, ElvinError *error)
 {
   ValueType type;
-  Value *value;
   
   on_error_return (type = byte_buffer_read_int32 (buffer, error), NULL);
-  
-  value = malloc (sizeof (Value));
   
   value->type = type;
   
@@ -83,14 +80,7 @@ Value *value_read (ByteBuffer *buffer, ElvinError *error)
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid value type");
   }
   
-  if (elvin_error_occurred (error))
-  {
-    free (value);
-    
-    value = NULL;
-  }
-  
-  return value;
+  return elvin_error_ok (error);
 }
 
 bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
