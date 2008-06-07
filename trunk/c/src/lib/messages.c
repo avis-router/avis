@@ -80,7 +80,6 @@ typedef struct
 {
   MessageTypeID id;
   FieldFormat fields [MAX_MESSAGE_FIELDS];
-  const char *field_names [MAX_MESSAGE_FIELDS];
 } MessageFormat;
 
 #define I4  {FIELD_INT32, read_int32, write_int32, NULL}
@@ -98,32 +97,32 @@ typedef struct
 static MessageFormat MESSAGE_FORMATS [] = 
 {
   {MESSAGE_ID_NACK,
-    {XID, I4, STR, VA, END}, {"xid", "error", "message", "args"}},
+    {XID, I4, STR, VA, END} /* {"xid", "error", "message", "args"}*/},
   {MESSAGE_ID_CONN_RQST,
-    {XID, I4, I4, NV, KY, KY, END}, 
-    {"xid", "version_major", "version_minor",
-     "connection_options", "notification_keys" "subscription_keys"}},
+    {XID, I4, I4, NV, KY, KY, END} 
+    /*{"xid", "version_major", "version_minor",
+     "connection_options", "notification_keys" "subscription_keys"}*/},
   {MESSAGE_ID_CONN_RPLY,
-    {XID, NV, END}, {"xid", "connection_options"}},
+    {XID, NV, END} /*{"xid", "connection_options"}*/},
   {MESSAGE_ID_DISCONN_RQST,
-    {XID, END}, {"xid"}},
+    {XID, END} /*{"xid"}*/},
   {MESSAGE_ID_DISCONN_RPLY,
-    {XID, END}, {"xid"}},
+    {XID, END} /*{"xid"}*/},
   {MESSAGE_ID_DISCONN,
-    {I4, STR, END}, {"reason", "arguments"}},
+    {I4, STR, END} /*{"reason", "arguments"}*/},
   {MESSAGE_ID_NOTIFY_EMIT,
-    {NV, BO, KY, END}, {"attributes", "deliverInsecure", "keys"}},
+    {NV, BO, KY, END} /*{"attributes", "deliverInsecure", "keys"}*/},
   {MESSAGE_ID_NOTIFY_DELIVER,
-    {NV, I8A, I8A, END}, 
-    {"attributes", "secureMatches", "insecureMatches"}},
+    {NV, I8A, I8A, END}
+    /* {"attributes", "secureMatches", "insecureMatches"}*/},
   {MESSAGE_ID_SUB_ADD_RQST,
-    {XID, STR, BO, KY, END}, {"xid", "expr", "deliverInsecure", "keys"}},
+    {XID, STR, BO, KY, END} /*{"xid", "expr", "deliverInsecure", "keys"}*/},
   {MESSAGE_ID_SUB_DEL_RQST,
-    {XID, I8, END}, {"xid", "subscriptionId"}},
+    {XID, I8, END} /*{"xid", "subscriptionId"}*/},
   {MESSAGE_ID_SUB_RPLY,
-    {XID, I8, END}, {"xid"}},
+    {XID, I8, END} /*{"xid"}*/},
 
-  {-1, {END}, {"none"}}
+  {-1, {END}}
 };
 
 static MessageFormat *message_format_for (MessageTypeID type);
