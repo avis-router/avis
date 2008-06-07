@@ -51,6 +51,11 @@ Attributes *attributes_init (Attributes *);
 void attributes_free (Attributes *attributes);
 
 /**
+ * Clear and deallocate all entries, leaving an empty set of attributes.
+ */
+void attributes_clear (Attributes *attributes);
+
+/**
  * The number of entries in a set of named attributes.
  */
 unsigned int attributes_size (Attributes *attributes);
