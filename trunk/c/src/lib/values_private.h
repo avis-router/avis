@@ -6,7 +6,7 @@
 
 #include "byte_buffer.h"
 
-Value *value_read (ByteBuffer *buffer, ElvinError *error);
+bool value_read (ByteBuffer *buffer, Value *value, ElvinError *error);
 
 bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error);
 
