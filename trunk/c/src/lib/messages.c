@@ -12,6 +12,7 @@
 #include "messages.h"
 #include "byte_buffer.h"
 #include "attributes_private.h"
+#include "values_private.h"
 
 static Message read_int32 (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
@@ -467,18 +468,49 @@ void keys_free (Array *keys)
 
 Message read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  /* TODO */
-  abort ();
+  uint32_t item_count = byte_buffer_read_int32 (buffer, error);
+  
+  if (elvin_error_ok (error))
+  {
+    Array *array = array_create (Value, item_count); 
+    Value *value = array->items;
+  
+    for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
+      value_read (buffer, value, error);
+    
+    if (elvin_error_ok (error))
+    {
+      *(Array **)message = array;
+    } else
+    {
+      array->item_count -= item_count;
+      
+      values_free (array);
+      array_destroy (array);
+    }
+  }
+  
+  return message + sizeof (Array *);  
 }
 
 Message write_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  /* TODO */
-  abort ();
+  size_t item_count = (*(Array **)message)->item_count;
+  Value *value = (Value *)(*(Array **)message)->items;
+  
+  byte_buffer_write_int32 (buffer, item_count, error);
+  
+  for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
+    value_read (buffer, value, error);
+  
+  return message + sizeof (Array *);
 }
 
 void values_free (Array *values)
 {
-  /* TODO */
-  abort ();
+  size_t i;
+  Value *v = values->items;
+  
+  for (i = values->item_count; i > 0; i--, v++)
+    value_free (v);
 }
