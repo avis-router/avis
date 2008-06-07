@@ -62,10 +62,9 @@ void byte_buffer_set_max_length (ByteBuffer *buffer, int max_capacity);
 
 void byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t capacity);
 
-#define byte_buffer_len(buffer) (buffer->data_length)
-#define byte_buffer_position(buffer) (buffer->position)
 #define byte_buffer_set_max_length(buffer, max_capacity) \
   (buffer->max_data_length = (max_capacity))
+
 #define byte_buffer_skip(buffer, skip_bytes, error) \
   (byte_buffer_set_position ((buffer), buffer->position + (skip_bytes), (error)))
 
