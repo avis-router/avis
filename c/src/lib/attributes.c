@@ -45,6 +45,8 @@ void attributes_free (Attributes *attributes)
   }
 
   hashtable_free (attributes->table, 0);
+  
+  free (attributes->table);
 }
 
 unsigned int attributes_size (Attributes *attributes)
