@@ -3,8 +3,8 @@
 #include <string.h>
 #include <errno.h>
 
-#include <elvin/elvin.h>
-#include <elvin/attributes.h>
+#include <avis/elvin.h>
+#include <avis/attributes.h>
 
 void sub_listener (Subscription *sub, Notification *notification);
 

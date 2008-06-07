@@ -4,12 +4,12 @@
 #ifndef ELVIN_H
 #define ELVIN_H
 
-#include <elvin/keys.h>
-#include <elvin/attributes.h>
-#include <elvin/stdtypes.h>
-#include <elvin/elvin_uri.h>
-#include <elvin/errors.h>
-#include <elvin/array_list.h>
+#include <avis/keys.h>
+#include <avis/attributes.h>
+#include <avis/stdtypes.h>
+#include <avis/elvin_uri.h>
+#include <avis/errors.h>
+#include <avis/array_list.h>
 
 #ifdef WIN32
   #include <winsock2.h>

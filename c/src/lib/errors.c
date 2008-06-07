@@ -2,8 +2,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include <elvin/stdtypes.h>
-#include <elvin/errors.h>
+#include <avis/stdtypes.h>
+#include <avis/errors.h>
 
 void elvin_perror (const char *tag, ElvinError *error)
 {

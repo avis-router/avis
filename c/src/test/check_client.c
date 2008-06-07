@@ -6,10 +6,10 @@
 #include <time.h>
 #include <math.h>
 
-#include <elvin/elvin.h>
-#include <elvin/errors.h>
-#include <elvin/attributes.h>
-#include <elvin/keys.h>
+#include <avis/elvin.h>
+#include <avis/errors.h>
+#include <avis/attributes.h>
+#include <avis/keys.h>
 
 #include <messages.h>
 #include <byte_buffer.h>

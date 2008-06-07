@@ -1,8 +1,8 @@
 #ifndef ELVIN_URI_H_
 #define ELVIN_URI_H_
 
-#include <elvin/stdtypes.h>
-#include <elvin/errors.h>
+#include <avis/stdtypes.h>
+#include <avis/errors.h>
 
 /**
  * A URI referring to an Elvin router endpoint.

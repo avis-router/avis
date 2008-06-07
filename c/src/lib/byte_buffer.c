@@ -9,8 +9,8 @@
   #include <winsock2.h>
 #endif
 
-#include <elvin/stdtypes.h>
-#include <elvin/errors.h>
+#include <avis/stdtypes.h>
+#include <avis/errors.h>
 
 #include "byte_buffer.h"
 

@@ -7,10 +7,10 @@
   #include <alloca.h>
 #endif
 
-#include <elvin/stdtypes.h>
-#include <elvin/attributes.h>
-#include <elvin/keys.h>
-#include <elvin/elvin.h>
+#include <avis/stdtypes.h>
+#include <avis/attributes.h>
+#include <avis/keys.h>
+#include <avis/elvin.h>
 
 #include "byte_buffer.h"
 

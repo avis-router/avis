@@ -4,8 +4,8 @@
 #include "hashtable.h"
 #include "hashtable_itr.h"
 
-#include <elvin/values.h>
-#include <elvin/attributes.h>
+#include <avis/values.h>
+#include <avis/attributes.h>
 
 #include "values_private.h"
 #include "attributes_private.h"

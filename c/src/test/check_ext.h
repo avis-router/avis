@@ -1,7 +1,7 @@
 #ifndef CHECK_EXT_H_
 #define CHECK_EXT_H_
 
-#include <elvin/errors.h>
+#include <avis/errors.h>
 
 #define fail_on_error(error) \
   (fail_unless ((error)->code == ELVIN_ERROR_NONE, \

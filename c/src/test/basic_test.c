@@ -3,7 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include <elvin/elvin.h>
+#include <avis/elvin.h>
 
 int main (int argc, const char * argv[]) 
 {

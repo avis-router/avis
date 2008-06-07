@@ -1,7 +1,7 @@
 #ifndef ERRORS_H_
 #define ERRORS_H_
 
-#include <elvin/stdtypes.h>
+#include <avis/stdtypes.h>
 
 /**
  * Error reporting information for functions that may fail.

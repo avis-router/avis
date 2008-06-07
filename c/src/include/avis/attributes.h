@@ -1,9 +1,9 @@
 #ifndef ELVIN_NAMED_VALUES_H
 #define ELVIN_NAMED_VALUES_H
 
-#include <elvin/stdtypes.h>
-#include <elvin/errors.h>
-#include <elvin/values.h>
+#include <avis/stdtypes.h>
+#include <avis/errors.h>
+#include <avis/values.h>
 
 struct hashtable;
 
