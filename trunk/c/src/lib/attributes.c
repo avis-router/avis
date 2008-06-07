@@ -125,7 +125,7 @@ Array *attributes_get_opaque (Attributes *attributes, const char *name)
 }
 
 bool attributes_write (ByteBuffer *buffer, Attributes *attributes, 
-                         ElvinError *error)
+                       ElvinError *error)
 {  
   on_error_return_false 
     (byte_buffer_write_int32 (buffer, hashtable_count (attributes->table), error));
@@ -147,7 +147,7 @@ bool attributes_write (ByteBuffer *buffer, Attributes *attributes,
 }
 
 bool attributes_read (ByteBuffer *buffer, Attributes *attributes, 
-                        ElvinError *error)
+                      ElvinError *error)
 {
   uint32_t count;
   char *name;
