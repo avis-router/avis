@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+/**
+ * A variable-length array. This is used internally and is not intended for
+ * client use.
+ */
 typedef struct
 {
   void * items;
