@@ -9,7 +9,7 @@
 #define ELVIN_H
 
 #include <elvin/keys.h>
-#include <elvin/named_values.h>
+#include <elvin/attributes.h>
 #include <elvin/stdtypes.h>
 #include <elvin/elvin_uri.h>
 #include <elvin/errors.h>
@@ -79,7 +79,7 @@ typedef struct
 typedef struct
 {
   /** The attribute values of the notification. */
-  NamedValues attributes;
+  Attributes attributes;
   
   /** True if the notification was received securely. */
   bool secure;
@@ -155,19 +155,19 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
  * <pre>
  * Elvin *elvin = ...
  * ElvinError *error = ...
- * NamedValues *notification = named_values_create ();
+ * Attributes *notification = attributes_create ();
  * 
- * named_values_set_int32 (notification, "favourite number", 42);
- * named_values_set_string (notification, "message", "hello world");
+ * attributes_set_int32 (notification, "favourite number", 42);
+ * attributes_set_string (notification, "message", "hello world");
  *  
  * elvin_send (elvin, notification, error);
  *
- * named_values_destroy (ntfn);
+ * attributes_destroy (ntfn);
  * </pre>
  * 
  * @see elvin_subscribe()
  */
-bool elvin_send (Elvin *elvin, NamedValues *notification, ElvinError *error);
+bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
 
 /**
  * Subscribe to notifications from an Elvin router.

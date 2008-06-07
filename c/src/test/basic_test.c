@@ -9,7 +9,7 @@ int main (int argc, const char * argv[])
 {
   Elvin elvin;
   ElvinError error = elvin_error_create ();
-  NamedValues *ntfn;
+  Attributes *ntfn;
   const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
   
   if (!elvin_open (&elvin, uri, &error))
@@ -18,14 +18,14 @@ int main (int argc, const char * argv[])
     exit (1);
   }
 
-  ntfn = named_values_create ();
+  ntfn = attributes_create ();
     
-  named_values_set_int32 (ntfn, "favourite number", 42);
-  named_values_set_string (ntfn, "some text", "paydirt");
+  attributes_set_int32 (ntfn, "favourite number", 42);
+  attributes_set_string (ntfn, "some text", "paydirt");
   
   elvin_send (&elvin, ntfn, &error);
 
-  named_values_destroy (ntfn);
+  attributes_destroy (ntfn);
   
   elvin_close (&elvin);
   

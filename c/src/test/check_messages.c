@@ -7,14 +7,14 @@
 
 #include <elvin/elvin.h>
 #include <elvin/errors.h>
-#include <elvin/named_values.h>
+#include <elvin/attributes.h>
 #include <elvin/keys.h>
 #include <elvin/stdtypes.h>
 
 #include "messages.h"
 #include "byte_buffer.h"
 
-#include "named_values_private.h"
+#include "attributes_private.h"
 
 #include "check_ext.h"
 
@@ -154,67 +154,67 @@ START_TEST (test_string_io)
 END_TEST
 
 /**
- * Named values IO.
+ * Named attributes IO.
  */
-START_TEST (test_named_values_io)
+START_TEST (test_attributes_io)
 {
   ByteBuffer *buffer = byte_buffer_create ();
-  NamedValues *values2;
-  NamedValues *values;
+  Attributes *attributes2;
+  Attributes *attributes;
   Array some_bytes;
   
   array_init (&some_bytes, 128, 1);
   
   memset (some_bytes.items, 42, 128);
   
-  // empty values
-  named_values_write (buffer, EMPTY_NAMED_VALUES, &error);
+  // empty attributes
+  attributes_write (buffer, EMPTY_NAMED_VALUES, &error);
   fail_on_error (&error);
     
   byte_buffer_set_position (buffer, 0, &error);
-  values2 = named_values_create ();
-  named_values_read (buffer, values2, &error);
+  attributes2 = attributes_create ();
+  attributes_read (buffer, attributes2, &error);
   fail_on_error (&error);
   
-  fail_unless (named_values_size (values2) == 0, "Empty values failed");
+  fail_unless (attributes_size (attributes2) == 0, "Empty attributes failed");
   
   byte_buffer_set_position (buffer, 0, &error);
-  named_values_destroy (values2);
+  attributes_destroy (attributes2);
   
-  // non empty values
-  values = named_values_create ();
+  // non empty attributes
+  attributes = attributes_create ();
   
-  named_values_set_int32 (values, "int32", 42);
-  named_values_set_int64 (values, "int64", 0xDEADBEEFF00DL);
-  named_values_set_opaque (values, "opaque", some_bytes);
-  named_values_set_string (values, "string", "hello world");
+  attributes_set_int32 (attributes, "int32", 42);
+  attributes_set_int64 (attributes, "int64", 0xDEADBEEFF00DL);
+  attributes_set_opaque (attributes, "opaque", some_bytes);
+  attributes_set_string (attributes, "string", "hello world");
   
-  named_values_write (buffer, values, &error);
+  attributes_write (buffer, attributes, &error);
   fail_on_error (&error);
   
   byte_buffer_set_position (buffer, 0, &error);
-  values2 = named_values_create ();  
+  attributes2 = attributes_create ();  
   
-  named_values_read (buffer, values2, &error);
+  attributes_read (buffer, attributes2, &error);
   fail_on_error (&error);
   
-  fail_unless (named_values_get_int32 (values2, "int32") == 42, 
+  fail_unless (attributes_get_int32 (attributes2, "int32") == 42, 
                "Failed to serialize value: %u", 
-               named_values_get_int32 (values, "int32"));
+               attributes_get_int32 (attributes, "int32"));
   
-  fail_unless (named_values_get_int64 (values2, "int64") == 0xDEADBEEFF00DL, 
+  fail_unless (attributes_get_int64 (attributes2, "int64") == 0xDEADBEEFF00DL, 
                "Failed to serialize value: %lu", 
-               named_values_get_int64 (values2, "int64"));
+               attributes_get_int64 (attributes2, "int64"));
 
-  fail_unless (array_equals (named_values_get_opaque (values2, "opaque"), 
+  fail_unless (array_equals (attributes_get_opaque (attributes2, "opaque"), 
                &some_bytes), "Failed to serialize opaque");
   
   fail_unless 
-    (strcmp (named_values_get_string (values2, "string"), "hello world") == 0, 
+    (strcmp (attributes_get_string (attributes2, "string"), "hello world") == 0, 
      "Failed to serialize string");
 
-  named_values_destroy (values);
-  named_values_destroy (values2);
+  attributes_destroy (attributes);
+  attributes_destroy (attributes2);
   byte_buffer_destroy (buffer);
 }
 END_TEST
@@ -275,7 +275,7 @@ TCase *messages_tests ()
   tcase_add_checked_fixture (tc_core, setup, teardown);
   tcase_add_test (tc_core, test_byte_buffer_io);
   tcase_add_test (tc_core, test_string_io);
-  tcase_add_test (tc_core, test_named_values_io);
+  tcase_add_test (tc_core, test_attributes_io);
   tcase_add_test (tc_core, test_message_io);
 
   return tc_core;

@@ -16,7 +16,7 @@ libelvin_la_SOURCES = \
   elvin.c \
   elvin_uri.c \
   messages.c \
-  named_values.c \
+  attributes.c \
   byte_buffer.c \
   errors.c \
   values.c \
@@ -32,5 +32,5 @@ include_HEADERS = \
   $(public_inc)/elvin_uri.h \
   $(public_inc)/keys.h \
   $(public_inc)/values.h \
-  $(public_inc)/named_values.h \
+  $(public_inc)/attributes.h \
   $(public_inc)/log.h

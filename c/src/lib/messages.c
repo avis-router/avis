@@ -5,13 +5,13 @@
 
 #include <elvin/stdtypes.h>
 #include <elvin/errors.h>
-#include <elvin/named_values.h>
+#include <elvin/attributes.h>
 #include <elvin/values.h>
 #include <elvin/log.h>
 
 #include "messages.h"
 #include "byte_buffer.h"
-#include "named_values_private.h"
+#include "attributes_private.h"
 
 static Message read_int32 (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
@@ -39,9 +39,9 @@ static Message read_string (ByteBuffer *buffer, Message message,
 static Message write_string (ByteBuffer *buffer, Message message, 
                              ElvinError *error);
 
-static Message read_named_values (ByteBuffer *buffer, Message message, 
+static Message read_attributes (ByteBuffer *buffer, Message message, 
                                   ElvinError *error);
-static Message write_named_values (ByteBuffer *buffer, Message message, 
+static Message write_attributes (ByteBuffer *buffer, Message message, 
                                    ElvinError *error);
 
 static Message read_values (ByteBuffer *buffer, Message message, 
@@ -87,7 +87,7 @@ typedef struct
 #define I8  {FIELD_INT64, read_int64, write_int64, NULL}
 #define I8A {FIELD_POINTER, read_int64_array, write_int64_array, array_free}
 #define STR {FIELD_POINTER, read_string, write_string, NULL}
-#define NV  {FIELD_POINTER, read_named_values, write_named_values, named_values_free}
+#define NV  {FIELD_POINTER, read_attributes, write_attributes, attributes_free}
 #define BO  {FIELD_INT32, read_bool, write_int32, NULL}
 #define XID {FIELD_XID, read_xid, write_int32, NULL}
 #define VA  {FIELD_POINTER, read_values, write_values, values_free}
@@ -420,27 +420,27 @@ Message write_string (ByteBuffer *buffer, Message message, ElvinError *error)
   return message + sizeof (char *);
 }
 
-Message read_named_values (ByteBuffer *buffer, Message message, 
+Message read_attributes (ByteBuffer *buffer, Message message, 
                            ElvinError *error)
 {
-  NamedValues *named_values = named_values_create ();
+  Attributes *attributes = attributes_create ();
         
-  named_values_read (buffer, named_values, error);
+  attributes_read (buffer, attributes, error);
 
   if (elvin_error_ok (error))
-    *(NamedValues **)message = named_values;
+    *(Attributes **)message = attributes;
   else
-    named_values_destroy (named_values);  
+    attributes_destroy (attributes);  
   
-  return message + sizeof (NamedValues *);
+  return message + sizeof (Attributes *);
 }
 
-Message write_named_values (ByteBuffer *buffer, Message message, 
+Message write_attributes (ByteBuffer *buffer, Message message, 
                             ElvinError *error)
 {
-  named_values_write (buffer, *(NamedValues **)message, error);
+  attributes_write (buffer, *(Attributes **)message, error);
   
-  return message + sizeof (NamedValues *);
+  return message + sizeof (Attributes *);
 }
 
 Message read_keys (ByteBuffer *buffer, Message message, ElvinError *error)

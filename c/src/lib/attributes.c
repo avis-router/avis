@@ -5,34 +5,34 @@
 #include "hashtable_itr.h"
 
 #include <elvin/values.h>
-#include <elvin/named_values.h>
+#include <elvin/attributes.h>
 
 #include "values_private.h"
-#include "named_values_private.h"
+#include "attributes_private.h"
 
 static struct hashtable empty_hashtable = {0, NULL, 0, 0, 0, NULL, NULL};
 
-NamedValues _empty_named_values = {&empty_hashtable};
+Attributes _empty_attributes = {&empty_hashtable};
 
 static unsigned int string_hash (void *string);
 
 static int string_equals (void *string1, void *string2);
 
-NamedValues *named_values_init (NamedValues *values)
+Attributes *attributes_init (Attributes *attributes)
 {
-  values->table = malloc (sizeof (struct hashtable));
+  attributes->table = malloc (sizeof (struct hashtable));
   
-  init_hashtable (values->table, 16, string_hash, string_equals);
+  init_hashtable (attributes->table, 16, string_hash, string_equals);
   
-  return values;
+  return attributes;
 }
 
-void named_values_free (NamedValues *values)
+void attributes_free (Attributes *attributes)
 {
   /* free entries */
-  if (hashtable_count (values->table) > 0)
+  if (hashtable_count (attributes->table) > 0)
   {
-    struct hashtable_itr *i = hashtable_iterator (values->table);
+    struct hashtable_itr *i = hashtable_iterator (attributes->table);
 
     do
     {      
@@ -44,37 +44,37 @@ void named_values_free (NamedValues *values)
     free (i);
   }
 
-  hashtable_free (values->table, 0);
+  hashtable_free (attributes->table, 0);
 }
 
-unsigned int named_values_size (NamedValues *values)
+unsigned int attributes_size (Attributes *attributes)
 {
-  return hashtable_count (values->table);
+  return hashtable_count (attributes->table);
 }
 
-void named_values_set (NamedValues *values, const char *name, Value *value)
+void attributes_set (Attributes *attributes, const char *name, Value *value)
 {
-  Value *old_value = named_values_remove (values, name);
+  Value *old_value = attributes_remove (attributes, name);
   
   if (old_value)
     value_destroy (old_value);
   
-  hashtable_insert (values->table, strdup (name), value);
+  hashtable_insert (attributes->table, strdup (name), value);
 }
 
-Value *named_values_get (NamedValues *values, const char *name)
+Value *attributes_get (Attributes *attributes, const char *name)
 {
-  return hashtable_search (values->table, (void *)name);
+  return hashtable_search (attributes->table, (void *)name);
 }
 
-Value *named_values_remove (NamedValues *values, const char *name)
+Value *attributes_remove (Attributes *attributes, const char *name)
 {
-  return hashtable_remove (values->table, (void *)name);
+  return hashtable_remove (attributes->table, (void *)name);
 }
 
-int32_t named_values_get_int32 (NamedValues *values, const char *name)
+int32_t attributes_get_int32 (Attributes *attributes, const char *name)
 {
-  Value *value = hashtable_search (values->table, (void *)name);
+  Value *value = hashtable_search (attributes->table, (void *)name);
   
   if (value && value->type == TYPE_INT32)
     return value->value.int32;
@@ -82,9 +82,9 @@ int32_t named_values_get_int32 (NamedValues *values, const char *name)
     return 0;
 }
 
-int64_t named_values_get_int64 (NamedValues *values, const char *name)
+int64_t attributes_get_int64 (Attributes *attributes, const char *name)
 {
-  Value *value = hashtable_search (values->table, (void *)name);
+  Value *value = hashtable_search (attributes->table, (void *)name);
   
   if (value && value->type == TYPE_INT64)
     return value->value.int64;
@@ -92,9 +92,9 @@ int64_t named_values_get_int64 (NamedValues *values, const char *name)
     return 0;
 }
 
-real64_t named_values_get_real64 (NamedValues *values, const char *name)
+real64_t attributes_get_real64 (Attributes *attributes, const char *name)
 {
-  Value *value = hashtable_search (values->table, (void *)name);
+  Value *value = hashtable_search (attributes->table, (void *)name);
   
   if (value && value->type == TYPE_REAL64)
     return value->value.real64;
@@ -102,9 +102,9 @@ real64_t named_values_get_real64 (NamedValues *values, const char *name)
     return 0;
 }
 
-const char *named_values_get_string (NamedValues *values, const char *name)
+const char *attributes_get_string (Attributes *attributes, const char *name)
 {
-  Value *value = hashtable_search (values->table, (void *)name);
+  Value *value = hashtable_search (attributes->table, (void *)name);
     
   if (value && value->type == TYPE_STRING)
     return value->value.str;
@@ -112,9 +112,9 @@ const char *named_values_get_string (NamedValues *values, const char *name)
     return NULL;
 }
 
-Array *named_values_get_opaque (NamedValues *values, const char *name)
+Array *attributes_get_opaque (Attributes *attributes, const char *name)
 {
-  Value *value = hashtable_search (values->table, (void *)name);
+  Value *value = hashtable_search (attributes->table, (void *)name);
     
   if (value && value->type == TYPE_OPAQUE)
     return &value->value.bytes;
@@ -122,15 +122,15 @@ Array *named_values_get_opaque (NamedValues *values, const char *name)
     return NULL;
 }
 
-bool named_values_write (ByteBuffer *buffer, NamedValues *values, 
+bool attributes_write (ByteBuffer *buffer, Attributes *attributes, 
                          ElvinError *error)
 {  
   on_error_return_false 
-    (byte_buffer_write_int32 (buffer, hashtable_count (values->table), error));
+    (byte_buffer_write_int32 (buffer, hashtable_count (attributes->table), error));
   
-  if (hashtable_count (values->table) > 0)
+  if (hashtable_count (attributes->table) > 0)
   {
-    struct hashtable_itr *i = hashtable_iterator (values->table);
+    struct hashtable_itr *i = hashtable_iterator (attributes->table);
 
     do
     {      
@@ -144,7 +144,7 @@ bool named_values_write (ByteBuffer *buffer, NamedValues *values,
   return elvin_error_ok (error);
 }
 
-bool named_values_read (ByteBuffer *buffer, NamedValues *values, 
+bool attributes_read (ByteBuffer *buffer, Attributes *attributes, 
                         ElvinError *error)
 {
   uint32_t count;
@@ -157,7 +157,7 @@ bool named_values_read (ByteBuffer *buffer, NamedValues *values,
     if ((name = byte_buffer_read_string (buffer, error)) &&
         (value = value_read (buffer, error)))
     {
-      hashtable_insert (values->table, name, value);
+      hashtable_insert (attributes->table, name, value);
     }
   }
 

@@ -4,7 +4,7 @@
 #include <errno.h>
 
 #include <elvin/elvin.h>
-#include <elvin/named_values.h>
+#include <elvin/attributes.h>
 
 void sub_listener (Subscription *sub, Notification *notification);
 
@@ -49,5 +49,5 @@ int main (int argc, const char * argv[])
 void sub_listener (Subscription *sub, Notification *notification)
 {
   printf ("Notified! Message = %s\n", 
-          named_values_get_string (&notification->attributes, "message"));
+          attributes_get_string (&notification->attributes, "message"));
 }
