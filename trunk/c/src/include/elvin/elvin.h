@@ -1,10 +1,6 @@
 /*
- *  elvin.h
- *
- *  Elvin Client Library
- *  Main Public Definitions.
+ * The main Avis client library definitions.
  */
-
 #ifndef ELVIN_H
 #define ELVIN_H
 
@@ -41,7 +37,7 @@
  */
 typedef struct
 {
-  socket_t socket;
+  socket_t  socket;
   ArrayList subscriptions;
 } Elvin;
 
@@ -63,12 +59,12 @@ typedef enum
  */
 typedef struct
 {
-  Elvin *elvin;
-  const char *subscription_expr;
-  uint64_t id;
-  Keys keys;
-  SecureMode security;
-  ArrayList listeners;
+  Elvin *      elvin;
+  const char * subscription_expr;
+  uint64_t     id;
+  Keys         keys;
+  SecureMode   security;
+  ArrayList    listeners;
 } Subscription;
 
 /**
@@ -82,7 +78,7 @@ typedef struct
   Attributes attributes;
   
   /** True if the notification was received securely. */
-  bool secure;
+  bool       secure;
 } Notification;
 
 /**
