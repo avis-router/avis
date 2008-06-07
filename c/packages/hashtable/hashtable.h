@@ -76,6 +76,12 @@ create_hashtable(unsigned int minsize,
                  unsigned int (*hashfunction) (void*),
                  int (*key_eq_fn) (void*,void*));
 
+struct hashtable *
+init_hashtable(struct hashtable *h,
+               unsigned int minsize,
+               unsigned int (*hashf) (void*),
+               int (*eqf) (void*,void*));
+
 /*****************************************************************************
  * hashtable_insert
    
