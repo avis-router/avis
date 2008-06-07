@@ -178,7 +178,8 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * <pre>
  * Elvin *elvin = ...
  * ElvinError *error = ...
- * Subscription *subscription = elvin_subscribe ("string (message)");
+ * Subscription *subscription = 
+ *   elvin_subscribe (elvin, "string (message)", error);
  *
  * if (!subscription)
  * {
@@ -186,15 +187,15 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  *   exit (1);
  * }
  * 
- * elvin_unsubscribe (elvin, &subscription, error);
+ * elvin_unsubscribe (elvin, subscription, error);
  * </pre>
  * 
  * @see elvin_send()
  * @see elvin_unsubscribe()
  * @see elvin_subscription_add_listener()
  */
-Subscription * elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
-                                ElvinError *error);
+Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
+                               ElvinError *error);
 
 /**
  * Unsubscribe from a subscription created on an Elvin router.
@@ -202,7 +203,7 @@ Subscription * elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * @param elvin The Elvin connection instance.
  *
  * @param subscription The subscription to remove. This will be automatically
- * freed with elvin_subscription_free().
+ * freed by the connection.
  *
  * @param error The error info.
  * 
