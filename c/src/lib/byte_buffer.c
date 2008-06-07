@@ -108,7 +108,7 @@ void byte_buffer_free (ByteBuffer *buffer)
     free (buffer->data);
     
     buffer->data = NULL;
-    buffer->data_length = -1;
+    buffer->data_length = 0;
   }
 }
 
@@ -154,7 +154,7 @@ void expand_buffer (ByteBuffer *buffer, size_t new_length)
   
   assert (new_length > buffer->data_length);
   
-  memcpy ((void *)new_data, (void *)old_data, buffer->data_length);
+  memcpy (new_data, old_data, buffer->data_length);
   
   /* TODO this may not be necessary: does malloc guarantee zeroed memory? */
   memset ((void *)(new_data + buffer->data_length), 0, 
@@ -240,14 +240,20 @@ real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error)
 {
   int64_t value = byte_buffer_read_int64 (buffer, error);
  
-  /* We're assuming the system's double type is already in IEEE 754 format. */
+  /* 
+   * We're assuming the system's double type is already in IEEE 754 format.
+   * This will almost certainly fail on some platforms 
+   */
   return *(real64_t *)&value;
 }
 
 bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t value, 
                                ElvinError *error)
 {
-  /* We're assuming the system's double type is already in IEEE 754 format. */
+  /* 
+   * We're assuming the system's double type is already in IEEE 754 format.
+   * This will almost certainly fail on some platforms 
+   */
   return byte_buffer_write_int64 (buffer, *(int64_t *)&value, error);
 }
 
