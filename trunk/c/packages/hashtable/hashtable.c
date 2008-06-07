@@ -25,21 +25,36 @@ const unsigned int prime_table_length = sizeof(primes)/sizeof(primes[0]);
 const float max_load_factor = 0.65f;
 
 /*****************************************************************************/
+
 struct hashtable *
 create_hashtable(unsigned int minsize,
                  unsigned int (*hashf) (void*),
                  int (*eqf) (void*,void*))
 {
     struct hashtable *h;
-    unsigned int pindex, size = primes[0];
+  
     /* Check requested hashtable isn't too large */
     if (minsize > (1u << 30)) return NULL;
+
+    h = malloc (sizeof (struct hashtable));
+    
+    if (NULL == h) return NULL; /*oom*/
+    
+    return init_hashtable (h, minsize, hashf, eqf);
+}
+
+struct hashtable *
+init_hashtable(struct hashtable *h,
+               unsigned int minsize,
+               unsigned int (*hashf) (void*),
+               int (*eqf) (void*,void*))
+{
+    unsigned int pindex, size = primes[0];
     /* Enforce size as prime */
     for (pindex=0; pindex < prime_table_length; pindex++) {
         if (primes[pindex] > minsize) { size = primes[pindex]; break; }
     }
-    h = (struct hashtable *)malloc(sizeof(struct hashtable));
-    if (NULL == h) return NULL; /*oom*/
+
     h->table = (struct entry **)malloc(sizeof(struct entry*) * size);
     if (NULL == h->table) { free(h); return NULL; } /*oom*/
     memset(h->table, 0, size * sizeof(struct entry *));
