@@ -169,6 +169,9 @@ bool attributes_read (ByteBuffer *buffer, Attributes *attributes,
       hashtable_insert (attributes->table, name, value);
     } else
     {
+      if (name)
+        free (name);
+      
       value_destroy (value);
     }
   }
