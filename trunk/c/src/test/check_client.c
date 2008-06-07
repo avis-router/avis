@@ -117,9 +117,14 @@ START_TEST (test_subscribe)
   
   elvin_open (&elvin, "elvin://localhost", &error);
   fail_on_error (&error);
+
+  /* check invalid subscription is handled */
+  elvin_subscription_init (&sub, "size (bogus");
   
+  elvin_subscribe (&elvin, &sub, &error);
+  fail_unless_error_code (&error, ELVIN_ERROR_SYNTAX);
+
   elvin_subscription_init (&sub, "require (test) && string (message)");
-  fail_on_error (&error);
   
   elvin_subscribe (&elvin, &sub, &error);
   fail_on_error (&error);
