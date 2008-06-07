@@ -111,6 +111,19 @@ int array_list_find_func (ArrayList *list, void (*func) ())
   return -1;
 }
 
+int array_list_find_ptr (ArrayList *list, void *ptr)
+{
+  size_t index;
+    
+  for (index = 0; index < list->item_count; index++)
+  {
+    if (((void **)list->items) [index] == ptr)
+      return (int)index;
+  }
+  
+  return -1;
+}
+
 bool array_list_remove_int (ArrayList *list, int int_value)
 {
   int index = array_list_find_int (list, int_value);
@@ -133,6 +146,21 @@ bool array_list_remove_func (ArrayList *list, void (*func) ())
   if (index != -1)
   {
     array_list_remove (list, index, FuncPtr);
+    
+    return true;
+  } else
+  {
+    return false;
+  }
+}
+
+bool array_list_remove_ptr (ArrayList *list, void *ptr)
+{
+  int index = array_list_find_ptr (list, ptr);
+      
+  if (index != -1)
+  {
+    array_list_remove (list, index, void *);
     
     return true;
   } else

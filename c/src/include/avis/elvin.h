@@ -169,25 +169,18 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * Subscribe to notifications from an Elvin router.
  * 
  * @param elvin The Elvin connection instance.
- *
- * @param subscription The subscription to add. The subscription_expr field
- * must be initialised to the expression used to select notifications (see
- * elvin_subscription_init()). The keys and security fields may also be set
- * to the desired initial values.
- *
+ * @param subscription_expr The subscription expression.
  * @param error The error info.
- * 
- * @return True if the subscription succeeded.
+ *
+ * @return The new subscription, or NULL on error.
  * 
  * Example:
  * <pre>
  * Elvin *elvin = ...
  * ElvinError *error = ...
- * Subscription subscription;
- * 
- * elvin_subscription_init (&subscription, "string (message)");
+ * Subscription *subscription = elvin_subscribe ("string (message)");
  *
- * if (!elvin_subscribe (elvin, &sub, error))
+ * if (!subscription)
  * {
  *   elvin_perror ("subscribe", error);
  *   exit (1);
@@ -200,15 +193,16 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * @see elvin_unsubscribe()
  * @see elvin_subscription_add_listener()
  */
-bool elvin_subscribe (Elvin *elvin, Subscription *subscription, 
-                      ElvinError *error);
+Subscription * elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
+                                ElvinError *error);
 
 /**
  * Unsubscribe from a subscription created on an Elvin router.
  * 
  * @param elvin The Elvin connection instance.
  *
- * @param subscription The subscription to remove.
+ * @param subscription The subscription to remove. This will be automatically
+ * freed with elvin_subscription_free().
  *
  * @param error The error info.
  * 
@@ -260,18 +254,4 @@ bool elvin_close (Elvin *elvin);
  */
 bool elvin_poll (Elvin *elvin, ElvinError *error);
 
-/**
- * Initialise a subscription instance. After initialisation of the required
- * subscription_expr field, the optional keys and security fields may also be
- * set before calling elvin_subscribe() to activate the subscription.
- * 
- * @param subscription The instance to initialise.
- * @param subscription_expr The 
- * <a href="http://avis.sourceforge.net/subscription_language.html">subscription expression</a>
- * used to select incoming notifications.
- * 
- * @see elvin_unsubscribe()
- */
-void elvin_subscription_init (Subscription *subscription, 
-                              const char *subscription_expr);
 #endif /* ELVIN_H */

@@ -29,10 +29,10 @@
 #include "messages.h"
 #include "array_list_private.h"
 
+static void elvin_shutdown (Elvin *elvin);
+
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
-
-static void close_socket (Elvin *elvin);
 
 static bool send_and_receive (socket_t socketfd, Message request, 
                               Message reply, MessageTypeID reply_type, 
@@ -59,6 +59,10 @@ static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 static void deliver_notification (Elvin *elvin, Array *ids, 
                                   Notification *notification,
                                   ElvinError *error);
+
+static Subscription *elvin_subscription_create ();
+
+static void elvin_subscription_free (Subscription *subscription);
 
 #ifdef WIN32
   static void init_windows_sockets (ElvinError *error);
@@ -124,11 +128,35 @@ bool elvin_close (Elvin *elvin)
   send_and_receive (elvin->socket, disconn_rqst, reply,
                     MESSAGE_ID_DISCONN_RPLY, &error);
 
-  close_socket (elvin);
+  elvin_shutdown (elvin);
   
   elvin_error_destroy (&error);
   
   return true;
+}
+
+void elvin_shutdown (Elvin *elvin)
+{
+  size_t i;
+  Subscription **sub = elvin->subscriptions.items;
+  
+  #ifdef WIN32
+    closesocket (elvin->socket);
+  
+    WSACleanup ();
+  #else
+    close (elvin->socket);
+  #endif
+  
+  elvin->socket = -1;
+  
+  for (i = elvin->subscriptions.item_count; i > 0; i--, sub++)
+  {
+    elvin_subscription_free (*sub);
+    free (*sub);
+  }
+  
+  array_list_free (&elvin->subscriptions);
 }
 
 bool elvin_poll (Elvin *elvin, ElvinError *error)
@@ -150,7 +178,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
                      "Unexpected message type from router");
       
-    close_socket (elvin);
+    elvin_shutdown (elvin);
     break;
   }
   
@@ -162,7 +190,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
 void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
 {
   /* TODO support close listener */
-  close_socket (elvin);
+  elvin_shutdown (elvin);
 }
 
 /* TODO include message from router */
@@ -251,20 +279,35 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error)
   return send_message (elvin->socket, notify_emit, error);
 }
 
-void elvin_subscription_init (Subscription *subscription, 
-                              const char *subscription_expr)
+#define elvin_subscription_destroy(sub) \
+  (elvin_subscription_free (sub), free (sub), sub = NULL)
+
+Subscription *elvin_subscription_create (const char *subscription_expr)
 {
+  Subscription *subscription = malloc (sizeof (Subscription));
+  
   subscription->elvin = NULL;
   subscription->id = 0;
   subscription->security = ALLOW_INSECURE_DELIVERY;
   subscription->subscription_expr = subscription_expr;
   array_list_init (&subscription->listeners, sizeof (SubscriptionListener), 5);
   elvin_keys_init (&subscription->keys);
+  
+  return subscription;
 }
 
-bool elvin_subscribe (Elvin *elvin, Subscription *subscription, 
-                      ElvinError *error)
+void elvin_subscription_free (Subscription *subscription)
 {
+  subscription->elvin = NULL;
+  subscription->id = 0;
+  array_list_free (&subscription->listeners);
+  elvin_keys_free (&subscription->keys);
+}
+
+Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
+                               ElvinError *error)
+{
+  Subscription *subscription = elvin_subscription_create (subscription_expr);
   Message sub_add_rqst = message_alloca ();
   Message sub_reply = message_alloca ();
   
@@ -273,15 +316,20 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
                 ALLOW_INSECURE_DELIVERY,
                 &subscription->keys);
   
-  on_error_return_false 
-   (send_and_receive (elvin->socket, sub_add_rqst, sub_reply,
-                      MESSAGE_ID_SUB_RPLY, error));
-  
-  subscription->id = int64_at_offset (sub_reply, 4);
-  
-  array_list_add_ptr (&elvin->subscriptions, subscription);
+  if (send_and_receive (elvin->socket, sub_add_rqst, sub_reply,
+                        MESSAGE_ID_SUB_RPLY, error))
+  {
+    subscription->id = int64_at_offset (sub_reply, 4);
+    
+    array_list_add_ptr (&elvin->subscriptions, subscription);
 
-  return true;
+    return subscription;
+  } else
+  {
+    elvin_subscription_destroy (subscription);
+    
+    return NULL;
+  }
 }
 
 bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription, 
@@ -289,11 +337,19 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
 {
   Message sub_del_rqst = message_alloca ();
   Message sub_reply = message_alloca ();
-    
+  bool succeeded;
+  
   message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
   
-  return send_and_receive (elvin->socket, sub_del_rqst, sub_reply,
-                           MESSAGE_ID_SUB_RPLY, error);
+  succeeded = 
+    send_and_receive (elvin->socket, sub_del_rqst, sub_reply,
+                      MESSAGE_ID_SUB_RPLY, error);
+  
+  array_list_remove_ptr (&elvin->subscriptions, subscription);
+
+  elvin_subscription_destroy (subscription);
+  
+  return succeeded;
 }
 
 /* TODO support adding general listeners */
@@ -448,19 +504,6 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   {
     return elvin_error_from_errno (error);
   }
-}
-
-void close_socket (Elvin *elvin)
-{
-  #ifdef WIN32
-    closesocket (elvin->socket);
-  
-    WSACleanup ();
-  #else
-    close (elvin->socket);
-  #endif
-  
-  elvin->socket = -1;
 }
 
 bool resolve_address (struct sockaddr_in *router_addr,

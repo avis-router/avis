@@ -43,8 +43,12 @@ int array_list_find_int (ArrayList *list, int int_value);
 
 int array_list_find_func (ArrayList *list, void (*func) ());
 
+int array_list_find_ptr (ArrayList *list, void *ptr);
+
 bool array_list_remove_int (ArrayList *list, int int_value);
 
 bool array_list_remove_func (ArrayList *list, void (*func) ());
+
+bool array_list_remove_ptr (ArrayList *list, void *ptr);
 
 #endif /*ARRAY_LIST_PRIVATE_H_*/

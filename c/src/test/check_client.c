@@ -112,24 +112,21 @@ static bool test_subscribe_received_ntfn = false;
 START_TEST (test_subscribe)
 {
   Elvin elvin;
-  Subscription sub;
+  Subscription *sub;
   time_t start_time;
   
   elvin_open (&elvin, "elvin://localhost", &error);
   fail_on_error (&error);
 
   /* check invalid subscription is handled */
-  elvin_subscription_init (&sub, "size (bogus");
+  sub = elvin_subscribe (&elvin, "size (bogus", &error);
   
-  elvin_subscribe (&elvin, &sub, &error);
   fail_unless_error_code (&error, ELVIN_ERROR_SYNTAX);
 
-  elvin_subscription_init (&sub, "require (test) && string (message)");
-  
-  elvin_subscribe (&elvin, &sub, &error);
+  sub = elvin_subscribe (&elvin, "require (test) && string (message)", &error);
   fail_on_error (&error);
   
-  elvin_subscription_add_listener (&sub, test_subscribe_sub_listener);
+  elvin_subscription_add_listener (sub, test_subscribe_sub_listener);
   
   Attributes *ntfn = attributes_create ();
   
@@ -157,7 +154,7 @@ START_TEST (test_subscribe)
   
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
   
-  elvin_unsubscribe (&elvin, &sub, &error);
+  elvin_unsubscribe (&elvin, sub, &error);
   fail_on_error (&error);
     
   elvin_close (&elvin);

@@ -11,7 +11,7 @@ void sub_listener (Subscription *sub, Notification *notification);
 int main (int argc, const char * argv[]) 
 {
   Elvin elvin;
-  Subscription sub;
+  Subscription *sub;
   ElvinError error = elvin_error_create ();
   const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
   
@@ -22,16 +22,15 @@ int main (int argc, const char * argv[])
   }
   
   /* TODO handle Ctrl+C */
+  sub = elvin_subscribe (&elvin, "require (test) && string (message)", &error);
   
-  elvin_subscription_init (&sub, "require (test) && string (message)");
-  
-  if (!elvin_subscribe (&elvin, &sub, &error))
+  if (!sub)
   {
     elvin_perror ("subscribe", &error);
     exit (1);
   }
   
-  elvin_subscription_add_listener (&sub, sub_listener);
+  elvin_subscription_add_listener (sub, sub_listener);
   
   while (elvin_is_open (&elvin) && elvin_error_ok (&error))
   {

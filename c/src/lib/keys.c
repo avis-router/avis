@@ -10,3 +10,8 @@ Keys *elvin_keys_init (Keys *keys)
   
   return keys;
 }
+
+void elvin_keys_free (Keys *keys)
+{
+  /* TODO */
+}
