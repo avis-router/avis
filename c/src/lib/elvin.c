@@ -169,7 +169,7 @@ void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
 void handleNack (Message message, ElvinError *error)
 {
   uint32_t error_code = int32_at_offset (message, 4);
-  
+
   /* 21xx NACK code => subscription error */
   if (error_code / 100 == 21)
   {
@@ -276,8 +276,6 @@ bool elvin_subscribe (Elvin *elvin, Subscription *subscription,
   on_error_return_false 
    (send_and_receive (elvin->socket, sub_add_rqst, sub_reply,
                       MESSAGE_ID_SUB_RPLY, error));
-  
-  /* TODO handle NACK due to invalid expression */
   
   subscription->id = int64_at_offset (sub_reply, 4);
   
