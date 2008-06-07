@@ -5,33 +5,8 @@
 #include <elvin/errors.h>
 #include <elvin/values.h>
 
-#ifdef AVIS_SHARED_LIB
-  #include <hashtable_private.h>
-#else
-  /*
-   * A dodgy way of allowing this to be used by clients without needing
-   * to expose the full hashtable implementation headers.
-   */
-  struct entry
-  {
-    void *k, *v;
-    unsigned int h;
-    struct entry *next;
-  };
+struct hashtable;
 
-  struct hashtable
-  {
-    unsigned int tablelength;
-    struct entry **table;
-    unsigned int entrycount;
-    unsigned int loadlimit;
-    unsigned int primeindex;
-    unsigned int (*hashfn) (void *k);
-    int (*eqfn) (void *k1, void *k2);
-  };
-#endif
-
-/* TODO this does not document properly */
 /**
  * A map of string names to polymorphic Value instances. This is used as the 
  * payload for notification messages (see elvin_send()) and for specifying
@@ -40,7 +15,10 @@
  * @see named_values_create()
  * @see Value
  */
-typedef struct hashtable NamedValues;
+typedef struct
+{
+  struct hashtable *table;
+} NamedValues;
 
 extern NamedValues _empty_named_values;
 
@@ -52,7 +30,10 @@ extern NamedValues _empty_named_values;
  * @see named_values_free() 
  * @see named_values_destroy() 
  */
-NamedValues *named_values_create ();
+#define named_values_create() \
+  (named_values_init (malloc (sizeof (NamedValues))))
+
+NamedValues *named_values_init (NamedValues *);
 
 /**
  * Free and NULL a named values instance.
