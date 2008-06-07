@@ -235,8 +235,7 @@ START_TEST (test_message_io)
   
   fail_on_error (&error);
   
-  fail_unless (byte_buffer_position (buffer) == 32, 
-               "Message length incorrect");
+  fail_unless (buffer->position == 32, "Message length incorrect");
   
   Message connRqst2 = message_alloca ();
   
