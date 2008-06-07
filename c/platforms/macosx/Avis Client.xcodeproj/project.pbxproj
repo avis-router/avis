@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		C906FBF50DD3FC3900375E7D /* elvin.h in Headers */ = {isa = PBXBuildFile; fileRef = C906FBF30DD3FC3900375E7D /* elvin.h */; };
 		C906FBF60DD3FC3900375E7D /* elvin.c in Sources */ = {isa = PBXBuildFile; fileRef = C906FBF40DD3FC3900375E7D /* elvin.c */; };
-		C906FD6F0DD44F2200375E7D /* libelvin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libelvin.dylib */; };
+		C906FD6F0DD44F2200375E7D /* libavis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libavis.dylib */; };
 		C927C9370DF6555B0077E05E /* check.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A0AD0DF642E500313558 /* check.c */; };
 		C927C9380DF6555B0077E05E /* check.h in Headers */ = {isa = PBXBuildFile; fileRef = C931A0AE0DF642E500313558 /* check.h */; };
 		C927C9390DF6555B0077E05E /* check_error.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A0AF0DF642E500313558 /* check_error.c */; };
@@ -40,9 +40,9 @@
 		C9B465D90DD82A9800A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465D70DD82A9800A1C448 /* messages.c */; };
 		C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B466750DD9374900A1C448 /* libcheck.dylib */; };
 		C9B467190DD9554E00A1C448 /* keys.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B467180DD9554E00A1C448 /* keys.h */; };
-		C9E7FF330DF9533B00F0210C /* libelvin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libelvin.dylib */; };
+		C9E7FF330DF9533B00F0210C /* libavis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libavis.dylib */; };
 		C9E7FF390DF9535700F0210C /* event_loop_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E7FF020DF951D800F0210C /* event_loop_test.c */; };
-		C9E7FF420DF9538300F0210C /* libelvin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libelvin.dylib */; };
+		C9E7FF420DF9538300F0210C /* libavis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libavis.dylib */; };
 		C9E7FF480DF9539700F0210C /* basic_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C906FBD70DD3FA0800375E7D /* basic_test.c */; };
 		C9ED37330DFA358A00FB55CE /* attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = C9ED37320DFA358A00FB55CE /* attributes.c */; };
 		FA4D5B570DF420DE0098EE7D /* byte_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B4E0DF420DE0098EE7D /* byte_buffer.c */; };
@@ -100,7 +100,7 @@
 
 /* Begin PBXFileReference section */
 		C906FBD70DD3FA0800375E7D /* basic_test.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = basic_test.c; path = ../../src/test/basic_test.c; sourceTree = SOURCE_ROOT; };
-		C906FBED0DD3FBB300375E7D /* libelvin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libelvin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C906FBED0DD3FBB300375E7D /* libavis.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libavis.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C906FBF30DD3FC3900375E7D /* elvin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = elvin.h; path = ../../src/include/avis/elvin.h; sourceTree = SOURCE_ROOT; };
 		C906FBF40DD3FC3900375E7D /* elvin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin.c; path = ../../src/lib/elvin.c; sourceTree = SOURCE_ROOT; };
 		C931A0130DF640F200313558 /* array_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array_list.c; path = ../../src/lib/array_list.c; sourceTree = SOURCE_ROOT; };
@@ -170,7 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */,
-				C906FD6F0DD44F2200375E7D /* libelvin.dylib in Frameworks */,
+				C906FD6F0DD44F2200375E7D /* libavis.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,7 +185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9E7FF330DF9533B00F0210C /* libelvin.dylib in Frameworks */,
+				C9E7FF330DF9533B00F0210C /* libavis.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +193,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9E7FF420DF9538300F0210C /* libelvin.dylib in Frameworks */,
+				C9E7FF420DF9538300F0210C /* libavis.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,7 +249,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C906FBED0DD3FBB300375E7D /* libelvin.dylib */,
+				C906FBED0DD3FBB300375E7D /* libavis.dylib */,
 				C9B466750DD9374900A1C448 /* libcheck.dylib */,
 				C9B466850DD9377200A1C448 /* tests */,
 				FA4D5B770DF421FB0098EE7D /* libhashtable.a */,
@@ -362,9 +362,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		C906FBEC0DD3FBB300375E7D /* Elvin Client */ = {
+		C906FBEC0DD3FBB300375E7D /* Client Library */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C906FBF10DD3FBDE00375E7D /* Build configuration list for PBXNativeTarget "Elvin Client" */;
+			buildConfigurationList = C906FBF10DD3FBDE00375E7D /* Build configuration list for PBXNativeTarget "Client Library" */;
 			buildPhases = (
 				C906FBE90DD3FBB300375E7D /* Headers */,
 				C906FBEA0DD3FBB300375E7D /* Sources */,
@@ -375,9 +375,9 @@
 			dependencies = (
 				FA4D5B900DF422E50098EE7D /* PBXTargetDependency */,
 			);
-			name = "Elvin Client";
+			name = "Client Library";
 			productName = elvin;
-			productReference = C906FBED0DD3FBB300375E7D /* libelvin.dylib */;
+			productReference = C906FBED0DD3FBB300375E7D /* libavis.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		C906FD6A0DD44F1100375E7D /* tests */ = {
@@ -471,14 +471,14 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "Elvin Client" */;
+			buildConfigurationList = 1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "Avis Client" */;
 			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* Elvin Client */;
 			projectDirPath = "";
 			projectRoot = ../..;
 			targets = (
-				C906FBEC0DD3FBB300375E7D /* Elvin Client */,
+				C906FBEC0DD3FBB300375E7D /* Client Library */,
 				C906FD6A0DD44F1100375E7D /* tests */,
 				C9B466740DD9374900A1C448 /* check */,
 				FA4D5B760DF421FB0098EE7D /* hashtable */,
@@ -564,7 +564,7 @@
 /* Begin PBXTargetDependency section */
 		C906FD900DD44FCA00375E7D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C906FBEC0DD3FBB300375E7D /* Elvin Client */;
+			target = C906FBEC0DD3FBB300375E7D /* Client Library */;
 			targetProxy = C906FD8F0DD44FCA00375E7D /* PBXContainerItemProxy */;
 		};
 		C9B466890DD9378100A1C448 /* PBXTargetDependency */ = {
@@ -574,12 +574,12 @@
 		};
 		C9E7FF270DF9533B00F0210C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C906FBEC0DD3FBB300375E7D /* Elvin Client */;
+			target = C906FBEC0DD3FBB300375E7D /* Client Library */;
 			targetProxy = C9E7FF280DF9533B00F0210C /* PBXContainerItemProxy */;
 		};
 		C9E7FF3D0DF9538300F0210C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C906FBEC0DD3FBB300375E7D /* Elvin Client */;
+			target = C906FBEC0DD3FBB300375E7D /* Client Library */;
 			targetProxy = C9E7FF3E0DF9538300F0210C /* PBXContainerItemProxy */;
 		};
 		FA4D5B900DF422E50098EE7D /* PBXTargetDependency */ = {
@@ -654,7 +654,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = AVIS_SHARED_LIB;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = elvin;
+				PRODUCT_NAME = avis;
 				USER_HEADER_SEARCH_PATHS = "../../packages/hashtable ../../src/include";
 				ZERO_LINK = NO;
 			};
@@ -671,7 +671,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = AVIS_SHARED_LIB;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = elvin;
+				PRODUCT_NAME = avis;
 				USER_HEADER_SEARCH_PATHS = "../../packages/hashtable ../../src/include";
 				ZERO_LINK = NO;
 			};
@@ -885,7 +885,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "Elvin Client" */ = {
+		1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "Avis Client" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB914F08733D8E0010E9CD /* Debug */,
@@ -894,7 +894,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C906FBF10DD3FBDE00375E7D /* Build configuration list for PBXNativeTarget "Elvin Client" */ = {
+		C906FBF10DD3FBDE00375E7D /* Build configuration list for PBXNativeTarget "Client Library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C906FBEE0DD3FBB300375E7D /* Debug */,
