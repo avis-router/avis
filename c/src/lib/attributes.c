@@ -49,6 +49,12 @@ void attributes_free (Attributes *attributes)
   free (attributes->table);
 }
 
+void attributes_clear (Attributes *attributes)
+{
+  attributes_free (attributes);
+  attributes_init (attributes);
+}
+
 unsigned int attributes_size (Attributes *attributes)
 {
   return hashtable_count (attributes->table);
@@ -150,20 +156,32 @@ bool attributes_read (ByteBuffer *buffer, Attributes *attributes,
                       ElvinError *error)
 {
   uint32_t count;
-  char *name;
-  Value *value;
   
   for (count = byte_buffer_read_int32 (buffer, error); 
        count > 0 && elvin_error_ok (error); count--)
   {
+    char *name;  
+    Value *value = value_create_int32 (0); /* init to safe value */
+
     if ((name = byte_buffer_read_string (buffer, error)) &&
-        (value = value_read (buffer, error)))
+        (value_read (buffer, value, error)))
     {
       hashtable_insert (attributes->table, name, value);
+    } else
+    {
+      value_destroy (value);
     }
   }
+  
+  if (elvin_error_ok (error))
+  {
+    return true;
+  } else
+  {
+    attributes_clear (attributes);
 
-  return elvin_error_ok (error);
+    return false;
+  }
 }
 
 /*
