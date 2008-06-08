@@ -426,7 +426,8 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-/* TODO close connection on protocol violation */
+/* TODO close connection on protocol violation: replace error set's with 
+ * function */
 bool receive_message (socket_t socketfd, Message message, ElvinError *error)
 {
   ByteBuffer buffer;

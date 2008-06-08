@@ -275,10 +275,10 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   return true; 
 }
 
-void  read_using_format (ByteBuffer *buffer, 
-                         Message message,
-                         MessageFormat *format, 
-                         ElvinError *error)
+void read_using_format (ByteBuffer *buffer, 
+                        Message message,
+                        MessageFormat *format, 
+                        ElvinError *error)
 {
   FieldFormat *field;
   
