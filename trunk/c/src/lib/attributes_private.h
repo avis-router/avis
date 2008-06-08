@@ -1,12 +1,12 @@
-#ifndef NAMED_VALUES_INT_H_
-#define NAMED_VALUES_INT_H_
+#ifndef ATTRIBUTES_PRIVATE_H_
+#define ATTRIBUTES_PRIVATE_H_
 
 #include "byte_buffer.h"
 
 bool attributes_write (ByteBuffer *buffer, Attributes *attributes, 
-                         ElvinError *error);
+                       ElvinError *error);
 
 bool attributes_read (ByteBuffer *buffer, Attributes *attributes, 
-                        ElvinError *error);
+                      ElvinError *error);
 
-#endif /*NAMED_VALUES_INT_H_*/
+#endif /*ATTRIBUTES_PRIVATE_H_*/
