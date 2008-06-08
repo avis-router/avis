@@ -41,7 +41,7 @@ Attributes *attributes_init (Attributes *);
  * @see attributes_free()
  */
 #define attributes_destroy(attributes) \
-  (attributes_free (attributes), attributes = NULL)
+  (attributes_free (attributes), free (attributes), attributes = NULL)
 
 /**
  * Free resources held by a named attributes instance.
