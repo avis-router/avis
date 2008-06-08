@@ -28,47 +28,71 @@ void array_list_free (ArrayList *list)
   }
 }
 
-void array_list_add_ptr (ArrayList *list, void *item)
-{
-  auto_resize (list, list->item_count + 1, sizeof (void *));
-  
-  ((void **)list->items) [list->item_count++] = item;
-}
+/*
+ * Matthew's Poor Man's Generics (tm) below
+ */
 
-void array_list_add_func (ArrayList *list, FuncPtr func)
-{
-  auto_resize (list, list->item_count + 1, sizeof (FuncPtr));
-  
-  ((FuncPtr *)list->items) [list->item_count++] = func;
-}
+#define def_array_list_add(item_type, postfix) \
+  void array_list_add_##postfix (ArrayList *list, item_type item)\
+  {\
+    auto_resize (list, list->item_count + 1, sizeof (item_type));\
+    \
+    ((item_type *)list->items) [list->item_count++] = item;\
+  }
 
-void array_list_add_int (ArrayList *list, int value)
-{
-  auto_resize (list, list->item_count + 1, sizeof (int));
-    
-  ((int *)list->items) [list->item_count++] = value;
-}
+def_array_list_add (int, int)
+def_array_list_add (void *, ptr)
+def_array_list_add (FuncPtr, func)
 
-int array_list_get_int (ArrayList *list, size_t index)
-{
-  assert (index >= 0 && index < list->item_count);
+#define def_array_list_get(item_type, postfix) \
+  item_type array_list_get_##postfix (ArrayList *list, size_t index)\
+  {\
+    assert (index >= 0 && index < list->item_count);\
+    \
+    return ((item_type *)list->items) [index];\
+  }\
   
-  return ((int *)list->items) [index];
-}
+def_array_list_get (int, int)
+def_array_list_get (void *, ptr)
+def_array_list_get (FuncPtr, func)
 
-FuncPtr array_list_get_func (ArrayList *list, size_t index)
-{
-  assert (index >= 0 && index < list->item_count);
-  
-  return ((void (**) ())list->items) [index];
-}
+#define def_array_list_find(item_type, postfix) \
+  int array_list_find_##postfix (ArrayList *list, item_type value)\
+  {\
+    size_t index;\
+    \
+    for (index = 0; index < list->item_count; index++)\
+    {\
+      if (((item_type *)list->items) [index] == value)\
+        return (int)index;\
+    }\
+    \
+    return -1;\
+  }
 
-void *array_list_get_ptr (ArrayList *list, size_t index)
-{
-  assert (index >= 0 && index < list->item_count);
-  
-  return ((void **)list->items) [index];
-}
+def_array_list_find (int, int)
+def_array_list_find (void *, ptr)
+def_array_list_find (FuncPtr, func)
+
+#define def_array_list_remove(item_type, postfix) \
+  bool array_list_remove_##postfix (ArrayList *list, item_type value)\
+  {\
+    int index = array_list_find_##postfix (list, value);\
+    \
+    if (index != -1)\
+    {\
+      array_list_remove (list, index, item_type);\
+      \
+      return true;\
+    } else\
+    {\
+      return false;\
+    }\
+  }
+
+def_array_list_remove (int, int)
+def_array_list_remove (void *, ptr)
+def_array_list_remove (FuncPtr, func)
 
 void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
 {
@@ -83,90 +107,6 @@ void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
   }
   
   list->item_count--;
-}
-
-int array_list_find_int (ArrayList *list, int int_value)
-{
-  size_t index;
-  
-  for (index = 0; index < list->item_count; index++)
-  {
-    if (((int *)list->items) [index] == int_value)
-      return (int)index;
-  }
-  
-  return -1;
-}
-
-int array_list_find_func (ArrayList *list, void (*func) ())
-{
-  size_t index;
-    
-  for (index = 0; index < list->item_count; index++)
-  {
-    if (((void (**) ())list->items) [index] == func)
-      return (int)index;
-  }
-  
-  return -1;
-}
-
-int array_list_find_ptr (ArrayList *list, void *ptr)
-{
-  size_t index;
-    
-  for (index = 0; index < list->item_count; index++)
-  {
-    if (((void **)list->items) [index] == ptr)
-      return (int)index;
-  }
-  
-  return -1;
-}
-
-bool array_list_remove_int (ArrayList *list, int int_value)
-{
-  int index = array_list_find_int (list, int_value);
-  
-  if (index != -1)
-  {
-    array_list_remove (list, index, int);
-    
-    return true;
-  } else
-  {
-    return false;
-  }
-}
-
-bool array_list_remove_func (ArrayList *list, void (*func) ())
-{
-  int index = array_list_find_func (list, func);
-    
-  if (index != -1)
-  {
-    array_list_remove (list, index, FuncPtr);
-    
-    return true;
-  } else
-  {
-    return false;
-  }
-}
-
-bool array_list_remove_ptr (ArrayList *list, void *ptr)
-{
-  int index = array_list_find_ptr (list, ptr);
-      
-  if (index != -1)
-  {
-    array_list_remove (list, index, void *);
-    
-    return true;
-  } else
-  {
-    return false;
-  }
 }
 
 void auto_resize (ArrayList *list, size_t min_item_count, size_t item_size)
