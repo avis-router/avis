@@ -50,9 +50,10 @@ void value_free (Value *value)
 
 bool value_read (ByteBuffer *buffer, Value *value, ElvinError *error)
 {
-  ValueType type;
+  uint32_t type = byte_buffer_read_int32 (buffer, error);
   
-  on_error_return (type = byte_buffer_read_int32 (buffer, error), NULL);
+  if (elvin_error_occurred (error))
+    return false;
   
   value->type = type;
   
