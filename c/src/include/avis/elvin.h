@@ -53,7 +53,6 @@ typedef enum
 /**
  * A subscription to notifications on an Elvin router.
  * 
- * @see elvin_subscription_init()
  * @see elvin_subscribe()
  * @see Notification
  */
@@ -159,7 +158,7 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
  *  
  * elvin_send (elvin, notification, error);
  *
- * attributes_destroy (ntfn);
+ * attributes_destroy (notification);
  * </pre>
  * 
  * @see elvin_subscribe()
@@ -170,7 +169,8 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * Subscribe to notifications from an Elvin router.
  * 
  * @param elvin The Elvin connection instance.
- * @param subscription_expr The subscription expression.
+ * @param subscription_expr The 
+ * <a href="http://avis.sourceforge.net/subscription_language.html">subscription expression</a>.
  * @param error The error info.
  *
  * @return The new subscription, or NULL on error.
