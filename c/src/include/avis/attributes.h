@@ -11,7 +11,14 @@ struct hashtable;
  * A map of string names to polymorphic Value instances. This is used as the 
  * payload for notification messages (see elvin_send()) and for specifying
  * connection options to the router (see elvin_open()).
- * 
+ *
+ * All string keys and Value's associated with them are considered to
+ * be owned by the Attributes instance and will be automatically freed
+ * when when appropriate. For convenience, most of the methods used to
+ * add entries automatically copy their string name parameter before
+ * adding: see the documentation for each function for more
+ * information.
+ *
  * @see attributes_create()
  * @see Value
  */
@@ -27,12 +34,19 @@ extern Attributes _empty_attributes;
 /**
  * Create a new named attributes instance on the heap.
  * 
+ * @see attributes_init()
  * @see attributes_free() 
  * @see attributes_destroy() 
  */
 #define attributes_create() \
   (attributes_init (malloc (sizeof (Attributes))))
 
+/**
+ * Initialise an attributes instance to empty.
+ * 
+ * @see attributes_create()
+ * @see attributes_clear()
+ */
 Attributes *attributes_init (Attributes *);
 
 /**
@@ -47,6 +61,7 @@ Attributes *attributes_init (Attributes *);
  * Free resources held by a named attributes instance.
  * 
  * @see attributes_create()
+ * @see attributes_clear()
  */
 void attributes_free (Attributes *attributes);
 
