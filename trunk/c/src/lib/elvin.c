@@ -429,7 +429,7 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
   do
   {
     int bytes_written = send (socketfd, buffer.data + position, 
-							                buffer.position - position, 0);
+                              buffer.position - position, 0);
     
     if (bytes_written == -1)
       elvin_error_from_errno (error);
