@@ -176,7 +176,8 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
     break;
   default:
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Unexpected message type from router");
+                     "Unexpected message type from router: %u", 
+                     message_type_of (message));
       
     elvin_shutdown (elvin);
     break;
