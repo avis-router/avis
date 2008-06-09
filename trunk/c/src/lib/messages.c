@@ -228,7 +228,8 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   
   if (format == NULL)
   {
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Unknown message type");
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                     "Unknown message type: %u", type);
     
     return false;
   }
@@ -385,7 +386,7 @@ Message read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
     if (value == 0 || value == 1)
       *(int32_t *)message = value;
     else
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid boolean");
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid boolean: %u", value);
   }
   
   return message + sizeof (int32_t);
@@ -400,7 +401,7 @@ Message read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
     if (value > 0)
       *(uint32_t *)message = value;
     else
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid XID");
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid XID: %u", value);
   }
   
   return message + sizeof (uint32_t);
