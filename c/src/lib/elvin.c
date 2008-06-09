@@ -113,7 +113,6 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
   on_error_return_false 
     (send_and_receive (elvin, conn_rqst, reply, MESSAGE_ID_CONN_RPLY, error));
   
-  
   /* todo check message reply options */
   message_free (reply);
   
