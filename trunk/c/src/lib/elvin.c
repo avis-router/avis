@@ -442,6 +442,7 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
+/* TODO check for protocol violation: call protocol error handler.*/
 bool receive_message (socket_t socketfd, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
