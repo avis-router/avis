@@ -26,7 +26,7 @@ static void setup ()
 
 static void teardown ()
 {
-  elvin_error_destroy (&error);
+  elvin_error_free (&error);
 }
 
 /**
