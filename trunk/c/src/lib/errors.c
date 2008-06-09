@@ -6,6 +6,7 @@
 
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
+#include <avis/log.h>
 
 void elvin_error_free (ElvinError *error)
 {
@@ -27,12 +28,19 @@ void elvin_perror (const char *tag, ElvinError *error)
     fprintf (stderr, "%s: %s\n", tag, error->message);
 }
 
-/* TODO should this allow later errors to override earlier ones? */
 bool elvin_error_set (ElvinError *error, int code, const char *message, ...)
 {
   int chars_written, message_length = 300;
   char *np;
   va_list args;
+  
+  /* do not allow earlier error to override */
+  if (error->code != ELVIN_ERROR_NONE)
+  {
+    DIAGNOSTIC1 ("Ignoring error override: %s", message);
+    
+    return false;
+  }
   
   error->code = code;
 
