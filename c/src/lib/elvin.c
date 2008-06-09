@@ -50,7 +50,7 @@ static bool resolve_address (struct sockaddr_in *router_addr,
 static void handle_notify_deliver (Elvin *elvin, Message message, 
                                    ElvinError *error);
 
-static void handleNack (Message message, ElvinError *error);
+static void handle_nack (Message message, ElvinError *error);
 
 static void handle_disconn (Elvin *elvin, Message message, ElvinError *error);
 
@@ -130,7 +130,7 @@ bool elvin_close (Elvin *elvin)
 
   elvin_shutdown (elvin);
   
-  elvin_error_destroy (&error);
+  elvin_error_free (&error);
   
   return true;
 }
@@ -193,31 +193,33 @@ void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
   elvin_shutdown (elvin);
 }
 
-/* TODO include message from router */
-void handleNack (Message message, ElvinError *error)
+void handle_nack (Message nack, ElvinError *error)
 {
-  uint32_t error_code = int32_at_offset (message, 4);
-
+  uint32_t error_code = int32_at_offset (nack, 4);
+  const char *message = ptr_at_offset (nack, 8);
+  
+  /* TODO handle Mantara message args */
+  /* Array *args = ptr_at_offset (nack, 8 + sizeof (char *)); */
+  
   /* 21xx NACK code => subscription error */
   if (error_code / 100 == 21)
   {
     if (error_code == NACK_PARSE_ERROR)
     {
       elvin_error_set (error, ELVIN_ERROR_SYNTAX, 
-                       "Syntax error in subscription expression");
+                       "Syntax error in subscription expression: %s", message);
     } else if (error_code == NACK_EXP_IS_TRIVIAL)
     {
-      elvin_error_set (error, ELVIN_ERROR_TRIVIAL_EXPRESSION,
-                       "Expression is trivial");
+      elvin_error_set (error, ELVIN_ERROR_TRIVIAL_EXPRESSION, message);
     } else
     {
       elvin_error_set (error, ELVIN_ERROR_SYNTAX,
-                       "Invalid subscription expression");
+                       "Invalid subscription expression: %s", message);
     }
   } else
   {
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Unexpected NACK from router");
+                     "Unexpected NACK from router: %s", message);
   }
 }
 
@@ -380,7 +382,7 @@ bool send_and_receive (socket_t socketfd, Message request,
   {
     if (message_type_of (reply) == MESSAGE_ID_NACK)
     {
-      handleNack (reply, error);
+      handle_nack (reply, error);
     } else
     {
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
