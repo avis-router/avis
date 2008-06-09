@@ -108,7 +108,7 @@ typedef void (*SubscriptionListener) (Subscription *subscription,
  * Example:
  * <pre>
  * Elvin elvin;
- * ElvinError error;
+ * ElvinError error = elvin_error_create ();
  * 
  * if (!elvin_open (&elvin, "elvin://public.elvin.org", &error))
  * {
@@ -117,6 +117,7 @@ typedef void (*SubscriptionListener) (Subscription *subscription,
  * }
  * 
  * elvin_close (&elvin);
+ * elvin_error_free (&error);
  * </pre>
  * 
  * @see elvin_open_uri()
