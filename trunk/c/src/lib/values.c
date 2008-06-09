@@ -4,7 +4,6 @@
 #include <avis/stdtypes.h>
 #include <avis/values.h>
 #include <avis/errors.h>
-#include <avis/log.h>
 
 #include "byte_buffer.h"
 
@@ -75,8 +74,6 @@ bool value_read (ByteBuffer *buffer, Value *value, ElvinError *error)
     byte_buffer_read_byte_array (buffer, &value->value.bytes, error);
     break;
   default:
-    DIAGNOSTIC1 ("Invalid value type found %u", type);
-    
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
                      "Invalid value type: %u", type);
   }
