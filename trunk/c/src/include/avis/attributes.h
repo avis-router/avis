@@ -135,6 +135,7 @@ Value *attributes_remove (Attributes *attributes, const char *name);
  * @return The integer associated with name, or 0 if not set or value
  * is not an integer.
  * 
+ * @see attributes_set_int32()
  * @see attributes_get()
  */
 int32_t attributes_get_int32 (Attributes *attributes, const char *name);
@@ -160,6 +161,7 @@ int32_t attributes_get_int32 (Attributes *attributes, const char *name);
  * @return The integer associated with name, or 0 if not set or value
  * is not an integer.
  * 
+ * @see attributes_set_int64()
  * @see attributes_get()
  */
 int64_t attributes_get_int64 (Attributes *attributes, const char *name);
@@ -185,6 +187,7 @@ int64_t attributes_get_int64 (Attributes *attributes, const char *name);
  * @return The real64  associated with name, or 0 if not set or value
  * is not an real64 value.
  * 
+ * @see attributes_set_real64()
  * @see attributes_get()
  */
 real64_t attributes_get_real64 (Attributes *attributes, const char *name);
@@ -211,6 +214,7 @@ real64_t attributes_get_real64 (Attributes *attributes, const char *name);
  * @return The string associated with name, or NULL if not set or value
  * is not a string.
  * 
+ * @see attributes_set_string()
  * @see attributes_get()
  */
 const char *attributes_get_string (Attributes *attributes, const char *name);
@@ -229,6 +233,17 @@ const char *attributes_get_string (Attributes *attributes, const char *name);
 #define attributes_set_opaque(attributes, name, value) \
   (attributes_set (attributes, name, value_create_opaque (value)))
 
+/**
+ * Convenience to get an opaque value.
+ * 
+ * @param attributes The attributes to read from.
+ * @param name The name to use.
+ * @return The opaque value associated with name, or NULL if not set
+ * or value is not an opaque.
+ * 
+ * @see attributes_set_opaque()
+ * @see attributes_get()
+ */
 Array *attributes_get_opaque (Attributes *attributes, const char *name);
 
 #endif /* ELVIN_NAMED_VALUES_H */
