@@ -259,7 +259,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
     if (subscription == NULL)
     {
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                       "Invalid subscription ID from router");
+                       "Invalid subscription ID from router: %lu", *id);
       
       return;
     }
@@ -377,7 +377,8 @@ bool send_and_receive (socket_t socketfd, Message request,
   if (xid_of (request) != xid_of (reply))
   {
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Mismatched transaction ID in reply from router");
+                     "Mismatched transaction ID in reply from router: %u != %u", 
+                     xid_of (request), xid_of (reply));
   } else if (message_type_of (reply) != reply_type)
   {
     if (message_type_of (reply) == MESSAGE_ID_NACK)
@@ -386,7 +387,8 @@ bool send_and_receive (socket_t socketfd, Message request,
     } else
     {
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                       "Unexpected reply from router");
+                       "Unexpected reply from router: message ID %u", 
+                       message_type_of (reply));
     }
   }
   

@@ -78,7 +78,8 @@ bool value_read (ByteBuffer *buffer, Value *value, ElvinError *error)
   default:
     DIAGNOSTIC1 ("Invalid value type found %u", type);
     
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid value type");
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                     "Invalid value type: %u", type);
   }
   
   return elvin_error_ok (error);
