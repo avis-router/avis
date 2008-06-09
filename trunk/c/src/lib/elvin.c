@@ -34,7 +34,7 @@ static void elvin_shutdown (Elvin *elvin);
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
 
-static bool send_and_receive (socket_t socketfd, Message request, 
+static bool send_and_receive (Elvin *elvin, Message request, 
                               Message reply, MessageTypeID reply_type, 
                               ElvinError *error);
 
@@ -50,9 +50,21 @@ static bool resolve_address (struct sockaddr_in *router_addr,
 static void handle_notify_deliver (Elvin *elvin, Message message, 
                                    ElvinError *error);
 
-static void handle_nack (Message message, ElvinError *error);
+static void handle_nack (Elvin *elvin, Message message, ElvinError *error);
 
 static void handle_disconn (Elvin *elvin, Message message, ElvinError *error);
+
+#define handle_protocol_error(elvin, error, message) \
+  elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message), \
+  elvin_shutdown (elvin)
+
+#define handle_protocol_error1(elvin, error, message, arg1) \
+  elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message, arg1), \
+  elvin_shutdown (elvin)
+
+#define handle_protocol_error2(elvin, error, message, arg1, arg2) \
+  elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message, arg1, arg2), \
+  elvin_shutdown (elvin)
 
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 
@@ -99,8 +111,7 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
                 EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
   
   on_error_return_false 
-    (send_and_receive (elvin->socket, conn_rqst, reply,
-                       MESSAGE_ID_CONN_RPLY, error));
+    (send_and_receive (elvin, conn_rqst, reply, MESSAGE_ID_CONN_RPLY, error));
   
   
   /* todo check message reply options */
@@ -125,7 +136,7 @@ bool elvin_close (Elvin *elvin)
   
   message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
   
-  send_and_receive (elvin->socket, disconn_rqst, reply,
+  send_and_receive (elvin, disconn_rqst, reply,
                     MESSAGE_ID_DISCONN_RPLY, &error);
 
   elvin_shutdown (elvin);
@@ -175,11 +186,10 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
     handle_disconn (elvin, message, error);
     break;
   default:
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Unexpected message type from router: %u", 
-                     message_type_of (message));
-      
-    elvin_shutdown (elvin);
+    handle_protocol_error1 
+      (elvin, error, "Unexpected message type from router: %u", 
+       message_type_of (message));
+    
     break;
   }
   
@@ -194,7 +204,7 @@ void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
   elvin_shutdown (elvin);
 }
 
-void handle_nack (Message nack, ElvinError *error)
+void handle_nack (Elvin *elvin, Message nack, ElvinError *error)
 {
   uint32_t error_code = int32_at_offset (nack, 4);
   const char *message = ptr_at_offset (nack, 8);
@@ -219,8 +229,8 @@ void handle_nack (Message nack, ElvinError *error)
     }
   } else
   {
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Unexpected NACK from router: %s", message);
+    handle_protocol_error1 (elvin, error, "Unexpected NACK from router: %s", 
+                            message);
   }
 }
 
@@ -259,8 +269,8 @@ void deliver_notification (Elvin *elvin, Array *ids,
     
     if (subscription == NULL)
     {
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                       "Invalid subscription ID from router: %lu", *id);
+      handle_protocol_error1 
+        (elvin, error, "Invalid subscription ID from router: %lu", *id);
       
       return;
     }
@@ -319,7 +329,7 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
                 ALLOW_INSECURE_DELIVERY,
                 &subscription->keys);
   
-  if (send_and_receive (elvin->socket, sub_add_rqst, sub_reply,
+  if (send_and_receive (elvin, sub_add_rqst, sub_reply,
                         MESSAGE_ID_SUB_RPLY, error))
   {
     subscription->id = int64_at_offset (sub_reply, 4);
@@ -345,7 +355,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
   message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
   
   succeeded = 
-    send_and_receive (elvin->socket, sub_del_rqst, sub_reply,
+    send_and_receive (elvin, sub_del_rqst, sub_reply,
                       MESSAGE_ID_SUB_RPLY, error);
   
   array_list_remove_ptr (&elvin->subscriptions, subscription);
@@ -364,32 +374,34 @@ void elvin_subscription_add_listener (Subscription *subscription,
   array_list_add_func (&subscription->listeners, listener);
 }
 
-bool send_and_receive (socket_t socketfd, Message request, 
+bool send_and_receive (Elvin *elvin, Message request, 
                        Message reply, MessageTypeID reply_type, 
                        ElvinError *error)
 {
-  /* todo could share the buffer for this */
-  if (!(send_message (socketfd, request, error) && 
-        receive_message (socketfd, reply, error)))
+  /* TODO could share the buffer for this */
+  if (!(send_message (elvin->socket, request, error) && 
+        receive_message (elvin->socket, reply, error)))
   {
+    handle_protocol_error (elvin, error, error->message);
+    
     return false;
   }
   
   if (xid_of (request) != xid_of (reply))
   {
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Mismatched transaction ID in reply from router: %u != %u", 
-                     xid_of (request), xid_of (reply));
+    handle_protocol_error2 
+      (elvin, error, "Mismatched transaction ID in reply from router: %u != %u", 
+       xid_of (request), xid_of (reply));
   } else if (message_type_of (reply) != reply_type)
   {
     if (message_type_of (reply) == MESSAGE_ID_NACK)
     {
-      handle_nack (reply, error);
+      handle_nack (elvin, reply, error);
     } else
     {
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                       "Unexpected reply from router: message ID %u", 
-                       message_type_of (reply));
+      handle_protocol_error1 
+        (elvin, error, "Unexpected reply from router: message ID %u", 
+        message_type_of (reply));
     }
   }
   
@@ -413,7 +425,7 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
   
   message_write (&buffer, message, error);
 
-  /* todo set max size */
+  /* TODO set max size */
 
   do
   {
@@ -431,8 +443,6 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-/* TODO close connection on protocol violation: replace error set's with 
- * function */
 bool receive_message (socket_t socketfd, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
@@ -444,10 +454,8 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
   
   if (bytes_read != 4)
   {
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                     "Failed to read router message");
-    
-    return false;
+    return elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                            "Failed to read router message");
   }
   
   frame_size = ntohl (frame_size);
