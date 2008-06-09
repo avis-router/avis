@@ -64,7 +64,6 @@ bool value_read (ByteBuffer *buffer, Value *value, ElvinError *error)
     break;
   case TYPE_INT64:
     value->value.int64 = byte_buffer_read_int64 (buffer, error);
-    byte_buffer_skip (buffer, 8, error);
     break;
   case TYPE_REAL64:
     value->value.real64 = byte_buffer_read_real64 (buffer, error);
