@@ -159,6 +159,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\attributes.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\byte_buffer.c"
 				>
 			</File>
@@ -187,10 +191,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\named_values.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\lib\values.c"
 				>
 			</File>
@@ -202,6 +202,10 @@
 			>
 			<File
 				RelativePath="..\..\..\src\lib\array_list.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\attributes_private.h"
 				>
 			</File>
 			<File
@@ -226,14 +230,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\messages.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\elvin\named_values.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\named_values_private.h"
 				>
 			</File>
 			<File
