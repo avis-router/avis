@@ -22,6 +22,11 @@ ArrayList *array_list_init (ArrayList *list, size_t item_size,
 
 void array_list_free (ArrayList *list);
 
+#define array_list_add(list, item_type) \
+  ((item_type *)array_list_add_item (list, sizeof (item_type)))
+
+void *array_list_add_item (ArrayList *list, size_t item_size);
+
 void array_list_add_ptr (ArrayList *list, void *item);
 
 void array_list_add_int (ArrayList *list, int value);

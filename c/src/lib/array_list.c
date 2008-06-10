@@ -28,6 +28,13 @@ void array_list_free (ArrayList *list)
   }
 }
 
+void *array_list_add_item (ArrayList *list, size_t item_size)
+{
+  auto_resize (list, list->item_count + 1, item_size);
+
+  return (uint8_t *)list->items + (list->item_count++ * item_size);
+}
+
 /*
  * Matthew's Poor Man's Generics (tm) below
  */
