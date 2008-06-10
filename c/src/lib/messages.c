@@ -188,11 +188,9 @@ void message_free (Message message)
 {
   MessageFormat *format = message_format_for (message_type_of (message));
   FieldFormat *field;
+  Message message_field = message + 4;
   
   assert (format != NULL);
-  
-  /* skip type */
-  message += 4;
   
   for (field = format->fields; field->read; field++)
   {
@@ -200,21 +198,23 @@ void message_free (Message message)
     {
     case FIELD_POINTER:
       if (field->free)
-        (*field->free) (*(void **)message);
+        (*field->free) (*(void **)message_field);
       
-      free (*(void **)message);
+      free (*(void **)message_field);
       
-      message += sizeof (void *);
+      message_field += sizeof (void *);
       break;
     case FIELD_INT32:
     case FIELD_XID:
-      message += 4;
+      message_field += 4;
       break;
     case FIELD_INT64:
-      message += 8;
+      message_field += 8;
       break;
     }
   }
+  
+  memset (message, 0, MAX_MESSAGE_SIZE);
 }
 
 bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
