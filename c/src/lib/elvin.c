@@ -38,10 +38,9 @@ static bool send_and_receive (Elvin *elvin, Message request,
                               Message reply, MessageTypeID reply_type, 
                               ElvinError *error);
 
-static bool send_message (socket_t socketfd, Message message, ElvinError *error);
+static bool send_message (Elvin *elvin, Message message, ElvinError *error);
 
-static bool receive_message (socket_t socketfd, Message message, 
-                             ElvinError *error);
+static bool receive_message (Elvin *elvin, Message message, ElvinError *error);
 
 static bool resolve_address (struct sockaddr_in *router_addr,
                              const char *host, uint16_t port, 
@@ -173,7 +172,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
   Message message = message_alloca (); 
     
-  if (!receive_message (elvin->socket, message, error))
+  if (!receive_message (elvin, message, error))
     return false;
   
   switch (message_type_of (message))
@@ -228,8 +227,8 @@ void handle_nack (Elvin *elvin, Message nack, ElvinError *error)
     }
   } else
   {
-    handle_protocol_error1 (elvin, error, "Unexpected NACK from router: %s", 
-                            message);
+    elvin_error_set (error, ELVIN_ERROR_NACK, 
+                     "Router rejected request: %s", message);
   }
 }
 
@@ -288,7 +287,7 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error)
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT, 
                 notification, true, EMPTY_KEYS);
   
-  return send_message (elvin->socket, notify_emit, error);
+  return send_message (elvin, notify_emit, error);
 }
 
 #define elvin_subscription_destroy(sub) \
@@ -377,30 +376,27 @@ bool send_and_receive (Elvin *elvin, Message request,
                        Message reply, MessageTypeID reply_type, 
                        ElvinError *error)
 {
-  /* TODO could share the buffer for this */
-  if (!(send_message (elvin->socket, request, error) && 
-        receive_message (elvin->socket, reply, error)))
+  if (send_message (elvin, request, error) && 
+      receive_message (elvin, reply, error))
   {
-    handle_protocol_error (elvin, error, error->message);
-    
-    return false;
-  }
-  
-  if (xid_of (request) != xid_of (reply))
-  {
-    handle_protocol_error2 
-      (elvin, error, "Mismatched transaction ID in reply from router: %u != %u", 
-       xid_of (request), xid_of (reply));
-  } else if (message_type_of (reply) != reply_type)
-  {
-    if (message_type_of (reply) == MESSAGE_ID_NACK)
+    if (xid_of (request) != xid_of (reply))
     {
-      handle_nack (elvin, reply, error);
-    } else
+      elvin_error_set  
+        (error, ELVIN_ERROR_PROTOCOL, 
+         "Mismatched transaction ID in reply from router: %u != %u", 
+         xid_of (request), xid_of (reply));
+    } else if (message_type_of (reply) != reply_type)
     {
-      handle_protocol_error1 
-        (elvin, error, "Unexpected reply from router: message ID %u", 
-        message_type_of (reply));
+      if (message_type_of (reply) == MESSAGE_ID_NACK)
+      {
+        handle_nack (elvin, reply, error);
+      } else
+      {
+        elvin_error_set  
+          (error, ELVIN_ERROR_PROTOCOL, 
+           "Unexpected reply from router: message ID %u",
+           message_type_of (reply));
+      }
     }
   }
   
@@ -415,7 +411,7 @@ bool send_and_receive (Elvin *elvin, Message request,
   }
 }
 
-bool send_message (socket_t socketfd, Message message, ElvinError *error)
+bool send_message (Elvin *elvin, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
@@ -428,7 +424,7 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
 
   do
   {
-    int bytes_written = send (socketfd, buffer.data + position, 
+    int bytes_written = send (elvin->socket, buffer.data + position, 
                               buffer.position - position, 0);
     
     if (bytes_written == -1)
@@ -442,15 +438,14 @@ bool send_message (socket_t socketfd, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-/* TODO check for protocol violation: call protocol error handler.*/
-bool receive_message (socket_t socketfd, Message message, ElvinError *error)
+bool receive_message (Elvin *elvin, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   uint32_t frame_size;
   size_t position = 0;
   int bytes_read;
     
-  bytes_read = recv (socketfd, (void *)&frame_size, 4, 0);
+  bytes_read = recv (elvin->socket, (void *)&frame_size, 4, 0);
   
   if (bytes_read != 4)
   {
@@ -465,7 +460,7 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
 
   do
   {
-    bytes_read = recv (socketfd, buffer.data + position, 
+    bytes_read = recv (elvin->socket, buffer.data + position, 
                        buffer.max_data_length - position, 0);
    
     if (bytes_read == -1)
@@ -479,6 +474,10 @@ bool receive_message (socket_t socketfd, Message message, ElvinError *error)
   
   byte_buffer_free (&buffer);
 
+  /* close connection on protocol error */
+  if (error->code == ELVIN_ERROR_PROTOCOL)
+    elvin_shutdown (elvin);
+  
   return elvin_error_ok (error);
 }
 
