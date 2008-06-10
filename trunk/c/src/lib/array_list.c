@@ -116,6 +116,7 @@ void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
   list->item_count--;
 }
 
+/* TODO use realloc () here */
 void auto_resize (ArrayList *list, size_t min_item_count, size_t item_size)
 {
   size_t min_length = min_item_count * item_size;
