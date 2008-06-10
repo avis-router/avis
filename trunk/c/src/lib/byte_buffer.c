@@ -22,9 +22,16 @@
  * The following shenaningans defines htonll() and ntohll() macros that
  * handle network/host endianness conversion for int64 values. 
  */
+
+/* TODO use
+   http://svn.digium.com/view/asterisk/trunk/include/asterisk/endian.h?view=markup
+   and
+   http://people.freedesktop.org/~anholt/doxygen/xorg/xserver/glxbyteorder_8h-source.html
+   as hints to make this code better. */
+
 #ifdef HAVE_ARCHITECTURE_BYTE_ORDER_H
 
-  /* Mac OS X & BSD (?) */
+  /* Mac OS X */
   #include <architecture/byte_order.h>
 
   #define htonll(i) (NXSwapHostLongLongToBig(i))
@@ -263,16 +270,11 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
 {
   uint32_t length = (uint32_t)strlen (string);
   
-  on_error_return_false 
-    (auto_resize (buffer, buffer->position + length + 8, error));
-  
-  on_error_return_false 
-    (byte_buffer_write_int32 (buffer, length, error));
-  
-  on_error_return_false 
-    (byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error));
-  
-  return write_padding_for (buffer, length, error);
+  return 
+    auto_resize (buffer, buffer->position + length + 8, error) &&
+    byte_buffer_write_int32 (buffer, length, error) &&
+    byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error) &&
+    write_padding_for (buffer, length, error);
 }
 
 char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
@@ -292,17 +294,18 @@ char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
     return NULL;
   }
   
-  if (!(byte_buffer_read_bytes (buffer, (uint8_t *)string, length, error) &&
-        byte_buffer_skip (buffer, padding_for (length), error)))
+  if (byte_buffer_read_bytes (buffer, (uint8_t *)string, length, error) &&
+      byte_buffer_skip (buffer, padding_for (length), error))
+  {
+    string [length] = '\0';
+  
+    return string;
+  } else
   {
     free (string);
     
     return NULL;
-  }
-  
-  string [length] = '\0';
-  
-  return string;
+  }  
 }
 
 bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
@@ -348,30 +351,28 @@ bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
     return false;
   }
   
-  if (!(byte_buffer_read_bytes (buffer, bytes, length, error) &&
-        byte_buffer_skip (buffer, padding_for (length), error)))
+  if (byte_buffer_read_bytes (buffer, bytes, length, error) &&
+      byte_buffer_skip (buffer, padding_for (length), error))
+  {
+    array->items = bytes;
+    array->item_count = length;
+  
+    return true;
+  } else
   {
     free (bytes);
     
     return false;
   }
-  
-  array->items = bytes;
-  array->item_count = length;
-  
-  return true;
 }
 
 bool byte_buffer_write_byte_array (ByteBuffer *buffer, Array *array,
                                    ElvinError *error)
 {
-  on_error_return_false 
-    (byte_buffer_write_int32 (buffer, array->item_count, error));
-  
-  on_error_return_false 
-    (byte_buffer_write_bytes (buffer, array->items, array->item_count, error));
-  
-  return write_padding_for (buffer, array->item_count, error);
+  return
+    byte_buffer_write_int32 (buffer, array->item_count, error) &&
+    byte_buffer_write_bytes (buffer, array->items, array->item_count, error) &&
+    write_padding_for (buffer, array->item_count, error);
 }
 
 bool write_padding_for (ByteBuffer *buffer, uint32_t length, ElvinError *error)
