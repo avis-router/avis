@@ -155,6 +155,9 @@ void elvin_shutdown (Elvin *elvin)
   size_t i;
   Subscription **sub = elvin->subscriptions.items;
   
+  if (elvin->socket == -1)
+    return;
+  
   #ifdef WIN32
     closesocket (elvin->socket);
   
@@ -178,26 +181,27 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
   Message message = message_alloca (); 
     
-  if (!receive_message (elvin, message, error))
-    return false;
-  
-  switch (message_type_of (message))
+  if (receive_message (elvin, message, error))
   {
-  case MESSAGE_ID_NOTIFY_DELIVER:
-    handle_notify_deliver (elvin, message, error);
-    break;
-  case MESSAGE_ID_DISCONN:
-    handle_disconn (elvin, message, error);
-    break;
-  default:
-    handle_protocol_error1 
-      (elvin, error, "Unexpected message type from router: %u", 
-       message_type_of (message));
+    switch (message_type_of (message))
+    {
+    case MESSAGE_ID_NOTIFY_DELIVER:
+      handle_notify_deliver (elvin, message, error);
+      break;
+    case MESSAGE_ID_DISCONN:
+      handle_disconn (elvin, message, error);
+      break;
+    default:
+      elvin_error_set 
+        (error, ELVIN_ERROR_PROTOCOL, 
+         "Unexpected message type from router: %u", message_type_of (message));
+    }
     
-    break;
+    message_free (message);
   }
   
-  message_free (message);
+  if (error->code == ELVIN_ERROR_PROTOCOL)
+    elvin_shutdown (elvin);
   
   return elvin_error_ok (error);
 }
@@ -273,9 +277,9 @@ void deliver_notification (Elvin *elvin, Array *ids,
     
     if (subscription == NULL)
     {
-      handle_protocol_error1 
-        (elvin, error, "Invalid subscription ID from router: %lu", *id);
-      
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                       "Invalid subscription ID from router: %lu", *id);
+
       return;
     }
     
@@ -430,17 +434,16 @@ bool send_and_receive (Elvin *elvin, Message request,
            message_type_of (reply));
       }
     }
+    
+    if (elvin_error_occurred (error))
+      message_free (reply);
   }
   
-  if (elvin_error_ok (error))
-  {
-    return true;
-  } else
-  {
-    message_free (reply);
-    
-    return false;
-  }
+  /* close connection on protocol error */
+  if (error->code == ELVIN_ERROR_PROTOCOL)
+    elvin_shutdown (elvin);
+  
+  return elvin_error_ok (error);
 }
 
 bool send_message (Elvin *elvin, Message message, ElvinError *error)
@@ -505,10 +508,6 @@ bool receive_message (Elvin *elvin, Message message, ElvinError *error)
     message_read (&buffer, message, error);
   
   byte_buffer_free (&buffer);
-
-  /* close connection on protocol error */
-  if (error->code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin);
   
   return elvin_error_ok (error);
 }
