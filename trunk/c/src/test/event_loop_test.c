@@ -6,7 +6,8 @@
 #include <avis/elvin.h>
 #include <avis/attributes.h>
 
-void sub_listener (Subscription *sub, Notification *notification);
+void sub_listener (Subscription *sub, Notification *notification, 
+                   void *user_data);
 
 int main (int argc, const char * argv[]) 
 {
@@ -30,7 +31,7 @@ int main (int argc, const char * argv[])
     exit (1);
   }
   
-  elvin_subscription_add_listener (sub, sub_listener);
+  elvin_subscription_add_listener (sub, sub_listener, NULL);
   
   while (elvin_is_open (&elvin) && elvin_error_ok (&error))
   {
@@ -45,7 +46,8 @@ int main (int argc, const char * argv[])
   return 0;
 }
 
-void sub_listener (Subscription *sub, Notification *notification)
+void sub_listener (Subscription *sub, Notification *notification, 
+                   void *user_data)
 {
   printf ("Notified! Message = %s\n", 
           attributes_get_string (&notification->attributes, "message"));

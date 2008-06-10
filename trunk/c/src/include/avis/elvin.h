@@ -50,6 +50,8 @@ typedef enum
   ALLOW_INSECURE_DELIVERY = 1
 } SecureMode;
 
+/* TODO allow custom subscription destruct */
+
 /**
  * A subscription to notifications on an Elvin router.
  * 
@@ -90,11 +92,14 @@ typedef struct
  * returns. If you want to refer to any part of the notification 
  * outside callback scope, you will need to copy the relevant parts before
  * returning.
+ * @param user_data The user data pointer passed into 
+ * elvin_subscription_add_listener().
  * 
  * @see elvin_subscription_add_listener()
  */
 typedef void (*SubscriptionListener) (Subscription *subscription, 
-                                      Notification *notification); 
+                                      Notification *notification,
+                                      void *user_data); 
 /**
  * Open a connection to an Elvin router.
  * 
@@ -221,10 +226,28 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
  * 
  * @param subscription The subscription to add the listener to.
  * @param listener The listener to be called for matching notifications.
+ * @param user_data An optional pointer to user data to be passed into
+ * the listener when called. This can be used to provide context information 
+ * to the listener function.
+ * 
+ * @see elvin_subscription_remove_listener()
  */
 void elvin_subscription_add_listener (Subscription *subscription, 
-                                      SubscriptionListener listener);
+                                      SubscriptionListener listener,
+                                      void *user_data);
 
+/**
+ * Remove a previously added subscription listener.
+ * 
+ * @param subscription The subscription to remove the listener from.
+ * @param listener The listener to be removed.
+ * @return True if the listener was removed, false if it was not in the 
+ * subscription list.
+ * 
+ * @see elvin_subscription_add_listener()
+ */
+bool elvin_subscription_remove_listener (Subscription *subscription, 
+                                         SubscriptionListener listener);
 /**
  * Test if the Elvin connection is open.
  * 
