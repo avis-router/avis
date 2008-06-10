@@ -8,6 +8,10 @@
 #include <avis/errors.h>
 #include <avis/log.h>
 
+#ifdef WIN32
+  #define vsnprintf _vsnprintf
+#endif //WIN32
+
 void elvin_error_free (ElvinError *error)
 {
   if (error->message)

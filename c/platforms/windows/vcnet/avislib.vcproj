@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src\include;.\avislib;..\..\..\packages\hashtable"
+				AdditionalIncludeDirectories="..\..\..\src\include;..\..\..\packages\hashtable;.\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\src\include;.\avislib;..\..\..\packages\hashtable"
+				AdditionalIncludeDirectories="..\..\..\src\include;..\..\..\packages\hashtable;.\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -107,6 +107,9 @@
 				RelativePath="..\..\..\src\lib\array_list.c">
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\attributes.c">
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\byte_buffer.c">
 			</File>
 			<File
@@ -128,9 +131,6 @@
 				RelativePath="..\..\..\src\lib\messages.c">
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\named_values.c">
-			</File>
-			<File
 				RelativePath="..\..\..\src\lib\values.c">
 			</File>
 		</Filter>
@@ -140,6 +140,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\src\lib\array_list.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\avis\attributes.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\byte_buffer.h">
@@ -160,16 +163,13 @@
 				RelativePath="..\..\..\src\lib\messages.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\elvin\named_values.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\named_values_private.h">
-			</File>
-			<File
 				RelativePath="..\..\..\src\include\elvin\stdtypes.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\elvin\values.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\values_private.h">
 			</File>
 		</Filter>
 		<Filter
