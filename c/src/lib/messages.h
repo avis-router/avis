@@ -48,6 +48,7 @@ typedef enum
 
 typedef uint8_t * Message;
 
+/* TODO it seems alloca() is discouraged: use only with gcc? */
 #define message_alloca() ((Message)alloca (MAX_MESSAGE_SIZE))
 
 Message message_init (Message message, MessageTypeID type, ...);
