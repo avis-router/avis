@@ -695,7 +695,7 @@
 				OTHER_CFLAGS = "-std=c99";
 				PREBINDING = NO;
 				PRODUCT_NAME = tests;
-				USER_HEADER_SEARCH_PATHS = "../../packages/check/src ../../src/include";
+				USER_HEADER_SEARCH_PATHS = "../../packages/check/src ../../src/include ../../src/lib";
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -717,7 +717,7 @@
 				OTHER_CFLAGS = "-std=c99";
 				PREBINDING = NO;
 				PRODUCT_NAME = tests;
-				USER_HEADER_SEARCH_PATHS = "../../packages/check/src ../../src/include";
+				USER_HEADER_SEARCH_PATHS = "../../packages/check/src ../../src/include ../../src/lib";
 				ZERO_LINK = NO;
 			};
 			name = Release;
