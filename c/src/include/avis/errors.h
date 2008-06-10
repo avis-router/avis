@@ -5,7 +5,7 @@
 
 /**
  * Error reporting information for the Avis client library. Functions
- * in the library that may fail will requirw a pointer to an
+ * in the library that may fail will require a pointer to an
  * ElvinError instance as their last parameter, which will be loaded
  * with an error code and message if the the function or any sub
  * function fails. Functions which would otherwise return void will
