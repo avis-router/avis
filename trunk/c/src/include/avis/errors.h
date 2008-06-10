@@ -48,14 +48,16 @@ typedef struct
 #define ELVIN_ERROR_NACK (ELVIN_ERROR_BASE + 7)
 
 /**
- * Initialise an error. This should be done to initialise a new error 
- * instance. Use elvin_error_reset() to reset an existing instance.
+ * Initialise an error. This should be done to initialise a new error
+ * instance. Use elvin_error_reset() to reset an existing instance,
+ * and elvin_error_free() to release any resources allocated before
+ * disposing.
  */
 #define elvin_error_create() {ELVIN_ERROR_NONE, NULL}
 
 /**
- * Free any resources allocated to an error instance and reset the error code.
- * The error instance may be reused after this call.
+ * Free any resources allocated to an error instance and reset the
+ * error code.  The error instance may be reused after this call.
  * 
  * @see elvin_error_reset()
  */
@@ -67,8 +69,8 @@ void elvin_error_free (ElvinError *error);
 #define elvin_error_reset(error) (elvin_error_free (error))
 
 /**
- * Macro statement to return false if an error is set in the "error" variable
- * inside the current scope.
+ * Macro statement to return false if an error is set in the "error"
+ * variable inside the current scope.
  * 
  * @param stat The statement to execute before the test.
  * 
@@ -77,7 +79,7 @@ void elvin_error_free (ElvinError *error);
 #define on_error_return_false(stat) on_error_return (stat, false)
 
 /**
- * Macro statement to return a given value if an error is set in the 
+ * Macro statement to return a given value if an error is set in the
  * "error" variable inside the current scope.
  * 
  * @param stat The statement to execute before the test.
@@ -106,7 +108,7 @@ void elvin_error_free (ElvinError *error);
 void elvin_perror (const char *tag, ElvinError *error);
 
 /**
- * Load an error status from the system's "errno" error variable and 
+ * Load an error status from the system's "errno" error variable and
  * strerror () function.
  * 
  * @param error The error to affect.
@@ -117,8 +119,8 @@ bool elvin_error_from_errno (ElvinError *error);
 
 /**
  * Signal an error has occurred. If an error is already set, this has
- * no effect (see elvin_error_reset() if you want to override any existing
- * error status).
+ * no effect (see elvin_error_reset() if you want to override any
+ * existing error status).
  * 
  * @param error The error to target.
  * @param code The error code. One of the ELVIN_ERROR_* defines or 
@@ -128,10 +130,11 @@ bool elvin_error_from_errno (ElvinError *error);
  * @param ... The rest of the arguments if message contains format 
  * placeholders.
  * 
- * @return Returns false as a convenience so that this can be used in return 
- * statements indicating an error.
+ * @return Returns false as a convenience so that this can be used in
+ * return statements indicating an error.
  * 
  * @see elvin_error_from_errno()
+ * @see elvin_error_free()
  */
 bool elvin_error_set (ElvinError *error, int code, const char *message, ...);
 
