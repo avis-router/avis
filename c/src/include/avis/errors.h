@@ -45,6 +45,7 @@ typedef struct
 #define ELVIN_ERROR_INVALID_URI (ELVIN_ERROR_BASE + 4)
 #define ELVIN_ERROR_SYNTAX (ELVIN_ERROR_BASE + 5)
 #define ELVIN_ERROR_TRIVIAL_EXPRESSION (ELVIN_ERROR_BASE + 6)
+#define ELVIN_ERROR_NACK (ELVIN_ERROR_BASE + 7)
 
 /**
  * Initialise an error. This should be done to initialise a new error 
