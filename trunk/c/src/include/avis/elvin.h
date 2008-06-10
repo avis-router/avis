@@ -199,6 +199,7 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * @see elvin_send()
  * @see elvin_unsubscribe()
  * @see elvin_subscription_add_listener()
+ * @see elvin_poll()
  */
 Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
                                ElvinError *error);
