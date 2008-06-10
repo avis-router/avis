@@ -149,6 +149,7 @@ bool auto_resize (ByteBuffer *buffer, size_t min_length, ElvinError *error)
 
 void expand_buffer (ByteBuffer *buffer, size_t new_length)
 {
+  /* TODO use realloc here */
   uint8_t *new_data = malloc (new_length);
   uint8_t *old_data = buffer->data;
   
