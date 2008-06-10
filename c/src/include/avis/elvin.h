@@ -99,7 +99,8 @@ typedef struct
  */
 typedef void (*SubscriptionListener) (Subscription *subscription, 
                                       Notification *notification,
-                                      void *user_data); 
+                                      void *user_data);
+
 /**
  * Open a connection to an Elvin router.
  * 
