@@ -1,10 +1,11 @@
 #include <stdlib.h>
 #include <stdint.h>
-#include <check.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+
+#include <check.h>
 
 #include <avis/elvin.h>
 #include <avis/errors.h>
@@ -15,8 +16,8 @@
 #include <byte_buffer.h>
 #include "check_ext.h"
 
-static void test_subscribe_sub_listener (Subscription *sub, 
-                                         Notification *notification);
+static void test_subscribe_sub_listener
+  (Subscription *sub, Notification *notification, void *user_data);
 
 static ElvinError error = elvin_error_create ();
 
@@ -126,7 +127,8 @@ START_TEST (test_subscribe)
   sub = elvin_subscribe (&elvin, "require (test) && string (message)", &error);
   fail_on_error (&error);
   
-  elvin_subscription_add_listener (sub, test_subscribe_sub_listener);
+  elvin_subscription_add_listener (sub, test_subscribe_sub_listener, 
+                                   "user_data");
   
   Attributes *ntfn = attributes_create ();
   
@@ -154,6 +156,15 @@ START_TEST (test_subscribe)
   
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
   
+  /* test listener removal */
+  fail_unless 
+    (elvin_subscription_remove_listener (sub, test_subscribe_sub_listener), 
+        "Failed to remove sub listener");
+  
+  fail_if
+    (elvin_subscription_remove_listener (sub, test_subscribe_sub_listener), 
+     "Failed to detect redundant remove of sub listener");
+  
   elvin_unsubscribe (&elvin, sub, &error);
   fail_on_error (&error);
     
@@ -162,8 +173,10 @@ START_TEST (test_subscribe)
 END_TEST
 
 void test_subscribe_sub_listener (Subscription *sub, 
-                                  Notification *notification)
+                                  Notification *notification, void *user_data)
 {
+  fail_unless (strcmp (user_data, "user_data") == 0, "User data incorrect");
+  
   fail_unless 
     (strcmp (attributes_get_string (&notification->attributes, "message"), 
              "hello world") == 0, "Invalid notification");

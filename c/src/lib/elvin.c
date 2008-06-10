@@ -29,6 +29,12 @@
 #include "messages.h"
 #include "array_list_private.h"
 
+typedef struct
+{
+  SubscriptionListener listener;
+  void *user_data;
+} SubscriptionListenerEntry;
+
 static void elvin_shutdown (Elvin *elvin);
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
@@ -259,7 +265,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 {
   size_t i, j;
   int64_t *id = ids->items;
-  SubscriptionListener *listeners;
+  SubscriptionListenerEntry *listeners;
   
   for (i = ids->item_count; i > 0; i--, id++)
   {
@@ -276,7 +282,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
     listeners = subscription->listeners.items;
     
     for (j = subscription->listeners.item_count; j > 0; j--, listeners++)
-      (*listeners) (subscription, notification);
+      (*listeners->listener) (subscription, notification, listeners->user_data);
   }
 }
 
@@ -301,7 +307,8 @@ Subscription *elvin_subscription_create (const char *subscription_expr)
   subscription->id = 0;
   subscription->security = ALLOW_INSECURE_DELIVERY;
   subscription->subscription_expr = subscription_expr;
-  array_list_init (&subscription->listeners, sizeof (SubscriptionListener), 5);
+  array_list_init (&subscription->listeners, 
+                   sizeof (SubscriptionListenerEntry), 5);
   elvin_keys_init (&subscription->keys);
   
   return subscription;
@@ -357,19 +364,44 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
                       MESSAGE_ID_SUB_RPLY, error);
   
   array_list_remove_ptr (&elvin->subscriptions, subscription);
-
+  
   elvin_subscription_destroy (subscription);
   
   return succeeded;
 }
 
 /* TODO support adding general listeners */
-/* TODO support client data pointer */
 
 void elvin_subscription_add_listener (Subscription *subscription, 
-                                      SubscriptionListener listener)
+                                      SubscriptionListener listener,
+                                      void *user_data)
 {
-  array_list_add_func (&subscription->listeners, listener);
+  SubscriptionListenerEntry *entry = 
+    array_list_add (&subscription->listeners, SubscriptionListenerEntry);
+
+  entry->listener = listener;
+  entry->user_data = user_data;
+}
+
+bool elvin_subscription_remove_listener (Subscription *subscription, 
+                                         SubscriptionListener listener)
+{
+  SubscriptionListenerEntry *entry = subscription->listeners.items;
+  int count;
+
+  for (count = subscription->listeners.item_count - 1; 
+       count >= 0 && entry->listener != listener; count--, entry++);
+  
+  if (count >= 0)
+  {
+    array_list_remove (&subscription->listeners, count, 
+                       SubscriptionListenerEntry);
+    
+    return true;
+  } else
+  {
+    return false;
+  }
 }
 
 bool send_and_receive (Elvin *elvin, Message request, 
