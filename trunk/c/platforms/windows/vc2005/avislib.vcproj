@@ -201,43 +201,39 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\lib\array_list.h"
+				RelativePath="..\..\..\src\include\avis\array_list.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\attributes_private.h"
+				RelativePath="..\..\..\src\include\avis\attributes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\byte_buffer.h"
+				RelativePath="..\..\..\src\include\avis\elvin.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\elvin\elvin.h"
+				RelativePath="..\..\..\src\include\avis\elvin_uri.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\elvin\errors.h"
+				RelativePath="..\..\..\src\include\avis\errors.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\elvin\keys.h"
+				RelativePath="..\..\..\src\include\avis\keys.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\elvin\log.h"
+				RelativePath="..\..\..\src\include\avis\log.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\messages.h"
+				RelativePath="..\..\..\src\include\avis\stdtypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\elvin\stdtypes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\elvin\values.h"
+				RelativePath="..\..\..\src\include\avis\values.h"
 				>
 			</File>
 		</Filter>
