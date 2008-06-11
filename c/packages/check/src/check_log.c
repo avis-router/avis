@@ -34,6 +34,9 @@
 #include "check_log.h"
 #include "check_print.h"
 
+#ifdef WIN32
+#include <winsock2.h>
+#endif //WIN32
 
 static void srunner_send_evt (SRunner *sr, void *obj, enum cl_event evt);
 

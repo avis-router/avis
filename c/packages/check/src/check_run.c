@@ -41,6 +41,10 @@
 #include "check_msg.h"
 #include "check_log.h"
 
+#ifdef WIN32
+#define snprintf _snprintf
+#define strdup _strdup
+#endif //WIN32
 
 enum rinfo {
   CK_R_SIG,
