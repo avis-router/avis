@@ -13,64 +13,12 @@
 #include <avis/errors.h>
 
 #include "byte_buffer.h"
-
-#ifdef _HAVE_CONFIG_H
-  #include "config.h"
-#endif
+#include "endian.h"
 
 /*
  * The following shenaningans defines htonll() and ntohll() macros that
  * handle network/host endianness conversion for int64 values. 
  */
-
-/* TODO use
-   http://svn.digium.com/view/asterisk/trunk/include/asterisk/endian.h?view=markup
-   and
-   http://people.freedesktop.org/~anholt/doxygen/xorg/xserver/glxbyteorder_8h-source.html
-   as hints to make this code better. */
-
-#ifdef HAVE_ARCHITECTURE_BYTE_ORDER_H
-
-  /* Mac OS X */
-  #include <architecture/byte_order.h>
-
-  #define htonll(i) (NXSwapHostLongLongToBig(i))
-  #define ntohll(i) (NXSwapBigLongLongToHost(i))
-
-#else
-
-  #ifdef HAVE_ENDIAN_H
-    /* GNU glibc */
-    #include <endian.h>
-  #elif defined(WIN32)
-    #include <rpcndr.h>
-
-    static const unsigned long WIN32_LITTLE_ENDIAN = 
-      NDR_LOCAL_ENDIAN == NDR_LITTLE_ENDIAN;
-
-    #if WIN32_LITTLE_ENDIAN
-      #define __LITTLE_ENDIAN 1
-    #else
-      #define __BIG_ENDIAN 1
-    #endif
-  #else
-    #error "Unknown endianness" 
-  #endif
-
-  #ifdef __LITTLE_ENDIAN
-    #define HI(i) (i >> 32L)
-    #define LO(i) (i & 0x00000000FFFFFFFFL)
-
-    #define htonll(i) \
-      (((uint64_t)(htonl (LO (i))) << 32) | (uint64_t)htonl (HI (i)))
-    #define ntohll(i) \
-      (((uint64_t)(ntohl (HI (i))) | ((uint64_t)ntohl (LO (i)) << 32)))
-  #else
-    #define htonll(i) (i)
-    #define ntohll(i) (i)
-  #endif
-
-#endif
 
 #define INIT_LENGTH 1024
 #define MAX_LENGTH (2 * 1024 * 1024)
