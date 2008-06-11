@@ -591,7 +591,7 @@ public class Router implements IoHandler, Closeable
     
     if (shouldLog (TRACE))
     {
-      trace ("Server got message from " + Text.idFor (session) +
+      trace ("Server got message from " + idFor (session) +
              ": " + messageObject, this);
     }
     
@@ -1120,7 +1120,7 @@ public class Router implements IoHandler, Closeable
     throws Exception
   {
     if (shouldLog (TRACE))
-      trace ("Server session " + Text.idFor (session) + " closed", this);
+      trace ("Server session " + idFor (session) + " closed", this);
     
     sessions.remove (session);
 
@@ -1168,7 +1168,7 @@ public class Router implements IoHandler, Closeable
     if (status == READER_IDLE && peekConnectionFor (session) == null)
     {
       diagnostic
-        ("Client " + Text.idFor (session) +
+        ("Client " + idFor (session) +
          " waited too long to connect: closing session", this);
       
       session.close ();
@@ -1178,7 +1178,7 @@ public class Router implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    diagnostic ("Server session " + Text.idFor (session) + 
+    diagnostic ("Server session " + idFor (session) + 
                 " opened for connection on " + session.getServiceAddress () + 
                 (isSecure (session) ? " (using TLS)" : ""), this);
     
@@ -1237,7 +1237,7 @@ public class Router implements IoHandler, Closeable
   {    
     if (shouldLog (TRACE))
     {
-      trace ("Server sent message to " + Text.idFor (session) + ": " + message,
+      trace ("Server sent message to " + idFor (session) + ": " + message,
              Router.class);
     }
     
