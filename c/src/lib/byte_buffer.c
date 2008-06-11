@@ -156,22 +156,21 @@ bool auto_resize (ByteBuffer *buffer, size_t min_length, ElvinError *error)
 
 void expand_buffer (ByteBuffer *buffer, size_t new_length)
 {
-  /* TODO use realloc here */
-  uint8_t *new_data = malloc (new_length);
-  uint8_t *old_data = buffer->data;
+  uint8_t *new_data;
   
   assert (new_length > buffer->data_length);
   
-  memcpy (new_data, old_data, buffer->data_length);
+  new_data = realloc (buffer->data, new_length);
   
-  /* TODO this may not be necessary: does malloc guarantee zeroed memory? */
-  memset ((void *)(new_data + buffer->data_length), 0, 
-          new_length - buffer->data_length);
-  
-  buffer->data = new_data;
-  buffer->data_length = new_length;
-  
-  free (old_data);
+  if (new_data)
+  {
+    buffer->data = new_data;
+    buffer->data_length = new_length;
+  } else
+  {
+    /* TODO what is the best thing to do when we run out of memory? */
+    abort ();
+  }
 }
 
 void byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t capacity)

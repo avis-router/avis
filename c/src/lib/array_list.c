@@ -116,23 +116,24 @@ void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
   list->item_count--;
 }
 
-/* TODO use realloc () here */
 void auto_resize (ArrayList *list, size_t min_item_count, size_t item_size)
 {
   size_t min_length = min_item_count * item_size;
   
   if (list->items_length < min_length)
   {
-    void *old_items = list->items;
-    
     /* new size is double old size */
     do   
     {
       list->items_length *= 2;
     } while (list->items_length < min_length);
  
-    list->items = malloc (list->items_length);
+    list->items = realloc (list->items, list->items_length);
     
-    memcpy (list->items, old_items, list->item_count * item_size);
+    if (!list->items)
+    {
+      /* TODO what is the best thing to do when we run out of memory? */
+      abort ();
+    }
   }
 }
