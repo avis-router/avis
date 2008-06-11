@@ -1,4 +1,4 @@
-/*
+/** \file
  * The main Avis client library definitions.
  */
 #ifndef ELVIN_H
