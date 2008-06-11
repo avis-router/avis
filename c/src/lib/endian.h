@@ -37,6 +37,10 @@
       #define __BYTE_ORDER __LITTLE_ENDIAN
     #endif /* defined i386 */
     
+    #if defined (WIN32)
+      #define __BYTE_ORDER __LITTLE_ENDIAN
+    #endif /* defined WIN32 */
+
     #if defined (sun) && defined (unix) && defined (sparc)
       #define __BYTE_ORDER __BIG_ENDIAN
     #endif /* sun unix sparc */
