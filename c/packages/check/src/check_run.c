@@ -22,8 +22,12 @@
 #include "config.h"
 
 #include <sys/types.h>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif //HAVE_SYS_WAIT_H
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif //HAVE_UNISTD_H
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
