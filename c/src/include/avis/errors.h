@@ -1,3 +1,6 @@
+/** \file
+ * Error handling.
+ */
 #ifndef ERRORS_H_
 #define ERRORS_H_
 

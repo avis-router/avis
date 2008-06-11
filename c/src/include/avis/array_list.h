@@ -1,3 +1,6 @@
+/** \file
+ * Variable length arrays. Not for client use.
+ */
 #ifndef ARRAY_LIST_H_
 #define ARRAY_LIST_H_
 

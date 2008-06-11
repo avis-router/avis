@@ -1,6 +1,5 @@
-/*
- * Pulls in C99 stdint.h, stdbool.h, etc headers if available, or defines the 
- * needed types if not. 
+/** \file
+ * Ensure int8_t, int32_t, int64_t, etc are defined. 
  */
 #ifndef ELVIN_STDTYPES_H
 #define ELVIN_STDTYPES_H
