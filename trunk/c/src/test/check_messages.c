@@ -224,7 +224,7 @@ START_TEST (test_message_io)
   ByteBuffer *buffer = byte_buffer_create ();
   
   // write message out
-  Message connRqst = message_alloca ();
+  alloc_message (connRqst);
   
   message_init (connRqst, MESSAGE_ID_CONN_RQST,
                 DEFAULT_CLIENT_PROTOCOL_MAJOR, 
@@ -237,7 +237,7 @@ START_TEST (test_message_io)
   
   fail_unless (buffer->position == 32, "Message length incorrect");
   
-  Message connRqst2 = message_alloca ();
+  alloc_message (connRqst2);
   
   // read message back
   byte_buffer_set_position (buffer, 0, &error);

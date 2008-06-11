@@ -1,12 +1,6 @@
 #ifndef ELVIN_MESSAGES_H
 #define ELVIN_MESSAGES_H
 
-#ifdef WIN32
-  #include <malloc.h>
-#else
-  #include <alloca.h>
-#endif
-
 #include <avis/stdtypes.h>
 #include <avis/attributes.h>
 #include <avis/keys.h>
@@ -48,8 +42,7 @@ typedef enum
 
 typedef uint8_t * Message;
 
-/* TODO it seems alloca() is discouraged: use only with gcc? */
-#define message_alloca() ((Message)alloca (MAX_MESSAGE_SIZE))
+#define alloc_message(name) uint8_t name [MAX_MESSAGE_SIZE]
 
 Message message_init (Message message, MessageTypeID type, ...);
 

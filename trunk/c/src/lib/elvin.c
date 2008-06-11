@@ -101,8 +101,8 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error)
 
 bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
 {
-  Message conn_rqst = message_alloca ();
-  Message reply = message_alloca ();
+  alloc_message (conn_rqst);
+  alloc_message (reply);
   
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription *), 5);
@@ -132,8 +132,8 @@ bool elvin_is_open (Elvin *elvin)
 bool elvin_close (Elvin *elvin)
 {
   ElvinError error = elvin_error_create ();
-  Message disconn_rqst = message_alloca ();
-  Message reply = message_alloca ();
+  alloc_message (disconn_rqst);
+  alloc_message (reply);
   
   if (elvin->socket == -1)
     return false;
@@ -179,7 +179,7 @@ void elvin_shutdown (Elvin *elvin)
 
 bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
-  Message message = message_alloca (); 
+  alloc_message (message); 
     
   if (receive_message (elvin, message, error))
   {
@@ -292,7 +292,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 
 bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error)
 {
-  Message notify_emit = message_alloca ();
+  alloc_message (notify_emit);
 
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT, 
                 notification, true, EMPTY_KEYS);
@@ -330,8 +330,8 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
                                ElvinError *error)
 {
   Subscription *subscription = elvin_subscription_create (subscription_expr);
-  Message sub_add_rqst = message_alloca ();
-  Message sub_reply = message_alloca ();
+  alloc_message (sub_add_rqst);
+  alloc_message (sub_reply);
   
   message_init (sub_add_rqst,
                 MESSAGE_ID_SUB_ADD_RQST, subscription->subscription_expr,
@@ -357,8 +357,8 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
 bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription, 
                         ElvinError *error)
 {
-  Message sub_del_rqst = message_alloca ();
-  Message sub_reply = message_alloca ();
+  alloc_message (sub_del_rqst);
+  alloc_message (sub_reply);
   bool succeeded;
   
   message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
