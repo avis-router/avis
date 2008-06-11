@@ -1,3 +1,6 @@
+/** \file
+ * Elvin attributes (name/value pairs) support.
+ */
 #ifndef ELVIN_NAMED_VALUES_H
 #define ELVIN_NAMED_VALUES_H
 

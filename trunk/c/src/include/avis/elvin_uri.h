@@ -1,3 +1,6 @@
+/** \file
+ * Elvin URI handling.
+ */
 #ifndef ELVIN_URI_H_
 #define ELVIN_URI_H_
 

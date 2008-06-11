@@ -1,3 +1,6 @@
+/** \file
+ * Polymorphic values.
+ */
 #ifndef VALUES_H_
 #define VALUES_H_
 
