@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\src\include;.\avislib;..\..\..\packages\hashtable"
+				AdditionalIncludeDirectories="..\..\..\src\include;.;.\avislib;..\..\..\packages\hashtable;."
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
