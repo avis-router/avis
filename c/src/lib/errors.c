@@ -10,7 +10,7 @@
 
 #ifdef WIN32
   #define vsnprintf _vsnprintf
-#endif //WIN32
+#endif
 
 void elvin_error_free (ElvinError *error)
 {

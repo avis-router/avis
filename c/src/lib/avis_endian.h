@@ -2,8 +2,8 @@
  * Adapted from endian.h in Asterisk (http://www.asterisk.org).
  */
 
-#ifndef ENDIAN_H_
-#define ENDIAN_H_
+#ifndef AVIS_ENDIAN_H_
+#define AVIS_ENDIAN_H_
 
 /*
  * Autodetect system endianess
@@ -90,5 +90,4 @@
   #define ntohll(i) (i)
 #endif
 
-#endif /*ENDIAN_H_*/
-  
+#endif /*AVIS_ENDIAN_H_*/

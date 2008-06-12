@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <arpa/inet.h> /* ntohl () and htonl()  */
 
 #ifdef WIN32
   /* For definition of ntohl */
@@ -13,7 +14,7 @@
 #include <avis/errors.h>
 
 #include "byte_buffer.h"
-#include "endian.h"
+#include "avis_endian.h"
 
 /*
  * The following shenaningans defines htonll() and ntohll() macros that
