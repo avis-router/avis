@@ -22,15 +22,24 @@ libelvin_la_SOURCES = \
   values.c \
   keys.c \
   log.c \
-  array_list.c
+  array_list.c \
+  array_list_private.h \
+  attributes_private.h \
+  byte_buffer.h \
+  endian.h \
+  messages.h \
+  values_private.h
 
 libelvin_la_LIBADD = \
   $(top_srcdir)/packages/hashtable/libhashtable.la
 
 include_HEADERS = \
-  $(public_inc)/elvin.h \
-  $(public_inc)/elvin_uri.h \
-  $(public_inc)/keys.h \
-  $(public_inc)/values.h \
+  $(public_inc)/array_list.h \
   $(public_inc)/attributes.h \
-  $(public_inc)/log.h
+  $(public_inc)/elvin_uri.h \
+  $(public_inc)/elvin.h \
+  $(public_inc)/errors.h \
+  $(public_inc)/keys.h \
+  $(public_inc)/log.h \
+  $(public_inc)/stdtypes.h \
+  $(public_inc)/values.h

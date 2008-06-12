@@ -12,7 +12,8 @@ tests_SOURCES = \
   check_ext.c \
   check_messages.c \
   check_client.c \
-  check_array_list.c
+  check_array_list.c \
+  check_ext.h
 
 tests_LDADD = \
   $(top_srcdir)/src/lib/libelvin.la \
