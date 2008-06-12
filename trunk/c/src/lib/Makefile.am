@@ -10,9 +10,9 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = -Wall -std=gnu89 -pedantic
 
-lib_LTLIBRARIES = libelvin.la
+lib_LTLIBRARIES = libavis.la
 
-libelvin_la_SOURCES = \
+libavis_la_SOURCES = \
   elvin.c \
   elvin_uri.c \
   messages.c \
@@ -30,7 +30,7 @@ libelvin_la_SOURCES = \
   messages.h \
   values_private.h
 
-libelvin_la_LIBADD = \
+libavis_la_LIBADD = \
   $(top_srcdir)/packages/hashtable/libhashtable.la
 
 include_HEADERS = \
