@@ -1,8 +1,8 @@
 /** \file
  * Elvin attributes (name/value pairs) support.
  */
-#ifndef ELVIN_NAMED_VALUES_H
-#define ELVIN_NAMED_VALUES_H
+#ifndef ELVIN_ATTRIBUTES_H
+#define ELVIN_ATTRIBUTES_H
 
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
@@ -249,4 +249,4 @@ const char *attributes_get_string (Attributes *attributes, const char *name);
  */
 Array *attributes_get_opaque (Attributes *attributes, const char *name);
 
-#endif /* ELVIN_NAMED_VALUES_H */
+#endif /* ELVIN_ATTRIBUTES_H */

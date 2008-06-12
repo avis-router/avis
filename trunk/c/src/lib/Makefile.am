@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
   -I$(top_srcdir)/packages/hashtable \
   -DAVIS_SHARED_LIB
 
-AM_CFLAGS   = -Wall -std=c89 -pedantic
+AM_CFLAGS = -Wall -std=gnu89 -pedantic
 
 lib_LTLIBRARIES = libelvin.la
 
@@ -26,7 +26,7 @@ libelvin_la_SOURCES = \
   array_list_private.h \
   attributes_private.h \
   byte_buffer.h \
-  endian.h \
+  avis_endian.h \
   messages.h \
   values_private.h
 
