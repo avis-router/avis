@@ -42,13 +42,15 @@ FuncPtr array_list_get_func (ArrayList *list, size_t index);
 #define array_list_remove(list, index, item_type) \
   (array_list_remove_item (list, index, sizeof (item_type)))
 
+void array_list_remove_item_using_ptr (ArrayList *list, void *item, size_t item_size);
+
 void array_list_remove_item (ArrayList *list, size_t index, size_t item_size);
 
-int array_list_find_int (ArrayList *list, int int_value);
+int32_t *array_list_find_int (ArrayList *list, int32_t int_value);
 
-int array_list_find_func (ArrayList *list, void (*func) ());
+FuncPtr *array_list_find_func (ArrayList *list, void (*func) ());
 
-int array_list_find_ptr (ArrayList *list, void *ptr);
+void **array_list_find_ptr (ArrayList *list, void *ptr);
 
 bool array_list_remove_int (ArrayList *list, int int_value);
 
