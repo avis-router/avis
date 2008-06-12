@@ -5,7 +5,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
 
 AM_CFLAGS = -Wall -std=gnu99 -pedantic -lm
 
-bin_PROGRAMS=tests basic_test event_loop_test
+noinst_PROGRAMS=tests basic_test event_loop_test
 
 tests_SOURCES = \
   tests.c \
@@ -16,15 +16,15 @@ tests_SOURCES = \
   check_ext.h
 
 tests_LDADD = \
-  $(top_srcdir)/src/lib/libelvin.la \
+  $(top_srcdir)/src/lib/libavis.la \
   $(top_srcdir)/packages/check/src/libcheck.la
 
 basic_test_SOURCES = basic_test.c
 
 basic_test_LDADD = \
-  $(top_srcdir)/src/lib/libelvin.la
+  $(top_srcdir)/src/lib/libavis.la
 
 event_loop_test_SOURCES = event_loop_test.c
 
 event_loop_test_LDADD = \
-  $(top_srcdir)/src/lib/libelvin.la
+  $(top_srcdir)/src/lib/libavis.la

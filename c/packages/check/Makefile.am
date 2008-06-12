@@ -16,19 +16,19 @@ CLEANFILES = *~\
 
 ## what additional things to distribute
 
-EXTRA_DIST = SVNChangeLog ChangeLogOld check.pc.in $(m4data_DATA)
+# EXTRA_DIST = SVNChangeLog ChangeLogOld check.pc.in $(m4data_DATA)
 
 ## install docs
-docdir = $(datadir)/doc/$(PACKAGE)
-doc_DATA = SVNChangeLog ChangeLog ChangeLogOld NEWS README COPYING.LESSER
+# docdir = $(datadir)/doc/$(PACKAGE)
+# doc_DATA = SVNChangeLog ChangeLog ChangeLogOld NEWS README COPYING.LESSER
 
 ## install check.m4 with AM_PATH_CHECK in it
-m4datadir = $(datadir)/aclocal
-m4data_DATA = check.m4
+# m4datadir = $(datadir)/aclocal
+# m4data_DATA = check.m4
 
 ## install check.pc
-pcdatadir = $(libdir)/pkgconfig
-pcdata_DATA = check.pc
+# pcdatadir = $(libdir)/pkgconfig
+# pcdata_DATA = check.pc
 
-SVNChangeLog:
-	svn log -v @abs_top_srcdir@ > $@
+# SVNChangeLog:
+#	svn log -v @abs_top_srcdir@ > $@

@@ -33,6 +33,8 @@ libavis_la_SOURCES = \
 libavis_la_LIBADD = \
   $(top_srcdir)/packages/hashtable/libhashtable.la
 
+includedir=${prefix}/include/avis
+
 include_HEADERS = \
   $(public_inc)/array_list.h \
   $(public_inc)/attributes.h \

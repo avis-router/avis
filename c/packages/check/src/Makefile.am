@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-lib_LTLIBRARIES=libcheck.la
+noinst_LTLIBRARIES=libcheck.la
 
-include_HEADERS=check.h
+noinst_HEADERS=check.h
 
 AM_CFLAGS=@GCOV_CFLAGS@
 
