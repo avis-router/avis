@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-info_TEXINFOS = check.texi
-check_TEXINFOS = fdl.texi
+#info_TEXINFOS = check.texi
+#check_TEXINFOS = fdl.texi
 
 ## we need to include several diffs as we evolve the example in the
 ## tutorial.  this means we'll generate them from the example source.
@@ -100,21 +100,21 @@ CLEANFILES = *~ *.diff
 
 ## what to distribute
 
-EXTRA_DIST = $(example_docs) \
-             $(example_src_docs) \
-             $(example_tests_docs)
+#EXTRA_DIST = $(example_docs) \
+#             $(example_src_docs) \
+#             $(example_tests_docs)
 
 ## what to install
 
-docdir = $(datadir)/doc/$(PACKAGE)
+#docdir = $(datadir)/doc/$(PACKAGE)
 
 # install money example
 
-exampledir = $(docdir)/example
-example_DATA = $(example_docs)
+#exampledir = $(docdir)/example
+#example_DATA = $(example_docs)
 
-examplesrcdir = $(docdir)/example/src
-examplesrc_DATA = $(example_src_docs)
+#examplesrcdir = $(docdir)/example/src
+#examplesrc_DATA = $(example_src_docs)
 
-exampletestsdir = $(docdir)/example/tests
-exampletests_DATA = $(example_tests_docs)
+#exampletestsdir = $(docdir)/example/tests
+#exampletests_DATA = $(example_tests_docs)
