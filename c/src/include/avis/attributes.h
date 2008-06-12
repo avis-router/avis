@@ -17,8 +17,8 @@ struct hashtable;
  *
  * All string keys and Value's associated with them are considered to
  * be owned by the Attributes instance and will be automatically freed
- * when when appropriate. For convenience, most of the methods used to
- * add entries automatically copy their string name parameter before
+ * when appropriate. For convenience, most of the methods used to add
+ * entries automatically copy their string name parameter before
  * adding: see the documentation for each function for more
  * information.
  *
