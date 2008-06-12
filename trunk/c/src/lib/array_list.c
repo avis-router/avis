@@ -64,31 +64,32 @@ def_array_list_get (void *, ptr)
 def_array_list_get (FuncPtr, func)
 
 #define def_array_list_find(item_type, postfix) \
-  int array_list_find_##postfix (ArrayList *list, item_type value)\
+  item_type *array_list_find_##postfix (ArrayList *list, item_type value)\
   {\
-    size_t index;\
+    item_type *ptr; \
+    int index = list->item_count; \
     \
-    for (index = 0; index < list->item_count; index++)\
-    {\
-      if (((item_type *)list->items) [index] == value)\
-        return (int)index;\
-    }\
+    for (ptr = list->items; index > 0; index--, ptr++) \
+    { \
+      if (*ptr == value) \
+        return ptr;\
+    } \
     \
-    return -1;\
+    return NULL; \
   }
 
-def_array_list_find (int, int)
+def_array_list_find (int32_t, int)
 def_array_list_find (void *, ptr)
 def_array_list_find (FuncPtr, func)
 
 #define def_array_list_remove(item_type, postfix) \
   bool array_list_remove_##postfix (ArrayList *list, item_type value)\
   {\
-    int index = array_list_find_##postfix (list, value);\
+    item_type *ptr = array_list_find_##postfix (list, value);\
     \
-    if (index != -1)\
+    if (ptr)\
     {\
-      array_list_remove (list, index, item_type);\
+      array_list_remove_item_using_ptr (list, ptr, sizeof (item_type));\
       \
       return true;\
     } else\
@@ -97,7 +98,7 @@ def_array_list_find (FuncPtr, func)
     }\
   }
 
-def_array_list_remove (int, int)
+def_array_list_remove (int32_t, int)
 def_array_list_remove (void *, ptr)
 def_array_list_remove (FuncPtr, func)
 
@@ -105,13 +106,20 @@ void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
 {
   assert (index >= 0 && index < list->item_count);
   
-  if (index < list->item_count - 1)
-  {
-    int8_t *target = ((int8_t *)list->items) + (index * item_size);
-    
-    memmove (target, target + item_size, 
-             (list->item_count - index - 1) * item_size);    
-  }
+  array_list_remove_item_using_ptr 
+    (list, (int8_t *)list->items + (index * item_size), item_size);
+}
+
+void array_list_remove_item_using_ptr (ArrayList *list, void *item, 
+                                       size_t item_size)
+{
+  int8_t *end = (int8_t *)list->items + (list->item_count * item_size);
+  int8_t *src = (int8_t *)item + item_size;
+  
+  assert (list->item_count > 0);
+  
+  if ((int8_t *)item < end - item_size)
+    memmove (item, src, end - src);    
   
   list->item_count--;
 }

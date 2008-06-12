@@ -19,12 +19,12 @@ START_TEST (test_array_list)
   
   fail_unless (array_list_size (list) == 1000, "Not full");
 
-  fail_unless (array_list_find_int (list, 42) == 42, "Find failed");
-  fail_unless (array_list_find_int (list, 123456) == -1, "Find failed");
+  fail_unless (*array_list_find_int (list, 42) == 42, "Find failed");
+  fail_unless (array_list_find_int (list, 123456) == NULL, "Find failed");
   
   for (int i = 0; i < 1000; i++)
     fail_unless (array_list_get_int (list, i) == i, "Not equal");
-  
+    
   for (int i = 0; i < 1000; i++)
   {
     array_list_remove (list, 0, int);
