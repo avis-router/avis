@@ -6,6 +6,7 @@
 TCase *messages_tests ();
 TCase *client_tests ();
 TCase *array_list_tests ();
+TCase *security_tests ();
 
 Suite *suite ()
 {
@@ -14,6 +15,7 @@ Suite *suite ()
   suite_add_tcase (s, messages_tests ());
   suite_add_tcase (s, client_tests ());
   suite_add_tcase (s, array_list_tests ());
+  suite_add_tcase (s, security_tests ());
 
   return s;
 }

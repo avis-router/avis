@@ -16,6 +16,7 @@ libavis_la_SOURCES = \
   elvin.c \
   elvin_uri.c \
   messages.c \
+  sha1.c \
   attributes.c \
   byte_buffer.c \
   errors.c \
@@ -26,6 +27,7 @@ libavis_la_SOURCES = \
   array_list_private.h \
   attributes_private.h \
   byte_buffer.h \
+  keys_private.h \
   avis_endian.h \
   messages.h \
   values_private.h
