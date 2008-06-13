@@ -1,8 +1,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
 #include "array_list_private.h"
+
+#define min(x,y) ((x) < (y) ? (x) : (y))
 
 static void auto_resize (ArrayList *list, size_t min_item_count, 
                          size_t item_size);
@@ -10,7 +13,7 @@ static void auto_resize (ArrayList *list, size_t min_item_count,
 ArrayList *array_list_init (ArrayList *list, size_t item_size, 
                             size_t initial_item_count)
 {
-  list->items_length = initial_item_count * item_size;
+  list->items_length = min (initial_item_count, 1) * item_size;
   list->items = malloc (list->items_length);
   list->item_count = 0;
   
