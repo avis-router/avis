@@ -1,9 +1,11 @@
 #ifndef BYTE_BUFFER_H_
 #define BYTE_BUFFER_H_
 
+#include <stdlib.h>
+
 #include <avis/stdtypes.h>
 #include <avis/values.h>
-#include <stdlib.h>
+#include <avis/errors.h>
 
 typedef struct
 {
