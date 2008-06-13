@@ -236,7 +236,7 @@ char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
   
   if (string == NULL)
   {
-    elvin_error_set (error, ERRNO_TO_ELVIN_ERROR (errno), 
+    elvin_error_set (error, errno_to_elvin_error (errno), 
                      "Not enough memory to allocate string");
     
     return NULL;
@@ -293,7 +293,7 @@ bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
   
   if (bytes == NULL)
   {
-    elvin_error_set (error, ERRNO_TO_ELVIN_ERROR (errno), 
+    elvin_error_set (error, errno_to_elvin_error (errno), 
                      "Not enough memory to allocate opaque");
     
     return false;

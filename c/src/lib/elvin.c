@@ -554,7 +554,7 @@ bool resolve_address (struct sockaddr_in *router_addr,
 
   if ((error_code = getaddrinfo (host, NULL, &hints, &address_info)) != 0)
   {
-    return elvin_error_set (error, HOST_TO_ELVIN_ERROR (error_code), 
+    return elvin_error_set (error, host_to_elvin_error (error_code), 
                             gai_strerror (error_code));
   }
   
