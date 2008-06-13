@@ -9,8 +9,8 @@ noinst_PROGRAMS=tests basic_test event_loop_test
 
 tests_SOURCES = \
   tests.c \
-  check_ext.c \
   check_messages.c \
+  check_security.c \
   check_client.c \
   check_array_list.c \
   check_ext.h
