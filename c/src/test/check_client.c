@@ -66,7 +66,9 @@ START_TEST (test_uri)
   
   check_invalid_uri ("hello://host");  
   check_invalid_uri ("elvin://host:1234567890");  
+  check_invalid_uri ("elvin://host:-1");  
   check_invalid_uri ("elvin://host:hello");  
+  check_invalid_uri ("elvin://:1234");  
   check_invalid_uri ("elvin://");
   check_invalid_uri ("elvin:/");
   check_invalid_uri ("elvin::/");
