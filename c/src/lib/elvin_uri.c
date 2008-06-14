@@ -9,10 +9,7 @@ static const char *stranychr (const char *start, const char *chars);
 
 #define parse_fail(expr,message) \
   if (expr) \
-  {\
-    elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);\
-    return false;\
-  }
+    return elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);
 
 void elvin_uri_free (ElvinURI *uri)
 {
