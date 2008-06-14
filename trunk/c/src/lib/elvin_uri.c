@@ -59,13 +59,15 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   
   parse_fail (*index1 == '\0', "Missing hostname");
   
-  index2 = stranychr (index1 + 1, ":?");
+  index2 = stranychr (index1, ":?");
   
   if (index2 == NULL)
   {
     uri->host = strdup (index1);
   } else
   {
+    parse_fail (index2 == index1, "Missing hostname");
+
     uri->host = substring (index1, index2);
     
     if (*index2 == ':')
