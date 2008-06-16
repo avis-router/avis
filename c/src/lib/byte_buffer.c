@@ -4,12 +4,12 @@
 #include <string.h>
 #include <assert.h>
 
+/* ntohl () and htonl()  */
 #ifdef WIN32
-  /* For definition of ntohl */
   #include <winsock2.h>
 #else
-  #include <arpa/inet.h> /* ntohl () and htonl()  */
-#endif //WIN32
+  #include <arpa/inet.h>
+#endif
 
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
