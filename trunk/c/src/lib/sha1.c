@@ -19,6 +19,7 @@ A million repetitions of "a"
 #include <stdio.h>
 #include <string.h>
 
+#include <avis/keys.h>
 #include <avis/stdtypes.h>
 #include "avis_endian.h"
 
@@ -33,18 +34,21 @@ static void SHA1Init(SHA1_CTX* context);
 static void SHA1Update(SHA1_CTX* context, unsigned char* data, unsigned int len);
 static void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
 
-uint8_t *avis_sha1 (uint8_t *input, uint32_t length)
+Key avis_sha1 (Key *input)
 {
   SHA1_CTX context;
-  uint8_t *result = malloc (20);
+  Key key;
+  
+  key.data = malloc (20);
+  key.length = 20;
   
   SHA1Init (&context);
   
-  SHA1Update (&context, input, length);
+  SHA1Update (&context, input->data, input->length);
   
-  SHA1Final (result, &context);
+  SHA1Final (key.data, &context);
   
-  return result;
+  return key;
 }
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
