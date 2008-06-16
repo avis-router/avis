@@ -46,6 +46,8 @@ Keys *elvin_keys_init (Keys *keys);
 
 void elvin_keys_free (Keys *keys);
 
+bool elvin_keys_equal (Keys *keys1, Keys *keys2);
+
 bool elvin_keys_add (Keys *keys, KeyScheme scheme, Key key);
 
 bool elvin_keys_add_dual_consumer (Keys *keys, KeyScheme scheme, Key key);
@@ -56,5 +58,7 @@ bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
   {(uint8_t *)strdup (str), strlen (str)}
 
 #define elvin_key_from_data(data, length) {data, length}
+
+bool elvin_key_equal (Key *key1, Key *key2);
 
 #endif /* ELVIN_KEYS_H */
