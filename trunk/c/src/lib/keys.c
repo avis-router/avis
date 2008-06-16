@@ -181,7 +181,7 @@ bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key)
 
 bool elvin_keys_add_dual_consumer (Keys *keys, KeyScheme scheme, Key key)
 {
-  if (scheme->type == PRODUCER + CONSUMER)
+  if (scheme->type == DUAL)
   {
     *array_list_add (dual_consumer_keyset (keys, scheme->id), Key) = key;
     
