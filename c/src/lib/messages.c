@@ -17,16 +17,19 @@
 
 static Message read_int32 (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
+
 static Message write_int32 (ByteBuffer *buffer, Message message, 
                             ElvinError *error);
 
 static Message read_int64 (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
+
 static Message write_int64 (ByteBuffer *buffer, Message message, 
                             ElvinError *error);
 
 static Message read_int64_array (ByteBuffer *buffer, Message message, 
                                  ElvinError *error);
+
 static Message write_int64_array (ByteBuffer *buffer, Message message, 
                                   ElvinError *error);
 
@@ -38,21 +41,25 @@ static Message read_xid (ByteBuffer *buffer, Message message,
 
 static Message read_string (ByteBuffer *buffer, Message message, 
                             ElvinError *error);
+
 static Message write_string (ByteBuffer *buffer, Message message, 
                              ElvinError *error);
 
 static Message read_attributes (ByteBuffer *buffer, Message message, 
                                   ElvinError *error);
+
 static Message write_attributes (ByteBuffer *buffer, Message message, 
                                    ElvinError *error);
 
 static Message read_values (ByteBuffer *buffer, Message message, 
                             ElvinError *error);
+
 static Message write_values (ByteBuffer *buffer, Message message, 
                              ElvinError *error);
 
 static Message read_keys (ByteBuffer *buffer, Message message, 
                           ElvinError *error);
+
 static Message write_keys (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
 
