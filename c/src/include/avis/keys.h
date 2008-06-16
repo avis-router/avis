@@ -59,6 +59,8 @@ bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
 
 #define elvin_key_from_data(data, length) {data, length}
 
+Key elvin_public_key (Key *private_key, KeyScheme scheme);
+
 bool elvin_key_equal (Key *key1, Key *key2);
 
 #endif /* ELVIN_KEYS_H */
