@@ -191,6 +191,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\sha1.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\values.c"
 				>
 			</File>
@@ -206,6 +210,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\avis\attributes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\byte_buffer.h"
 				>
 			</File>
 			<File

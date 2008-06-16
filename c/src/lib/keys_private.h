@@ -4,7 +4,7 @@
 #include <avis/errors.h>
 #include <avis/keys.h>
 
-#include <byte_buffer.h>
+#include "byte_buffer.h"
 
 bool elvin_keys_read (ByteBuffer *buffer, Keys *keys, ElvinError *error);
 

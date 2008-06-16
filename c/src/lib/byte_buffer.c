@@ -3,12 +3,13 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
-#include <arpa/inet.h> /* ntohl () and htonl()  */
 
 #ifdef WIN32
   /* For definition of ntohl */
   #include <winsock2.h>
-#endif
+#else
+  #include <arpa/inet.h> /* ntohl () and htonl()  */
+#endif //WIN32
 
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
