@@ -53,6 +53,11 @@
   #error Need to know endianess
 #endif /* __BYTE_ORDER */
 
+/*
+ * The following shenaningans defines htonll() and ntohll() macros that
+ * handle network/host endianness conversion for int64 values. 
+ */
+
 #ifdef __APPLE__
 
   /* Mac OS X */
