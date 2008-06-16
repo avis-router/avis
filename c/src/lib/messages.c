@@ -13,6 +13,7 @@
 #include "byte_buffer.h"
 #include "attributes_private.h"
 #include "values_private.h"
+#include "keys_private.h"
 
 static Message read_int32 (ByteBuffer *buffer, Message message, 
                            ElvinError *error);
@@ -57,8 +58,6 @@ static Message write_keys (ByteBuffer *buffer, Message message,
 
 static void values_free (Array *values);
 
-static void keys_free (Array *keys);
-
 typedef enum 
 {
   FIELD_XID, FIELD_INT32, FIELD_INT64, FIELD_POINTER
@@ -91,7 +90,7 @@ typedef struct
 #define BO  {FIELD_INT32, read_bool, write_int32, NULL}
 #define XID {FIELD_XID, read_xid, write_int32, NULL}
 #define VA  {FIELD_POINTER, read_values, write_values, values_free}
-#define KY  {FIELD_POINTER, read_keys, write_keys, keys_free}
+#define KY  {FIELD_POINTER, read_keys, write_keys, elvin_keys_free}
 
 #define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL, NULL}
 
@@ -446,25 +445,21 @@ Message write_attributes (ByteBuffer *buffer, Message message,
 
 Message read_keys (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  /* TODO */
-  byte_buffer_skip (buffer, 4, error);
+  Keys *keys = elvin_keys_create ();
   
-  *(Keys **)message = malloc (sizeof (Keys));
+  if (elvin_keys_read (buffer, keys, error))
+    *(Keys **)message = keys;
+  else
+    elvin_keys_destroy (keys);
   
   return message + sizeof (Keys *);
 }
 
 Message write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  /* TODO */ 
-  byte_buffer_write_int32 (buffer, 0, error);
+  elvin_keys_write (buffer, *(Keys **)message, error);
   
   return message + sizeof (Keys *);
-}
-
-void keys_free (Array *keys)
-{
-  /* TODO */
 }
 
 Message read_values (ByteBuffer *buffer, Message message, ElvinError *error)
