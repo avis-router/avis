@@ -131,6 +131,9 @@
 				RelativePath="..\..\..\src\lib\messages.c">
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\sha1.c">
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\values.c">
 			</File>
 		</Filter>
@@ -139,34 +142,22 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\src\lib\array_list.h">
+				RelativePath="..\..\..\src\lib\array_list_private.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\avis\attributes.h">
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\avis_endian.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\byte_buffer.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\elvin\elvin.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\elvin\errors.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\elvin\keys.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\elvin\log.h">
+				RelativePath="..\..\..\src\lib\keys_private.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\messages.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\elvin\stdtypes.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\elvin\values.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\values_private.h">
