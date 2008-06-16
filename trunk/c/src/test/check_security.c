@@ -69,6 +69,26 @@ START_TEST (test_key_io)
   Keys *keys2 = elvin_keys_create ();
   ByteBuffer *buffer = byte_buffer_create ();  
 
+  /* empty keys */
+  elvin_keys_write (buffer, EMPTY_KEYS, &error);
+  fail_on_error (&error);
+
+  fail_unless (buffer->position == 4, "Keys length incorrect: %u != 4", 
+               buffer->position);
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  
+  elvin_keys_read (buffer, keys2, &error);
+  fail_on_error (&error);
+  
+  fail_unless (elvin_keys_equal (EMPTY_KEYS, keys2), "Keys not equal");
+
+  elvin_keys_destroy (keys2);
+  keys2 = elvin_keys_create ();
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  
+  /* populated key set */
   elvin_keys_add (keys1, KEY_SCHEME_SHA1_CONSUMER, key1);
   elvin_keys_add (keys1, KEY_SCHEME_SHA1_PRODUCER, key2);
   
