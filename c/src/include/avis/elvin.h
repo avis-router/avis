@@ -144,6 +144,10 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
  */
 bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
 
+bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
+                           Keys *notification_keys, Keys *subscription_keys, 
+                           ElvinError *error);
+
 /**
  * Send a notification to an Elvin router.
  * 

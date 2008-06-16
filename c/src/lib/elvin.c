@@ -95,7 +95,9 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
+bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
+                           Keys *notification_keys, Keys *subscription_keys, 
+                           ElvinError *error)
 {
   alloc_message (conn_rqst);
   alloc_message (reply);
@@ -103,13 +105,13 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
   
-  if (!open_socket (elvin, url->host, url->port, error))
+  if (!open_socket (elvin, uri->host, uri->port, error))
     return false;
   
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST, 
                 DEFAULT_CLIENT_PROTOCOL_MAJOR, 
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
-                EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+                EMPTY_NAMED_VALUES, notification_keys, subscription_keys);
   
   on_error_return_false 
     (send_and_receive (elvin, conn_rqst, reply, MESSAGE_ID_CONN_RPLY, error));
@@ -117,7 +119,12 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *url, ElvinError *error)
   /* todo check message reply options */
   message_free (reply);
   
-  return true;
+  return true;  
+}
+
+bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error)
+{
+  return elvin_open_with_keys (elvin, uri, EMPTY_KEYS, EMPTY_KEYS, error);
 }
 
 bool elvin_is_open (Elvin *elvin)
