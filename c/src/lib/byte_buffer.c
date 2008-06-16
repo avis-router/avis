@@ -17,11 +17,6 @@
 #include "byte_buffer.h"
 #include "avis_endian.h"
 
-/*
- * The following shenaningans defines htonll() and ntohll() macros that
- * handle network/host endianness conversion for int64 values. 
- */
-
 #define INIT_LENGTH 1024
 #define MAX_LENGTH (2 * 1024 * 1024)
 
