@@ -197,6 +197,121 @@ void test_subscribe_sub_listener (Subscription *sub,
   test_subscribe_received_ntfn = true;
 }
 
+START_TEST (test_security)
+{
+  Elvin elvin;
+  ElvinURI uri;
+  Subscription *sub;
+  time_t start_time;
+  Elvin alice_client, bob_client;
+  
+  elvin_uri_from_string (&uri, "elvin://localhost", &error);
+  fail_on_error (&error);
+  
+  Key alice_private = elvin_key_from_string ("alice private");
+  Keys *alice_ntfn_keys = elvin_keys_create ();
+  elvin_keys_add (alice_ntfn_keys, KEY_SCHEME_SHA1_CONSUMER, alice_private);
+  
+  Keys* bob_sub_keys = elvin_keys_create ();
+  elvin_keys_add (bob_sub_keys, KEY_SCHEME_SHA1_PRODUCER, 
+                  elvin_public_key (&alice_private, KEY_SCHEME_SHA1_PRODUCER));
+  
+  elvin_open_with_keys (&alice_client, &uri, 
+                        alice_ntfn_keys, EMPTY_KEYS, &error);
+  
+  fail_on_error (&error);
+  
+  elvin_close (&alice_client);
+}
+END_TEST
+
+/*
+ *   public void security ()
+    throws Exception
+  {
+    createServer ();
+    
+    ElvinURI uri = new ElvinURI (ELVIN_URI);
+    
+    Key alicePrivate = new Key ("alice private");
+
+    Keys aliceNtfnKeys = new Keys ();
+    aliceNtfnKeys.add (SHA1_PRODUCER, alicePrivate);
+    
+    Keys bobSubKeys = new Keys ();
+    bobSubKeys.add (SHA1_PRODUCER, alicePrivate.publicKeyFor (SHA1_PRODUCER));
+    
+    // subscribe with global keys
+    Elvin aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
+    Elvin bobClient = new Elvin (uri, EMPTY_KEYS, bobSubKeys);
+    Elvin eveClient = new Elvin (uri);
+    
+    Subscription bobSub =
+      bobClient.subscribe ("require (From-Alice)", REQUIRE_SECURE_DELIVERY);
+    
+    Subscription eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
+    
+    aliceClient.close ();
+    bobClient.close ();
+    eveClient.close ();
+    
+    // check we can add global keys later for same result
+    aliceClient = new Elvin (uri);
+    bobClient = new Elvin (uri);
+    eveClient = new Elvin (uri);
+    
+    aliceClient.setNotificationKeys (aliceNtfnKeys);
+    
+    bobSub = bobClient.subscribe ("require (From-Alice)",
+                                  REQUIRE_SECURE_DELIVERY);
+    bobClient.setSubscriptionKeys (bobSubKeys);
+    
+    eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
+    
+    aliceClient.close ();
+    bobClient.close ();
+    eveClient.close ();
+    
+    // check we can add subscription keys for same result
+    aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
+    bobClient = new Elvin (uri);
+    eveClient = new Elvin (uri);
+    
+    bobSub = bobClient.subscribe ("require (From-Alice)",
+                                  REQUIRE_SECURE_DELIVERY);
+    
+    bobSub.setKeys (bobSubKeys);
+    
+    eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
+    
+    aliceClient.close ();
+    bobClient.close ();
+    eveClient.close ();
+    
+    // check we can subscribe securely in one step
+    aliceClient = new Elvin (uri, aliceNtfnKeys, EMPTY_KEYS);
+    bobClient = new Elvin (uri);
+    eveClient = new Elvin (uri);
+    
+    bobSub = bobClient.subscribe ("require (From-Alice)",
+                                  bobSubKeys, REQUIRE_SECURE_DELIVERY);
+    
+    eveSub = eveClient.subscribe ("require (From-Alice)");
+    
+    checkSecureSendReceive (aliceClient, bobSub, eveSub);
+    
+    aliceClient.close ();
+    bobClient.close ();
+    eveClient.close ();
+  }
+  */
+
 TCase *client_tests ()
 {
   TCase *tc_core = tcase_create ("client");
@@ -204,6 +319,7 @@ TCase *client_tests ()
   tcase_add_test (tc_core, test_connect);
   tcase_add_test (tc_core, test_notify);
   tcase_add_test (tc_core, test_subscribe);
+  tcase_add_test (tc_core, test_security);
  
   tcase_add_checked_fixture (tc_core, setup, teardown);
 
