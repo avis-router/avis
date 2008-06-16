@@ -12,20 +12,18 @@ typedef uint8_t * (*HashFunc) (uint8_t *data, uint32_t length);
 #define CONSUMER 2
 #define DUAL     (PRODUCER + CONSUMER)
 
+#define KEY_SCHEME_COUNT 3
+
 struct KeyScheme
 {
   int id;
-  HashFunc hash;
   int type;
+  HashFunc hash;
 };
 
-#define index_for(scheme) ((scheme)->id - 1)
-
-struct KeyScheme _KEY_SCHEME_SHA1_DUAL = {1, avis_sha1, PRODUCER + CONSUMER};
-struct KeyScheme _KEY_SCHEME_SHA1_PRODUCER = {2, avis_sha1, PRODUCER};
-struct KeyScheme _KEY_SCHEME_SHA1_CONSUMER = {3, avis_sha1, CONSUMER};
-
-#define KEY_SCHEME_COUNT 3
+struct KeyScheme _KEY_SCHEME_SHA1_DUAL =     {1, DUAL,     avis_sha1};
+struct KeyScheme _KEY_SCHEME_SHA1_PRODUCER = {2, PRODUCER, avis_sha1};
+struct KeyScheme _KEY_SCHEME_SHA1_CONSUMER = {3, CONSUMER, avis_sha1};
 
 static KeyScheme schemes [KEY_SCHEME_COUNT] = 
 {
@@ -34,18 +32,23 @@ static KeyScheme schemes [KEY_SCHEME_COUNT] =
   &_KEY_SCHEME_SHA1_CONSUMER
 };
 
-Keys _empty_keys = {{{NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}}};
+static ArrayList _empty_dual_keys = {NULL, 0, 0};
 
+Keys _empty_keys = {{{&_empty_dual_keys, 0, 2}, {NULL, 0, 0}, {NULL, 0, 0}}};
+
+#define index_for(scheme) ((scheme)->id - 1)
+
+/** The key set (actually an array list) for a key collection and scheme ID */
 #define keyset_for_scheme(k, id) (&(k->keys [(id) - 1]))
 
-/** Pointer to the single key list for a single key scheme. */
+/** The single key list for a single key scheme. */
 #define single_keyset(k, id) (keyset_for_scheme (k, id))
 
-/** Pointer to the dual producer key list for a key collection & scheme ID. */
+/** The dual producer key list for a key collection & scheme ID. */
 #define dual_producer_keyset(k, id) \
   (ArrayList *)(keyset_for_scheme(k, id))->items 
 
-/** Pointer to the dual consumer key list for a key collection & scheme ID. */
+/** The dual consumer key list for a key collection & scheme ID. */
 #define dual_consumer_keyset(k, id) \
   (((ArrayList *)(keyset_for_scheme(k, id))->items) + 1) 
 
@@ -59,15 +62,15 @@ static bool read_keyset (ByteBuffer *buffer, ArrayList *keyset,
 
 Keys *elvin_keys_init (Keys *keys)
 {
+  /* init producer/consumer sub-lists for SHA1 dual scheme */
   array_list_init (&keys->keys [0], sizeof (ArrayList), 2);
   
   keys->keys [0].item_count = 2;
   
-  /* init producer/consumer sub arrays for SHA1 dual scheme */
   array_list_init (dual_producer_keyset (keys, 1), sizeof (Key), 2);
   array_list_init (dual_consumer_keyset (keys, 1), sizeof (Key), 2);
 
-  /* init key arrays for SHA1 produer and consumer schemes */
+  /* init key arrays for SHA1 producer and SHA1 consumer schemes */
   array_list_init (single_keyset (keys, 2), sizeof (Key), 2);
   array_list_init (single_keyset (keys, 3), sizeof (Key), 2);
   
@@ -78,10 +81,10 @@ void elvin_keys_free (Keys *keys)
 {
   array_list_free (dual_producer_keyset (keys, 1));
   array_list_free (dual_consumer_keyset (keys, 1));
-  array_list_free (&keys->keys [0]);
   
-  array_list_free (single_keyset (keys, 2));
-  array_list_free (single_keyset (keys, 3));
+  array_list_free (keyset_for_scheme (keys, 1));
+  array_list_free (keyset_for_scheme (keys, 2));
+  array_list_free (keyset_for_scheme (keys, 3));
 }
 
 bool elvin_key_equal (Key *key1, Key *key2)
@@ -149,7 +152,7 @@ bool elvin_keys_add (Keys *keys, KeyScheme scheme, Key key)
   
   if (scheme->type != DUAL)
   {
-    *array_list_add (&keys->keys [index_for (scheme)], Key) = key;
+    *array_list_add (single_keyset (keys, scheme->id), Key) = key;
    
     return true;
   } else
@@ -220,8 +223,8 @@ bool read_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
 bool write_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
 {
   uint32_t key_count = keyset->item_count;
-  Array array;
   Key *key = keyset->items;
+  Array array;
   
   byte_buffer_write_int32 (buffer, key_count, error);
   
@@ -280,8 +283,8 @@ bool elvin_keys_read (ByteBuffer *buffer, Keys *keys, ElvinError *error)
 
 bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error)
 {
-  uint32_t scheme_count = 0;
   int id;
+  uint32_t scheme_count = 0;
   KeyScheme *scheme = schemes;
   ArrayList *list = keys->keys;
   size_t start = buffer->position;
@@ -297,12 +300,12 @@ bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error)
     
     if ((*scheme)->type == DUAL)
     {
-      if (((ArrayList *)list->items) [0].item_count > 0 || 
-          ((ArrayList *)list->items) [1].item_count > 0)
+      if (array_list_get (list, 0, ArrayList).item_count > 0 || 
+          array_list_get (list, 1, ArrayList).item_count > 0)
       {
         byte_buffer_write_int32 (buffer, 2, error) &&
-        write_keyset (buffer, (ArrayList *)list->items, error) &&
-        write_keyset (buffer, (ArrayList *)list->items + 1, error);
+        write_keyset (buffer, &array_list_get (list, 0, ArrayList), error) &&
+        write_keyset (buffer, &array_list_get (list, 1, ArrayList), error);
         
         scheme_count++;
       }
@@ -320,7 +323,9 @@ bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error)
   
   if (elvin_error_ok (error))
   {
+    /* write scheme count */
     size_t position = buffer->position;
+    
     byte_buffer_set_position (buffer, start, error);
     byte_buffer_write_int32 (buffer, scheme_count, error);
     byte_buffer_set_position (buffer, position, error);
