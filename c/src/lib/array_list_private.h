@@ -33,6 +33,9 @@ void array_list_add_int (ArrayList *list, int value);
 
 void array_list_add_func (ArrayList *list, void (*func) ());
 
+#define array_list_get(list, index, item_type) \
+  (((item_type *)list->items) [index])
+
 int array_list_get_int (ArrayList *list, size_t index);
 
 void *array_list_get_ptr (ArrayList *list, size_t index);
