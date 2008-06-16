@@ -4,9 +4,9 @@
 #include "keys_private.h"
 #include "array_list_private.h"
 
-uint8_t *avis_sha1 (uint8_t *input, uint32_t length);
+Key avis_sha1 (Key *input);
 
-typedef uint8_t * (*HashFunc) (uint8_t *data, uint32_t length);
+typedef Key (*HashFunc) (Key *key);
 
 #define PRODUCER 1
 #define CONSUMER 2
@@ -85,6 +85,11 @@ void elvin_keys_free (Keys *keys)
   array_list_free (keyset_for_scheme (keys, 1));
   array_list_free (keyset_for_scheme (keys, 2));
   array_list_free (keyset_for_scheme (keys, 3));
+}
+
+Key elvin_public_key (Key *private_key, KeyScheme scheme)
+{
+  return (*scheme->hash) (private_key);
 }
 
 bool elvin_key_equal (Key *key1, Key *key2)
@@ -250,7 +255,7 @@ bool elvin_keys_read (ByteBuffer *buffer, Keys *keys, ElvinError *error)
     KeyScheme scheme;
     
     if (elvin_error_occurred (error))
-      return false;
+      break;
     
     on_error_return_false (scheme = scheme_for (scheme_id, error));
     
@@ -295,14 +300,12 @@ bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error)
   for (id = 1; id <= KEY_SCHEME_COUNT && elvin_error_ok (error); 
        id++, list++, scheme++)
   {
-    if (!byte_buffer_write_int32 (buffer, (*scheme)->id, error))
-      continue;
-    
     if ((*scheme)->type == DUAL)
     {
       if (array_list_get (list, 0, ArrayList).item_count > 0 || 
           array_list_get (list, 1, ArrayList).item_count > 0)
       {
+        byte_buffer_write_int32 (buffer, (*scheme)->id, error) &&
         byte_buffer_write_int32 (buffer, 2, error) &&
         write_keyset (buffer, &array_list_get (list, 0, ArrayList), error) &&
         write_keyset (buffer, &array_list_get (list, 1, ArrayList), error);
@@ -313,6 +316,7 @@ bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error)
     {
       if (list->item_count > 0)
       {
+        byte_buffer_write_int32 (buffer, (*scheme)->id, error) &&
         byte_buffer_write_int32 (buffer, 1, error) &&      
         write_keyset (buffer, list, error);
         
