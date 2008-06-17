@@ -223,7 +223,7 @@ bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t number,
   if (!auto_resize (buffer, buffer->position + 8, error))
     return false;
   
-  #if __BYTE_ORDER ==  __LITTLE_ENDIAN
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
     for (i = 0; i < 8; i++)
       buffer->data [buffer->position++] = bytes [7 - i];
   #else
