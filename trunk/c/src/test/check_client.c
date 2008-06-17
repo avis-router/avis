@@ -127,7 +127,11 @@ START_TEST (test_subscribe)
   
   fail_unless_error_code (&error, ELVIN_ERROR_SYNTAX);
 
-  sub = elvin_subscribe (&elvin, "require (test) && string (message)", &error);
+  sub = 
+    elvin_subscribe
+      (&elvin, 
+       "require (test) && string (message) && int32 == 32 && int64 == 64L", 
+       &error);
   fail_on_error (&error);
   
   elvin_subscription_add_listener (sub, test_subscribe_sub_listener, 
@@ -136,6 +140,8 @@ START_TEST (test_subscribe)
   Attributes *ntfn = attributes_create ();
   
   attributes_set_int32 (ntfn, "test", 1);
+  attributes_set_int32 (ntfn, "int32", 32);
+  attributes_set_int64 (ntfn, "int64", 64);
   attributes_set_real64 (ntfn, "pi", M_PI);
   attributes_set_real64 (ntfn, "nan", NAN);
   attributes_set_string (ntfn, "message", "hello world");
