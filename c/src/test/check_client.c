@@ -186,13 +186,16 @@ void test_subscribe_sub_listener (Subscription *sub,
   
   /* check the real64 made the roundtrip in case this system is not using 
    * IEEE 754 for double precision floats. */
-  fail_unless 
-    (attributes_get_real64 (&notification->attributes, "pi") == M_PI, 
-     "Invalid notification");
+  fail_unless
+      (attributes_get_real64 (&notification->attributes, "pi") == M_PI,
+       "Invalid notification: PI != %f",
+       attributes_get_real64 (&notification->attributes, "pi") );
+
   
   fail_unless 
     (isnan (attributes_get_real64 (&notification->attributes, "nan")), 
-     "Invalid notification");
+     "Invalid notification: NaN != %f", 
+     attributes_get_real64 (&notification->attributes, "nan"));
   
   test_subscribe_received_ntfn = true;
 }
