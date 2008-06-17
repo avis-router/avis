@@ -190,15 +190,16 @@ bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
 
 real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error)
 {
-  #ifdef __LITTLE_ENDIAN
-    uint8_t bytes [8];
+  uint8_t bytes [8];
+
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
     int i;
   #endif
   
   if (!check_remaining (buffer, 8, error))
     return 0;
   
-  #ifdef __LITTLE_ENDIAN
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
     for (i = 0; i < 8; i++)
       bytes [7 - i] = buffer->data [buffer->position++];
   #else
@@ -213,15 +214,16 @@ real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error)
 bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t number,
                                ElvinError *error)
 {
-  #ifdef __LITTLE_ENDIAN
-    uint8_t *bytes = (uint8_t *)&number;
+  uint8_t *bytes = (uint8_t *)&number;
+
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
     int i;
   #endif
   
   if (!auto_resize (buffer, buffer->position + 8, error))
     return false;
   
-  #ifdef __LITTLE_ENDIAN
+  #if __BYTE_ORDER ==  __LITTLE_ENDIAN
     for (i = 0; i < 8; i++)
       buffer->data [buffer->position++] = bytes [7 - i];
   #else
