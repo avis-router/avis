@@ -5,10 +5,42 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "attributes_private.h"
 #include "array_list_private.h"
 #include "check_ext.h"
 
-TCase *array_list_tests ();
+TCase *collections_tests ();
+
+START_TEST (test_attributes)
+{
+  Attributes *ntfn = attributes_create ();
+    
+  attributes_set_int32 (ntfn, "int32", 32);
+  attributes_set_int64 (ntfn, "int64", 64);
+  attributes_set_real64 (ntfn, "real64", 3.1415);
+  attributes_set_string (ntfn, "string", "hello world");
+  
+  fail_unless (attributes_get_int32 (ntfn, "int32") == 32, 
+               "int32 attribute: %lu != %lu", 
+               attributes_get_int32 (ntfn, "int32"), 32);
+  
+  fail_unless (attributes_get_int64 (ntfn, "int64") == 64L, 
+               "int64 attribute: %lu != %lu", 
+               attributes_get_int64 (ntfn, "int64"), 64);
+  
+  fail_unless (attributes_get_real64 (ntfn, "real64") == 3.1415, 
+               "real64 attribute: %f != %f", 
+               attributes_get_real64 (ntfn, "real64"), 3.1415);
+  
+  fail_unless 
+    (strcmp (attributes_get_string (ntfn, "string"), "hello world") == 0, 
+     "string attribute");
+  
+  fail_unless 
+    (attributes_get_string (ntfn, "nonexistent") == NULL, 
+     "nonexistent string attribute");
+}
+END_TEST
 
 START_TEST (test_array_list)
 {
@@ -55,10 +87,11 @@ START_TEST (test_array_list)
 }
 END_TEST
 
-TCase *array_list_tests ()
+TCase *collections_tests ()
 {
-  TCase *tc_core = tcase_create ("array_list");
+  TCase *tc_core = tcase_create ("collections");
   
+  tcase_add_test (tc_core, test_attributes);
   tcase_add_test (tc_core, test_array_list);
   
   return tc_core;
