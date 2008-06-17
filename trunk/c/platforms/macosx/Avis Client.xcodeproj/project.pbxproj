@@ -31,10 +31,10 @@
 		C931A0150DF640F200313558 /* array_list.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A0130DF640F200313558 /* array_list.c */; };
 		C931A0160DF640F200313558 /* array_list.h in Headers */ = {isa = PBXBuildFile; fileRef = C931A0140DF640F200313558 /* array_list.h */; };
 		C931A01B0DF641AC00313558 /* libhashtable.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4D5B770DF421FB0098EE7D /* libhashtable.a */; };
-		C931A0430DF6422A00313558 /* check_array_list.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A03E0DF6422A00313558 /* check_array_list.c */; };
 		C931A0440DF6422A00313558 /* check_client.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A03F0DF6422A00313558 /* check_client.c */; };
 		C931A0460DF6422A00313558 /* check_messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A0410DF6422A00313558 /* check_messages.c */; };
 		C931A0470DF6422A00313558 /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A0420DF6422A00313558 /* tests.c */; };
+		C97245F90E079A5000C9884C /* check_collections.c in Sources */ = {isa = PBXBuildFile; fileRef = C97245F20E0799DF00C9884C /* check_collections.c */; };
 		C9B465D80DD82A9800A1C448 /* messages.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B465D60DD82A9800A1C448 /* messages.h */; };
 		C9B465D90DD82A9800A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465D70DD82A9800A1C448 /* messages.c */; };
 		C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B466750DD9374900A1C448 /* libcheck.dylib */; };
@@ -114,7 +114,6 @@
 		C906FBF40DD3FC3900375E7D /* elvin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin.c; path = ../../src/lib/elvin.c; sourceTree = SOURCE_ROOT; };
 		C931A0130DF640F200313558 /* array_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array_list.c; path = ../../src/lib/array_list.c; sourceTree = SOURCE_ROOT; };
 		C931A0140DF640F200313558 /* array_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array_list.h; path = ../../src/include/avis/array_list.h; sourceTree = SOURCE_ROOT; };
-		C931A03E0DF6422A00313558 /* check_array_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_array_list.c; path = ../../src/test/check_array_list.c; sourceTree = SOURCE_ROOT; };
 		C931A03F0DF6422A00313558 /* check_client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_client.c; path = ../../src/test/check_client.c; sourceTree = SOURCE_ROOT; };
 		C931A0410DF6422A00313558 /* check_messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_messages.c; path = ../../src/test/check_messages.c; sourceTree = SOURCE_ROOT; };
 		C931A0420DF6422A00313558 /* tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tests.c; path = ../../src/test/tests.c; sourceTree = SOURCE_ROOT; };
@@ -136,6 +135,7 @@
 		C931A0BC0DF642E500313558 /* check_run.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_run.c; path = ../../packages/check/src/check_run.c; sourceTree = SOURCE_ROOT; };
 		C931A0BD0DF642E500313558 /* check_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_str.c; path = ../../packages/check/src/check_str.c; sourceTree = SOURCE_ROOT; };
 		C931A0BE0DF642E500313558 /* check_str.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = check_str.h; path = ../../packages/check/src/check_str.h; sourceTree = SOURCE_ROOT; };
+		C97245F20E0799DF00C9884C /* check_collections.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_collections.c; path = ../../src/test/check_collections.c; sourceTree = SOURCE_ROOT; };
 		C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avis_client_config.h; sourceTree = "<group>"; };
 		C97363CC0DF7CF2F00DCE905 /* array_list_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array_list_private.h; path = ../../src/lib/array_list_private.h; sourceTree = SOURCE_ROOT; };
 		C97363F70DF7D04900DCE905 /* stdtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdtypes.h; path = ../../src/include/avis/stdtypes.h; sourceTree = SOURCE_ROOT; };
@@ -298,8 +298,8 @@
 		C931A0E50DF643D100313558 /* Unit tests */ = {
 			isa = PBXGroup;
 			children = (
+				C97245F20E0799DF00C9884C /* check_collections.c */,
 				C9F0DAA30E060BF400DB5A88 /* check_security.c */,
-				C931A03E0DF6422A00313558 /* check_array_list.c */,
 				C931A03F0DF6422A00313558 /* check_client.c */,
 				C931A0410DF6422A00313558 /* check_messages.c */,
 				C931A0420DF6422A00313558 /* tests.c */,
@@ -546,11 +546,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C931A0430DF6422A00313558 /* check_array_list.c in Sources */,
 				C931A0440DF6422A00313558 /* check_client.c in Sources */,
 				C931A0460DF6422A00313558 /* check_messages.c in Sources */,
 				C931A0470DF6422A00313558 /* tests.c in Sources */,
 				C9F0DAA50E060BFD00DB5A88 /* check_security.c in Sources */,
+				C97245F90E079A5000C9884C /* check_collections.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
