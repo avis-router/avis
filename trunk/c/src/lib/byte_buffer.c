@@ -191,7 +191,7 @@ bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
 real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error)
 {
   #ifdef __LITTLE_ENDIAN
-    unsigned char bytes [8];
+    uint8_t bytes [8];
     int i;
   #endif
   
@@ -214,7 +214,7 @@ bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t number,
                                ElvinError *error)
 {
   #ifdef __LITTLE_ENDIAN
-    unsigned char *bytes = (unsigned char *)&number;
+    uint8_t *bytes = (uint8_t *)&number;
     int i;
   #endif
   
