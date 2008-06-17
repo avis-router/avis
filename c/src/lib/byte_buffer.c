@@ -188,25 +188,34 @@ bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
   return true;
 }
 
+/**
+ * Used to coerce a 64-bit real value to/from an int64. This is assuming the 
+ * system's double type is already in IEEE 754 format, which is the case with
+ * almost all modern architectures, but may fail on some exotic platforms. 
+ */
+union Real64
+{
+  int64_t  int64;
+  real64_t real64;
+};
+
 real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error)
 {
-  int64_t value = byte_buffer_read_int64 (buffer, error);
- 
-  /* 
-   * We're assuming the system's double type is already in IEEE 754 format.
-   * This will almost certainly fail on some platforms 
-   */
-  return *(real64_t *)&value;
+  union Real64 value;
+
+  value.int64 = byte_buffer_read_int64 (buffer, error);
+
+  return value.real64;
 }
 
-bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t value, 
+bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t number,
                                ElvinError *error)
 {
-  /* 
-   * We're assuming the system's double type is already in IEEE 754 format.
-   * This will almost certainly fail on some platforms 
-   */
-  return byte_buffer_write_int64 (buffer, *(int64_t *)&value, error);
+  union Real64 value;
+
+  value.real64 = number;
+  
+  return byte_buffer_write_int64 (buffer, value.int64, error);
 }
 
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
