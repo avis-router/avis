@@ -79,19 +79,19 @@ void value_free (Value *value);
  * Allocate and init an int32 value. Use value_destroy() when done.
  */
 #define value_create_int32(value) \
-  (value_init (malloc (sizeof (Value)), TYPE_INT32, value))
+  (value_init (malloc (sizeof (Value)), TYPE_INT32, (int32_t)(value)))
 
 /** 
  * Allocate and init an int64 value. Use value_destroy() when done.
  */
 #define value_create_int64(value) \
-  (value_init (malloc (sizeof (Value)), TYPE_INT64, value))
+  (value_init (malloc (sizeof (Value)), TYPE_INT64, (int64_t)(value)))
 
 /** 
  * Allocate and init a real64 value. Use value_destroy() when done.
  */
 #define value_create_real64(value) \
-  (value_init (malloc (sizeof (Value)), TYPE_REAL64, value))
+  (value_init (malloc (sizeof (Value)), TYPE_REAL64, (real64_t)(value)))
 
 /** 
  * Allocate and init a string value. Use value_destroy() when done. The
