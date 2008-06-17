@@ -32,7 +32,7 @@ static KeyScheme schemes [KEY_SCHEME_COUNT] =
   &_KEY_SCHEME_SHA1_CONSUMER
 };
 
-static ArrayList _empty_dual_keys = {NULL, 0, 0};
+static ArrayList _empty_dual_keys [2] = {{NULL, 0, 0}, {NULL, 0, 0}};
 
 Keys _empty_keys = {{{&_empty_dual_keys, 0, 2}, {NULL, 0, 0}, {NULL, 0, 0}}};
 
