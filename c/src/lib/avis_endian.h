@@ -12,12 +12,13 @@
 #ifndef __BYTE_ORDER
   #ifdef __linux__
     #include <endian.h>
-  #elif defined (__OpenBSD__) || defined (__FreeBSD__) || defined (__NetBSD__) || defined (__APPLE__)
+  #elif defined (__OpenBSD__) || defined (__FreeBSD__) || \
+        defined (__NetBSD__) || defined (__APPLE__)
 
     #include <machine/endian.h>
-    #define __BYTE_ORDER BYTE_ORDER
-    #define __LITTLE_ENDIAN LITTLE_ENDIAN
-    #define __BIG_ENDIAN BIG_ENDIAN
+    #define __BYTE_ORDER     BYTE_ORDER
+    #define __LITTLE_ENDIAN  LITTLE_ENDIAN
+    #define __BIG_ENDIAN     BIG_ENDIAN
   
   #else
 
@@ -26,7 +27,7 @@
     #endif
   
     #ifndef __BIG_ENDIAN
-      #define __BIG_ENDIAN    4321
+      #define __BIG_ENDIAN      4321
     #endif
   
     #ifdef __LITTLE_ENDIAN__
@@ -51,30 +52,14 @@
 
 #ifndef __BYTE_ORDER
   #error Need to know endianess
-#endif /* __BYTE_ORDER */
+#endif
 
 /*
  * The following shenaningans defines htonll() and ntohll() macros that
  * handle network/host endianness conversion for int64 values. 
  */
 
-#ifdef __APPLE__
-
-  /* Mac OS X */
-  #include <architecture/byte_order.h>
-
-  #define htonll(i) (NXSwapHostLongLongToBig(i))
-  #define ntohll(i) (NXSwapBigLongLongToHost(i))
-
-  /*
-  Could use code below if we're using C99: uses unsigned long long vars
-  
-  #include <libkern/OSByteOrder.h>
-
-  #define ntohll(i) ((int64_t)OSSwapInt64 (i))
-  #define htonll(i) ((int64_t)OSSwapInt64 (i))
-  */
-#elif defined(__LITTLE_ENDIAN)
+#if __BYTE_ORDER == __LITTLE_ENDIAN
 
   #define bswap_16(value) ((((value) & 0xff) << 8) | ((value) >> 8))
  
