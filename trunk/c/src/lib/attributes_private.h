@@ -1,6 +1,8 @@
 #ifndef ATTRIBUTES_PRIVATE_H_
 #define ATTRIBUTES_PRIVATE_H_
 
+#include <avis/attributes.h>
+
 #include "byte_buffer.h"
 
 bool attributes_write (ByteBuffer *buffer, Attributes *attributes, 
