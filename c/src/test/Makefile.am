@@ -12,7 +12,7 @@ tests_SOURCES = \
   check_messages.c \
   check_security.c \
   check_client.c \
-  check_array_list.c \
+  check_collections.c \
   check_ext.h
 
 tests_LDADD = \
