@@ -18,10 +18,10 @@ Value *value_init (Value *value, ValueType type, ...)
   switch (type)
   {
   case TYPE_INT32:
-    value->value.int32 = va_arg (args, uint32_t);
+    value->value.int32 = va_arg (args, int32_t);
     break;
   case TYPE_INT64:
-    value->value.int64 = va_arg (args, uint64_t);
+    value->value.int64 = va_arg (args, int64_t);
     break;
   case TYPE_REAL64:
     value->value.real64 = va_arg (args, real64_t);
