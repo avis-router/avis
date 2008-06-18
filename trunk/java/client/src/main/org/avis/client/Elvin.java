@@ -953,7 +953,7 @@ public final class Elvin implements Closeable
    * 
    * @param subscriptionExpr The subscription expression to match
    *          notifications.
-   * @param keys The keys that must match notificiation keys for
+   * @param keys The keys that must match notification keys for
    *          secure delivery.
    * @param secureMode The security mode: specifying
    *          REQUIRE_SECURE_DELIVERY means the subscription will only
