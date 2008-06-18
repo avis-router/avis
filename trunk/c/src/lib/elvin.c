@@ -322,13 +322,22 @@ void elvin_subscription_free (Subscription *subscription)
 
 Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
                                ElvinError *error)
+{
+  return elvin_subscribe_with_keys 
+    (elvin, subscription_expr, EMPTY_KEYS, ALLOW_INSECURE_DELIVERY, error);
+}
+
+Subscription *elvin_subscribe_with_keys (Elvin *elvin, 
+                                         const char *subscription_expr, 
+                                         Keys *keys,
+                                         SecureMode security, 
+                                         ElvinError *error)
 {  
   alloc_message (sub_add_rqst);
   alloc_message (sub_reply);
   
-  message_init (sub_add_rqst,
-                MESSAGE_ID_SUB_ADD_RQST, subscription_expr,
-                ALLOW_INSECURE_DELIVERY, EMPTY_KEYS);
+  message_init (sub_add_rqst, MESSAGE_ID_SUB_ADD_RQST, subscription_expr, 
+                security, keys);
   
   if (send_and_receive (elvin, sub_add_rqst, sub_reply,
                         MESSAGE_ID_SUB_RPLY, error))
