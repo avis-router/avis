@@ -14,6 +14,10 @@
 /** Max size of an in-memory decoded message */
 #define MAX_MESSAGE_SIZE (MAX_MESSAGE_FIELDS * sizeof (int *))
 
+/** 
+ * Message type ID's for the subset of Elvin messages understood by the 
+ * client.
+ */
 typedef enum
 {
   MESSAGE_ID_NACK = 48,
@@ -29,6 +33,9 @@ typedef enum
   MESSAGE_ID_SUB_RPLY = 61
 } MessageTypeID;
 
+/**
+ * Selected NACK codes.
+ */
 typedef enum
 {
   NACK_PROT_INCOMPAT  = 0001,
@@ -40,29 +47,44 @@ typedef enum
   NACK_EXP_IS_TRIVIAL = 2110
 } NackCode;
 
+/**
+ * A message is actually a fixed-length blob 'o bytes up to MAX_MESSAGE_SIZE 
+ * long.
+ */
 typedef uint8_t * Message;
 
+/**
+ * Allocate a message on the stack.
+ */
 #define alloc_message(name) uint8_t name [MAX_MESSAGE_SIZE]
 
+/**
+ * Initialise a message's fields from a variable length set of arguments.
+ */
 Message message_init (Message message, MessageTypeID type, ...);
 
 #define message_destroy(message) \
   (message_free (message), free (message), message = NULL)
 
 /**
- * Free memory allocated to a message dynamically allocated by message_read().
+ * Free fields allocated inside a message dynamically allocated by 
+ * message_read().
  */
 void message_free (Message message);
 
 /**
- * Read a message from a buffer. The buffer's max length must be primed with
- * the amount of data expected to be read and the position set to the start
- * of the data.
+ * Read an XDR-encoded message from a buffer. The buffer's max length must be 
+ * primed with the amount of data expected to be read and the position set to 
+ * the start of the data.
  * 
+ * @see message_read()
  * @see message_free()
  */
 bool message_read (ByteBuffer *buffer, Message message, ElvinError *error);
 
+/**
+ * Write a message to a buffer in Elvin XDR-encoded form.
+ */
 bool message_write (ByteBuffer *buffer, Message message, ElvinError *error);
 
 /** The message's type ID. */
