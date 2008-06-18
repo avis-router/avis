@@ -187,6 +187,8 @@ START_TEST (test_subscribe)
 }
 END_TEST
 
+/* TODO change to passing notification as args */
+/* TODO think about max key size */
 void test_subscribe_sub_listener (Subscription *sub, 
                                   Notification *notification, void *user_data)
 {
