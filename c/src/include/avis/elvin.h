@@ -126,6 +126,7 @@ typedef void (*SubscriptionListener) (Subscription *subscription,
  * </pre>
  * 
  * @see elvin_open_uri()
+ * @see elvin_open_with_keys()
  * @see elvin_close()
  * @see elvin_is_open()
  */
@@ -144,6 +145,23 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
  */
 bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
 
+/**
+ * Open a connection to an Elvin router with optional security constraints.
+ * 
+ * @param elvin The Elvin connection instance.
+ * @param uri The URI for the router endpoint.
+ * @param notification_keys These keys automatically apply to all
+ *          notifications, exactly as if they were added to the keys
+ *          in the elvin_send_with_keys() call.
+ * @param subscription_keys These keys automatically apply to all
+ *          subscriptions, exactly as if they were added to the keys
+ *          in the elvin_subscribe_with_keys() call.
+ * @param error The error info.
+ * 
+ * @return true if the connection succeeded.
+ * 
+ * @see elvin_open_uri()
+ */
 bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
                            Keys *notification_keys, Keys *subscription_keys, 
                            ElvinError *error);
@@ -184,7 +202,7 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * @param error The error info.
  *
  * @return The new subscription, or NULL on error.
- * 
+ *
  * Example:
  * <pre>
  * Elvin *elvin = ...
@@ -200,14 +218,58 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * 
  * elvin_unsubscribe (elvin, subscription, error);
  * </pre>
+ *  
+ * @see elvin_subscribe_with_keys()
+ */
+Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
+                               ElvinError *error);
+
+/**
+ * Subscribe to notifications from an Elvin router with optional security
+ * constraints.
+ * 
+ * @param elvin The Elvin connection instance.
+ * @param subscription_expr The 
+ * <a href="http://avis.sourceforge.net/subscription_language.html">subscription expression</a>.
+ * @param keys The keys that must match notification keys for
+ *          secure delivery.
+ * @param secureMode The security mode: specifying
+ *          REQUIRE_SECURE_DELIVERY means the subscription will only
+ *          receive notifications that are sent by clients with keys
+ *          matching the set supplied here or the global
+ *          subscription key set.
+ * @param error The error info.
+ *
+ * @return The new subscription, or NULL on error.
+ * 
+ * Example:
+ * <pre>
+ * Elvin *elvin = ...
+ * Keys *sub_keys = ...
+ * ElvinError *error = ...
+ * Subscription *subscription = 
+ *   elvin_subscribe (elvin, "string (message)", keys, 
+ *                    REQUIRE_SECURE_DELIVERY, error);
+ *
+ * if (!subscription)
+ * {
+ *   elvin_perror ("subscribe", error);
+ *   exit (1);
+ * }
+ * 
+ * elvin_unsubscribe (elvin, subscription, error);
+ * </pre>
  * 
  * @see elvin_send()
  * @see elvin_unsubscribe()
  * @see elvin_subscription_add_listener()
  * @see elvin_poll()
  */
-Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
-                               ElvinError *error);
+Subscription *elvin_subscribe_with_keys (Elvin *elvin, 
+                                         const char *subscription_expr, 
+                                         Keys *keys,
+                                         SecureMode security, 
+                                         ElvinError *error);
 
 /**
  * Unsubscribe from a subscription created on an Elvin router.
