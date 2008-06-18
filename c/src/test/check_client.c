@@ -17,6 +17,8 @@
 #include <byte_buffer.h>
 #include "check_ext.h"
 
+static const char *elvin_router ();
+
 static void test_subscribe_sub_listener
   (Subscription *sub, Notification *notification, void *user_data);
 
@@ -42,6 +44,13 @@ static void teardown ()
 }
 
 #define reset_uri(uri) (uri.host = NULL, uri.port = 0)
+
+const char *elvin_router ()
+{
+  const char *uri = getenv ("ELVIN");
+  
+  return uri == NULL ? "elvin://localhost" : uri;
+}
 
 START_TEST (test_uri)
 {
@@ -86,7 +95,7 @@ START_TEST (test_connect)
 {
   Elvin elvin;
     
-  elvin_open (&elvin, "elvin://localhost", &error);
+  elvin_open (&elvin, elvin_router (), &error);
   fail_on_error (&error);
   
   elvin_close (&elvin);
@@ -97,7 +106,7 @@ START_TEST (test_notify)
 {
   Elvin elvin;
     
-  elvin_open (&elvin, "elvin://localhost", &error);
+  elvin_open (&elvin, elvin_router (), &error);
   fail_on_error (&error);
   
   Attributes *ntfn = attributes_create ();
@@ -122,7 +131,7 @@ START_TEST (test_subscribe)
   Elvin elvin;
   Subscription *sub;
   
-  elvin_open (&elvin, "elvin://localhost", &error);
+  elvin_open (&elvin, elvin_router (), &error);
   fail_on_error (&error);
 
   /* check invalid subscription is handled */
@@ -213,7 +222,7 @@ START_TEST (test_security)
   Elvin alice_client;
   Elvin bob_client;
   
-  elvin_uri_from_string (&uri, "elvin://localhost", &error);
+  elvin_uri_from_string (&uri, elvin_router (), &error);
   fail_on_error (&error);
   
   Key alice_private = elvin_key_from_string ("alice private");
