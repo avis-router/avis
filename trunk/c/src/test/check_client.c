@@ -20,6 +20,10 @@
 static void test_subscribe_sub_listener
   (Subscription *sub, Notification *notification, void *user_data);
 
+static void check_secure_send_receive (Elvin *client, Subscription *secure_sub);
+
+static void wait_for_notification ();
+
 static ElvinError error = elvin_error_create ();
 
 static void setup ()
@@ -117,7 +121,6 @@ START_TEST (test_subscribe)
 {
   Elvin elvin;
   Subscription *sub;
-  time_t start_time;
   
   elvin_open (&elvin, "elvin://localhost", &error);
   fail_on_error (&error);
@@ -145,7 +148,8 @@ START_TEST (test_subscribe)
   attributes_set_real64 (ntfn, "pi", M_PI);
   attributes_set_real64 (ntfn, "nan", NAN);
   attributes_set_string (ntfn, "message", "hello world");
-  
+
+  test_subscribe_received_ntfn = false;
   elvin_send (&elvin, ntfn, &error);
   fail_on_error (&error);
   
@@ -154,14 +158,7 @@ START_TEST (test_subscribe)
   elvin_poll (&elvin, &error);
   fail_on_error (&error);
   
-  /* Wait up to 3 seconds for notification to come in */
-  start_time = time (NULL);
-  
-  while (!test_subscribe_received_ntfn &&
-         difftime (time (NULL), start_time) < 3);
-  {
-    usleep (500);
-  }
+  wait_for_notification ();
   
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
   
@@ -206,20 +203,22 @@ void test_subscribe_sub_listener (Subscription *sub,
   test_subscribe_received_ntfn = true;
 }
 
+/*
+ * TODO elvin connection should free keys. how to handle empty keys?
+ */
 START_TEST (test_security)
 {
-  Elvin elvin;
   ElvinURI uri;
-  Subscription *sub;
-  time_t start_time;
-  Elvin alice_client, bob_client;
+  Subscription *bob_sub;
+  Elvin alice_client;
+  Elvin bob_client;
   
   elvin_uri_from_string (&uri, "elvin://localhost", &error);
   fail_on_error (&error);
   
   Key alice_private = elvin_key_from_string ("alice private");
   Keys *alice_ntfn_keys = elvin_keys_create ();
-  elvin_keys_add (alice_ntfn_keys, KEY_SCHEME_SHA1_CONSUMER, alice_private);
+  elvin_keys_add (alice_ntfn_keys, KEY_SCHEME_SHA1_PRODUCER, alice_private);
   
   Keys* bob_sub_keys = elvin_keys_create ();
   elvin_keys_add (bob_sub_keys, KEY_SCHEME_SHA1_PRODUCER, 
@@ -227,13 +226,57 @@ START_TEST (test_security)
   
   elvin_open_with_keys (&alice_client, &uri, 
                         alice_ntfn_keys, EMPTY_KEYS, &error);
-  
+  fail_on_error (&error);
+    
+  elvin_open_with_keys (&bob_client, &uri, EMPTY_KEYS, bob_sub_keys, &error);
   fail_on_error (&error);
   
+  bob_sub = elvin_subscribe_with_keys (&bob_client, "require (From-Alice)",
+                                  EMPTY_KEYS, REQUIRE_SECURE_DELIVERY, &error);
+  
+  check_secure_send_receive (&alice_client, bob_sub);
+  
   elvin_close (&alice_client);
+  elvin_close (&bob_client);
 }
 END_TEST
 
+void test_security_sub_listener (Subscription *sub, 
+                                 Notification *notification, void *user_data)
+{
+  fail_unless (notification->secure, "Not secure");
+  
+  test_subscribe_received_ntfn = true;
+}
+
+void check_secure_send_receive (Elvin *client, Subscription *secure_sub)
+{
+  elvin_subscription_add_listener 
+    (secure_sub, test_security_sub_listener, NULL);
+  
+  Attributes *ntfn = attributes_create ();
+  attributes_set_int32 (ntfn, "From-Alice", 1);
+  
+  test_subscribe_received_ntfn = false;
+  
+  elvin_send (client, ntfn, &error);
+  fail_on_error (&error);
+  
+  attributes_destroy (ntfn);
+  
+  elvin_poll (secure_sub->elvin, &error);
+  fail_on_error (&error);
+    
+  wait_for_notification ();
+  
+  fail_unless (test_subscribe_received_ntfn, "Did not get notification");
+  
+  elvin_subscription_remove_listener (secure_sub, test_security_sub_listener);
+  
+//  TestNtfnListener insecureListener = new TestNtfnListener (insecureSub);
+//  insecureListener.waitForSecureNotification (client, ntfn);
+//  assertNull (insecureListener.event);
+}
 /*
  *   public void security ()
     throws Exception
@@ -320,6 +363,18 @@ END_TEST
     eveClient.close ();
   }
   */
+
+void wait_for_notification ()
+{
+  /* Wait up to 3 seconds for notification to come in */
+  time_t start_time = time (NULL);
+  
+  while (!test_subscribe_received_ntfn &&
+         difftime (time (NULL), start_time) < 3);
+  {
+    usleep (500);
+  }
+}
 
 TCase *client_tests ()
 {
