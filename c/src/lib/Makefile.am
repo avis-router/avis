@@ -23,8 +23,8 @@ libavis_la_SOURCES = \
   values.c \
   keys.c \
   log.c \
-  array_list.c \
-  array_list_private.h \
+  arrays.c \
+  arrays_private.h \
   attributes_private.h \
   byte_buffer.h \
   keys_private.h \
@@ -38,7 +38,7 @@ libavis_la_LIBADD = \
 includedir=${prefix}/include/avis
 
 include_HEADERS = \
-  $(public_inc)/array_list.h \
+  $(public_inc)/arrays.h \
   $(public_inc)/attributes.h \
   $(public_inc)/elvin_uri.h \
   $(public_inc)/elvin.h \

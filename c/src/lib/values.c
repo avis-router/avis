@@ -109,28 +109,3 @@ bool value_write (ByteBuffer *buffer, Value *value, ElvinError *error)
   
   return true;
 }
-
-Array *array_init (Array *array, size_t item_count, size_t item_length)
-{
-  array->item_count = item_count;
-  array->items = malloc (item_count * item_length);
-
-  return array;
-}
-
-void array_free (Array *array)
-{
-  if (array->items)
-  {
-    free (array->items);
-    
-    array->items = NULL;
-    array->item_count = 0;
-  }
-}
-
-bool array_equals (Array *array1, Array *array2)
-{
-  return array1->item_count == array2->item_count && 
-         memcmp (array1->items, array2->items, array1->item_count) == 0;
-}

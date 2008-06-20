@@ -1,10 +1,10 @@
-#ifndef ARRAY_LIST_PRIVATE_H_
-#define ARRAY_LIST_PRIVATE_H_
+#ifndef ARRAYS_PRIVATE_H_
+#define ARRAYS_PRIVATE_H_
 
 #include <stdlib.h>
 
-#include <avis/array_list.h>
 #include <avis/stdtypes.h>
+#include <avis/arrays.h>
 
 typedef void (*FuncPtr) ();
 
@@ -61,4 +61,4 @@ bool array_list_remove_func (ArrayList *list, void (*func) ());
 
 bool array_list_remove_ptr (ArrayList *list, void *ptr);
 
-#endif /*ARRAY_LIST_PRIVATE_H_*/
+#endif /*ARRAYS_PRIVATE_H_*/

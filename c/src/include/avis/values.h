@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include <avis/stdtypes.h>
+#include <avis/arrays.h>
 
 /**
  * The type tag for polymorphic values. These are the same as the type codes 
@@ -17,18 +18,6 @@ typedef enum
   TYPE_INT32 = 1, TYPE_INT64 = 2, TYPE_REAL64 = 3, 
   TYPE_STRING = 4, TYPE_OPAQUE = 5
 } ValueType;
-
-/**
- * A generic homogeneous, fixed length array of any type of item.
- */
-typedef struct
-{
-  /** A pointer to the items in the array. */
-  void * items;
-  
-  /** The number of items in the array. */
-  size_t item_count; 
-} Array;
 
 /** 
  * A polymorphic value: either an int32, int64, real64, string or opaque 
