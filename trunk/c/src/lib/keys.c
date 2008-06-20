@@ -4,9 +4,9 @@
 #include "keys_private.h"
 #include "arrays_private.h"
 
-Key avis_sha1 (Key *input);
+Key avis_sha1 (Key input);
 
-typedef Key (*HashFunc) (Key *key);
+typedef Key (*HashFunc) (Key key);
 
 #define PRODUCER 1
 #define CONSUMER 2
@@ -115,9 +115,9 @@ void free_keyset (ArrayList *keyset)
   array_list_free (keyset);
 }
 
-Key elvin_public_key (Key private_key, KeyScheme scheme)
+Key elvin_key_create_public (Key private_key, KeyScheme scheme)
 {
-  return (*scheme->hash) (&private_key);
+  return (*scheme->hash) (private_key);
 }
 
 bool elvin_key_equal (Key *key1, Key *key2)

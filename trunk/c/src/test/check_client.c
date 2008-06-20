@@ -231,8 +231,9 @@ START_TEST (test_security)
   elvin_keys_add (alice_ntfn_keys, KEY_SCHEME_SHA1_PRODUCER, alice_private);
   
   Keys* bob_sub_keys = elvin_keys_create ();
-  elvin_keys_add (bob_sub_keys, KEY_SCHEME_SHA1_PRODUCER, 
-                  elvin_public_key (alice_private, KEY_SCHEME_SHA1_PRODUCER));
+  elvin_keys_add 
+    (bob_sub_keys, KEY_SCHEME_SHA1_PRODUCER, 
+     elvin_key_create_public (alice_private, KEY_SCHEME_SHA1_PRODUCER));
   
   elvin_open_with_keys (&alice_client, &uri, 
                         alice_ntfn_keys, EMPTY_KEYS, &error);
