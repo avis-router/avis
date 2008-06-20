@@ -188,7 +188,6 @@ START_TEST (test_subscribe)
 END_TEST
 
 /* TODO change to passing notification as args */
-/* TODO think about max key size */
 void test_subscribe_sub_listener (Subscription *sub, 
                                   Notification *notification, void *user_data)
 {
@@ -201,9 +200,9 @@ void test_subscribe_sub_listener (Subscription *sub,
   /* check the real64 made the roundtrip in case this system is not using 
    * IEEE 754 for double precision floats. */
   fail_unless
-      (attributes_get_real64 (&notification->attributes, "pi") == M_PI,
-       "Invalid notification: PI != %f",
-       attributes_get_real64 (&notification->attributes, "pi") );
+    (attributes_get_real64 (&notification->attributes, "pi") == M_PI,
+     "Invalid notification: PI != %f",
+     attributes_get_real64 (&notification->attributes, "pi") );
 
   
   fail_unless 
@@ -227,13 +226,13 @@ START_TEST (test_security)
   elvin_uri_from_string (&uri, elvin_router (), &error);
   fail_on_error (&error);
   
-  Key alice_private = elvin_key_from_string ("alice private");
+  Key alice_private = elvin_key_create_from_string ("alice private");
   Keys *alice_ntfn_keys = elvin_keys_create ();
   elvin_keys_add (alice_ntfn_keys, KEY_SCHEME_SHA1_PRODUCER, alice_private);
   
   Keys* bob_sub_keys = elvin_keys_create ();
   elvin_keys_add (bob_sub_keys, KEY_SCHEME_SHA1_PRODUCER, 
-                  elvin_public_key (&alice_private, KEY_SCHEME_SHA1_PRODUCER));
+                  elvin_public_key (alice_private, KEY_SCHEME_SHA1_PRODUCER));
   
   elvin_open_with_keys (&alice_client, &uri, 
                         alice_ntfn_keys, EMPTY_KEYS, &error);

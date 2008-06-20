@@ -2,7 +2,7 @@
 #include <avis/keys.h>
 
 #include "keys_private.h"
-#include "array_list_private.h"
+#include "arrays_private.h"
 
 Key avis_sha1 (Key *input);
 
@@ -52,6 +52,8 @@ Keys _empty_keys = {{{&_empty_dual_keys, 0, 2}, {NULL, 0, 0}, {NULL, 0, 0}}};
 #define dual_consumer_keyset(k, id) \
   (((ArrayList *)(keyset_for_scheme(k, id))->items) + 1) 
 
+static void free_keyset (ArrayList *keyset);
+
 static bool keysets_equal (ArrayList *keyset1, ArrayList *keyset2);
 
 static bool write_keyset (ByteBuffer *buffer, ArrayList *keyset, 
@@ -59,6 +61,7 @@ static bool write_keyset (ByteBuffer *buffer, ArrayList *keyset,
 
 static bool read_keyset (ByteBuffer *buffer, ArrayList *keyset, 
                          ElvinError *error);
+
 
 Keys *elvin_keys_init (Keys *keys)
 {
@@ -79,17 +82,39 @@ Keys *elvin_keys_init (Keys *keys)
 
 void elvin_keys_free (Keys *keys)
 {
-  array_list_free (dual_producer_keyset (keys, 1));
-  array_list_free (dual_consumer_keyset (keys, 1));
+  free_keyset (dual_producer_keyset (keys, 1));
+  free_keyset (dual_consumer_keyset (keys, 1));
   
   array_list_free (keyset_for_scheme (keys, 1));
-  array_list_free (keyset_for_scheme (keys, 2));
-  array_list_free (keyset_for_scheme (keys, 3));
+  
+  free_keyset (keyset_for_scheme (keys, 2));
+  free_keyset (keyset_for_scheme (keys, 3));
 }
 
-Key elvin_public_key (Key *private_key, KeyScheme scheme)
+void key_free (Key *key)
 {
-  return (*scheme->hash) (private_key);
+  if (key->data)
+  {
+    free (key->data);
+    
+    key->data = NULL;
+  }
+}
+
+void free_keyset (ArrayList *keyset)
+{
+  size_t i = keyset->item_count;
+  Key *key = keyset->items;
+  
+  for ( ; i > 0; i--, key++)
+    key_free (key);
+  
+  array_list_free (keyset);
+}
+
+Key elvin_public_key (Key private_key, KeyScheme scheme)
+{
+  return (*scheme->hash) (&private_key);
 }
 
 bool elvin_key_equal (Key *key1, Key *key2)
