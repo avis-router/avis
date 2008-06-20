@@ -24,6 +24,9 @@ typedef struct
   size_t item_count;
 } ArrayList;
 
+/**
+ * Duplicate a block of memory a la strdup ().
+ */
 void *memdup (void *source, size_t length);
 
 #endif /*ARRAYS_H_*/
