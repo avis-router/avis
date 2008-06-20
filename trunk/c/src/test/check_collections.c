@@ -6,7 +6,7 @@
 #include <string.h>
 
 #include "attributes_private.h"
-#include "array_list_private.h"
+#include "arrays_private.h"
 #include "check_ext.h"
 
 TCase *collections_tests ();

@@ -23,7 +23,7 @@
 #include <avis/log.h>
 
 #include "messages.h"
-#include "array_list_private.h"
+#include "arrays_private.h"
 
 typedef struct
 {

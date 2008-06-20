@@ -9,7 +9,7 @@
 #include <avis/stdtypes.h>
 #include <avis/elvin_uri.h>
 #include <avis/errors.h>
-#include <avis/array_list.h>
+#include <avis/arrays.h>
 
 #ifdef WIN32
   #include <winsock2.h>
