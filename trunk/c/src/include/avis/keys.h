@@ -41,10 +41,22 @@ typedef struct
  * contains zero or more mappings from a KeyScheme to the Keys registered 
  * for that scheme.
  * <p>
- * Once in use, key collections should be treated as immutable
- * i.e. never be modified directly after construction.
- * <p>
  * See also section 7.4 of the client protocol spec.
+ * <p>
+ * <h3>Ownership</h3>
+ * 
+ * Once added to a Keys collection, a Key's data is considered to
+ * be owned by the key set and will be freed whent when elvin_keys_free() 
+ * is invoked. Thus, if you wish to add the same key more than once you
+ * should elvin_key_copy() it first.
+ * <p>
+ * Similarly, once a Keys instance has been used in a successful call
+ * to an Elvin client connection (e.g. elvin_open_with_keys() or
+ * elvin_subscribe_with_keys()), the connection will take ownership of
+ * that key collection and free it when appropriate.
+ * <p>
+ * Once in use, key collections should be treated as immutable
+ * and never be modified directly.
  */
 typedef struct
 {
@@ -120,9 +132,21 @@ extern struct KeyScheme _KEY_SCHEME_SHA1_CONSUMER;
 
 extern Keys _empty_keys;
 
+/**
+ * Create an empty keys collection.
+ * 
+ * @see elvin_keys_free()
+ * @see elvin_keys_destroy()
+ */
 #define elvin_keys_create() \
   (elvin_keys_init (malloc (sizeof (Keys))))
 
+/**
+ * Macro to destroy and NULL a keys collection. Handles NULL and EMPTY_KEYS
+ * values.
+ * 
+ * @see elvin_keys_free()
+ */
 #define elvin_keys_destroy(keys) \
   if ((keys) != EMPTY_KEYS && (keys) != NULL) \
   {\
@@ -130,31 +154,129 @@ extern Keys _empty_keys;
   }\
   keys = NULL;\
 
+/**
+ * Initialise a keys collection to empty.
+ * 
+ * @see elvin_keys_create()
+ */
 Keys *elvin_keys_init (Keys *keys);
 
+/**
+ * Free any resources held by key collection. This includes any key data 
+ * blocks referenced.
+ * 
+ * @see Keys
+ * @see elvin_keys_init()
+ */
 void elvin_keys_free (Keys *keys);
 
+/**
+ * Test if two key collections are logically equal.
+ */
 bool elvin_keys_equal (Keys *keys1, Keys *keys2);
 
+/**
+ * Add a key to the collection in a given security scheme.
+ * 
+ * @param keys The keys to add to.
+ * @param scheme the security scheme to associate the key with.
+ * @param key The key to add. The key becomes owned by the collection and
+ * will be freed when the collection is.
+ * @return True if the key was added, false if the collection was not modified
+ * (the key was already in the collection).
+ * 
+ * @see elvin_keys_add_dual_consumer()
+ * @see elvin_keys_add_dual_producer()
+ */
 bool elvin_keys_add (Keys *keys, KeyScheme scheme, Key key);
 
+/**
+ * Add a key to the collection as a consumer key in a given dual key security 
+ * scheme.
+ * 
+ * @param keys The keys to add to.
+ * @param scheme the security scheme to associate the key with. This must
+ * be a dual scheme (e.g. KEY_SCHEME_SHA1_DUAL).
+ * @param key The key to add. The key becomes owned by the collection and
+ * will be freed when the collection is.
+ * @return True if the key was added, false if the collection was not modified
+ * (the key was already in the collection, or the scheme is not a dual key
+ * scheme).
+ * 
+ * @see elvin_keys_add()
+ * @see elvin_keys_add_dual_producer()
+ */
 bool elvin_keys_add_dual_consumer (Keys *keys, KeyScheme scheme, Key key);
 
+/**
+ * Add a key to the collection as a producer key in a given dual key security 
+ * scheme.
+ * 
+ * @param keys The keys to add to.
+ * @param scheme the security scheme to associate the key with. This must
+ * be a dual scheme (e.g. KEY_SCHEME_SHA1_DUAL).
+ * @param key The key to add. The key becomes owned by the collection and
+ * will be freed when the collection is.
+ * @return True if the key was added, false if the collection was not modified
+ * (the key was already in the collection, or the scheme is not a dual key
+ * scheme).
+ * 
+ * @see elvin_keys_add()
+ * @see elvin_keys_add_dual_consumer()
+ */
 bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
 
+/**
+ * Free the data block associated with a key.
+ * 
+ * @see elvin_key_create_from_string()
+ * @see elvin_key_create_from_data()
+ */
 void key_free (Key *key);
 
+/**
+ * Copy a key.
+ * 
+ * @see elvin_key_create_from_data()
+ */
 #define elvin_key_copy(key) \
   (Key){memdup ((key).data, (key).length), (key).length}
 
+/**
+ * Create a key from a character string.
+ * 
+ * @see elvin_key_create_from_data()
+ * @see key_free()
+ */
 #define elvin_key_create_from_string(str) \
-  {(uint8_t *)strdup (str), strlen (str)}
+  elvin_key_create_from_data ((uint8_t *)(str), strlen (str))
 
+/**
+ * Create a key from a block of data.
+ * 
+ * @see elvin_key_create_from_string()
+ * @see elvin_key_create_public()
+ * @see key_free()
+ */
 #define elvin_key_create_from_data(data, length) \
   {memdup (data, length), length}
 
-Key elvin_public_key (Key private_key, KeyScheme scheme);
+/**
+ * Create a public key from a private key using a given scheme's hash.
+ * 
+ * @param private_key The private key block.
+ * @param scheme The security scheme to use.
+ * 
+ * @return The public key. public.data = hash (private_key.data)
+ * 
+ * @see elvin_key_create_from_data()
+ * @see key_free()
+ */
+Key elvin_key_create_public (Key private_key, KeyScheme scheme);
 
+/**
+ * Test if two keys are equal.
+ */
 bool elvin_key_equal (Key *key1, Key *key2);
 
 #endif /* ELVIN_KEYS_H */
