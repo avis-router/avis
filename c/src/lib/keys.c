@@ -82,6 +82,9 @@ Keys *elvin_keys_init (Keys *keys)
 
 void elvin_keys_free (Keys *keys)
 {
+  if (keys == EMPTY_KEYS || keys == NULL)
+    return;
+  
   free_keyset (dual_producer_keyset (keys, 1));
   free_keyset (dual_consumer_keyset (keys, 1));
   

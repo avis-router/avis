@@ -124,7 +124,11 @@ extern Keys _empty_keys;
   (elvin_keys_init (malloc (sizeof (Keys))))
 
 #define elvin_keys_destroy(keys) \
-  (elvin_keys_free (keys), free (keys), keys = NULL)
+  if ((keys) != EMPTY_KEYS && (keys) != NULL) \
+  {\
+    elvin_keys_free (keys); free (keys); \
+  }\
+  keys = NULL;\
 
 Keys *elvin_keys_init (Keys *keys);
 
@@ -146,7 +150,8 @@ void key_free (Key *key);
 #define elvin_key_create_from_string(str) \
   {(uint8_t *)strdup (str), strlen (str)}
 
-#define elvin_key_create_from_data(data, length) {memdup (data, length), length}
+#define elvin_key_create_from_data(data, length) \
+  {memdup (data, length), length}
 
 Key elvin_public_key (Key private_key, KeyScheme scheme);
 
