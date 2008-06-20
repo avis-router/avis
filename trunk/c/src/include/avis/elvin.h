@@ -235,7 +235,7 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * <a href="http://avis.sourceforge.net/subscription_language.html">subscription expression</a>.
  * @param keys The keys that must match notification keys for
  *          secure delivery.
- * @param secureMode The security mode: specifying
+ * @param security The security mode: specifying
  *          REQUIRE_SECURE_DELIVERY means the subscription will only
  *          receive notifications that are sent by clients with keys
  *          matching the set supplied here or the global
