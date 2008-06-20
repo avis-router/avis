@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include <avis/stdtypes.h>
-#include <avis/array_list.h>
+#include <avis/arrays.h>
 
 /**
  * An empty Keys collection.
@@ -138,12 +138,17 @@ bool elvin_keys_add_dual_consumer (Keys *keys, KeyScheme scheme, Key key);
 
 bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
 
-#define elvin_key_from_string(str) \
+void key_free (Key *key);
+
+#define elvin_key_copy(key) \
+  (Key){memdup ((key).data, (key).length), (key).length}
+
+#define elvin_key_create_from_string(str) \
   {(uint8_t *)strdup (str), strlen (str)}
 
-#define elvin_key_from_data(data, length) {data, length}
+#define elvin_key_create_from_data(data, length) {memdup (data, length), length}
 
-Key elvin_public_key (Key *private_key, KeyScheme scheme);
+Key elvin_public_key (Key private_key, KeyScheme scheme);
 
 bool elvin_key_equal (Key *key1, Key *key2);
 
