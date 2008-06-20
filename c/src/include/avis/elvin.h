@@ -58,7 +58,6 @@ typedef enum
  * A subscription to notifications on an Elvin router.
  * 
  * @see elvin_subscribe()
- * @see Notification
  */
 typedef struct
 {
@@ -71,36 +70,24 @@ typedef struct
 } Subscription;
 
 /**
- * A notification received via an Elvin router.
- * 
- * @see elvin_subscription_add_listener() 
- */
-typedef struct
-{
-  /** The attribute values of the notification. */
-  Attributes attributes;
-  
-  /** True if the notification was received securely. */
-  bool       secure;
-} Notification;
-
-/**
  * A listener for notifications received via a subscription.
  * 
  * @param subscription The subscription that matched the notification.
- * @param notification The notification from the router. Note that this 
- * notification and its associated attributes is only valid for the duration
- * of the callback -- it will be freed by the connection after the callback 
- * returns. If you want to refer to any part of the notification 
- * outside callback scope, you will need to copy the relevant parts before
- * returning.
+ * @param attributes The notification from the router. Note that these 
+ * attributes are only valid for the duration of the callback -- they will be 
+ * freed by the connection after the callback returns. If you want to refer to 
+ * any part of the notification  outside callback scope, you will need to copy 
+ * the relevant parts before returning.
+ * @param secure True if the notification was received securely from a client
+ * with a matching set of security keys (see elvin_subscribe_with_keys() and
+ * elvin_open_with_keys()).
  * @param user_data The user data pointer passed into 
  * elvin_subscription_add_listener().
  * 
  * @see elvin_subscription_add_listener()
  */
 typedef void (*SubscriptionListener) (Subscription *subscription, 
-                                      Notification *notification,
+                                      Attributes *attributes, bool secure,
                                       void *user_data);
 
 /**
@@ -222,6 +209,7 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * </pre>
  *  
  * @see elvin_subscribe_with_keys()
+ * @see elvin_subscription_add_listener()
  */
 Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
                                ElvinError *error);

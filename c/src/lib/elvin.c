@@ -70,7 +70,7 @@ static void handle_disconn (Elvin *elvin, Message message, ElvinError *error);
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 
 static void deliver_notification (Elvin *elvin, Array *ids, 
-                                  Notification *notification,
+                                  Attributes *attributes, bool secure,
                                   ElvinError *error);
 
 static Subscription *elvin_subscription_init (Subscription *subscription);
@@ -254,22 +254,17 @@ void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
     ptr_at_offset (message, sizeof (Attributes *));
   Array *insecure_matches = 
     ptr_at_offset (message, sizeof (Attributes *) + sizeof (Array *));
-  Notification notification;
   
-  notification.attributes = *attributes;
-  notification.secure = true;
-  
-  deliver_notification (elvin, secure_matches, &notification, error);
+  deliver_notification (elvin, secure_matches, attributes, true, error);
   
   if (elvin_error_occurred (error))
     return;
   
-  notification.secure = false;
-  deliver_notification (elvin, insecure_matches, &notification, error);
+  deliver_notification (elvin, insecure_matches, attributes, false, error);
 }
 
 void deliver_notification (Elvin *elvin, Array *ids,
-                           Notification *notification, 
+                           Attributes *attributes, bool secure, 
                            ElvinError *error)
 {
   size_t i, j;
@@ -291,7 +286,8 @@ void deliver_notification (Elvin *elvin, Array *ids,
     listeners = subscription->listeners.items;
     
     for (j = subscription->listeners.item_count; j > 0; j--, listeners++)
-      (*listeners->listener) (subscription, notification, listeners->user_data);
+      (*listeners->listener) (subscription, attributes, secure, 
+                              listeners->user_data);
   }
 }
 

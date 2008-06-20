@@ -20,7 +20,7 @@
 static const char *elvin_router ();
 
 static void test_subscribe_sub_listener
-  (Subscription *sub, Notification *notification, void *user_data);
+  (Subscription *sub, Attributes *attributes, bool secure, void *user_data);
 
 static void check_secure_send_receive (Elvin *client, Subscription *secure_sub);
 
@@ -189,26 +189,27 @@ END_TEST
 
 /* TODO change to passing notification as args */
 void test_subscribe_sub_listener (Subscription *sub, 
-                                  Notification *notification, void *user_data)
+                                  Attributes *attributes, bool secure, 
+                                  void *user_data)
 {
   fail_unless (strcmp (user_data, "user_data") == 0, "User data incorrect");
   
   fail_unless 
-    (strcmp (attributes_get_string (&notification->attributes, "message"), 
+    (strcmp (attributes_get_string (attributes, "message"), 
              "hello world") == 0, "Invalid notification");
   
   /* check the real64 made the roundtrip in case this system is not using 
    * IEEE 754 for double precision floats. */
   fail_unless
-    (attributes_get_real64 (&notification->attributes, "pi") == M_PI,
+    (attributes_get_real64 (attributes, "pi") == M_PI,
      "Invalid notification: PI != %f",
-     attributes_get_real64 (&notification->attributes, "pi") );
+     attributes_get_real64 (attributes, "pi") );
 
   
   fail_unless 
-    (isnan (attributes_get_real64 (&notification->attributes, "nan")), 
+    (isnan (attributes_get_real64 (attributes, "nan")), 
      "Invalid notification: NaN != %f", 
-     attributes_get_real64 (&notification->attributes, "nan"));
+     attributes_get_real64 (attributes, "nan"));
   
   test_subscribe_received_ntfn = true;
 }
@@ -256,9 +257,10 @@ START_TEST (test_security)
 END_TEST
 
 void test_security_sub_listener (Subscription *sub, 
-                                 Notification *notification, void *user_data)
+                                 Attributes *attributes, 
+                                 bool secure, void *user_data)
 {
-  fail_unless (notification->secure, "Not secure");
+  fail_unless (secure, "Not secure");
   
   test_subscribe_received_ntfn = true;
 }
