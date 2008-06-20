@@ -39,6 +39,8 @@ typedef struct
 {
   socket_t  socket;
   ArrayList subscriptions;
+  Keys *    notification_keys;
+  Keys *    subscription_keys;
 } Elvin;
 
 /**
@@ -63,9 +65,9 @@ typedef struct
   Elvin *      elvin;
   const char * subscription_expr;
   uint64_t     id;
-  Keys         keys;
   SecureMode   security;
   ArrayList    listeners;
+  Keys *       keys;
 } Subscription;
 
 /**

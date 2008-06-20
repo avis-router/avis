@@ -28,7 +28,7 @@
 typedef struct
 {
   SubscriptionListener listener;
-  void *user_data;
+  void *               user_data;
 } SubscriptionListenerEntry;
 
 static void elvin_shutdown (Elvin *elvin);
@@ -104,6 +104,8 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
+  elvin->notification_keys = notification_keys;
+  elvin->subscription_keys = subscription_keys;
   
   if (!open_socket (elvin, uri->host, uri->port, error))
     return false;
@@ -175,6 +177,9 @@ void elvin_shutdown (Elvin *elvin)
     elvin_subscription_free (sub);
   
   array_list_free (&elvin->subscriptions);
+ 
+  elvin_keys_destroy (elvin->notification_keys);
+  elvin_keys_destroy (elvin->subscription_keys);
 }
 
 bool elvin_poll (Elvin *elvin, ElvinError *error)
@@ -305,9 +310,9 @@ Subscription *elvin_subscription_init (Subscription *subscription)
   subscription->elvin = NULL;
   subscription->id = 0;
   subscription->security = ALLOW_INSECURE_DELIVERY;
+  subscription->keys = NULL;
   array_list_init (&subscription->listeners, 
                    sizeof (SubscriptionListenerEntry), 5);
-  elvin_keys_init (&subscription->keys);
   
   return subscription;
 }
@@ -317,7 +322,7 @@ void elvin_subscription_free (Subscription *subscription)
   subscription->elvin = NULL;
   subscription->id = 0;
   array_list_free (&subscription->listeners);
-  elvin_keys_free (&subscription->keys);
+  elvin_keys_destroy (subscription->keys);
 }
 
 Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
@@ -350,6 +355,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     subscription->elvin = elvin;
     subscription->subscription_expr = subscription_expr;
     subscription->id = int64_at_offset (sub_reply, 4);
+    subscription->keys = keys;
 
     return subscription;
   } else
