@@ -269,7 +269,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 {
   size_t i, j;
   int64_t *id = ids->items;
-  SubscriptionListenerEntry *listeners;
+  SubscriptionListenerEntry *listener_entry;
   
   for (i = ids->item_count; i > 0; i--, id++)
   {
@@ -278,16 +278,16 @@ void deliver_notification (Elvin *elvin, Array *ids,
     if (subscription == NULL)
     {
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                       "Invalid subscription ID from router: %lu", *id);
+                       "Invalid subscription ID from router: %llu", *id);
 
       return;
     }
     
-    listeners = subscription->listeners.items;
+    listener_entry = subscription->listeners.items;
     
-    for (j = subscription->listeners.item_count; j > 0; j--, listeners++)
-      (*listeners->listener) (subscription, attributes, secure, 
-                              listeners->user_data);
+    for (j = subscription->listeners.item_count; j > 0; j--, listener_entry++)
+      (*listener_entry->listener) (subscription, attributes, secure, 
+                                   listener_entry->user_data);
   }
 }
 
@@ -422,13 +422,7 @@ bool send_and_receive (Elvin *elvin, Message request,
   if (send_message (elvin, request, error) && 
       receive_message (elvin, reply, error))
   {
-    if (xid_of (request) != xid_of (reply))
-    {
-      elvin_error_set  
-        (error, ELVIN_ERROR_PROTOCOL, 
-         "Mismatched transaction ID in reply from router: %u != %u", 
-         xid_of (request), xid_of (reply));
-    } else if (message_type_of (reply) != reply_type)
+    if (message_type_of (reply) != reply_type)
     {
       if (message_type_of (reply) == MESSAGE_ID_NACK)
       {
@@ -440,6 +434,12 @@ bool send_and_receive (Elvin *elvin, Message request,
            "Unexpected reply from router: message ID %u",
            message_type_of (reply));
       }
+    } else if (xid_of (request) != xid_of (reply))
+    {
+      elvin_error_set  
+        (error, ELVIN_ERROR_PROTOCOL, 
+         "Mismatched transaction ID in reply from router: %u != %u", 
+         xid_of (request), xid_of (reply));
     }
     
     if (elvin_error_occurred (error))
@@ -521,13 +521,13 @@ bool receive_message (Elvin *elvin, Message message, ElvinError *error)
 
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 {
-  Subscription *subscriptions = elvin->subscriptions.items;
+  Subscription *subscription = elvin->subscriptions.items;
   size_t i;
  
-  for (i = elvin->subscriptions.item_count; i > 0; i--, subscriptions++)
+  for (i = elvin->subscriptions.item_count; i > 0; i--, subscription++)
   {
-    if (subscriptions->id == id)
-      return subscriptions;
+    if (subscription->id == id)
+      return subscription;
   }
   
   return NULL;
