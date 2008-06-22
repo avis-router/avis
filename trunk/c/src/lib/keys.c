@@ -272,6 +272,7 @@ bool write_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
   return elvin_error_ok (error);
 }
 
+/* TODO limit key counts and sizes */
 bool elvin_keys_read (ByteBuffer *buffer, Keys *keys, ElvinError *error)
 {
   uint32_t scheme_count = byte_buffer_read_int32 (buffer, error);
