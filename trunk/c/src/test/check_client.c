@@ -166,7 +166,8 @@ START_TEST (test_subscribe)
 
   elvin_poll (&elvin, &error);
   fail_on_error (&error);
-  
+
+  /* TODO poll is blocking, no point in waiting here */
   wait_for_notification ();
   
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
@@ -174,7 +175,7 @@ START_TEST (test_subscribe)
   /* test listener removal */
   fail_unless 
     (elvin_subscription_remove_listener (sub, test_subscribe_sub_listener), 
-        "Failed to remove sub listener");
+     "Failed to remove sub listener");
   
   fail_if
     (elvin_subscription_remove_listener (sub, test_subscribe_sub_listener), 
@@ -187,7 +188,6 @@ START_TEST (test_subscribe)
 }
 END_TEST
 
-/* TODO change to passing notification as args */
 void test_subscribe_sub_listener (Subscription *sub, 
                                   Attributes *attributes, bool secure, 
                                   void *user_data)
