@@ -373,10 +373,10 @@ void read_int64_array (ByteBuffer *buffer, Message message,
   if (elvin_error_ok (error))
   {
     Array *array = array_create (int64_t, item_count); 
-    int64_t *items = (int64_t *)array->items;
+    int64_t *item = (int64_t *)array->items;
   
-    for ( ; item_count > 0 && elvin_error_ok (error); item_count--, items++)
-      *items = byte_buffer_read_int64 (buffer, error);
+    for ( ; item_count > 0 && elvin_error_ok (error); item_count--, item++)
+      *item = byte_buffer_read_int64 (buffer, error);
     
     if (elvin_error_ok (error))
       *(Array **)message = array;
@@ -389,12 +389,12 @@ void write_int64_array (ByteBuffer *buffer, Message message,
                         ElvinError *error)
 {
   size_t item_count = (*(Array **)message)->item_count;
-  int64_t *items = (int64_t *)(*(Array **)message)->items;
+  int64_t *item = (int64_t *)(*(Array **)message)->items;
   
   byte_buffer_write_int32 (buffer, item_count, error);
   
-  for ( ; item_count > 0 && elvin_error_ok (error); item_count--, items++)
-    byte_buffer_write_int64 (buffer, *items, error);
+  for ( ; item_count > 0 && elvin_error_ok (error); item_count--, item++)
+    byte_buffer_write_int64 (buffer, *item, error);
 }
 
 void read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
@@ -435,7 +435,7 @@ void write_string (ByteBuffer *buffer, Message message, ElvinError *error)
 }
 
 void read_attributes (ByteBuffer *buffer, Message message, 
-                           ElvinError *error)
+                      ElvinError *error)
 {
   Attributes *attributes = attributes_create ();
         
@@ -508,8 +508,8 @@ void write_values (ByteBuffer *buffer, Message message, ElvinError *error)
 void values_free (Array *values)
 {
   size_t i;
-  Value *v = values->items;
+  Value *value = values->items;
   
-  for (i = values->item_count; i > 0; i--, v++)
-    value_free (v);
+  for (i = values->item_count; i > 0; i--, value++)
+    value_free (value);
 }
