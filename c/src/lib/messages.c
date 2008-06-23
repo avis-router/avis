@@ -89,45 +89,45 @@ typedef struct
   FieldFormat fields [MAX_MESSAGE_FIELDS];
 } MessageFormat;
 
-#define I4  {FIELD_INT32, read_int32, write_int32, NULL}
-#define I8  {FIELD_INT64, read_int64, write_int64, NULL}
-#define I8A {FIELD_POINTER, read_int64_array, write_int64_array, array_free}
-#define STR {FIELD_POINTER, read_string, write_string, NULL}
-#define NV  {FIELD_POINTER, read_attributes, write_attributes, attributes_free}
-#define BO  {FIELD_INT32, read_bool, write_int32, NULL}
-#define XID {FIELD_XID, read_xid, write_int32, NULL}
-#define VA  {FIELD_POINTER, read_values, write_values, values_free}
-#define KY  {FIELD_POINTER, read_keys, write_keys, elvin_keys_free}
+#define I32  {FIELD_INT32, read_int32, write_int32, NULL}
+#define I64  {FIELD_INT64, read_int64, write_int64, NULL}
+#define I64A {FIELD_POINTER, read_int64_array, write_int64_array, array_free}
+#define STR  {FIELD_POINTER, read_string, write_string, NULL}
+#define ATTR {FIELD_POINTER, read_attributes, write_attributes, attributes_free}
+#define BO   {FIELD_INT32, read_bool, write_int32, NULL}
+#define XID  {FIELD_XID, read_xid, write_int32, NULL}
+#define VA   {FIELD_POINTER, read_values, write_values, values_free}
+#define KEYS {FIELD_POINTER, read_keys, write_keys, elvin_keys_free}
 
 #define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL, NULL}
 
 static MessageFormat MESSAGE_FORMATS [] = 
 {
   {MESSAGE_ID_NACK,
-    {XID, I4, STR, VA, END} /* {"xid", "error", "message", "args"}*/},
+    {XID, I32, STR, VA, END} /* {"xid", "error", "message", "args"}*/},
   {MESSAGE_ID_CONN_RQST,
-    {XID, I4, I4, NV, KY, KY, END} 
+    {XID, I32, I32, ATTR, KEYS, KEYS, END} 
     /*{"xid", "version_major", "version_minor",
      "connection_options", "notification_keys" "subscription_keys"}*/},
   {MESSAGE_ID_CONN_RPLY,
-    {XID, NV, END} /*{"xid", "connection_options"}*/},
+    {XID, ATTR, END} /*{"xid", "connection_options"}*/},
   {MESSAGE_ID_DISCONN_RQST,
     {XID, END} /*{"xid"}*/},
   {MESSAGE_ID_DISCONN_RPLY,
     {XID, END} /*{"xid"}*/},
   {MESSAGE_ID_DISCONN,
-    {I4, STR, END} /*{"reason", "arguments"}*/},
+    {I32, STR, END} /*{"reason", "arguments"}*/},
   {MESSAGE_ID_NOTIFY_EMIT,
-    {NV, BO, KY, END} /*{"attributes", "deliverInsecure", "keys"}*/},
+    {ATTR, BO, KEYS, END} /*{"attributes", "deliverInsecure", "keys"}*/},
   {MESSAGE_ID_NOTIFY_DELIVER,
-    {NV, I8A, I8A, END}
+    {ATTR, I64A, I64A, END}
     /* {"attributes", "secureMatches", "insecureMatches"}*/},
   {MESSAGE_ID_SUB_ADD_RQST,
-    {XID, STR, BO, KY, END} /*{"xid", "expr", "deliverInsecure", "keys"}*/},
+    {XID, STR, BO, KEYS, END} /*{"xid", "expr", "deliverInsecure", "keys"}*/},
   {MESSAGE_ID_SUB_DEL_RQST,
-    {XID, I8, END} /*{"xid", "subscriptionId"}*/},
+    {XID, I64, END} /*{"xid", "subscriptionId"}*/},
   {MESSAGE_ID_SUB_RPLY,
-    {XID, I8, END} /*{"xid"}*/},
+    {XID, I64, END} /*{"xid"}*/},
 
   {-1, {END}}
 };
@@ -166,17 +166,17 @@ Message message_init (Message message, MessageTypeID type, ...)
   {
     switch (field->type)
     {
+    case FIELD_XID:
+      *(uint32_t *)message = next_xid ();
+      message += 4;
+      break;
     case FIELD_INT32:
       *(int32_t *)message = va_arg (args, int32_t);
-      message += sizeof (int32_t);
+      message += 4;
       break;
     case FIELD_INT64:
       *(int64_t *)message = va_arg (args, int64_t);
-      message += sizeof (int64_t);
-      break;
-    case FIELD_XID:
-      *(uint32_t *)message = next_xid ();
-      message += sizeof (uint32_t);
+      message += 8;
       break;
     case FIELD_POINTER:
       *(void **)message = va_arg (args, void *);
@@ -323,28 +323,28 @@ Message read_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   *(int32_t *)message = byte_buffer_read_int32 (buffer, error);
   
-  return message + sizeof (int32_t);
+  return message + 4;
 }
 
 Message write_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   byte_buffer_write_int32 (buffer, *(int32_t *)message, error);
     
-  return message + sizeof (int32_t);
+  return message + 4;
 }
 
 Message read_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   *(int64_t *)message = byte_buffer_read_int64 (buffer, error);
   
-  return message + sizeof (int64_t);
+  return message + 8;
 }
 
 Message write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   byte_buffer_write_int64 (buffer, *(int64_t *)message, error);
     
-  return message + sizeof (int64_t);
+  return message + 8;
 }
 
 Message read_int64_array (ByteBuffer *buffer, Message message, 
@@ -395,7 +395,7 @@ Message read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid boolean: %u", value);
   }
   
-  return message + sizeof (int32_t);
+  return message + 4;
 }
 
 Message read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
@@ -410,7 +410,7 @@ Message read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid XID: %u", value);
   }
   
-  return message + sizeof (uint32_t);
+  return message + 4;
 }
 
 Message read_string (ByteBuffer *buffer, Message message, ElvinError *error)
