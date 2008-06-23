@@ -15,53 +15,53 @@
 #include "values_private.h"
 #include "keys_private.h"
 
-static Message read_int32 (ByteBuffer *buffer, Message message, 
-                           ElvinError *error);
+static void read_int32 (ByteBuffer *buffer, Message message, 
+                        ElvinError *error);
 
-static Message write_int32 (ByteBuffer *buffer, Message message, 
-                            ElvinError *error);
-
-static Message read_int64 (ByteBuffer *buffer, Message message, 
-                           ElvinError *error);
-
-static Message write_int64 (ByteBuffer *buffer, Message message, 
-                            ElvinError *error);
-
-static Message read_int64_array (ByteBuffer *buffer, Message message, 
-                                 ElvinError *error);
-
-static Message write_int64_array (ByteBuffer *buffer, Message message, 
-                                  ElvinError *error);
-
-static Message read_bool (ByteBuffer *buffer, Message message, 
-                          ElvinError *error);
-
-static Message read_xid (ByteBuffer *buffer, Message message, 
+static void write_int32 (ByteBuffer *buffer, Message message, 
                          ElvinError *error);
 
-static Message read_string (ByteBuffer *buffer, Message message, 
-                            ElvinError *error);
+static void read_int64 (ByteBuffer *buffer, Message message, 
+                        ElvinError *error);
 
-static Message write_string (ByteBuffer *buffer, Message message, 
-                             ElvinError *error);
+static void write_int64 (ByteBuffer *buffer, Message message, 
+                         ElvinError *error);
 
-static Message read_attributes (ByteBuffer *buffer, Message message, 
+static void read_int64_array (ByteBuffer *buffer, Message message, 
+                              ElvinError *error);
+
+static void write_int64_array (ByteBuffer *buffer, Message message, 
                                   ElvinError *error);
 
-static Message write_attributes (ByteBuffer *buffer, Message message, 
-                                   ElvinError *error);
-
-static Message read_values (ByteBuffer *buffer, Message message, 
-                            ElvinError *error);
-
-static Message write_values (ByteBuffer *buffer, Message message, 
-                             ElvinError *error);
-
-static Message read_keys (ByteBuffer *buffer, Message message, 
+static void read_bool (ByteBuffer *buffer, Message message, 
                           ElvinError *error);
 
-static Message write_keys (ByteBuffer *buffer, Message message, 
-                           ElvinError *error);
+static void read_xid (ByteBuffer *buffer, Message message, 
+                         ElvinError *error);
+
+static void read_string (ByteBuffer *buffer, Message message, 
+                         ElvinError *error);
+
+static void write_string (ByteBuffer *buffer, Message message, 
+                          ElvinError *error);
+
+static void read_attributes (ByteBuffer *buffer, Message message, 
+                             ElvinError *error);
+
+static void write_attributes (ByteBuffer *buffer, Message message, 
+                              ElvinError *error);
+
+static void read_values (ByteBuffer *buffer, Message message, 
+                         ElvinError *error);
+
+static void write_values (ByteBuffer *buffer, Message message, 
+                          ElvinError *error);
+
+static void read_keys (ByteBuffer *buffer, Message message, 
+                       ElvinError *error);
+
+static void write_keys (ByteBuffer *buffer, Message message, 
+                        ElvinError *error);
 
 static void values_free (Array *values);
 
@@ -70,8 +70,8 @@ typedef enum
   FIELD_XID, FIELD_INT32, FIELD_INT64, FIELD_POINTER
 } FieldType;
 
-typedef Message (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
-                 ElvinError *error);
+typedef void (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
+                                   ElvinError *error);
 
 typedef void (*DeallocFunction) ();
 
@@ -133,6 +133,8 @@ static MessageFormat MESSAGE_FORMATS [] =
 };
 
 static MessageFormat *message_format_for (MessageTypeID type);
+
+static size_t field_size (FieldType type);
 
 static void read_using_format (ByteBuffer *buffer, 
                                Message message,
@@ -282,6 +284,22 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   return true; 
 }
 
+size_t field_size (FieldType type)
+{
+  switch (type)
+  {
+  case FIELD_INT32:
+  case FIELD_XID:
+    return 4;
+  case FIELD_INT64:
+    return 8;
+  case FIELD_POINTER:
+    return sizeof (void *);
+  default:
+    abort ();
+  }
+}
+
 void read_using_format (ByteBuffer *buffer, 
                         Message message,
                         MessageFormat *format, 
@@ -290,7 +308,11 @@ void read_using_format (ByteBuffer *buffer,
   FieldFormat *field;
   
   for (field = format->fields; field->read && elvin_error_ok (error); field++)
-    message = (*field->read) (buffer, message, error);
+  {
+    (*field->read) (buffer, message, error);
+
+    message += field_size (field->type);
+  }
 }
 
 void write_using_format (ByteBuffer *buffer, 
@@ -301,7 +323,11 @@ void write_using_format (ByteBuffer *buffer,
   FieldFormat *field;
     
   for (field = format->fields; field->write && elvin_error_ok (error); field++)
-    message = (*field->write) (buffer, message, error);
+  {
+    (*field->write) (buffer, message, error);
+
+    message += field_size (field->type);
+  }
 }
 
 MessageFormat *message_format_for (MessageTypeID type)
@@ -319,36 +345,28 @@ MessageFormat *message_format_for (MessageTypeID type)
   return NULL;
 }
 
-Message read_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
+void read_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   *(int32_t *)message = byte_buffer_read_int32 (buffer, error);
-  
-  return message + 4;
 }
 
-Message write_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
+void write_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   byte_buffer_write_int32 (buffer, *(int32_t *)message, error);
-    
-  return message + 4;
 }
 
-Message read_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
+void  read_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   *(int64_t *)message = byte_buffer_read_int64 (buffer, error);
-  
-  return message + 8;
 }
 
-Message write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
+void  write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   byte_buffer_write_int64 (buffer, *(int64_t *)message, error);
-    
-  return message + 8;
 }
 
-Message read_int64_array (ByteBuffer *buffer, Message message, 
-                          ElvinError *error)
+void read_int64_array (ByteBuffer *buffer, Message message, 
+                       ElvinError *error)
 {
   uint32_t item_count = byte_buffer_read_int32 (buffer, error);
   
@@ -365,12 +383,10 @@ Message read_int64_array (ByteBuffer *buffer, Message message,
     else
       array_destroy (array);
   }
-  
-  return message + sizeof (Array *);
 }
 
-Message write_int64_array (ByteBuffer *buffer, Message message,
-                           ElvinError *error)
+void write_int64_array (ByteBuffer *buffer, Message message,
+                        ElvinError *error)
 {
   size_t item_count = (*(Array **)message)->item_count;
   int64_t *items = (int64_t *)(*(Array **)message)->items;
@@ -379,11 +395,9 @@ Message write_int64_array (ByteBuffer *buffer, Message message,
   
   for ( ; item_count > 0 && elvin_error_ok (error); item_count--, items++)
     byte_buffer_write_int64 (buffer, *items, error);
-  
-  return message + sizeof (Array *);
 }
 
-Message read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
+void read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   int32_t value = byte_buffer_read_int32 (buffer, error);
   
@@ -392,13 +406,12 @@ Message read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
     if (value == 0 || value == 1)
       *(int32_t *)message = value;
     else
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid boolean: %u", value);
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
+                       "Invalid boolean: %u", value);
   }
-  
-  return message + 4;
 }
 
-Message read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
+void read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t value = byte_buffer_read_int32 (buffer, error);
     
@@ -409,25 +422,19 @@ Message read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
     else
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid XID: %u", value);
   }
-  
-  return message + 4;
 }
 
-Message read_string (ByteBuffer *buffer, Message message, ElvinError *error)
+void read_string (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   *(char **)message = byte_buffer_read_string (buffer, error);
-  
-  return message + sizeof (char *);
 }
 
-Message write_string (ByteBuffer *buffer, Message message, ElvinError *error)
+void write_string (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   byte_buffer_write_string (buffer, *(char **)message, error);
-    
-  return message + sizeof (char *);
 }
 
-Message read_attributes (ByteBuffer *buffer, Message message, 
+void read_attributes (ByteBuffer *buffer, Message message, 
                            ElvinError *error)
 {
   Attributes *attributes = attributes_create ();
@@ -438,19 +445,15 @@ Message read_attributes (ByteBuffer *buffer, Message message,
     *(Attributes **)message = attributes;
   else
     attributes_destroy (attributes);  
-  
-  return message + sizeof (Attributes *);
 }
 
-Message write_attributes (ByteBuffer *buffer, Message message, 
+void write_attributes (ByteBuffer *buffer, Message message, 
                             ElvinError *error)
 {
   attributes_write (buffer, *(Attributes **)message, error);
-  
-  return message + sizeof (Attributes *);
 }
 
-Message read_keys (ByteBuffer *buffer, Message message, ElvinError *error)
+void read_keys (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   Keys *keys = elvin_keys_create ();
   
@@ -458,18 +461,15 @@ Message read_keys (ByteBuffer *buffer, Message message, ElvinError *error)
     *(Keys **)message = keys;
   else
     elvin_keys_destroy (keys);
-  
-  return message + sizeof (Keys *);
 }
 
-Message write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
+void write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   elvin_keys_write (buffer, *(Keys **)message, error);
-  
-  return message + sizeof (Keys *);
 }
 
-Message read_values (ByteBuffer *buffer, Message message, ElvinError *error)
+/** TODO limit items */
+void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t item_count = byte_buffer_read_int32 (buffer, error);
   
@@ -492,11 +492,9 @@ Message read_values (ByteBuffer *buffer, Message message, ElvinError *error)
       array_destroy (array);
     }
   }
-  
-  return message + sizeof (Array *);  
 }
 
-Message write_values (ByteBuffer *buffer, Message message, ElvinError *error)
+void write_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   size_t item_count = (*(Array **)message)->item_count;
   Value *value = (Value *)(*(Array **)message)->items;
@@ -505,8 +503,6 @@ Message write_values (ByteBuffer *buffer, Message message, ElvinError *error)
   
   for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
     value_read (buffer, value, error);
-  
-  return message + sizeof (Array *);
 }
 
 void values_free (Array *values)
