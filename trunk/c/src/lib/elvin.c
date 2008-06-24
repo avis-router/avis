@@ -314,11 +314,12 @@ Subscription *elvin_subscription_init (Subscription *subscription)
 }
 
 void elvin_subscription_free (Subscription *subscription)
-{
-  subscription->elvin = NULL;
-  subscription->id = 0;
+{  
+  free (subscription->subscription_expr);
   array_list_free (&subscription->listeners);
   elvin_keys_destroy (subscription->keys);
+  
+  memset (subscription, 0, sizeof (Subscription));
 }
 
 Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr, 
@@ -349,7 +350,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     elvin_subscription_init (subscription);
     
     subscription->elvin = elvin;
-    subscription->subscription_expr = subscription_expr;
+    subscription->subscription_expr = strdup (subscription_expr);
     subscription->id = int64_at_offset (sub_reply, 4);
     subscription->keys = keys;
 

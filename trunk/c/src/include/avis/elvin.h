@@ -62,7 +62,7 @@ typedef enum
 typedef struct
 {
   Elvin *      elvin;
-  const char * subscription_expr;
+  char *       subscription_expr;
   uint64_t     id;
   SecureMode   security;
   ArrayList    listeners;
@@ -136,6 +136,8 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
 
 /**
  * Open a connection to an Elvin router with optional security constraints.
+ * Ownership of the keys used in this call passes to the connection,
+ * which will free them when no longer needed.
  * 
  * @param elvin The Elvin connection instance.
  * @param uri The URI for the router endpoint.
@@ -188,6 +190,7 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  * @param elvin The Elvin connection instance.
  * @param subscription_expr The 
  * <a href="http://avis.sourceforge.net/subscription_language.html">subscription expression</a>.
+ * This expression is copied and freed when the subscription is disposed.
  * @param error The error info.
  *
  * @return The new subscription, or NULL on error.
@@ -221,8 +224,10 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * @param elvin The Elvin connection instance.
  * @param subscription_expr The 
  * <a href="http://avis.sourceforge.net/subscription_language.html">subscription expression</a>.
+ * This expression is copied and freed when the subscription is disposed.
  * @param keys The keys that must match notification keys for
- *          secure delivery.
+ *          secure delivery. Ownership of the keys passes to the connection,
+ * which will free them when no longer needed.
  * @param security The security mode: specifying
  *          REQUIRE_SECURE_DELIVERY means the subscription will only
  *          receive notifications that are sent by clients with keys
