@@ -6,7 +6,8 @@
 
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
-#include <avis/log.h>
+
+#include "log.h"
 
 #ifdef WIN32
   #define vsnprintf _vsnprintf
@@ -91,13 +92,4 @@ bool elvin_error_from_errno (ElvinError *error)
   error->message = strdup (strerror (errno));
   
   return false;
-}
-
-bool elvin_error_assert (ElvinError *error, bool condition, 
-                         int code, const char *message)
-{
-  if (condition)
-    return true;
-  else
-    return elvin_error_set (error, code, message);
 }

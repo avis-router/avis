@@ -28,6 +28,7 @@ libavis_la_SOURCES = \
   attributes_private.h \
   byte_buffer.h \
   keys_private.h \
+  log.h \
   avis_endian.h \
   messages.h \
   values_private.h
@@ -44,6 +45,5 @@ include_HEADERS = \
   $(public_inc)/elvin.h \
   $(public_inc)/errors.h \
   $(public_inc)/keys.h \
-  $(public_inc)/log.h \
   $(public_inc)/stdtypes.h \
   $(public_inc)/values.h

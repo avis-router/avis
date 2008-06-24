@@ -1,8 +1,8 @@
 /** \file
  * The main Avis client library definitions.
  */
-#ifndef ELVIN_H
-#define ELVIN_H
+#ifndef AVIS_ELVIN_H
+#define AVIS_ELVIN_H
 
 #include <avis/keys.h>
 #include <avis/attributes.h>
@@ -51,8 +51,6 @@ typedef enum
   REQUIRE_SECURE_DELIVERY = 0,
   ALLOW_INSECURE_DELIVERY = 1
 } SecureMode;
-
-/* TODO allow custom subscription destruct */
 
 /**
  * A subscription to notifications on an Elvin router.
@@ -330,16 +328,27 @@ bool elvin_is_open (Elvin *elvin);
 bool elvin_close (Elvin *elvin);
 
 /**
- * Poll an Elvin connection for incoming messages from the router. This will 
- * block until a notification or disconnect signal is received from the 
+ * Poll an Elvin connection for an incoming message from the router. This will 
+ * block until a notification or disconnect message is received from the 
  * router. On receipt of a notification, any listeners to the notification
- * will be called from this function.
- * 
- * This method should be called in an event loop by clients that
- * subscribe to notifications.
+ * will be called from this function. On receipt of a disconnect or socket
+ * close, the connection will be shut down.
  * 
  * @return True if no error occurred.
+ * 
+ * This method should be called in an event loop by clients that
+ * subscribe to notifications. For example:
+ * 
+ * <pre>
+ * Elvin *elvin = ...
+ * ElvinError *error = ...
+ * 
+ * while (elvin_is_open (elvin) && elvin_error_ok (error))
+ * {
+ *   elvin_poll (elvin, error);
+ * }
+ * </pre>
  */
 bool elvin_poll (Elvin *elvin, ElvinError *error);
 
-#endif /* ELVIN_H */
+#endif /* AVIS_ELVIN_H */

@@ -1,8 +1,8 @@
 /** \file
  * Polymorphic values.
  */
-#ifndef VALUES_H_
-#define VALUES_H_
+#ifndef AVIS_VALUES_H_
+#define AVIS_VALUES_H_
 
 #include <string.h>
 
@@ -147,4 +147,4 @@ void array_free (Array *array);
  */
 bool array_equals (Array *array1, Array *array2);
 
-#endif /*VALUES_H_*/
+#endif /*AVIS_VALUES_H_*/

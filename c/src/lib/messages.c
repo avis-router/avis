@@ -7,13 +7,13 @@
 #include <avis/errors.h>
 #include <avis/attributes.h>
 #include <avis/values.h>
-#include <avis/log.h>
 
 #include "messages.h"
 #include "byte_buffer.h"
 #include "attributes_private.h"
 #include "values_private.h"
 #include "keys_private.h"
+#include "log.h"
 
 static void read_int32 (ByteBuffer *buffer, Message message, 
                         ElvinError *error);

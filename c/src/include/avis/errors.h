@@ -1,8 +1,8 @@
 /** \file
  * Error handling.
  */
-#ifndef ERRORS_H_
-#define ERRORS_H_
+#ifndef AVIS_ERRORS_H_
+#define AVIS_ERRORS_H_
 
 #include <avis/stdtypes.h>
 
@@ -37,30 +37,30 @@ typedef struct
   char * message;
 } ElvinError;
 
-#define ELVIN_ERROR_BASE      0
-#define ELVIN_ERRNO_BASE      10000
-#define ELVIN_HOST_ERROR_BASE 20000
+#define ELVIN_ERROR_BASE       0
+#define ELVIN_ERRNO_BASE       10000
+#define ELVIN_HOST_ERROR_BASE  20000
 
-#define ELVIN_ERROR_NONE               0
-#define ELVIN_ERROR_INTERNAL           (ELVIN_ERROR_BASE + 1)
-#define ELVIN_ERROR_PROTOCOL           (ELVIN_ERROR_BASE + 2)
-#define ELVIN_ERROR_CONNECTION_CLOSED  (ELVIN_ERROR_BASE + 3)
-#define ELVIN_ERROR_INVALID_URI        (ELVIN_ERROR_BASE + 4)
-#define ELVIN_ERROR_SYNTAX             (ELVIN_ERROR_BASE + 5)
-#define ELVIN_ERROR_TRIVIAL_EXPRESSION (ELVIN_ERROR_BASE + 6)
-#define ELVIN_ERROR_NACK               (ELVIN_ERROR_BASE + 7)
+#define ELVIN_ERROR_NONE                0
+#define ELVIN_ERROR_INTERNAL            (ELVIN_ERROR_BASE + 1)
+#define ELVIN_ERROR_PROTOCOL            (ELVIN_ERROR_BASE + 2)
+#define ELVIN_ERROR_CONNECTION_CLOSED   (ELVIN_ERROR_BASE + 3)
+#define ELVIN_ERROR_INVALID_URI         (ELVIN_ERROR_BASE + 4)
+#define ELVIN_ERROR_SYNTAX              (ELVIN_ERROR_BASE + 5)
+#define ELVIN_ERROR_TRIVIAL_EXPRESSION  (ELVIN_ERROR_BASE + 6)
+#define ELVIN_ERROR_NACK                (ELVIN_ERROR_BASE + 7)
 
 /**
- * Initialise an error. This should be done to initialise a new error
- * instance. Use elvin_error_reset() to reset an existing instance,
- * and elvin_error_free() to release any resources allocated before
+ * An empty error instance. This should be assigned to an error instance to 
+ * initialise it on declaration. Use elvin_error_reset() to reset an existing
+ * instance, and elvin_error_free() to release any resources allocated before
  * disposing.
  */
 #define elvin_error_create() {ELVIN_ERROR_NONE, NULL}
 
 /**
  * Free any resources allocated to an error instance and reset the
- * error code.  The error instance may be reused after this call.
+ * error code. The error instance may be reused after this call.
  * 
  * @see elvin_error_reset()
  */
@@ -141,9 +141,6 @@ bool elvin_error_from_errno (ElvinError *error);
  */
 bool elvin_error_set (ElvinError *error, int code, const char *message, ...);
 
-bool elvin_error_assert (ElvinError *error, bool condition, 
-                         int code, const char *message);
-
 /** 
  * True if no error has occurred. 
  */
@@ -154,4 +151,4 @@ bool elvin_error_assert (ElvinError *error, bool condition,
  */
 #define elvin_error_occurred(error) (!elvin_error_ok (error))
 
-#endif /*ERRORS_H_*/
+#endif /*AVIS_ERRORS_H_*/

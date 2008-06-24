@@ -1,8 +1,8 @@
 /** \file
  * Ensure int8_t, int32_t, int64_t, etc are defined. 
  */
-#ifndef ELVIN_STDTYPES_H
-#define ELVIN_STDTYPES_H
+#ifndef AVIS_STDTYPES_H
+#define AVIS_STDTYPES_H
 
 typedef double real64_t;
   
@@ -40,4 +40,4 @@ typedef double real64_t;
   #define false 0
 #endif
 
-#endif /* ELVIN_STDTYPES_H */
+#endif /* AVIS_STDTYPES_H */

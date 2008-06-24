@@ -1,5 +1,5 @@
-#ifndef ARRAYS_H_
-#define ARRAYS_H_
+#ifndef AVIS_ARRAYS_H_
+#define AVIS_ARRAYS_H_
 
 /**
  * A generic homogeneous, fixed length array of any type of item.
@@ -29,4 +29,4 @@ typedef struct
  */
 void *memdup (void *source, size_t length);
 
-#endif /*ARRAYS_H_*/
+#endif /*AVIS_ARRAYS_H_*/
