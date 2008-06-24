@@ -25,7 +25,7 @@ struct hashtable {
 
 /*****************************************************************************/
 unsigned int
-hash(struct hashtable *h, void *k);
+hashtable_hash(struct hashtable *h, void *k);
 
 /*****************************************************************************/
 

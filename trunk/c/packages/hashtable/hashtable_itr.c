@@ -133,7 +133,7 @@ hashtable_iterator_search(struct hashtable_itr *itr,
     struct entry *e, *parent;
     unsigned int hashvalue, index;
 
-    hashvalue = hash(h,k);
+    hashvalue = hashtable_hash(h,k);
     index = indexFor(h->tablelength,hashvalue);
 
     e = h->table[index];

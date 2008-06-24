@@ -21,8 +21,8 @@ static const unsigned int primes[] = {
 50331653, 100663319, 201326611, 402653189,
 805306457, 1610612741
 };
-const unsigned int prime_table_length = sizeof(primes)/sizeof(primes[0]);
-const float max_load_factor = 0.65f;
+static const unsigned int prime_table_length = sizeof(primes)/sizeof(primes[0]);
+static const float max_load_factor = 0.65f;
 
 /*****************************************************************************/
 
@@ -69,7 +69,7 @@ init_hashtable(struct hashtable *h,
 
 /*****************************************************************************/
 unsigned int
-hash(struct hashtable *h, void *k)
+hashtable_hash(struct hashtable *h, void *k)
 {
     /* Aim to protect against poor hash functions by adding logic here
      * - logic taken from java 1.4 hashtable source */
@@ -164,7 +164,7 @@ hashtable_insert(struct hashtable *h, void *k, void *v)
     }
     e = (struct entry *)malloc(sizeof(struct entry));
     if (NULL == e) { --(h->entrycount); return 0; } /*oom*/
-    e->h = hash(h,k);
+    e->h = hashtable_hash(h,k);
     index = indexFor(h->tablelength,e->h);
     e->k = k;
     e->v = v;
@@ -179,7 +179,7 @@ hashtable_search(struct hashtable *h, void *k)
 {
     struct entry *e;
     unsigned int hashvalue, index;
-    hashvalue = hash(h,k);
+    hashvalue = hashtable_hash(h,k);
     index = indexFor(h->tablelength,hashvalue);
     e = h->table[index];
     while (NULL != e)
@@ -203,8 +203,8 @@ hashtable_remove(struct hashtable *h, void *k)
     void *v;
     unsigned int hashvalue, index;
 
-    hashvalue = hash(h,k);
-    index = indexFor(h->tablelength,hash(h,k));
+    hashvalue = hashtable_hash(h,k);
+    index = indexFor(h->tablelength,hashtable_hash(h,k));
     pE = &(h->table[index]);
     e = *pE;
     while (NULL != e)
