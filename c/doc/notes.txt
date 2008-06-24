@@ -2,7 +2,7 @@ TODO
 
 0.1 release
 
-* custom subscription destruct: free sub expr, or not hold a ref
+* DONE: custom subscription destruct: free sub expr, or not hold a ref
 * API review: make sure we're using elvin_ prefix
 * tests pass on Windows
 * web page
