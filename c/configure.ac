@@ -43,8 +43,15 @@ AC_FUNC_MALLOC
 # Output files
 AC_CONFIG_HEADERS([platforms/gnu_automake/avis_client_config.h])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/lib/Makefile src/test/Makefile
-                 packages/Makefile packages/hashtable/Makefile])
+AC_CONFIG_FILES([
+   Makefile 
+   src/Makefile 
+   src/lib/Makefile
+   doc/Makefile
+   doc/api/Makefile 
+   src/test/Makefile
+   packages/Makefile 
+   packages/hashtable/Makefile])
 
 SUBDIRS=src packages/check
 

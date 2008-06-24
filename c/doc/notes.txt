@@ -3,9 +3,12 @@ TODO
 0.1 release
 
 * DONE: custom subscription destruct: free sub expr, or not hold a ref
-* API review: make sure we're using elvin_ prefix
+* DONE: API review: make sure we're using elvin_ prefix
 * tests pass on Windows
-* web page
+* API docs in dist
+* API docs online
+* web page: extend client library page
+* ?use valgrid to pick up errors
 
 0.2 release
 
@@ -20,9 +23,7 @@ TODO
 
 general
  
-* use valgrid to pick up errors
 * Universal binary for Mac OS X: 
   http://developer.apple.com/documentation/Porting/Conceptual/PortingUnix/compiling/chapter_4_section_3.html
-* include defs should have AVIS_ prefix
 
 * DONE: rename Elvin client lib refs to Avis, including headers

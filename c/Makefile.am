@@ -1,7 +1,7 @@
-SUBDIRS = packages . src
+SUBDIRS = packages . src doc
 
-tests: all
+run-tests: all
 	./src/test/tests
 
-docs:
-	doxygen doc/doxygen.config
+api-docs:
+	(cd doc/api && make api-docs)
