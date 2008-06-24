@@ -20,10 +20,10 @@
 #include <avis/elvin.h>
 #include <avis/errors.h>
 #include <avis/values.h>
-#include <avis/log.h>
 
 #include "messages.h"
 #include "arrays_private.h"
+#include "log.h"
 
 typedef struct
 {

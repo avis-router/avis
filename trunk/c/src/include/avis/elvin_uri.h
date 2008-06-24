@@ -1,8 +1,8 @@
 /** \file
  * Elvin URI handling.
  */
-#ifndef ELVIN_URI_H_
-#define ELVIN_URI_H_
+#ifndef AVIS_ELVIN_URI_H_
+#define AVIS_ELVIN_URI_H_
 
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
@@ -15,7 +15,7 @@
  */
 typedef struct
 {
-  char *host;
+  char *   host;
   uint16_t port;
 } ElvinURI;
 
@@ -46,4 +46,4 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
  */
 void elvin_uri_free (ElvinURI *uri);
 
-#endif /*ELVIN_URI_H_*/
+#endif /*AVIS_ELVIN_URI_H_*/

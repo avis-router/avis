@@ -52,6 +52,8 @@ Keys _empty_keys = {{{&_empty_dual_keys, 0, 2}, {NULL, 0, 0}, {NULL, 0, 0}}};
 #define dual_consumer_keyset(k, id) \
   (((ArrayList *)(keyset_for_scheme(k, id))->items) + 1) 
 
+static KeyScheme scheme_for (uint32_t id, ElvinError *error);
+
 static void free_keyset (ArrayList *keyset);
 
 static bool keysets_equal (ArrayList *keyset1, ArrayList *keyset2);
@@ -94,7 +96,7 @@ void elvin_keys_free (Keys *keys)
   free_keyset (keyset_for_scheme (keys, 3));
 }
 
-void key_free (Key *key)
+void elvin_key_free (Key *key)
 {
   if (key->data)
   {
@@ -110,7 +112,7 @@ void free_keyset (ArrayList *keyset)
   Key *key = keyset->items;
   
   for ( ; i > 0; i--, key++)
-    key_free (key);
+    elvin_key_free (key);
   
   array_list_free (keyset);
 }

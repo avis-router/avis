@@ -1,7 +1,7 @@
-#include <avis/log.h>
-
 #include <stdio.h>
 #include <stdarg.h>
+
+#include "log.h"
 
 void elvin_log (int level, const char *message, ...)
 {

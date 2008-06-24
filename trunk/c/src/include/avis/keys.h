@@ -10,7 +10,7 @@
 #include <avis/arrays.h>
 
 /**
- * An empty Keys collection.
+ * A pointer to an immutable empty Keys collection.
  */
 #define EMPTY_KEYS (&_empty_keys)
 
@@ -232,7 +232,7 @@ bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
  * @see elvin_key_create_from_string()
  * @see elvin_key_create_from_data()
  */
-void key_free (Key *key);
+void elvin_key_free (Key *key);
 
 /**
  * Copy a key.
@@ -246,7 +246,7 @@ void key_free (Key *key);
  * Create a key from a character string.
  * 
  * @see elvin_key_create_from_data()
- * @see key_free()
+ * @see elvin_key_free()
  */
 #define elvin_key_create_from_string(str) \
   elvin_key_create_from_data ((uint8_t *)(str), strlen (str))
@@ -256,7 +256,7 @@ void key_free (Key *key);
  * 
  * @see elvin_key_create_from_string()
  * @see elvin_key_create_public()
- * @see key_free()
+ * @see elvin_key_free()
  */
 #define elvin_key_create_from_data(data, length) \
   {memdup (data, length), length}
@@ -270,7 +270,7 @@ void key_free (Key *key);
  * @return The public key. public.data = hash (private_key.data)
  * 
  * @see elvin_key_create_from_data()
- * @see key_free()
+ * @see elvin_key_free()
  */
 Key elvin_key_create_public (Key private_key, KeyScheme scheme);
 
