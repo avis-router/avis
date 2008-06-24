@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <time.h>
 #include <math.h>
 #include <string.h>
 
@@ -23,8 +22,6 @@ static void test_subscribe_sub_listener
   (Subscription *sub, Attributes *attributes, bool secure, void *user_data);
 
 static void check_secure_send_receive (Elvin *client, Subscription *secure_sub);
-
-static void wait_for_notification ();
 
 static ElvinError error = elvin_error_create ();
 
@@ -166,9 +163,6 @@ START_TEST (test_subscribe)
 
   elvin_poll (&elvin, &error);
   fail_on_error (&error);
-
-  /* TODO poll is blocking, no point in waiting here */
-  wait_for_notification ();
   
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
   
@@ -214,9 +208,6 @@ void test_subscribe_sub_listener (Subscription *sub,
   test_subscribe_received_ntfn = true;
 }
 
-/*
- * TODO elvin connection should free keys. how to handle empty keys?
- */
 START_TEST (test_security)
 {
   ElvinURI uri;
@@ -283,8 +274,6 @@ void check_secure_send_receive (Elvin *client, Subscription *secure_sub)
   elvin_poll (secure_sub->elvin, &error);
   fail_on_error (&error);
     
-  wait_for_notification ();
-  
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
   
   elvin_subscription_remove_listener (secure_sub, test_security_sub_listener);
@@ -379,18 +368,6 @@ void check_secure_send_receive (Elvin *client, Subscription *secure_sub)
     eveClient.close ();
   }
   */
-
-void wait_for_notification ()
-{
-  /* Wait up to 3 seconds for notification to come in */
-  time_t start_time = time (NULL);
-  
-  while (!test_subscribe_received_ntfn &&
-         difftime (time (NULL), start_time) < 3);
-  {
-    usleep (500);
-  }
-}
 
 TCase *client_tests ()
 {
