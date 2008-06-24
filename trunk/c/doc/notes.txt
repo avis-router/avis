@@ -1,7 +1,28 @@
 TODO
 
+0.1 release
+
+* custom subscription destruct: free sub expr, or not hold a ref
+* API review: make sure we're using elvin_ prefix
+* tests pass on Windows
+* web page
+
+0.2 release
+
+* finish URI parsing
+* connection options
+* size limit enforcement
+* close listener
+* general notif listener
+* IPv6 connect on Linux
+* handle OOM and other fatal conditions
+* keys add/remove and change on client
+
+general
+ 
 * use valgrid to pick up errors
-* rename Elvin client lib refs to Avis, including headers
 * Universal binary for Mac OS X: 
   http://developer.apple.com/documentation/Porting/Conceptual/PortingUnix/compiling/chapter_4_section_3.html
 * include defs should have AVIS_ prefix
+
+* DONE: rename Elvin client lib refs to Avis, including headers
