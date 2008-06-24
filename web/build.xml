@@ -9,15 +9,23 @@
   <description>Avis web site</description>
 
   <!-- latest client and server release streams -->
-  <property name="client-release" value="1.1" />
+  <property name="java-client-release" value="1.1" />
+  <property name="c-client-release" value="0.1" />
   <property name="server-release" value="1.2" />
 
   <property name="avis-root" value="${basedir}/.." />
   <property name="web" value="${avis-root}/web" />
 
   <!-- base for released client and server -->
-  <property name="client" value="${avis-root}/../avis-client-${client-release}/java/client" />
-  <property name="server" value="${avis-root}/../avis-${server-release}/java/server" />
+  <property 
+    name="java-client" 
+    value="${avis-root}/../avis-java-client-${java-client-release}/java/client" />
+  <property 
+    name="c-client" 
+    value="${avis-root}/../avis-c-client-${c-client-release}/c" />
+  <property 
+      name="server" 
+      value="${avis-root}/../avis-${server-release}/java/server" />
   
   <property name="support" value="${avis-root}/support" />
 
@@ -29,7 +37,7 @@
             value="${support}/markdown-1.0.1/Markdown.pl" />
 
   <!-- Use arcane Ant-isms to build web page from text using Markdown -->
-  <target name="website" depends="htmlize-source-examples"
+  <target name="website" depends="htmlize-java-client-examples"
           description="Build HTML files in web from sources">  
     <antcall target="fn:make-html">
       <param name="src" value="avis.txt" />
@@ -117,20 +125,35 @@
     </exec>
   </target>
 
-  <target name="deploy-javadoc"
-          description="Rsync client library Javadoc to sourceforge web site">
+  <target name="deploy-java-apidoc"
+          description="Rsync Java client library Javadoc to sourceforge web">
 
-    <ant dir="${client}" target="javadoc"
+    <ant dir="${java-client}" target="javadoc"
          inheritall="false" inheritrefs="false" />
 
-    <exec executable="rsync" dir="${client}/build/javadoc">
+    <exec executable="rsync" dir="${java-client}/build/javadoc">
       <arg value="-rlgoDv" />
       <arg value="--delete" />
       <arg value="." />
-      <arg value="${sourceforge-web}/client-library/javadoc/" />
+      <arg value="${sourceforge-web}/client-library/java/apidoc/" />
     </exec>
   </target>
-  
+
+  <target name="deploy-c-apidoc"
+          description="Rsync C client library API docs to sourceforge web">
+
+    <exec executable="make" dir="${c-client}">
+      <arg value="apidoc" />
+    </exec>
+
+    <exec executable="rsync" dir="${c-client}/doc/api/html">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg value="." />
+      <arg value="${sourceforge-web}/client-library/c/apidoc/" />
+    </exec>
+  </target>
+
   <!-- Build a web page from text template using Markdown -->
   <target name="fn:make-html" 
           depends="check-html-uptodate" 
@@ -138,12 +161,16 @@
     <property name="dest-html" value="${web}/site/${dest}" />
 
     <!-- load server/client properties for release info -->
-    <property file="${client}/avis-client.properties" prefix="client." />
+    <property file="${java-client}/avis-client.properties" prefix="java-client." />
+    <property file="${c-client}/avis-client.properties" prefix="c-client." />
     <property file="${server}/avis-server.properties" prefix="server." />
 
     <!-- init properties available in web templates -->
-    <property name="client.version" 
-              value="${client.avis.version.major}.${client.avis.version.minor}.${client.avis.version.patch}" />
+    <property name="java-client.version" 
+              value="${java-client.avis.version.major}.${java-client.avis.version.minor}.${java-client.avis.version.patch}" />
+
+    <property name="c-client.version" 
+              value="${c-client.avis.version.major}.${c-client.avis.version.minor}.${c-client.avis.version.patch}" />
 
     <property name="server.version" 
               value="${server.avis.version.major}.${server.avis.version.minor}.${server.avis.version.patch}" />
@@ -193,14 +220,14 @@
     </condition>
   </target>
 
-  <target name="htmlize-source-examples">
+  <target name="htmlize-java-client-examples">
 
     <taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask"
              classpath="${support}/java_syntax_highlighting/syntax.jar" />
 
     <mkdir dir="site/client-library/examples" />
 
-    <syntax srcDir="${client}/src/examples/org/avis/client/examples"
+    <syntax srcDir="${java-client}/src/examples/org/avis/client/examples"
             destDir="${web}/site/client-library/examples" 
             css="../../client-examples.css" />
   </target>
