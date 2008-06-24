@@ -27,3 +27,18 @@ general
   http://developer.apple.com/documentation/Porting/Conceptual/PortingUnix/compiling/chapter_4_section_3.html
 
 * DONE: rename Elvin client lib refs to Avis, including headers
+
+web
+
+http://avis.sourceforge.net/client_library.html
+http://avis.sourceforge.net/client-library/examples/HelloWorld.java.html
+http://avis.sourceforge.net/client-library/javadoc/
+http://downloads.sourceforge.net/avis/avis-client-1.1.0.zip
+
+http://avis.sourceforge.net/client_library.html
+http://avis.sourceforge.net/client-library/java/examples/HelloWorld.java.html
+http://avis.sourceforge.net/client-library/java/apidoc/
+http://avis.sourceforge.net/client-library/c/apidoc/
+http://downloads.sourceforge.net/avis/avis-client-1.1.0.zip
+http://downloads.sourceforge.net/avis/avis-client-0.1.0.tar.gz
+
