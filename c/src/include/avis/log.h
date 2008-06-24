@@ -1,13 +1,13 @@
 /** \file
  * Logging support.
  */
-#ifndef LOG_H_
-#define LOG_H_
+#ifndef AVIS_LOG_H_
+#define AVIS_LOG_H_
 
-#define ELVIN_LOG_LEVEL 1
+#define ELVIN_LOG_LEVEL       1
 
-#define LOG_LEVEL_DIAGNOSTIC 5
-#define LOG_LEVEL_TRACE 6
+#define LOG_LEVEL_DIAGNOSTIC  5
+#define LOG_LEVEL_TRACE       6
 
 #define LOGGING(loglevel) (ELVIN_LOG_LEVEL >= loglevel)
 
@@ -29,4 +29,4 @@
 
 void elvin_log (int level, const char *message, ...);
 
-#endif /*LOG_H_*/
+#endif /*AVIS_LOG_H_*/
