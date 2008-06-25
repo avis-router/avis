@@ -1,8 +1,20 @@
 # Process this file with autoconf to produce a configure script.
 
+# read in the Avis release numbers
+
+define([version_major], 
+       esyscmd([. avis-client.properties && printf "%s" ${avis_version_major}]))
+
+define([version_minor], 
+       esyscmd([. avis-client.properties && printf "%s" ${avis_version_minor}]))
+
+define([version_patch], 
+       esyscmd([. avis-client.properties && printf "%s" ${avis_version_patch}]))
+
 # Prelude.
 AC_PREREQ([1.0])
-AC_INIT([Avis Client], [1.0], [phillipsm@sourceforge.net])
+AC_INIT([Avis Client], version_major.version_minor.version_patch, 
+        [phillipsm@sourceforge.net])
 
 # unique source file --- primitive safety check 
 #AC_CONFIG_SRCDIR([src/money.c])
