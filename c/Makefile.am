@@ -1,6 +1,7 @@
 SUBDIRS = packages . src doc
 
 EXTRA_DIST = \
+  avis-client.properties \
   platforms/gnu_automake/readme.txt \
   platforms/macosx/avis_client.xcodeproj/project.pbxproj \
   platforms/macosx/avis_client_config.h \
