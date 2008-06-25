@@ -1,0 +1,4 @@
+# This is a generated file.
+SET(ENV{srcdir} C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4)
+SET(ENV{pcregrep} C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/$(OutDir)/pcregrep.exe)
+SET(ENV{pcretest} C:/Documents and Settings/kru028.NEXUS/Desktop/braccetto code/avis/support/pcre-7.4/win32/$(OutDir)/pcretest.exe)

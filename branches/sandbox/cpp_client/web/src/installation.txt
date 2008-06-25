@@ -1,0 +1,136 @@
+Installing Avis
+======================================================================
+
+Avis install packages are available from [the sourceforge download
+area][downloads]. See the relevant section below for more information.
+
+Requirements
+----------------------------------------------------------------------
+
+Before installing Avis, you will need a Java 5 (or later) runtime or
+development kit installed. Windows and Unix users can get Java from
+[Sun's Java download site][sun_java]. Mac OS X users can get Java 5
+from [Apple's download site][apple_java] (Mac OS X 10.4 or later).
+
+You can run Avis with a minimal Java Runtime Environment (JRE) but if
+you wish to get optimal performance it is recommended you install the
+full JDK to gain access to the "server" optimizing VM.
+
+Configuration
+----------------------------------------------------------------------
+
+The Avis router will install and run with no configuration
+required. If you do wish to change any of the router's default
+parameters, these are specified in a file called `avisd.config`. See
+the installation instructions for your platform below for information
+on where this file can be found. Documentation and templates for the
+config options can be found in the file itself.
+
+Windows
+----------------------------------------------------------------------
+
+To install, run the self-installer package. By default this will
+install Avis in `C:\Program Files\Avis`.
+
+You may also elect to add Avis as a system service, which will run
+Avis in the background as a startup service. If you don't wish to add
+Avis as a service at install time, you can add it later by running
+`bin\install_avis_service.cmd`.
+
+Once installed, Avis will either already be running (if you installed
+it as a service), or you may start it from the command line using
+`bin\start_avis_service.cmd`.
+
+Configuration options for Avis can be found in the
+`config\avisd.config` file.
+
+
+Fedora
+----------------------------------------------------------------------
+
+The Avis RPM is targeted and tested on Fedora Core 2 and
+later. However the RPM is architecture-independent and not
+particularly dependent on Fedora, so it may work on other RPM-based
+Linux distributions.
+
+NOTE: Avis will *not* run under GNU gcj, which is the default version
+of Java shipped with Fedora. You'll need to download the Java SE 1.6
+JDK from [java.sun.com][sun_java], and then use [these instructions at
+jpackage.org](http://jpackage.org/installation.php) to install Sun
+Java and make it the default runtime.
+
+To install:
+
+    > sudo rpm -ivh avis-${server.version}.rpm
+
+Configuration options are in the file `/etc/avis/avisd.config`.
+
+To run from the command line as a test:
+
+    > /usr/sbin/avisd -c /etc/avis/avisd.config
+
+To install as a startup service:
+
+    > sudo /sbin/chkconfig --add avisd
+    > sudo /sbin/chkconfig avisd on
+    > sudo /sbin/service avisd start
+
+To uninstall as a system service:
+
+    > sudo /sbin/service avisd stop
+    > sudo /sbin/chkconfig avisd --del
+
+To uninstall:
+
+    > sudo rpm -e avis
+
+Mac OS X
+----------------------------------------------------------------------
+
+To install, open the Avis `.tbz` archive in Finder. This will extract
+the Avis installation package which you can open and install.
+
+To configure: The Avis configuration is in
+`/usr/local/etc/avis/avisd.config`.
+
+To start Avis, open a Terminal window and, as an admin user, run the
+command to instruct [launchd][] to load and start it as a system
+daemon:
+
+    > sudo launchctl load \
+        /Library/LaunchDaemons/org.avis.avisd.plist
+
+To stop Avis:
+
+    > sudo launchctl unload \
+        /Library/LaunchDaemons/org.avis.avisd.plist
+
+To uninstall: Mac OS X unfortunately does not have a standard way to
+uninstall installer package (`.pkg`) files. You can however use a
+third party utility called [DesInstaller][desinstaller] to selectively
+delete installed packages.
+
+
+Other
+----------------------------------------------------------------------
+
+The Avis source distribution comes with precompiled binaries ready to
+run on any platform. Simply unzip the source distribution and run Avis
+from a bash command shell:
+
+     > cd avis-${server.version}/server
+     > ./bin/avisd
+
+See `etc/avisd.config` for configuration options.
+
+There is also a smaller binary distribution intended for Unix systems:
+look for a download like `avis-${server.version}.tar.bz2`. This
+distribution can be installed using the included `install.sh` script
+or via [GNU stow][stow]. See the included README for more information.
+
+[downloads]: http://sourceforge.net/project/showfiles.php?group_id=181381&package_id=210191
+[sun_java]: http://java.sun.com/javase/downloads
+[apple_java]: http://developer.apple.com/java/download
+[desinstaller]: http://krugazor.free.fr/software/desinstaller/DesInstaller.php
+[launchd]: http://en.wikipedia.org/wiki/Launchd
+[stow]: http://www.gnu.org/software/stow
