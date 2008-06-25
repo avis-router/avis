@@ -31,13 +31,13 @@ static void read_int64_array (ByteBuffer *buffer, Message message,
                               ElvinError *error);
 
 static void write_int64_array (ByteBuffer *buffer, Message message, 
-                                  ElvinError *error);
+                               ElvinError *error);
 
 static void read_bool (ByteBuffer *buffer, Message message, 
-                          ElvinError *error);
+                       ElvinError *error);
 
 static void read_xid (ByteBuffer *buffer, Message message, 
-                         ElvinError *error);
+                      ElvinError *error);
 
 static void read_string (ByteBuffer *buffer, Message message, 
                          ElvinError *error);
@@ -67,8 +67,11 @@ static void values_free (Array *values);
 
 typedef enum 
 {
-  FIELD_XID, FIELD_INT32, FIELD_INT64, FIELD_POINTER
+  FIELD_XID = 0, FIELD_INT32 = 1, FIELD_INT64 = 2, FIELD_POINTER = 3
 } FieldType;
+
+/** Size of FieldType values */
+static int field_sizes [4] = {4, 4, 8, sizeof (void *)};
 
 typedef void (*MessageIOFunction) (ByteBuffer *buffer, Message message, 
                                    ElvinError *error);
@@ -133,8 +136,6 @@ static MessageFormat MESSAGE_FORMATS [] =
 };
 
 static MessageFormat *message_format_for (MessageTypeID type);
-
-static size_t field_size (FieldType type);
 
 static void read_using_format (ByteBuffer *buffer, 
                                Message message,
@@ -284,22 +285,6 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
   return true; 
 }
 
-size_t field_size (FieldType type)
-{
-  switch (type)
-  {
-  case FIELD_INT32:
-  case FIELD_XID:
-    return 4;
-  case FIELD_INT64:
-    return 8;
-  case FIELD_POINTER:
-    return sizeof (void *);
-  default:
-    abort ();
-  }
-}
-
 void read_using_format (ByteBuffer *buffer, 
                         Message message,
                         MessageFormat *format, 
@@ -311,7 +296,7 @@ void read_using_format (ByteBuffer *buffer,
   {
     (*field->read) (buffer, message, error);
 
-    message += field_size (field->type);
+    message += field_sizes [field->type];
   }
 }
 
@@ -326,7 +311,7 @@ void write_using_format (ByteBuffer *buffer,
   {
     (*field->write) (buffer, message, error);
 
-    message += field_size (field->type);
+    message += field_sizes [field->type];
   }
 }
 
