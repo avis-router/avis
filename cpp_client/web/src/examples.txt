@@ -1,0 +1,158 @@
+Avis Example
+======================================================================
+
+This page contains a simple example scenario using Avis to illustrate
+how it operates.
+
+In this example we imagine a scenario where we have a large number of
+servers in several company departments that we wish to monitor. We
+install a small Elvin client on each host we want to monitor that runs
+the code below every minute:<sup>[1][]</sup>
+
+The diagram below is an overview of the example scenario. We'll expand
+on what this means in the following sections.
+
+<img src="images/example overview.png"
+     alt="Example overview diagram" border="0" />
+
+Monitor
+----------------------------------------------------------------------
+
+The code below runs on each host we wish to monitor. It puts a message
+on the Elvin bus tagged with the message type and
+version.<sup>[2][]</sup> The messages describe the host's name,
+department and percentage of free disk space.
+
+<pre class="java">
+<span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
+<span class="type">Notification</span> <span class="variable-name">ntfn</span> = <span class="keyword">new</span> <span class="type">Notification</span> ();
+  
+ntfn.set (<span class="string">"Status-Message"</span>, 1000);
+ntfn.set (<span class="string">"Host-Name"</span>, hostName ());
+ntfn.set (<span class="string">"Department"</span>,  lookupDepartment ());
+ntfn.set (<span class="string">"Percent-Disk-Free"</span>, diskFreePercentage ());
+  
+elvin.send (ntfn);
+  
+elvin.close ();
+</pre>
+
+Logger
+----------------------------------------------------------------------
+
+Once we have hosts emitting status messages, we might add a logging
+client somewhere in the control centre that stores them in a central
+rotating log file. The code below does this by listening for any
+status message.
+
+<pre class="java">
+<span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
+
+<span class="comment-delimiter">// </span><span class="comment">Listen for any version 1.x status message 
+</span><span class="type">Subscription</span> <span class="variable-name">statusSub</span> =
+  elvin.subscribe (<span class="string">"Status-Message &lt; 2000"</span>);
+
+statusSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
+{
+  <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
+  {
+    addLog (e.notification.getString (<span class="string">"Host-Name"</span>),
+            e.notification.getInt (<span class="string">"Percent-Disk-Free"</span>));
+  }
+});
+
+...
+</pre>
+
+Alerter
+----------------------------------------------------------------------
+
+Perhaps later on we decide we need to be alerted if any of the servers
+in in the "IT" department get too low on disk space.
+
+<pre>
+<span class="type">Elvin</span> <span class="variable-name">elvin</span> = <span class="keyword">new</span> <span class="type">Elvin</span> (<span class="string">"elvin://elvin_router"</span>);
+
+<span class="comment-delimiter">// </span><span class="comment">Listen for status messages in the IT
+</span><span class="comment-delimiter">// </span><span class="comment">department where disk space is 10% or less
+</span>
+<span class="type">Subscription</span> <span class="variable-name">alertSub</span> =
+  elvin.subscribe
+    (<span class="string">"Status-Message &lt; 2000 &amp;&amp; "</span> +
+     <span class="string">"Department == 'IT' &amp;&amp; "</span> +
+     <span class="string">"Percent-Disk-Free &lt;= 10"</span>);
+
+alertSub.addListener (<span class="keyword">new</span> <span class="type">NotificationListener</span> ()
+{
+  <span class="keyword">public</span> <span class="type">void</span> <span class="function-name">notificationReceived</span> (<span class="type">NotificationEvent</span> <span class="variable-name">e</span>)
+  {
+    alert (<span class="string">"Host %s has low disk space (%i percent)"</span>,
+           e.notification.get (<span class="string">"Host-Name"</span>),
+           e.notification.get (<span class="string">"Percent-Disk-Free"</span>));
+  }
+});
+</pre>
+
+The `alert ()` routine called by the subscription handler above might
+do something like flash the message on a big display, send an email or
+SMS. In fact `alert ()` might be better off emittng another kind of
+"alert" Elvin notification that is handled by several listening
+services that could do any of the above.
+
+One useful example of a service that reacts to alerts would be one
+that emits a text message in the [tickertape instant messaging
+format][about_tickertape]. This format can be displayed by a number of
+[ticker clients][ticker_clients], either on a big display or on an
+administrator's desktop.
+
+More Information
+----------------------------------------------------------------------
+
+One widely deployed public use of Elvin has been as a wide-area
+instant messaging and presence network. This network was initiated by
+the Elvin project at DSTC as an inter-organisation communication aid
+and has continued to be maintained since DSTC's closure.
+
+One client for this network is the [Sticker tickertape messaging
+client][sticker]. Sticker can be both a useful testing client for Avis
+and a real world example of using Elvin messaging. The source code for
+Sticker is available at [the tickertape.org downloads
+page][tickertape_downloads].
+
+<div class="footnotes">
+
+<hr />
+
+Footnotes
+
+<ol>
+
+<li id="fn1-examples">
+
+<p> The source code examples on this page are written using the Avis
+    Java client library for Elvin. Please see the <a
+    href="client_library.html">client library page</a> for more
+    details.</p>
+
+</li>
+
+<li id="fn2-examples">
+
+<p> A tag value of <code>1000 == version 1.0</code>, <code>1001 ==
+    1.1</code>, <code>2000 == 2.0</code> etc. This kind of versioning
+    can be very useful for long-lived formats allowing you to have
+    several versions in use on the bus without interfering with each
+    other.</p>
+
+</li>
+
+</ol>
+</div>
+
+[1]: #fn1-examples
+[2]: #fn2-examples
+[about_tickertape]: http://tickertape.org/documents/what_is_tickertape.html "More about tickertape"
+[ticker_clients]: http://tickertape.org/get_tickerta "Available tickertape clients"
+[tickertape_downloads]: http://tickertape.org/download "Download a tickertape client"
+[sticker]: http://tickertape.org/projects/sticker "Sticker project page"
+[client_library]: client_library.html
