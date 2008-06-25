@@ -461,7 +461,8 @@ void write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
   elvin_keys_write (buffer, *(Keys **)message, error);
 }
 
-/** TODO limit items */
+/* TODO limit items */
+/* TODO add test for dud server messages */
 void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t item_count = byte_buffer_read_int32 (buffer, error);
@@ -474,7 +475,7 @@ void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
     for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
       value_read (buffer, value, error);
   
-    /** TODO finish new cleanup logic */
+    /* TODO finish new cleanup logic */
     if (elvin_error_ok (error))
     {
       *(Array **)message = array;
