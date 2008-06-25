@@ -243,6 +243,8 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
     return false;
   }
 
+  memset (message, 0, MAX_MESSAGE_SIZE);
+
   /* fill in type field */
   message_type_of (message) = type;
     
@@ -253,8 +255,18 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   {
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
   }
-  
-  return elvin_error_ok (error);
+
+  if (elvin_error_ok (error))
+  {
+    return true;
+  } else
+  {
+    message_free (message);
+
+    memset (message, 0, MAX_MESSAGE_SIZE);
+
+    return false;
+  }
 }
 
 bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
@@ -340,12 +352,12 @@ void write_int32 (ByteBuffer *buffer, Message message, ElvinError *error)
   byte_buffer_write_int32 (buffer, *(int32_t *)message, error);
 }
 
-void  read_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
+void read_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   *(int64_t *)message = byte_buffer_read_int64 (buffer, error);
 }
 
-void  write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
+void write_int64 (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   byte_buffer_write_int64 (buffer, *(int64_t *)message, error);
 }
@@ -426,10 +438,7 @@ void read_attributes (ByteBuffer *buffer, Message message,
         
   attributes_read (buffer, attributes, error);
 
-  if (elvin_error_ok (error))
-    *(Attributes **)message = attributes;
-  else
-    attributes_destroy (attributes);  
+  *(Attributes **)message = attributes;
 }
 
 void write_attributes (ByteBuffer *buffer, Message message, 
@@ -442,10 +451,9 @@ void read_keys (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   Keys *keys = elvin_keys_create ();
   
-  if (elvin_keys_read (buffer, keys, error))
-    *(Keys **)message = keys;
-  else
-    elvin_keys_destroy (keys);
+  elvin_keys_read (buffer, keys, error);
+
+  *(Keys **)message = keys;
 }
 
 void write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
@@ -465,7 +473,8 @@ void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
   
     for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
       value_read (buffer, value, error);
-    
+  
+    /** TODO finish new cleanup logic */
     if (elvin_error_ok (error))
     {
       *(Array **)message = array;
