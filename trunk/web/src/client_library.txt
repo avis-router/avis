@@ -3,9 +3,10 @@ Avis Client Libraries
 
 The Avis project provides client libaries for development of
 applications that wish to interact with an Elvin router. There are
-currently libraries for Java and C.
+currently libraries for Java and C, both available under the terms of
+the [LGPL][] (version 3).
 
-Java Client Library
+Java
 ----------------------------------------------------------------------
  
 The Avis Java Client Library provides a high level API for Java
@@ -47,20 +48,22 @@ examples in `src/examples` and documentation on how to use them in
 You can also see a demonstration of the Java client library in a
 realistic scenario at the [examples page][examples].
 
-C Client Library
+C
 ----------------------------------------------------------------------
 
-The C client library is currently still in development. An alpha
-release (${c-client.version}) is available for testing.
+An Avis client library for C development is currently in progress. A
+preview alpha release (${c-client.version}) is available for testing:
+the API in this release should be very similar to the final API, with
+some features currently missing.
 
  * [Download the C client library][c-client-src] (alpha release
-   ${c-client.version}.
+   ${c-client.version}).
 
  * [C API documentation][c-apidoc] for the latest version of the
    library.
 
 
-General Documentation
+Other Documentation
 ----------------------------------------------------------------------
 
  * A description of the [Elvin subscription language][subscription].
@@ -78,3 +81,5 @@ General Documentation
 [subscription]: subscription_language.html
 
 [examples]: examples.html
+
+[LGPL]: http://www.gnu.org/licenses/lgpl.html
