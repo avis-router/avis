@@ -29,7 +29,7 @@ Array *array_init (Array *array, size_t item_count, size_t item_length)
 
 void array_free (Array *array)
 {
-  if (array->items)
+  if (array && array->items)
   {
     free (array->items);
     
