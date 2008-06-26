@@ -71,12 +71,7 @@ static TestResult * tcase_run_checked_setup (SRunner *sr, TCase *tc);
 static void tcase_run_checked_teardown (TCase *tc);
 static void srunner_iterate_tcase_tfuns (SRunner *sr, TCase *tc);
 static void srunner_add_failure (SRunner *sr, TestResult *tf);
-static TestResult *tcase_run_tfun_fork (SRunner *sr, TCase *tc, TF *tf, int i);
 static TestResult *tcase_run_tfun_nofork (SRunner *sr, TCase *tc, TF *tf, int i);
-static TestResult *receive_result_info_fork (const char *tcname,
-                                             const char *tname,
-                                             int iter,
-					     int status, int expected_signal);
 static TestResult *receive_result_info_nofork (const char *tcname,
                                                const char *tname,
                                                int iter);
@@ -86,7 +81,17 @@ static char *signal_msg (int sig);
 static char *signal_error_msg (int signal_received, int signal_expected);
 static char *pass_msg (void);
 static char *exit_msg (int exitstatus);
+
+
+#ifdef HAVE_FORK
+static TestResult *tcase_run_tfun_fork (SRunner *sr, TCase *tc, TF *tf, int i);
+static TestResult *receive_result_info_fork (const char *tcname,
+                                             const char *tname,
+                                             int iter,
+											 int status,
+											 int expected_signal);
 static int waserror (int status, int expected_signal);
+#endif //HAVE_FORK
 
 #define MSG_LEN 100
 
@@ -197,8 +202,10 @@ static void srunner_iterate_tcase_tfuns (SRunner *sr, TCase *tc)
     {
       switch (srunner_fork_status(sr)) {
        case CK_FORK:
+#ifdef HAVE_FORK
         tr = tcase_run_tfun_fork (sr, tc, tfun, i);
         break;
+#endif //HAVE_FORK
        case CK_NOFORK:
         tr = tcase_run_tfun_nofork (sr, tc, tfun, i);
         break;
@@ -319,6 +326,7 @@ static void srunner_run_tcase (SRunner *sr, TCase *tc)
   }
 }
 
+#ifdef HAVE_FORK
 static TestResult *receive_result_info_fork (const char *tcname,
                                              const char *tname,
                                              int iter,
@@ -336,6 +344,7 @@ static TestResult *receive_result_info_fork (const char *tcname,
 
   return tr;
 }
+#endif //HAVE_FORK
 
 static TestResult *receive_result_info_nofork (const char *tcname,
                                                const char *tname,
@@ -356,10 +365,22 @@ static TestResult *receive_result_info_nofork (const char *tcname,
 
 static void set_fork_info (TestResult *tr, int status, int signal_expected)
 {
-  int was_sig = WIFSIGNALED(status);
-  int was_exit = WIFEXITED(status);
-  int exit_status = WEXITSTATUS(status);
-  int signal_received = WTERMSIG(status);
+  int was_sig;
+  int was_exit;
+  int exit_status;
+  int signal_received;
+
+#if HAVE_FORK
+  was_sig = WIFSIGNALED(status);
+  was_exit = WIFEXITED(status);
+  exit_status = WEXITSTATUS(status);
+  signal_received = WTERMSIG(status);
+#else //HAVE_FORK
+  was_sig = 0;
+  was_exit = 0;
+  exit_status = status;
+  signal_received = 0;
+#endif //HAVE_FORK
 
   if (was_sig) {
     if (signal_expected == signal_received) {
@@ -427,7 +448,7 @@ static TestResult *tcase_run_tfun_nofork (SRunner *sr, TCase *tc, TF *tfun, int 
   return tr;
 }
 
-  
+#ifdef HAVE_FORK
 static TestResult *tcase_run_tfun_fork (SRunner *sr, TCase *tc, TF *tfun, int i)
 {
   pid_t pid_w;
@@ -457,6 +478,7 @@ static TestResult *tcase_run_tfun_fork (SRunner *sr, TCase *tc, TF *tfun, int i)
 
   return receive_result_info_fork(tc->name, tfun->name, i, status, tfun->signal);
 }
+#endif //HAVE_FORK
 
 static char *signal_error_msg (int signal_received, int signal_expected)
 {
@@ -523,6 +545,7 @@ void srunner_set_fork_status (SRunner *sr, enum fork_status fstat)
   sr->fstat = fstat;
 }
 
+#ifdef HAVE_FORK
 pid_t check_fork (void)
 {
   pid_t pid = fork();
@@ -530,6 +553,7 @@ pid_t check_fork (void)
   setpgid(pid, group_pid);
   return pid;
 }
+
 
 void check_waitpid_and_exit (pid_t pid)
 {
@@ -544,8 +568,10 @@ void check_waitpid_and_exit (pid_t pid)
       exit(EXIT_FAILURE);
   }
   exit(EXIT_SUCCESS);
-}  
+}
+#endif //HAVE_FORK
 
+#ifdef HAVE_FORK
 static int waserror (int status, int signal_expected)
 {
   int was_sig = WIFSIGNALED (status);
@@ -556,3 +582,4 @@ static int waserror (int status, int signal_expected)
   return ((was_sig && (signal_received != signal_expected)) ||
           (was_exit && exit_status != 0));
 }
+#endif //HAVE_FORK

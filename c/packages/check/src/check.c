@@ -211,8 +211,10 @@ void _fail_unless (int result, const char *file,
     vsnprintf(buf, BUFSIZ, msg, ap);
     va_end(ap);
     send_failure_info (buf);
+#ifdef HAVE_FORK
     if (cur_fork_status() == CK_FORK)
       exit(1);
+#endif //HAVE_FORK
   }
 }
 
