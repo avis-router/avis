@@ -155,7 +155,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\src\lib\array_list.c"
+				RelativePath="..\..\..\src\lib\arrays.c"
 				>
 			</File>
 			<File
@@ -205,7 +205,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\include\avis\array_list.h"
+				RelativePath="..\..\..\src\lib\arrays_private.h"
 				>
 			</File>
 			<File
