@@ -32,7 +32,7 @@ typedef struct
 
 extern Attributes _empty_attributes;
 
-#define EMPTY_NAMED_VALUES (&_empty_attributes)
+#define EMPTY_ATTRIBUTES (&_empty_attributes)
 
 /**
  * Create a new named attributes instance on the heap.
