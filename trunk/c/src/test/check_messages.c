@@ -295,24 +295,31 @@ START_TEST (test_dud_router)
   length = buffer->position;
   buffer->max_data_length = buffer->data_length = length - 1;
   
-  byte_buffer_set_position (buffer, 0, &error);
+  byte_buffer_set_position (buffer, 4, &error);
   
-  // skip frame size
-  byte_buffer_skip (buffer, 4, &error);
-  fail_on_error (&error);
-
   message_read (buffer, message2, &error);
   
   fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);  
-
+  /* message2 should be freed by message_read () on error, but should be OK to 
+   * free again */
+  message_free (message2);
+  
+  /* create a corrupt message */
+  buffer->max_data_length = buffer->data_length = length;
+  byte_buffer_set_position (buffer, 4, &error);
+  
+  /* generate "error: Invalid value type: 4294967295" */
+  ((uint32_t *)buffer->data) [9] = 0xFFFFFFFF;
+  
+  message_read (buffer, message2, &error);
+  
+  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);  
+  message_free (message2);  
+    
   byte_buffer_destroy (buffer);
   
   /* not freeing messages1 since it refers to global singletons */
-  attributes_destroy (attributes);
-  
-  /* message2 should be freed by message_read () on error, but should be OK to 
-   * free again */
-  message_free (message2);  
+  attributes_destroy (attributes);  
 }
 END_TEST
 
