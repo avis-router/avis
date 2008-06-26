@@ -98,6 +98,7 @@ static int waserror (int status, int expected_signal);
 static int alarm_received;
 static pid_t group_pid;
 
+#ifdef HAVE_ALARM
 static void sig_handler(int sig_nr)
 {
   switch (sig_nr) {
@@ -110,6 +111,7 @@ static void sig_handler(int sig_nr)
     break;
   }
 }
+#endif /* HAVE_ALARM */
 
 static void srunner_run_init (SRunner *sr, enum print_output print_mode)
 {
@@ -155,22 +157,28 @@ static void srunner_iterate_suites (SRunner *sr,
 
 void srunner_run_all (SRunner *sr, enum print_output print_mode)
 {
+#ifdef HAVE_ALARM
   struct sigaction old_action;
   struct sigaction new_action;
-  
+#endif /* HAVE_ALARM */
+
   if (sr == NULL)
     return;
   if (print_mode < 0 || print_mode >= CK_LAST)
     eprintf("Bad print_mode argument to srunner_run_all: %d",
 	    __FILE__, __LINE__, print_mode);
-  
+
+#ifdef HAVE_ALARM
   memset(&new_action, 0, sizeof new_action);
   new_action.sa_handler = sig_handler;
   sigaction(SIGALRM, &new_action, &old_action);
+#endif /* HAVE_ALARM */
   srunner_run_init (sr, print_mode);
   srunner_iterate_suites (sr, print_mode);
   srunner_run_end (sr, print_mode);
+#ifdef HAVE_ALARM
   sigaction(SIGALRM, &old_action, NULL);
+#endif /* HAVE_ALARM */
 }
 
 static void srunner_add_failure (SRunner *sr, TestResult *tr)
