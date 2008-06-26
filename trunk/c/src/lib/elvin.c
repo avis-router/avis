@@ -95,12 +95,17 @@ bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error)
   return elvin_error_ok (error);
 }
 
+bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error)
+{
+  return elvin_open_with_keys (elvin, uri, EMPTY_KEYS, EMPTY_KEYS, error);
+}
+
 bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
                            Keys *notification_keys, Keys *subscription_keys, 
                            ElvinError *error)
 {
   alloc_message (conn_rqst);
-  alloc_message (reply);
+  alloc_message (conn_rply);
   
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
@@ -116,17 +121,14 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
                 EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
   
   on_error_return_false 
-    (send_and_receive (elvin, conn_rqst, reply, MESSAGE_ID_CONN_RPLY, error));
+    (send_and_receive (elvin, conn_rqst, conn_rply,
+                       MESSAGE_ID_CONN_RPLY, error));
   
-  /* todo check message reply options */
-  message_free (reply);
+  /* TODO check message reply options */
+  
+  message_free (conn_rply);
   
   return true;  
-}
-
-bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error)
-{
-  return elvin_open_with_keys (elvin, uri, EMPTY_KEYS, EMPTY_KEYS, error);
 }
 
 bool elvin_is_open (Elvin *elvin)
@@ -138,17 +140,17 @@ bool elvin_close (Elvin *elvin)
 {
   ElvinError error = elvin_error_create ();
   alloc_message (disconn_rqst);
-  alloc_message (disconn_reply);
+  alloc_message (disconn_rply);
   
   if (elvin->socket == -1)
     return false;
   
   message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
   
-  send_and_receive (elvin, disconn_rqst, disconn_reply,
+  send_and_receive (elvin, disconn_rqst, disconn_rply,
                     MESSAGE_ID_DISCONN_RPLY, &error);
 
-  /* no free needed for disconn_reply */
+  /* no free needed for disconn_rply */
   
   elvin_shutdown (elvin);
   
@@ -338,12 +340,12 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
                                          ElvinError *error)
 {  
   alloc_message (sub_add_rqst);
-  alloc_message (sub_reply);
+  alloc_message (sub_rply);
   
   message_init (sub_add_rqst, MESSAGE_ID_SUB_ADD_RQST, subscription_expr, 
                 security, keys);
   
-  if (send_and_receive (elvin, sub_add_rqst, sub_reply,
+  if (send_and_receive (elvin, sub_add_rqst, sub_rply,
                         MESSAGE_ID_SUB_RPLY, error))
   {
     Subscription *subscription = 
@@ -353,10 +355,10 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     
     subscription->elvin = elvin;
     subscription->subscription_expr = strdup (subscription_expr);
-    subscription->id = int64_at_offset (sub_reply, 4);
+    subscription->id = int64_at_offset (sub_rply, 4);
     subscription->keys = keys;
 
-    /* no free needed for sub_reply */
+    /* no free needed for sub_rply */
 
     return subscription;
   } else
@@ -369,16 +371,16 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
                         ElvinError *error)
 {
   alloc_message (sub_del_rqst);
-  alloc_message (sub_reply);
+  alloc_message (sub_rply);
   bool succeeded;
   
   message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
   
   succeeded = 
-    send_and_receive (elvin, sub_del_rqst, sub_reply,
+    send_and_receive (elvin, sub_del_rqst, sub_rply,
                       MESSAGE_ID_SUB_RPLY, error);
   
-  message_free (sub_reply);
+  /* no free needed for sub_rply */
   
   elvin_subscription_free (subscription);
 
