@@ -198,6 +198,7 @@ void message_free (Message message)
   MessageFormat *format = message_format_for (message_type_of (message));
   FieldFormat *field;
   Message message_field = message + 4;
+  void *ptr;
   
   assert (format != NULL);
   
@@ -206,10 +207,15 @@ void message_free (Message message)
     switch (field->type)
     {
     case FIELD_POINTER:
-      if (field->free)
-        (*field->free) (*(void **)message_field);
+      ptr = *(void **)message_field;
       
-      free (*(void **)message_field);
+      if (ptr)
+      {
+        if (field->free)
+          (*field->free) (ptr);
+        
+        free (ptr);
+      }
       
       message_field += sizeof (void *);
       break;
@@ -231,6 +237,8 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   uint32_t type;
   MessageFormat *format;
   
+  memset (message, 0, MAX_MESSAGE_SIZE);
+
   on_error_return_false (type = byte_buffer_read_int32 (buffer, error));
   
   format = message_format_for (type);
@@ -242,8 +250,6 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
     
     return false;
   }
-
-  memset (message, 0, MAX_MESSAGE_SIZE);
 
   /* fill in type field */
   message_type_of (message) = type;
@@ -375,10 +381,7 @@ void read_int64_array (ByteBuffer *buffer, Message message,
     for ( ; item_count > 0 && elvin_error_ok (error); item_count--, item++)
       *item = byte_buffer_read_int64 (buffer, error);
     
-    if (elvin_error_ok (error))
-      *(Array **)message = array;
-    else
-      array_destroy (array);
+    *(Array **)message = array;
   }
 }
 
@@ -396,29 +399,22 @@ void write_int64_array (ByteBuffer *buffer, Message message,
 
 void read_bool (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  int32_t value = byte_buffer_read_int32 (buffer, error);
+  uint32_t value = byte_buffer_read_int32 (buffer, error);
   
-  if (elvin_error_ok (error))
-  {
-    if (value == 0 || value == 1)
-      *(int32_t *)message = value;
-    else
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, 
-                       "Invalid boolean: %u", value);
-  }
+  *(uint32_t *)message = value;
+  
+  if (value > 1 && elvin_error_ok (error))
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid boolean: %u", value);
 }
 
 void read_xid (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t value = byte_buffer_read_int32 (buffer, error);
-    
-  if (elvin_error_ok (error))
-  {
-    if (value > 0)
-      *(uint32_t *)message = value;
-    else
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Invalid XID: %u", value);
-  }
+  
+  *(uint32_t *)message = value;
+  
+  if (value == 0 && elvin_error_ok (error))
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "XID cannot be zero", value);
 }
 
 void read_string (ByteBuffer *buffer, Message message, ElvinError *error)
@@ -472,20 +468,15 @@ void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
     Array *array = array_create (Value, item_count); 
     Value *value = array->items;
   
-    for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
+    array->item_count = 0;
+    
+    for ( ; array->item_count < item_count && elvin_error_ok (error); 
+            array->item_count++, value++)
+    {
       value_read (buffer, value, error);
-  
-    /* TODO finish new cleanup logic */
-    if (elvin_error_ok (error))
-    {
-      *(Array **)message = array;
-    } else
-    {
-      array->item_count -= item_count;
-      
-      values_free (array);
-      array_destroy (array);
     }
+    
+    *(Array **)message = array;
   }
 }
 
@@ -497,7 +488,7 @@ void write_values (ByteBuffer *buffer, Message message, ElvinError *error)
   byte_buffer_write_int32 (buffer, item_count, error);
   
   for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
-    value_read (buffer, value, error);
+    value_write (buffer, value, error);
 }
 
 void values_free (Array *values)
