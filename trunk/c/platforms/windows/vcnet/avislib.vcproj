@@ -104,7 +104,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\src\lib\array_list.c">
+				RelativePath="..\..\..\src\lib\arrays.c">
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\attributes.c">
@@ -142,10 +142,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\src\lib\array_list_private.h">
+				RelativePath="..\..\..\src\lib\arrays_private.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\avis\attributes.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\attributes_private.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\avis_endian.h">
