@@ -138,16 +138,18 @@ bool elvin_close (Elvin *elvin)
 {
   ElvinError error = elvin_error_create ();
   alloc_message (disconn_rqst);
-  alloc_message (reply);
+  alloc_message (disconn_reply);
   
   if (elvin->socket == -1)
     return false;
   
   message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
   
-  send_and_receive (elvin, disconn_rqst, reply,
+  send_and_receive (elvin, disconn_rqst, disconn_reply,
                     MESSAGE_ID_DISCONN_RPLY, &error);
 
+  /* no free needed for disconn_reply */
+  
   elvin_shutdown (elvin);
   
   elvin_error_free (&error);
@@ -354,7 +356,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     subscription->id = int64_at_offset (sub_reply, 4);
     subscription->keys = keys;
 
-    message_free (sub_reply);
+    /* no free needed for sub_reply */
 
     return subscription;
   } else
