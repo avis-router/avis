@@ -439,8 +439,8 @@ bool send_and_receive (Elvin *elvin, Message request,
     {
       elvin_error_set  
         (error, ELVIN_ERROR_PROTOCOL, 
-         "Mismatched transaction ID in reply from router: %u != %u", 
-         xid_of (request), xid_of (reply));
+         "Mismatched transaction ID in reply from router: %u (should be %u)", 
+         xid_of (reply), xid_of (request));
     }
     
     if (elvin_error_occurred (error))
