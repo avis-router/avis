@@ -354,6 +354,8 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     subscription->id = int64_at_offset (sub_reply, 4);
     subscription->keys = keys;
 
+    message_free (sub_reply);
+
     return subscription;
   } else
   {
@@ -373,6 +375,8 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
   succeeded = 
     send_and_receive (elvin, sub_del_rqst, sub_reply,
                       MESSAGE_ID_SUB_RPLY, error);
+  
+  message_free (sub_reply);
   
   elvin_subscription_free (subscription);
 

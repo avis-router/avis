@@ -38,9 +38,10 @@ static void teardown ()
 {\
   elvin_uri_from_string (&uri, uri_string, &error);\
   fail_unless_error_code (&error, ELVIN_ERROR_INVALID_URI);\
+  reset_uri (uri);\
 }
 
-#define reset_uri(uri) (uri.host = NULL, uri.port = 0)
+#define reset_uri(uri) (elvin_uri_free (&uri), uri.host = NULL, uri.port = 0)
 
 const char *elvin_router ()
 {
@@ -73,6 +74,8 @@ START_TEST (test_uri)
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
   fail_unless (uri.port == 4567, "Bad port: %s", uri.port);
+  
+  reset_uri (uri);
   
   check_invalid_uri ("hello://host");  
   check_invalid_uri ("elvin://host:1234567890");  

@@ -196,11 +196,11 @@ Message message_init (Message message, MessageTypeID type, ...)
 void message_free (Message message)
 {
   MessageFormat *format = message_format_for (message_type_of (message));
-  FieldFormat *field;
   Message message_field = message + 4;
+  FieldFormat *field;
   void *ptr;
   
-  /* will happen on zerod-out message block */
+  /* will happen on zeroed-out message block */
   if (format == NULL)
     return;
   
@@ -471,10 +471,10 @@ void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
   
     array->item_count = 0;
     
-    for ( ; array->item_count < item_count && elvin_error_ok (error); 
-            array->item_count++, value++)
+    for ( ; array->item_count < item_count && elvin_error_ok (error); value++)
     {
-      value_read (buffer, value, error);
+      if (value_read (buffer, value, error))
+        array->item_count++;
     }
     
     *(Array **)message = array;
@@ -496,7 +496,9 @@ void values_free (Array *values)
 {
   size_t i;
   Value *value = values->items;
-  
+
   for (i = values->item_count; i > 0; i--, value++)
     value_free (value);
+  
+  array_free (values);
 }
