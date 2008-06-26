@@ -39,6 +39,8 @@ START_TEST (test_attributes)
   fail_unless 
     (attributes_get_string (ntfn, "nonexistent") == NULL, 
      "nonexistent string attribute");
+  
+  attributes_destroy (ntfn);
 }
 END_TEST
 

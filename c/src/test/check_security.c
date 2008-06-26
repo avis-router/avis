@@ -57,6 +57,7 @@ START_TEST (test_keys)
   fail_unless (elvin_keys_equal (keys1, keys2), "Keys not equal");
   
   elvin_keys_destroy (keys1);
+  elvin_keys_destroy (keys2);
 }
 END_TEST
 
@@ -108,7 +109,9 @@ START_TEST (test_key_io)
   fail_unless (elvin_keys_equal (keys1, keys2), "Keys not equal");
   
   elvin_keys_destroy (keys1); 
-  elvin_keys_destroy (keys2); 
+  elvin_keys_destroy (keys2);
+  
+  byte_buffer_destroy (buffer);
 }
 END_TEST
 
