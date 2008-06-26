@@ -168,7 +168,7 @@ START_TEST (test_attributes_io)
   memset (some_bytes.items, 42, 128);
   
   // empty attributes
-  attributes_write (buffer, EMPTY_NAMED_VALUES, &error);
+  attributes_write (buffer, EMPTY_ATTRIBUTES, &error);
   fail_on_error (&error);
     
   byte_buffer_set_position (buffer, 0, &error);
@@ -229,7 +229,7 @@ START_TEST (test_message_io)
   message_init (connRqst, MESSAGE_ID_CONN_RQST,
                 DEFAULT_CLIENT_PROTOCOL_MAJOR, 
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
-                EMPTY_NAMED_VALUES, EMPTY_KEYS, EMPTY_KEYS);
+                EMPTY_ATTRIBUTES, EMPTY_KEYS, EMPTY_KEYS);
 
   message_write (buffer, connRqst, &error);
   
@@ -268,6 +268,54 @@ START_TEST (test_message_io)
 }
 END_TEST
 
+START_TEST (test_dud_router)
+{
+  ByteBuffer *buffer = byte_buffer_create ();
+  Attributes *attributes = attributes_create ();
+  uint32_t length;
+  
+  attributes_set_int32 (attributes, "int32", 42);
+  attributes_set_int64 (attributes, "int64", 0xDEADBEEFF00DL);
+  attributes_set_string (attributes, "string", "hello world");
+  
+  // write message out
+  alloc_message (message1);
+  alloc_message (message2);
+  
+  message_init (message1, MESSAGE_ID_CONN_RQST,
+                DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                DEFAULT_CLIENT_PROTOCOL_MINOR,
+                attributes, EMPTY_KEYS, EMPTY_KEYS);
+
+  message_write (buffer, message1, &error);
+  fail_on_error (&error);
+  
+  // create an underflow
+  
+  length = buffer->position;
+  buffer->max_data_length = buffer->data_length = length - 1;
+  
+  byte_buffer_set_position (buffer, 0, &error);
+  
+  // skip frame size
+  byte_buffer_skip (buffer, 4, &error);
+  fail_on_error (&error);
+
+  message_read (buffer, message2, &error);
+  
+  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);  
+
+  byte_buffer_destroy (buffer);
+  
+  /* not freeing messages1 since it refers to global singletons */
+  attributes_destroy (attributes);
+  
+  /* message2 should be freed by message_read () on error, but should be OK to 
+   * free again */
+  message_free (message2);  
+}
+END_TEST
+
 TCase *messages_tests ()
 {
   TCase *tc_core = tcase_create ("test_message_io");
@@ -276,6 +324,7 @@ TCase *messages_tests ()
   tcase_add_test (tc_core, test_string_io);
   tcase_add_test (tc_core, test_attributes_io);
   tcase_add_test (tc_core, test_message_io);
+  tcase_add_test (tc_core, test_dud_router);
 
   return tc_core;
 }
