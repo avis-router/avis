@@ -200,7 +200,9 @@ void message_free (Message message)
   Message message_field = message + 4;
   void *ptr;
   
-  assert (format != NULL);
+  /* will happen on zerod-out message block */
+  if (format == NULL)
+    return;
   
   for (field = format->fields; field->read; field++)
   {
@@ -458,7 +460,6 @@ void write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
 }
 
 /* TODO limit items */
-/* TODO add test for dud server messages */
 void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t item_count = byte_buffer_read_int32 (buffer, error);
