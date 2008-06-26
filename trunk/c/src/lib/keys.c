@@ -98,7 +98,7 @@ void elvin_keys_free (Keys *keys)
 
 void elvin_key_free (Key *key)
 {
-  if (key->data)
+  if (key && key->data)
   {
     free (key->data);
     
