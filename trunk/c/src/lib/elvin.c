@@ -113,7 +113,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST, 
                 DEFAULT_CLIENT_PROTOCOL_MAJOR, 
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
-                EMPTY_NAMED_VALUES, notification_keys, subscription_keys);
+                EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
   
   on_error_return_false 
     (send_and_receive (elvin, conn_rqst, reply, MESSAGE_ID_CONN_RPLY, error));
