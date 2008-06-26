@@ -198,7 +198,6 @@ void message_free (Message message)
   MessageFormat *format = message_format_for (message_type_of (message));
   Message message_field = message + 4;
   FieldFormat *field;
-  void *ptr;
   
   /* will happen on zeroed-out message block */
   if (format == NULL)
@@ -206,10 +205,9 @@ void message_free (Message message)
   
   for (field = format->fields; field->read; field++)
   {
-    switch (field->type)
+    if (field->type == FIELD_POINTER)
     {
-    case FIELD_POINTER:
-      ptr = *(void **)message_field;
+      void *ptr = *(void **)message_field;
       
       if (ptr)
       {
@@ -218,17 +216,9 @@ void message_free (Message message)
         
         free (ptr);
       }
-      
-      message_field += sizeof (void *);
-      break;
-    case FIELD_INT32:
-    case FIELD_XID:
-      message_field += 4;
-      break;
-    case FIELD_INT64:
-      message_field += 8;
-      break;
     }
+
+    message_field += field_sizes [field->type];
   }
   
   memset (message, 0, MAX_MESSAGE_SIZE);
