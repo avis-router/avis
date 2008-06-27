@@ -27,6 +27,6 @@ typedef struct
 /**
  * Duplicate a block of memory a la strdup ().
  */
-void *memdup (void *source, size_t length);
+void *memdup (const void *source, size_t length);
 
 #endif /*AVIS_ARRAYS_H_*/

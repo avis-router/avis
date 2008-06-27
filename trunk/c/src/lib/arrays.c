@@ -10,7 +10,7 @@
 static void auto_resize (ArrayList *list, size_t min_item_count, 
                          size_t item_size);
 
-void *memdup (void *source, size_t length)
+void *memdup (const void *source, size_t length)
 {
   void *target = malloc (length);
   
