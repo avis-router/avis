@@ -1,13 +1,14 @@
 #include <stdlib.h>
-#ifndef WIN32
-#include <stdint.h>
-#include <unistd.h>
-#endif /* !WIN32 */
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 
-#include "check.h"
+#ifndef WIN32
+  #include <stdint.h>
+  #include <unistd.h>
+#endif
+
+#include <check.h>
 
 #include "avis/elvin.h"
 #include "avis/errors.h"
