@@ -2,9 +2,9 @@ Avis Downloads
 ======================================================================
 
 The downloads listed here are for the latest stable version of the
-router (${server.version}) and client library (${client.version}). See
-the [Avis Sourceforge download page][all_downloads] for older
-releases.
+router (${server.version}) and client libraries (Java
+${java-client.version}, C ${c-client.version}). See the [Avis
+Sourceforge download page][all_downloads] for older releases.
 
 Avis Router
 ----------------------------------------------------------------------
