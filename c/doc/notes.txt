@@ -2,8 +2,8 @@ TODO
 
 0.1 release
 
-* LGPL headers
-* check dist
+* DONE: LGPL headers
+* DONE: check dist
 * DONE: custom subscription destruct: free sub expr, or not hold a ref
 * DONE: API review: make sure we're using elvin_ prefix
 * DONE: tests pass on Windows
