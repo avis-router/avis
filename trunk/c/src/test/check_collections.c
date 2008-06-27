@@ -1,12 +1,13 @@
 #include <stdlib.h>
-#ifndef WIN32
-#include <stdint.h>
-#include <unistd.h>
-#endif /* !WIN32 */
-#include "check.h"
 #include <stdio.h>
-
 #include <string.h>
+
+#ifndef WIN32
+  #include <stdint.h>
+  #include <unistd.h>
+#endif
+
+#include <check.h>
 
 #include "attributes_private.h"
 #include "arrays_private.h"
@@ -50,8 +51,9 @@ END_TEST
 START_TEST (test_array_list)
 {
   ArrayList *list = array_list_create (int, 5);
- 
-  for (int i = 0; i < 1000; i++)
+  int i;
+  
+  for (i = 0; i < 1000; i++)
     array_list_add_int (list, i);
   
   fail_unless (array_list_size (list) == 1000, "Not full");
@@ -59,10 +61,10 @@ START_TEST (test_array_list)
   fail_unless (*array_list_find_int (list, 42) == 42, "Find failed");
   fail_unless (array_list_find_int (list, 123456) == NULL, "Find failed");
   
-  for (int i = 0; i < 1000; i++)
+  for (i = 0; i < 1000; i++)
     fail_unless (array_list_get_int (list, i) == i, "Not equal");
     
-  for (int i = 0; i < 1000; i++)
+  for (i = 0; i < 1000; i++)
   {
     array_list_remove (list, 0, int);
     
