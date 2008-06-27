@@ -1,15 +1,17 @@
 #include <stdlib.h>
+#ifndef WIN32
 #include <stdint.h>
-#include <check.h>
+#include <unistd.h>
+#endif /* !WIN32 */
+#include "check.h"
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
-#include <avis/elvin.h>
-#include <avis/errors.h>
-#include <avis/attributes.h>
-#include <avis/keys.h>
-#include <avis/stdtypes.h>
+#include "avis/elvin.h"
+#include "avis/errors.h"
+#include "avis/attributes.h"
+#include "avis/keys.h"
+#include "avis/stdtypes.h"
 
 #include "messages.h"
 #include "byte_buffer.h"

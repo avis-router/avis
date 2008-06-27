@@ -1,8 +1,11 @@
 #include <stdlib.h>
+#ifndef WIN32
 #include <stdint.h>
-#include <check.h>
-#include <stdio.h>
 #include <unistd.h>
+#endif /* !WIN32 */
+#include "check.h"
+#include <stdio.h>
+
 #include <string.h>
 
 #include "attributes_private.h"
