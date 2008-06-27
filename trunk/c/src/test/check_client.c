@@ -1,12 +1,23 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <string.h>
 
-#ifndef WIN32
+#ifdef WIN32
+  #include <float.h>
+
+  #define _USE_MATH_DEFINES
+  #ifndef NAN
+    static const unsigned __int32 nan [2] = {0xffffffff, 0x7fffffff};
+    #define NAN (*(const double *) nan)
+  #endif
+
+  #define isnan _isnan
+#else
   #include <stdint.h>
   #include <unistd.h>
 #endif
+
+#include <math.h>
 
 #include <check.h>
 
