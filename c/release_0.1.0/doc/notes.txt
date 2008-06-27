@@ -1,0 +1,47 @@
+TODO
+
+0.1 release
+
+* DONE: LGPL headers
+* DONE: check dist
+* DONE: custom subscription destruct: free sub expr, or not hold a ref
+* DONE: API review: make sure we're using elvin_ prefix
+* DONE: tests pass on Windows
+* DONE: API docs in dist
+* DONE: API docs online
+* DONE: web page: extend client library page
+* DONE: use valgrid to pick up errors
+* DONE: version number -> make dist
+
+0.2 release
+
+* finish URI parsing
+* connection options
+* size limit enforcement
+* close listener
+* general notif listener
+* IPv6 connect on Linux
+* handle OOM and other fatal conditions
+* keys add/remove and change on client
+
+general
+ 
+* Universal binary for Mac OS X: 
+  http://developer.apple.com/documentation/Porting/Conceptual/PortingUnix/compiling/chapter_4_section_3.html
+
+* DONE: rename Elvin client lib refs to Avis, including headers
+
+web
+
+http://avis.sourceforge.net/client_library.html
+http://avis.sourceforge.net/client-library/examples/HelloWorld.java.html
+http://avis.sourceforge.net/client-library/javadoc/
+http://downloads.sourceforge.net/avis/avis-client-1.1.0.zip
+
+http://avis.sourceforge.net/client_library.html
+http://avis.sourceforge.net/client-library/java/examples/HelloWorld.java.html
+http://avis.sourceforge.net/client-library/java/apidoc/
+http://avis.sourceforge.net/client-library/c/apidoc/
+http://downloads.sourceforge.net/avis/avis-client-1.1.0.zip
+http://downloads.sourceforge.net/avis/avis-client-0.1.0.tar.gz
+
