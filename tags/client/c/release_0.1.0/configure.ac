@@ -1,0 +1,73 @@
+# Process this file with autoconf to produce a configure script.
+
+# read in the Avis release numbers
+
+define([version_major], 
+       esyscmd([. avis-client.properties && printf "%s" ${avis_version_major}]))
+
+define([version_minor], 
+       esyscmd([. avis-client.properties && printf "%s" ${avis_version_minor}]))
+
+define([version_patch], 
+       esyscmd([. avis-client.properties && printf "%s" ${avis_version_patch}]))
+
+# Prelude.
+AC_PREREQ([1.0])
+AC_INIT([Avis Client], version_major.version_minor.version_patch, 
+        [phillipsm@sourceforge.net])
+
+# unique source file --- primitive safety check 
+#AC_CONFIG_SRCDIR([src/money.c])
+
+# place to put some extra build scripts installed
+AC_CONFIG_AUX_DIR([automake])
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_LIBTOOL
+
+# fairly severe build strictness
+# change foreign to gnu or gnits to comply with gnu standards
+AM_INIT_AUTOMAKE([-Wall foreign 1.9.5])
+
+# Checks for libraries.
+
+# This macro is defined in check.m4 and tests if check.h and
+# libcheck.a are installed in your system. It sets CHECK_CFLAGS and
+# CHECK_LIBS accordingly.  
+#  AM_PATH_CHECK([MINIMUM-VERSION,
+#                [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
+#AM_PATH_CHECK()
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([stdlib.h])
+AC_CHECK_HEADERS([stdint.h])
+AC_CHECK_HEADERS([stdbool.h])
+AC_CHECK_HEADERS([endian.h])
+AC_CHECK_HEADERS([architecture/byte_order.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+
+# Output files
+AC_CONFIG_HEADERS([platforms/gnu_automake/avis_client_config.h])
+
+AC_CONFIG_FILES([
+   Makefile 
+   src/Makefile 
+   src/lib/Makefile
+   doc/Makefile
+   doc/api/Makefile 
+   src/test/Makefile
+   packages/Makefile 
+   packages/hashtable/Makefile])
+
+SUBDIRS=src packages/check
+
+# Call check's ./configure script recursively.
+AC_CONFIG_SUBDIRS([packages/check])
+
+AC_OUTPUT

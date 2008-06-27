@@ -1,0 +1,5 @@
+Release 0.1.0 (June 27, 2008)
+----------------------------------------------------------------------
+
+Initial alpha release. Missing some security options, no connection
+option support.
