@@ -118,6 +118,7 @@
       <arg line="--include *.css" />
       <arg line="--include client-library/java/examples/*.html" />
       <arg line="--exclude client-library/java/apidoc" />
+      <arg line="--exclude client-library/c/apidoc" />
       <arg line="--exclude */.svn" />
       <arg line="--exclude .*" />
       <arg line="--include .htaccess" />
