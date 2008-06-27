@@ -6,6 +6,7 @@ EXTRA_DIST = \
   .settings \
   avis-client.properties \
   README.txt \
+  LICENSE.txt \
   platforms/gnu_automake/readme.txt \
   platforms/macosx/avis_client.xcodeproj/project.pbxproj \
   platforms/macosx/avis_client_config.h \
