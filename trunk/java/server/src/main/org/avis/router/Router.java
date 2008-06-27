@@ -71,7 +71,6 @@ import org.avis.util.ConcurrentHashSet;
 import org.avis.util.Filter;
 import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
-import org.avis.util.Text;
 
 import static java.lang.Math.max;
 import static java.lang.Runtime.getRuntime;
