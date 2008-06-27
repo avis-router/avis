@@ -68,6 +68,7 @@ To get a released version of the router:
 To get a released version of the client library:
 
     https://avis.svn.sourceforge.net/svnroot/avis/branches/client/java/release_1.1
+
     https://avis.svn.sourceforge.net/svnroot/avis/branches/client/c/release_1.0
 
 [all_downloads]: http://sourceforge.net/project/showfiles.php?group_id=181381
