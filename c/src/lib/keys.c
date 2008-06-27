@@ -117,6 +117,27 @@ void free_keyset (ArrayList *keyset)
   array_list_free (keyset);
 }
 
+Key elvin_key_create_from_string (const char *str)
+{
+  size_t length = strlen (str);
+  Key key;
+  
+  key.data = memdup (str, length);
+  key.length = length;
+  
+  return key;
+}
+
+Key elvin_key_create_from_data (const uint8_t *data, size_t length)
+{
+  Key key;
+  
+  key.data = memdup (data, length);
+  key.length = length;
+  
+  return key;  
+}
+
 Key elvin_key_create_public (Key private_key, KeyScheme scheme)
 {
   return (*scheme->hash) (private_key);

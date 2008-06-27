@@ -239,8 +239,7 @@ void elvin_key_free (Key *key);
  * 
  * @see elvin_key_create_from_data()
  */
-#define elvin_key_copy(key) \
-  (Key){memdup ((key).data, (key).length), (key).length}
+#define elvin_key_copy(key) (elvin_key_create_from_data (key.data, key.length))
 
 /**
  * Create a key from a character string.
@@ -248,8 +247,7 @@ void elvin_key_free (Key *key);
  * @see elvin_key_create_from_data()
  * @see elvin_key_free()
  */
-#define elvin_key_create_from_string(str) \
-  elvin_key_create_from_data ((uint8_t *)(str), strlen (str))
+Key elvin_key_create_from_string (const char *str);
 
 /**
  * Create a key from a block of data.
@@ -258,8 +256,7 @@ void elvin_key_free (Key *key);
  * @see elvin_key_create_public()
  * @see elvin_key_free()
  */
-#define elvin_key_create_from_data(data, length) \
-  {memdup (data, length), length}
+Key elvin_key_create_from_data (const uint8_t *data, size_t length);
 
 /**
  * Create a public key from a private key using a given scheme's hash.
