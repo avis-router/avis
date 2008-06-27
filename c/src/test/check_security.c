@@ -1,14 +1,15 @@
 #include <stdlib.h>
-#ifndef WIN32
-#include <stdint.h>
-#include <unistd.h>
-#endif /* !WIN32 */
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
 #include <string.h>
 
-#include "check.h"
+#ifndef WIN32
+  #include <stdint.h>
+  #include <unistd.h>
+#endif
+
+#include <check.h>
 
 #include "avis/keys.h"
 

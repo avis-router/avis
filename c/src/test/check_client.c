@@ -107,14 +107,13 @@ END_TEST
 START_TEST (test_notify)
 {
   Elvin elvin;
+  Attributes *ntfn = attributes_create ();
     
   elvin_open (&elvin, elvin_router (), &error);
   fail_on_error (&error);
   
-  Attributes *ntfn = attributes_create ();
-  
   attributes_set_int32 (ntfn, "int32", 42);
-  attributes_set_int64 (ntfn, "int64", 0xDEADBEEFF00DL);
+  attributes_set_int64 (ntfn, "int64", 0xDEADBEEFL);
   attributes_set_string (ntfn, "string", "paydirt");
   
   elvin_send (&elvin, ntfn, &error);
@@ -132,6 +131,7 @@ START_TEST (test_subscribe)
 {
   Elvin elvin;
   Subscription *sub;
+  Attributes *ntfn = attributes_create ();
   
   elvin_open (&elvin, elvin_router (), &error);
   fail_on_error (&error);
@@ -150,8 +150,6 @@ START_TEST (test_subscribe)
   
   elvin_subscription_add_listener (sub, test_subscribe_sub_listener, 
                                    "user_data");
-  
-  Attributes *ntfn = attributes_create ();
   
   attributes_set_int32 (ntfn, "test", 1);
   attributes_set_int32 (ntfn, "int32", 32);
@@ -216,18 +214,21 @@ void test_subscribe_sub_listener (Subscription *sub,
 START_TEST (test_security)
 {
   ElvinURI uri;
-  Subscription *bob_sub;
   Elvin alice_client;
   Elvin bob_client;
+  Subscription *bob_sub;
+  Key alice_private;
+  Keys *alice_ntfn_keys;
+  Keys *bob_sub_keys;
   
   elvin_uri_from_string (&uri, elvin_router (), &error);
   fail_on_error (&error);
   
-  Key alice_private = elvin_key_create_from_string ("alice private");
-  Keys *alice_ntfn_keys = elvin_keys_create ();
+  alice_private = elvin_key_create_from_string ("alice private");
+  alice_ntfn_keys = elvin_keys_create ();
   elvin_keys_add (alice_ntfn_keys, KEY_SCHEME_SHA1_PRODUCER, alice_private);
   
-  Keys* bob_sub_keys = elvin_keys_create ();
+  bob_sub_keys = elvin_keys_create ();
   elvin_keys_add 
     (bob_sub_keys, KEY_SCHEME_SHA1_PRODUCER, 
      elvin_key_create_public (alice_private, KEY_SCHEME_SHA1_PRODUCER));
@@ -263,10 +264,11 @@ void test_security_sub_listener (Subscription *sub,
 
 void check_secure_send_receive (Elvin *client, Subscription *secure_sub)
 {
+  Attributes *ntfn = attributes_create ();
+
   elvin_subscription_add_listener 
     (secure_sub, test_security_sub_listener, NULL);
   
-  Attributes *ntfn = attributes_create ();
   attributes_set_int32 (ntfn, "From-Alice", 1);
   
   test_subscribe_received_ntfn = false;
@@ -281,11 +283,7 @@ void check_secure_send_receive (Elvin *client, Subscription *secure_sub)
     
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
   
-  elvin_subscription_remove_listener (secure_sub, test_security_sub_listener);
-  
-//  TestNtfnListener insecureListener = new TestNtfnListener (insecureSub);
-//  insecureListener.waitForSecureNotification (client, ntfn);
-//  assertNull (insecureListener.event);
+  elvin_subscription_remove_listener (secure_sub, test_security_sub_listener);  
 }
 /*
  *   public void security ()

@@ -195,7 +195,7 @@ START_TEST (test_attributes_io)
   attributes = attributes_create ();
   
   attributes_set_int32 (attributes, "int32", 42);
-  attributes_set_int64 (attributes, "int64", 0xDEADBEEFF00DLL);
+  attributes_set_int64 (attributes, "int64", 0xDEADBEEFF00DL);
   attributes_set_opaque (attributes, "opaque", some_bytes);
   attributes_set_string (attributes, "string", "hello world");
   
