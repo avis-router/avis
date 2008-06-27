@@ -280,6 +280,6 @@ Key elvin_key_create_public (Key private_key, KeyScheme scheme);
 /**
  * Test if two keys are equal.
  */
-bool elvin_key_equal (Key *key1, Key *key2);
+bool elvin_key_equal (Key key1, Key key2);
 
 #endif /* ELVIN_KEYS_H */
