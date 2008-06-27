@@ -5,7 +5,10 @@
 #ifdef WIN32
   #include <float.h>
 
+  /* pull in M_PI */
   #define _USE_MATH_DEFINES
+
+  /* Windows doesn't have a NaN definition (why?) */
   #ifndef NAN
     static const unsigned __int32 nan [2] = {0xffffffff, 0x7fffffff};
     #define NAN (*(const double *) nan)
