@@ -43,13 +43,16 @@ command line.
 
 * **[Download the Avis router source][router_src]**.
 
-Avis Client Library
+Avis Client Libraries
 ----------------------------------------------------------------------
 
-The [Avis client library][client_info] is a Java 5 API for programming
-clients that use an Elvin router.
+The [Avis client libraries][client_info] provide an API for
+programming clients that use an Elvin router.
 
-* **[Download the Avis Java client library][client_src]** (source and binary)
+* **[Download the Avis client library for Java][java-client-src]**
+    (source and binary)
+
+* **[Download the Avis client library for C][c-client-src]** (source)
 
 Subversion
 ----------------------------------------------------------------------
@@ -64,7 +67,8 @@ To get a released version of the router:
 
 To get a released version of the client library:
 
-    https://avis.svn.sourceforge.net/svnroot/avis/branches/client/release_1.1
+    https://avis.svn.sourceforge.net/svnroot/avis/branches/client/java/release_1.1
+    https://avis.svn.sourceforge.net/svnroot/avis/branches/client/c/release_1.0
 
 [all_downloads]: http://sourceforge.net/project/showfiles.php?group_id=181381
 
@@ -77,6 +81,7 @@ To get a released version of the client library:
 [client_info]: client_library.html
 
 [router_src]: http://downloads.sourceforge.net/avis/avis-src-${server.version}${server.release}.zip
+
 [router_windows_exe]: http://downloads.sourceforge.net/avis/avis-${server.version}.exe
 
 [router_fedora_rpm]: http://downloads.sourceforge.net/avis/avis-${server.version}.rpm
@@ -85,5 +90,8 @@ To get a released version of the client library:
 
 [router_unix]: http://downloads.sourceforge.net/avis/avis-${server.version}.tar.bz2
 
-[client_src]: http://downloads.sourceforge.net/avis/avis-client-${client.version}.zip
+[java-client-src]: http://downloads.sourceforge.net/avis/avis-client-${java-client.version}.zip
+
+[c-client-src]: http://downloads.sourceforge.net/avis/avis-client-${c-client.version}.tar.gz
+
 
