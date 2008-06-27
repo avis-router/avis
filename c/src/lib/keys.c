@@ -143,10 +143,10 @@ Key elvin_key_create_public (Key private_key, KeyScheme scheme)
   return (*scheme->hash) (private_key);
 }
 
-bool elvin_key_equal (Key *key1, Key *key2)
+bool elvin_key_equal (Key key1, Key key2)
 {
-  return key1->length == key2->length && 
-         memcmp (key1->data, key2->data, key1->length) == 0;
+  return key1.length == key2.length && 
+         memcmp (key1.data, key2.data, key1.length) == 0;
 }
 
 bool keysets_equal (ArrayList *keyset1, ArrayList *keyset2)
@@ -157,8 +157,8 @@ bool keysets_equal (ArrayList *keyset1, ArrayList *keyset2)
     
     for (i = 0; i < keyset1->item_count; i++)
     {
-      if (!elvin_key_equal (&array_list_get (keyset1, i, Key), 
-                            &array_list_get (keyset2, i, Key)))
+      if (!elvin_key_equal (array_list_get (keyset1, i, Key), 
+                            array_list_get (keyset2, i, Key)))
       {
         return false;
       }
