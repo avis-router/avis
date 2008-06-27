@@ -120,6 +120,7 @@
       <arg line="--exclude client-library/java/apidoc" />
       <arg line="--exclude */.svn" />
       <arg line="--exclude .*" />
+      <arg line="--include .htaccess" />
       <arg value="." />
       <arg value="${sourceforge-web}" />
     </exec>
@@ -143,11 +144,11 @@
           description="Rsync C client library API docs to sourceforge web">
 
     <exec executable="make" dir="${c-client}">
-      <arg value="apidoc" />
+      <arg value="api-docs" />
     </exec>
 
     <exec executable="rsync" dir="${c-client}/doc/api/html">
-      <arg value="-rlgoDv" />
+      <arg value="-rRlgoDv" />
       <arg value="--delete" />
       <arg value="." />
       <arg value="${sourceforge-web}/client-library/c/apidoc/" />
