@@ -101,7 +101,7 @@
       author="true"
       version="true"
       use="true"
-      windowtitle="Avis Client Library For Elvin"
+      windowtitle="Avis Java Client Library For Elvin"
       classpathref="classpath"
       access="public"
       excludepackagenames="org.apache.*,org.slf4j.*">
