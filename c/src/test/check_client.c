@@ -1,19 +1,21 @@
 #include <stdlib.h>
+#ifndef WIN32
 #include <stdint.h>
-#include <stdio.h>
 #include <unistd.h>
+#endif /* !WIN32 */
+#include <stdio.h>
 #include <math.h>
 #include <string.h>
 
-#include <check.h>
+#include "check.h"
 
-#include <avis/elvin.h>
-#include <avis/errors.h>
-#include <avis/attributes.h>
-#include <avis/keys.h>
+#include "avis/elvin.h"
+#include "avis/errors.h"
+#include "avis/attributes.h"
+#include "avis/keys.h"
 
-#include <messages.h>
-#include <byte_buffer.h>
+#include "messages.h"
+#include "byte_buffer.h"
 #include "check_ext.h"
 
 static const char *elvin_router ();

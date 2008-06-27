@@ -1,17 +1,19 @@
 #include <stdlib.h>
+#ifndef WIN32
 #include <stdint.h>
-#include <stdio.h>
 #include <unistd.h>
+#endif /* !WIN32 */
+#include <stdio.h>
 #include <time.h>
 #include <math.h>
 #include <string.h>
 
-#include <check.h>
+#include "check.h"
 
-#include <avis/keys.h>
+#include "avis/keys.h"
 
-#include <byte_buffer.h>
-#include <keys_private.h>
+#include "byte_buffer.h"
+#include "keys_private.h"
 
 #include "check_ext.h"
 
