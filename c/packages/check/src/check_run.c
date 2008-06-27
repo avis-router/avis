@@ -42,9 +42,16 @@
 #include "check_log.h"
 
 #ifdef WIN32
-#define snprintf _snprintf
-#define strdup _strdup
-#endif //WIN32
+  #define snprintf _snprintf
+  #define strdup _strdup
+
+  char * strsignal (int signo)
+  {
+    static char buf[64];
+    snprintf (buf, sizeof buf, "Signal %d", signo);
+    return buf;
+  }
+#endif /* WIN32 */
 
 enum rinfo {
   CK_R_SIG,
