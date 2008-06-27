@@ -2,13 +2,14 @@ TODO
 
 0.1 release
 
+* check dist
 * DONE: custom subscription destruct: free sub expr, or not hold a ref
 * DONE: API review: make sure we're using elvin_ prefix
-* tests pass on Windows
+* DONE: tests pass on Windows
 * DONE: API docs in dist
-* API docs online
-* web page: extend client library page
-* ?use valgrid to pick up errors
+* DONE: API docs online
+* DONE: web page: extend client library page
+* DONE: use valgrid to pick up errors
 * DONE: version number -> make dist
 
 0.2 release
