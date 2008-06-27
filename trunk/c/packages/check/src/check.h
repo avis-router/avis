@@ -64,8 +64,13 @@ CK_CPPSTART
 #include <sys/types.h>
 
 #ifdef WIN32
-#define pid_t int
-#endif //WIN32
+  #define pid_t int
+#endif
+
+/* If we're not using GNU C, elide __attribute__ */
+#ifndef __GNUC__
+  #define  __attribute__(x)  /*NOTHING*/
+#endif
 
 /* check version numbers */
 
