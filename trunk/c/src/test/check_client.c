@@ -164,7 +164,13 @@ START_TEST (test_subscribe)
   Elvin elvin;
   Subscription *sub;
   Attributes *ntfn = attributes_create ();
+  Array data;
   
+  data.item_count = 100 * 1024;
+  data.items = malloc (data.item_count);
+
+  memset (data.items, 42, data.item_count);
+
   elvin_open (&elvin, elvin_router (), &error);
   fail_on_error (&error);
 
@@ -189,6 +195,7 @@ START_TEST (test_subscribe)
   attributes_set_real64 (ntfn, "pi", M_PI);
   attributes_set_real64 (ntfn, "nan", NAN);
   attributes_set_string (ntfn, "message", "hello world");
+  attributes_set_opaque (ntfn, "opaque", data);
 
   test_subscribe_received_ntfn = false;
   elvin_send (&elvin, ntfn, &error);
