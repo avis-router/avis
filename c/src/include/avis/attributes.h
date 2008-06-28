@@ -245,8 +245,10 @@ const char *attributes_get_string (Attributes *attributes, const char *name);
  * @param attributes The attributes to update.
  * @param name The name to use. This will be copied before being put into
  * the set.
- * @param value The value to associate with name. Unlike string attributes, 
- * this will NOT be copied before being added to the set.
+ * @param value The opaque value to associate with name (an Array
+ * instance). Unlike string attributes, this will NOT be copied before
+ * being added to the set: the set will take ownership of the array's
+ * data and free it when appropriate.
  * 
  * @see attributes_set()
  */
