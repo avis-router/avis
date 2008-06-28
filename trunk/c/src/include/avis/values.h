@@ -113,6 +113,8 @@ void value_free (Value *value);
  * Unlike string values, this will NOT be copied before being added to the 
  * set.
  * 
+ * @param value An Array instance representing the opaque data.
+ *
  * @see value_init()
  */
 #define value_create_opaque(value) \
