@@ -228,6 +228,8 @@ void test_subscribe_sub_listener (Subscription *sub,
                                   Attributes *attributes, bool secure, 
                                   void *user_data)
 {
+  Array *data = attributes_get_opaque (attributes, "opaque");
+
   fail_unless (strcmp (user_data, "user_data") == 0, "User data incorrect");
   
   fail_unless 
@@ -246,7 +248,11 @@ void test_subscribe_sub_listener (Subscription *sub,
     (isnan (attributes_get_real64 (attributes, "nan")), 
      "Invalid notification: NaN != %f", 
      attributes_get_real64 (attributes, "nan"));
-  
+
+  fail_unless (data, "Data missing");
+  fail_unless (data->item_count == 100 * 1024, "Data wrong length");
+  fail_unless (((uint8_t *)data->items) [10] == 42, "Data wrong");
+
   test_subscribe_received_ntfn = true;
 }
 
