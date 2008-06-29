@@ -18,4 +18,14 @@ public final class DualKeyScheme extends KeyScheme
   {
     super (id, keyHash, true, true);
   }
+  
+  @Override
+  boolean match (KeySet producerKeys, KeySet consumerKeys)
+  {
+    DualKeySet keys1 = (DualKeySet)producerKeys;
+    DualKeySet keys2 = (DualKeySet)consumerKeys;
+    
+    return matchKeys (keys1.producerKeys, keys2.producerKeys) &&
+           matchKeys (keys2.consumerKeys, keys1.consumerKeys);    
+  }
 }
