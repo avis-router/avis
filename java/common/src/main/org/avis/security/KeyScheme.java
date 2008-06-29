@@ -143,26 +143,7 @@ public abstract class KeyScheme
    *         notification from a producer with producerKeys in this
    *         scheme.
    */
-  boolean match (KeySet producerKeys, KeySet consumerKeys)
-  {
-    if (isDual ())
-    {
-      DualKeySet keys1 = (DualKeySet)producerKeys;
-      DualKeySet keys2 = (DualKeySet)consumerKeys;
-      
-      return matchKeys (keys1.producerKeys, keys2.producerKeys) &&
-             matchKeys (keys2.consumerKeys, keys1.consumerKeys);
-      
-    } else if (producer)
-    {
-      return matchKeys ((SingleKeySet)producerKeys,
-                        (SingleKeySet)consumerKeys);
-    } else
-    {
-      return matchKeys ((SingleKeySet)consumerKeys,
-                        (SingleKeySet)producerKeys);
-    }
-  }
+  abstract boolean match (KeySet producerKeys, KeySet consumerKeys);
   
   /**
    * Match a set of private keys with a set of public keys.
@@ -173,7 +154,7 @@ public abstract class KeyScheme
    *         version (using this scheme's hash) was in the given
    *         public key set.
    */
-  private boolean matchKeys (Set<Key> privateKeys, Set<Key> publicKeys)
+  protected boolean matchKeys (Set<Key> privateKeys, Set<Key> publicKeys)
   {
     for (Key privateKey : privateKeys)
     {
