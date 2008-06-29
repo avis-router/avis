@@ -169,24 +169,21 @@ class Connection
     
     for (Subscription subscription : subscriptions.values ())
     {
-      /*
-       * Check message/global keys against global subscription keys
-       * and keys for the current subscription.
-       */
-      boolean secureMatch = subscriptionKeys.match (globalKeys) ||
-                            subscriptionKeys.match (messageKeys) ||
-                            subscription.keys.match (globalKeys) ||
-                            subscription.keys.match (messageKeys);
-      
-      if (secureMatch || (deliverInsecure && subscription.acceptInsecure))
+      if (subscription.matches (attributes))
       {
-        if (subscription.matches (attributes))
-        {
-          if (secureMatch)
-            matches.secure.add (subscription.id);
-          else
-            matches.insecure.add (subscription.id);
-        }
+        /*
+         * Check message/global keys against global subscription keys
+         * and keys for the current subscription.
+         */
+        boolean secureMatch = subscriptionKeys.match (globalKeys) ||
+                              subscriptionKeys.match (messageKeys) ||
+                              subscription.keys.match (globalKeys) ||
+                              subscription.keys.match (messageKeys);
+
+        if (secureMatch)
+          matches.secure.add (subscription.id);
+        else if (deliverInsecure && subscription.acceptInsecure)
+          matches.insecure.add (subscription.id);
       }
     }
     
