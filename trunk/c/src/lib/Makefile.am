@@ -22,6 +22,8 @@ libavis_la_SOURCES = \
   errors.c \
   values.c \
   keys.c \
+  listeners.c \
+  listeners.h \
   log.c \
   arrays.c \
   arrays_private.h \
