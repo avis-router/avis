@@ -2,13 +2,14 @@ TODO
 
 0.2 release
 
-* change security keys
-* finish URI parsing
-* connection options
-* size limit enforcement
+* DONE: change security keys
+* DONE: change subscription
 * close listener
 * general notif listener
 * IPv6 connect on Linux
+* finish URI parsing
+* connection options
+* size limit enforcement
 * handle OOM and other fatal conditions
 
 0.1 release
