@@ -177,16 +177,19 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
  * Change the connection-wide keys used to secure the receipt and
  * delivery of notifications.
  *
+ * @param elvin The Elvin connection.
  * @param notification_keys The new notification keys. These
  *          automatically apply to all notifications, exactly as if
- *          they were added to the keys in the elvin_send() call.
+ *          they were added to the keys in the elvin_send_with_keys() call.
  * @param subscription_keys The new subscription keys. These
  *          automatically apply to all subscriptions, exactly as if
  *          they were added to the keys in the elvin_subscribe_with_keys(),
  *          call. This applies to all existing and future
  *          subscriptions.
+ * @param error The error info.
  *
  * @see elvin_open_with_keys()
+ * @see elvin_subscription_set_keys()
  */
 bool elvin_set_keys (Elvin *elvin,
                      Keys *notification_keys, Keys *subscription_keys,
@@ -292,6 +295,7 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * @see elvin_send()
  * @see elvin_unsubscribe()
  * @see elvin_subscription_add_listener()
+ * @see elvin_subscription_set_keys()
  * @see elvin_poll()
  */
 Subscription *elvin_subscribe_with_keys (Elvin *elvin,
@@ -316,6 +320,18 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
  */
 bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
                         ElvinError *error);
+
+/**
+ * Change the keys used for receiving secure notifications.
+ *
+ * @param subscription The subscription to change.
+ * @param subscription_keys The new subscription keys.
+ *
+ * @see elvin_set_keys()
+*/
+bool elvin_subscription_set_keys (Subscription *subscription,
+                                  Keys *subscription_keys,
+                                  ElvinError *error);
 
 /**
  * Add a listener that will be called when notifications matching

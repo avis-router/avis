@@ -148,6 +148,8 @@ static MessageFormat MESSAGE_FORMATS [] =
     /* {"attributes", "secureMatches", "insecureMatches"}*/},
   {MESSAGE_ID_SUB_ADD_RQST,
     {XID, STR, BO, KEYS, END} /*{"xid", "expr", "deliverInsecure", "keys"}*/},
+  {MESSAGE_ID_SUB_MOD_RQST,
+    {XID, I64, STR, BO, KEYS, KEYS, END}},
   {MESSAGE_ID_SUB_DEL_RQST,
     {XID, I64, END} /*{"xid", "subscriptionId"}*/},
   {MESSAGE_ID_SUB_RPLY,

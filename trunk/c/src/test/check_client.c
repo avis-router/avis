@@ -305,15 +305,37 @@ START_TEST (test_security)
   elvin_open_uri (&bob_client, &uri, &error);
   fail_on_error (&error);
 
-  elvin_set_keys (&alice_client, alice_ntfn_keys, EMPTY_KEYS, &error);
+  elvin_set_keys (&alice_client, elvin_keys_copy (alice_ntfn_keys),
+                  EMPTY_KEYS, &error);
   fail_on_error (&error);
 
-  elvin_set_keys (&bob_client, EMPTY_KEYS, bob_sub_keys, &error);
+  elvin_set_keys (&bob_client, EMPTY_KEYS, elvin_keys_copy (bob_sub_keys),
+                  &error);
   fail_on_error (&error);
 
   bob_sub =
     elvin_subscribe_with_keys (&bob_client, "require (From-Alice)",
                                EMPTY_KEYS, REQUIRE_SECURE_DELIVERY, &error);
+
+  check_secure_send_receive (&alice_client, bob_sub);
+
+  elvin_close (&alice_client);
+  elvin_close (&bob_client);
+
+  /* check we can add subscription keys for same result */
+  elvin_open_with_keys (&alice_client, &uri,
+                        elvin_keys_copy (alice_ntfn_keys), EMPTY_KEYS, &error);
+  fail_on_error (&error);
+
+  elvin_open_uri (&bob_client, &uri, &error);
+  fail_on_error (&error);
+
+  bob_sub =
+    elvin_subscribe_with_keys (&bob_client, "require (From-Alice)",
+                               EMPTY_KEYS, REQUIRE_SECURE_DELIVERY, &error);
+
+  elvin_subscription_set_keys (bob_sub, bob_sub_keys, &error);
+  fail_on_error (&error);
 
   check_secure_send_receive (&alice_client, bob_sub);
 
