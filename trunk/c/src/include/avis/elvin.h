@@ -222,6 +222,25 @@ bool elvin_set_keys (Elvin *elvin,
 bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
 
 /**
+ * Send a notification to an Elvin router with security constraints.
+ *
+ * @param attributes The notification to send.
+ * @param notification_keys The keys that must match for secure delivery.
+ * @param security The security requirement.
+ *          REQUIRE_SECURE_DELIVERY means the notification can only
+ *          be received by subscriptions with keys matching the set
+ *          supplied here (or the connections' global notification keys: see
+ *          elvin_subscription_set_keys()).
+ * @param error The error info.
+ *
+ * @see elvin_send()
+ * @see elvin_subscribe_with_keys()
+ */
+bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
+                           Keys *notification_keys, SecureMode security,
+                           ElvinError *error);
+
+/**
  * Subscribe to notifications from an Elvin router.
  *
  * @param elvin The Elvin connection instance.
@@ -292,7 +311,7 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * elvin_unsubscribe (elvin, subscription, error);
  * </pre>
  *
- * @see elvin_send()
+ * @see elvin_send_with_keys()
  * @see elvin_unsubscribe()
  * @see elvin_subscription_add_listener()
  * @see elvin_subscription_set_keys()
