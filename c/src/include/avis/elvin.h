@@ -45,6 +45,15 @@
 /** The default client protocol minor version supported by this library. */
 #define DEFAULT_CLIENT_PROTOCOL_MINOR 0
 
+struct ArrayList;
+
+#define AVIS_LISTENERS_STRUCT
+
+typedef struct Listeners
+{
+  ArrayList *list;
+} Listeners;
+
 /**
  * A client connection to an Elvin router. Typically a client creates a
  * connection (elvin_open()) and then subscribes to notifications
@@ -56,6 +65,7 @@ typedef struct
 {
   socket_t  socket;
   ArrayList subscriptions;
+  Listeners close_listeners;
   Keys *    notification_keys;
   Keys *    subscription_keys;
 } Elvin;
@@ -80,7 +90,7 @@ typedef struct
   char *       subscription_expr;
   uint64_t     id;
   SecureMode   security;
-  ArrayList    listeners;
+  Listeners    listeners;
   Keys *       keys;
 } Subscription;
 
@@ -104,6 +114,37 @@ typedef struct
 typedef void (*SubscriptionListener) (Subscription *subscription,
                                       Attributes *attributes, bool secure,
                                       void *user_data);
+
+typedef enum
+{
+  /** The client was shut down normally with a call to elvin_close(). */
+  REASON_CLIENT_SHUTDOWN,
+
+  /** The router was shut down normally. */
+  REASON_ROUTER_SHUTDOWN,
+
+  /**
+   * Either the client or the router decided that the protocol rules have
+   * been violated. This would only happen in the case of a serious bug in
+   * the client or router.
+   */
+  REASON_PROTOCOL_VIOLATION
+} CloseReason;
+
+/**
+ * A listener for elvin connection close events.
+ *
+ * @param elvin The elvin connection.
+ * @param reason The reason for the shutdown.
+ * @param message The router's shutdown message (when REASON_ROUTER_SHUTDOWN),
+ * or the client's description of the reason otherwise.
+ * @param user_data The user data passed in when adding the listener.
+ *
+ * @see elvin_add_close_listener()
+ */
+typedef void (*CloseListener) (Elvin *elvin, CloseReason reason,
+                               const char *message,
+                               void *user_data);
 
 /**
  * Open a connection to an Elvin router.
@@ -420,6 +461,33 @@ bool elvin_is_open (Elvin *elvin);
  * @return True if the connection was closed, false if it was already closed.
  */
 bool elvin_close (Elvin *elvin);
+
+/**
+ * Add a listener that will be called when the connection is closed.
+ *
+ * @param elvin The elvin connection.
+ * @param listener The listener to be called when the connection is either
+ * closed locally (elvin_close ()) or remotely by the router
+ * @param user_data An optional pointer to user data to be passed into
+ * the listener when called. This can be used to provide context information
+ * to the listener function.
+ *
+ * @see elvin_remove_close_listener()
+ */
+void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
+                               void *user_data);
+
+/**
+ * Remove a listener added by elvin_add_close_listener().
+ *
+ * @param elvin The elvin connection.
+ * @param listener The listener to be removed.
+ *
+ * @return True if the listener was in the list and was removed.
+ *
+ * @see elvin_add_close_listener()
+ */
+bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener);
 
 /**
  * Poll an Elvin connection for an incoming message from the router. This will

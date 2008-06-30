@@ -39,14 +39,9 @@
 #include <avis/values.h>
 
 #include "messages.h"
+#include "listeners.h"
 #include "arrays_private.h"
 #include "log.h"
-
-typedef struct
-{
-  SubscriptionListener listener;
-  void *               user_data;
-} SubscriptionListenerEntry;
 
 static void elvin_shutdown (Elvin *elvin);
 
@@ -191,6 +186,17 @@ void elvin_shutdown (Elvin *elvin)
   elvin_keys_destroy (elvin->subscription_keys);
 }
 
+void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
+                               void *user_data)
+{
+  listeners_add (&elvin->close_listeners, listener, user_data);
+}
+
+bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener)
+{
+  return listeners_remove (&elvin->close_listeners, listener);
+}
+
 bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
   alloc_message (message);
@@ -276,9 +282,9 @@ void deliver_notification (Elvin *elvin, Array *ids,
                            Attributes *attributes, bool secure,
                            ElvinError *error)
 {
-  size_t i, j;
+  int i;
   int64_t *id = ids->items;
-  SubscriptionListenerEntry *listener_entry;
+  ListenersIter l;
 
   for (i = ids->item_count; i > 0; i--, id++)
   {
@@ -292,11 +298,13 @@ void deliver_notification (Elvin *elvin, Array *ids,
       return;
     }
 
-    listener_entry = subscription->listeners.items;
+    listeners_iter_start (subscription->listeners, l);
 
-    for (j = subscription->listeners.item_count; j > 0; j--, listener_entry++)
-      (*listener_entry->listener) (subscription, attributes, secure,
-                                   listener_entry->user_data);
+    each_listener (l)
+    {
+      (*l.entry->listener) (subscription, attributes, secure,
+                            l.entry->user_data);
+    }
   }
 }
 
@@ -352,8 +360,7 @@ Subscription *elvin_subscription_init (Subscription *subscription)
   subscription->id = 0;
   subscription->security = ALLOW_INSECURE_DELIVERY;
   subscription->keys = NULL;
-  array_list_init (&subscription->listeners,
-                   sizeof (SubscriptionListenerEntry), 5);
+  listeners_init (&subscription->listeners);
 
   return subscription;
 }
@@ -361,7 +368,7 @@ Subscription *elvin_subscription_init (Subscription *subscription)
 void elvin_subscription_free (Subscription *subscription)
 {
   free (subscription->subscription_expr);
-  array_list_free (&subscription->listeners);
+  listeners_free (&subscription->listeners);
   elvin_keys_destroy (subscription->keys);
 
   memset (subscription, 0, sizeof (Subscription));
@@ -493,32 +500,13 @@ void elvin_subscription_add_listener (Subscription *subscription,
                                       SubscriptionListener listener,
                                       void *user_data)
 {
-  SubscriptionListenerEntry *entry =
-    array_list_add (&subscription->listeners, SubscriptionListenerEntry);
-
-  entry->listener = listener;
-  entry->user_data = user_data;
+  listeners_add (&subscription->listeners, (Listener)listener, user_data);
 }
 
 bool elvin_subscription_remove_listener (Subscription *subscription,
                                          SubscriptionListener listener)
 {
-  SubscriptionListenerEntry *entry = subscription->listeners.items;
-  int count;
-
-  for (count = subscription->listeners.item_count;
-       count > 0 && entry->listener != listener; count--, entry++);
-
-  if (count > 0)
-  {
-    array_list_remove_item_using_ptr (&subscription->listeners, entry,
-                                      sizeof (SubscriptionListenerEntry));
-
-    return true;
-  } else
-  {
-    return false;
-  }
+  return listeners_remove (&subscription->listeners, (Listener)listener);
 }
 
 bool send_and_receive (Elvin *elvin, Message request,
