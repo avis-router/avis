@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,8 +31,8 @@
 /** Max size of an in-memory decoded message */
 #define MAX_MESSAGE_SIZE (MAX_MESSAGE_FIELDS * sizeof (int *))
 
-/** 
- * Message type ID's for the subset of Elvin messages understood by the 
+/**
+ * Message type ID's for the subset of Elvin messages understood by the
  * client.
  */
 typedef enum
@@ -43,6 +43,8 @@ typedef enum
   MESSAGE_ID_DISCONN_RQST = 51,
   MESSAGE_ID_DISCONN_RPLY = 52,
   MESSAGE_ID_DISCONN = 53,
+  MESSAGE_ID_SEC_RQST = 54,
+  MESSAGE_ID_SEC_RPLY = 55,
   MESSAGE_ID_NOTIFY_EMIT = 56,
   MESSAGE_ID_NOTIFY_DELIVER = 57,
   MESSAGE_ID_SUB_ADD_RQST = 58,
@@ -65,7 +67,7 @@ typedef enum
 } NackCode;
 
 /**
- * A message is actually a fixed-length blob 'o bytes up to MAX_MESSAGE_SIZE 
+ * A message is actually a fixed-length blob 'o bytes up to MAX_MESSAGE_SIZE
  * long.
  */
 typedef uint8_t * Message;
@@ -84,16 +86,16 @@ Message message_init (Message message, MessageTypeID type, ...);
   (message_free (message), free (message), message = NULL)
 
 /**
- * Free fields allocated inside a message dynamically allocated by 
+ * Free fields allocated inside a message dynamically allocated by
  * message_read().
  */
 void message_free (Message message);
 
 /**
- * Read an XDR-encoded message from a buffer. The buffer's max length must be 
- * primed with the amount of data expected to be read and the position set to 
+ * Read an XDR-encoded message from a buffer. The buffer's max length must be
+ * primed with the amount of data expected to be read and the position set to
  * the start of the data.
- * 
+ *
  * @see message_read()
  * @see message_free()
  */
