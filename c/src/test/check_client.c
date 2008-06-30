@@ -198,15 +198,31 @@ START_TEST (test_subscribe)
   attributes_set_opaque (ntfn, "opaque", data);
 
   test_subscribe_received_ntfn = false;
-  elvin_send (&elvin, ntfn, &error);
-  fail_on_error (&error);
-
-  attributes_destroy (ntfn);
-
-  elvin_poll (&elvin, &error);
+  elvin_send (&elvin, ntfn, &error) && elvin_poll (&elvin, &error);
   fail_on_error (&error);
 
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
+
+  elvin_unsubscribe (&elvin, sub, &error);
+  fail_on_error (&error);
+
+  /* test sub change*/
+  sub = elvin_subscribe (&elvin, "require (bogus)", &error);
+  fail_on_error (&error);
+
+  elvin_subscription_add_listener (sub, test_subscribe_sub_listener,
+                                   "user_data");
+
+  elvin_subscription_set_expr (sub, "require (test)", &error);
+  fail_on_error (&error);
+
+  test_subscribe_received_ntfn = false;
+  elvin_send (&elvin, ntfn, &error) && elvin_poll (&elvin, &error);
+  fail_on_error (&error);
+
+  fail_unless (test_subscribe_received_ntfn, "Did not get notification");
+
+  attributes_destroy (ntfn);
 
   /* test listener removal */
   fail_unless
