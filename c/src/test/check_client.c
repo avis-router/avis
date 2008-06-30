@@ -278,11 +278,37 @@ START_TEST (test_security)
     (bob_sub_keys, KEY_SCHEME_SHA1_PRODUCER,
      elvin_key_create_public (alice_private, KEY_SCHEME_SHA1_PRODUCER));
 
+  /* subscribe with global keys */
+
   elvin_open_with_keys (&alice_client, &uri,
-                        alice_ntfn_keys, EMPTY_KEYS, &error);
+                        elvin_keys_copy (alice_ntfn_keys), EMPTY_KEYS, &error);
   fail_on_error (&error);
 
-  elvin_open_with_keys (&bob_client, &uri, EMPTY_KEYS, bob_sub_keys, &error);
+  elvin_open_with_keys (&bob_client, &uri, EMPTY_KEYS,
+                        elvin_keys_copy (bob_sub_keys), &error);
+  fail_on_error (&error);
+
+  bob_sub =
+    elvin_subscribe_with_keys (&bob_client, "require (From-Alice)",
+                               EMPTY_KEYS, REQUIRE_SECURE_DELIVERY, &error);
+
+  check_secure_send_receive (&alice_client, bob_sub);
+
+  elvin_close (&alice_client);
+  elvin_close (&bob_client);
+
+  /* check we can add global keys later for same result */
+
+  elvin_open_uri (&alice_client, &uri, &error);
+  fail_on_error (&error);
+
+  elvin_open_uri (&bob_client, &uri, &error);
+  fail_on_error (&error);
+
+  elvin_set_keys (&alice_client, alice_ntfn_keys, EMPTY_KEYS, &error);
+  fail_on_error (&error);
+
+  elvin_set_keys (&bob_client, EMPTY_KEYS, bob_sub_keys, &error);
   fail_on_error (&error);
 
   bob_sub =
