@@ -330,10 +330,18 @@ bool elvin_set_keys (Elvin *elvin,
 
 bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error)
 {
+  return elvin_send_with_keys (elvin, notification, EMPTY_KEYS,
+                               ALLOW_INSECURE_DELIVERY, error);
+}
+
+bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
+                           Keys *notification_keys, SecureMode security,
+                           ElvinError *error)
+{
   alloc_message (notify_emit);
 
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT,
-                notification, true, EMPTY_KEYS);
+                notification, security, notification_keys);
 
   return send_message (elvin, notify_emit, error);
 }
