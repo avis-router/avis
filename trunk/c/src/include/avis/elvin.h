@@ -326,11 +326,18 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
  *
  * @param subscription The subscription to change.
  * @param subscription_keys The new subscription keys.
+ * @param security security The security mode: specifying
+ *          REQUIRE_SECURE_DELIVERY means the subscription will only
+ *          receive notifications that are sent by clients with keys
+ *          matching the set supplied here or the global
+ *          subscription key set.
+ * @param error The error information.
  *
  * @see elvin_set_keys()
 */
 bool elvin_subscription_set_keys (Subscription *subscription,
                                   Keys *subscription_keys,
+                                  SecureMode security,
                                   ElvinError *error);
 
 /**
