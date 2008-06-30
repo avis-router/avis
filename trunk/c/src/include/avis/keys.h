@@ -181,6 +181,10 @@ Keys *elvin_keys_init (Keys *keys);
 /**
  * Copy a key collection.
  *
+ * @param keys The keys to copy.
+ *
+ * @return An independent copy of the source key collection.
+ *
  * @see elvin_keys_free()
  * @see elvin_key_copy()
  */
