@@ -3,7 +3,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/lib \
               -I$(top_srcdir)/packages/check/src $(all_includes)
 
-AM_CFLAGS = -Wall -std=gnu89 -pedantic -lm
+AM_CFLAGS = -Wall -std=gnu99 -pedantic -lm
 
 noinst_PROGRAMS=tests basic_test event_loop_test
 
