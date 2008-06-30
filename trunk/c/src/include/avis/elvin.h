@@ -312,8 +312,9 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * elvin_unsubscribe (elvin, subscription, error);
  * </pre>
  *
- * @see elvin_send_with_keys()
  * @see elvin_unsubscribe()
+ * @see elvin_subscription_set_expr()
+ * @see elvin_send_with_keys()
  * @see elvin_subscription_add_listener()
  * @see elvin_subscription_set_keys()
  * @see elvin_poll()
@@ -342,6 +343,19 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
                         ElvinError *error);
 
 /**
+ * Change the subscription expression for an existing subscription.
+ *
+ * @param subscription The subscription to change.
+ * @param subscription_expr The new subscription expression.
+ * @param error The error information.
+ *
+ * @see elvin_subscribe()
+*/
+bool elvin_subscription_set_expr (Subscription *subscription,
+                                  const char *subscription_expr,
+                                  ElvinError *error);
+
+/**
  * Change the keys used for receiving secure notifications.
  *
  * @param subscription The subscription to change.
@@ -353,6 +367,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
  *          subscription key set.
  * @param error The error information.
  *
+ * @see elvin_subscribe_with_keys()
  * @see elvin_set_keys()
 */
 bool elvin_subscription_set_keys (Subscription *subscription,

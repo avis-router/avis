@@ -431,6 +431,33 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
   return succeeded;
 }
 
+bool elvin_subscription_set_expr (Subscription *subscription,
+                                  const char *subscription_expr,
+                                  ElvinError *error)
+{
+  alloc_message (sub_mod_rqst);
+  alloc_message (sub_rply);
+
+  message_init (sub_mod_rqst, MESSAGE_ID_SUB_MOD_RQST, subscription->id,
+                subscription_expr, subscription->security,
+                EMPTY_KEYS, EMPTY_KEYS);
+
+  if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
+                        MESSAGE_ID_SUB_RPLY, error))
+  {
+    free (subscription->subscription_expr);
+
+    subscription->subscription_expr = strdup (subscription_expr);
+
+    /* no free needed for sub_rply */
+
+    return true;
+  } else
+  {
+    return false;
+  }
+}
+
 bool elvin_subscription_set_keys (Subscription *subscription,
                                   Keys *subscription_keys,
                                   SecureMode security,
