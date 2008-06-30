@@ -330,11 +330,10 @@ START_TEST (test_security)
   elvin_open_uri (&bob_client, &uri, &error);
   fail_on_error (&error);
 
-  bob_sub =
-    elvin_subscribe_with_keys (&bob_client, "require (From-Alice)",
-                               EMPTY_KEYS, REQUIRE_SECURE_DELIVERY, &error);
+  bob_sub = elvin_subscribe (&bob_client, "require (From-Alice)", &error);
 
-  elvin_subscription_set_keys (bob_sub, bob_sub_keys, &error);
+  elvin_subscription_set_keys (bob_sub, bob_sub_keys,
+                               REQUIRE_SECURE_DELIVERY, &error);
   fail_on_error (&error);
 
   check_secure_send_receive (&alice_client, bob_sub);

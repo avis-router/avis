@@ -425,6 +425,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
 
 bool elvin_subscription_set_keys (Subscription *subscription,
                                   Keys *subscription_keys,
+                                  SecureMode security,
                                   ElvinError *error)
 {
   alloc_message (sub_mod_rqst);
@@ -432,14 +433,14 @@ bool elvin_subscription_set_keys (Subscription *subscription,
 
   /* TODO (opt) could delta keys here to potentially reduce message size */
   message_init (sub_mod_rqst, MESSAGE_ID_SUB_MOD_RQST, subscription->id,
-                "", subscription->security,
-                subscription_keys, subscription->keys);
+                "", security, subscription_keys, subscription->keys);
 
   if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
                         MESSAGE_ID_SUB_RPLY, error))
   {
     elvin_keys_free (subscription->keys);
 
+    subscription->security = security;
     subscription->keys = subscription_keys;
 
     /* no free needed for sub_rply */
