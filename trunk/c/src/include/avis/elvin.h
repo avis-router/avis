@@ -224,7 +224,8 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
 /**
  * Send a notification to an Elvin router with security constraints.
  *
- * @param attributes The notification to send.
+ * @param elvin The Elvin connection instance.
+ * @param notification The notification to send.
  * @param notification_keys The keys that must match for secure delivery.
  * @param security The security requirement.
  *          REQUIRE_SECURE_DELIVERY means the notification can only
