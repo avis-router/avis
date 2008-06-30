@@ -72,18 +72,6 @@ static void handle_nack (Elvin *elvin, Message message, ElvinError *error);
 
 static void handle_disconn (Elvin *elvin, Message message, ElvinError *error);
 
-#define handle_protocol_error(elvin, error, message) \
-  elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message), \
-  elvin_shutdown (elvin)
-
-#define handle_protocol_error1(elvin, error, message, arg1) \
-  elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message, arg1), \
-  elvin_shutdown (elvin)
-
-#define handle_protocol_error2(elvin, error, message, arg1, arg2) \
-  elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message, arg1, arg2), \
-  elvin_shutdown (elvin)
-
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 
 static void deliver_notification (Elvin *elvin, Array *ids,
@@ -433,6 +421,34 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
     (&elvin->subscriptions, subscription, sizeof (Subscription));
 
   return succeeded;
+}
+
+bool elvin_subscription_set_keys (Subscription *subscription,
+                                  Keys *subscription_keys,
+                                  ElvinError *error)
+{
+  alloc_message (sub_mod_rqst);
+  alloc_message (sub_rply);
+
+  /* TODO (opt) could delta keys here to potentially reduce message size */
+  message_init (sub_mod_rqst, MESSAGE_ID_SUB_MOD_RQST, subscription->id,
+                "", subscription->security,
+                subscription_keys, subscription->keys);
+
+  if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
+                        MESSAGE_ID_SUB_RPLY, error))
+  {
+    elvin_keys_free (subscription->keys);
+
+    subscription->keys = subscription_keys;
+
+    /* no free needed for sub_rply */
+
+    return true;
+  } else
+  {
+    return false;
+  }
 }
 
 /* TODO support adding general listeners */
