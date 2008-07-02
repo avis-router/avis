@@ -194,21 +194,19 @@ Message message_init (Message message, MessageTypeID type, ...)
     {
     case FIELD_XID:
       *(uint32_t *)message = next_xid ();
-      message += 4;
       break;
     case FIELD_INT32:
       *(int32_t *)message = va_arg (args, int32_t);
-      message += 4;
       break;
     case FIELD_INT64:
       *(int64_t *)message = va_arg (args, int64_t);
-      message += 8;
       break;
     case FIELD_POINTER:
       *(void **)message = va_arg (args, void *);
-      message += sizeof (void *);
       break;
     }
+
+    message += field_sizes [field->type];
   }
 
   va_end (args);
