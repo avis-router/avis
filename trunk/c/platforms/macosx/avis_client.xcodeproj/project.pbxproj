@@ -37,6 +37,8 @@
 		C9739E960E11EC3100B7727F /* arrays.c in Sources */ = {isa = PBXBuildFile; fileRef = C9739E940E11EC3100B7727F /* arrays.c */; };
 		C9739E970E11EC5F00B7727F /* stdtypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C97363F70DF7D04900DCE905 /* stdtypes.h */; };
 		C9739E980E11EC5F00B7727F /* avis_client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */; };
+		C99B745C0E1B3E6900D0A7B0 /* listeners.c in Sources */ = {isa = PBXBuildFile; fileRef = C99B745A0E1B3E6900D0A7B0 /* listeners.c */; };
+		C99B745D0E1B3E6900D0A7B0 /* listeners.h in Headers */ = {isa = PBXBuildFile; fileRef = C99B745B0E1B3E6900D0A7B0 /* listeners.h */; };
 		C9B465D80DD82A9800A1C448 /* messages.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B465D60DD82A9800A1C448 /* messages.h */; };
 		C9B465D90DD82A9800A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465D70DD82A9800A1C448 /* messages.c */; };
 		C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B466750DD9374900A1C448 /* libcheck.dylib */; };
@@ -140,6 +142,8 @@
 		C97363F70DF7D04900DCE905 /* stdtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdtypes.h; path = ../../src/include/avis/stdtypes.h; sourceTree = SOURCE_ROOT; };
 		C9739E930E11EC3100B7727F /* arrays_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arrays_private.h; path = ../../src/lib/arrays_private.h; sourceTree = SOURCE_ROOT; };
 		C9739E940E11EC3100B7727F /* arrays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = arrays.c; path = ../../src/lib/arrays.c; sourceTree = SOURCE_ROOT; };
+		C99B745A0E1B3E6900D0A7B0 /* listeners.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listeners.c; path = ../../src/lib/listeners.c; sourceTree = SOURCE_ROOT; };
+		C99B745B0E1B3E6900D0A7B0 /* listeners.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = listeners.h; path = ../../src/lib/listeners.h; sourceTree = SOURCE_ROOT; };
 		C9B465D60DD82A9800A1C448 /* messages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messages.h; path = ../../src/lib/messages.h; sourceTree = "<group>"; };
 		C9B465D70DD82A9800A1C448 /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/lib/messages.c; sourceTree = "<group>"; };
 		C9B466750DD9374900A1C448 /* libcheck.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcheck.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -243,6 +247,8 @@
 		08FB7795FE84155DC02AAC07 /* Client Library */ = {
 			isa = PBXGroup;
 			children = (
+				C99B745A0E1B3E6900D0A7B0 /* listeners.c */,
+				C99B745B0E1B3E6900D0A7B0 /* listeners.h */,
 				C9739E930E11EC3100B7727F /* arrays_private.h */,
 				C9739E940E11EC3100B7727F /* arrays.c */,
 				C9F0DAB00E060C5D00DB5A88 /* sha1.c */,
@@ -369,6 +375,7 @@
 				C9739E950E11EC3100B7727F /* arrays_private.h in Headers */,
 				C9739E970E11EC5F00B7727F /* stdtypes.h in Headers */,
 				C9739E980E11EC5F00B7727F /* avis_client_config.h in Headers */,
+				C99B745D0E1B3E6900D0A7B0 /* listeners.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,6 +550,7 @@
 				C9ED37330DFA358A00FB55CE /* attributes.c in Sources */,
 				C9F0DAB40E060C5D00DB5A88 /* sha1.c in Sources */,
 				C9739E960E11EC3100B7727F /* arrays.c in Sources */,
+				C99B745C0E1B3E6900D0A7B0 /* listeners.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
