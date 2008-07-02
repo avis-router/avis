@@ -13,11 +13,13 @@ EXTRA_DIST = \
   platforms/windows/vc2005/avis_client_config.h \
   platforms/windows/vc2005/Avis.sln \
   platforms/windows/vc2005/avislib.vcproj \
+  platforms/windows/vc2005/avistests.vcproj \
   platforms/windows/vc2005/basic_test.vcproj \
   platforms/windows/vc2005/check.sln \
   platforms/windows/vc2005/event_loop_test.vcproj \
   platforms/windows/vc2005/hashtable.sln \
   platforms/windows/vc2005/libcheck.vcproj \
+  platforms/windows/vc2005/libcheck/config.h \
   platforms/windows/vc2005/libhashtable.vcproj
 
 run-tests: all
