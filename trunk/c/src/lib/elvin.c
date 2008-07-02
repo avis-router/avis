@@ -110,7 +110,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
 
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
-  listeners_init (&elvin->close_listeners);
+  listeners_init (elvin->close_listeners);
   elvin->notification_keys = notification_keys;
   elvin->subscription_keys = subscription_keys;
 
@@ -365,7 +365,7 @@ Subscription *elvin_subscription_init (Subscription *subscription)
   subscription->id = 0;
   subscription->security = ALLOW_INSECURE_DELIVERY;
   subscription->keys = NULL;
-  listeners_init (&subscription->listeners);
+  listeners_init (subscription->listeners);
 
   return subscription;
 }

@@ -19,18 +19,18 @@
 
 void listeners_free (Listeners *listeners)
 {
-  if (listeners->list != NULL)
-    array_list_destroy (listeners->list);
+  if (*listeners != NULL)
+    array_list_destroy (*listeners);
 }
 
 void listeners_add (Listeners *listeners, Listener listener, void *user_data)
 {
   ListenerEntry *entry;
 
-  if (listeners->list == NULL)
-    listeners->list = array_list_create (ListenerEntry, 2);
+  if (*listeners == NULL)
+    *listeners = array_list_create (ListenerEntry, 2);
 
-  entry = array_list_add (listeners->list, ListenerEntry);
+  entry = array_list_add (*listeners, ListenerEntry);
 
   entry->listener = listener;
   entry->user_data = user_data;
@@ -41,21 +41,21 @@ bool listeners_remove (Listeners *listeners, Listener listener)
   ListenerEntry *entry;
   int count;
 
-  if (listeners->list == NULL)
+  if (*listeners == NULL)
     return false;
 
-  entry = listeners->list->items;
+  entry = (*listeners)->items;
 
-  for (count = listeners->list->item_count;
+  for (count = (*listeners)->item_count;
        count > 0 && entry->listener != listener; count--, entry++);
 
   if (count > 0)
   {
-    array_list_remove_item_using_ptr (listeners->list, entry,
+    array_list_remove_item_using_ptr (*listeners, entry,
                                       sizeof (ListenerEntry));
 
-    if (listeners->list->item_count == 0)
-      array_list_destroy (listeners->list);
+    if ((*listeners)->item_count == 0)
+      array_list_destroy (*listeners);
 
     return true;
   } else
