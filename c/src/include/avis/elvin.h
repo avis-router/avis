@@ -47,12 +47,9 @@
 
 struct ArrayList;
 
-#define AVIS_LISTENERS_STRUCT
+#define AVIS_LISTENERS_TYPE
 
-typedef struct Listeners
-{
-  ArrayList *list;
-} Listeners;
+typedef ArrayList * Listeners;
 
 /**
  * A client connection to an Elvin router. Typically a client creates a

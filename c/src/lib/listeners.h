@@ -22,14 +22,11 @@
 
 typedef void (*Listener) ();
 
-#ifndef AVIS_LISTENERS_STRUCT
+#ifndef AVIS_LISTENERS_TYPE
 
-  #define AVIS_LISTENERS_STRUCT
+  #define AVIS_LISTENERS_TYPE
 
-  typedef struct Listeners
-  {
-    ArrayList *list;
-  } Listeners;
+  typedef ArrayList * Listeners;
 #endif
 
 typedef struct
@@ -44,18 +41,18 @@ typedef struct
   int             remaining;
 } ListenersIterator;
 
-#define listeners_init(listeners) {(listeners)->list = NULL;}
+#define listeners_init(listeners) {(listeners) = NULL;}
 
 void listeners_free (Listeners *listeners);
 
 #define listeners_iter_init(listeners, i) \
-    if ((listeners).list == NULL) \
+    if ((listeners) == NULL) \
     { \
       (i).remaining = 0; \
     } else \
     { \
-      (i).entry = (listeners).list->items; \
-      (i).remaining = (listeners).list->item_count; \
+      (i).entry = (listeners)->items; \
+      (i).remaining = (listeners)->item_count; \
     }
 
 #define for_each_listener(listeners, l) \
