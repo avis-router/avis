@@ -4,8 +4,8 @@ TODO
 
 * DONE: change security keys
 * DONE: change subscription
-* close listener
-* general notif listener
+* DONE: close listener
+* DONE: general notif listener
 * IPv6 connect on Linux
 * finish URI parsing
 * connection options

@@ -63,6 +63,7 @@ typedef struct
   socket_t  socket;
   ArrayList subscriptions;
   Listeners close_listeners;
+  Listeners notification_listeners;
   Keys *    notification_keys;
   Keys *    subscription_keys;
 } Elvin;
@@ -91,6 +92,22 @@ typedef struct
   Keys *       keys;
 } Subscription;
 
+typedef enum
+{
+  /** The client was shut down normally with a call to elvin_close(). */
+  REASON_CLIENT_SHUTDOWN,
+
+  /** The router was shut down normally. */
+  REASON_ROUTER_SHUTDOWN,
+
+  /**
+   * Either the client or the router decided that the protocol rules have
+   * been violated. This would only happen in the case of a serious bug in
+   * the client or router.
+   */
+  REASON_PROTOCOL_VIOLATION
+} CloseReason;
+
 /**
  * A listener for notifications received via a subscription.
  *
@@ -112,22 +129,6 @@ typedef void (*SubscriptionListener) (Subscription *subscription,
                                       Attributes *attributes, bool secure,
                                       void *user_data);
 
-typedef enum
-{
-  /** The client was shut down normally with a call to elvin_close(). */
-  REASON_CLIENT_SHUTDOWN,
-
-  /** The router was shut down normally. */
-  REASON_ROUTER_SHUTDOWN,
-
-  /**
-   * Either the client or the router decided that the protocol rules have
-   * been violated. This would only happen in the case of a serious bug in
-   * the client or router.
-   */
-  REASON_PROTOCOL_VIOLATION
-} CloseReason;
-
 /**
  * A listener for elvin connection close events.
  *
@@ -142,6 +143,26 @@ typedef enum
 typedef void (*CloseListener) (Elvin *elvin, CloseReason reason,
                                const char *message,
                                void *user_data);
+
+/**
+ * A listener for connection-wide notification events.
+ *
+ * @param elvin The elvin connection.
+ * @param attributes The notification from the router. Note that these
+ * attributes are only valid for the duration of the callback -- they will be
+ * freed by the connection after the callback returns. If you want to refer to
+ * any part of the notification  outside callback scope, you will need to copy
+ * the relevant parts before returning.
+ * @param secure True if the notification was received securely from a client
+ * with a matching set of security keys (see elvin_subscribe_with_keys() and
+ * elvin_open_with_keys()). This will be true if at least one subscription
+ * securely matched the notification.
+ * @param user_data The user data passed in when adding the listener.
+ *
+ * @see elvin_add_notification_listener()
+ */
+typedef void (*GeneralNotificationListener)
+  (Elvin *elvin, Attributes *attributes, bool secure, void *user_data);
 
 /**
  * Open a connection to an Elvin router.
@@ -424,6 +445,7 @@ bool elvin_subscription_set_keys (Subscription *subscription,
  * to the listener function.
  *
  * @see elvin_subscription_remove_listener()
+ * @see elvin_add_notification_listener()
  */
 void elvin_subscription_add_listener (Subscription *subscription,
                                       SubscriptionListener listener,
@@ -485,6 +507,38 @@ void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
  * @see elvin_add_close_listener()
  */
 bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener);
+
+/**
+ * Add a listener that will be called when a notification is received on any
+ * subscription created by this connection.
+ *
+ * @param elvin The elvin connection.
+ * @param listener The listener to be called when the a notification
+ * is received.
+ * @param user_data An optional pointer to user data to be passed into
+ * the listener when called. This can be used to provide context information
+ * to the listener function.
+ *
+ * @see elvin_remove_notification_listener()
+ * @see elvin_subscribe()
+ * @see elvin_subscription_add_listener()
+ */
+void elvin_add_notification_listener (Elvin *elvin,
+                                      GeneralNotificationListener listener,
+                                      void *user_data);
+
+/**
+ * Remove a listener added by elvin_add_notification_listener().
+ *
+ * @param elvin The elvin connection.
+ * @param listener The listener to be removed.
+ *
+ * @return True if the listener was in the list and was removed.
+ *
+ * @see elvin_add_close_listener()
+ */
+bool elvin_remove_notification_listener (Elvin *elvin,
+                                         GeneralNotificationListener listener);
 
 /**
  * Poll an Elvin connection for an incoming message from the router. This will

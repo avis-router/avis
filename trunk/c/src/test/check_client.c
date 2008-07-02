@@ -58,6 +58,11 @@ static void close_listener
 static void test_subscribe_sub_listener
   (Subscription *sub, Attributes *attributes, bool secure, void *user_data);
 
+static void test_subscribe_general_listener (Elvin *elvin,
+                                             Attributes *attributes,
+                                             bool secure,
+                                             void *user_data);
+
 static void check_secure_send_receive (Elvin *client, Subscription *secure_sub);
 
 static ElvinError error = elvin_error_create ();
@@ -254,6 +259,21 @@ START_TEST (test_subscribe)
     (elvin_subscription_remove_listener (sub, test_subscribe_sub_listener),
      "Failed to detect redundant remove of sub listener");
 
+  /* test general listener */
+  ntfn = attributes_create ();
+  attributes_set_int32 (ntfn, "test", 1);
+
+  elvin_add_notification_listener
+    (&elvin, test_subscribe_general_listener, NULL);
+
+  test_subscribe_received_ntfn = false;
+  elvin_send (&elvin, ntfn, &error) && elvin_poll (&elvin, &error);
+  fail_on_error (&error);
+
+  fail_unless (test_subscribe_received_ntfn, "Did not get general notification");
+
+  attributes_destroy (ntfn);
+
   elvin_unsubscribe (&elvin, sub, &error);
   fail_on_error (&error);
 
@@ -290,6 +310,13 @@ void test_subscribe_sub_listener (Subscription *sub,
   fail_unless (data->item_count == 100 * 1024, "Data wrong length");
   fail_unless (((uint8_t *)data->items) [10] == 42, "Data wrong");
 
+  test_subscribe_received_ntfn = true;
+}
+
+void test_subscribe_general_listener (Elvin *elvin,
+                                      Attributes *attributes, bool secure,
+                                      void *user_data)
+{
   test_subscribe_received_ntfn = true;
 }
 
