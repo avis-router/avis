@@ -470,6 +470,7 @@ bool elvin_subscription_set_expr (Subscription *subscription,
                                   const char *subscription_expr,
                                   ElvinError *error)
 {
+  /* TODO check sub exprs are different */
   alloc_message (sub_mod_rqst);
   alloc_message (sub_rply);
 
