@@ -52,6 +52,9 @@
 
 static const char *elvin_router ();
 
+static void close_listener
+  (Elvin *elvin, CloseReason reason, const char *message, void *user_data);
+
 static void test_subscribe_sub_listener
   (Subscription *sub, Attributes *attributes, bool secure, void *user_data);
 
@@ -125,6 +128,8 @@ START_TEST (test_uri)
 }
 END_TEST
 
+static bool close_listener_called = false;
+
 START_TEST (test_connect)
 {
   Elvin elvin;
@@ -132,9 +137,25 @@ START_TEST (test_connect)
   elvin_open (&elvin, elvin_router (), &error);
   fail_on_error (&error);
 
+  close_listener_called = false;
+
+  elvin_add_close_listener (&elvin, close_listener, "user_data");
+
   elvin_close (&elvin);
+
+  fail_unless (close_listener_called, "Close listener not called");
 }
 END_TEST
+
+void close_listener
+  (Elvin *elvin, CloseReason reason, const char *message, void *user_data)
+{
+  fail_if (elvin_is_open (elvin), "Elvin should be marked as closed");
+  fail_unless (strcmp (user_data, "user_data") == 0, "User data incorrect");
+  fail_unless (reason == REASON_CLIENT_SHUTDOWN, "Reason incorrect");
+
+  close_listener_called = true;
+}
 
 START_TEST (test_notify)
 {
