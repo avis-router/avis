@@ -43,7 +43,8 @@
 #include "arrays_private.h"
 #include "log.h"
 
-static void elvin_shutdown (Elvin *elvin);
+static void elvin_shutdown (Elvin *elvin, CloseReason reason,
+                            const char *message);
 
 static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                          ElvinError *error);
@@ -109,6 +110,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
 
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
+  listeners_init (&elvin->close_listeners);
   elvin->notification_keys = notification_keys;
   elvin->subscription_keys = subscription_keys;
 
@@ -152,17 +154,18 @@ bool elvin_close (Elvin *elvin)
 
   /* no free needed for disconn_rply */
 
-  elvin_shutdown (elvin);
+  elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
 
   elvin_error_free (&error);
 
   return true;
 }
 
-void elvin_shutdown (Elvin *elvin)
+void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 {
   size_t i;
   Subscription *sub = elvin->subscriptions.items;
+  ListenersIterator l;
 
   if (elvin->socket == -1)
     return;
@@ -184,6 +187,11 @@ void elvin_shutdown (Elvin *elvin)
 
   elvin_keys_destroy (elvin->notification_keys);
   elvin_keys_destroy (elvin->subscription_keys);
+
+  for_each_listener (elvin->close_listeners, l)
+    (*l.entry->listener) (elvin, reason, message, l.entry->user_data);
+
+  listeners_free (&elvin->close_listeners);
 }
 
 void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
@@ -221,15 +229,14 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
   }
 
   if (error->code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin);
+    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
 
   return elvin_error_ok (error);
 }
 
 void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
 {
-  /* TODO support close listener */
-  elvin_shutdown (elvin);
+  elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, "Router is shutting down");
 }
 
 void handle_nack (Elvin *elvin, Message nack, ElvinError *error)
@@ -284,7 +291,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 {
   int i;
   int64_t *id = ids->items;
-  ListenersIter l;
+  ListenersIterator l;
 
   for (i = ids->item_count; i > 0; i--, id++)
   {
@@ -298,9 +305,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
       return;
     }
 
-    listeners_iter_start (subscription->listeners, l);
-
-    each_listener (l)
+    for_each_listener (subscription->listeners, l)
     {
       (*l.entry->listener) (subscription, attributes, secure,
                             l.entry->user_data);
@@ -542,7 +547,7 @@ bool send_and_receive (Elvin *elvin, Message request,
 
   /* close connection on protocol error */
   if (error->code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin);
+    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
 
   return elvin_error_ok (error);
 }
