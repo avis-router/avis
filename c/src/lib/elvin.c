@@ -111,6 +111,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   elvin->socket = -1;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
   listeners_init (elvin->close_listeners);
+  listeners_init (elvin->notification_listeners);
   elvin->notification_keys = notification_keys;
   elvin->subscription_keys = subscription_keys;
 
@@ -192,6 +193,7 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
     (*l.entry->listener) (elvin, reason, message, l.entry->user_data);
 
   listeners_free (&elvin->close_listeners);
+  listeners_free (&elvin->notification_listeners);
 }
 
 void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
@@ -203,6 +205,19 @@ void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
 bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener)
 {
   return listeners_remove (&elvin->close_listeners, listener);
+}
+
+void elvin_add_notification_listener (Elvin *elvin,
+                                      GeneralNotificationListener listener,
+                                      void *user_data)
+{
+  listeners_add (&elvin->notification_listeners, (Listener)listener, user_data);
+}
+
+bool elvin_remove_notification_listener (Elvin *elvin,
+                                         GeneralNotificationListener listener)
+{
+  return listeners_remove (&elvin->notification_listeners, (Listener)listener);
 }
 
 bool elvin_poll (Elvin *elvin, ElvinError *error)
@@ -276,6 +291,7 @@ void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
     ptr_at_offset (message, sizeof (Attributes *));
   Array *insecure_matches =
     ptr_at_offset (message, sizeof (Attributes *) + sizeof (Array *));
+  ListenersIterator l;
 
   deliver_notification (elvin, secure_matches, attributes, true, error);
 
@@ -283,6 +299,13 @@ void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
     return;
 
   deliver_notification (elvin, insecure_matches, attributes, false, error);
+
+  /* deliver to general notification listeners */
+  for_each_listener (elvin->notification_listeners, l)
+  {
+    (*l.entry->listener) (elvin, attributes, secure_matches->item_count > 0,
+                          l.entry->user_data);
+  }
 }
 
 void deliver_notification (Elvin *elvin, Array *ids,
