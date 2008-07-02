@@ -125,16 +125,16 @@ public final class Subscription
   /**
    * Change the subscription expression.
    * 
-   * @throws IOException if the subscription is invalid or if a
-   *           network error occurs.
-   * @throws InvalidSubscriptionException if the subscription expression
-   *           is invalid.
+   * @throws InvalidSubscriptionException if the subscription
+   *           expression is invalid.
+   * @throws IOException if the subscription if network or protocol
+   *           error occurs.
    */
   public void setSubscriptionExpr (String newSubscriptionExpr)
     throws IOException, InvalidSubscriptionException
   {
     newSubscriptionExpr = checkSubscription (newSubscriptionExpr);
-    
+
     synchronized (elvin)
     {
       checkActive ();
