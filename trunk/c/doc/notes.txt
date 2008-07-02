@@ -11,6 +11,7 @@ TODO
 * connection options
 * size limit enforcement
 * handle OOM and other fatal conditions
+* use hashmap for subscriptions?
 
 0.1 release
 
