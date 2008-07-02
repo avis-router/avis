@@ -54,6 +54,9 @@ bool listeners_remove (Listeners *listeners, Listener listener)
     array_list_remove_item_using_ptr (listeners->list, entry,
                                       sizeof (ListenerEntry));
 
+    if (listeners->list->item_count == 0)
+      array_list_destroy (listeners->list);
+
     return true;
   } else
   {

@@ -42,25 +42,25 @@ typedef struct
 {
   ListenerEntry * entry;
   int             remaining;
-} ListenersIter;
+} ListenersIterator;
 
 #define listeners_init(listeners) {(listeners)->list = NULL;}
 
 void listeners_free (Listeners *listeners);
 
-#define listeners_iter_start(listeners, i) \
-    if (listeners.list == NULL) \
+#define listeners_iter_init(listeners, i) \
+    if ((listeners).list == NULL) \
     { \
-      (i).entry = NULL; \
       (i).remaining = 0; \
     } else \
     { \
-      (i).entry = listeners.list->items; \
-      (i).remaining = listeners.list->item_count; \
+      (i).entry = (listeners).list->items; \
+      (i).remaining = (listeners).list->item_count; \
     }
 
-#define each_listener(l) \
-  for ( ; l.remaining > 0; l.remaining--, l.entry++)
+#define for_each_listener(listeners, l) \
+  listeners_iter_init (listeners, l); \
+  for ( ; (l).remaining > 0; (l).remaining--, (l).entry++)
 
 void listeners_add (Listeners *listeners, Listener listener, void *user_data);
 
