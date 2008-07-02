@@ -88,7 +88,7 @@ typedef enum
 } FieldType;
 
 /** Size of FieldType values */
-static int field_sizes [4] = {4, 4, 8, sizeof (void *)};
+static const int field_sizes [4] = {4, 4, 8, sizeof (void *)};
 
 typedef void (*MessageIOFunction) (ByteBuffer *buffer, Message message,
                                    ElvinError *error);
@@ -121,7 +121,7 @@ typedef struct
 
 #define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL, NULL}
 
-static MessageFormat MESSAGE_FORMATS [] =
+static const MessageFormat MESSAGE_FORMATS [] =
 {
   {MESSAGE_ID_NACK,
     {XID, I32, STR, VA, END} /* {"xid", "error", "message", "args"}*/},
@@ -158,6 +158,10 @@ static MessageFormat MESSAGE_FORMATS [] =
   {-1, {END}}
 };
 
+static uint32_t xid_counter = 1;
+
+#define next_xid() (xid_counter++)
+
 static MessageFormat *message_format_for (MessageTypeID type);
 
 static void read_using_format (ByteBuffer *buffer,
@@ -169,10 +173,6 @@ static void write_using_format (ByteBuffer *buffer,
                                 MessageFormat *format,
                                 Message message,
                                 ElvinError *error);
-
-static uint32_t xid_counter = 1;
-
-#define next_xid() (xid_counter++)
 
 Message message_init (Message message, MessageTypeID type, ...)
 {
