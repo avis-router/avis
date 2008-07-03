@@ -529,8 +529,6 @@ bool elvin_subscription_set_keys (Subscription *subscription,
   }
 }
 
-/* TODO support adding general listeners */
-
 void elvin_subscription_add_listener (Subscription *subscription,
                                       SubscriptionListener listener,
                                       void *user_data)
