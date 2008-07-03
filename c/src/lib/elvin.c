@@ -24,7 +24,12 @@
 #ifdef WIN32
   #include <winsock2.h>
   #include <ws2tcpip.h>
-  #include <ws2ipdef.h>
+
+  /* This should be picked up from avis_client_config.h but,
+     although VS is happy to #include it, somehow 
+     HAVE_STRUCT_SOCKADDR_IN6 remains undefined no matter
+     how much I swear at the fscking thing. */
+  #define HAVE_STRUCT_SOCKADDR_IN6 1
 #else
   #include <unistd.h>
   #include <sys/types.h>
@@ -43,6 +48,7 @@
 #include "listeners.h"
 #include "arrays_private.h"
 #include "log.h"
+#include "avis_client_config.h"
 
 static void elvin_shutdown (Elvin *elvin, CloseReason reason,
                             const char *message);
@@ -655,6 +661,8 @@ Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 
   return NULL;
 }
+
+#include "avis_client_config.h"
 
 bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                   ElvinError *error)
