@@ -21,6 +21,8 @@
 #ifndef AVIS_ERRORS_H_
 #define AVIS_ERRORS_H_
 
+#include <stdlib.h>
+
 #include <avis/stdtypes.h>
 
 /**
@@ -66,6 +68,8 @@ typedef struct
 #define ELVIN_ERROR_SYNTAX              (ELVIN_ERROR_BASE + 5)
 #define ELVIN_ERROR_TRIVIAL_EXPRESSION  (ELVIN_ERROR_BASE + 6)
 #define ELVIN_ERROR_NACK                (ELVIN_ERROR_BASE + 7)
+
+void *do_avis_emalloc (size_t size, const char *file, int line);
 
 #define avis_emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
 
