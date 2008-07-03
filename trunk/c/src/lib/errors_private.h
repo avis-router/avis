@@ -18,11 +18,11 @@
 #ifndef ERRORS_PRIVATE_H_
 #define ERRORS_PRIVATE_H_
 
+#include <avis/errors.h>
+
 #define error_fail(message) avis_fail ((message), __FILE__, __LINE__)
 
 #define emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
-
-void *do_avis_emalloc (size_t size, const char *file, int line);
 
 void avis_fail (const char *message, const char *file, int line, ...);
 

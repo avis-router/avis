@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,6 +36,7 @@
 #include "byte_buffer.h"
 
 #include "attributes_private.h"
+#include "errors_private.h"
 
 #include "check_ext.h"
 
@@ -62,63 +63,63 @@ START_TEST (test_byte_buffer_io)
   uint8_t *bytes;
   uint8_t *read_bytes;
   int i;
-  
+
   ByteBuffer *buffer = byte_buffer_create ();
   byte_buffer_set_max_length (buffer, 1024);
-  
+
   byte_buffer_write_int32 (buffer, 42, &error);
   fail_on_error (&error);
-  
+
   byte_buffer_set_position (buffer, 0, &error);
   fail_on_error (&error);
-  
+
   value = byte_buffer_read_int32 (buffer, &error);
   fail_on_error (&error);
-  
+
   fail_unless (value == 42, "Value incorrect: %u", value);
-  
+
   /* test resize */
   byte_buffer_set_position (buffer, 0, &error);
-  
+
   bytes_len = 20 * 1024;
   bytes = emalloc (bytes_len);
-  
+
   for (i = 0; i < bytes_len; i++)
     bytes [i] = (uint8_t)i;
-  
+
   /* try to write beyond max */
   byte_buffer_write_bytes (buffer, bytes, bytes_len, &error);
   fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
-  
+
   /* exand max, retry */
   byte_buffer_set_max_length (buffer, bytes_len);
   byte_buffer_write_bytes (buffer, bytes, bytes_len, &error);
   fail_on_error (&error);
-    
+
   read_bytes = emalloc (bytes_len);
-  
+
   byte_buffer_set_position (buffer, 0, &error);
   byte_buffer_read_bytes (buffer, read_bytes, bytes_len, &error);
   fail_on_error (&error);
-  
+
   for (i = 0; i < bytes_len; i++)
     fail_unless (bytes [i] == read_bytes [i], "Bytes differ at %u", i);
-  
+
   free (bytes);
   free (read_bytes);
-  
+
   /* read/write ints */
   byte_buffer_destroy (buffer);
   buffer = byte_buffer_create ();
-  
+
   for (i = 0; i < 1000; i++)
   {
     byte_buffer_write_int32 (buffer, i, &error);
     fail_on_error (&error);
   }
-  
+
   byte_buffer_set_position (buffer, 0, &error);
-    
+
   for (i = 0; i < 1000; i++)
   {
     int32_t value;
@@ -126,12 +127,12 @@ START_TEST (test_byte_buffer_io)
     fail_on_error (&error);
     fail_unless (value == i, "Value not the same");
   }
-  
+
   /* int64 */
   byte_buffer_set_position (buffer, 0, &error);
   byte_buffer_write_int64 (buffer, 123456790L, &error);
   fail_on_error (&error);
-  
+
   byte_buffer_set_position (buffer, 0, &error);
   value64 = byte_buffer_read_int64 (buffer, &error);
   fail_on_error (&error);
@@ -142,12 +143,12 @@ START_TEST (test_byte_buffer_io)
   byte_buffer_set_position (buffer, 0, &error);
   byte_buffer_write_real64 (buffer, 3.1415, &error);
   fail_on_error (&error);
-  
+
   byte_buffer_set_position (buffer, 0, &error);
   value_real64 = byte_buffer_read_real64 (buffer, &error);
   fail_on_error (&error);
 
-  fail_unless (value_real64 == 3.1415, 
+  fail_unless (value_real64 == 3.1415,
                "Value not the same: %d\n", value_real64);
 
   byte_buffer_destroy (buffer);
@@ -161,21 +162,21 @@ START_TEST (test_string_io)
 {
   ByteBuffer *buffer = byte_buffer_create ();
   char *string2;
-  
+
   byte_buffer_write_string (buffer, "hello world", &error);
   fail_on_error (&error);
-  
+
   fail_unless (buffer->position == 16, "Length incorrect");
-  
+
   byte_buffer_set_position (buffer, 0, &error);
-  
+
   string2 = byte_buffer_read_string (buffer, &error);
   fail_on_error (&error);
-  
+
   fail_unless (strcmp (string2, "hello world") == 0, "Strings not equal");
-  
+
   byte_buffer_destroy (buffer);
-  
+
   free (string2);
 }
 END_TEST
@@ -189,55 +190,55 @@ START_TEST (test_attributes_io)
   Attributes *attributes2;
   Attributes *attributes;
   Array some_bytes;
-  
+
   array_init (&some_bytes, 128, 1);
-  
+
   memset (some_bytes.items, 42, 128);
-  
+
   /* empty attributes */
   attributes_write (buffer, EMPTY_ATTRIBUTES, &error);
   fail_on_error (&error);
-    
+
   byte_buffer_set_position (buffer, 0, &error);
   attributes2 = attributes_create ();
   attributes_read (buffer, attributes2, &error);
   fail_on_error (&error);
-  
+
   fail_unless (attributes_size (attributes2) == 0, "Empty attributes failed");
-  
+
   byte_buffer_set_position (buffer, 0, &error);
   attributes_destroy (attributes2);
-  
+
   /* non empty attributes */
   attributes = attributes_create ();
-  
+
   attributes_set_int32 (attributes, "int32", 42);
   attributes_set_int64 (attributes, "int64", 0xDEADBEEFF00DL);
   attributes_set_opaque (attributes, "opaque", some_bytes);
   attributes_set_string (attributes, "string", "hello world");
-  
+
   attributes_write (buffer, attributes, &error);
   fail_on_error (&error);
-  
+
   byte_buffer_set_position (buffer, 0, &error);
-  attributes2 = attributes_create ();  
-  
+  attributes2 = attributes_create ();
+
   attributes_read (buffer, attributes2, &error);
   fail_on_error (&error);
-  
-  fail_unless (attributes_get_int32 (attributes2, "int32") == 42, 
-               "Failed to serialize value: %u", 
+
+  fail_unless (attributes_get_int32 (attributes2, "int32") == 42,
+               "Failed to serialize value: %u",
                attributes_get_int32 (attributes, "int32"));
-  
-  fail_unless (attributes_get_int64 (attributes2, "int64") == 0xDEADBEEFF00DL, 
-               "Failed to serialize value: %lu", 
+
+  fail_unless (attributes_get_int64 (attributes2, "int64") == 0xDEADBEEFF00DL,
+               "Failed to serialize value: %lu",
                attributes_get_int64 (attributes2, "int64"));
 
-  fail_unless (array_equals (attributes_get_opaque (attributes2, "opaque"), 
+  fail_unless (array_equals (attributes_get_opaque (attributes2, "opaque"),
                &some_bytes), "Failed to serialize opaque");
-  
-  fail_unless 
-    (strcmp (attributes_get_string (attributes2, "string"), "hello world") == 0, 
+
+  fail_unless
+    (strcmp (attributes_get_string (attributes2, "string"), "hello world") == 0,
      "Failed to serialize string");
 
   attributes_destroy (attributes);
@@ -252,43 +253,43 @@ START_TEST (test_message_io)
   uint32_t frame_size;
   alloc_message (connRqst);
   alloc_message (connRqst2);
-    
+
   /* write message out */
   message_init (connRqst, MESSAGE_ID_CONN_RQST,
-                DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                DEFAULT_CLIENT_PROTOCOL_MAJOR,
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
                 EMPTY_ATTRIBUTES, EMPTY_KEYS, EMPTY_KEYS);
 
   message_write (buffer, connRqst, &error);
-  
+
   fail_on_error (&error);
-  
+
   fail_unless (buffer->position == 32, "Message length incorrect");
-  
+
   /* read message back */
   byte_buffer_set_position (buffer, 0, &error);
-  
+
   frame_size = byte_buffer_read_int32 (buffer, &error);
   fail_on_error (&error);
 
   fail_unless (frame_size == 28, "Frame size not sent correctly");
-  
+
   byte_buffer_set_max_length (buffer, frame_size + 4);
-  
+
   message_read (buffer, connRqst2, &error);
-  
+
   fail_on_error (&error);
-  
-  fail_unless (message_type_of (connRqst2) == MESSAGE_ID_CONN_RQST, 
+
+  fail_unless (message_type_of (connRqst2) == MESSAGE_ID_CONN_RQST,
                "Type incorrect");
-  
+
   fail_unless (*(uint32_t *)(connRqst2 + 8) == DEFAULT_CLIENT_PROTOCOL_MAJOR,
-               "Major version incorrect");  
+               "Major version incorrect");
   fail_unless (*(uint32_t *)(connRqst2 + 12) == DEFAULT_CLIENT_PROTOCOL_MINOR,
                "Minor version incorrect");
-  
+
   byte_buffer_destroy (buffer);
-  
+
   message_free (connRqst2);
 }
 END_TEST
@@ -300,51 +301,51 @@ START_TEST (test_dud_router)
   uint32_t length;
   alloc_message (message1);
   alloc_message (message2);
-  
+
   attributes_set_int32 (attributes, "int32", 42);
   attributes_set_int64 (attributes, "int64", 0xDEADBEEFF00DL);
   attributes_set_string (attributes, "string", "hello world");
-  
+
   /* write message out */
-  
+
   message_init (message1, MESSAGE_ID_CONN_RQST,
-                DEFAULT_CLIENT_PROTOCOL_MAJOR, 
+                DEFAULT_CLIENT_PROTOCOL_MAJOR,
                 DEFAULT_CLIENT_PROTOCOL_MINOR,
                 attributes, EMPTY_KEYS, EMPTY_KEYS);
 
   message_write (buffer, message1, &error);
   fail_on_error (&error);
-  
+
   /* create an underflow */
-  
+
   length = buffer->position;
   buffer->max_data_length = buffer->data_length = length - 1;
-  
+
   byte_buffer_set_position (buffer, 4, &error);
-  
+
   message_read (buffer, message2, &error);
-  
-  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);  
-  /* message2 should be freed by message_read () on error, but should be OK to 
+
+  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
+  /* message2 should be freed by message_read () on error, but should be OK to
    * free again */
   message_free (message2);
-  
+
   /* create a corrupt message */
   buffer->max_data_length = buffer->data_length = length;
   byte_buffer_set_position (buffer, 4, &error);
-  
+
   /* generate "error: Invalid value type: 4294967295" */
   ((uint32_t *)buffer->data) [9] = 0xFFFFFFFF;
-  
+
   message_read (buffer, message2, &error);
-  
-  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);  
-  message_free (message2);  
-    
+
+  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
+  message_free (message2);
+
   byte_buffer_destroy (buffer);
-  
+
   /* not freeing messages1 since it refers to global singletons */
-  attributes_destroy (attributes);  
+  attributes_destroy (attributes);
 }
 END_TEST
 
