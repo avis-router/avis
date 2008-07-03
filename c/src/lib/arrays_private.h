@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,8 @@
 
 #include <avis/stdtypes.h>
 #include <avis/arrays.h>
+
+#include "errors_private.h"
 
 typedef void (*FuncPtr) ();
 
@@ -34,7 +36,7 @@ typedef void (*FuncPtr) ();
 
 #define array_list_size(list) ((list)->item_count)
 
-ArrayList *array_list_init (ArrayList *list, size_t item_size, 
+ArrayList *array_list_init (ArrayList *list, size_t item_size,
                             size_t initial_item_count);
 
 void array_list_free (ArrayList *list);

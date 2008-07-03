@@ -43,6 +43,7 @@
 
 #include "avis/elvin.h"
 #include "avis/errors.h"
+#include "errors_private.h"
 #include "avis/attributes.h"
 #include "avis/keys.h"
 

@@ -15,6 +15,7 @@ lib_LTLIBRARIES = libavis.la
 libavis_la_SOURCES = \
   elvin.c \
   elvin_uri.c \
+  errors_private.h \
   messages.c \
   sha1.c \
   attributes.c \

@@ -121,7 +121,7 @@ typedef struct
 
 #define END {0, (MessageIOFunction)NULL, (MessageIOFunction)NULL, NULL}
 
-static const MessageFormat MESSAGE_FORMATS [] =
+static MessageFormat MESSAGE_FORMATS [] =
 {
   {MESSAGE_ID_NACK,
     {XID, I32, STR, VA, END} /* {"xid", "error", "message", "args"}*/},
