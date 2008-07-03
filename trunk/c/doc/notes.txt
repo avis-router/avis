@@ -7,12 +7,22 @@ TODO
 * DONE: close listener
 * DONE: general notif listener
 * DONE: IPv6 connect on Linux
+* DONE: handle OOM and other fatal conditions
 * finish URI parsing
 * connection options
 * size limit enforcement
-* handle OOM and other fatal conditions
 * use hashmap for subscriptions?
 * NO_DELAY
+
+int flag = 1;
+  int result = setsockopt(sock,            /* socket affected */
+                          IPPROTO_TCP,     /* set option at TCP level */
+                          TCP_NODELAY,     /* name of option */
+                          (char *) &flag,  /* the cast is historical 
+                                                  cruft */
+                          sizeof(int));    /* length of option value */
+  if (result < 0)
+     ... handle the error ...
                                    
 0.1 release
 

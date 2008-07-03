@@ -21,7 +21,9 @@ A million repetitions of "a"
 
 #include <avis/keys.h>
 #include <avis/stdtypes.h>
+
 #include "avis_endian.h"
+#include "errors_private.h"
 
 typedef struct {
     unsigned long state[5];
@@ -38,16 +40,16 @@ Key avis_sha1 (Key input)
 {
   SHA1_CTX context;
   Key key;
-  
-  key.data = malloc (20);
+
+  key.data = emalloc (20);
   key.length = 20;
-  
+
   SHA1Init (&context);
-  
+
   SHA1Update (&context, input.data, input.length);
-  
+
   SHA1Final (key.data, &context);
-  
+
   return key;
 }
 
@@ -218,9 +220,9 @@ FILE* file;
             fputs("Unable to open file.", stderr);
             exit(-1);
         }
-    } 
+    }
     SHA1Init(&context);
-    while (!feof(file)) {   note: what if ferror(file) 
+    while (!feof(file)) {   note: what if ferror(file)
         i = fread(buffer, 1, 16384, file);
         SHA1Update(&context, buffer, i);
     }

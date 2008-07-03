@@ -26,7 +26,7 @@
 typedef void (*FuncPtr) ();
 
 #define array_list_create(item_type, initial_item_count) \
-  (array_list_init (malloc (sizeof (ArrayList)), \
+  (array_list_init (emalloc (sizeof (ArrayList)), \
    sizeof (item_type), initial_item_count))
 
 #define array_list_destroy(list) \

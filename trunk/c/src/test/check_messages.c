@@ -81,7 +81,7 @@ START_TEST (test_byte_buffer_io)
   byte_buffer_set_position (buffer, 0, &error);
   
   bytes_len = 20 * 1024;
-  bytes = malloc (bytes_len);
+  bytes = emalloc (bytes_len);
   
   for (i = 0; i < bytes_len; i++)
     bytes [i] = (uint8_t)i;
@@ -95,7 +95,7 @@ START_TEST (test_byte_buffer_io)
   byte_buffer_write_bytes (buffer, bytes, bytes_len, &error);
   fail_on_error (&error);
     
-  read_bytes = malloc (bytes_len);
+  read_bytes = emalloc (bytes_len);
   
   byte_buffer_set_position (buffer, 0, &error);
   byte_buffer_read_bytes (buffer, read_bytes, bytes_len, &error);

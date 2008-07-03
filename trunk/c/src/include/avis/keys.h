@@ -156,7 +156,7 @@ extern Keys _empty_keys;
  * @see elvin_keys_destroy()
  */
 #define elvin_keys_create() \
-  (elvin_keys_init (malloc (sizeof (Keys))))
+  (elvin_keys_init (avis_emalloc (sizeof (Keys))))
 
 /**
  * Macro to destroy and NULL a keys collection. Handles NULL and EMPTY_KEYS

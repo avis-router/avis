@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,25 +21,26 @@
 #include <math.h>
 
 #include "arrays_private.h"
+#include "errors_private.h"
 
 #define max(x,y) ((x) > (y) ? (x) : (y))
 
-static void auto_resize (ArrayList *list, size_t min_item_count, 
+static void auto_resize (ArrayList *list, size_t min_item_count,
                          size_t item_size);
 
 void *memdup (const void *source, size_t length)
 {
-  void *target = malloc (length);
-  
+  void *target = emalloc (length);
+
   memcpy (target, source, length);
-  
+
   return target;
 }
 
 Array *array_init (Array *array, size_t item_count, size_t item_length)
 {
   array->item_count = item_count;
-  array->items = malloc (item_count * item_length);
+  array->items = emalloc (item_count * item_length);
 
   return array;
 }
@@ -49,7 +50,7 @@ void array_free (Array *array)
   if (array && array->items)
   {
     free (array->items);
-    
+
     array->items = NULL;
     array->item_count = 0;
   }
@@ -57,17 +58,17 @@ void array_free (Array *array)
 
 bool array_equals (Array *array1, Array *array2)
 {
-  return array1->item_count == array2->item_count && 
+  return array1->item_count == array2->item_count &&
          memcmp (array1->items, array2->items, array1->item_count) == 0;
 }
 
-ArrayList *array_list_init (ArrayList *list, size_t item_size, 
+ArrayList *array_list_init (ArrayList *list, size_t item_size,
                             size_t initial_item_count)
 {
   list->items_length = max (initial_item_count, 1) * item_size;
-  list->items = malloc (list->items_length);
+  list->items = emalloc (list->items_length);
   list->item_count = 0;
-  
+
   return list;
 }
 
@@ -76,7 +77,7 @@ void array_list_free (ArrayList *list)
   if (list->items)
   {
     free (list->items);
-    
+
     list->items = NULL;
     list->item_count = 0;
   }
@@ -112,7 +113,7 @@ def_array_list_add (FuncPtr, func)
     \
     return ((item_type *)list->items) [index];\
   }\
-  
+
 def_array_list_get (int, int)
 def_array_list_get (void *, ptr)
 def_array_list_get (FuncPtr, func)
@@ -159,39 +160,39 @@ def_array_list_remove (FuncPtr, func)
 void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
 {
   assert (index >= 0 && index < list->item_count);
-  
-  array_list_remove_item_using_ptr 
+
+  array_list_remove_item_using_ptr
     (list, (int8_t *)list->items + (index * item_size), item_size);
 }
 
-void array_list_remove_item_using_ptr (ArrayList *list, void *item, 
+void array_list_remove_item_using_ptr (ArrayList *list, void *item,
                                        size_t item_size)
 {
   int8_t *end = (int8_t *)list->items + (list->item_count * item_size);
   int8_t *src = (int8_t *)item + item_size;
-  
+
   assert (list->item_count > 0);
-  
+
   if ((int8_t *)item < end - item_size)
-    memmove (item, src, end - src);    
-  
+    memmove (item, src, end - src);
+
   list->item_count--;
 }
 
 void auto_resize (ArrayList *list, size_t min_item_count, size_t item_size)
 {
   size_t min_length = min_item_count * item_size;
-  
+
   if (list->items_length < min_length)
   {
     /* new size is double old size */
-    do   
+    do
     {
       list->items_length *= 2;
     } while (list->items_length < min_length);
- 
+
     list->items = realloc (list->items, list->items_length);
-    
+
     if (!list->items)
     {
       /* TODO what is the best thing to do when we run out of memory? */

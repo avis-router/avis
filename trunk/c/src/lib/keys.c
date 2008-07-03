@@ -20,6 +20,7 @@
 
 #include "keys_private.h"
 #include "arrays_private.h"
+#include "errors_private.h"
 
 Key avis_sha1 (Key input);
 
@@ -117,7 +118,7 @@ Keys *elvin_keys_copy (Keys *keys)
   if (keys == EMPTY_KEYS)
     return EMPTY_KEYS;
 
-  copy = malloc (sizeof (Keys));
+  copy = emalloc (sizeof (Keys));
 
   init_dual_keysets (copy);
 
@@ -233,7 +234,7 @@ void keysets_copy (ArrayList *target, ArrayList *source)
 
   target->item_count = source->item_count;
   target->items_length = source->items_length;
-  target->items = malloc (target->items_length);
+  target->items = emalloc (target->items_length);
 
   for (i = 0; i < source->item_count; i++)
     ((Key *)target->items) [i] = elvin_key_copy (((Key *)source->items) [i]);

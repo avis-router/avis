@@ -92,6 +92,18 @@ const char *elvin_router ()
   return uri == NULL ? "elvin://localhost" : uri;
 }
 
+START_TEST (test_errors)
+{
+  ElvinError error = elvin_error_create ();
+
+  elvin_error_set (&error, 666, "Test %i", 42);
+
+  fail_unless (strcmp (error.message, "Test 42") == 0, "Message incorrect");
+
+  // avis_fail ("Eeek! %u", __FILE__, __LINE__, 42);
+}
+END_TEST
+
 START_TEST (test_uri)
 {
   ElvinURI uri;
@@ -193,7 +205,7 @@ START_TEST (test_subscribe)
   Array data;
 
   data.item_count = 100 * 1024;
-  data.items = malloc (data.item_count);
+  data.items = emalloc (data.item_count);
 
   memset (data.items, 42, data.item_count);
 
@@ -531,6 +543,7 @@ void check_secure_send_receive (Elvin *client, Subscription *secure_sub)
 TCase *client_tests ()
 {
   TCase *tc_core = tcase_create ("client");
+  tcase_add_test (tc_core, test_errors);
   tcase_add_test (tc_core, test_uri);
   tcase_add_test (tc_core, test_connect);
   tcase_add_test (tc_core, test_notify);
