@@ -194,9 +194,6 @@ void auto_resize (ArrayList *list, size_t min_item_count, size_t item_size)
     list->items = realloc (list->items, list->items_length);
 
     if (!list->items)
-    {
-      /* TODO what is the best thing to do when we run out of memory? */
-      abort ();
-    }
+      error_fail ("Failed to resize array");
   }
 }

@@ -131,8 +131,7 @@ void expand_buffer (ByteBuffer *buffer, size_t new_length)
     buffer->data_length = new_length;
   } else
   {
-    /* TODO what is the best thing to do when we run out of memory? */
-    abort ();
+    error_fail ("Failed to resize byte buffer");
   }
 }
 
