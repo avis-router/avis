@@ -24,6 +24,7 @@
 #ifdef WIN32
   #include <winsock2.h>
   #include <ws2tcpip.h>
+  #include <ws2ipdef.h>
 #else
   #include <unistd.h>
   #include <sys/types.h>
@@ -470,7 +471,6 @@ bool elvin_subscription_set_expr (Subscription *subscription,
                                   const char *subscription_expr,
                                   ElvinError *error)
 {
-  /* TODO check sub exprs are different */
   alloc_message (sub_mod_rqst);
   alloc_message (sub_rply);
 
@@ -659,20 +659,30 @@ Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                   ElvinError *error)
 {
-  struct sockaddr_in router_addr;
+  #if HAVE_STRUCT_SOCKADDR_IN6
+    struct sockaddr_in6 router_addr;
+  #else
+    struct sockaddr_in router_addr;
+  #endif
 
   #ifdef WIN32
     on_error_return_false (init_windows_sockets (error));
   #endif
 
-  on_error_return_false (resolve_address (&router_addr, host, port, error));
+  if (!resolve_address ((struct sockaddr_in *)&router_addr, host, port, error))
+    return false;
 
-  elvin->socket = socket (PF_INET, SOCK_STREAM, 0);
+  #if HAVE_STRUCT_SOCKADDR_IN6
+    elvin->socket = socket (router_addr.sin6_family, SOCK_STREAM, 0);
+  #else
+    elvin->socket = socket (router_addr.sin_family, SOCK_STREAM, 0);
+  #endif
 
   if (elvin->socket != -1 &&
       connect (elvin->socket, (struct sockaddr *)&router_addr,
                sizeof (router_addr)) == 0)
   {
+
     return true;
   } else
   {
@@ -688,9 +698,14 @@ bool resolve_address (struct sockaddr_in *router_addr,
   struct addrinfo *address_info;
   int error_code;
 
-  /* TODO this does not appear to work with IPv6 */
   memset (&hints, '\0', sizeof (struct addrinfo));
-  hints.ai_family = AF_INET;
+
+  #if HAVE_STRUCT_SOCKADDR_IN6
+    hints.ai_family = AF_UNSPEC;
+  #else
+    hints.ai_family = AF_INET;
+  #endif
+
   hints.ai_socktype = SOCK_STREAM;
 
   if ((error_code = getaddrinfo (host, NULL, &hints, &address_info)) != 0)
@@ -709,7 +724,7 @@ bool resolve_address (struct sockaddr_in *router_addr,
 
     inet_ntop (address_info->ai_family, &router_addr->sin_addr,
                ip, sizeof (ip));
-    DIAGNOSTIC2 ("Resolved router address %s = %s\n", host, ip);
+    printf ("Resolved router address %s = %s\n", host, ip);
   }
   #endif
 
