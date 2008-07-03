@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,6 +24,8 @@
 #include <avis/values.h>
 #include <avis/errors.h>
 
+#include "errors_private.h"
+
 typedef struct
 {
   uint8_t * data;
@@ -32,7 +34,7 @@ typedef struct
   size_t    position;
 } ByteBuffer;
 
-#define byte_buffer_create() (byte_buffer_init (malloc (sizeof (ByteBuffer))))
+#define byte_buffer_create() (byte_buffer_init (emalloc (sizeof (ByteBuffer))))
 
 ByteBuffer *byte_buffer_init (ByteBuffer *buffer);
 
@@ -45,28 +47,28 @@ void byte_buffer_free (ByteBuffer *buffer);
 
 int32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error);
 
-bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value, 
+bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value,
                               ElvinError *error);
 
 int64_t byte_buffer_read_int64 (ByteBuffer *buffer, ElvinError *error);
 
-bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value, 
+bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
                               ElvinError *error);
 
 real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error);
 
-bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t value, 
+bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t value,
                                ElvinError *error);
 
-bool byte_buffer_write_string (ByteBuffer *buffer, const char *string, 
+bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
                                ElvinError *error);
 
 char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error);
 
-bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes, 
+bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes,
                              size_t bytes_len, ElvinError *error);
 
-bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes, 
+bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes,
                               size_t bytes_len, ElvinError *error);
 
 bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,

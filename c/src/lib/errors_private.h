@@ -15,19 +15,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CHECK_EXT_H_
-#define CHECK_EXT_H_
+#ifndef ERRORS_PRIVATE_H_
+#define ERRORS_PRIVATE_H_
 
-#include <avis/errors.h>
+#define error_fail(message) avis_fail ((message), __FILE__, __LINE__)
 
-#include "errors_private.h"
+#define emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
 
-#define fail_on_error(error) \
-  (fail_unless ((error)->code == ELVIN_ERROR_NONE, \
-      "Elvin error: %s", (error)->message))
+void *do_avis_emalloc (size_t size, const char *file, int line);
 
-#define fail_unless_error_code(error,expected_code) \
-  (fail_unless ((error)->code == (expected_code), \
-      "Expected elvin error"), elvin_error_reset (error))
+void avis_fail (const char *message, const char *file, int line, ...);
 
-#endif /*CHECK_EXT_H_*/
+#endif /* ERRORS_PRIVATE_H_ */
