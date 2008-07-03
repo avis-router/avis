@@ -6,13 +6,14 @@ TODO
 * DONE: change subscription
 * DONE: close listener
 * DONE: general notif listener
-* IPv6 connect on Linux
+* DONE: IPv6 connect on Linux
 * finish URI parsing
 * connection options
 * size limit enforcement
 * handle OOM and other fatal conditions
 * use hashmap for subscriptions?
-
+* NO_DELAY
+                                   
 0.1 release
 
 * DONE: LGPL headers
