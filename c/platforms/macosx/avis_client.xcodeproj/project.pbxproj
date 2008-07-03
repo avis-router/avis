@@ -238,13 +238,13 @@
 				C931A0E50DF643D100313558 /* Unit tests */,
 				FA4D5B260DF41F440098EE7D /* Hashtable library */,
 				C9B4665C0DD936D000A1C448 /* Check library */,
-				08FB7795FE84155DC02AAC07 /* Client Library */,
+				08FB7795FE84155DC02AAC07 /* Client library */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 			);
 			name = "Elvin Client";
 			sourceTree = "<group>";
 		};
-		08FB7795FE84155DC02AAC07 /* Client Library */ = {
+		08FB7795FE84155DC02AAC07 /* Client library */ = {
 			isa = PBXGroup;
 			children = (
 				C99B745A0E1B3E6900D0A7B0 /* listeners.c */,
@@ -277,7 +277,7 @@
 				C906FBF40DD3FC3900375E7D /* elvin.c */,
 				C9B467180DD9554E00A1C448 /* keys.h */,
 			);
-			name = "Client Library";
+			name = "Client library";
 			sourceTree = "<group>";
 		};
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
