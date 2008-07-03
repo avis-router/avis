@@ -106,9 +106,20 @@ void *do_avis_emalloc (size_t size, const char *file, int line)
    return data;
 }
 
+static bool in_fail = false;
+
 void avis_fail (const char *message, const char *file, int line, ...)
 {
   char *formatted_message = NULL;
+
+  if (in_fail)
+  {
+    fprintf (stderr, "Avis client library multiple failures\n");
+
+    exit (1);
+  }
+
+  in_fail = true;
 
   avis_vnsprintf (formatted_message, message, line);
 
