@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,11 +30,11 @@
  * with an error code and message if the the function or any sub
  * function fails. Functions which would otherwise return void will
  * often also return true/false as a convenience.
- * 
+ *
  * Example:
  * <pre>
  * ElvinError error = elvin_error_create ();
- *  
+ *
  * function_that_may_fail (arg1, arg2, ..., &error);
  *
  * if (elvin_error_occurred (&error))
@@ -42,7 +42,7 @@
  *
  * elvin_error_free (&error);
  * </pre>
- * 
+ *
  * @see elvin_error_set()
  * @see elvin_error_ok()
  * @see on_error_return_false()
@@ -67,8 +67,10 @@ typedef struct
 #define ELVIN_ERROR_TRIVIAL_EXPRESSION  (ELVIN_ERROR_BASE + 6)
 #define ELVIN_ERROR_NACK                (ELVIN_ERROR_BASE + 7)
 
+#define avis_emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
+
 /**
- * An empty error instance. This should be assigned to an error instance to 
+ * An empty error instance. This should be assigned to an error instance to
  * initialise it on declaration. Use elvin_error_reset() to reset an existing
  * instance, and elvin_error_free() to release any resources allocated before
  * disposing.
@@ -78,12 +80,12 @@ typedef struct
 /**
  * Free any resources allocated to an error instance and reset the
  * error code. The error instance may be reused after this call.
- * 
+ *
  * @see elvin_error_reset()
  */
 void elvin_error_free (ElvinError *error);
 
-/** 
+/**
  * Reset the error info back to OK state. Synonymn for elvin_error_free().
  */
 #define elvin_error_reset(error) (elvin_error_free (error))
@@ -91,9 +93,9 @@ void elvin_error_free (ElvinError *error);
 /**
  * Macro statement to return false if an error is set in the "error"
  * variable inside the current scope.
- * 
+ *
  * @param stat The statement to execute before the test.
- * 
+ *
  * See also on_error_return().
  */
 #define on_error_return_false(stat) on_error_return (stat, false)
@@ -101,10 +103,10 @@ void elvin_error_free (ElvinError *error);
 /**
  * Macro statement to return a given value if an error is set in the
  * "error" variable inside the current scope.
- * 
+ *
  * @param stat The statement to execute before the test.
  * @param retval The value to return on error.
- * 
+ *
  * See also on_error_return().
  */
 #define on_error_return(stat, retval) \
@@ -130,9 +132,9 @@ void elvin_perror (const char *tag, ElvinError *error);
 /**
  * Load an error status from the system's "errno" error variable and
  * strerror () function.
- * 
+ *
  * @param error The error to affect.
- * 
+ *
  * @see elvin_error_set()
  */
 bool elvin_error_from_errno (ElvinError *error);
@@ -141,29 +143,29 @@ bool elvin_error_from_errno (ElvinError *error);
  * Signal an error has occurred. If an error is already set, this has
  * no effect (see elvin_error_reset() if you want to override any
  * existing error status).
- * 
+ *
  * @param error The error to target.
- * @param code The error code. One of the ELVIN_ERROR_* defines or 
+ * @param code The error code. One of the ELVIN_ERROR_* defines or
  * host_to_elvin_error().
- * @param message The message, possibly including printf-style format 
+ * @param message The message, possibly including printf-style format
  * placeholders.
- * @param ... The rest of the arguments if message contains format 
+ * @param ... The rest of the arguments if message contains format
  * placeholders.
- * 
+ *
  * @return Returns false as a convenience so that this can be used in
  * return statements indicating an error.
- * 
+ *
  * @see elvin_error_from_errno()
  * @see elvin_error_free()
  */
 bool elvin_error_set (ElvinError *error, int code, const char *message, ...);
 
-/** 
- * True if no error has occurred. 
+/**
+ * True if no error has occurred.
  */
 #define elvin_error_ok(error) ((error)->code == ELVIN_ERROR_NONE)
 
-/** 
+/**
  * True if an error has occurred.
  */
 #define elvin_error_occurred(error) (!elvin_error_ok (error))
