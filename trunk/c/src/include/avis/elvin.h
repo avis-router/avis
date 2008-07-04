@@ -37,8 +37,6 @@
   typedef int socket_t;
 #endif
 
-struct ArrayList;
-
 #define AVIS_LISTENERS_TYPE
 
 typedef ArrayList * Listeners;
