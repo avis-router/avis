@@ -324,6 +324,8 @@ public class ElvinURI
         
         if (versionMatch.group (2) != null)
           versionMinor = parseInt (versionMatch.group (2));
+        else
+          versionMinor = 0;
       } catch (NumberFormatException ex)
       {
         throw new InvalidURIException (uriString,

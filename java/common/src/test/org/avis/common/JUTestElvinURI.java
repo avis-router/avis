@@ -37,7 +37,7 @@ public class JUTestElvinURI
     uri = new ElvinURI ("elvin:5//elvin_host");
     
     assertEquals (5, uri.versionMajor);
-    assertEquals (CLIENT_VERSION_MINOR, uri.versionMinor);
+    assertEquals (0, uri.versionMinor);
     assertEquals ("elvin_host", uri.host);
     
     assertInvalid ("http:hello//elvin_host");
