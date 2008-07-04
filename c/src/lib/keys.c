@@ -17,6 +17,7 @@
  */
 #include <avis/errors.h>
 #include <avis/keys.h>
+#include <avis/defs.h>
 
 #include "keys_private.h"
 #include "arrays_private.h"
@@ -330,6 +331,8 @@ bool read_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
 {
   uint32_t key_count = byte_buffer_read_int32 (buffer, error);
   Array array;
+
+  check_max_size (key_count, MAX_KEY_COUNT, "Too many keys", error);
 
   for ( ; key_count > 0 && elvin_error_ok (error); key_count--)
   {

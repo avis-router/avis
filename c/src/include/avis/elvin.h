@@ -21,6 +21,7 @@
 #ifndef AVIS_ELVIN_H
 #define AVIS_ELVIN_H
 
+#include <avis/defs.h>
 #include <avis/keys.h>
 #include <avis/attributes.h>
 #include <avis/stdtypes.h>
@@ -35,15 +36,6 @@
 #else
   typedef int socket_t;
 #endif
-
-/** The default port for Elvin client connections. */
-#define DEFAULT_ELVIN_PORT 2917
-
-/** The default client protocol major version supported by this library. */
-#define DEFAULT_CLIENT_PROTOCOL_MAJOR 4
-
-/** The default client protocol minor version supported by this library. */
-#define DEFAULT_CLIENT_PROTOCOL_MINOR 0
 
 struct ArrayList;
 

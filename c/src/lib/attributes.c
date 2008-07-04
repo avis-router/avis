@@ -21,6 +21,7 @@
 #include "hashtable.h"
 #include "hashtable_itr.h"
 
+#include <avis/defs.h>
 #include <avis/values.h>
 #include <avis/attributes.h>
 
@@ -173,10 +174,11 @@ bool attributes_write (ByteBuffer *buffer, Attributes *attributes,
 bool attributes_read (ByteBuffer *buffer, Attributes *attributes,
                       ElvinError *error)
 {
-  uint32_t count;
+  uint32_t count = byte_buffer_read_int32 (buffer, error);
 
-  for (count = byte_buffer_read_int32 (buffer, error);
-       count > 0 && elvin_error_ok (error); count--)
+  check_max_size (count, MAX_ATTRIBUTE_COUNT, "Too many attributes", error);
+
+  for ( ; count > 0 && elvin_error_ok (error); count--)
   {
     char *name;
     Value *value = value_create_int32 (0); /* init to safe value */

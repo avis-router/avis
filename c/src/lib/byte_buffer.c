@@ -29,22 +29,20 @@
 #endif
 
 #include <avis/stdtypes.h>
+#include <avis/defs.h>
 #include <avis/errors.h>
 
 #include "byte_buffer.h"
 #include "avis_endian.h"
 #include "errors_private.h"
 
-#define INIT_LENGTH 1024
-#define MAX_LENGTH (2 * 1024 * 1024)
+#define INIT_LENGTH  1024
+#define MAX_LENGTH   (10 * 1024 * 1024)
 
 #define padding_for(length) ((4 - ((length) & 3)) & 3)
 
 static bool check_remaining (ByteBuffer *buffer, size_t required_remaining,
                              ElvinError *error);
-
-static bool auto_resize (ByteBuffer *buffer, size_t min_length,
-                         ElvinError *error);
 
 static void expand_buffer (ByteBuffer *buffer, size_t new_length);
 
@@ -87,15 +85,22 @@ bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
 {
   if (buffer->position != position)
   {
-    on_error_return_false (auto_resize (buffer, position, error));
+    if (byte_buffer_ensure_capacity (buffer, position, error))
+    {
+      buffer->position = position;
 
-    buffer->position = position;
+      return true;
+    } else
+    {
+      return false;
+    }
   }
 
   return true;
 }
 
-bool auto_resize (ByteBuffer *buffer, size_t min_length, ElvinError *error)
+bool byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t min_length,
+                                  ElvinError *error)
 {
   if (buffer->data_length < min_length)
   {
@@ -135,12 +140,6 @@ void expand_buffer (ByteBuffer *buffer, size_t new_length)
   }
 }
 
-void byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t capacity)
-{
-  if (buffer->data_length < capacity)
-    expand_buffer (buffer, capacity);
-}
-
 bool check_remaining (ByteBuffer *buffer, size_t required_remaining,
                       ElvinError *error)
 {
@@ -169,7 +168,7 @@ bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value,
                               ElvinError *error)
 {
   on_error_return_false
-    (auto_resize (buffer, buffer->position + 4, error));
+    (byte_buffer_ensure_capacity (buffer, buffer->position + 4, error));
 
   *(int32_t *)(buffer->data + buffer->position) = htonl (value);
 
@@ -196,7 +195,7 @@ bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
                               ElvinError *error)
 {
   on_error_return_false
-    (auto_resize (buffer, buffer->position + 8, error));
+    (byte_buffer_ensure_capacity (buffer, buffer->position + 8, error));
 
   *(int64_t *)(buffer->data + buffer->position) = htonll (value);
 
@@ -237,7 +236,7 @@ bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t number,
     int i;
   #endif
 
-  if (!auto_resize (buffer, buffer->position + 8, error))
+  if (!byte_buffer_ensure_capacity (buffer, buffer->position + 8, error))
     return false;
 
   #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -250,49 +249,6 @@ bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t number,
   #endif
 
   return true;
-}
-
-bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
-                               ElvinError *error)
-{
-  uint32_t length = (uint32_t)strlen (string);
-
-  return
-    auto_resize (buffer, buffer->position + length + 8, error) &&
-    byte_buffer_write_int32 (buffer, length, error) &&
-    byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error) &&
-    write_padding_for (buffer, length, error);
-}
-
-char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
-{
-  uint32_t length;
-  char *string;
-
-  on_error_return (length = byte_buffer_read_int32 (buffer, error), NULL);
-
-  string = emalloc (length + 1);
-
-  if (string == NULL)
-  {
-    elvin_error_set (error, errno_to_elvin_error (errno),
-                     "Not enough memory to allocate string");
-
-    return NULL;
-  }
-
-  if (byte_buffer_read_bytes (buffer, (uint8_t *)string, length, error) &&
-      byte_buffer_skip (buffer, padding_for (length), error))
-  {
-    string [length] = '\0';
-
-    return string;
-  } else
-  {
-    free (string);
-
-    return NULL;
-  }
 }
 
 bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes,
@@ -311,13 +267,53 @@ bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes,
                               size_t bytes_len, ElvinError *error)
 {
   on_error_return_false
-    (auto_resize (buffer, buffer->position + bytes_len, error));
+    (byte_buffer_ensure_capacity (buffer, buffer->position + bytes_len, error));
 
   memcpy (buffer->data + buffer->position, bytes, bytes_len);
 
   buffer->position += bytes_len;
 
   return true;
+}
+
+bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
+                               ElvinError *error)
+{
+  uint32_t length = (uint32_t)strlen (string);
+
+  return
+    byte_buffer_ensure_capacity (buffer, buffer->position + length + 8, error) &&
+    byte_buffer_write_int32 (buffer, length, error) &&
+    byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error) &&
+    write_padding_for (buffer, length, error);
+}
+
+char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
+{
+  uint32_t length;
+  char *string;
+
+  on_error_return (length = byte_buffer_read_int32 (buffer, error), NULL);
+
+  check_max_size (length, MAX_STRING_LENGTH, "String too long", error);
+
+  if (!elvin_error_ok (error))
+    return NULL;
+
+  string = emalloc (length + 1);
+
+  if (byte_buffer_read_bytes (buffer, (uint8_t *)string, length, error) &&
+      byte_buffer_skip (buffer, padding_for (length), error))
+  {
+    string [length] = '\0';
+
+    return string;
+  } else
+  {
+    free (string);
+
+    return NULL;
+  }
 }
 
 bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
@@ -327,6 +323,11 @@ bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
   uint8_t *bytes;
 
   on_error_return_false (length = byte_buffer_read_int32 (buffer, error));
+
+  check_max_size (length, MAX_OPAQUE_LENGTH, "Opaque array too long", error);
+
+  if (!elvin_error_ok (error))
+    return false;
 
   bytes = emalloc (length);
 
@@ -369,7 +370,7 @@ bool write_padding_for (ByteBuffer *buffer, uint32_t length, ElvinError *error)
   if (padding > 0)
   {
     on_error_return_false
-      (byte_buffer_ensure_capacity (buffer, buffer->position + padding));
+      (byte_buffer_ensure_capacity (buffer, buffer->position + padding, error));
 
     memset (buffer->data + buffer->position, 0, padding);
 
