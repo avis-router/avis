@@ -126,9 +126,9 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
     return false;
 
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST,
-                DEFAULT_CLIENT_PROTOCOL_MAJOR,
-                DEFAULT_CLIENT_PROTOCOL_MINOR,
-                EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
+                (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
+                EMPTY_ATTRIBUTES,
+                notification_keys, subscription_keys);
 
   on_error_return_false
     (send_and_receive (elvin, conn_rqst, conn_rply,
