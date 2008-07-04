@@ -9,11 +9,21 @@ TODO
 * DONE: IPv6 connect on Linux
 * DONE: handle OOM and other fatal conditions
 * DONE: size limit enforcement
-* change error init
+* DONE: change error init
 * finish URI parsing
-* NO_DELAY
 * use hashmap for subscriptions?
 * connection options?
+
+* NO_DELAY
+int flag = 1;
+  int result = setsockopt(sock,            /* socket affected */
+                          IPPROTO_TCP,     /* set option at TCP level */
+                          TCP_NODELAY,     /* name of option */
+                          (char *) &flag,  /* the cast is historical 
+                                                  cruft */
+                          sizeof(int));    /* length of option value */
+  if (result < 0)
+     ... handle the error ...
 
 * Solaris /usr/include/sys/int_types.h
 * Solaris: check_check_sub.c uses setenv and unsetenv http://gollem.science.uva.nl/SWI-Prolog/mailinglist/archive/2006/q1/0155.html
@@ -26,16 +36,6 @@ cc1: unknown C standard `gnu99'
 * Solaris: -lsocket in test Undefined                       first referenced
  symbol                             in file
 recv                                ../../src/lib/.libs/libavis.so
-
-int flag = 1;
-  int result = setsockopt(sock,            /* socket affected */
-                          IPPROTO_TCP,     /* set option at TCP level */
-                          TCP_NODELAY,     /* name of option */
-                          (char *) &flag,  /* the cast is historical 
-                                                  cruft */
-                          sizeof(int));    /* length of option value */
-  if (result < 0)
-     ... handle the error ...
                                    
 0.1 release
 
