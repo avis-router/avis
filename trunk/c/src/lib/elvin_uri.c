@@ -122,23 +122,22 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 
 bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
 {
-  const char *index2;
-
-  unsigned long value = strtoul (index1, (char **)&index2, 10);
+  char *index2;
+  unsigned long value = strtoul (index1, &index2, 10);
 
   fail_if (index1 == index2, "Invalid version number");
 
-  uri->version_major = value;
+  uri->version_major = (uint16_t)value;
 
   if (*index2 == '.')
   {
     index1 = index2 + 1;
 
-    value = strtoul (index1, (char **)&index2, 10);
+    value = strtoul (index1, &index2, 10);
 
     fail_if (index1 == index2, "Invalid version number");
 
-    uri->version_minor = value;
+    uri->version_minor = (uint16_t)value;
   }
 
   return true;
