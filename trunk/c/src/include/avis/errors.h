@@ -85,14 +85,22 @@ void *do_avis_emalloc (size_t size, const char *file, int line);
  * Free any resources allocated to an error instance and reset the
  * error code. The error instance may be reused after this call.
  *
- * @see elvin_error_init()
+ * @see elvin_error_reset()
  */
 void elvin_error_free (ElvinError *error);
 
 /**
+ * Initialise an uninitialised error instance.
+ *
+ * @see ELVIN_EMPTY_ERROR
+ * @see elvin_error_reset()
+ */
+void elvin_error_init (ElvinError *error);
+
+/**
  * Free any resources and reset the error info back to OK state.
  */
-#define elvin_error_init(error) (elvin_error_free (error))
+#define elvin_error_reset(error) (elvin_error_free (error))
 
 /**
  * Macro statement to return false if an error is set in the "error"
@@ -145,7 +153,7 @@ bool elvin_error_from_errno (ElvinError *error);
 
 /**
  * Signal an error has occurred. If an error is already set, this has
- * no effect (see elvin_error_init() if you want to override any
+ * no effect (see elvin_error_reset() if you want to override any
  * existing error status).
  *
  * @param error The error to target.
