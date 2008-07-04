@@ -89,6 +89,6 @@ bool byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t min_length,
   (buffer->max_data_length = (max_capacity))
 
 #define byte_buffer_skip(buffer, skip_bytes, error) \
-  (byte_buffer_set_position ((buffer), buffer->position + (skip_bytes), (error)))
+  (byte_buffer_set_position ((buffer), (buffer)->position + (skip_bytes), (error)))
 
 #endif /*BYTE_BUFFER_H_*/
