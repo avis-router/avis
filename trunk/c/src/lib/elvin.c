@@ -584,10 +584,21 @@ bool send_message (Elvin *elvin, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
+  uint32_t frame_size;
 
   byte_buffer_init (&buffer);
 
+  on_error_return_false (byte_buffer_skip (&buffer, 4, error));
+
   message_write (&buffer, message, error);
+
+  frame_size = (uint32_t)buffer.position - 4;
+
+  /* write frame length */
+  byte_buffer_set_position (&buffer, 0, error);
+  byte_buffer_write_int32 (&buffer, frame_size, error);
+
+  byte_buffer_set_position (&buffer, frame_size + 4, error);
 
   do
   {
