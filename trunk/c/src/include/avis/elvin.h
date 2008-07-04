@@ -166,7 +166,7 @@ typedef void (*GeneralNotificationListener)
  * Example:
  * <pre>
  * Elvin elvin;
- * ElvinError error = elvin_error_create ();
+ * ElvinError error = ELVIN_EMPTY_ERROR;
  *
  * if (!elvin_open (&elvin, "elvin://public.elvin.org", &error))
  * {

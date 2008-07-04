@@ -9,6 +9,7 @@ TODO
 * DONE: IPv6 connect on Linux
 * DONE: handle OOM and other fatal conditions
 * DONE: size limit enforcement
+* change error init
 * finish URI parsing
 * NO_DELAY
 * use hashmap for subscriptions?

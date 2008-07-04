@@ -35,7 +35,7 @@
 
 #include "check_ext.h"
 
-static ElvinError error = elvin_error_create ();
+static ElvinError error = ELVIN_EMPTY_ERROR;
 
 static void setup ()
 {

@@ -66,7 +66,7 @@ static void test_subscribe_general_listener (Elvin *elvin,
 
 static void check_secure_send_receive (Elvin *client, Subscription *secure_sub);
 
-static ElvinError error = elvin_error_create ();
+static ElvinError error = ELVIN_EMPTY_ERROR;
 
 static void setup ()
 {
@@ -95,7 +95,7 @@ const char *elvin_router ()
 
 START_TEST (test_errors)
 {
-  ElvinError error = elvin_error_create ();
+  ElvinError error = ELVIN_EMPTY_ERROR;
 
   elvin_error_set (&error, 666, "Test %i", 42);
 

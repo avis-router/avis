@@ -148,7 +148,7 @@ bool elvin_is_open (Elvin *elvin)
 
 bool elvin_close (Elvin *elvin)
 {
-  ElvinError error = elvin_error_create ();
+  ElvinError error = ELVIN_EMPTY_ERROR;
   alloc_message (disconn_rqst);
   alloc_message (disconn_rply);
 

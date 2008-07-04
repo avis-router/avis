@@ -35,7 +35,7 @@
  *
  * Example:
  * <pre>
- * ElvinError error = elvin_error_create ();
+ * ElvinError error = ELVIN_EMPTY_ERROR;
  *
  * function_that_may_fail (arg1, arg2, ..., &error);
  *
@@ -74,25 +74,25 @@ void *do_avis_emalloc (size_t size, const char *file, int line);
 #define avis_emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
 
 /**
- * An empty error instance. This should be assigned to an error instance to
- * initialise it on declaration. Use elvin_error_reset() to reset an existing
- * instance, and elvin_error_free() to release any resources allocated before
- * disposing.
+ * An empty error instance. This can be assigned to an error instance to
+ * initialise it on declaration rather than using elvin_error_init() (which is
+ * the other method). Regardless of initialisation method, elvin_error_free()
+ * should be used to release any resources allocated before disposing.
  */
-#define elvin_error_create() {ELVIN_ERROR_NONE, NULL}
+#define ELVIN_EMPTY_ERROR {ELVIN_ERROR_NONE, NULL}
 
 /**
  * Free any resources allocated to an error instance and reset the
  * error code. The error instance may be reused after this call.
  *
- * @see elvin_error_reset()
+ * @see elvin_error_init()
  */
 void elvin_error_free (ElvinError *error);
 
 /**
- * Reset the error info back to OK state. Synonymn for elvin_error_free().
+ * Free any resources and reset the error info back to OK state.
  */
-#define elvin_error_reset(error) (elvin_error_free (error))
+#define elvin_error_init(error) (elvin_error_free (error))
 
 /**
  * Macro statement to return false if an error is set in the "error"
@@ -145,7 +145,7 @@ bool elvin_error_from_errno (ElvinError *error);
 
 /**
  * Signal an error has occurred. If an error is already set, this has
- * no effect (see elvin_error_reset() if you want to override any
+ * no effect (see elvin_error_init() if you want to override any
  * existing error status).
  *
  * @param error The error to target.

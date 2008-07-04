@@ -25,7 +25,7 @@
 int main (int argc, const char * argv[]) 
 {
   Elvin elvin;
-  ElvinError error = elvin_error_create ();
+  ElvinError error = ELVIN_EMPTY_ERROR;
   Attributes *ntfn;
   const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
   
