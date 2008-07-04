@@ -62,6 +62,13 @@
 #define MAX_ATTRIBUTE_COUNT  (4 * _KB_)
 
 /**
+ * Max total number of key scheme/key set pairs from an Elvin router. This
+ * currently has no effect on the client since it only sends keys not receives
+ * them, but might be useful if this library ever forms the basis of a server.
+ */
+#define MAX_KEY_SCHEME_COUNT 16
+
+/**
  * Max total number of keys in a key set from an Elvin router. This currently
  * has no effect on the client since it only sends keys not receives them, but
  * might be useful if this library ever forms the basis of a server.
