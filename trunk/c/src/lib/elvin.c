@@ -589,8 +589,6 @@ bool send_message (Elvin *elvin, Message message, ElvinError *error)
 
   message_write (&buffer, message, error);
 
-  /* TODO set max size */
-
   do
   {
     int bytes_written = send (elvin->socket, buffer.data + position,
