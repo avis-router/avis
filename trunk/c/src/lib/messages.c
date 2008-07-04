@@ -252,16 +252,15 @@ void message_free (Message message)
 
 bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  uint32_t type;
+  uint32_t type = byte_buffer_read_int32 (buffer, error);
   MessageFormat *format;
 
   memset (message, 0, MAX_MESSAGE_SIZE);
 
-  on_error_return_false (type = byte_buffer_read_int32 (buffer, error));
+  if (elvin_error_occurred (error))
+    return false;
 
-  format = message_format_for (type);
-
-  if (format == NULL)
+  if ((format = message_format_for (type)) == NULL)
   {
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL,
                      "Unknown message type: %u", type);
@@ -269,7 +268,6 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
     return false;
   }
 
-  /* fill in type field */
   message_type_of (message) = type;
 
   if (read_using_format (buffer, message + 4, format, error))
