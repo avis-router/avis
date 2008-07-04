@@ -624,7 +624,14 @@ bool receive_message (Elvin *elvin, Message message, ElvinError *error)
 
   frame_size = ntohl (frame_size);
 
-  /* TODO check size is not too big or < 4 */
+  if (frame_size == 0 || frame_size % 4 != 0 || frame_size > MAX_PACKET_LENGTH)
+  {
+    elvin_error_set
+      (error, ELVIN_ERROR_PROTOCOL, "Illegal frame size: %lu", frame_size);
+
+    return false;
+  }
+
   byte_buffer_init_sized (&buffer, frame_size);
 
   do
