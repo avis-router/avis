@@ -264,17 +264,14 @@ START_TEST (test_message_io)
 
   fail_on_error (&error);
 
-  fail_unless (buffer->position == 32, "Message length incorrect");
+  frame_size = buffer->position;
+
+  fail_unless (frame_size == 28, "Message length incorrect");
 
   /* read message back */
   byte_buffer_set_position (buffer, 0, &error);
 
-  frame_size = byte_buffer_read_int32 (buffer, &error);
-  fail_on_error (&error);
-
-  fail_unless (frame_size == 28, "Frame size not sent correctly");
-
-  byte_buffer_set_max_length (buffer, frame_size + 4);
+  byte_buffer_set_max_length (buffer, frame_size);
 
   message_read (buffer, connRqst2, &error);
 
@@ -324,7 +321,7 @@ START_TEST (test_dud_router)
   length = buffer->position;
   buffer->max_data_length = buffer->data_length = length - 1;
 
-  byte_buffer_set_position (buffer, 4, &error);
+  byte_buffer_set_position (buffer, 0, &error);
 
   message_read (buffer, message2, &error);
 
@@ -335,10 +332,10 @@ START_TEST (test_dud_router)
 
   /* create a corrupt message */
   buffer->max_data_length = buffer->data_length = length;
-  byte_buffer_set_position (buffer, 4, &error);
+  byte_buffer_set_position (buffer, 0, &error);
 
   /* generate "error: Invalid value type: 4294967295" */
-  ((uint32_t *)buffer->data) [9] = 0xFFFFFFFF;
+  ((uint32_t *)buffer->data) [8] = 0xFFFFFFFF;
 
   message_read (buffer, message2, &error);
 
@@ -351,9 +348,9 @@ START_TEST (test_dud_router)
   buffer = byte_buffer_create ();
   message_write (buffer, message1, &error);
 
-  byte_buffer_set_position (buffer, 20, &error);
+  byte_buffer_set_position (buffer, 16, &error);
   byte_buffer_write_int32 (buffer, 0xFFFFFFFF, &error);
-  byte_buffer_set_position (buffer, 4, &error);
+  byte_buffer_set_position (buffer, 0, &error);
 
   message_read (buffer, message2, &error);
 

@@ -287,16 +287,12 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   }
 }
 
-/* TODO this should not write length, elvin connection should */
 bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
 {
-  size_t frame_size;
   MessageFormat *format = message_format_for (message_type_of (message));
 
   assert (format != NULL);
 
-  on_error_return_false
-    (byte_buffer_skip (buffer, 4, error));
   on_error_return_false
     (byte_buffer_write_int32 (buffer, message_type_of (message), error));
 
@@ -304,14 +300,6 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
 
   if (elvin_error_occurred (error))
     return false;
-
-  frame_size = buffer->position - 4;
-
-  /* write frame length */
-  byte_buffer_set_position (buffer, 0, error);
-  byte_buffer_write_int32 (buffer, (uint32_t)frame_size, error);
-
-  byte_buffer_set_position (buffer, frame_size + 4, error);
 
   return true;
 }
