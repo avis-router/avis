@@ -30,7 +30,7 @@ int main (int argc, const char * argv[])
 {
   Elvin elvin;
   Subscription *sub;
-  ElvinError error = elvin_error_create ();
+  ElvinError error = ELVIN_EMPTY_ERROR;
   const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
   
   if (!elvin_open (&elvin, uri, &error))

@@ -28,6 +28,6 @@
 
 #define fail_unless_error_code(error,expected_code) \
   (fail_unless ((error)->code == (expected_code), \
-      "Expected elvin error"), elvin_error_reset (error))
+      "Expected elvin error"), elvin_error_init (error))
 
 #endif /*CHECK_EXT_H_*/
