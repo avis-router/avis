@@ -50,6 +50,12 @@ static void try_vnsprintf (char **message, int *message_length,
     } \
   }
 
+void elvin_error_init (ElvinError *error)
+{
+  error->code = ELVIN_ERROR_NONE;
+  error->message = NULL;
+}
+
 void elvin_error_free (ElvinError *error)
 {
   if (error->message)
