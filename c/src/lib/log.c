@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,13 +23,12 @@
 void elvin_log (int level, const char *message, ...)
 {
   va_list args;
-  
+
   va_start (args, message);
-  
-  /* todo */
+
   fprintf (stderr, "log: ");
   vfprintf (stderr, message, args);
   fprintf (stderr, "\n");
-  
+
   va_end (args);
 }

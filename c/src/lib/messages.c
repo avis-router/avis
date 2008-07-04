@@ -472,7 +472,6 @@ void write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
   elvin_keys_write (buffer, *(Keys **)message, error);
 }
 
-/* TODO limit items */
 void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t item_count = byte_buffer_read_int32 (buffer, error);
