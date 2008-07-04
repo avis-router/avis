@@ -80,7 +80,7 @@ typedef struct
   ArrayList keys [3];
 } Keys;
 
-struct KeyScheme;
+struct KeyScheme_t;
 
 /**
  * Defines an Elvin security scheme. A key scheme
@@ -120,11 +120,11 @@ struct KeyScheme;
  * available: KEY_SCHEME_SHA1_DUAL, KEY_SCHEME_SHA1_CONSUMER and
  * KEY_SCHEME_SHA1_PRODUCER.
  */
-typedef struct KeyScheme * KeyScheme;
+typedef struct KeyScheme_t * KeyScheme;
 
-extern struct KeyScheme _KEY_SCHEME_SHA1_DUAL;
-extern struct KeyScheme _KEY_SCHEME_SHA1_PRODUCER;
-extern struct KeyScheme _KEY_SCHEME_SHA1_CONSUMER;
+extern struct KeyScheme_t _KEY_SCHEME_SHA1_DUAL;
+extern struct KeyScheme_t _KEY_SCHEME_SHA1_PRODUCER;
+extern struct KeyScheme_t _KEY_SCHEME_SHA1_CONSUMER;
 
 /**
  * The SHA-1 dual key scheme.

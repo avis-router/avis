@@ -32,16 +32,16 @@ typedef Key (*HashFunc) (Key key);
 
 #define KEY_SCHEME_COUNT 3
 
-struct KeyScheme
+struct KeyScheme_t
 {
   int id;
   int type;
   HashFunc hash;
 };
 
-struct KeyScheme _KEY_SCHEME_SHA1_DUAL =     {1, DUAL,     avis_sha1};
-struct KeyScheme _KEY_SCHEME_SHA1_PRODUCER = {2, PRODUCER, avis_sha1};
-struct KeyScheme _KEY_SCHEME_SHA1_CONSUMER = {3, CONSUMER, avis_sha1};
+struct KeyScheme_t _KEY_SCHEME_SHA1_DUAL =     {1, DUAL,     avis_sha1};
+struct KeyScheme_t _KEY_SCHEME_SHA1_PRODUCER = {2, PRODUCER, avis_sha1};
+struct KeyScheme_t _KEY_SCHEME_SHA1_CONSUMER = {3, CONSUMER, avis_sha1};
 
 static KeyScheme schemes [KEY_SCHEME_COUNT] =
 {
