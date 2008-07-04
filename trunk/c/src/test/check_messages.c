@@ -294,6 +294,9 @@ START_TEST (test_message_io)
 }
 END_TEST
 
+/**
+ * Check we handle case where router sends dud messages.
+ */
 START_TEST (test_dud_router)
 {
   ByteBuffer *buffer = byte_buffer_create ();
@@ -343,6 +346,19 @@ START_TEST (test_dud_router)
   message_free (message2);
 
   byte_buffer_destroy (buffer);
+
+  /* create a message that's too big: too many attributes */
+  buffer = byte_buffer_create ();
+  message_write (buffer, message1, &error);
+
+  byte_buffer_set_position (buffer, 20, &error);
+  byte_buffer_write_int32 (buffer, 0xFFFFFFFF, &error);
+  byte_buffer_set_position (buffer, 4, &error);
+
+  message_read (buffer, message2, &error);
+
+  fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
+  message_free (message2);
 
   /* not freeing messages1 since it refers to global singletons */
   attributes_destroy (attributes);

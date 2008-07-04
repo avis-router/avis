@@ -24,6 +24,10 @@
 
 #define emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
 
+#define check_max_size(value, max, message, error) \
+  if ((value) > (max)) \
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message);
+
 void avis_fail (const char *message, const char *file, int line, ...);
 
 #endif /* ERRORS_PRIVATE_H_ */

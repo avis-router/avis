@@ -82,7 +82,8 @@ bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
 
 void byte_buffer_set_max_length (ByteBuffer *buffer, int max_capacity);
 
-void byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t capacity);
+bool byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t min_length,
+                                  ElvinError *error);
 
 #define byte_buffer_set_max_length(buffer, max_capacity) \
   (buffer->max_data_length = (max_capacity))

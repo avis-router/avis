@@ -638,8 +638,11 @@ bool receive_message (Elvin *elvin, Message message, ElvinError *error)
       position += bytes_read;
   } while (position < buffer.max_data_length && elvin_error_ok (error));
 
-  if (elvin_error_ok (error))
-    message_read (&buffer, message, error);
+  if (elvin_error_ok (error) && message_read (&buffer, message, error))
+  {
+    if (buffer.position < frame_size)
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
+  }
 
   byte_buffer_free (&buffer);
 

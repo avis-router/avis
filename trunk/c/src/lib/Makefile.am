@@ -44,6 +44,7 @@ includedir=${prefix}/include/avis
 include_HEADERS = \
   $(public_inc)/arrays.h \
   $(public_inc)/attributes.h \
+  $(public_inc)/defs.h \
   $(public_inc)/elvin_uri.h \
   $(public_inc)/elvin.h \
   $(public_inc)/errors.h \

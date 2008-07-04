@@ -21,6 +21,7 @@
 #include <assert.h>
 
 #include <avis/stdtypes.h>
+#include <avis/defs.h>
 #include <avis/errors.h>
 #include <avis/attributes.h>
 #include <avis/values.h>
@@ -31,6 +32,10 @@
 #include "values_private.h"
 #include "keys_private.h"
 #include "log.h"
+
+#define check_max_size(value, max, message, error) \
+  if ((value) > (max)) \
+    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message);
 
 static void read_int32 (ByteBuffer *buffer, Message message,
                         ElvinError *error);
@@ -269,12 +274,6 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
 
   read_using_format (buffer, message + 4, format, error);
 
-  if (buffer->position < buffer->max_data_length &&
-      elvin_error_ok (error))
-  {
-    elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
-  }
-
   if (elvin_error_ok (error))
   {
     return true;
@@ -288,6 +287,7 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   }
 }
 
+/* TODO this should not write length, elvin connection should */
 bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   size_t frame_size;
@@ -386,6 +386,8 @@ void read_int64_array (ByteBuffer *buffer, Message message,
 {
   uint32_t item_count = byte_buffer_read_int32 (buffer, error);
 
+  check_max_size (item_count, MAX_ARRAY_LENGTH, "int64 array too long", error);
+
   if (elvin_error_ok (error))
   {
     Array *array = array_create (int64_t, item_count);
@@ -474,6 +476,8 @@ void write_keys (ByteBuffer *buffer, Message message, ElvinError *error)
 void read_values (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t item_count = byte_buffer_read_int32 (buffer, error);
+
+  check_max_size (item_count, MAX_ARRAY_LENGTH, "Value array too long", error);
 
   if (elvin_error_ok (error))
   {
