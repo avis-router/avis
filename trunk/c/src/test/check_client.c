@@ -144,7 +144,7 @@ START_TEST (test_uri)
 
   fail_unless (uri.version_major == 5,
                "Bad major version: %u", uri.version_major);
-  fail_unless (uri.version_minor == DEFAULT_CLIENT_PROTOCOL_MINOR,
+  fail_unless (uri.version_minor == 0,
                "Bad minor version: %u", uri.version_minor);
 
   reset_uri (uri);

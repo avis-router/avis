@@ -139,6 +139,9 @@ bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
     fail_if (index1 == index2 || value < 0, "Invalid version number");
 
     uri->version_minor = (uint16_t)value;
+  } else
+  {
+    uri->version_minor = 0;
   }
 
   fail_if (*index2 != '/', "Junk at end of version number");
