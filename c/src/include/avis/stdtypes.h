@@ -52,9 +52,11 @@ typedef double real64_t;
 #ifdef HAVE_STDBOOL_H
   #include <stdbool.h>
 #else
-  #define bool int
-  #define true 1
-  #define false 0
+  #ifndef __cplusplus
+    #define bool int
+    #define true 1
+    #define false 0
+  #endif /* __cplusplus */
 #endif
 
 #endif /* AVIS_STDTYPES_H */
