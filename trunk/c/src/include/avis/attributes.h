@@ -59,7 +59,7 @@ extern Attributes _empty_attributes;
  * @see attributes_destroy()
  */
 #define attributes_create() \
-  (attributes_init (avis_emalloc (sizeof (Attributes))))
+  (attributes_init ((Attributes *)avis_emalloc (sizeof (Attributes))))
 
 /**
  * Initialise an attributes instance to empty.
