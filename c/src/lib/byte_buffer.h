@@ -34,7 +34,8 @@ typedef struct
   size_t    position;
 } ByteBuffer;
 
-#define byte_buffer_create() (byte_buffer_init (emalloc (sizeof (ByteBuffer))))
+#define byte_buffer_create() \
+  (byte_buffer_init ((ByteBuffer *)emalloc (sizeof (ByteBuffer))))
 
 ByteBuffer *byte_buffer_init (ByteBuffer *buffer);
 
