@@ -8,11 +8,11 @@ TODO
 * DONE: general notif listener
 * DONE: IPv6 connect on Linux
 * DONE: handle OOM and other fatal conditions
+* DONE: size limit enforcement
 * finish URI parsing
-* connection options
-* size limit enforcement
-* use hashmap for subscriptions?
 * NO_DELAY
+* use hashmap for subscriptions?
+* connection options?
 
 * Solaris /usr/include/sys/int_types.h
 * Solaris: check_check_sub.c uses setenv and unsetenv http://gollem.science.uva.nl/SWI-Prolog/mailinglist/archive/2006/q1/0155.html
@@ -53,5 +53,3 @@ general
  
 * Universal binary for Mac OS X: 
   http://developer.apple.com/documentation/Porting/Conceptual/PortingUnix/compiling/chapter_4_section_3.html
-
-* DONE: rename Elvin client lib refs to Avis, including headers
