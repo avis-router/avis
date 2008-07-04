@@ -23,10 +23,15 @@
 
 #include "errors_private.h"
 
+static bool parse_version (ElvinURI *uri,
+                           const char *index1,
+                           ElvinError *error);
+
 static char *substring (const char *start, const char *end);
+
 static const char *stranychr (const char *start, const char *chars);
 
-#define parse_fail(expr,message) \
+#define fail_if(expr,message) \
   if (expr) \
     return elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);
 
@@ -49,25 +54,29 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 
   uri->host = NULL;
   uri->port = DEFAULT_ELVIN_PORT;
+  uri->version_major = DEFAULT_CLIENT_PROTOCOL_MAJOR;
+  uri->version_minor = DEFAULT_CLIENT_PROTOCOL_MINOR;
 
   index2 = strchr (index1, ':');
 
-  parse_fail (index2 == NULL, "No URI scheme present");
-  parse_fail (memcmp ("elvin", index1, index2 - index1) != 0,
-              "Not an Elvin URI");
+  fail_if (index2 == NULL, "No URI scheme present");
+  fail_if (memcmp ("elvin", index1, index2 - index1) != 0, "Not an Elvin URI");
 
   /* first slash */
-  index1 = strchr (index2 + 1, '/');
-  parse_fail (index1 == NULL, "No host name present");
+  index2++;
+  index1 = strchr (index2, '/');
+  fail_if (index1 == NULL, "No host name present");
 
-  if (index1 != index2 + 1)
+  if (index1 != index2)
   {
-    /* TODO parse version */
+    /* parse version: elvin:<major>.<minor>//... */
+    if (!parse_version (uri, index2, error))
+      return false;
   }
 
   /* second slash */
   index2 = strchr (index1 + 1, '/');
-  parse_fail (index2 == NULL, "Missing second /");
+  fail_if (index2 == NULL, "Missing second /");
 
   if (index2 != index1 + 1)
   {
@@ -76,7 +85,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 
   index1 = index2 + 1;
 
-  parse_fail (*index1 == '\0', "Missing hostname");
+  fail_if (*index1 == '\0', "Missing hostname");
 
   index2 = stranychr (index1, ":?");
 
@@ -85,7 +94,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
     uri->host = strdup (index1);
   } else
   {
-    parse_fail (index2 == index1, "Missing hostname");
+    fail_if (index2 == index1, "Missing hostname");
 
     uri->host = substring (index1, index2);
 
@@ -95,7 +104,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 
       port = strtoul (index1, (char **)&index2, 10);
 
-      parse_fail (index1 == index2 || port > 65535, "Invalid port number");
+      fail_if (index1 == index2 || port > 65535, "Invalid port number");
 
       uri->port = (uint16_t)port;
 
@@ -106,6 +115,30 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
     {
       /* TODO parse name/values */
     }
+  }
+
+  return true;
+}
+
+bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
+{
+  const char *index2;
+
+  unsigned long value = strtoul (index1, (char **)&index2, 10);
+
+  fail_if (index1 == index2, "Invalid version number");
+
+  uri->version_major = value;
+
+  if (*index2 == '.')
+  {
+    index1 = index2 + 1;
+
+    value = strtoul (index1, (char **)&index2, 10);
+
+    fail_if (index1 == index2, "Invalid version number");
+
+    uri->version_minor = value;
   }
 
   return true;

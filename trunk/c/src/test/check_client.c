@@ -84,7 +84,9 @@ static void teardown ()
   reset_uri (uri);\
 }
 
-#define reset_uri(uri) (elvin_uri_free (&uri), uri.host = NULL, uri.port = 0)
+#define reset_uri(uri) \
+  (elvin_uri_free (&uri), uri.host = NULL, uri.port = 0, \
+   uri.version_major = uri.version_minor = 0)
 
 const char *elvin_router ()
 {
@@ -120,15 +122,30 @@ START_TEST (test_uri)
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
   fail_unless (uri.port == 1234, "Bad port: %s", uri.port);
+  fail_unless (uri.version_major == DEFAULT_CLIENT_PROTOCOL_MAJOR,
+               "Bad major version: %u", uri.version_major);
+  fail_unless (uri.version_minor == DEFAULT_CLIENT_PROTOCOL_MINOR,
+               "Bad minor version: %u", uri.version_minor);
 
   reset_uri (uri);
   elvin_uri_from_string
-    (&uri, "elvin:4.1/xdr,none,ssl/host:4567?name1=value1;name2=value2",
+    (&uri, "elvin:5.1/xdr,none,ssl/host:4567?name1=value1;name2=value2",
      &error);
   fail_on_error (&error);
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
   fail_unless (uri.port == 4567, "Bad port: %s", uri.port);
+  fail_unless (uri.version_major == 5, "Bad major version: %u", uri.version_major);
+  fail_unless (uri.version_minor == 1, "Bad minor version: %u", uri.version_minor);
+
+  reset_uri (uri);
+  elvin_uri_from_string (&uri, "elvin:5//host", &error);
+  fail_on_error (&error);
+
+  fail_unless (uri.version_major == 5,
+               "Bad major version: %u", uri.version_major);
+  fail_unless (uri.version_minor == DEFAULT_CLIENT_PROTOCOL_MINOR,
+               "Bad minor version: %u", uri.version_minor);
 
   reset_uri (uri);
 
@@ -137,6 +154,8 @@ START_TEST (test_uri)
   check_invalid_uri ("elvin://host:-1");
   check_invalid_uri ("elvin://host:hello");
   check_invalid_uri ("elvin://:1234");
+  check_invalid_uri ("elvin:hello//host");
+  check_invalid_uri ("elvin:4.//host");
   check_invalid_uri ("elvin://");
   check_invalid_uri ("elvin:/");
   check_invalid_uri ("elvin::/");
