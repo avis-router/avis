@@ -50,7 +50,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 {
   const char *index1 = uri_string;
   const char *index2;
-  unsigned long port;
+  long port;
 
   uri->host = NULL;
   uri->port = DEFAULT_ELVIN_PORT;
@@ -102,9 +102,10 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
     {
       index1 = index2 + 1;
 
-      port = strtoul (index1, (char **)&index2, 10);
+      port = strtol (index1, (char **)&index2, 10);
 
-      fail_if (index1 == index2 || port > 65535, "Invalid port number");
+      fail_if (index1 == index2 || port < 0 || port > 65535,
+               "Invalid port number");
 
       uri->port = (uint16_t)port;
 
@@ -123,9 +124,9 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
 {
   char *index2;
-  unsigned long value = strtoul (index1, &index2, 10);
+  long value = strtol (index1, &index2, 10);
 
-  fail_if (index1 == index2, "Invalid version number");
+  fail_if (index1 == index2 || value < 0, "Invalid version number");
 
   uri->version_major = (uint16_t)value;
 
@@ -133,12 +134,14 @@ bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
   {
     index1 = index2 + 1;
 
-    value = strtoul (index1, &index2, 10);
+    value = strtol (index1, &index2, 10);
 
-    fail_if (index1 == index2, "Invalid version number");
+    fail_if (index1 == index2 || value < 0, "Invalid version number");
 
     uri->version_minor = (uint16_t)value;
   }
+
+  fail_if (*index2 != '/', "Junk at end of version number");
 
   return true;
 }
