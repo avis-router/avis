@@ -169,12 +169,12 @@ static uint32_t xid_counter = 1;
 
 static MessageFormat *message_format_for (MessageTypeID type);
 
-static void read_using_format (ByteBuffer *buffer,
+static bool read_using_format (ByteBuffer *buffer,
                                Message message,
                                MessageFormat *format,
                                ElvinError *error);
 
-static void write_using_format (ByteBuffer *buffer,
+static bool write_using_format (ByteBuffer *buffer,
                                 MessageFormat *format,
                                 Message message,
                                 ElvinError *error);
@@ -272,9 +272,7 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   /* fill in type field */
   message_type_of (message) = type;
 
-  read_using_format (buffer, message + 4, format, error);
-
-  if (elvin_error_ok (error))
+  if (read_using_format (buffer, message + 4, format, error))
   {
     return true;
   } else
@@ -293,18 +291,11 @@ bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
 
   assert (format != NULL);
 
-  on_error_return_false
-    (byte_buffer_write_int32 (buffer, message_type_of (message), error));
-
-  write_using_format (buffer, format, message + 4, error);
-
-  if (elvin_error_occurred (error))
-    return false;
-
-  return true;
+  return byte_buffer_write_int32 (buffer, message_type_of (message), error) &&
+         write_using_format (buffer, format, message + 4, error);
 }
 
-void read_using_format (ByteBuffer *buffer,
+bool read_using_format (ByteBuffer *buffer,
                         Message message,
                         MessageFormat *format,
                         ElvinError *error)
@@ -317,9 +308,11 @@ void read_using_format (ByteBuffer *buffer,
 
     message += field_sizes [field->type];
   }
+
+  return elvin_error_ok (error);
 }
 
-void write_using_format (ByteBuffer *buffer,
+bool write_using_format (ByteBuffer *buffer,
                          MessageFormat *format,
                          Message message,
                          ElvinError *error)
@@ -332,6 +325,8 @@ void write_using_format (ByteBuffer *buffer,
 
     message += field_sizes [field->type];
   }
+
+  return elvin_error_ok (error);
 }
 
 MessageFormat *message_format_for (MessageTypeID type)
