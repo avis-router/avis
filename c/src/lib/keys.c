@@ -367,7 +367,6 @@ bool write_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-/* TODO limit key counts and sizes */
 bool elvin_keys_read (ByteBuffer *buffer, Keys *keys, ElvinError *error)
 {
   uint32_t scheme_count = byte_buffer_read_int32 (buffer, error);
@@ -377,6 +376,9 @@ bool elvin_keys_read (ByteBuffer *buffer, Keys *keys, ElvinError *error)
     uint32_t scheme_id = byte_buffer_read_int32 (buffer, error);
     uint32_t key_set_count = byte_buffer_read_int32 (buffer, error);
     KeyScheme scheme;
+
+    check_max_size
+      (key_set_count, MAX_KEY_SCHEME_COUNT, "Too many key sets", error);
 
     if (elvin_error_occurred (error))
       break;
