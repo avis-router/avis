@@ -127,8 +127,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
 
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST,
                 (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
-                EMPTY_ATTRIBUTES,
-                notification_keys, subscription_keys);
+                EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
 
   on_error_return_false
     (send_and_receive (elvin, conn_rqst, conn_rply,
@@ -384,7 +383,7 @@ bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
   alloc_message (notify_emit);
 
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT,
-                notification, security, notification_keys);
+                notification, (uint32_t)security, notification_keys);
 
   return send_message (elvin, notify_emit, error);
 }
@@ -426,7 +425,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
   alloc_message (sub_rply);
 
   message_init (sub_add_rqst, MESSAGE_ID_SUB_ADD_RQST, subscription_expr,
-                security, keys);
+      (uint32_t)security, keys);
 
   if (send_and_receive (elvin, sub_add_rqst, sub_rply,
                         MESSAGE_ID_SUB_RPLY, error))
@@ -510,7 +509,7 @@ bool elvin_subscription_set_keys (Subscription *subscription,
 
   /* TODO (opt) could delta keys here to potentially reduce message size */
   message_init (sub_mod_rqst, MESSAGE_ID_SUB_MOD_RQST, subscription->id,
-                "", security, subscription_keys, subscription->keys);
+                "", (uint32_t)security, subscription_keys, subscription->keys);
 
   if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
                         MESSAGE_ID_SUB_RPLY, error))

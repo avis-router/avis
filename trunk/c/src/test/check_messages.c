@@ -256,8 +256,8 @@ START_TEST (test_message_io)
 
   /* write message out */
   message_init (connRqst, MESSAGE_ID_CONN_RQST,
-                DEFAULT_CLIENT_PROTOCOL_MAJOR,
-                DEFAULT_CLIENT_PROTOCOL_MINOR,
+                (uint32_t)DEFAULT_CLIENT_PROTOCOL_MAJOR,
+                (uint32_t)DEFAULT_CLIENT_PROTOCOL_MINOR,
                 EMPTY_ATTRIBUTES, EMPTY_KEYS, EMPTY_KEYS);
 
   message_write (buffer, connRqst, &error);
@@ -309,8 +309,8 @@ START_TEST (test_dud_router)
   /* write message out */
 
   message_init (message1, MESSAGE_ID_CONN_RQST,
-                DEFAULT_CLIENT_PROTOCOL_MAJOR,
-                DEFAULT_CLIENT_PROTOCOL_MINOR,
+                (uint32_t)DEFAULT_CLIENT_PROTOCOL_MAJOR,
+                (uint32_t)DEFAULT_CLIENT_PROTOCOL_MINOR,
                 attributes, EMPTY_KEYS, EMPTY_KEYS);
 
   message_write (buffer, message1, &error);
