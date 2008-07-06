@@ -53,7 +53,6 @@ START_TEST (test_basic)
 {
   ElvinURI uri;
 
-  /* basic URI */
   elvin_uri_from_string (&uri, "elvin://host", &error);
   fail_on_error (&error);
 
@@ -105,7 +104,6 @@ START_TEST (test_ipv6)
 {
   ElvinURI uri;
 
-  /* IPv6 */
   elvin_uri_from_string (&uri, "elvin://[::1]", &error);
   fail_on_error (&error);
 
@@ -131,7 +129,6 @@ START_TEST (test_invalid)
 {
   ElvinURI uri;
 
-  /* invaid URI's */
   check_invalid_uri ("hello://host");
   check_invalid_uri ("elvin://host:1234567890");
   check_invalid_uri ("elvin://host:1234:1234");
