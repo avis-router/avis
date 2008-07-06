@@ -24,6 +24,8 @@
 #ifdef WIN32
   #include <winsock2.h>
   #include <ws2tcpip.h>
+
+  #define close_socket(s) closesocket (s)
 #else
   #include <unistd.h>
   #include <sys/types.h>
@@ -31,6 +33,8 @@
   #include <netdb.h>
   #include <netinet/in.h>
   #include <arpa/inet.h>
+
+  #define close_socket(s) close (s)
 #endif
 
 #include <avis/stdtypes.h>
@@ -167,13 +171,7 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
   if (elvin->socket == -1)
     return;
 
-  #ifdef WIN32
-    closesocket (elvin->socket);
-
-    WSACleanup ();
-  #else
-    close (elvin->socket);
-  #endif
+  close_socket (elvin->socket);
 
   elvin->socket = -1;
 
@@ -190,6 +188,10 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 
   listeners_free (&elvin->close_listeners);
   listeners_free (&elvin->notification_listeners);
+
+  #ifdef WIN32
+    WSACleanup ();
+  #endif
 }
 
 void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
@@ -673,19 +675,18 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 {
   struct addrinfo hints;
   struct addrinfo *info;
+  struct addrinfo *i;
   int error_code;
   socket_t sock;
   char service [10];
 
   elvin->socket = -1;
 
-  memset (&hints, 0, sizeof (hints));
+  snprintf (service, sizeof (service) - 1, "%u", port);
 
-  /* set-up hints structure */
+  memset (&hints, 0, sizeof (hints));
   hints.ai_family = PF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
-
-  snprintf (service, sizeof (service) - 1, "%u", port);
 
   if ((error_code = getaddrinfo (host, service, &hints, &info)))
   {
@@ -693,14 +694,16 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                             gai_strerror (error_code));
   }
 
-  for (; info && elvin->socket == -1; info = info->ai_next)
+  for (i = info; i && elvin->socket == -1; i = i->ai_next)
   {
-    sock = socket (info->ai_family, SOCK_STREAM, 0);
+    sock = socket (i->ai_family, SOCK_STREAM, 0);
 
     if (sock != -1)
     {
-      if (connect (sock, info->ai_addr, info->ai_addrlen) == 0)
+      if (connect (sock, i->ai_addr, i->ai_addrlen) == 0)
         elvin->socket = sock;
+      else
+        close_socket (sock);
     }
   }
 
