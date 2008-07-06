@@ -123,15 +123,16 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
                 (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
                 EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
 
-  on_error_return_false
-    (send_and_receive (elvin, conn_rqst, conn_rply,
-                       MESSAGE_ID_CONN_RPLY, error));
+  if (send_and_receive (elvin, conn_rqst, conn_rply,
+                        MESSAGE_ID_CONN_RPLY, error))
+  {
 
-  /* TODO check message reply options */
+    /* TODO check message reply options */
 
-  message_free (conn_rply);
+    message_free (conn_rply);
+  }
 
-  return true;
+  return elvin_error_ok (error);
 }
 
 bool elvin_is_open (Elvin *elvin)
