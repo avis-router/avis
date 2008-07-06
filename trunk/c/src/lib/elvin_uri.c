@@ -96,7 +96,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
     /* IPv6 addess */
     index2 = find_char (index1, ']');
 
-    fail_if (index1 == index2, "Missing closing ']' in IPv6 address");
+    fail_if (*index2 == '\0', "Missing closing ']' in IPv6 address");
 
     uri->host = substring (index1, index2);
 
@@ -130,6 +130,8 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   {
     /* TODO parse name/values */
   }
+
+  fail_if (*index1 != '\0', "Junk at end of URI");
 
   return true;
 }

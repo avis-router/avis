@@ -82,9 +82,7 @@ START_TEST (test_version)
 {
   ElvinURI uri;
 
-  elvin_uri_from_string
-    (&uri, "elvin:5.1/xdr,none,ssl/host:4567?name1=value1;name2=value2",
-     &error);
+  elvin_uri_from_string (&uri, "elvin:5.1/xdr,none,ssl/host:4567",&error);
   fail_on_error (&error);
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
@@ -122,6 +120,10 @@ START_TEST (test_ipv6)
     (strcmp (uri.host, "2001:0db8:85a3:08d3:1319:8a2e:0370:7344") == 0,
      "Bad IPv6 host: %s", uri.host);
   fail_unless (uri.port == 1234, "Bad port: %i", uri.port);
+
+  check_invalid_uri ("elvin://[");
+  check_invalid_uri ("elvin://[[");
+  check_invalid_uri ("elvin://[]]");
 }
 END_TEST
 
@@ -132,6 +134,7 @@ START_TEST (test_invalid)
   /* invaid URI's */
   check_invalid_uri ("hello://host");
   check_invalid_uri ("elvin://host:1234567890");
+  check_invalid_uri ("elvin://host:1234:1234");
   check_invalid_uri ("elvin://host:-1");
   check_invalid_uri ("elvin://host:hello");
   check_invalid_uri ("elvin://:1234");
