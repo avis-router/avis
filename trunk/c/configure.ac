@@ -49,21 +49,21 @@ AC_CHECK_HEADERS([architecture/byte_order.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
-AC_CACHE_CHECK([for struct sockaddr_in6], ac_cv_have_struct_sockaddr_in6, [
-	AC_TRY_COMPILE(
-		[
-#include <sys/types.h>
-#include <netinet/in.h>
-		],
-		[ struct sockaddr_in6 s; s.sin6_family = 0; ],
-		[ ac_cv_have_struct_sockaddr_in6="yes" ],
-		[ ac_cv_have_struct_sockaddr_in6="no" ]
-	)
-])
-if test "x$ac_cv_have_struct_sockaddr_in6" = "xyes" ; then
-	AC_DEFINE(HAVE_STRUCT_SOCKADDR_IN6, 1,
-		[define if you have struct sockaddr_in6 data type])
-fi
+#AC_CACHE_CHECK([for struct sockaddr_in6], ac_cv_have_struct_sockaddr_in6, [
+#	AC_TRY_COMPILE(
+#		[
+##include <sys/types.h>
+##include <netinet/in.h>
+#		],
+#		[ struct sockaddr_in6 s; s.sin6_family = 0; ],
+#		[ ac_cv_have_struct_sockaddr_in6="yes" ],
+#		[ ac_cv_have_struct_sockaddr_in6="no" ]
+#	)
+#])
+#if test "x$ac_cv_have_struct_sockaddr_in6" = "xyes" ; then
+#	AC_DEFINE(HAVE_STRUCT_SOCKADDR_IN6, 1,
+#		[define if you have struct sockaddr_in6 data type])
+#fi
 
 # Checks for library functions.
 AC_FUNC_MALLOC
