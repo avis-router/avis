@@ -32,6 +32,8 @@
 		C931A0440DF6422A00313558 /* check_client.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A03F0DF6422A00313558 /* check_client.c */; };
 		C931A0460DF6422A00313558 /* check_messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A0410DF6422A00313558 /* check_messages.c */; };
 		C931A0470DF6422A00313558 /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = C931A0420DF6422A00313558 /* tests.c */; };
+		C953D5A30E20BA05001F14EF /* errors_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C953D5A20E20BA05001F14EF /* errors_private.h */; };
+		C953D5A50E20BA21001F14EF /* check_uri.c in Sources */ = {isa = PBXBuildFile; fileRef = C953D5A40E20BA21001F14EF /* check_uri.c */; };
 		C97245F90E079A5000C9884C /* check_collections.c in Sources */ = {isa = PBXBuildFile; fileRef = C97245F20E0799DF00C9884C /* check_collections.c */; };
 		C9739E950E11EC3100B7727F /* arrays_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9739E930E11EC3100B7727F /* arrays_private.h */; };
 		C9739E960E11EC3100B7727F /* arrays.c in Sources */ = {isa = PBXBuildFile; fileRef = C9739E940E11EC3100B7727F /* arrays.c */; };
@@ -137,6 +139,8 @@
 		C931A0BC0DF642E500313558 /* check_run.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_run.c; path = ../../packages/check/src/check_run.c; sourceTree = SOURCE_ROOT; };
 		C931A0BD0DF642E500313558 /* check_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_str.c; path = ../../packages/check/src/check_str.c; sourceTree = SOURCE_ROOT; };
 		C931A0BE0DF642E500313558 /* check_str.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = check_str.h; path = ../../packages/check/src/check_str.h; sourceTree = SOURCE_ROOT; };
+		C953D5A20E20BA05001F14EF /* errors_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = errors_private.h; path = ../../src/lib/errors_private.h; sourceTree = SOURCE_ROOT; };
+		C953D5A40E20BA21001F14EF /* check_uri.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_uri.c; path = ../../src/test/check_uri.c; sourceTree = SOURCE_ROOT; };
 		C97245F20E0799DF00C9884C /* check_collections.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_collections.c; path = ../../src/test/check_collections.c; sourceTree = SOURCE_ROOT; };
 		C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avis_client_config.h; sourceTree = "<group>"; };
 		C97363F70DF7D04900DCE905 /* stdtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdtypes.h; path = ../../src/include/avis/stdtypes.h; sourceTree = SOURCE_ROOT; };
@@ -247,6 +251,7 @@
 		08FB7795FE84155DC02AAC07 /* Client library */ = {
 			isa = PBXGroup;
 			children = (
+				C953D5A20E20BA05001F14EF /* errors_private.h */,
 				C99B745A0E1B3E6900D0A7B0 /* listeners.c */,
 				C99B745B0E1B3E6900D0A7B0 /* listeners.h */,
 				C9739E930E11EC3100B7727F /* arrays_private.h */,
@@ -305,6 +310,7 @@
 		C931A0E50DF643D100313558 /* Unit tests */ = {
 			isa = PBXGroup;
 			children = (
+				C953D5A40E20BA21001F14EF /* check_uri.c */,
 				C9E217F40E133A8E00FD24D9 /* check_ext.h */,
 				C97245F20E0799DF00C9884C /* check_collections.c */,
 				C9F0DAA30E060BF400DB5A88 /* check_security.c */,
@@ -376,6 +382,7 @@
 				C9739E970E11EC5F00B7727F /* stdtypes.h in Headers */,
 				C9739E980E11EC5F00B7727F /* avis_client_config.h in Headers */,
 				C99B745D0E1B3E6900D0A7B0 /* listeners.h in Headers */,
+				C953D5A30E20BA05001F14EF /* errors_private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,6 +570,7 @@
 				C931A0470DF6422A00313558 /* tests.c in Sources */,
 				C9F0DAA50E060BFD00DB5A88 /* check_security.c in Sources */,
 				C97245F90E079A5000C9884C /* check_collections.c in Sources */,
+				C953D5A50E20BA21001F14EF /* check_uri.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
