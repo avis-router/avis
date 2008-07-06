@@ -1,6 +1,6 @@
 /*
  *  Avis Elvin client library for C.
- *  
+ *
  *  Copyright (C) 2008 Matthew Phillips <avis@mattp.name>
  *
  *  This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *  General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,11 +26,13 @@ TCase *messages_tests ();
 TCase *client_tests ();
 TCase *collections_tests ();
 TCase *security_tests ();
+TCase *uri_tests ();
 
 Suite *suite ()
 {
   Suite *s = suite_create ("Avis Client");
 
+  suite_add_tcase (s, uri_tests ());
   suite_add_tcase (s, messages_tests ());
   suite_add_tcase (s, client_tests ());
   suite_add_tcase (s, collections_tests ());

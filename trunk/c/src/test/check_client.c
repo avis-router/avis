@@ -77,17 +77,6 @@ static void teardown ()
   elvin_error_free (&error);
 }
 
-#define check_invalid_uri(uri_string)\
-{\
-  elvin_uri_from_string (&uri, uri_string, &error);\
-  fail_unless_error_code (&error, ELVIN_ERROR_INVALID_URI);\
-  reset_uri (uri);\
-}
-
-#define reset_uri(uri) \
-  (elvin_uri_free (&uri), uri.host = NULL, uri.port = 0, \
-   uri.version_major = uri.version_minor = 0)
-
 const char *elvin_router ()
 {
   const char *uri = getenv ("ELVIN");
@@ -104,66 +93,6 @@ START_TEST (test_errors)
   fail_unless (strcmp (error.message, "Test 42") == 0, "Message incorrect");
 
   // avis_fail ("Eeek! %u", __FILE__, __LINE__, 42);
-}
-END_TEST
-
-START_TEST (test_uri)
-{
-  ElvinURI uri;
-
-  elvin_uri_from_string (&uri, "elvin://host", &error);
-  fail_on_error (&error);
-
-  fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
-
-  reset_uri (uri);
-  elvin_uri_from_string (&uri, "elvin://host:1234", &error);
-  fail_on_error (&error);
-
-  fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
-  fail_unless (uri.port == 1234, "Bad port: %s", uri.port);
-  fail_unless (uri.version_major == DEFAULT_CLIENT_PROTOCOL_MAJOR,
-               "Bad major version: %u", uri.version_major);
-  fail_unless (uri.version_minor == DEFAULT_CLIENT_PROTOCOL_MINOR,
-               "Bad minor version: %u", uri.version_minor);
-
-  reset_uri (uri);
-  elvin_uri_from_string
-    (&uri, "elvin:5.1/xdr,none,ssl/host:4567?name1=value1;name2=value2",
-     &error);
-  fail_on_error (&error);
-
-  fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
-  fail_unless (uri.port == 4567, "Bad port: %s", uri.port);
-  fail_unless (uri.version_major == 5, "Bad major version: %u", uri.version_major);
-  fail_unless (uri.version_minor == 1, "Bad minor version: %u", uri.version_minor);
-
-  reset_uri (uri);
-  elvin_uri_from_string (&uri, "elvin:5//host", &error);
-  fail_on_error (&error);
-
-  fail_unless (uri.version_major == 5,
-               "Bad major version: %u", uri.version_major);
-  fail_unless (uri.version_minor == 0,
-               "Bad minor version: %u", uri.version_minor);
-
-  reset_uri (uri);
-
-  check_invalid_uri ("hello://host");
-  check_invalid_uri ("elvin://host:1234567890");
-  check_invalid_uri ("elvin://host:-1");
-  check_invalid_uri ("elvin://host:hello");
-  check_invalid_uri ("elvin://:1234");
-  check_invalid_uri ("elvin:hello//host");
-  check_invalid_uri ("elvin:4.//host");
-  check_invalid_uri ("elvin:-4//host");
-  check_invalid_uri ("elvin:4e//host");
-  check_invalid_uri ("elvin://");
-  check_invalid_uri ("elvin:/");
-  check_invalid_uri ("elvin::/");
-  check_invalid_uri ("elvin:");
-  check_invalid_uri ("elvin");
-  check_invalid_uri ("");
 }
 END_TEST
 
@@ -480,7 +409,6 @@ TCase *client_tests ()
 {
   TCase *tc_core = tcase_create ("client");
   tcase_add_test (tc_core, test_errors);
-  tcase_add_test (tc_core, test_uri);
   tcase_add_test (tc_core, test_connect);
   tcase_add_test (tc_core, test_notify);
   tcase_add_test (tc_core, test_subscribe);

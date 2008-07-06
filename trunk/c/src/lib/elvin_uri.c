@@ -29,7 +29,9 @@ static bool parse_version (ElvinURI *uri,
 
 static char *substring (const char *start, const char *end);
 
-static const char *stranychr (const char *start, const char *chars);
+static const char *find_chars (const char *start, const char *chars);
+
+static const char *find_char (const char *start, char c);
 
 #define fail_if(expr,message) \
   if (expr) \
@@ -87,35 +89,46 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 
   fail_if (*index1 == '\0', "Missing hostname");
 
-  index2 = stranychr (index1, ":?");
+  if (*index1 == '[')
+  {
+    index1++;
 
-  if (index2 == NULL)
-  {
-    uri->host = strdup (index1);
-  } else
-  {
-    fail_if (index2 == index1, "Missing hostname");
+    /* IPv6 addess */
+    index2 = find_char (index1, ']');
+
+    fail_if (index1 == index2, "Missing closing ']' in IPv6 address");
 
     uri->host = substring (index1, index2);
 
-    if (*index2 == ':')
-    {
-      index1 = index2 + 1;
+    index1 = index2 + 1;
+  } else
+  {
+    index2 = find_chars (index1, ":?");
 
-      port = strtol (index1, (char **)&index2, 10);
+    fail_if (index1 == index2, "Missing hostname");
 
-      fail_if (index1 == index2 || port < 0 || port > 65535,
-               "Invalid port number");
+    uri->host = substring (index1, index2);
 
-      uri->port = (uint16_t)port;
+    index1 = index2;
+  }
 
-      index1 = index2;
-    }
+  if (*index1 == ':')
+  {
+    index1++;
 
-    if (*index1 == '?')
-    {
-      /* TODO parse name/values */
-    }
+    port = strtol (index1, (char **)&index2, 10);
+
+    fail_if (index1 == index2 || port < 0 || port > 65535,
+             "Invalid port number");
+
+    uri->port = (uint16_t)port;
+
+    index1 = index2;
+  }
+
+  if (*index1 == '?')
+  {
+    /* TODO parse name/values */
   }
 
   return true;
@@ -150,9 +163,10 @@ bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
 }
 
 /**
- * Like strchr(), but find the first occurrence of any character in chars.
+ * Find the first occurrence of any character in chars, returning the pointer
+ * to the end of the string if not.
  */
-const char *stranychr (const char *start, const char *chars)
+const char *find_chars (const char *start, const char *chars)
 {
   const char *c;
 
@@ -165,7 +179,14 @@ const char *stranychr (const char *start, const char *chars)
     }
   }
 
-  return NULL;
+  return start;
+}
+
+const char *find_char (const char *start, char c)
+{
+  for ( ; *start && *start != c; start++) { /* zip */ }
+
+  return start;
 }
 
 /**
