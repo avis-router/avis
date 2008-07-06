@@ -24,12 +24,6 @@
 #ifdef WIN32
   #include <winsock2.h>
   #include <ws2tcpip.h>
-
-  /* This should be picked up from avis_client_config.h but,
-     although VS is happy to #include it, somehow
-     HAVE_STRUCT_SOCKADDR_IN6 remains undefined no matter
-     how much I swear at the fscking thing. */
-  #define HAVE_STRUCT_SOCKADDR_IN6 1
 #else
   #include <unistd.h>
   #include <sys/types.h>
@@ -63,10 +57,6 @@ static bool send_and_receive (Elvin *elvin, Message request,
 static bool send_message (Elvin *elvin, Message message, ElvinError *error);
 
 static bool receive_message (Elvin *elvin, Message message, ElvinError *error);
-
-static bool resolve_address (struct sockaddr_in *router_addr,
-                             const char *host, uint16_t port,
-                             ElvinError *error);
 
 static void handle_notify_deliver (Elvin *elvin, Message message,
                                    ElvinError *error);
@@ -681,78 +671,45 @@ Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                   ElvinError *error)
 {
-  #if HAVE_STRUCT_SOCKADDR_IN6
-    struct sockaddr_in6 router_addr;
-  #else
-    struct sockaddr_in router_addr;
-  #endif
-
-  #ifdef WIN32
-    on_error_return_false (init_windows_sockets (error));
-  #endif
-
-  if (!resolve_address ((struct sockaddr_in *)&router_addr, host, port, error))
-    return false;
-
-  #if HAVE_STRUCT_SOCKADDR_IN6
-    elvin->socket = socket (router_addr.sin6_family, SOCK_STREAM, 0);
-  #else
-    elvin->socket = socket (router_addr.sin_family, SOCK_STREAM, 0);
-  #endif
-
-  if (elvin->socket != -1 &&
-      connect (elvin->socket, (struct sockaddr *)&router_addr,
-               sizeof (router_addr)) == 0)
-  {
-
-    return true;
-  } else
-  {
-    return elvin_error_from_errno (error);
-  }
-}
-
-bool resolve_address (struct sockaddr_in *router_addr,
-                      const char *host, uint16_t port,
-                      ElvinError *error)
-{
   struct addrinfo hints;
-  struct addrinfo *address_info;
+  struct addrinfo *info;
   int error_code;
+  socket_t sock;
+  char service [10];
 
-  memset (&hints, '\0', sizeof (struct addrinfo));
+  elvin->socket = -1;
 
-  #if HAVE_STRUCT_SOCKADDR_IN6
-    hints.ai_family = AF_UNSPEC;
-  #else
-    hints.ai_family = AF_INET;
-  #endif
+  memset (&hints, 0, sizeof (hints));
 
+  /* set-up hints structure */
+  hints.ai_family = PF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
-  if ((error_code = getaddrinfo (host, NULL, &hints, &address_info)) != 0)
+  snprintf (service, sizeof (service) - 1, "%u", port);
+
+  if ((error_code = getaddrinfo (host, service, &hints, &info)))
   {
     return elvin_error_set (error, host_to_elvin_error (error_code),
                             gai_strerror (error_code));
   }
 
-  memcpy (router_addr, address_info->ai_addr, address_info->ai_addrlen);
-  memset (router_addr->sin_zero, '\0', sizeof (router_addr->sin_zero));
-  router_addr->sin_port = htons (port);
-
-  #if LOGGING (LOG_LEVEL_DIAGNOSTIC)
+  for (; info && elvin->socket == -1; info = info->ai_next)
   {
-    char ip [46];
+    sock = socket (info->ai_family, SOCK_STREAM, 0);
 
-    inet_ntop (address_info->ai_family, &router_addr->sin_addr,
-               ip, sizeof (ip));
-    printf ("Resolved router address %s = %s\n", host, ip);
+    if (sock != -1)
+    {
+      if (connect (sock, info->ai_addr, info->ai_addrlen) == 0)
+        elvin->socket = sock;
+    }
   }
-  #endif
 
-  freeaddrinfo (address_info);
+  freeaddrinfo (info);
 
-  return true;
+  if (elvin->socket != -1)
+    return true;
+  else
+    return elvin_error_from_errno (error);
 }
 
 #ifdef WIN32
