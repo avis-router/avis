@@ -13,6 +13,7 @@ tests_SOURCES = \
   check_security.c \
   check_client.c \
   check_collections.c \
+  check_uri.c \
   check_ext.h
 
 tests_LDADD = \
