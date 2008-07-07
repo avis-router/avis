@@ -184,7 +184,12 @@ int64_t byte_buffer_read_int64 (ByteBuffer *buffer, ElvinError *error)
   if (!check_remaining (buffer, 8, error))
     return 0;
 
-  value = ntohll (*(int64_t *)(buffer->data + buffer->position));
+  /* On Solaris the following line SEGV's, using memcpy () instead */
+  /* value = ntohll (*(int64_t *)(buffer->data + buffer->position)); */
+
+  memcpy (&value, buffer->data + buffer->position, 8);
+
+  value = ntohll (value);
 
   buffer->position += 8;
 
@@ -197,7 +202,12 @@ bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
   on_error_return_false
     (byte_buffer_ensure_capacity (buffer, buffer->position + 8, error));
 
-  *(int64_t *)(buffer->data + buffer->position) = htonll (value);
+  /* On Solaris the following line SEGV's, using memcpy () instead */
+  /* *(int64_t *)(buffer->data + buffer->position) = htonll (value); */
+
+  value = htonll (value);
+
+  memcpy (buffer->data + buffer->position, &value, 8);
 
   buffer->position += 8;
 
