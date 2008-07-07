@@ -684,7 +684,7 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 
   elvin->socket = -1;
 
-  snprintf (service, sizeof (service) - 1, "%u", port);
+  snprintf (service, sizeof (service), "%u", port);
 
   memset (&hints, 0, sizeof (hints));
   hints.ai_family = PF_UNSPEC;
