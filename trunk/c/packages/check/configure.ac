@@ -107,12 +107,19 @@ AC_CHECK_FUNCS([alarm gettimeofday localtime_r memmove memset putenv setenv strd
 # Output files
 AC_CONFIG_HEADERS([config.h])
 
+# MPP: disable tests
+#AC_CONFIG_FILES([check.pc
+#                 Makefile
+#		  doc/Makefile
+#                 src/check.h
+#                 src/Makefile
+#                 tests/Makefile])
+
 AC_CONFIG_FILES([check.pc
                  Makefile
 		 doc/Makefile
                  src/check.h
-                 src/Makefile
-                 tests/Makefile])
+                 src/Makefile])
 
 AM_PROG_CC_C_O
 
