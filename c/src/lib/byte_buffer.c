@@ -179,37 +179,47 @@ bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value,
 
 int64_t byte_buffer_read_int64 (ByteBuffer *buffer, ElvinError *error)
 {
-  int64_t value;
+  uint8_t bytes [8];
+
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
+    int i;
+  #endif
 
   if (!check_remaining (buffer, 8, error))
     return 0;
 
-  /* On Solaris the following line SEGV's, using memcpy () instead */
-  /* value = ntohll (*(int64_t *)(buffer->data + buffer->position)); */
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
+    for (i = 0; i < 8; i++)
+      bytes [7 - i] = buffer->data [buffer->position++];
+  #else
+    memcpy (bytes, buffer->data + buffer->position, 8);
 
-  memcpy (&value, buffer->data + buffer->position, 8);
+    buffer->position += 8;
+  #endif
 
-  value = ntohll (value);
-
-  buffer->position += 8;
-
-  return value;
+  return *(int64_t *)bytes;
 }
 
 bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
                               ElvinError *error)
 {
-  on_error_return_false
-    (byte_buffer_ensure_capacity (buffer, buffer->position + 8, error));
+  uint8_t *bytes = (uint8_t *)&value;
 
-  /* On Solaris the following line SEGV's, using memcpy () instead */
-  /* *(int64_t *)(buffer->data + buffer->position) = htonll (value); */
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
+    int i;
+  #endif
 
-  value = htonll (value);
+  if (!byte_buffer_ensure_capacity (buffer, buffer->position + 8, error))
+    return false;
 
-  memcpy (buffer->data + buffer->position, &value, 8);
+  #if __BYTE_ORDER == __LITTLE_ENDIAN
+    for (i = 0; i < 8; i++)
+      buffer->data [buffer->position++] = bytes [7 - i];
+  #else
+    memcpy (buffer->data + buffer->position, bytes, 8);
 
-  buffer->position += 8;
+    buffer->position += 8;
+  #endif
 
   return true;
 }
