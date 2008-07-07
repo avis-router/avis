@@ -11,6 +11,7 @@ TODO
 * DONE: size limit enforcement
 * DONE: change error init
 * finish URI parsing
+* refactor tests
 * use hashmap for subscriptions?
 * connection options?
 
