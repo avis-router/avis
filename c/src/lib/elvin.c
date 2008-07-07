@@ -26,6 +26,7 @@
   #include <ws2tcpip.h>
 
   #define close_socket(s) closesocket (s)
+  #define snprintf _snprintf
 #else
   #include <unistd.h>
   #include <sys/types.h>
