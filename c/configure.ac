@@ -51,8 +51,6 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([stdint.h])
 AC_CHECK_HEADERS([stdbool.h])
 AC_CHECK_HEADERS([endian.h])
-AC_CHECK_HEADERS([architecture/byte_order.h])  # Mac OS X
-AC_CHECK_HEADERS([sys/int_types.h])            # Solaris
 
 # Checks for typedefs, structures, and compiler characteristics.
 
