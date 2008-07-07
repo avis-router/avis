@@ -310,10 +310,8 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
 
 char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
 {
-  uint32_t length;
+  uint32_t length = byte_buffer_read_int32 (buffer, error);
   char *string;
-
-  on_error_return (length = byte_buffer_read_int32 (buffer, error), NULL);
 
   check_max_size (length, MAX_STRING_LENGTH, "String too long", error);
 
@@ -339,10 +337,8 @@ char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
 bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
                                   ElvinError *error)
 {
-  uint32_t length;
+  uint32_t length = byte_buffer_read_int32 (buffer, error);
   uint8_t *bytes;
-
-  on_error_return_false (length = byte_buffer_read_int32 (buffer, error));
 
   check_max_size (length, MAX_OPAQUE_LENGTH, "Opaque array too long", error);
 
