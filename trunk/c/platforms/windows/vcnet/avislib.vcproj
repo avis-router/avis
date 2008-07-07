@@ -125,6 +125,9 @@
 				RelativePath="..\..\..\src\lib\keys.c">
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\listeners.c">
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\log.c">
 			</File>
 			<File
@@ -158,6 +161,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\keys_private.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\listeners.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\lib\messages.h">
