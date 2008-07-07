@@ -2,7 +2,9 @@
 
 ## run tests after everything else
 
-SUBDIRS = src doc . tests
+# SUBDIRS = src doc . tests
+# MPP: removed tests compilation: not needed, doesn't work on Solaris
+SUBDIRS = src doc
 
 ## FIXME: maybe we don't need this line
 
