@@ -189,15 +189,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\test\check_ext.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\test\check_messages.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\test\check_security.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\test\check_uri.c"
 				>
 			</File>
 			<File
