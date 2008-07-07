@@ -22,15 +22,14 @@
 #include <string.h>
 
 #ifndef WIN32
-  #include <stdint.h>
   #include <unistd.h>
 #endif
 
-#include "avis/elvin.h"
-#include "avis/errors.h"
-#include "avis/attributes.h"
-#include "avis/keys.h"
-#include "avis/stdtypes.h"
+#include <avis/elvin.h>
+#include <avis/errors.h>
+#include <avis/attributes.h>
+#include <avis/keys.h>
+#include <avis/stdtypes.h>
 
 #include "messages.h"
 #include "byte_buffer.h"

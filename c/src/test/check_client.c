@@ -24,16 +24,7 @@
 
   /* pull in M_PI */
   #define _USE_MATH_DEFINES
-
-  /* Windows doesn't have a NaN definition (why?) */
-  #ifndef NAN
-    static const unsigned __int32 nan [2] = {0xffffffff, 0x7fffffff};
-    #define NAN (*(const double *) nan)
-  #endif
-
-  #define isnan _isnan
 #else
-  #include <stdint.h>
   #include <unistd.h>
 #endif
 
@@ -41,8 +32,9 @@
 
 #include <check.h>
 
-#include "avis/elvin.h"
-#include "avis/errors.h"
+#include <avis/elvin.h>
+#include <avis/errors.h>
+#include <avis/stdtypes.h>
 #include "errors_private.h"
 #include "avis/attributes.h"
 #include "avis/keys.h"
@@ -92,7 +84,7 @@ START_TEST (test_errors)
 
   fail_unless (strcmp (error.message, "Test 42") == 0, "Message incorrect");
 
-  // avis_fail ("Eeek! %u", __FILE__, __LINE__, 42);
+  /* avis_fail ("Eeek! %u", __FILE__, __LINE__, 42); */
 }
 END_TEST
 
@@ -182,7 +174,6 @@ START_TEST (test_subscribe)
   attributes_set_int32 (ntfn, "int32", 32);
   attributes_set_int64 (ntfn, "int64", 64);
   attributes_set_real64 (ntfn, "pi", M_PI);
-  attributes_set_real64 (ntfn, "nan", NAN);
   attributes_set_string (ntfn, "message", "hello world");
   attributes_set_opaque (ntfn, "opaque", data);
 
@@ -263,11 +254,6 @@ void test_subscribe_sub_listener (Subscription *sub,
      "Invalid notification: PI != %f",
      attributes_get_real64 (attributes, "pi") );
 
-
-  fail_unless
-    (isnan (attributes_get_real64 (attributes, "nan")),
-     "Invalid notification: NaN != %f",
-     attributes_get_real64 (attributes, "nan"));
 
   fail_unless (data != NULL, "Data missing");
   fail_unless (data->item_count == 100 * 1024, "Data wrong length");
