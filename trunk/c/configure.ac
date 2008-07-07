@@ -89,16 +89,17 @@ fi
 # linked libraries needed by various platforms
 case $host in 
   *-*-linux*)
-    AVIS_CFLAGS="$AVIS_CFLAGS -lm"
+    AVIS_LDFLAGS="$AVIS_LDFLAGS -lm"
     ;;
   sparc-sun-solaris*)
-    AVIS_CFLAGS="$AVIS_CFLAGS -lm -lsocket"
+    AVIS_LDFLAGS="$AVIS_LDFLAGS -lm -lsocket"
     ;;
 esac
 
 AC_SUBST(AVIS_STD_C89)
 AC_SUBST(AVIS_STD_C99)
 AC_SUBST(AVIS_CFLAGS)
+AC_SUBST(AVIS_LDFLAGS)
 
 # Output files
 AC_CONFIG_HEADERS([platforms/gnu_automake/avis_client_config.h])

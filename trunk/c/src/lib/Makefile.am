@@ -10,6 +10,8 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @AVIS_CFLAGS@ @AVIS_STD_C89@
 
+AM_LDFLAGS = @AVIS_LDFLAGS@
+
 lib_LTLIBRARIES = libavis.la
 
 libavis_la_SOURCES = \
