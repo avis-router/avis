@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
   -I$(top_srcdir)/packages/hashtable \
   -DAVIS_SHARED_LIB
 
-AM_CFLAGS = -Wall -std=gnu89 -pedantic
+AM_CFLAGS = @AVIS_CFLAGS@ @AVIS_STD_C89@
 
 lib_LTLIBRARIES = libavis.la
 

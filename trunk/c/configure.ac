@@ -16,15 +16,21 @@ AC_PREREQ([1.0])
 AC_INIT([Avis Client], version_major.version_minor.version_patch, 
         [phillipsm@sourceforge.net])
 
-# unique source file --- primitive safety check 
-#AC_CONFIG_SRCDIR([src/money.c])
-
 # place to put some extra build scripts installed
 AC_CONFIG_AUX_DIR([automake])
+
+# Call check's ./configure script recursively.
+AC_CONFIG_SUBDIRS([packages/check])
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_LIBTOOL
+
+AC_PATH_PROGS(AR, ar, no, $PATH:/usr/ccs/bin:/usr/local/bin)
+
+if test x$AR = xno ; then
+  AC_MSG_ERROR([Avis requires ar, but cannot find it.])
+fi
 
 # fairly severe build strictness
 # change foreign to gnu or gnits to comply with gnu standards
@@ -45,7 +51,8 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([stdint.h])
 AC_CHECK_HEADERS([stdbool.h])
 AC_CHECK_HEADERS([endian.h])
-AC_CHECK_HEADERS([architecture/byte_order.h])
+AC_CHECK_HEADERS([architecture/byte_order.h])  # Mac OS X
+AC_CHECK_HEADERS([sys/int_types.h])            # Solaris
 
 # Checks for typedefs, structures, and compiler characteristics.
 
@@ -68,6 +75,31 @@ AC_CHECK_HEADERS([architecture/byte_order.h])
 # Checks for library functions.
 AC_FUNC_MALLOC
 
+# gcc-specific stuff
+if `echo "$CC" | grep gcc >/dev/null 2>&1`; then
+  AVIS_CFLAGS="$AVIS_CFLAGS -Wall -pedantic"
+  AVIS_STD_C89="-std=gnu89"
+fi
+
+# use gnu99 on gcc 4 and later
+if `"$CC" --version | grep "gcc-4" >/dev/null 2>&1`; then
+  AVIS_STD_C99="-std=gnu99"
+fi
+
+# linked libraries needed by various platforms
+case $host in 
+  *-*-linux*)
+    AVIS_CFLAGS="$AVIS_CFLAGS -lm"
+    ;;
+  sparc-sun-solaris*)
+    AVIS_CFLAGS="$AVIS_CFLAGS -lsocket"
+    ;;
+esac
+
+AC_SUBST(AVIS_STD_C89)
+AC_SUBST(AVIS_STD_C99)
+AC_SUBST(AVIS_CFLAGS)
+
 # Output files
 AC_CONFIG_HEADERS([platforms/gnu_automake/avis_client_config.h])
 
@@ -82,8 +114,5 @@ AC_CONFIG_FILES([
    packages/hashtable/Makefile])
 
 SUBDIRS=src packages/check
-
-# Call check's ./configure script recursively.
-AC_CONFIG_SUBDIRS([packages/check])
 
 AC_OUTPUT
