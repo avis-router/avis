@@ -62,9 +62,9 @@ typedef struct
  * <p>
  * <h3>Ownership</h3>
  *
- * Once added to a Keys collection, a Key's data is considered to
- * be owned by the key set and will be freed whent when elvin_keys_free()
- * is invoked. Thus, if you wish to add the same key more than once you
+ * Once added to a Keys collection, a Key's data is considered to be
+ * owned by the key set and will be freed when elvin_keys_free() is
+ * invoked. Thus, if you wish to add the same key more than once you
  * should elvin_key_copy() it first.
  * <p>
  * Similarly, once a Keys instance has been used in a successful call
