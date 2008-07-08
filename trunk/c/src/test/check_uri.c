@@ -81,7 +81,7 @@ START_TEST (test_version)
 {
   ElvinURI uri;
 
-  elvin_uri_from_string (&uri, "elvin:5.1/xdr,none,ssl/host:4567",&error);
+  elvin_uri_from_string (&uri, "elvin:5.1//host:4567",&error);
   fail_on_error (&error);
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
@@ -97,6 +97,40 @@ START_TEST (test_version)
                "Bad major version: %u", uri.version_major);
   fail_unless (uri.version_minor == 0,
                "Bad minor version: %u", uri.version_minor);
+}
+END_TEST
+
+START_TEST (test_protocol)
+{
+  ElvinURI uri;
+
+  elvin_uri_from_string (&uri, "elvin:/foo,bar,baz/host", &error);
+  fail_on_error (&error);
+
+  fail_unless (strcmp (uri.protocol [0], "foo") == 0, "Bad protocol: %s",
+               uri.protocol [0]);
+  fail_unless (strcmp (uri.protocol [1], "bar") == 0, "Bad protocol: %s",
+               uri.protocol [1]);
+  fail_unless (strcmp (uri.protocol [2], "baz") == 0, "Bad protocol: %s",
+               uri.protocol [2]);
+
+  reset_uri (uri);
+
+  /* secure */
+  elvin_uri_from_string (&uri, "elvin:/secure/host", &error);
+  fail_on_error (&error);
+
+  fail_unless (strcmp (uri.protocol [0], "xdr") == 0, "Bad protocol: %s",
+               uri.protocol [0]);
+  fail_unless (strcmp (uri.protocol [1], "none") == 0, "Bad protocol: %s",
+               uri.protocol [1]);
+  fail_unless (strcmp (uri.protocol [2], "ssl") == 0, "Bad protocol: %s",
+               uri.protocol [2]);
+
+  reset_uri (uri);
+
+  check_invalid_uri ("elvin:/tcp/host");
+  check_invalid_uri ("elvin:/tcp,none/host");
 }
 END_TEST
 
@@ -118,6 +152,8 @@ START_TEST (test_ipv6)
     (strcmp (uri.host, "2001:0db8:85a3:08d3:1319:8a2e:0370:7344") == 0,
      "Bad IPv6 host: %s", uri.host);
   fail_unless (uri.port == 1234, "Bad port: %i", uri.port);
+
+  reset_uri (uri);
 
   check_invalid_uri ("elvin://[");
   check_invalid_uri ("elvin://[[");
@@ -175,6 +211,8 @@ START_TEST (test_options)
     (strcmp (attributes_get_string (uri.options, "name=1"), "value1") == 0,
      "Value wrong: %s != value1", attributes_get_string (uri.options, "name=1"));
 
+  reset_uri (uri);
+
   check_invalid_uri ("elvin://host?");
   check_invalid_uri ("elvin://host?x");
   check_invalid_uri ("elvin://host?=");
@@ -217,6 +255,7 @@ TCase *uri_tests ()
   tcase_add_test (tc_core, test_host_and_port);
   tcase_add_test (tc_core, test_version);
   tcase_add_test (tc_core, test_ipv6);
+  tcase_add_test (tc_core, test_protocol);
   tcase_add_test (tc_core, test_options);
   tcase_add_test (tc_core, test_invalid);
 
