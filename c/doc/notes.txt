@@ -1,17 +1,8 @@
 TODO
 
-0.2 release
+0.3 release
 
-* DONE: change security keys
-* DONE: change subscription
-* DONE: close listener
-* DONE: general notif listener
-* DONE: IPv6 connect on Linux
-* DONE: handle OOM and other fatal conditions
-* DONE: size limit enforcement
-* DONE: change error init
-* finish URI parsing
-* Linux name resolution
+* check protocol stack
 * refactor tests
 * use hashmap for subscriptions?
 * connection options?
@@ -28,17 +19,20 @@ int flag = 1;
   if (result < 0)
      ... handle the error ...
 
-* Solaris /usr/include/sys/int_types.h
-* Solaris: check_check_sub.c uses setenv and unsetenv http://gollem.science.uva.nl/SWI-Prolog/mailinglist/archive/2006/q1/0155.html
-* Solaris
-gcc -DHAVE_CONFIG_H -I. -I../../platforms/gnu_automake  -I../../src/include -I../../src/lib  -I../../packages/check/src    -Wall -std=gnu99 -pedantic -lm -g -O2 -c tests.c
-cc1: unknown C standard `gnu99'
-*** Error code 1
-* Solaris: check_messages, check_security: stdint.h
-* Solaris: NAN
-* Solaris: -lsocket in test Undefined                       first referenced
- symbol                             in file
-recv                                ../../src/lib/.libs/libavis.so
+0.2 release
+
+* update web
+* update history
+* dist on windows and OS X
+* DONE: change security keys
+* DONE: change subscription
+* DONE: close listener
+* DONE: general notif listener
+* DONE: IPv6 connect on Linux
+* DONE: handle OOM and other fatal conditions
+* DONE: size limit enforcement
+* DONE: change error init
+* DONE: finish URI parsing
                                    
 0.1 release
 
