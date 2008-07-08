@@ -211,6 +211,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\..\src\include\avis\arrays.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\arrays_private.h"
 				>
 			</File>
@@ -219,11 +223,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\attributes_private.h"
+				>
+			</File>
+			<File
 				RelativePath=".\avis_client_config.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\avis_endian.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\byte_buffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\avis\defs.h"
 				>
 			</File>
 			<File
@@ -239,11 +255,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\errors_private.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\avis\keys.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\keys_private.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\listeners.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\avis\log.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\messages.h"
 				>
 			</File>
 			<File
@@ -252,6 +284,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\avis\values.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\lib\values_private.h"
 				>
 			</File>
 		</Filter>
