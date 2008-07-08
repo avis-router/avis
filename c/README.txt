@@ -16,10 +16,10 @@ Supported Platforms
 ======================================================================
 
 The client library is written in portable C and is actively tested on
-Mac OS X (10.5, but should be fine on 10.4), Linux, Solaris (5.9
-later), and Microsoft Windows XP. It can be built using the GNU
-autotools toolchain, or under the Apple Xcode and Microsoft Visual
-Studio 2005 IDE's.
+Mac OS X, Linux, Solaris (5.9 and later), and Microsoft Windows XP. It
+can be built from the command line using the GNU automake-based build
+scripts, or using the projects provided or the Apple Xcode and
+Microsoft Visual Studio 2005 IDE's.
 
 
 Distribution Layout
@@ -32,7 +32,7 @@ doc/
 
 src/
 
-  include/avis/               Public header files.
+  include/avis/               Public header files for the library.
   lib/                        Source for the client library.
   test/                       Unit tests.
 
@@ -41,7 +41,7 @@ packages/
   check/                      Check unit testing framework.
                               (modified from 0.9.5 release)
   hashtable/                  C hash table implementation.
-                              (http://www.cl.cam.ac.uk/~cwc22/hashtable/)
+
 platforms/
 
   gnu_automake/               For building under GNU automake.
@@ -69,28 +69,28 @@ unit tests:
 Set the ELVIN environment variable to change the default Elvin URI for
 the router. e.g.
 
-  > export ELVIN=elvin://public.elvin.org
+  > export ELVIN="elvin://public.elvin.org"
  
  
 Mac OS X
 ----------------------------------------------------------------------
 
-The client library will build using the GNU tools as described above,
-or you can build in Xcode (3.0 or later) using the project in
-platforms/macosx.
+The client library will build from the command line using the steps
+above, or you can build in Xcode (3.0 or later) using the project in
+"platforms/macosx".
 
 Windows
 ----------------------------------------------------------------------
 
-Open the platforms/windows/vc2005/Avis.sln file under Visual Studio
+Open the "platforms/windows/vc2005/Avis.sln" file under Visual Studio
 2005 or later.
 
 
 Using In Eclipse C Development Tools (CDT)
 ======================================================================
 
-To add the Avis client library to your workspace (assuming you have
-the CDT 4.0.x or later installed):
+To import the Avis client library to your workspace (you need the
+Eclipse CDT plugin version 4.0.x or later):
  
  * Choose File -> Import...
 
