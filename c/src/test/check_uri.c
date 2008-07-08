@@ -57,6 +57,8 @@ START_TEST (test_basic)
   fail_on_error (&error);
 
   fail_unless (strcmp ("host", uri.host) == 0, "Bad host: %s", uri.host);
+
+  elvin_uri_free (&uri);
 }
 END_TEST
 
@@ -73,6 +75,8 @@ START_TEST (test_host_and_port)
                "Bad major version: %u", uri.version_major);
   fail_unless (uri.version_minor == DEFAULT_CLIENT_PROTOCOL_MINOR,
                "Bad minor version: %u", uri.version_minor);
+
+  elvin_uri_free (&uri);
 }
 END_TEST
 
@@ -97,6 +101,8 @@ START_TEST (test_version)
                "Bad major version: %u", uri.version_major);
   fail_unless (uri.version_minor == 0,
                "Bad minor version: %u", uri.version_minor);
+
+  elvin_uri_free (&uri);
 }
 END_TEST
 
@@ -143,6 +149,8 @@ START_TEST (test_ipv6)
 
   fail_unless
     (strcmp (uri.host, "::1") == 0, "Bad IPv6 host: %s", uri.host);
+
+  elvin_uri_free (&uri);
 
   elvin_uri_from_string
     (&uri, "elvin://[2001:0db8:85a3:08d3:1319:8a2e:0370:7344]:1234", &error);

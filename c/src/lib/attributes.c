@@ -89,6 +89,16 @@ void attributes_set (Attributes *attributes, const char *name, Value *value)
   hashtable_insert (attributes->table, strdup (name), value);
 }
 
+void attributes_set_nocopy (Attributes *attributes, char *name, Value *value)
+{
+  Value *old_value = attributes_remove (attributes, name);
+
+  if (old_value)
+    value_destroy (old_value);
+
+  hashtable_insert (attributes->table, name, value);
+}
+
 Value *attributes_get (Attributes *attributes, const char *name)
 {
   return hashtable_search (attributes->table, (void *)name);

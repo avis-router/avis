@@ -104,9 +104,19 @@ void value_free (Value *value);
  * string is duplicated before being added.
  *
  * @see value_init()
+ * @see value_create_string_nocopy()
  */
 #define value_create_string(value) \
   (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_STRING, strdup (value)))
+
+/**
+ * Allocate and init a string value. Use value_destroy() when done.
+ *
+ * @see value_init()
+ * @see value_create_string()
+ */
+#define value_create_string_nocopy(value) \
+  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_STRING, value))
 
 /**
  * Allocate and init an opaque value. Use value_destroy() when done.

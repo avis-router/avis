@@ -84,6 +84,8 @@ START_TEST (test_errors)
 
   fail_unless (strcmp (error.message, "Test 42") == 0, "Message incorrect");
 
+  elvin_error_free (&error);
+
   /* avis_fail ("Eeek! %u", __FILE__, __LINE__, 42); */
 }
 END_TEST
@@ -345,7 +347,7 @@ START_TEST (test_security)
 
   bob_sub = elvin_subscribe (&bob_client, "require (From-Alice)", &error);
 
-  elvin_subscription_set_keys (bob_sub, bob_sub_keys,
+  elvin_subscription_set_keys (bob_sub, elvin_keys_copy (bob_sub_keys),
                                REQUIRE_SECURE_DELIVERY, &error);
   fail_on_error (&error);
 
@@ -353,6 +355,9 @@ START_TEST (test_security)
 
   elvin_close (&alice_client);
   elvin_close (&bob_client);
+
+  elvin_keys_destroy (alice_ntfn_keys);
+  elvin_keys_destroy (bob_sub_keys);
 
   elvin_uri_free (&uri);
 }
