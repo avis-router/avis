@@ -1,6 +1,8 @@
 Release 0.2.0 (July 8, 2008)
 ----------------------------------------------------------------------
 
+This is a beta-quality release with most of the API complete.
+
 * Added support for changing subscriptions and security keys on a live
   connection.
 
