@@ -125,6 +125,60 @@ START_TEST (test_ipv6)
 }
 END_TEST
 
+START_TEST (test_options)
+{
+  ElvinURI uri;
+
+  elvin_uri_from_string (&uri, "elvin://host?name1=value1", &error);
+  fail_on_error (&error);
+
+  fail_unless
+    (attributes_size (uri.options) == 1, "Wrong number of attributes");
+
+  fail_unless
+    (strcmp (attributes_get_string (uri.options, "name1"), "value1") == 0,
+     "Value wrong: %s != value1", attributes_get_string (uri.options, "name1"));
+
+  reset_uri (uri);
+
+  elvin_uri_from_string (&uri, "elvin://host?name1=value1;name2=value2", &error);
+  fail_on_error (&error);
+
+  fail_unless
+    (attributes_size (uri.options) == 2, "Wrong number of attributes");
+
+  fail_unless
+    (strcmp (attributes_get_string (uri.options, "name1"), "value1") == 0,
+     "Value wrong: %s != value1", attributes_get_string (uri.options, "name1"));
+
+  fail_unless
+    (strcmp (attributes_get_string (uri.options, "name2"), "value2") == 0,
+     "Value wrong: %s != value2", attributes_get_string (uri.options, "name2"));
+
+  /* check escapes */
+  reset_uri (uri);
+
+  elvin_uri_from_string (&uri, "elvin://host?name\\=1=value1;name2=value2", &error);
+  fail_on_error (&error);
+
+  fail_unless
+    (attributes_size (uri.options) == 2, "Wrong number of attributes");
+
+  fail_unless
+    (strcmp (attributes_get_string (uri.options, "name=1"), "value1") == 0,
+     "Value wrong: %s != value1", attributes_get_string (uri.options, "name=1"));
+
+  check_invalid_uri ("elvin://host?");
+  check_invalid_uri ("elvin://host?x");
+  check_invalid_uri ("elvin://host?=");
+  check_invalid_uri ("elvin://host?name1=");
+  check_invalid_uri ("elvin://host?=value");
+  check_invalid_uri ("elvin://host?name==value");
+  check_invalid_uri ("elvin://host?name=value;x");
+  check_invalid_uri ("elvin://host?name=\\");
+}
+END_TEST
+
 START_TEST (test_invalid)
 {
   ElvinURI uri;
@@ -155,6 +209,7 @@ TCase *uri_tests ()
   tcase_add_test (tc_core, test_host_and_port);
   tcase_add_test (tc_core, test_version);
   tcase_add_test (tc_core, test_ipv6);
+  tcase_add_test (tc_core, test_options);
   tcase_add_test (tc_core, test_invalid);
 
   tcase_add_checked_fixture (tc_core, setup, teardown);
