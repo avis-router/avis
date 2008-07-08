@@ -16,9 +16,10 @@ Supported Platforms
 ======================================================================
 
 The client library is written in portable C and is actively tested on
-Mac OS X (10.5, but should be fine on 10.4), Linux and Microsoft
-Windows XP. It can be built using the GNU autotools toolchain, or
-under Apple Xcode or Microsoft Visual Studio 2005.
+Mac OS X (10.5, but should be fine on 10.4), Linux, Solaris (5.9
+later), and Microsoft Windows XP. It can be built using the GNU
+autotools toolchain, or under the Apple Xcode and Microsoft Visual
+Studio 2005 IDE's.
 
 
 Distribution Layout
@@ -56,10 +57,21 @@ Building The Client Library
 GNU Automake
 ----------------------------------------------------------------------
 
- > ./configure
- > make
- > sudo make install
+  > ./configure
+  > make
+  > sudo make install
 
+Optionally, if you have an accessible Elvin router, you can run the
+unit tests:
+
+  > ./src/test/tests
+
+Set the ELVIN environment variable to change the default Elvin URI for
+the router. e.g.
+
+  > export ELVIN=elvin://public.elvin.org
+ 
+ 
 Mac OS X
 ----------------------------------------------------------------------
 
