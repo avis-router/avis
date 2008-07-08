@@ -170,14 +170,15 @@ START_TEST (test_ipv6)
 END_TEST
 
 static const char *base_long_uri = "elvin://host?name=";
+static const int base_long_uri_length = 18;
 
 START_TEST (test_options)
 {
   ElvinURI uri;
-  char long_option_uri [500 + strlen (base_long_uri) + 1];
+  char long_option_uri [500 + base_long_uri_length + 1];
 
   memset (long_option_uri, 'x', sizeof (long_option_uri));
-  memcpy (long_option_uri, base_long_uri, strlen (base_long_uri));
+  memcpy (long_option_uri, base_long_uri, base_long_uri_length);
   long_option_uri [sizeof (long_option_uri) - 1] = '\0';
 
   elvin_uri_from_string (&uri, "elvin://host?name1=value1", &error);
