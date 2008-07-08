@@ -22,8 +22,13 @@
 #define AVIS_ELVIN_URI_H_
 
 #include <avis/attributes.h>
+#include <avis/arrays.h>
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
+
+extern char * _elvin_uri_default_protocol [3];
+
+#define DEFAULT_URI_PROTOCOL (_elvin_uri_default_protocol)
 
 /**
  * A URI referring to an Elvin router endpoint.
@@ -37,7 +42,19 @@ typedef struct
   uint16_t     port;
   uint16_t     version_major;
   uint16_t     version_minor;
+
+  /**
+   * Connection options in URI. e.g. "elvin://host?name1=value1;name2=value2".
+   * These are currently not used by the client.
+   */
   Attributes * options;
+
+  /**
+   * The 3-element protocol stack array. e.g. "elvin:/tcp,none,ssl/host" gives
+   * protocol [0] == "tcp", protocol [1] == "none", protocol [2] == "ssl".
+   * Can also use "secure" in place of "tcp,none,ssl".
+   */
+  char **      protocol;
 } ElvinURI;
 
 /**

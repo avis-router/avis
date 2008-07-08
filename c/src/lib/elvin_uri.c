@@ -27,21 +27,36 @@ static bool parse_version (ElvinURI *uri,
                            const char *index,
                            ElvinError *error);
 
+static bool parse_protocol (ElvinURI *uri,
+                            const char *index,
+                            ElvinError *error);
+
+static const char *parse_options (ElvinURI *uri, const char *index,
+                                  ElvinError *error);
+
 static char *substring (const char *start, const char *end);
 
 static const char *find_chars (const char *start, const char *chars);
 
 static const char *find_char (const char *start, char c);
 
-static const char *parse_options (ElvinURI *uri, const char *index,
-                                  ElvinError *error);
+static void free_protocol (char **protocol);
 
 #define fail_if(expr,message) \
   if (expr) \
     return elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);
 
+#define protocol_fail_if(expr,message) \
+  if (expr) \
+  { \
+    elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message); \
+    goto end; \
+  }
+
 #define fail(message) \
   elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);
+
+char * _elvin_uri_default_protocol [3] = {"tcp", "none", "xdr"};
 
 void elvin_uri_free (ElvinURI *uri)
 {
@@ -50,6 +65,15 @@ void elvin_uri_free (ElvinURI *uri)
     free (uri->host);
 
     uri->host = NULL;
+  }
+
+  attributes_destroy (uri->options);
+
+  if (uri->protocol != NULL && uri->protocol != DEFAULT_URI_PROTOCOL)
+  {
+    free_protocol (uri->protocol);
+
+    uri->protocol = NULL;
   }
 }
 
@@ -65,6 +89,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   uri->version_major = DEFAULT_CLIENT_PROTOCOL_MAJOR;
   uri->version_minor = DEFAULT_CLIENT_PROTOCOL_MINOR;
   uri->options = EMPTY_ATTRIBUTES;
+  uri->protocol = DEFAULT_URI_PROTOCOL;
 
   index2 = strchr (index1, ':');
 
@@ -89,7 +114,9 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 
   if (index2 != index1 + 1)
   {
-    /* TODO parse protocol stack */
+    /* parse protocol stack: elvin:/xdr,none,ssl */
+    if (!parse_protocol (uri, index1 + 1, error))
+      return false;
   }
 
   index1 = index2 + 1;
@@ -173,6 +200,61 @@ bool parse_version (ElvinURI *uri, const char *index, ElvinError *error)
   return true;
 }
 
+bool parse_protocol (ElvinURI *uri, const char *index1, ElvinError *error)
+{
+  char **items = emalloc (sizeof (char * [3]));
+  const char *index2;
+
+  memset (items, 0, sizeof (char * [3]));
+
+  /* look for first "," or end of protocol in case of an alias */
+  index2 = find_chars (index1, ",/");
+
+  protocol_fail_if (*index2 == '\0', "Invalid protocol");
+
+  if (*index2 == '/')
+  {
+    /* handle protocol alias: "secure" is the only one currently */
+    protocol_fail_if (index2 - index1 != 6 || memcmp (index1, "secure", 6) != 0,
+                      "Invalid protocol alias");
+
+    items [0] = strdup ("xdr");
+    items [1] = strdup ("none");
+    items [2] = strdup ("ssl");
+  } else
+  {
+    items [0] = substring (index1, index2);
+
+    index1 = index2 + 1;
+
+    index2 = strchr (index1, ',');
+
+    protocol_fail_if (index2 == NULL, "Invalid protocol");
+
+    items [1] = substring (index1, index2);
+
+    index1 = index2 + 1;
+
+    index2 = strchr (index1, '/');
+
+    items [2] = substring (index1, index2);
+  }
+
+  end:
+
+  if (elvin_error_ok (error))
+  {
+    uri->protocol = items;
+
+    return true;
+  } else
+  {
+    free_protocol (items);
+
+    return false;
+  }
+}
+
 /** Max length of an option name or value */
 #define MAX_OPTION_LENGTH 255
 
@@ -251,6 +333,19 @@ const char *parse_options (ElvinURI *uri, const char *index,
 
     return NULL;
   }
+}
+
+void free_protocol (char **protocol)
+{
+  int i;
+
+  for (i = 0; i < 3; i++)
+  {
+    if (protocol [i])
+      free (protocol [i]);
+  }
+
+  free (protocol);
 }
 
 /**
