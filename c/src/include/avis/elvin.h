@@ -349,8 +349,8 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * Keys *sub_keys = ...
  * ElvinError *error = ...
  * Subscription *subscription =
- *   elvin_subscribe (elvin, "string (message)", keys,
- *                    REQUIRE_SECURE_DELIVERY, error);
+ *   elvin_subscribe_with_keys (elvin, "string (message)", keys,
+ *                              REQUIRE_SECURE_DELIVERY, error);
  *
  * if (!subscription)
  * {
