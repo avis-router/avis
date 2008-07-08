@@ -170,7 +170,7 @@ START_TEST (test_ipv6)
 END_TEST
 
 static const char *base_long_uri = "elvin://host?name=";
-static const int base_long_uri_length = 18;
+#define base_long_uri_length 18
 
 START_TEST (test_options)
 {
