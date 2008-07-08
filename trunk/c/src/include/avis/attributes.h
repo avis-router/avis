@@ -108,9 +108,25 @@ unsigned int attributes_size (Attributes *attributes);
  * @param value The value to associate with name.
  *
  * @see attributes_get()
+ * @see attributes_set_direct()
  * @see attributes_remove()
  */
 void attributes_set (Attributes *attributes, const char *name, Value *value);
+
+/**
+ * Same as attributes_set(), but does not copy the name first. If an
+ * existing value exists, it will be replaced and deleted.
+ *
+ * @param attributes The attributes to update.
+ * @param name The name to use.
+ * @param value The value to associate with name.
+ *
+ * @see attributes_get()
+ * @see attributes_set()
+ * @see attributes_remove()
+ * @see value_create_string_nocopy()
+ */
+void attributes_set_nocopy (Attributes *attributes, char *name, Value *value);
 
 /**
  * Get the value mapped to a name.

@@ -356,6 +356,8 @@ START_TEST (test_dud_router)
   fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
   message_free (message2);
 
+  byte_buffer_destroy (buffer);
+
   /* not freeing messages1 since it refers to global singletons */
   attributes_destroy (attributes);
 }
