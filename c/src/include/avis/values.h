@@ -110,7 +110,8 @@ void value_free (Value *value);
   (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_STRING, strdup (value)))
 
 /**
- * Allocate and init a string value. Use value_destroy() when done.
+ * Allocate and init a string value, without copying it first. Use
+ * value_destroy() when done, which will free the string passed in here.
  *
  * @see value_init()
  * @see value_create_string()
