@@ -21,9 +21,9 @@ int flag = 1;
 
 0.2 release
 
-* update web
-* update history
-* dist on windows and OS X
+* DONE: update web
+* DONE: dist on windows and OS X
+* DONE: update history
 * DONE: change security keys
 * DONE: change subscription
 * DONE: close listener
