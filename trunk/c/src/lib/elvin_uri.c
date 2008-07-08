@@ -177,7 +177,7 @@ bool parse_version (ElvinURI *uri, const char *index, ElvinError *error)
 #define MAX_OPTION_LENGTH 255
 
 /** Finish adding chars to the buffer: generate a string and reset */
-#define buffer_finish(buff, end) (*end = '\0', end = buff, strdup (buff))
+#define buffer_finish(buff, curr) (*curr = '\0', curr = buff, strdup (buff))
 
 const char *parse_options (ElvinURI *uri, const char *index,
                            ElvinError *error)
