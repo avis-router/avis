@@ -4,19 +4,20 @@ Release 0.2.0 (July 8, 2008)
 * Added support for changing subscriptions and security keys on a live
   connection.
 
-* Added listener callback for any notification on any subscription.
+* Added listener callbacks for any notification on any subscription.
 
 * Added connection close listener callback support.
 
 * Added checking for array sizes in router messages to better protect
   against broken/malicious messages from a router.
- 
-* Added support for IPv6.
+
+* Added support for IPv6 addresses in elvin:// URI's and to the socket
+  connection logic.
 
 * Completed Elvin URI parser, including protocol version and protocol
   stack.
 
-* Improved platform support. Now builds and runs on Solaris.
+* Improved platform support. Now runs on Solaris.
 
 * Added better handling for fatal conditions such as memory allocation
   failure.
