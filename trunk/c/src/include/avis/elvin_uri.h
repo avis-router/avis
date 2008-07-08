@@ -21,6 +21,7 @@
 #ifndef AVIS_ELVIN_URI_H_
 #define AVIS_ELVIN_URI_H_
 
+#include <avis/attributes.h>
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
 
@@ -32,10 +33,11 @@
  */
 typedef struct
 {
-  char *   host;
-  uint16_t port;
-  uint16_t version_major;
-  uint16_t version_minor;
+  char *       host;
+  uint16_t     port;
+  uint16_t     version_major;
+  uint16_t     version_minor;
+  Attributes * options;
 } ElvinURI;
 
 /**

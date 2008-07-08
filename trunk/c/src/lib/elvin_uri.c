@@ -24,7 +24,7 @@
 #include "errors_private.h"
 
 static bool parse_version (ElvinURI *uri,
-                           const char *index1,
+                           const char *index,
                            ElvinError *error);
 
 static char *substring (const char *start, const char *end);
@@ -33,9 +33,15 @@ static const char *find_chars (const char *start, const char *chars);
 
 static const char *find_char (const char *start, char c);
 
+static const char *parse_options (ElvinURI *uri, const char *index,
+                                  ElvinError *error);
+
 #define fail_if(expr,message) \
   if (expr) \
     return elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);
+
+#define fail(message) \
+  elvin_error_set (error, ELVIN_ERROR_INVALID_URI, message);
 
 void elvin_uri_free (ElvinURI *uri)
 {
@@ -58,6 +64,7 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   uri->port = DEFAULT_ELVIN_PORT;
   uri->version_major = DEFAULT_CLIENT_PROTOCOL_MAJOR;
   uri->version_minor = DEFAULT_CLIENT_PROTOCOL_MINOR;
+  uri->options = EMPTY_ATTRIBUTES;
 
   index2 = strchr (index1, ':');
 
@@ -128,7 +135,9 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
 
   if (*index1 == '?')
   {
-    /* TODO parse name/values */
+    /* parse options: elvin://...?name1=value1;name2=value2 */
+    if ((index1 = parse_options (uri, index1 + 1, error)) == NULL)
+      return false;
   }
 
   fail_if (*index1 != '\0', "Junk at end of URI");
@@ -136,22 +145,22 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   return true;
 }
 
-bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
+bool parse_version (ElvinURI *uri, const char *index, ElvinError *error)
 {
   char *index2;
-  long value = strtol (index1, &index2, 10);
+  long value = strtol (index, &index2, 10);
 
-  fail_if (index1 == index2 || value < 0, "Invalid version number");
+  fail_if (index == index2 || value < 0, "Invalid version number");
 
   uri->version_major = (uint16_t)value;
 
   if (*index2 == '.')
   {
-    index1 = index2 + 1;
+    index = index2 + 1;
 
-    value = strtol (index1, &index2, 10);
+    value = strtol (index, &index2, 10);
 
-    fail_if (index1 == index2 || value < 0, "Invalid version number");
+    fail_if (index == index2 || value < 0, "Invalid version number");
 
     uri->version_minor = (uint16_t)value;
   } else
@@ -162,6 +171,86 @@ bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
   fail_if (*index2 != '/', "Junk at end of version number");
 
   return true;
+}
+
+/** Max length of an option name or value */
+#define MAX_OPTION_LENGTH 255
+
+/** Finish adding chars to the buffer: generate a string and reset */
+#define buffer_finish(buff, end) (*end = '\0', end = buff, strdup (buff))
+
+const char *parse_options (ElvinURI *uri, const char *index,
+                           ElvinError *error)
+{
+  Attributes *options = attributes_create ();
+  char buffer [MAX_OPTION_LENGTH + 1];
+  char *name = NULL;
+  char *current = buffer;
+  char *end = buffer + MAX_OPTION_LENGTH;
+
+  while (true)
+  {
+    switch (*index)
+    {
+    case ';':
+    case '\0':
+      if (name != NULL && current != buffer)
+      {
+        attributes_set_string (options, name, buffer_finish (buffer, current));
+        name = NULL;
+      } else
+      {
+        fail ("Missing option value");
+      }
+      break;
+    case '=':
+      if (name == NULL)
+      {
+        if (current != buffer)
+          name = buffer_finish (buffer, current);
+        else
+          fail ("Missing option value");
+      } else
+      {
+        fail ("Missing option name");
+      }
+      break;
+    case '\\':
+      index++;
+
+      if (*index == '\0')
+      {
+        fail ("Trailing \\");
+        break;
+      }
+      /* drop through to default append behaviour */
+    default:
+      if (current < end)
+        *current++ = *index;
+      else
+        fail (name ? "Name too long" : "Value too long");
+    }
+
+    if (*index == '\0')
+      break;
+    else
+      index++;
+  }
+
+  if (name != NULL)
+    free (name);
+
+  if (elvin_error_ok (error))
+  {
+    uri->options = options;
+
+    return index;
+  } else
+  {
+    attributes_free (options);
+
+    return NULL;
+  }
 }
 
 /**
