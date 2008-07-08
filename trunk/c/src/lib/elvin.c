@@ -419,7 +419,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
   alloc_message (sub_rply);
 
   message_init (sub_add_rqst, MESSAGE_ID_SUB_ADD_RQST, subscription_expr,
-      (uint32_t)security, keys);
+                (uint32_t)security, keys);
 
   if (send_and_receive (elvin, sub_add_rqst, sub_rply,
                         MESSAGE_ID_SUB_RPLY, error))
