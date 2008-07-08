@@ -157,6 +157,9 @@
 				RelativePath="..\..\..\src\lib\attributes_private.h">
 			</File>
 			<File
+				RelativePath=".\avis_client_config.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\avis_endian.h">
 			</File>
 			<File
