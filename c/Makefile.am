@@ -27,3 +27,6 @@ run-tests: all
 
 api-docs:
 	(cd doc/api && make api-docs)
+
+changelog:
+	svn2cl -r ${release_rev}:HEAD https://avis.svn.sourceforge.net/svnroot/avis/trunk/c
