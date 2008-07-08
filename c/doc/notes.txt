@@ -11,9 +11,11 @@ TODO
 * DONE: size limit enforcement
 * DONE: change error init
 * finish URI parsing
+* Linux name resolution
 * refactor tests
 * use hashmap for subscriptions?
 * connection options?
+* hide non-public symbols?
 
 * NO_DELAY
 int flag = 1;
