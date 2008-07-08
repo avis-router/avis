@@ -682,6 +682,10 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
   socket_t sock;
   char service [10];
 
+  #ifdef WIN32
+    on_error_return_false (init_windows_sockets (error));
+  #endif
+
   elvin->socket = -1;
 
   snprintf (service, sizeof (service), "%u", port);
