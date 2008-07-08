@@ -52,11 +52,10 @@ C
 ----------------------------------------------------------------------
 
 The Avis client library for C is currently in development. A preview
-alpha release is available for testing: the API in this release should
-be very similar to the final API, but some features are currently
-missing.
+beta release is available for testing: the API in this release is
+intended to be the same, or very similar to, the final API.
 
- * [Download the C client library][c-client-src] (alpha release
+ * [Download the C client library][c-client-src] (beta release
    ${c-client.version}).
 
  * [C API documentation][c-apidoc] for the latest version of the
