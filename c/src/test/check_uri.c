@@ -125,9 +125,16 @@ START_TEST (test_ipv6)
 }
 END_TEST
 
+static const char *base_long_uri = "elvin://host?name=";
+
 START_TEST (test_options)
 {
   ElvinURI uri;
+  char long_option_uri [500 + sizeof (base_long_uri) + 1];
+
+  memset (long_option_uri, 'x', sizeof (long_option_uri));
+  memcpy (long_option_uri, base_long_uri, strlen (base_long_uri));
+  long_option_uri [sizeof (long_option_uri) - 1] = '\0';
 
   elvin_uri_from_string (&uri, "elvin://host?name1=value1", &error);
   fail_on_error (&error);
@@ -176,6 +183,7 @@ START_TEST (test_options)
   check_invalid_uri ("elvin://host?name==value");
   check_invalid_uri ("elvin://host?name=value;x");
   check_invalid_uri ("elvin://host?name=\\");
+  check_invalid_uri (long_option_uri);
 }
 END_TEST
 
