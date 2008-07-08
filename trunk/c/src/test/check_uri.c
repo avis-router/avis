@@ -130,7 +130,7 @@ static const char *base_long_uri = "elvin://host?name=";
 START_TEST (test_options)
 {
   ElvinURI uri;
-  char long_option_uri [500 + sizeof (base_long_uri) + 1];
+  char long_option_uri [500 + strlen (base_long_uri) + 1];
 
   memset (long_option_uri, 'x', sizeof (long_option_uri));
   memcpy (long_option_uri, base_long_uri, strlen (base_long_uri));
