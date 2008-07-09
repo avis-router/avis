@@ -18,7 +18,7 @@ Supported Platforms
 The client library is written in portable C and is actively tested on
 Mac OS X, Linux, Solaris (5.9 and later), and Microsoft Windows XP. It
 can be built from the command line using the GNU automake-based build
-scripts, or using the projects provided or the Apple Xcode and
+scripts, or using the projects provided for the Apple Xcode and
 Microsoft Visual Studio 2005 IDE's.
 
 
