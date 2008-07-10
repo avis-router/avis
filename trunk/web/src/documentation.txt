@@ -5,6 +5,8 @@ Documentation hosted on this site:
 
  * [Installing Avis][installation].
 
+ * [The Avis Command Line Tools][tools].
+
  * [Configuring Federation][federation].
 
  * [Configuring TLS/SSL][tls].
@@ -29,6 +31,7 @@ maintainer](mailto:avis@mattp.name).
 &nbsp;
 
 [subscription]: subscription_language.html
+[tools]: tools.html
 [tls]: tls.html
 [federation]: federation.html
 [client]: client_library.html
