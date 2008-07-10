@@ -136,7 +136,7 @@ public class Router implements IoHandler, Closeable
    * 
    * @throws IOException if an network error during router
    *                 initialisation.
-   * @throws IllegalConfigOptionException If an option in the configuratiion
+   * @throws IllegalConfigOptionException If an option in the configuration
    *                 options is invalid.
    */
   @SuppressWarnings("unchecked")
