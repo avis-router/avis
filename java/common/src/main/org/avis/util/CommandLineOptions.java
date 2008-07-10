@@ -74,11 +74,15 @@ public abstract class CommandLineOptions
    *                IllegalCommandLineOption is handled specially by
    *                printing a usage string.
    */
-  public static void handleError (String appName, String usage, Exception ex)
+  public static void handleError (String appName, String appDesc,
+                                  String usage, Exception ex)
   {
     if (ex instanceof IllegalCommandLineOption)
     {
       System.err.println (appName + ": " + ex.getMessage ());
+      System.err.println ();
+      
+      System.err.println (appName + ": " + appDesc);
       System.err.println ();
       
       System.err.println ("Usage:");
