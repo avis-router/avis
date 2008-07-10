@@ -11,6 +11,9 @@ import org.avis.util.IllegalCommandLineOption;
  */
 public class EcOptions extends ToolOptions
 {
+  public static final String DESCRIPTION = 
+    "Subscribe to notifications from an Elvin router";
+  
   public static final String USAGE =
     COMMON_USAGE_SUMMARY + " subscription\n\n" + COMMON_USAGE_DETAIL;
 

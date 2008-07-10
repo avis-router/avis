@@ -7,6 +7,7 @@ import org.avis.client.Notification;
 import org.avis.io.StreamReader;
 import org.avis.util.InvalidFormatException;
 
+import static org.avis.tools.EpOptions.DESCRIPTION;
 import static org.avis.tools.EpOptions.USAGE;
 import static org.avis.tools.ToolOptions.handleIOError;
 import static org.avis.util.CommandLineOptions.handleError;
@@ -41,7 +42,7 @@ public class Ep
       handleIOError ("ep", ex);
     } catch (Exception ex)
     {
-      handleError ("ep", USAGE, ex);
+      handleError ("ep", DESCRIPTION, USAGE, ex);
     }
   }
 

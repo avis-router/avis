@@ -16,6 +16,7 @@ import org.avis.client.GeneralNotificationEvent;
 import org.avis.client.GeneralNotificationListener;
 import org.avis.client.Subscription;
 
+import static org.avis.tools.EcOptions.DESCRIPTION;
 import static org.avis.tools.EcOptions.USAGE;
 import static org.avis.tools.ToolOptions.handleIOError;
 import static org.avis.util.CommandLineOptions.handleError;
@@ -43,7 +44,7 @@ public class Ec
       handleIOError ("ec", ex);
     } catch (Exception ex)
     {
-      handleError ("ec", USAGE, ex);
+      handleError ("ec", DESCRIPTION, USAGE, ex);
     }
   }
 
