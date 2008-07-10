@@ -182,8 +182,6 @@ public class IoManager
    *          must be successfully authenticated via TLS or will be
    *          refused access.
    * 
-   * @return The created acceptors.
-   * 
    * @throws IOException if an error occurred during binding.
    */
   public void bind 
@@ -231,7 +229,7 @@ public class IoManager
   }
   
   /**
-   * Reverse the effect of {@link #bind()}.
+   * Reverse the effect of bind ().
    */
   public void unbind (Collection<? extends ElvinURI> uris)
   {
@@ -330,7 +328,7 @@ public class IoManager
   }
 
   /**
-   * Get the addresses for all URI's bound with {@link #bind()}
+   * Get the addresses for all URI's bound with bind ().
    */
   public Set<InetSocketAddress> addressesFor (Collection<? extends ElvinURI> uris)
   {
@@ -349,7 +347,7 @@ public class IoManager
   }
 
   /**
-   * Get the sessions for all URI's bound with {@link #bind()}
+   * Get the sessions for all URI's bound with bind ().
    */
   public Collection<IoSession> sessionsFor (Collection<? extends ElvinURI> uris)
   {
