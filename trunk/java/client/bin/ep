@@ -1,9 +1,11 @@
 #!/bin/sh
 
-jar_dir=$(dirname "$0")/../lib
+basedir=`dirname "$0"`
+
+jar_dir="$basedir/../lib"
 
 if [ ! -f "$jar_dir/avis-tools.jar" ]; then
-  jar_dir=$(dirname "$0")/../libexec/avis
+  jar_dir="$basedir/../libexec/avis"
 fi
 
 if [ ! -f "$jar_dir/avis-tools.jar" ]; then
