@@ -103,6 +103,10 @@ public class IoManager
     this.uriToConnectors = new HashMap<ElvinURI, NioSocketConnector> ();
     
     this.keystorePassphrase = keystorePassphrase;
+
+    if (keystoreUri != null)
+      this.keystore = loadKeystore (keystoreUri);
+
     this.ioExecutor = newCachedThreadPool ();
     this.processorPool = 
       new SimpleIoProcessorPool<NioSession> 
@@ -110,9 +114,6 @@ public class IoManager
          getRuntime ().availableProcessors () + 1);
     this.filterExecutor = new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
     this.throttleExecutor = newScheduledThreadPool (1);
-    
-    if (keystoreUri != null)
-      this.keystore = loadKeystore (keystoreUri);
     
     setUseDirectBuffer (useDirectBuffers);
   }

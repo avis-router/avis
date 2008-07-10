@@ -183,9 +183,20 @@ public class Router implements IoHandler, Closeable
        ioManager.createThrottleFilter 
          (routerOptions.getInt ("Receive-Queue.Max-Length")));
 
-    ioManager.bind 
-      (options.listenURIs (), this, filters, 
-       (Filter<InetAddress>)routerOptions.get ("Require-Authenticated")); 
+    boolean bindSucceeded = false;
+    
+    try
+    {
+      ioManager.bind 
+        (options.listenURIs (), this, filters, 
+         (Filter<InetAddress>)routerOptions.get ("Require-Authenticated"));
+      
+      bindSucceeded = true;
+    } finally
+    {
+      if (!bindSucceeded)
+        ioManager.close ();
+    }
   }
 
   public IoManager ioManager ()
