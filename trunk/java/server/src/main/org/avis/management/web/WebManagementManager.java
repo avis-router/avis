@@ -63,7 +63,7 @@ public class WebManagementManager implements Closeable
     
     AvisMinaTransport transport = 
       new AvisMinaTransport (addressesFor (listenUrls, DEFAULT_PORT), 
-                             router.filterExecutor (), router.ioProcessor ());
+                             router.ioManager ());
 
     container.addTransport (transport);
     

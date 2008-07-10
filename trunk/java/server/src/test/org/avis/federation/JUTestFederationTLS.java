@@ -155,8 +155,7 @@ public class JUTestFederationTLS
                                                  IoHandler listener)
     throws Exception
   {
-    NioSocketConnector connector = 
-      new NioSocketConnector (router.ioProcessor ());
+    NioSocketConnector connector = router.ioManager ().createConnector ();
     
     connector.setConnectTimeout (20);
     

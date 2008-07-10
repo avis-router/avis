@@ -3,7 +3,6 @@ package org.avis.federation;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -16,7 +15,6 @@ import org.apache.mina.common.IdleStatus;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -75,7 +73,6 @@ public class Acceptor implements IoHandler, Closeable
   protected FederationClasses federationClasses;
   protected Set<EwafURI> listenUris;
   protected Set<Link> links;
-  protected Collection<NioSocketAcceptor> acceptors;
   protected volatile boolean closing;
 
 
@@ -108,10 +105,10 @@ public class Acceptor implements IoHandler, Closeable
     filters.addLast
       ("liveness", new LivenessFilter (keepaliveInterval, requestTimeout));
 
-    this.acceptors = router.bind 
+    router.ioManager ().bind 
       (uris, this, filters, 
        (Filter<InetAddress>)options.get ("Federation.Require-Authenticated"));
-
+    
     if (shouldLog (DIAGNOSTIC))
     {
       for (EwafURI uri : uris)
@@ -138,8 +135,7 @@ public class Acceptor implements IoHandler, Closeable
     }
 
     // do this outside of sync block to allow IO threads access
-    for (NioSocketAcceptor acceptor : acceptors)
-      acceptor.dispose ();
+    router.ioManager ().unbind (listenUris);
   }
   
   public Set<EwafURI> listenURIs ()
@@ -147,14 +143,9 @@ public class Acceptor implements IoHandler, Closeable
     return listenUris;
   }
   
-  public Set<InetSocketAddress> listenAddresses ()
+  public Collection<InetSocketAddress> listenAddresses ()
   {
-    Set<InetSocketAddress> addresses = new TreeSet<InetSocketAddress> ();
-    
-    for (NioSocketAcceptor acceptor : acceptors)
-      addresses.add (acceptor.getLocalAddress ());
-    
-    return addresses; 
+    return router.ioManager ().addressesFor (listenUris);
   }
 
   /**
@@ -162,13 +153,10 @@ public class Acceptor implements IoHandler, Closeable
    */
   public void hang ()
   {
-    for (NioSocketAcceptor acceptor : acceptors)
+    for (IoSession session : router.ioManager ().sessionsFor (listenUris))
     {
-      for (IoSession session : acceptor.getManagedSessions ())
-      {
-        session.getFilterChain ().remove ("requestTracker");
-        session.getFilterChain ().remove ("liveness");        
-      }
+      session.getFilterChain ().remove ("requestTracker");
+      session.getFilterChain ().remove ("liveness");        
     }
     
     closing = true;

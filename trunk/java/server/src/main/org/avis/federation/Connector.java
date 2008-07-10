@@ -16,7 +16,6 @@ import org.apache.mina.common.IoFutureListener;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.RuntimeIoException;
-import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -63,7 +62,6 @@ public class Connector implements IoHandler, Closeable
   private EwafURI uri;
   private Options options;
   private Router router;
-  private NioSocketConnector connector;
   private IoSession session;
   private String serverDomain;
   private FederationClass federationClass;
@@ -114,14 +112,10 @@ public class Connector implements IoHandler, Closeable
     
     cancelAsyncConnect ();
     
-    connector = new NioSocketConnector (router.ioProcessor ());
-    
     long requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
     long keepaliveInterval = 
       options.getInt ("Federation.Keepalive-Interval") * 1000;
 
-    connector.setConnectTimeout ((int)(requestTimeout / 1000));
-    
     DefaultIoFilterChainBuilder filters = new DefaultIoFilterChainBuilder ();
     
     filters.addLast ("codec", FederationFrameCodec.FILTER);
@@ -135,23 +129,16 @@ public class Connector implements IoHandler, Closeable
     Filter<InetAddress> authRequired = 
       (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
     
-    if (uri.isSecure ())
-      filters = router.createSecureFilters (filters, authRequired, true);
-    else
-      filters = router.createStandardFilters (filters, authRequired);
-    
-    connector.setFilterChainBuilder (filters);
-    connector.setHandler (this);
-    
-    connector.connect 
-      (new InetSocketAddress (uri.host, uri.port)).addListener 
-        (new IoFutureListener<IoFuture> ()
-    {
-      public void operationComplete (IoFuture future)
+    router.ioManager ().connect 
+      (uri, this, filters, authRequired, 
+       options.getInt ("Federation.Request-Timeout")).addListener 
+      (new IoFutureListener<IoFuture> ()
       {
-        connectFutureComplete (future);
-      }
-    });
+        public void operationComplete (IoFuture future)
+        {
+          connectFutureComplete (future);
+        }
+      });
   }
   
   /**
@@ -275,11 +262,7 @@ public class Connector implements IoHandler, Closeable
     }
     
     // do this outside of sync block to allow IO threads access
-    if (connector != null)
-    {
-      connector.dispose ();
-      connector = null;
-    }
+    router.ioManager ().disconnect (uri);
   }
   
   private void reopen ()
