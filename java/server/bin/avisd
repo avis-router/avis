@@ -4,15 +4,15 @@ set -e
 
 daemon=0
 avis_opts=""
-
+basedir=`dirname "$0"`
 # find avis-router.jar in either lib or libexec/avis
-avisd_jar=$(dirname "$0")/../lib/avis-router.jar
+avisd_jar="$basedir/../lib/avis-router.jar"
 
-if [ ! -f $avisd_jar ]; then
-  avisd_jar=$(dirname "$0")/../libexec/avis/avis-router.jar
+if [ ! -f "$avisd_jar" ]; then
+  avisd_jar="$basedir/../libexec/avis/avis-router.jar"
 fi
 
-if [ ! -e "$avisd_jar" ]; then
+if [ ! -f "$avisd_jar" ]; then
   echo "Cannot find avis-router.jar"
   exit 1
 fi
@@ -53,8 +53,8 @@ command="java $java_options -jar $avisd_jar $avis_opts"
 
 if [ $daemon -eq 1 ]; then
 
-  if [ -z $logfile ]; then
-    logfile=/dev/null
+  if [ -z "$logfile" ]; then
+    logfile="/dev/null"
   fi
   
   ( exec $command < /dev/null >> $logfile 2>&1 ) &
@@ -63,7 +63,7 @@ if [ $daemon -eq 1 ]; then
 else
   if [ "x$pidfile" != "x" ]; then echo $$ > "$pidfile"; fi
   
-  if [ -z $logfile ]; then
+  if [ -z "$logfile" ]; then
     exec $command
   else
     exec $command >> $logfile 2>&1
