@@ -105,6 +105,12 @@
       <param name="web.title" value="TLS/SSL" />
     </antcall>
 
+    <antcall target="fn:make-html">
+      <param name="src" value="tools.txt" />
+      <param name="dest" value="tools.html" />
+      <param name="web.title" value="Tools" />
+    </antcall>
+
   </target>
 
   <target name="deploy" depends="website"
