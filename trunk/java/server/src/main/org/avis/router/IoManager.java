@@ -54,13 +54,16 @@ import static org.avis.logging.Log.warn;
 
 /**
  * Handles management of network I/O, including pooling of I/O
- * processors, acceptor/connector setup security (SSL authentication)
- * and common filter creation.
+ * processors, acceptor/connector setup, security (SSL
+ * authentication), and common filter creation.
  * 
  * @author Matthew Phillips
  */
 public class IoManager
 {
+  /**
+   * Used by read throttle to estimate size of messages in buffer.
+   */
   private static final MessageSizeEstimator MESSAGE_SIZE_ESTIMATOR = 
     new MessageSizeEstimator ()
   {
@@ -76,13 +79,21 @@ public class IoManager
   private OrderedThreadPoolExecutor filterExecutor;
   private ScheduledExecutorService throttleExecutor;
   
-  private URI keystoreUri;
   private String keystorePassphrase;
   private KeyStore keystore;
 
   private Map<ElvinURI, Collection<NioSocketAcceptor>> uriToAcceptors;
   private Map<ElvinURI, NioSocketConnector> uriToConnectors;
   
+  /**
+   * Create a new instance.
+   * 
+   * @param keystoreUri The URI for the SSL keystore. May be null, in
+   *          which case attempting to use a secure Elvin URI will
+   *          fail.
+   * @param keystorePassphrase The keystore passphrase.
+   * @param useDirectBuffers True if MINA should use direct IO buffers.
+   */
   public IoManager (URI keystoreUri, String keystorePassphrase,
                     boolean useDirectBuffers) 
     throws IOException
@@ -91,7 +102,6 @@ public class IoManager
       new HashMap<ElvinURI, Collection<NioSocketAcceptor>> ();
     this.uriToConnectors = new HashMap<ElvinURI, NioSocketConnector> ();
     
-    this.keystoreUri = keystoreUri;
     this.keystorePassphrase = keystorePassphrase;
     this.ioExecutor = newCachedThreadPool ();
     this.processorPool = 
@@ -102,7 +112,7 @@ public class IoManager
     this.throttleExecutor = newScheduledThreadPool (1);
     
     if (keystoreUri != null)
-      this.keystore = loadKeystore ();
+      this.keystore = loadKeystore (keystoreUri);
     
     setUseDirectBuffer (useDirectBuffers);
   }
@@ -286,7 +296,7 @@ public class IoManager
   /**
    * Lazy load the SSL keystore.
    */
-  private KeyStore loadKeystore () 
+  private KeyStore loadKeystore (URI keystoreUri) 
     throws IOException
   {
     if (keystoreUri == null)
