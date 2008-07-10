@@ -197,10 +197,11 @@ public class IoManager
 
     for (ElvinURI uri : uris)
     {
+      Set<InetSocketAddress> addresses = Net.addressesFor (uri);
       Collection<NioSocketAcceptor> uriAcceptors = 
-        new ArrayList<NioSocketAcceptor> (uris.size ());
+        new ArrayList<NioSocketAcceptor> (addresses.size ());
 
-      for (InetSocketAddress address : Net.addressesFor (uri))
+      for (InetSocketAddress address : addresses)
       {
         NioSocketAcceptor acceptor = createAcceptor ();
 
@@ -236,8 +237,11 @@ public class IoManager
   {
     for (ElvinURI uri: uris)
     {
-      for (NioSocketAcceptor acceptor : uriToAcceptors.get (uri))
-        acceptor.dispose ();
+      if (uriToAcceptors.containsKey (uri))
+      {
+        for (NioSocketAcceptor acceptor : uriToAcceptors.get (uri))
+          acceptor.dispose ();
+      }
     }
     
     for (ElvinURI uri: uris)
