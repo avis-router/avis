@@ -139,7 +139,7 @@ public class IoManager
 
   /**
    * Create a filter that throttles incoming data after a max buffer
-   * size is passed in. This only works for connections using
+   * size is passed. This only works for connections using
    * {@link FrameCodec} for messages
    */
   public IoFilter createThrottleFilter (int maxBufferSize)
@@ -163,11 +163,9 @@ public class IoManager
   }
 
   /**
-   * Bind to a set of URI's. This can be used by plugins to bind to
-   * network addresses using the same network setup as the router
-   * would, including TLS parameters.
+   * Bind to a set of URI's to network addresses.
    * 
-   * @param uris The URI's to listen to.
+   * @param uris The URI's to bind.
    * @param handler The IO handler.
    * @param filters The basic IO filters.
    * @param authenticationRequiredHosts Hosts matched by this filter
@@ -291,7 +289,7 @@ public class IoManager
   private KeyStore loadKeystore () 
     throws IOException
   {
-    if (keystoreUri.toString ().length () == 0)
+    if (keystoreUri == null)
     {
       throw new IOException 
         ("Cannot use TLS without a keystore: " +
@@ -339,9 +337,9 @@ public class IoManager
   /**
    * Get the sessions for all URI's bound with {@link #bind()}
    */
-  public Set<IoSession> sessionsFor (Collection<? extends ElvinURI> uris)
+  public Collection<IoSession> sessionsFor (Collection<? extends ElvinURI> uris)
   {
-    Set<IoSession> sessions = new TreeSet<IoSession> ();
+    Collection<IoSession> sessions = new ArrayList<IoSession> ();
     
     for (ElvinURI uri : uris)
     {
