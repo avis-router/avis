@@ -1,7 +1,6 @@
 package org.avis.management.web;
 
 import java.util.Set;
-import java.util.concurrent.Executor;
 
 import java.io.IOException;
 
@@ -12,11 +11,9 @@ import org.apache.asyncweb.server.Transport;
 import org.apache.asyncweb.server.TransportException;
 import org.apache.asyncweb.server.transport.mina.DefaultHttpIoHandler;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
-import org.apache.mina.common.IoProcessor;
-import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.SocketAcceptor;
-import org.apache.mina.transport.socket.nio.NioSession;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+
+import org.avis.router.IoManager;
 
 /**
  * Custom Asyncweb transport to allow web server to reuse router's IO
@@ -31,18 +28,15 @@ public class AvisMinaTransport implements Transport
   private Set<InetSocketAddress> addresses;
 
   public AvisMinaTransport (Set<InetSocketAddress> addresses,
-                            Executor executor,
-                            IoProcessor<NioSession> processor)
+                            IoManager ioManager)
   {
     this.addresses = addresses;
-    this.acceptor = new NioSocketAcceptor (processor);
+    this.acceptor = ioManager.createAcceptor ();
     
     DefaultIoFilterChainBuilder chain = acceptor.getFilterChain ();
 
-    chain.addFirst ("threadPool", new ExecutorFilter (executor));
+    chain.addFirst ("threadPool", ioManager.createThreadPoolFilter ());
     
-    acceptor.setReuseAddress (true);
-    acceptor.getSessionConfig ().setReuseAddress (true);
     // TODO make this configurable?
     acceptor.setBacklog (100);
   }
