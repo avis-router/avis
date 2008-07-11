@@ -617,6 +617,15 @@ bool send_message (Elvin *elvin, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
+#ifdef WIN32
+  #define sock_errno (WSAGetLastError ())
+/*#define EWOULDBLOCK WSAEWOULDBLOCK */
+#define sock_op_timed_out(err) (err == WSAETIMEDOUT)
+#else
+  #define sock_errno error
+  #define sock_op_timed_out(err) (err == EAGAIN || err == EWOULDBLOCK)
+#endif
+
 bool receive_message (Elvin *elvin, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
@@ -628,14 +637,14 @@ bool receive_message (Elvin *elvin, Message message, ElvinError *error)
 
   if (bytes_read != 4)
   {
-    if (errno == EAGAIN || errno == EWOULDBLOCK)
+    if (sock_op_timed_out (sock_errno))
     {
-      elvin_error_set (error, ELVIN_ERROR_TIMEOUT,
-                       "Failed to read router message");
+      elvin_error_set (error, ELVIN_ERROR_TIMEOUT, 
+                       "Receive timeout");
     } else
     {
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL,
-                       "Failed to read router message");
+        "Failed to read router message: %u", sock_errno);
     }
 
     return false;
@@ -725,9 +734,19 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
     {
       if (connect (sock, i->ai_addr, i->ai_addrlen) == 0)
       {
-        /* set send/receive timeouts */
-       struct timeval timeout =
-         {AVIS_IO_TIMEOUT / 1000, (AVIS_IO_TIMEOUT % 1000) * 1000};
+        /* set send/receive timeouts */ 
+        #ifdef WIN32
+          /* 
+           * Windows seems to treat the seconds field as 
+           * milliseconds from what I can see running tests.
+           * Lord only knows what it thinks the microseconds
+           * field is.
+           */
+          struct timeval timeout = {AVIS_IO_TIMEOUT, 0};
+        #elif
+          struct timeval timeout =
+            {AVIS_IO_TIMEOUT / 1000, (AVIS_IO_TIMEOUT % 1000) * 1000};
+        #endif
 
         setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO,
                     (char *)&timeout, sizeof (timeout));
