@@ -45,8 +45,19 @@ typedef ArrayList * Listeners;
  * A client connection to an Elvin router. Typically a client creates a
  * connection (elvin_open()) and then subscribes to notifications
  * (elvin_subscribe()) and/or sends them (elvin_send()).
+ * 
+ * <h2>Threading Model</h2>
+ * 
+ * Elvin client connections are not thread safe and are designed to be
+ * driven by a single thread calling elvin_event_loop(). The only
+ * exception is elvin_close(), which can be called from any thread,
+ * and which will trigger elvin_event_loop() to exit normally,
+ * allowing a clean shutdown.
  *
- * See elvin_open() and elvin_open_uri().
+ * @see elvin_open()
+ * @see elvin_open_uri()
+ * @see elvin_close()
+ * @see elvin_event_loop()
  */
 typedef struct
 {
