@@ -96,7 +96,7 @@ bool elvin_error_set (ElvinError *error, int code, const char *message, ...)
 
 bool elvin_error_from_errno (ElvinError *error)
 {
-  error->code = errno;
+  error->code = errno_to_elvin_error (errno);
   error->message = strdup (strerror (errno));
 
   return false;
