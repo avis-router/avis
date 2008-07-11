@@ -30,6 +30,9 @@
 /** The default client protocol minor version supported by this library. */
 #define DEFAULT_CLIENT_PROTOCOL_MINOR 0
 
+/** Timeout (in milliseconds) for I/O operations. */
+#define AVIS_IO_TIMEOUT 10000
+
 #define _KB_  1024
 #define _MB_  _KB_ * _KB_
 
