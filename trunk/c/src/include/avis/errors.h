@@ -68,6 +68,8 @@ typedef struct
 #define ELVIN_ERROR_SYNTAX              (ELVIN_ERROR_BASE + 5)
 #define ELVIN_ERROR_TRIVIAL_EXPRESSION  (ELVIN_ERROR_BASE + 6)
 #define ELVIN_ERROR_NACK                (ELVIN_ERROR_BASE + 7)
+#define ELVIN_ERROR_USAGE               (ELVIN_ERROR_BASE + 8)
+#define ELVIN_ERROR_TIMEOUT             (ELVIN_ERROR_BASE + 9)
 
 void *do_avis_emalloc (size_t size, const char *file, int line);
 
