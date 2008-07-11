@@ -20,6 +20,7 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#include <time.h>
 
 #ifdef WIN32
   #include <winsock2.h>
@@ -68,8 +69,6 @@ static void handle_notify_deliver (Elvin *elvin, Message message,
 
 static void handle_nack (Elvin *elvin, Message message, ElvinError *error);
 
-static void handle_disconn (Elvin *elvin, Message message, ElvinError *error);
-
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 
 static void deliver_notification (Elvin *elvin, Array *ids,
@@ -111,6 +110,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   alloc_message (conn_rply);
 
   elvin->socket = -1;
+  elvin->polling = false;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
   listeners_init (elvin->close_listeners);
   listeners_init (elvin->notification_listeners);
@@ -141,6 +141,13 @@ bool elvin_is_open (Elvin *elvin)
   return elvin->socket != -1;
 }
 
+#ifdef WIN32
+  #include <windows.h>
+  #define sleep_for(t) Sleep (t)
+#else
+  #define sleep_for(t) usleep (t)
+#endif
+
 bool elvin_close (Elvin *elvin)
 {
   ElvinError error = ELVIN_EMPTY_ERROR;
@@ -152,10 +159,25 @@ bool elvin_close (Elvin *elvin)
 
   message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
 
-  send_and_receive (elvin, disconn_rqst, disconn_rply,
-                    MESSAGE_ID_DISCONN_RPLY, &error);
+  if (elvin->polling)
+  {
+    if (send_message (elvin, disconn_rqst, &error))
+    {
+      time_t start_time = time (NULL);
 
-  /* no free needed for disconn_rply */
+      /* wait for poll loop to shutdown connection */
+      while (elvin->socket != -1 &&
+             difftime (time (NULL), start_time) < AVIS_IO_TIMEOUT);
+      {
+        sleep_for (200);
+      }
+    }
+  } else
+  {
+    send_and_receive (elvin, disconn_rqst, disconn_rply,
+                      MESSAGE_ID_DISCONN_RPLY, &error);
+
+  }
 
   elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
 
@@ -196,33 +218,32 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
   #endif
 }
 
-void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
-                               void *user_data)
+bool elvin_event_loop (Elvin *elvin, ElvinError *error)
 {
-  listeners_add (&elvin->close_listeners, listener, user_data);
-}
+  while (elvin->socket != -1 && elvin_error_ok (error))
+  {
+    elvin_poll (elvin, error);
 
-bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener)
-{
-  return listeners_remove (&elvin->close_listeners, listener);
-}
+    /* just keep looping on timeout */
+    if (error->code == ELVIN_ERROR_TIMEOUT)
+      elvin_error_reset (error);
+  }
 
-void elvin_add_notification_listener (Elvin *elvin,
-                                      GeneralNotificationListener listener,
-                                      void *user_data)
-{
-  listeners_add (&elvin->notification_listeners, (Listener)listener, user_data);
-}
-
-bool elvin_remove_notification_listener (Elvin *elvin,
-                                         GeneralNotificationListener listener)
-{
-  return listeners_remove (&elvin->notification_listeners, (Listener)listener);
+  return elvin_error_ok (error);
 }
 
 bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
   alloc_message (message);
+
+  if (elvin->polling)
+  {
+    elvin_error_set (error, ELVIN_ERROR_USAGE, "poll () called concurrently");
+
+    return false;
+  }
+
+  elvin->polling = true;
 
   if (receive_message (elvin, message, error))
   {
@@ -232,7 +253,10 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
       handle_notify_deliver (elvin, message, error);
       break;
     case MESSAGE_ID_DISCONN:
-      handle_disconn (elvin, message, error);
+      elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, "Router is shutting down");
+      break;
+    case MESSAGE_ID_DISCONN_RPLY:
+      elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
       break;
     default:
       elvin_error_set
@@ -246,12 +270,9 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
   if (error->code == ELVIN_ERROR_PROTOCOL)
     elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
 
-  return elvin_error_ok (error);
-}
+  elvin->polling = false;
 
-void handle_disconn (Elvin *elvin, Message message, ElvinError *error)
-{
-  elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, "Router is shutting down");
+  return elvin_error_ok (error);
 }
 
 void handle_nack (Elvin *elvin, Message nack, ElvinError *error)
@@ -522,19 +543,6 @@ bool elvin_subscription_set_keys (Subscription *subscription,
   }
 }
 
-void elvin_subscription_add_listener (Subscription *subscription,
-                                      SubscriptionListener listener,
-                                      void *user_data)
-{
-  listeners_add (&subscription->listeners, (Listener)listener, user_data);
-}
-
-bool elvin_subscription_remove_listener (Subscription *subscription,
-                                         SubscriptionListener listener)
-{
-  return listeners_remove (&subscription->listeners, (Listener)listener);
-}
-
 bool send_and_receive (Elvin *elvin, Message request,
                        Message reply, MessageTypeID reply_type,
                        ElvinError *error)
@@ -620,8 +628,17 @@ bool receive_message (Elvin *elvin, Message message, ElvinError *error)
 
   if (bytes_read != 4)
   {
-    return elvin_error_set (error, ELVIN_ERROR_PROTOCOL,
-                            "Failed to read router message");
+    if (errno == EAGAIN || errno == EWOULDBLOCK)
+    {
+      elvin_error_set (error, ELVIN_ERROR_TIMEOUT,
+                       "Failed to read router message");
+    } else
+    {
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL,
+                       "Failed to read router message");
+    }
+
+    return false;
   }
 
   frame_size = ntohl (frame_size);
@@ -707,9 +724,21 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
     if (sock != -1)
     {
       if (connect (sock, i->ai_addr, i->ai_addrlen) == 0)
+      {
+        /* set send/receive timeouts */
+       struct timeval timeout =
+         {AVIS_IO_TIMEOUT / 1000, (AVIS_IO_TIMEOUT % 1000) * 1000};
+
+        setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO,
+                    (char *)&timeout, sizeof (timeout));
+        setsockopt (sock, SOL_SOCKET, SO_SNDTIMEO,
+                    (char *)&timeout, sizeof (timeout));
+
         elvin->socket = sock;
-      else
+      } else
+      {
         close_socket (sock);
+      }
     }
   }
 
@@ -719,6 +748,43 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
     return true;
   else
     return elvin_error_from_errno (error);
+}
+
+void elvin_subscription_add_listener (Subscription *subscription,
+                                      SubscriptionListener listener,
+                                      void *user_data)
+{
+  listeners_add (&subscription->listeners, (Listener)listener, user_data);
+}
+
+bool elvin_subscription_remove_listener (Subscription *subscription,
+                                         SubscriptionListener listener)
+{
+  return listeners_remove (&subscription->listeners, (Listener)listener);
+}
+
+void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
+                               void *user_data)
+{
+  listeners_add (&elvin->close_listeners, listener, user_data);
+}
+
+bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener)
+{
+  return listeners_remove (&elvin->close_listeners, listener);
+}
+
+void elvin_add_notification_listener (Elvin *elvin,
+                                      GeneralNotificationListener listener,
+                                      void *user_data)
+{
+  listeners_add (&elvin->notification_listeners, (Listener)listener, user_data);
+}
+
+bool elvin_remove_notification_listener (Elvin *elvin,
+                                         GeneralNotificationListener listener)
+{
+  return listeners_remove (&elvin->notification_listeners, (Listener)listener);
 }
 
 #ifdef WIN32
