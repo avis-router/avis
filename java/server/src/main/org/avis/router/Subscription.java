@@ -35,7 +35,7 @@ class Subscription
     this.keys = keys;
     this.acceptInsecure = acceptInsecure;
     this.ast = parse (expr);
-    this.id = nextId ();
+    this.id = idCounter.incrementAndGet ();
   }
 
   public void updateExpression (String subscriptionExpr)
@@ -54,10 +54,5 @@ class Subscription
     throws ParseException
   {
     return new SubscriptionParser (new StringReader (expr)).parseAndValidate ();
-  }
-
-  private static long nextId ()
-  {
-    return idCounter.incrementAndGet ();
   }
 }
