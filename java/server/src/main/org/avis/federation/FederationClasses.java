@@ -25,14 +25,14 @@ public class FederationClasses
 {
   private static class Entry
   {
+    public Filter<InetAddress> filter;
+    public FederationClass     fedClass;
+
     public Entry (Filter<InetAddress> filter, FederationClass fedClass)
     {
       this.filter = filter;
       this.fedClass = fedClass;
     }
-    
-    public Filter<InetAddress> filter;
-    public FederationClass fedClass;
   }
   
   private FederationClass defaultClass;
