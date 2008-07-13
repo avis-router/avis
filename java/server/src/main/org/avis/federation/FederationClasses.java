@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 
 import org.avis.io.InetAddressFilter;
 import org.avis.util.Filter;
-import org.avis.util.Pair;
 
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
@@ -24,9 +23,21 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
  */
 public class FederationClasses
 {
+  private static class Entry
+  {
+    public Entry (Filter<InetAddress> filter, FederationClass fedClass)
+    {
+      this.filter = filter;
+      this.fedClass = fedClass;
+    }
+    
+    public Filter<InetAddress> filter;
+    public FederationClass fedClass;
+  }
+  
   private FederationClass defaultClass;
   private Map<String, FederationClass> classes;
-  private List<Pair<Filter<InetAddress>, FederationClass>> hostToClass;
+  private List<Entry> hostToClass;
 
   public FederationClasses ()
   {
@@ -43,7 +54,7 @@ public class FederationClasses
     this.defaultClass = defaultClass;
     this.classes = 
       new TreeMap<String, FederationClass> (CASE_INSENSITIVE_ORDER);
-    this.hostToClass = new ArrayList<Pair<Filter<InetAddress>,FederationClass>> ();
+    this.hostToClass = new ArrayList<Entry> ();
   }
 
   public void setDefaultClass (FederationClass newDefaultClass)
@@ -86,10 +97,10 @@ public class FederationClasses
    */
   public FederationClass classFor (InetAddress address)
   {
-    for (Pair<Filter<InetAddress>, FederationClass> entry : hostToClass)
+    for (Entry entry : hostToClass)
     {
-      if (entry.item1.matches (address))
-        return entry.item2;
+      if (entry.filter.matches (address))
+        return entry.fedClass;
     }
     
     return defaultClass;
@@ -122,8 +133,7 @@ public class FederationClasses
    */
   public void map (Filter<InetAddress> matcher, FederationClass fedClass)
   {
-    hostToClass.add 
-      (new Pair<Filter<InetAddress>, FederationClass> (matcher, fedClass));
+    hostToClass.add (new Entry (matcher, fedClass));
   }
 
   /**
