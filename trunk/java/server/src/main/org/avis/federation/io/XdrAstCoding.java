@@ -157,7 +157,7 @@ public final class XdrAstCoding
     {
       out.putInt (NAME);
       out.putInt (TYPE_STRING);
-      putString (out, ((Field)node).fieldName ());
+      putString (out, ((Field)node).name);
     } else
     {
       out.putInt (typeCodeFor (node));
