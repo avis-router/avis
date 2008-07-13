@@ -299,11 +299,16 @@ bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes,
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
                                ElvinError *error)
 {
-  uint32_t length = (uint32_t)strlen (string);
+  size_t length = strlen (string);
+
+  check_max_size (length, MAX_STRING_LENGTH, "String too long", error);
+
+  if (!elvin_error_ok (error))
+    return false;
 
   return
     byte_buffer_ensure_capacity (buffer, buffer->position + length + 8, error) &&
-    byte_buffer_write_int32 (buffer, length, error) &&
+    byte_buffer_write_int32 (buffer, (uint32_t)length, error) &&
     byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error) &&
     write_padding_for (buffer, length, error);
 }
