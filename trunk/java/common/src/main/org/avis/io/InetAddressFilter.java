@@ -5,8 +5,6 @@ import java.net.InetAddress;
 import org.avis.util.Filter;
 import org.avis.util.WildcardFilter;
 
-import static java.util.Arrays.asList;
-
 import static org.avis.util.Text.split;
 
 /**
@@ -21,7 +19,7 @@ public class InetAddressFilter implements Filter<InetAddress>
 
   public InetAddressFilter (String patterns)
   {
-    this.filter = new WildcardFilter (asList (split (patterns)));
+    this.filter = new WildcardFilter (split (patterns));
   }
   
   public boolean matches (InetAddress address)
