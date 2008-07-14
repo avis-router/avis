@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
-import org.apache.mina.common.ExceptionMonitor;
-import org.apache.mina.common.IdleStatus;
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.WriteFuture;
+import org.apache.mina.core.ExceptionMonitor;
+import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.future.WriteFuture;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.common.ElvinURI;
@@ -56,8 +56,8 @@ import org.avis.util.ListenerList;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
 
-import static org.apache.mina.common.IdleStatus.READER_IDLE;
-import static org.apache.mina.common.IoFutureListener.CLOSE;
+import static org.apache.mina.core.future.IoFutureListener.CLOSE;
+import static org.apache.mina.core.session.IdleStatus.READER_IDLE;
 import static org.avis.common.Common.CLIENT_VERSION_MAJOR;
 import static org.avis.common.Common.CLIENT_VERSION_MINOR;
 import static org.avis.common.Common.DEFAULT_PORT;
@@ -177,11 +177,13 @@ public class Router implements IoHandler, Closeable
     filters.addLast ("codec", ClientFrameCodec.FILTER);
     
     filters.addLast ("threadPool", ioManager.createThreadPoolFilter ());
-    
-    filters.addLast
-      ("readThrottle", 
-       ioManager.createThrottleFilter 
-         (routerOptions.getInt ("Receive-Queue.Max-Length")));
+
+    // TODO re-add throttle. looks like it will have to become the actual
+    // executor.
+//    filters.addLast
+//      ("readThrottle", 
+//       ioManager.createThrottleFilter 
+//         (routerOptions.getInt ("Receive-Queue.Max-Length")));
 
     boolean bindSucceeded = false;
     

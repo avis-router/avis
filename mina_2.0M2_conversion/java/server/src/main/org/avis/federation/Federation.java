@@ -2,8 +2,8 @@ package org.avis.federation;
 
 import java.io.IOException;
 
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.WriteFuture;
+import org.apache.mina.core.future.WriteFuture;
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;

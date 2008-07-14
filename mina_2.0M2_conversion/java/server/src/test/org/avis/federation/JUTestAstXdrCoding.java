@@ -1,6 +1,6 @@
 package org.avis.federation;
 
-import org.apache.mina.common.IoBuffer;
+import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import org.avis.federation.io.XdrAstCoding;

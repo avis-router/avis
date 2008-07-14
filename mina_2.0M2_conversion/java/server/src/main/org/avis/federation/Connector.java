@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
-import org.apache.mina.common.IdleStatus;
-import org.apache.mina.common.IoFuture;
-import org.apache.mina.common.IoFutureListener;
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.RuntimeIoException;
+import org.apache.mina.core.RuntimeIoException;
+import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.future.IoFuture;
+import org.apache.mina.core.future.IoFutureListener;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -130,8 +130,7 @@ public class Connector implements IoHandler, Closeable
       (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
     
     router.ioManager ().connect 
-      (uri, this, filters, authRequired, 
-       options.getInt ("Federation.Request-Timeout")).addListener 
+      (uri, this, filters, authRequired, requestTimeout).addListener 
       (new IoFutureListener<IoFuture> ()
       {
         public void operationComplete (IoFuture future)
@@ -151,15 +150,15 @@ public class Connector implements IoHandler, Closeable
     
     try
     {
-      if (!future.isReady ())
+      if (future.isReady ())
+      {
+        open (future.getSession ());
+      } else
       {
         diagnostic ("Connection attempt to federator at " + uri + 
                     " timed out, retrying", this);
         
         asyncConnect ();
-      } else
-      {
-        open (future.getSession ());
       }
     } catch (RuntimeIoException ex)
     {

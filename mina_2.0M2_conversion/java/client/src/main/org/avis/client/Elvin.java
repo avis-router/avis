@@ -18,12 +18,12 @@ import java.nio.channels.UnresolvedAddressException;
 
 import javax.net.ssl.SSLException;
 
-import org.apache.mina.common.ConnectFuture;
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
-import org.apache.mina.common.IoHandlerAdapter;
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.RuntimeIoException;
-import org.apache.mina.filter.SSLFilter;
+import org.apache.mina.core.RuntimeIoException;
+import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.common.ElvinURI;
@@ -487,7 +487,7 @@ public final class Elvin implements Closeable
 //      SocketConnectorConfig connectorConfig = new SocketConnectorConfig ();
 //      connectorConfig.setConnectTimeout ((int)(options.receiveTimeout / 1000));
 
-      connector.setConnectTimeout ((int)(options.receiveTimeout / 1000));
+      connector.setConnectTimeoutMillis (options.receiveTimeout);
       
       DefaultIoFilterChainBuilder filters = connector.getFilterChain ();
       
@@ -539,8 +539,8 @@ public final class Elvin implements Closeable
   private void openSSL ()
     throws IOException, IllegalArgumentException
   {
-    SSLFilter filter = 
-      new SSLFilter (sslContextFor (options.keystore, 
+    SslFilter filter = 
+      new SslFilter (sslContextFor (options.keystore, 
                                     options.keystorePassphrase, 
                                     options.requireAuthenticatedServer));
     
@@ -559,10 +559,10 @@ public final class Elvin implements Closeable
   /**
    * Start the SSL handshake process.
    */
-  private void handshakeSSL (SSLFilter filter) 
+  private void handshakeSSL (SslFilter filter) 
     throws SSLException
   {
-    filter.startSSL (connection);
+    filter.startSsl (connection);
     
     /*
      * Unfortunately SSL handshake is async: we have to poll.
@@ -573,7 +573,7 @@ public final class Elvin implements Closeable
     
     try
     {
-      while (filter.getSSLSession (connection) == null &&
+      while (filter.getSslSession (connection) == null &&
              !connection.containsAttribute ("sslException") &&
              currentTimeMillis () < finishAt)
       {

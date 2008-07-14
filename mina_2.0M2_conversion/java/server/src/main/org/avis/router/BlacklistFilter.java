@@ -3,9 +3,9 @@ package org.avis.router;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.IoFilter;
-import org.apache.mina.common.IoFilterAdapter;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.filterchain.IoFilterAdapter;
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.util.Filter;
 
