@@ -163,7 +163,7 @@ public class JUTestFederationManager
 
     FederationManager manager2 = new FederationManager (router2, options2);
 
-    waitForConnect (manager2.connectors.get (0));
+    waitForConnect (manager2.connectors.iterator ().next ());
     
     assertEquals (1, manager1.acceptor.links.size ());
     
@@ -226,7 +226,7 @@ public class JUTestFederationManager
 
     FederationManager manager2 = new FederationManager (router2, options2);
 
-    waitForConnect (manager2.connectors.get (0));
+    waitForConnect (manager2.connectors.iterator ().next ());
     
     assertEquals (1, manager1.acceptor.links.size ());
     

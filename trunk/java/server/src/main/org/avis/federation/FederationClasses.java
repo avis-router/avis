@@ -67,6 +67,11 @@ public class FederationClasses
     return defaultClass;
   }
   
+  public FederationClass find (String name)
+  {
+    return classes.get (name);
+  }
+  
   /**
    * Find an existing federation class with the given name or create a
    * new one.

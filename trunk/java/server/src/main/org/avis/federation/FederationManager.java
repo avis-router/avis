@@ -2,7 +2,6 @@ package org.avis.federation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -39,7 +38,7 @@ public class FederationManager implements CloseListener
   protected Router router;
   protected FederationClasses classes;
   protected Acceptor acceptor;
-  protected List<Connector> connectors;
+  protected Collection<Connector> connectors;
 
   public FederationManager (Router router, Options federationConfig) 
     throws IllegalConfigOptionException, IOException
@@ -123,7 +122,7 @@ public class FederationManager implements CloseListener
   }
   
   @SuppressWarnings("unchecked")
-  private static List<Connector> initConnectors
+  private static Collection<Connector> initConnectors
     (Router router,
      String serverDomain,
      FederationClasses classes, 
@@ -133,24 +132,30 @@ public class FederationManager implements CloseListener
     Map<String, Set<EwafURI>> connect = 
       (Map<String, Set<EwafURI>>)config.getParamOption ("Federation.Connect");
    
-    // check federation classes and URI's make sense
+    // check federation classes and URI's used in Federation.Connect make sense
     for (Entry<String, Set<EwafURI>> entry : connect.entrySet ())
     {
-      FederationClass fedClass = classes.define (entry.getKey ());
+      FederationClass fedClass = classes.find (entry.getKey ());
       
-      if (fedClass.allowsNothing ())
+      if (fedClass == null)
+      {
+        throw new IllegalConfigOptionException
+          ("Federation.Connect[" + entry.getKey () + "]",
+           "Undefined federation class \"" + entry.getKey () + "\"");
+      } else if (fedClass.allowsNothing ())
       {
         throw new IllegalConfigOptionException
           ("Federation.Connect[" + entry.getKey () + "]",
            "No federation subscribe/provide defined: " +
-            "this connection cannot import or export any notifications");
+            "this connection would not import or export any notifications");
       }
       
       for (EwafURI uri : entry.getValue ())
-        checkUri ("Federation.Connect[" + entry.getKey () + "]", uri);
+        checkProtocol ("Federation.Connect[" + entry.getKey () + "]", uri);
     }
     
-    List<Connector> connectors = new ArrayList<Connector> (connect.size ());
+    Collection<Connector> connectors = 
+      new ArrayList<Connector> (connect.size ());
     
     for (Entry<String, Set<EwafURI>> entry : connect.entrySet ())
     {
@@ -224,7 +229,7 @@ public class FederationManager implements CloseListener
       try
       {
         for (EwafURI uri : uris)
-          checkUri ("Federation.Listen", uri);
+          checkProtocol ("Federation.Listen", uri);
         
         return new Acceptor (router, serverDomain, classes, uris, config);
       } catch (IOException ex)
@@ -321,7 +326,7 @@ public class FederationManager implements CloseListener
     }
   }
   
-  private static void checkUri (String option, EwafURI uri)
+  private static void checkProtocol (String option, EwafURI uri)
   {
     if (!uri.protocol.equals (defaultProtocol ()) && 
         !uri.protocol.equals (secureProtocol ()))
