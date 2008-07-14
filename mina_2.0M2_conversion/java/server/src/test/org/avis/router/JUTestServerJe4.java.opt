@@ -1,0 +1,200 @@
+package org.avis.net.server;
+
+import org.elvin.je4.Connection;
+import org.elvin.je4.ConnectionFactory;
+import org.elvin.je4.Consumer;
+import org.elvin.je4.ElvinURL;
+import org.elvin.je4.Notification;
+import org.elvin.je4.NotificationListener;
+import org.elvin.je4.Producer;
+import org.elvin.je4.Subscription;
+import org.elvin.je4.security.ConsumerKeys;
+import org.elvin.je4.security.Key;
+import org.elvin.je4.security.KeyScheme;
+import org.elvin.je4.security.ProducerKeys;
+
+import org.junit.After;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+public class JUTestServerJe4
+{
+  static final int PORT = 29170;
+
+  private Server server;
+
+  @After public void tearDown ()
+  {
+    if (server != null)
+      server.close ();
+  }
+  /**
+   * Test je4 connection to router.
+   */
+  @Test public void connect ()
+    throws Exception
+  {
+    ConnectionFactory.getDefaultFactory ().setRouterDisableCoalesceDelay (true);
+    
+    server = new Server (PORT);
+    Connection client = new Connection (new ElvinURL ("localhost", PORT));
+    
+    System.out.println ("Connected to AVIS!");
+    
+    client.close ();
+    server.close ();
+  }
+  
+  /**
+   * Test case where server disconnects je4 client.
+   */
+  @Test public void serverDisconnect ()
+    throws Exception
+  {
+    server = new Server (PORT);
+    Connection client = new Connection (new ElvinURL ("localhost", PORT));
+
+    System.out.println ("Connected to AVIS!");
+    
+    server.close ();
+    client.close ();
+  }
+  
+  /**
+   * Test je4 connect, subscribe, disconnect sequence.
+   */
+  @Test public void subscribe ()
+    throws Exception
+  {
+    server = new Server (PORT);
+    Connection client = new Connection (new ElvinURL ("localhost", PORT));
+    
+    System.out.println ("Connected to AVIS!");
+    
+    Consumer consumer = new Consumer (client);
+    Producer producer = new Producer (client);
+    
+    ElvinListener listener = new ElvinListener ();
+    Subscription sub = new Subscription ("number == 1", listener);
+    
+    consumer.addSubscription (sub);
+    
+    // send/receive a notification
+    org.elvin.je4.Notification ntfn = new Notification ();
+    ntfn.put ("name", "foobar");
+    ntfn.put ("number", 1);
+    producer.notify (ntfn);
+    
+    Notification incoming = listener.waitForNtfn ();
+    
+    assertEquals ("foobar", incoming.get ("name"));
+    assertEquals (1, incoming.get ("number"));
+    
+    consumer.removeSubscription (sub);
+    
+    client.close ();
+    server.close ();
+  }
+  
+  /**
+   * Test using keys from je4.
+   */
+  @Test public void secureMessaging ()
+    throws Exception
+  {
+    server = new Server (PORT);
+    Connection client = new Connection (new ElvinURL ("localhost", PORT));
+    
+    Consumer consumer = new Consumer (client);
+    Producer producer = new Producer (client);
+    
+    ElvinListener listener = new ElvinListener ();
+    Subscription sub = new Subscription ("number == 1", listener);
+    
+    ConsumerKeys subKeys = new ConsumerKeys ();
+    subKeys.addSecretKey (KeyScheme.sha1Dual,
+                          new Key ("a very secret key 1"));
+    
+    sub.addSecurityKeys (subKeys);
+    
+    consumer.addSubscription (sub);
+    
+    // send/receive a notification
+    Notification ntfn = new Notification ();
+    ntfn.put ("name", "foobar");
+    ntfn.put ("number", 1);
+    producer.notify (ntfn);
+    
+    Notification incoming = listener.waitForNtfn ();
+    
+    assertEquals ("foobar", incoming.get ("name"));
+    assertEquals (1, incoming.get ("number"));
+    
+    // send a secure notification with non-matching keys
+    ntfn = new org.elvin.je4.Notification ();
+    ntfn.put ("name", "frodo");
+    ntfn.put ("number", 1);
+    
+    ProducerKeys prodKeys = new ProducerKeys ();
+    prodKeys.addSecretKey (KeyScheme.sha1Dual,
+                           new Key ("a very secret key 2"));
+    
+    ntfn.setSecurityKeys (prodKeys);
+    
+    ntfn.setDeliverInsecure (false);
+    
+    producer.notify (ntfn);
+    
+    try
+    {
+      incoming = listener.waitForNtfn (2000);
+      
+      fail ("Received secure ntfn insecurely");
+    } catch (IllegalStateException ex)
+    {
+      // ok
+    }
+    
+    client.close ();
+    server.close ();
+  }
+  
+  static class ElvinListener implements NotificationListener
+  {
+    private org.elvin.je4.Notification lastNtfn;
+    
+    public synchronized void notificationAction (org.elvin.je4.Notification n)
+    {
+      lastNtfn = n;
+      notifyAll (); 
+    }
+
+    public synchronized org.elvin.je4.Notification waitForNtfn ()
+      throws InterruptedException
+    {
+      return waitForNtfn (5000);
+    }
+    
+    public synchronized org.elvin.je4.Notification waitForNtfn (long timeout)
+      throws InterruptedException
+    {
+      if (lastNtfn == null)
+      {
+        long now = System.currentTimeMillis ();
+      
+        wait (timeout);
+        
+        if (System.currentTimeMillis () - now >= timeout)
+          throw new IllegalStateException ("No notification received");
+      }
+      
+      org.elvin.je4.Notification n = lastNtfn;
+      
+      lastNtfn = null;
+
+      return n;
+    }
+  }
+}

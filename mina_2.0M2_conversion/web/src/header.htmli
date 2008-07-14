@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>${web.title} - Avis</title>
+  <link href="styles.css" media="screen" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<div style="text-align:center;">
+
+<ul id="nav">
+  <li id="nav-home"><a href="index.html">Avis Event Router</a></li>
+</ul>
+
+</div>
+
+<div id="main">
+
+<div id="content">
+
+<div id="right-edge"><div id="left-edge"><div id="right-col">
+
+<div id="left-col">
+  <ul class="sections" id="navSections">
+    <li><a href="index.html">About Avis</a></li>
+    <li><a href="roadmap.html">Roadmap</a></li>
+    <li><a href="why_avis.html">Why Avis</a></li>
+    <li><a href="examples.html">Example</a></li>
+    <li><a href="client_library.html">Client Library</a></li>
+    <li><a href="downloads.html">Downloads</a></li>
+    <li><a href="documentation.html">Documentation</a></li>
+    <li><a href="installation.html">Installation</a></li>
+    <li><a href="federation.html">Federation</a></li>
+    <li><a href="http://sourceforge.net/projects/avis/">Project Site</a></li>
+  </ul>
+</div>
+
+<div id="article">
+

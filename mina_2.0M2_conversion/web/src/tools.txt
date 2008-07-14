@@ -1,0 +1,75 @@
+Avis Command Line Tools
+======================================================================
+
+The Avis router ships with two generic tools for producing and
+consuming Elvin notifications: `ec` and `ep`. These can be useful for
+using Elvin from scripts or as debugging aids
+
+ec
+----------------------------------------------------------------------
+
+The `ec` command allows you to subscribe to notifications using a
+[subscription expression][subscription] on the command line.
+
+For example:
+
+    ec -e elvin://public.elvin.org "string (Greeting)"
+
+This will select any messages with a `Greeting` field containing a
+string value. For more interesting real world example, try using
+`require (Presence-Protocol)` as the subscription on the
+`public.elvin.org` router.
+
+The `ec` command prints notifications to its standard output in text
+form. For example:
+
+    > ec -e elvin://public.elvin.org \
+        "require (Presence-Protocol)"
+    ec: Connected to server elvin:4.0//public.elvin.org:2917
+    $time 2008-07-10T11:51:08.729+0930
+    Client-Id: "0307ec7b6956d1c2b"
+    Distribution: "world"
+    Groups: "|osx|elvin|chat|aquatik|"
+    Presence-Info: "update"
+    Presence-Protocol: 1000
+    Status: "online"
+    Status-Duration: 69147
+    Status-Text: "Inactive"
+    User: "lawley@csiro"
+    ---
+    $time 2008-07-10T11:51:20.155+0930
+    Client-Id: "8146eae7b84334da7"
+    Distribution: "world"
+    Groups: "|elvin|ticker-dev|"
+    Presence-Info: "update"
+    Presence-Protocol: 1000
+    Status: "unavailable"
+    Status-Duration: 0
+    Status-Text: "Do not disturb"
+    User: "matthew@home"
+    ---
+
+    ...
+    ^C
+
+The output of `ec` is in the same format as that required by `ep`,
+making it easy to feed captured events back into a router.
+
+ep
+----------------------------------------------------------------------
+
+The `ep` command allows you to feed notifications into a router. For
+example:
+
+    ep -e elvin://public.elvin.org
+    Greeting: "hello world"
+    Number:   42
+    Long:     1234L
+    Real:     3.1415
+    Opaque:   [de ed be ef f0 0d]
+    ---
+
+Run the tools with no command line arguments for a full description of
+the command line options available.
+
+[subscription]: subscription_language.html

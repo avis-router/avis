@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="classes/main" path="src/main"/>
+	<classpathentry kind="src" output="classes/test" path="src/test"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-simple.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit-4.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry exported="true" kind="lib" path="lib/mina-filter-ssl-2.0.0-M1-20070726.091641-33.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mina-protocol-http-server-2.0.0-M1-20071017.020729-17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mina-core-2.0.0-M1-SNAPSHOT.jar" sourcepath="/Users/matt/Development/mina-2.0.0-M1/core/src/main/java"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

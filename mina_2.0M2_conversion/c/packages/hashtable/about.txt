@@ -1,0 +1,7 @@
+Source code for a hash table data structure in C
+
+This code is made available under the terms of the new BSD license.
+
+By Christopher Clark, January 2005.
+
+See http://www.cl.cam.ac.uk/~cwc22/hashtable.

@@ -1,0 +1,84 @@
+Avis Client Libraries
+======================================================================
+
+The Avis project provides client libaries for development of
+applications that wish to interact with an Elvin router. There are
+currently libraries for Java and C, both available under the terms of
+the [LGPL version 3][LGPL].
+
+Java
+----------------------------------------------------------------------
+ 
+The Avis Java Client Library provides a high level API for Java
+clients communicating with an Elvin router. It is based on the same
+foundations as the Avis router, but is made available under the terms
+of the GNU Lesser General Public License (LGPL) rather than the GPL
+used by the router.
+
+ * [Download the Java client library][java-client-src] (latest stable
+   version ${java-client.version}: see the [Sourceforge download
+   page][client-all] for older releases).
+
+ * [Javadoc API documentation][java-apidoc] for the latest version of
+   the library.
+
+### Examples
+
+The Java client library package contains a number of programming
+examples in `src/examples` and documentation on how to use them in
+`doc/examples.txt`. The examples are:
+
+  * [HelloWorld.java](client-library/java/examples/HelloWorld.java.html). A
+    single class creates two Elvin client connections, one sending the
+    traditional "Hello World" message as a greeting, the other one
+    listening for all greetings and printing them to the console.
+
+  * [WallBroadcaster.java](client-library/java/examples/WallBroadcaster.java.html)
+    and
+    [WallReceiver.java](client-library/java/examples/WallReceiver.java.html). This
+    example uses two console applications to simulate a simple Unix
+    "wall"-style command that broadcasts text to a number of consoles.
+
+  * [SecureSender.java](client-library/java/examples/SecureSender.java.html)
+    and
+    [SecureReceiver.java](client-library/java/examples/SecureReceiver.java.html). In
+    this example we set up a situation where a sender wants to ensure
+    that only receivers it trusts can see its messages.
+
+You can also see a demonstration of the Java client library in a
+realistic scenario at the [examples page][examples].
+
+C
+----------------------------------------------------------------------
+
+The Avis client library for C is currently in development. A preview
+beta release is available for testing: the API in this release is
+intended to be the same, or very similar to, the final API.
+
+ * [Download the C client library][c-client-src] (beta release
+   ${c-client.version}).
+
+ * [C API documentation][c-apidoc] for the latest version of the
+   library.
+
+
+Other Documentation
+----------------------------------------------------------------------
+
+ * A description of the [Elvin subscription language][subscription].
+
+[java-client-src]: http://downloads.sourceforge.net/avis/avis-client-${java-client.version}.zip
+
+[c-client-src]: http://downloads.sourceforge.net/avis/avis-client-${c-client.version}.tar.gz
+
+[client-all]: https://sourceforge.net/project/showfiles.php?group_id=181381&package_id=233706
+
+[java-apidoc]: http://avis.sourceforge.net/client-library/java/apidoc/
+
+[c-apidoc]: http://avis.sourceforge.net/client-library/c/apidoc/
+
+[subscription]: subscription_language.html
+
+[examples]: examples.html
+
+[LGPL]: http://www.gnu.org/licenses/lgpl.html
