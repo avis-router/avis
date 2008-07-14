@@ -2,9 +2,9 @@ package org.avis.io;
 
 import junit.framework.AssertionFailedError;
 
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoHandlerAdapter;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.io.messages.Message;
 

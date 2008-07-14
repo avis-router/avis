@@ -19,17 +19,17 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
-import org.apache.mina.common.IoFilter;
-import org.apache.mina.common.IoFuture;
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.SimpleIoProcessorPool;
+import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.future.IoFuture;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.SimpleIoProcessorPool;
+import org.apache.mina.core.session.IoEvent;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.IoEventQueueThrottle;
+import org.apache.mina.filter.executor.IoEventSizeEstimator;
 import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
-import org.apache.mina.filter.traffic.MessageSizeEstimator;
-import org.apache.mina.filter.traffic.ReadThrottleFilter;
-import org.apache.mina.filter.traffic.ReadThrottlePolicy;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
@@ -47,7 +47,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-import static org.apache.mina.common.IoBuffer.setUseDirectBuffer;
+import static org.apache.mina.core.buffer.IoBuffer.setUseDirectBuffer;
 import static org.avis.io.TLS.toPassphrase;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.warn;
@@ -64,12 +64,12 @@ public class IoManager
   /**
    * Used by read throttle to estimate size of messages in buffer.
    */
-  private static final MessageSizeEstimator MESSAGE_SIZE_ESTIMATOR = 
-    new MessageSizeEstimator ()
+  private static final IoEventSizeEstimator MESSAGE_SIZE_ESTIMATOR = 
+    new IoEventSizeEstimator ()
   {
-    public int estimateSize (Object message)
+    public int estimateSize (IoEvent event)
     {
-      return max (0, ((Message)message).frameSize * 2);
+      return max (0, ((Message)event.getParameter ()).frameSize * 2);
     }
   };
 
@@ -153,14 +153,15 @@ public class IoManager
    * size is passed. This only works for connections using
    * {@link FrameCodec} for messages
    */
-  public IoFilter createThrottleFilter (int maxBufferSize)
+  public IoEventQueueThrottle createThrottleFilter (int maxBufferSize)
   {
-    ReadThrottleFilter readThrottle = 
-      new ReadThrottleFilter (throttleExecutor, ReadThrottlePolicy.BLOCK, 
-                              MESSAGE_SIZE_ESTIMATOR);
-    
-    readThrottle.setMaxSessionBufferSize (maxBufferSize);
-    
+//    IoEventQueueThrottle readThrottle = 
+//      new IoEventQueueThrottle (throttleExecutor, IoEventQueueThrottle.BLOCK, 
+//                              MESSAGE_SIZE_ESTIMATOR);
+
+    IoEventQueueThrottle readThrottle = 
+      new IoEventQueueThrottle (MESSAGE_SIZE_ESTIMATOR, maxBufferSize);
+
     return readThrottle;
   }
 
@@ -265,7 +266,7 @@ public class IoManager
     DefaultIoFilterChainBuilder secureFilters = 
       new DefaultIoFilterChainBuilder (commonFilters);
     
-    secureFilters.addFirst 
+    secureFilters.addFirst
       ("security", 
        new SecurityFilter (keystore, keystorePassphrase, 
                            authRequired, clientMode));
@@ -359,7 +360,7 @@ public class IoManager
       if (uriToAcceptors.containsKey (uri))
       {
         for (NioSocketAcceptor acceptor : uriToAcceptors.get (uri))
-          sessions.addAll (acceptor.getManagedSessions ());
+          sessions.addAll (acceptor.getManagedSessions ().values ());
       }
     }
     
@@ -386,7 +387,7 @@ public class IoManager
   public IoFuture connect (ElvinURI uri, IoHandler handler,
                            DefaultIoFilterChainBuilder filters,
                            Filter<InetAddress> authenticationRequiredHosts, 
-                           int timeout)
+                           long timeout)
   {
     NioSocketConnector connector = new NioSocketConnector (processorPool);
     
@@ -399,7 +400,7 @@ public class IoManager
     
     connector.setFilterChainBuilder (filters);
     connector.setHandler (handler);
-    connector.setConnectTimeout (timeout);
+    connector.setConnectTimeoutMillis (timeout);
     
     return connector.connect (new InetSocketAddress (uri.host, uri.port));
   }

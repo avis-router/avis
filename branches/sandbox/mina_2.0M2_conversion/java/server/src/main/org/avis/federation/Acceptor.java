@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
-import org.apache.mina.common.IdleStatus;
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.WriteFuture;
+import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.future.WriteFuture;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -28,8 +28,8 @@ import org.avis.io.messages.Nack;
 import org.avis.router.Router;
 import org.avis.util.Filter;
 
-import static org.apache.mina.common.IdleStatus.READER_IDLE;
-import static org.apache.mina.common.IoFutureListener.CLOSE;
+import static org.apache.mina.core.future.IoFutureListener.CLOSE;
+import static org.apache.mina.core.session.IdleStatus.READER_IDLE;
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;

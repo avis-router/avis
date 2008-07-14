@@ -1,6 +1,6 @@
 package org.avis.io;
 
-import org.apache.mina.common.ExceptionMonitor;
+import org.apache.mina.core.ExceptionMonitor;
 
 import static org.avis.logging.Log.internalError;
 

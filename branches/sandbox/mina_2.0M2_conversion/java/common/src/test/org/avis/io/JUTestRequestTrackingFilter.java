@@ -1,12 +1,11 @@
 package org.avis.io;
 
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoHandlerAdapter;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.junit.Test;
 
 import org.avis.io.messages.ConnRqst;
 import org.avis.io.messages.RequestTimeoutMessage;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

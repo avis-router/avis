@@ -14,9 +14,9 @@ import java.io.Writer;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.IoConnector;
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.service.IoConnector;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.junit.After;
@@ -696,7 +696,7 @@ public class JUTestFederation
   {
     SocketConnector connector = new NioSocketConnector (1);
     
-    connector.setConnectTimeout (5);
+    connector.setConnectTimeoutMillis (5000);
     
     connector.getFilterChain ().addLast ("codec", FederationFrameCodec.FILTER);
     
