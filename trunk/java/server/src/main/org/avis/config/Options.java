@@ -184,7 +184,7 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * 
    * @return The value of the option, mapping parameters to values.
    */
-  public Map<String, ?> getParamOption (String option)
+  public Map<String, ? extends Object> getParamOption (String option)
   {
     return OptionTypeParam.getParamOption (this, option);
   }
