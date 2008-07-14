@@ -57,22 +57,7 @@ public class Ec
 
     System.err.println ("ec: Connected to server " +
                         options.elvinUri.toCanonicalString ());
-    
-    elvin.addCloseListener (new CloseListener ()
-    {
-      public void connectionClosed (CloseEvent e)
-      {
-        System.err.println ("ec: Connection closed: " + e.message);
         
-        if (e.error != null)
-        {
-          System.err.println ("ec: Trace for exception that triggered close:");
-          
-          e.error.printStackTrace ();
-        }
-      }
-    });
-    
     Subscription subscription = null;
     
     try
@@ -81,12 +66,27 @@ public class Ec
         elvin.subscribe (options.subscription, options.secureMode);
     
       elvin.addNotificationListener (new Listener ());
+      
+      elvin.addCloseListener (new CloseListener ()
+      {
+        public void connectionClosed (CloseEvent e)
+        {
+          System.err.println ("ec: Connection closed: " + e.message);
+          
+          if (e.error != null)
+          {
+            System.err.println ("ec: Trace for exception that triggered close:");
+            
+            e.error.printStackTrace ();
+          }
+        }
+      });
     } finally
     {
       // close connection if subscription failed
       if (subscription == null)
         elvin.close ();
-    }
+    }    
   }
   
   static class Listener implements GeneralNotificationListener
