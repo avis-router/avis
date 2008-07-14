@@ -1,0 +1,170 @@
+General
+----------------------------------------------------------------------
+
+* Consider REST API
+
+Releases
+----------------------------------------------------------------------
+
+* add note about windows registry Java currentversion = 1.6 when 1.5
+  installed.
+
+* router src distro needs ec/ep
+
+Server 1.2
+
+ * DONE: add Unix basic distro
+ * DONE: print full version on console
+ * DONE: review todo's
+ * DONE: fix Vendor-Identification
+ * DONE: if we package a known key in router keystore, does this make TLS
+   pointless?
+ * DONE: package tools with server
+ * DONE: Change Unix layout to match http://cvs.openpkg.org/fileview?f=openpkg-src/avis/avis.spec
+ * DONE: switch to launchd for OS X http://developer.apple.com/macosx/launchd.html
+  (10.4 only, but Java 5 only works there anyway). Put in 
+  /Library/LaunchDaemons/. Look at 
+  /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist. Also log to /var/log/avis 
+ * DONE: dump notifications in -vv mode
+ * DONE: date in log messages: Dec 23 04:20:01
+ * DONE: TLS web page
+ * DONE: how do we map fed classes to only trusted clients?
+ * DONE: Support client auth in connect/listen
+   options. elvin:/secure/0.0.0.0:29170?require-trusted=true. put
+   options in as default layer in front of config.
+ * DONE: test add keystore to distro
+ * DONE: ditch use of @ in federation. use of server domain is fairly useless
+ * DONE: allow wildcards in federation
+ * DONE: --Liveness TestConn for client connections?
+ * DONE: do we allow no keystore? 
+ * DONE--: change default federation class syntax?
+   e.g. Federation.Apply-Class[Public]=*
+ * DONE: Federation TLS
+ * DONE: Ship Avis server with default certs?
+
+Client 1.1
+
+ * DONE: simplify examples
+ * DONE: client source won't build in Eclipse without server. Need to add it
+   or deal with it otherwise.
+ * DONE: review todo's
+ * DONE: client should not log messages: events instead, esp
+   DropWarn. Will need a way to send these to log for testing.
+ * DONE: ec/ep options for TLS
+ * NOT DONE: ep needs to handle empty lines 
+ * DONE: --allow connection options in URI. merge with given options? --use
+   server options package and ditch special options class?--
+ * DONE: TLS
+ * DONE: add subscription string escape utilities
+ * DONE: ep doesn't do ^D properly
+
+Not allocated
+--------------
+
+Client
+
+* handle redirect disconns 
+* synchronous reconnect/redirect? block for up to x secs before closing
+* better reporting for going over connection limits (e.g. max subs)
+* UDP unotify
+* auto connect/reconnect
+* lots of ec/ep options
+* discovery
+* async/future-based messaging in client. use futures to track responses.
+* BUG: ec hangs on Presence-Protocol from public.elvin.org. Takes a long time
+  to close connection. possibly related to use of "tee" on command line
+* MAYBE: replace IOException witn RuntimeIOException? relates/affected
+  by async idea
+
+Server
+
+ * ?do we want clients trusted by CA's to be trusted
+ * Test large frames with new heap sizes
+ * ?thread pool size option
+* Password auth? Could use a KeyManager to use password auth? Not sure
+  how X509KeyManager can be extended to do this. There may be an Elvin
+  spec for this.
+* windows JRE does not have -server, need to add installer option
+* includes in config: would allow federation to be spec'd separately
+* Federation.Classes.Require=internal
+* failure to find VM wrapper on windows (David). possibly due to 
+  uninstalling Java 5 after installing Java 6
+* Mantara ec requires elvin:4.0//...
+* Warning: Failed to cleanly shut down thread pool. avisd during
+  testing for Alain. Also seen in FOCAL, possibly related to
+  federation reconnection. Not due to connected clients. Perhaps due
+  to waiting for Disconn to be sent?
+* simple web-based stats: use small HTTP server.
+* web-based management: use small HTTP server. or in context of
+  OSGi. allow shutdown-and-redirect
+* DEB, Solaris: look at je4 packages dir
+* what happens when sending ntfn to client that's too big?
+* test SecRqst: test_sync_modify_keys fails (should NACK empty keys)
+* profile performance
+* partly done: router-wide options that allow client to grow connection
+  footprint such like as keys, subscriptions. client can still easily kill
+  server using long subs atm. keys attack window reduced but still may be
+  possible using sub/ntfn keys plus long keys. need to check max size of key
+  data.
+* add message logging via MINA filter, remove current crusty approach
+* notification dropping incl DropWarn
+* write a multi-threaded test thrasher to test consistency
+* look into whether server can store hashed keys only and avoid
+  hashing them on each match. See Connection.matchSubscriptions ()
+* DONE: OS X: installation in /usr/local means getting blown away on system
+  reinstall. should we go in /opt?
+
+SSL
+----------------------------------------------------------------------
+
+Scenarios
+
+ * Client connects to elvin:/secure/public.elvin.org, wants auth and
+   privacy. Enable server auth on client, server has cert from root
+   CA. Add optional server auth required option for client, plus
+   optional trust keystore. Extend null trust manager as per
+   example. Will need to add new Elvin constructor taking client
+   options and absorb keys, etc into it. Server can have optional
+   client auth
+
+Todo
+
+ * DONE: Avis client lib TLS
+ * DONE: Create client/server certs, test mutual auth
+ * DONE: Use separate keystore for trusted certs?
+  
+Questions
+
+ * CLOSED: Do we need to support trusted clients? => need trust store
+   on server, key store on client, enable client auth on server.
+
+ * CLOSED: Do we want security per-URI?
+
+ * CLOSED: Do we need to support trusted servers? => need trust store
+   on client, enable server auth on client
+
+ * CLOSED: Federation TLS: security per class?
+
+ * CLOSED: Enable remote auth with URI option?
+   elvin:/secure/host?Remote-Auth=true. probably not: options are
+   connection options, not client config.
+
+ * CLOSED: Do we want to support keystores other than JKS?
+   eg. PKCS12. Check we could just import PKCS12, and add instructions
+   if so.
+
+ * CLOSED: Client -> trust: could implement trust manager: see
+   "Creating Your Own X509TrustManager"
+
+
+References
+
+http://java.sun.com/j2se/1.5.0/docs/guide/security/jsse/JSSERefGuide.html#KeyClasses (includes programming example)
+http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/keytool.html
+http://java.sun.com/j2se/1.5.0/docs/api/java/security/KeyStore.html#getInstance(java.lang.String)
+http://java.sun.com/j2se/1.5.0/docs/api/javax/net/ssl/SSLContext.html
+http://java.sun.com/j2se/1.5.0/docs/guide/security/CryptoSpec.html#AppA
+create SSL context: ~/Development/mina-1.1.5/example/src/main/java/org/apache/mina/example/echoserver/ssl/BogusSSLContextFactory.java
+
+* SSLFilter -> SSLContext -> keys -> key manager factory -> key store
+  (see createBougusServerSSLContext)

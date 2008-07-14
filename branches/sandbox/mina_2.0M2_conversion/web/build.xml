@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<!--
+  ====================================================================== 
+  Avis Web Site
+  ======================================================================
+-->
+<project name="avis.web" default="website">
+  
+  <description>Avis web site</description>
+
+  <!-- latest client and server release streams -->
+  <property name="java-client-release" value="1.1" />
+  <property name="c-client-release" value="0.1" />
+  <property name="server-release" value="1.2" />
+
+  <property name="avis-root" value="${basedir}/.." />
+  <property name="web" value="${avis-root}/web" />
+
+  <!-- base for released client and server -->
+  <property 
+    name="java-client" 
+    value="${avis-root}/../avis-java-client-${java-client-release}/java/client" />
+  <property 
+    name="c-client" 
+    value="${avis-root}/../avis-c-client-${c-client-release}/c" />
+  <property 
+      name="server" 
+      value="${avis-root}/../avis-${server-release}/java/server" />
+  
+  <property name="support" value="${avis-root}/support" />
+
+  <property name="sourceforge-web" 
+            value="sourceforge:/home/groups/a/av/avis/htdocs" />
+
+  <!-- Markdown 1.0.1: needed to build web page -->
+  <property name="markdown" 
+            value="${support}/markdown-1.0.1/Markdown.pl" />
+
+  <!-- Use arcane Ant-isms to build web page from text using Markdown -->
+  <target name="website" depends="htmlize-java-client-examples"
+          description="Build HTML files in web from sources">  
+    <antcall target="fn:make-html">
+      <param name="src" value="avis.txt" />
+      <param name="dest" value="index.html" />
+      <param name="web.title" value="Home" />
+    </antcall>
+  
+    <antcall target="fn:make-html">
+      <param name="src" value="examples.txt" />
+      <param name="dest" value="examples.html" />
+      <param name="web.title" value="Example" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="roadmap.txt" />
+      <param name="dest" value="roadmap.html" />
+      <param name="web.title" value="Roadmap" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="why_avis.txt" />
+      <param name="dest" value="why_avis.html" />
+      <param name="web.title" value="Why Choose Avis" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="installation.txt" />
+      <param name="dest" value="installation.html" />
+      <param name="web.title" value="Installation" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="federation.txt" />
+      <param name="dest" value="federation.html" />
+      <param name="web.title" value="Federation" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="client_library.txt" />
+      <param name="dest" value="client_library.html" />
+      <param name="web.title" value="Client Library" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="downloads.txt" />
+      <param name="dest" value="downloads.html" />
+      <param name="web.title" value="Downloads" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="subscription_language.txt" />
+      <param name="dest" value="subscription_language.html" />
+      <param name="web.title" value="Elvin Subscription Language" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="documentation.txt" />
+      <param name="dest" value="documentation.html" />
+      <param name="web.title" value="Documentation" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="tls.txt" />
+      <param name="dest" value="tls.html" />
+      <param name="web.title" value="TLS/SSL" />
+    </antcall>
+
+    <antcall target="fn:make-html">
+      <param name="src" value="tools.txt" />
+      <param name="dest" value="tools.html" />
+      <param name="web.title" value="Tools" />
+    </antcall>
+
+  </target>
+
+  <target name="deploy" depends="website"
+          description="Rsync web site to sourceforge">
+    <exec executable="rsync" dir="${web}/site">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg line="--include *.html" />
+      <arg line="--include *.png" />
+      <arg line="--include *.gif" />
+      <arg line="--include *.css" />
+      <arg line="--include client-library/java/examples/*.html" />
+      <arg line="--exclude client-library/java/apidoc" />
+      <arg line="--exclude client-library/c/apidoc" />
+      <arg line="--exclude */.svn" />
+      <arg line="--exclude .*" />
+      <arg line="--include .htaccess" />
+      <arg value="." />
+      <arg value="${sourceforge-web}" />
+    </exec>
+  </target>
+
+  <target name="deploy-java-apidoc"
+          description="Rsync Java client library Javadoc to sourceforge web">
+
+    <ant dir="${java-client}" target="javadoc"
+         inheritall="false" inheritrefs="false" />
+
+    <exec executable="rsync" dir="${java-client}/build/javadoc">
+      <arg value="-rlgoDv" />
+      <arg value="--delete" />
+      <arg value="." />
+      <arg value="${sourceforge-web}/client-library/java/apidoc/" />
+    </exec>
+  </target>
+
+  <target name="deploy-c-apidoc"
+          description="Rsync C client library API docs to sourceforge web">
+
+    <exec executable="make" dir="${c-client}">
+      <arg value="api-docs" />
+    </exec>
+
+    <exec executable="rsync" dir="${c-client}/doc/api/html">
+      <arg value="-rRlgoDv" />
+      <arg value="--delete" />
+      <arg value="." />
+      <arg value="${sourceforge-web}/client-library/c/apidoc/" />
+    </exec>
+  </target>
+
+  <!-- Build a web page from text template using Markdown -->
+  <target name="fn:make-html" 
+          depends="check-html-uptodate" 
+          unless="uptodate-${dest}">
+    <property name="dest-html" value="${web}/site/${dest}" />
+
+    <!-- load server/client properties for release info -->
+    <property file="${java-client}/avis-client.properties" prefix="java-client." />
+    <property file="${c-client}/avis-client.properties" prefix="c-client." />
+    <property file="${server}/avis-server.properties" prefix="server." />
+
+    <!-- init properties available in web templates -->
+    <property name="java-client.version" 
+              value="${java-client.avis.version.major}.${java-client.avis.version.minor}.${java-client.avis.version.patch}" />
+
+    <property name="c-client.version" 
+              value="${c-client.avis_version_major}.${c-client.avis_version_minor}.${c-client.avis_version_patch}" />
+
+    <property name="server.version" 
+              value="${server.avis.version.major}.${server.avis.version.minor}.${server.avis.version.patch}" />
+
+    <property name="server.release" value="${server.avis.release}" />
+
+    <!-- header -->
+    <concat destfile="${dest-html}" append="false">
+      <filelist dir="${web}/src" files="header.htmli" />
+    	
+      <filterchain>
+        <expandproperties />
+      </filterchain>
+    </concat>
+    
+    <!-- expand Markdown body -->
+    <exec executable="perl">
+      <arg value="${markdown}" />
+      <arg value="${web}/src/${src}" />
+      
+      <redirector append="true">
+        <outputmapper type="merge" to="${dest-html}" />
+
+        <outputfilterchain>
+          <expandproperties />
+        </outputfilterchain>
+      </redirector>
+    </exec>
+    
+    <!-- footer -->
+    <concat destfile="${dest-html}" append="true">
+      <filelist dir="${web}/src" files="footer.htmli" />
+    </concat>
+  </target>
+
+  <target name="check-html-uptodate">
+    <dependset>
+      <srcfileset dir="src" includes="${src}" />
+
+      <targetfileset dir="site" includes="${dest}" />
+    </dependset>
+
+    <condition property="uptodate-${dest}">
+      <and>
+        <available file="site/${dest}" />
+      </and>
+    </condition>
+  </target>
+
+  <target name="htmlize-java-client-examples">
+
+    <taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask"
+             classpath="${support}/java_syntax_highlighting/syntax.jar" />
+
+    <mkdir dir="site/client-library/java/examples" />
+
+    <syntax srcDir="${java-client}/src/examples/org/avis/client/examples"
+            destDir="${web}/site/client-library/java/examples" 
+            css="../../../client-examples.css" />
+  </target>
+
+  <target name="clean" description="Clean generated website files">
+    <delete>
+      <fileset dir="${web}/site">
+        <include name="*.html" />
+      </fileset>
+
+      <fileset dir="${web}/site/client-library/java/examples" />
+
+    </delete>
+  </target>
+
+</project>

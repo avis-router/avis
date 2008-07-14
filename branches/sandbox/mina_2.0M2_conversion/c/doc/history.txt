@@ -1,0 +1,38 @@
+Release 0.2.0 (July 8, 2008)
+----------------------------------------------------------------------
+
+This is a beta-quality release with most of the API complete.
+
+* Added support for changing subscriptions and security keys on a live
+  connection.
+
+* Added listener callbacks for any notification on any subscription.
+
+* Added connection close listener callback support.
+
+* Added checking for array sizes in router messages to better protect
+  against broken/malicious messages from a router.
+
+* Added support for IPv6 addresses in elvin:// URI's and to the socket
+  connection logic.
+
+* Completed Elvin URI parser, including protocol version and protocol
+  stack.
+
+* Improved platform support. Now runs on Solaris.
+
+* Added better handling for fatal conditions such as memory allocation
+  failure.
+
+* Added support for using headers in C++ development.
+
+* Added missing project files for Visual Studio 2005.
+
+* Code cleanups.
+
+
+Release 0.1.0 (June 27, 2008)
+----------------------------------------------------------------------
+
+Initial alpha release. Missing some security options, no connection
+option support.

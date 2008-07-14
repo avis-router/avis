@@ -1,0 +1,53 @@
+TODO
+
+0.3 release
+
+* check protocol stack
+* refactor tests
+* use hashmap for subscriptions?
+* connection options?
+* hide non-public symbols?
+
+* NO_DELAY
+int flag = 1;
+  int result = setsockopt(sock,            /* socket affected */
+                          IPPROTO_TCP,     /* set option at TCP level */
+                          TCP_NODELAY,     /* name of option */
+                          (char *) &flag,  /* the cast is historical 
+                                                  cruft */
+                          sizeof(int));    /* length of option value */
+  if (result < 0)
+     ... handle the error ...
+
+0.2 release
+
+* DONE: update web
+* DONE: dist on windows and OS X
+* DONE: update history
+* DONE: change security keys
+* DONE: change subscription
+* DONE: close listener
+* DONE: general notif listener
+* DONE: IPv6 connect on Linux
+* DONE: handle OOM and other fatal conditions
+* DONE: size limit enforcement
+* DONE: change error init
+* DONE: finish URI parsing
+                                   
+0.1 release
+
+* DONE: LGPL headers
+* DONE: check dist
+* DONE: custom subscription destruct: free sub expr, or not hold a ref
+* DONE: API review: make sure we're using elvin_ prefix
+* DONE: tests pass on Windows
+* DONE: API docs in dist
+* DONE: API docs online
+* DONE: web page: extend client library page
+* DONE: use valgrid to pick up errors
+* DONE: version number -> make dist
+
+general
+ 
+* Universal binary for Mac OS X: 
+  http://developer.apple.com/documentation/Porting/Conceptual/PortingUnix/compiling/chapter_4_section_3.html
