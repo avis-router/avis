@@ -193,12 +193,13 @@ public final class Notification
     do
     {
       line = in.readLine ();
-    } while (line != null && line.startsWith ("$"));
+      
+      if (line != null)
+        line = line.trim ();
+    } while (line != null && (line.startsWith ("$") || line.length () == 0));
     
     if (line != null)
     {
-      line = line.trim ();
-      
       if (line.startsWith ("---"))
         line = null;
     }
