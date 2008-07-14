@@ -245,22 +245,22 @@ public class FederationManager implements CloseListener
   {
     FederationClasses classes = new FederationClasses ();
     
-    Map<String, ?> provide = 
-      federationConfig.getParamOption ("Federation.Provide");
+    Map<String, Node> provide = 
+      (Map<String, Node>)federationConfig.getParamOption ("Federation.Provide");
     
-    for (Entry<String, ?> entry : provide.entrySet ())
+    for (Entry<String, Node> entry : provide.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
-      fedClass.outgoingFilter = (Node)entry.getValue ();
+      fedClass.outgoingFilter = entry.getValue ();
     }
     
-    Map<String, ?> subscribe = 
-      federationConfig.getParamOption ("Federation.Subscribe");
+    Map<String, Node> subscribe = 
+      (Map<String, Node>)federationConfig.getParamOption ("Federation.Subscribe");
     
-    for (Entry<String, ?> entry : subscribe.entrySet ())
+    for (Entry<String, Node> entry : subscribe.entrySet ())
     {
-      Node incomingFilter = (Node)entry.getValue ();
+      Node incomingFilter = entry.getValue ();
 
       /*
        * Cannot sub TRUE right now. When we support 1.1-level
