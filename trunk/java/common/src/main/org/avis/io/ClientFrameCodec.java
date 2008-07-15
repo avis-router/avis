@@ -1,7 +1,7 @@
 package org.avis.io;
 
-import org.apache.mina.common.IoFilter;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;

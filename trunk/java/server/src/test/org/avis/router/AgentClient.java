@@ -2,7 +2,7 @@ package org.avis.router;
 
 import java.util.Timer;
 
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.session.IoSession;
 
 public abstract class AgentClient extends SimpleClient
 {

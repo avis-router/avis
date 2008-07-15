@@ -26,7 +26,7 @@ import org.apache.asyncweb.server.HttpService;
 import org.apache.asyncweb.server.HttpServiceContext;
 import org.apache.asyncweb.server.HttpServiceHandler;
 import org.apache.asyncweb.server.resolver.ExactMatchURIServiceResolver;
-import org.apache.mina.common.IoBuffer;
+import org.apache.mina.core.buffer.IoBuffer;
 
 import org.avis.config.Options;
 import org.avis.router.Router;

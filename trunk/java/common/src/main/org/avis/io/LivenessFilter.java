@@ -3,10 +3,10 @@ package org.avis.io;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import org.apache.mina.common.IoFilter;
-import org.apache.mina.common.IoFilterAdapter;
-import org.apache.mina.common.IoFilterChain;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.filterchain.IoFilterAdapter;
+import org.apache.mina.core.filterchain.IoFilterChain;
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.io.messages.ConfConn;
 import org.avis.io.messages.LivenessFailureMessage;

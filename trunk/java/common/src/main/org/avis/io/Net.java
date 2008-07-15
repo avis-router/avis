@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 
 import org.avis.common.ElvinURI;

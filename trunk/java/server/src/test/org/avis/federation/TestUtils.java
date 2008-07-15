@@ -9,7 +9,7 @@ import static junit.framework.Assert.fail;
 
 public class TestUtils
 {
-  public static final long MAX_WAIT = 8000;
+  public static final long MAX_WAIT = 4000;
   
   /**
    * Wait up to 8 seconds for a connector to be in connected state.
