@@ -85,15 +85,16 @@ public class OptionTypeParam extends OptionType
   }
 
   @SuppressWarnings("unchecked")
-  public static Map<String, Object> getParamOption (Options options, 
-                                                    String option)
+  public static Map<String, ? extends Object> getParamOption (Options options, 
+                                                              String option)
   {
     OptionType type = options.optionSet ().optionTypeFor (option);
     
     if (type instanceof OptionTypeParam)
       return (Map<String, Object>)options.get (option);
     else
-      throw new IllegalConfigOptionException (option, "Not a parameterised option");
+      throw new IllegalConfigOptionException 
+        (option, "Not a parameterised option");
   }
 
   /**
