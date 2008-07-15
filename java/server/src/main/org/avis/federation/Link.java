@@ -2,8 +2,8 @@ package org.avis.federation;
 
 import java.util.Map;
 
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.WriteFuture;
+import org.apache.mina.core.future.WriteFuture;
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.federation.io.messages.Ack;
 import org.avis.federation.io.messages.FedNotify;
@@ -24,8 +24,8 @@ import org.avis.subscription.ast.Node;
 
 import static java.lang.System.arraycopy;
 import static java.util.Arrays.asList;
-import static org.apache.mina.common.IoFutureListener.CLOSE;
 
+import static org.apache.mina.core.future.IoFutureListener.CLOSE;
 import static org.avis.federation.Federation.logError;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;

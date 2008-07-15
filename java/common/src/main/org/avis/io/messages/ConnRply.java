@@ -2,7 +2,7 @@ package org.avis.io.messages;
 
 import java.util.Map;
 
-import org.apache.mina.common.IoBuffer;
+import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
 import static org.avis.io.XdrCoding.getNameValues;

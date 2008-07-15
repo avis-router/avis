@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import org.apache.mina.common.IoFilter;
-import org.apache.mina.common.IoFilterAdapter;
-import org.apache.mina.common.IoFilterChain;
-import org.apache.mina.common.IoSession;
-import org.apache.mina.common.WriteRequest;
+import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.filterchain.IoFilterAdapter;
+import org.apache.mina.core.filterchain.IoFilterChain;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.core.write.WriteRequest;
 
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
@@ -99,18 +99,17 @@ public class RequestTrackingFilter
     nextFilter.sessionCreated (session);
   }
   
-  @Override
-  public void sessionOpened (NextFilter nextFilter, IoSession session)
-    throws Exception
+  private Tracker trackerFor (IoSession session)
   {
-    session.setAttribute ("requestTracker", new Tracker (session));
+    Tracker tracker = (Tracker)session.getAttribute ("requestTracker");
+
+    if (tracker == null)
+    {
+      tracker = new Tracker (session);
+      session.setAttribute ("requestTracker", tracker);
+    }
     
-    nextFilter.sessionOpened (session);
-  }
-  
-  private static Tracker trackerFor (IoSession session)
-  {
-    return (Tracker)session.getAttribute ("requestTracker");
+    return tracker;
   }
   
   @Override

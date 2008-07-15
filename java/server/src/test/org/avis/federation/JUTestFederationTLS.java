@@ -2,9 +2,9 @@ package org.avis.federation;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.common.ConnectFuture;
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoSession;
+import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.junit.After;
@@ -157,7 +157,7 @@ public class JUTestFederationTLS
   {
     NioSocketConnector connector = router.ioManager ().createConnector ();
     
-    connector.setConnectTimeout (20);
+    connector.setConnectTimeoutMillis (20000);
     
     SslFilter filter = new SslFilter (defaultSSLContext ());
     

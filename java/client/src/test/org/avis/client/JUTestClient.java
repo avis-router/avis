@@ -937,9 +937,20 @@ public class JUTestClient
     // pound on it for a while
     sleep (runtime);
     
+    // shut down client threads
     for (MultiThreadClientThread thread : threads)
-      thread.interrupt ();
+      thread.running = false;
 
+    for (MultiThreadClientThread thread : threads)
+    {
+      long now = currentTimeMillis ();
+      
+      thread.join (WAIT_TIMEOUT);
+      
+      if (currentTimeMillis () - now > WAIT_TIMEOUT)
+        fail ("Thread took too long to shut down");
+    }
+    
     client.close ();
   }
   
@@ -948,6 +959,8 @@ public class JUTestClient
     private Elvin client;
     private Random random;
 
+    public volatile boolean running;
+    
     public MultiThreadClientThread (Elvin client, int number)
     {
       this.client = client;
@@ -957,11 +970,13 @@ public class JUTestClient
     @Override
     public void run ()
     {
+      running = true;
+      
       try
       {
         client.subscribe ("require (number)");
         
-        while (!interrupted () && client.isOpen ())
+        while (running && !interrupted () && client.isOpen ())
         {
           Subscription sub = 
             client.subscribe ("number <= " + random.nextInt (5));

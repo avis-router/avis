@@ -1,6 +1,6 @@
 package org.avis.security;
 
-import org.apache.mina.common.IoBuffer;
+import org.apache.mina.core.buffer.IoBuffer;
 import org.junit.Test;
 
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;

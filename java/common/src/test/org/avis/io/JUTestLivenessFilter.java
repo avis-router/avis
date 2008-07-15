@@ -1,15 +1,15 @@
 package org.avis.io;
 
-import org.apache.mina.common.IoHandler;
-import org.apache.mina.common.IoHandlerAdapter;
+import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoHandlerAdapter;
+import org.junit.Test;
 
 import org.avis.io.messages.LivenessFailureMessage;
 import org.avis.io.messages.TestConn;
 
-import org.junit.Test;
-
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
