@@ -97,11 +97,12 @@ public class JUTestFederation
       federation = null;
     }
     
-    for (Closeable toClose : autoClose)
+    // close in reverse order to add
+    for (int i = autoClose.size () - 1; i >= 0; i--)
     {
       try
       {
-        toClose.close ();
+        autoClose.get (i).close ();
       } catch (Throwable ex)
       {
         alarm ("Failed to close", this, ex);
