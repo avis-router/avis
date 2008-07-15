@@ -1,5 +1,6 @@
 package org.avis.io;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
@@ -19,7 +20,7 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
  * 
  * @author Matthew Phillips
  */
-public class AcceptorConnectorSetup
+public class AcceptorConnectorSetup implements Closeable
 {
   public SocketAcceptor acceptor;
   public IoSession session;
@@ -61,8 +62,7 @@ public class AcceptorConnectorSetup
     
     session = future.getSession ();
   }
-  
-  
+    
   public void close ()
   {
     session.close ();

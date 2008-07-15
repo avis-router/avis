@@ -3,9 +3,11 @@ package org.avis.io;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Test;
 
 import org.avis.io.messages.NotifyDeliver;
+import org.avis.util.AutoClose;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,6 +18,14 @@ import static org.junit.Assert.assertEquals;
  */
 public class JUTestFrameCodec
 {
+  private AutoClose autoClose = new AutoClose ();
+
+  @After
+  public void cleanup ()
+  {
+    autoClose.close ();
+  }
+  
   @Test
   public void bigFrames ()
     throws Exception
@@ -25,6 +35,8 @@ public class JUTestFrameCodec
     TestingIoHandler acceptorListener = new TestingIoHandler ();
     
     testSetup.connect (acceptorListener, new TestingIoHandler ());
+    
+    autoClose.add (testSetup);
     
     HashMap<String, Object> attributes = new HashMap<String, Object> ();
     
