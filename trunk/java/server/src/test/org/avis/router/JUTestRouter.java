@@ -1,11 +1,8 @@
 package org.avis.router;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import java.io.Closeable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,6 +28,7 @@ import org.avis.io.messages.UNotify;
 import org.avis.security.Key;
 import org.avis.security.KeyScheme;
 import org.avis.security.Keys;
+import org.avis.util.AutoClose;
 import org.avis.util.LogFailTester;
 
 import static org.junit.Assert.assertEquals;
@@ -42,7 +40,6 @@ import static org.avis.io.messages.Nack.EXP_IS_TRIVIAL;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.logging.Log.ALARM;
 import static org.avis.logging.Log.WARNING;
-import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
@@ -60,7 +57,7 @@ public class JUTestRouter
   private Router router;
   private Random random;
   private LogFailTester logTester;
-  private ArrayList<Closeable> autoClose;
+  private AutoClose autoClose = new AutoClose ();
 
   @Before
   public void setup ()
@@ -70,23 +67,13 @@ public class JUTestRouter
     
     random = new Random ();
     logTester = new LogFailTester ();
-    autoClose = new ArrayList<Closeable> ();
   }
   
   @After
   public void tearDown ()
   {
-    for (int i = autoClose.size () - 1; i >= 0; i--)
-    {
-      try
-      {
-        autoClose.get (i).close ();
-      } catch (Throwable ex)
-      {
-        alarm ("Failed to close", this, ex);
-      }
-    }
-
+    autoClose.close ();
+    
     if (router != null)
       router.close ();
 
