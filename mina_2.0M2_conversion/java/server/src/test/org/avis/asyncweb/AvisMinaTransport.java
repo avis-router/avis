@@ -11,7 +11,7 @@ import org.apache.asyncweb.server.Transport;
 import org.apache.asyncweb.server.TransportException;
 import org.apache.asyncweb.server.transport.mina.DefaultHttpIoHandler;
 import org.apache.asyncweb.server.transport.mina.HttpIoHandler;
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.transport.socket.SocketAcceptor;

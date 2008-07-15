@@ -10,7 +10,7 @@ import org.apache.asyncweb.server.ServiceContainer;
 import org.apache.asyncweb.server.Transport;
 import org.apache.asyncweb.server.TransportException;
 import org.apache.asyncweb.server.transport.mina.DefaultHttpIoHandler;
-import org.apache.mina.common.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.transport.socket.SocketAcceptor;
 
 import org.avis.router.IoManager;
