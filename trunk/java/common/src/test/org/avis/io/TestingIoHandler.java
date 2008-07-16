@@ -20,8 +20,10 @@ import static org.junit.Assert.fail;
 public class TestingIoHandler
   extends IoHandlerAdapter implements IoHandler
 {
+  private static final int TIMEOUT = 5000;
+  
   public Message message;
-
+  
   @Override
   public synchronized void messageReceived (IoSession session, 
                                             Object theMessage)
@@ -36,7 +38,7 @@ public class TestingIoHandler
     throws InterruptedException
   {
     if (message == null)
-      wait (5000);
+      wait (TIMEOUT);
     
     if (message == null)
       fail ("No message received");
@@ -63,7 +65,7 @@ public class TestingIoHandler
     
     try
     {
-      wait (5000);
+      wait (TIMEOUT);
     } catch (InterruptedException ex)
     {
       throw new Error (ex);
@@ -77,7 +79,6 @@ public class TestingIoHandler
   public synchronized void sessionClosed (IoSession session)
     throws Exception
   {
-    System.out.println ("*** closed");
     notifyAll ();
   }
 }
