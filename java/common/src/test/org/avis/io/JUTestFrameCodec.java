@@ -6,10 +6,13 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Test;
 
+import org.avis.io.messages.ErrorMessage;
+import org.avis.io.messages.Message;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.util.AutoClose;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for FrameCodec.
@@ -30,9 +33,9 @@ public class JUTestFrameCodec
   public void bigFrames ()
     throws Exception
   {
-    AcceptorConnectorSetup testSetup = new AcceptorConnectorSetup ();
-    
     TestingIoHandler acceptorListener = new TestingIoHandler ();
+    
+    AcceptorConnectorSetup testSetup = new AcceptorConnectorSetup ();
     
     testSetup.connect (acceptorListener, new TestingIoHandler ());
     
@@ -46,13 +49,21 @@ public class JUTestFrameCodec
     NotifyDeliver notifyDeliver = 
       new NotifyDeliver (attributes, new long [] {1}, new long [0]);
        
-    testSetup.session.write (notifyDeliver);
+    testSetup.connectorSession.write (notifyDeliver);
    
-    NotifyDeliver message = (NotifyDeliver)acceptorListener.waitForMessage ();
+    Message message = acceptorListener.waitForMessage ();
     
-    assertEquals (attributes.get ("string"), message.attributes.get ("string"));
+    if (message instanceof ErrorMessage)
+    {
+      fail ("Error message received: " + 
+            ((ErrorMessage)message).formattedMessage ());
+    }
+    
+    NotifyDeliver notify = (NotifyDeliver)acceptorListener.waitForMessage ();
+    
+    assertEquals (attributes.get ("string"), notify.attributes.get ("string"));
     assertEquals (((byte [])attributes.get ("blob")).length, 
-                  ((byte [])message.attributes.get ("blob")).length);
+                  ((byte [])notify.attributes.get ("blob")).length);
     
     testSetup.close ();
   }

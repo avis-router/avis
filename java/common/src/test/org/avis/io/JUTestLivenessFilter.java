@@ -45,7 +45,7 @@ public class JUTestLivenessFilter
     assertEquals (LivenessFailureMessage.ID, connectListener.message.typeId ());
     
     LivenessFilter.Tracker tracker = 
-      LivenessFilter.trackerFor (testSetup.session);
+      LivenessFilter.trackerFor (testSetup.connectorSession);
     
     testSetup.close ();
     

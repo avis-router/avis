@@ -37,7 +37,7 @@ public class JUTestRequestTrackingFilter
     
     ConnRqst fedConnRqst = new ConnRqst (1, 0);
     
-    testSetup.session.write (fedConnRqst);
+    testSetup.connectorSession.write (fedConnRqst);
     
     connectListener.waitForMessage ();
 
@@ -50,11 +50,11 @@ public class JUTestRequestTrackingFilter
     
     fedConnRqst = new ConnRqst (1, 0);
     
-    testSetup.session.write (fedConnRqst);
+    testSetup.connectorSession.write (fedConnRqst);
     
     Thread.sleep (1000);
     
-    testSetup.session.write (new ConnRqst (1, 0));
+    testSetup.connectorSession.write (new ConnRqst (1, 0));
     
     connectListener.waitForMessage ();
 
