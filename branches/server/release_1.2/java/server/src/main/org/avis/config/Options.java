@@ -201,7 +201,7 @@ public class Options implements Iterable<Map.Entry<String, Object>>
    * 
    * @throws IllegalConfigOptionException if the value is not a set.
    */
-  @SuppressWarnings({"unused", "unchecked"})
+  @SuppressWarnings({"unchecked"})
   public <T> Set<T> getSet (String option, Class<T> type)
   {
     Object value = get (option);
