@@ -188,7 +188,7 @@ public abstract class FrameCodec
         // need to save and restore limit
         int limit = in.limit ();
         
-        in.expand (frameSize);
+        in.expand (frameSize + 4);
       
         in.limit (limit);
       }
@@ -200,7 +200,7 @@ public abstract class FrameCodec
     }
   
     in.position (start);
-    
+
     return haveFrame;
   }
 
