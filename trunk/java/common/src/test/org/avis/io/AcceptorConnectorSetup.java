@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import java.net.InetSocketAddress;
 
-import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IoSession;
@@ -23,26 +22,23 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 public class AcceptorConnectorSetup implements Closeable
 {
   public SocketAcceptor acceptor;
-  public IoSession session;
   public SocketConnector connector;
+  public IoSession connectorSession;
 
   public AcceptorConnectorSetup ()
     throws IOException
   {
-    // acceptor
-    acceptor = new NioSocketAcceptor (1);
+    // acceptors
+    acceptor = new NioSocketAcceptor ();
     
     acceptor.setReuseAddress (true);
-    
-    DefaultIoFilterChainBuilder filterChainBuilder = acceptor.getFilterChain ();
-
-    filterChainBuilder.addLast ("codec", ClientFrameCodec.FILTER);
+    acceptor.getFilterChain ().addLast ("codec", ClientFrameCodec.FILTER);
     
     // connector
-    connector = new NioSocketConnector (1);
     
-    connector.setConnectTimeoutMillis (20 * 1000);
-
+    connector = new NioSocketConnector ();
+     
+    connector.setConnectTimeoutMillis (5 * 1000);
     connector.getFilterChain ().addLast ("codec", ClientFrameCodec.FILTER);
   }
   
@@ -58,14 +54,14 @@ public class AcceptorConnectorSetup implements Closeable
     connector.setHandler (connectorListener);
     ConnectFuture future = connector.connect (remoteAddress);
     
-    future.await ();
+    future.await (5000);
     
-    session = future.getSession ();
+    connectorSession = future.getSession ();
   }
     
   public void close ()
   {
-    session.close ();
+    connectorSession.close ();
     acceptor.dispose ();
     connector.dispose ();
   }
