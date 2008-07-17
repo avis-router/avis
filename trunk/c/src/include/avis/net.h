@@ -35,6 +35,7 @@
     elvin_error_set (err, errno_to_elvin_error (WSAGetLastError ()), \
                      "Socket error")
 #else
+  #include <unistd.h>
   #include <sys/socket.h>
   #include <netdb.h>
   #include <netinet/in.h>
