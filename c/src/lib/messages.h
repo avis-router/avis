@@ -21,7 +21,6 @@
 #include <avis/stdtypes.h>
 #include <avis/attributes.h>
 #include <avis/keys.h>
-#include <avis/elvin.h>
 
 #include "byte_buffer.h"
 
@@ -106,6 +105,10 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error);
  * Write a message to a buffer in Elvin XDR-encoded form.
  */
 bool message_write (ByteBuffer *buffer, Message message, ElvinError *error);
+
+bool send_message (socket_t socket, Message message, ElvinError *error);
+
+bool receive_message (socket_t socket, Message message, ElvinError *error);
 
 /** The message's type ID. */
 #define message_type_of(message) (*(uint32_t *)(message))

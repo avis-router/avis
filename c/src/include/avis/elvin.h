@@ -28,14 +28,7 @@
 #include <avis/elvin_uri.h>
 #include <avis/errors.h>
 #include <avis/arrays.h>
-
-#ifdef WIN32
-  #include <winsock2.h>
-
-  typedef SOCKET socket_t;
-#else
-  typedef int socket_t;
-#endif
+#include <avis/net.h>
 
 #define AVIS_LISTENERS_TYPE
 
@@ -45,9 +38,9 @@ typedef ArrayList * Listeners;
  * A client connection to an Elvin router. Typically a client creates a
  * connection (elvin_open()) and then subscribes to notifications
  * (elvin_subscribe()) and/or sends them (elvin_send()).
- * 
+ *
  * <h2>Threading Model</h2>
- * 
+ *
  * Elvin client connections are not thread safe and are designed to be
  * driven by a single thread calling elvin_event_loop(). The only
  * exception is elvin_close(), which can be called from any thread,

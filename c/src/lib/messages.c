@@ -19,12 +19,15 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <errno.h>
 
 #include <avis/stdtypes.h>
 #include <avis/defs.h>
 #include <avis/errors.h>
 #include <avis/attributes.h>
 #include <avis/values.h>
+#include <avis/net.h>
+#include <avis/errors.h>
 
 #include "messages.h"
 #include "byte_buffer.h"
@@ -340,6 +343,99 @@ MessageFormat *message_format_for (MessageTypeID type)
   DIAGNOSTIC1 ("Failed to lookup info for message type %i", type);
 
   return NULL;
+}
+
+bool send_message (socket_t socket, Message message, ElvinError *error)
+{
+  ByteBuffer buffer;
+  size_t position = 0;
+  uint32_t frame_size;
+
+  byte_buffer_init (&buffer);
+
+  on_error_return_false (byte_buffer_skip (&buffer, 4, error));
+
+  message_write (&buffer, message, error);
+
+  frame_size = (uint32_t)buffer.position - 4;
+
+  /* write frame length */
+  byte_buffer_set_position (&buffer, 0, error);
+  byte_buffer_write_int32 (&buffer, frame_size, error);
+
+  byte_buffer_set_position (&buffer, frame_size + 4, error);
+
+  do
+  {
+    int bytes_written = send (socket, buffer.data + position,
+                              buffer.position - position, 0);
+
+    if (bytes_written == -1)
+      elvin_error_from_socket (error);
+    else
+      position += bytes_written;
+  } while (position < buffer.position && elvin_error_ok (error));
+
+  byte_buffer_free (&buffer);
+
+  return elvin_error_ok (error);
+}
+
+bool receive_message (socket_t socket, Message message, ElvinError *error)
+{
+  ByteBuffer buffer;
+  uint32_t frame_size;
+  size_t position = 0;
+  int bytes_read;
+
+  bytes_read = recv (socket, (void *)&frame_size, 4, 0);
+
+  if (bytes_read != 4)
+  {
+    if (sock_op_timed_out ())
+    {
+      elvin_error_set (error, ELVIN_ERROR_TIMEOUT, "Receive timeout");
+    } else
+    {
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL,
+                       "Failed to read router message");
+    }
+
+    return false;
+  }
+
+  frame_size = ntohl (frame_size);
+
+  if (frame_size == 0 || frame_size % 4 != 0 || frame_size > MAX_PACKET_LENGTH)
+  {
+    elvin_error_set
+      (error, ELVIN_ERROR_PROTOCOL, "Illegal frame size: %lu", frame_size);
+
+    return false;
+  }
+
+  byte_buffer_init_sized (&buffer, frame_size);
+
+  do
+  {
+    bytes_read = recv (socket, buffer.data + position,
+                       buffer.max_data_length - position, 0);
+
+    if (bytes_read == -1)
+      elvin_error_from_socket (error);
+    else
+      position += bytes_read;
+  } while (position < buffer.max_data_length && elvin_error_ok (error));
+
+  if (elvin_error_ok (error) && message_read (&buffer, message, error))
+  {
+    if (buffer.position < frame_size)
+      elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
+  }
+
+  byte_buffer_free (&buffer);
+
+  return elvin_error_ok (error);
 }
 
 void read_int32 (ByteBuffer *buffer, Message message, ElvinError *error)

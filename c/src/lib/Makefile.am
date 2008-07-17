@@ -51,5 +51,6 @@ include_HEADERS = \
   $(public_inc)/elvin.h \
   $(public_inc)/errors.h \
   $(public_inc)/keys.h \
+  $(public_inc)/net.h \
   $(public_inc)/stdtypes.h \
   $(public_inc)/values.h
