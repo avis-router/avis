@@ -60,14 +60,14 @@ static bool send_and_receive (Elvin *elvin, Message request,
                               Message reply, MessageTypeID reply_type,
                               ElvinError *error);
 
-static bool send_message (Elvin *elvin, Message message, ElvinError *error);
+static bool send_message (socket_t socket, Message message, ElvinError *error);
 
-static bool receive_message (Elvin *elvin, Message message, ElvinError *error);
+static bool receive_message (socket_t socket, Message message, ElvinError *error);
 
 static void handle_notify_deliver (Elvin *elvin, Message message,
                                    ElvinError *error);
 
-static void handle_nack (Elvin *elvin, Message message, ElvinError *error);
+static void handle_nack (Message message, ElvinError *error);
 
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 
@@ -161,7 +161,7 @@ bool elvin_close (Elvin *elvin)
 
   if (elvin->polling)
   {
-    if (send_message (elvin, disconn_rqst, &error))
+    if (send_message (elvin->socket, disconn_rqst, &error))
     {
       time_t start_time = time (NULL);
 
@@ -245,7 +245,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
 
   elvin->polling = true;
 
-  if (receive_message (elvin, message, error))
+  if (receive_message (elvin->socket, message, error))
   {
     switch (message_type_of (message))
     {
@@ -275,7 +275,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-void handle_nack (Elvin *elvin, Message nack, ElvinError *error)
+void handle_nack (Message nack, ElvinError *error)
 {
   uint32_t error_code = int32_at_offset (nack, 4);
   const char *message = ptr_at_offset (nack, 8);
@@ -400,7 +400,7 @@ bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT,
                 notification, (uint32_t)security, notification_keys);
 
-  return send_message (elvin, notify_emit, error);
+  return send_message (elvin->socket, notify_emit, error);
 }
 
 Subscription *elvin_subscription_init (Subscription *subscription)
@@ -547,14 +547,14 @@ bool send_and_receive (Elvin *elvin, Message request,
                        Message reply, MessageTypeID reply_type,
                        ElvinError *error)
 {
-  if (send_message (elvin, request, error) &&
-      receive_message (elvin, reply, error))
+  if (send_message (elvin->socket, request, error) &&
+      receive_message (elvin->socket, reply, error))
   {
     if (message_type_of (reply) != reply_type)
     {
       if (message_type_of (reply) == MESSAGE_ID_NACK)
       {
-        handle_nack (elvin, reply, error);
+        handle_nack (reply, error);
       } else
       {
         elvin_error_set
@@ -591,7 +591,7 @@ bool send_and_receive (Elvin *elvin, Message request,
   #define elvin_error_from_socket(err) elvin_error_from_errno (err)
 #endif
 
-bool send_message (Elvin *elvin, Message message, ElvinError *error)
+bool send_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
@@ -613,7 +613,7 @@ bool send_message (Elvin *elvin, Message message, ElvinError *error)
 
   do
   {
-    int bytes_written = send (elvin->socket, buffer.data + position,
+    int bytes_written = send (socket, buffer.data + position,
                               buffer.position - position, 0);
 
     if (bytes_written == -1)
@@ -627,14 +627,14 @@ bool send_message (Elvin *elvin, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-bool receive_message (Elvin *elvin, Message message, ElvinError *error)
+bool receive_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   uint32_t frame_size;
   size_t position = 0;
   int bytes_read;
 
-  bytes_read = recv (elvin->socket, (void *)&frame_size, 4, 0);
+  bytes_read = recv (socket, (void *)&frame_size, 4, 0);
 
   if (bytes_read != 4)
   {
@@ -664,7 +664,7 @@ bool receive_message (Elvin *elvin, Message message, ElvinError *error)
 
   do
   {
-    bytes_read = recv (elvin->socket, buffer.data + position,
+    bytes_read = recv (socket, buffer.data + position,
                        buffer.max_data_length - position, 0);
 
     if (bytes_read == -1)
