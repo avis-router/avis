@@ -28,6 +28,7 @@ libavis_la_SOURCES = \
   listeners.c \
   listeners.h \
   log.c \
+  net.c \
   arrays.c \
   arrays_private.h \
   attributes_private.h \

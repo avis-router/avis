@@ -27,7 +27,7 @@
 
   typedef SOCKET socket_t;
 
-  #define close_socket(s) closesocket (s)
+  #define close_socket(s) (closesocket (s), WSACleanup ())
 
   #define sock_op_timed_out() (WSAGetLastError () == WSAETIMEDOUT)
 
@@ -48,5 +48,10 @@
 
   #define elvin_error_from_socket(err) elvin_error_from_errno (err)
 #endif
+
+#include <avis/errors.h>
+#include <avis/stdtypes.h>
+
+socket_t open_socket (const char *host, uint16_t port, ElvinError *error);
 
 #endif /* AVIS_NET_H_ */
