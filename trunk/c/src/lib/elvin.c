@@ -44,8 +44,8 @@
 static void elvin_shutdown (Elvin *elvin, CloseReason reason,
                             const char *message);
 
-static bool open_socket (Elvin *elvin, const char *host, uint16_t port,
-                         ElvinError *error);
+static socket_t open_socket (const char *host, uint16_t port,
+                             ElvinError *error);
 
 static bool send_and_receive (Elvin *elvin, Message request,
                               Message reply, MessageTypeID reply_type,
@@ -104,7 +104,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   elvin->notification_keys = notification_keys;
   elvin->subscription_keys = subscription_keys;
 
-  if (!open_socket (elvin, uri->host, uri->port, error))
+  if ((elvin->socket = open_socket (uri->host, uri->port, error)) == -1)
     return false;
 
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST,
@@ -583,21 +583,19 @@ Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
   return NULL;
 }
 
-bool open_socket (Elvin *elvin, const char *host, uint16_t port,
-                  ElvinError *error)
+socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
 {
   struct addrinfo hints;
   struct addrinfo *info;
   struct addrinfo *i;
   int error_code;
-  socket_t sock;
+  socket_t sock = -1;
   char service [10];
 
   #ifdef WIN32
-    on_error_return_false (init_windows_sockets (error));
+    if (!init_windows_sockets (error))
+      return -1;
   #endif
-
-  elvin->socket = -1;
 
   snprintf (service, sizeof (service), "%u", port);
 
@@ -607,11 +605,13 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
 
   if ((error_code = getaddrinfo (host, service, &hints, &info)))
   {
-    return elvin_error_set (error, host_to_elvin_error (error_code),
-                            gai_strerror (error_code));
+    elvin_error_set (error, host_to_elvin_error (error_code),
+                     gai_strerror (error_code));
+
+    return -1;
   }
 
-  for (i = info; i && elvin->socket == -1; i = i->ai_next)
+  for (i = info; i && sock == -1; i = i->ai_next)
   {
     sock = socket (i->ai_family, SOCK_STREAM, 0);
 
@@ -637,21 +637,21 @@ bool open_socket (Elvin *elvin, const char *host, uint16_t port,
                     (char *)&timeout, sizeof (timeout));
         setsockopt (sock, SOL_SOCKET, SO_SNDTIMEO,
                     (char *)&timeout, sizeof (timeout));
-
-        elvin->socket = sock;
       } else
       {
         close_socket (sock);
+
+        sock = -1;
       }
     }
   }
 
   freeaddrinfo (info);
 
-  if (elvin->socket != -1)
-    return true;
-  else
-    return elvin_error_from_errno (error);
+  if (sock == -1)
+    elvin_error_from_errno (error);
+
+  return sock;
 }
 
 void elvin_subscription_add_listener (Subscription *subscription,
