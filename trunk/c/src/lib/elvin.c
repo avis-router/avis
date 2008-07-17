@@ -45,6 +45,8 @@ static bool send_and_receive (Elvin *elvin, Message request,
                               Message reply, MessageTypeID reply_type,
                               ElvinError *error);
 
+static bool dispatch_message (Elvin *elvin, Message message, ElvinError *error);
+
 static bool receive_reply (Elvin *elvin, Message message,
                                    ElvinError *error);
 
@@ -223,18 +225,8 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
 
   if (receive_message (elvin->socket, message, error))
   {
-    switch (message_type_of (message))
+    if (!dispatch_message (elvin, message, error))
     {
-    case MESSAGE_ID_NOTIFY_DELIVER:
-      handle_notify_deliver (elvin, message, error);
-      break;
-    case MESSAGE_ID_DISCONN:
-      elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, "Router is shutting down");
-      break;
-    case MESSAGE_ID_DISCONN_RPLY:
-      elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
-      break;
-    default:
       elvin_error_set
         (error, ELVIN_ERROR_PROTOCOL,
          "Unexpected message type from router: %u", message_type_of (message));
@@ -559,25 +551,55 @@ bool send_and_receive (Elvin *elvin, Message request,
 
 /**
  * Receive a reply to a request message, handling any number of preceding
- * NotifyDeliver messages.
+ * incoming router-initiated messages.
  */
 bool receive_reply (Elvin *elvin, Message message, ElvinError *error)
 {
-  while (receive_message (elvin->socket, message, error) &&
-         elvin_error_ok (error))
+  while (elvin_error_ok (error) && elvin_is_open (elvin) &&
+         receive_message (elvin->socket, message, error))
   {
-    if (message_type_of (message) == MESSAGE_ID_NOTIFY_DELIVER)
-    {
-      handle_notify_deliver (elvin, message, error);
-
+    if (dispatch_message (elvin, message, error))
       message_free (message);
-    } else
-    {
+    else
       break;
-    }
   }
 
-  return elvin_error_ok (error);
+  if (elvin_error_ok (error))
+  {
+    return true;
+  } else
+  {
+    message_free (message);
+
+    return false;
+  }
+}
+
+/**
+ * Try to dispatch an incoming message from the router. Returns true
+ * if handled, false if not. The connection may be closed on return if
+ * a Disconn or DisconnRply is handled.
+ */
+bool dispatch_message (Elvin *elvin, Message message, ElvinError *error)
+{
+  bool handled = true;
+
+  switch (message_type_of (message))
+  {
+  case MESSAGE_ID_NOTIFY_DELIVER:
+    handle_notify_deliver (elvin, message, error);
+    break;
+  case MESSAGE_ID_DISCONN:
+    elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, "Router is shutting down");
+    break;
+  case MESSAGE_ID_DISCONN_RPLY:
+    elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
+    break;
+  default:
+    handled = false;
+  }
+
+  return handled;
 }
 
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
