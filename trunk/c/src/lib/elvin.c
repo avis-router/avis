@@ -45,6 +45,9 @@ static bool send_and_receive (Elvin *elvin, Message request,
                               Message reply, MessageTypeID reply_type,
                               ElvinError *error);
 
+static bool receive_reply (Elvin *elvin, Message message,
+                                   ElvinError *error);
+
 static void handle_notify_deliver (Elvin *elvin, Message message,
                                    ElvinError *error);
 
@@ -521,7 +524,7 @@ bool send_and_receive (Elvin *elvin, Message request,
                        ElvinError *error)
 {
   if (send_message (elvin->socket, request, error) &&
-      receive_message (elvin->socket, reply, error))
+      receive_reply (elvin, reply, error))
   {
     if (message_type_of (reply) != reply_type)
     {
@@ -554,6 +557,28 @@ bool send_and_receive (Elvin *elvin, Message request,
   return elvin_error_ok (error);
 }
 
+/**
+ * Receive a reply to a request message, handling any number of preceding
+ * NotifyDeliver messages.
+ */
+bool receive_reply (Elvin *elvin, Message message, ElvinError *error)
+{
+  while (receive_message (elvin->socket, message, error) &&
+         elvin_error_ok (error))
+  {
+    if (message_type_of (message) == MESSAGE_ID_NOTIFY_DELIVER)
+    {
+      handle_notify_deliver (elvin, message, error);
+
+      message_free (message);
+    } else
+    {
+      break;
+    }
+  }
+
+  return elvin_error_ok (error);
+}
 
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 {
