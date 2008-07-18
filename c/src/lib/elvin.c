@@ -546,7 +546,7 @@ bool send_and_receive (Elvin *elvin, Message request,
   if (error->code == ELVIN_ERROR_PROTOCOL)
     elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
 
-  return elvin_error_ok (error);
+  return elvin_error_ok (error) && elvin_is_open (elvin);
 }
 
 /**
@@ -566,7 +566,7 @@ bool receive_reply (Elvin *elvin, Message message, ElvinError *error)
 
   if (elvin_error_ok (error))
   {
-    return true;
+    return elvin_is_open (elvin);
   } else
   {
     message_free (message);
