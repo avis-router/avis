@@ -91,16 +91,15 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   alloc_message (conn_rqst);
   alloc_message (conn_rply);
 
-  elvin->socket = -1;
+  if ((elvin->socket = open_socket (uri->host, uri->port, error)) == -1)
+    return false;
+
   elvin->polling = false;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
   listeners_init (elvin->close_listeners);
   listeners_init (elvin->notification_listeners);
   elvin->notification_keys = notification_keys;
   elvin->subscription_keys = subscription_keys;
-
-  if ((elvin->socket = open_socket (uri->host, uri->port, error)) == -1)
-    return false;
 
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST,
                 (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
