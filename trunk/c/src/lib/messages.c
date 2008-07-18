@@ -280,8 +280,6 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
   {
     message_free (message);
 
-    memset (message, 0, MAX_MESSAGE_SIZE);
-
     return false;
   }
 }

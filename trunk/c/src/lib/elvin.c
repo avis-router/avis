@@ -148,7 +148,7 @@ bool elvin_close (Elvin *elvin)
       time_t start_time = time (NULL);
 
       /* wait for poll loop to shutdown connection */
-      while (elvin->socket != -1 &&
+      while (elvin_is_open (elvin) &&
              difftime (time (NULL), start_time) < AVIS_IO_TIMEOUT);
       {
         sleep_for (200);
@@ -160,8 +160,6 @@ bool elvin_close (Elvin *elvin)
                       MESSAGE_ID_DISCONN_RPLY, &error);
 
   }
-
-  elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
 
   elvin_error_free (&error);
 
@@ -198,7 +196,7 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 
 bool elvin_event_loop (Elvin *elvin, ElvinError *error)
 {
-  while (elvin->socket != -1 && elvin_error_ok (error))
+  while (elvin_is_open (elvin) && elvin_error_ok (error))
   {
     elvin_poll (elvin, error);
 
