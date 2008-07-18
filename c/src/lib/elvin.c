@@ -168,7 +168,7 @@ bool elvin_close (Elvin *elvin)
 void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 {
   size_t i;
-  Subscription *sub = elvin->subscriptions.items;
+  Subscription *sub;
   ListenersIterator l;
 
   if (elvin->socket == -1)
@@ -177,6 +177,8 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
   close_socket (elvin->socket);
 
   elvin->socket = -1;
+
+  sub = elvin->subscriptions.items;
 
   for (i = elvin->subscriptions.item_count; i > 0; i--, sub++)
     elvin_subscription_free (sub);
