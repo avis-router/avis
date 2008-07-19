@@ -589,7 +589,7 @@ bool dispatch_message (Elvin *elvin, Message message, ElvinError *error)
     handle_notify_deliver (elvin, message, error);
     break;
   case MESSAGE_ID_DISCONN:
-    elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, "Router is shutting down");
+    elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, ptr_at_offset (message, 4));
     break;
   case MESSAGE_ID_DISCONN_RPLY:
     elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
