@@ -224,7 +224,8 @@ public class Router implements IoHandler, Closeable
     closeListeners.fire (this);
     closeListeners = null;
     
-    Disconn disconnMessage = new Disconn (REASON_SHUTDOWN);
+    Disconn disconnMessage = 
+      new Disconn (REASON_SHUTDOWN, "Router is shutting down");
     
     for (IoSession session : sessions)
     {
