@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\lib\net.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\lib\sha1.c"
 				>
 			</File>
