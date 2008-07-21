@@ -25,7 +25,7 @@
 #ifdef WIN32
   #define snprintf _snprintf
 
-  static void init_windows_sockets (ElvinError *error);
+  static int init_windows_sockets (ElvinError *error);
 #endif
 
 socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
@@ -101,7 +101,7 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
 
 #ifdef WIN32
 
-void init_windows_sockets (ElvinError *error)
+int init_windows_sockets (ElvinError *error)
 {
   WSADATA wsaData;
   int err;
@@ -112,6 +112,7 @@ void init_windows_sockets (ElvinError *error)
   {
     elvin_error_set (error, ELVIN_ERROR_INTERNAL,
                      "Failed to init winsock library");
+	return 0;
   } else if (LOBYTE (wsaData.wVersion) != 2 ||
              HIBYTE (wsaData.wVersion) != 2)
   {
@@ -119,7 +120,9 @@ void init_windows_sockets (ElvinError *error)
 
     elvin_error_set (error, ELVIN_ERROR_INTERNAL,
                      "Failed to find winsock 2.2");
+	return 0;
   }
+  return 1;
 }
 
 #endif
