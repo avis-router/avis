@@ -350,8 +350,7 @@ bool send_message (socket_t socket, Message message, ElvinError *error)
   uint32_t frame_size;
 
   byte_buffer_init (&buffer);
-
-  on_error_return_false (byte_buffer_skip (&buffer, 4, error));
+  byte_buffer_skip (&buffer, 4, error);
 
   message_write (&buffer, message, error);
 
