@@ -75,4 +75,6 @@ socket_t select_ready (socket_t socket1, socket_t socket2, ElvinError *error);
 bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
                           ElvinError *error);
 
+void close_control_socket (socket_t socket_read, socket_t socket_write);
+
 #endif /* AVIS_NET_H_ */

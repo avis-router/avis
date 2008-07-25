@@ -28,17 +28,7 @@
   static bool init_windows_sockets (ElvinError *error);
 #endif
 
-#ifdef WIN32
-  /*
-   * Windows seems to treat the seconds field as
-   * milliseconds from what I can see running tests.
-   * Lord only knows what it thinks the microseconds
-   * field is.
-   */
-  #define init_timeout(t) {(t), 0}
-#else
-  #define init_timeout(t) {(t) / 1000, ((t) % 1000) * 1000}
-#endif
+#define init_timeout(t) {(t) / 1000, ((t) % 1000) * 1000}
 
 #define max(a,b) (a > b ? a : b)
 
@@ -268,6 +258,19 @@ bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
 }
 
 #endif /* defined (WIN32) */
+
+void close_control_socket (socket_t socket_read, socket_t socket_write)
+{
+#ifdef WIN32
+  closesocket (socket_read);
+  closesocket (socket_write);
+ 
+  WSACleanup ();
+#else
+  close (socket_read)
+  close (socket_write);
+#endif
+}
 
 #ifdef WIN32
 

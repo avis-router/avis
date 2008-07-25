@@ -177,8 +177,8 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
     return;
 
   close_socket (elvin->router_socket);
-  close_socket (elvin->control_socket_write);
-  close_socket (elvin->control_socket_read);
+  close_control_socket (elvin->control_socket_write, 
+                        elvin->control_socket_read);
 
   elvin->router_socket = -1;
 
