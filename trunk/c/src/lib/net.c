@@ -123,6 +123,10 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
 #include <windows.h>
 #include <io.h>
 
+/*
+ * See http://cantrip.org/socketpair.c
+ */
+
 /* socketpair.c
  * Copyright 2007 by Nathan C. Myers <ncm@cantrip.org>; all rights reserved.
  * This code is Free Software.  It may be copied freely, in original or
@@ -132,59 +136,85 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
  * for any reason the author might be held responsible for any consequences
  * of copying or use, license is withheld.
  */
-int dumb_socketpair(SOCKET socks[2], int make_overlapped)
+
+/* dumb_socketpair:
+ *   If make_overlapped is nonzero, both sockets created will be usable for
+ *   "overlapped" operations via WSASend etc.  If make_overlapped is zero,
+ *   socks[0] (only) will be usable with regular ReadFile etc., and thus
+ *   suitable for use as stdin or stdout of a child process.  Note that the
+ *   sockets must be closed with closesocket() regardless.
+ */
+int dumb_socketpair (SOCKET socks [2], int make_overlapped)
 {
   struct sockaddr_in addr;
   SOCKET listener;
   int e;
-  int addrlen = sizeof(addr);
+  int addrlen = sizeof (addr);
   DWORD flags = (make_overlapped ? WSA_FLAG_OVERLAPPED : 0);
 
-  if (socks == 0) {
-    WSASetLastError(WSAEINVAL);
+  if (socks == 0)
+  {
+    WSASetLastError (WSAEINVAL);
+
     return SOCKET_ERROR;
   }
 
-  socks[0] = socks[1] = INVALID_SOCKET;
-  if ((listener = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
-      return SOCKET_ERROR;
+  socks [0] = socks [1] = INVALID_SOCKET;
 
-  memset(&addr, 0, sizeof(addr));
+  if ((listener = socket (AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+    return SOCKET_ERROR;
+
+  memset(&addr, 0, sizeof (addr));
   addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = htonl(0x7f000001);
+  addr.sin_addr.s_addr = htonl (0x7f000001);
   addr.sin_port = 0;
 
-  e = bind(listener, (const struct sockaddr*) &addr, sizeof(addr));
-  if (e == SOCKET_ERROR) {
-      e = WSAGetLastError();
-    closesocket(listener);
-      WSASetLastError(e);
-      return SOCKET_ERROR;
+  e = bind (listener, (const struct sockaddr*) &addr, sizeof (addr));
+
+  if (e == SOCKET_ERROR)
+  {
+    e = WSAGetLastError ();
+    closesocket (listener);
+    WSASetLastError (e);
+
+    return SOCKET_ERROR;
   }
-  e = getsockname(listener, (struct sockaddr*) &addr, &addrlen);
-  if (e == SOCKET_ERROR) {
-      e = WSAGetLastError();
-    closesocket(listener);
-      WSASetLastError(e);
-      return SOCKET_ERROR;
+  e = getsockname (listener, (struct sockaddr*) &addr, &addrlen);
+
+  if (e == SOCKET_ERROR)
+  {
+    e = WSAGetLastError ();
+    closesocket (listener);
+    WSASetLastError (e);
+
+    return SOCKET_ERROR;
   }
 
-  do {
-      if (listen(listener, 1) == SOCKET_ERROR)                      break;
-      if ((socks[0] = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, flags))
-              == INVALID_SOCKET)                                    break;
-      if (connect(socks[0], (const struct sockaddr*) &addr,
-                  sizeof(addr)) == SOCKET_ERROR)                    break;
-      if ((socks[1] = accept(listener, NULL, NULL))
-              == INVALID_SOCKET)                                    break;
-      closesocket(listener);
-      return 0;
+  do
+  {
+    if (listen (listener, 1) == SOCKET_ERROR) break;
+
+    if ((socks [0] = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, flags))
+        == INVALID_SOCKET) break;
+    if (connect (socks [0], (const struct sockaddr*) &addr,
+            sizeof (addr)) == SOCKET_ERROR) break;
+
+    if ((socks [1] = accept (listener, NULL, NULL))
+        == INVALID_SOCKET) break;
+
+    closesocket (listener);
+
+    return 0;
   } while (0);
+
   e = WSAGetLastError();
-  closesocket(listener);
-  closesocket(socks[0]);
-  closesocket(socks[1]);
-  WSASetLastError(e);
+
+  closesocket (listener);
+  closesocket (socks [0]);
+  closesocket (socks [1]);
+
+  WSASetLastError (e);
+
   return SOCKET_ERROR;
 }
 
