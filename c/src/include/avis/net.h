@@ -72,9 +72,9 @@ socket_t select_ready (socket_t socket1, socket_t socket2, ElvinError *error);
 /**
  * Open a bi-directional control socket.
  */
-bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
+bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
                           ElvinError *error);
 
-void close_control_socket (socket_t socket_read, socket_t socket_write);
+void close_socket_pair (socket_t socket_read, socket_t socket_write);
 
 #endif /* AVIS_NET_H_ */

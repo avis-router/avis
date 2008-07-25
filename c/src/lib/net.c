@@ -188,7 +188,7 @@ int dumb_socketpair(SOCKET socks[2], int make_overlapped)
   return SOCKET_ERROR;
 }
 
-bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
+bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
                           ElvinError *error)
 {
   SOCKET sockets [2];
@@ -207,7 +207,7 @@ bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
 
 #else
 
-bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
+bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
                           ElvinError *error)
 {
   int pipes [2];
@@ -226,7 +226,7 @@ bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
 
 #endif /* defined (WIN32) */
 
-void close_control_socket (socket_t socket_read, socket_t socket_write)
+void close_socket_pair (socket_t socket_read, socket_t socket_write)
 {
   #ifdef WIN32
     closesocket (socket_read);

@@ -114,8 +114,8 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   if ((elvin->router_socket = open_socket (uri->host, uri->port, error)) == -1)
     return false;
 
-  if (!open_control_socket (&elvin->control_socket_read,
-                            &elvin->control_socket_write, error))
+  if (!open_socket_pair (&elvin->control_socket_read,
+                         &elvin->control_socket_write, error))
     return false;
 
   elvin->polling = false;
@@ -177,8 +177,7 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
     return;
 
   close_socket (elvin->router_socket);
-  close_control_socket (elvin->control_socket_write, 
-                        elvin->control_socket_read);
+  close_socket_pair (elvin->control_socket_write, elvin->control_socket_read);
 
   elvin->router_socket = -1;
 
@@ -228,6 +227,7 @@ bool receive_control_message (socket_t socket, Message message,
                               ElvinError *error)
 {
   int bytes_read;
+
   message_type_of (message) = MESSAGE_ID_CONTROL;
 
   bytes_read = pipe_read (socket, message + 4, sizeof (ControlMessage));
