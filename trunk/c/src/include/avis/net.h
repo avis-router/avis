@@ -55,4 +55,15 @@
 
 socket_t open_socket (const char *host, uint16_t port, ElvinError *error);
 
+/**
+ * Select a socket ready for reading. If both are ready, return socket2.s
+ */
+socket_t select_ready (socket_t socket1, socket_t socket2, ElvinError *error);
+
+/**
+ * Open a bi-directional control socket.
+ */
+bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
+                          ElvinError *error);
+
 #endif /* AVIS_NET_H_ */
