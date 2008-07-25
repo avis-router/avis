@@ -41,20 +41,21 @@ typedef ArrayList * Listeners;
  *
  * <h2>Threading Model</h2>
  *
- * Elvin client connections are not thread safe and are designed to be
- * driven by a single thread calling elvin_event_loop(). The only
- * exception is elvin_close(), which can be called from any thread,
- * and which will trigger elvin_event_loop() to exit normally,
- * allowing a clean shutdown.
+ * Elvin client connections are single-threaded, and are designed to
+ * be driven by a single thread calling elvin_event_loop(). To safely
+ * invoke operations from another thread, use elvin_invoke().
  *
  * @see elvin_open()
  * @see elvin_open_uri()
  * @see elvin_close()
  * @see elvin_event_loop()
+ * @see elvin_invoke()
  */
 typedef struct
 {
-  socket_t  socket;
+  socket_t  router_socket;
+  socket_t  control_socket_read;
+  socket_t  control_socket_write;
   ArrayList subscriptions;
   Listeners close_listeners;
   Listeners notification_listeners;
@@ -158,6 +159,11 @@ typedef void (*CloseListener) (Elvin *elvin, CloseReason reason,
  */
 typedef void (*GeneralNotificationListener)
   (Elvin *elvin, Attributes *attributes, bool secure, void *user_data);
+
+/**
+ * A handler function schedued to be called by elvin_invoke(). 
+ */
+typedef void (*InvokeHandler) (void *parameter);
 
 /**
  * Open a connection to an Elvin router.
@@ -477,6 +483,29 @@ bool elvin_is_open (Elvin *elvin);
  * @return True if the connection was closed, false if it was already closed.
  */
 bool elvin_close (Elvin *elvin);
+
+/**
+ * Invoke a function call inside the Elvin event loop thread. This
+ * call will return immediately, and the nominated handler will be
+ * called from the event loop thread at the earliest opportunity. This
+ * function is the only one that is safe to call from a thread other
+ * when running the main event loop.
+ * 
+ * @param elvin The Elvin connection.
+ * @param handler The handler to call.
+ * @param parameter The single parameter to supply to the handler
+ * (which may be NULL)
+ * @return True if the handler was queued for callback. False
+ * indicates the connection is closed or there was an internal error.
+ *
+ * Example: close the connection from another thread.
+ * <pre>
+ * Elvin *elvin = ...;
+ *
+ * elvin_invoke (elvin, elvin_close, elvin);
+ * </pre>
+ */
+bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter);
 
 /**
  * Add a listener that will be called when the connection is closed.

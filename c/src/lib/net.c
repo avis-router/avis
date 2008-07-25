@@ -28,6 +28,46 @@
   static bool init_windows_sockets (ElvinError *error);
 #endif
 
+#ifdef WIN32
+  /*
+   * Windows seems to treat the seconds field as
+   * milliseconds from what I can see running tests.
+   * Lord only knows what it thinks the microseconds
+   * field is.
+   */
+  #define init_timeout(t) {(t), 0}
+#else
+  #define init_timeout(t) {(t) / 1000, ((t) % 1000) * 1000}
+#endif
+
+#define max(a,b) (a > b ? a : b)
+
+socket_t select_ready (socket_t socket1, socket_t socket2, ElvinError *error)
+{
+  fd_set socks;
+  int ready_sockets;
+
+  FD_ZERO (&socks);
+  FD_SET (socket1, &socks);
+  FD_SET (socket2, &socks);
+
+  ready_sockets =
+    select (max (socket1, socket2) + 1, &socks, NULL, NULL, NULL);
+
+  if (ready_sockets == 0)
+  {
+    elvin_error_from_socket (error);
+
+    return -1;
+  } else if (ready_sockets == 1)
+  {
+    return (FD_ISSET (socket1, &socks)) ? socket1 : socket2;
+  } else
+  {
+    return socket2;
+  }
+}
+
 socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
 {
   struct addrinfo hints;
@@ -65,18 +105,7 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
       if (connect (sock, i->ai_addr, i->ai_addrlen) == 0)
       {
         /* set send/receive timeouts */
-        #ifdef WIN32
-          /*
-           * Windows seems to treat the seconds field as
-           * milliseconds from what I can see running tests.
-           * Lord only knows what it thinks the microseconds
-           * field is.
-           */
-          struct timeval timeout = {AVIS_IO_TIMEOUT, 0};
-        #else
-          struct timeval timeout =
-            {AVIS_IO_TIMEOUT / 1000, (AVIS_IO_TIMEOUT % 1000) * 1000};
-        #endif
+        struct timeval timeout = init_timeout (AVIS_IO_TIMEOUT);
 
         setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO,
                     (char *)&timeout, sizeof (timeout));
@@ -97,6 +126,23 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
     elvin_error_from_errno (error);
 
   return sock;
+}
+
+bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
+                          ElvinError *error)
+{
+  int pipes [2];
+
+  if (pipe (pipes) == 0)
+  {
+    *socket_read = pipes [0];
+    *socket_write = pipes [1];
+
+    return true;
+  } else
+  {
+    return elvin_error_from_errno (error);
+  }
 }
 
 #ifdef WIN32

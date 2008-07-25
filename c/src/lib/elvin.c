@@ -38,6 +38,21 @@
 #include "log.h"
 #include "avis_client_config.h"
 
+/**
+ * ID of synthetic control messages. Using 0 means message_free () will treat
+ * it as a disposed message.
+ */
+#define MESSAGE_ID_CONTROL 0
+
+/**
+ * The format of a message sent via the control socket.
+ */
+typedef struct
+{
+  InvokeHandler handler;
+  void *        parameter;
+} ControlMessage;
+
 static void elvin_shutdown (Elvin *elvin, CloseReason reason,
                             const char *message);
 
@@ -49,6 +64,11 @@ static bool dispatch_message (Elvin *elvin, Message message, ElvinError *error);
 
 static bool receive_reply (Elvin *elvin, Message message,
                                    ElvinError *error);
+
+static bool poll_message (Elvin *elvin, Message message, ElvinError *error);
+
+static void handle_control_message (Elvin *elvin, Message message,
+                                    ElvinError *error);
 
 static void handle_notify_deliver (Elvin *elvin, Message message,
                                    ElvinError *error);
@@ -91,7 +111,11 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   alloc_message (conn_rqst);
   alloc_message (conn_rply);
 
-  if ((elvin->socket = open_socket (uri->host, uri->port, error)) == -1)
+  if ((elvin->router_socket = open_socket (uri->host, uri->port, error)) == -1)
+    return false;
+
+  if (!open_control_socket (&elvin->control_socket_read,
+                            &elvin->control_socket_write, error))
     return false;
 
   elvin->polling = false;
@@ -119,15 +143,8 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
 
 bool elvin_is_open (Elvin *elvin)
 {
-  return elvin->socket != -1;
+  return elvin->router_socket != -1;
 }
-
-#ifdef WIN32
-  #include <windows.h>
-  #define sleep_for(t) Sleep (t)
-#else
-  #define sleep_for(t) usleep (t)
-#endif
 
 bool elvin_close (Elvin *elvin)
 {
@@ -135,30 +152,15 @@ bool elvin_close (Elvin *elvin)
   alloc_message (disconn_rqst);
   alloc_message (disconn_rply);
 
-  if (elvin->socket == -1)
+  if (elvin->router_socket == -1)
     return false;
 
   message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
 
-  if (elvin->polling)
-  {
-    if (send_message (elvin->socket, disconn_rqst, &error))
-    {
-      time_t start_time = time (NULL);
+  send_and_receive (elvin, disconn_rqst, disconn_rply,
+                    MESSAGE_ID_DISCONN_RPLY, &error);
 
-      /* wait for poll loop to shutdown connection */
-      while (elvin_is_open (elvin) &&
-             difftime (time (NULL), start_time) < AVIS_IO_TIMEOUT);
-      {
-        sleep_for (200);
-      }
-    }
-  } else
-  {
-    send_and_receive (elvin, disconn_rqst, disconn_rply,
-                      MESSAGE_ID_DISCONN_RPLY, &error);
-
-  }
+  elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
 
   elvin_error_free (&error);
 
@@ -171,12 +173,14 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
   Subscription *sub;
   ListenersIterator l;
 
-  if (elvin->socket == -1)
+  if (elvin->router_socket == -1)
     return;
 
-  close_socket (elvin->socket);
+  close_socket (elvin->router_socket);
+  close_socket (elvin->control_socket_write);
+  close_socket (elvin->control_socket_read);
 
-  elvin->socket = -1;
+  elvin->router_socket = -1;
 
   sub = elvin->subscriptions.items;
 
@@ -209,6 +213,54 @@ bool elvin_event_loop (Elvin *elvin, ElvinError *error)
   return elvin_error_ok (error);
 }
 
+bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
+{
+  ControlMessage message;
+
+  message.handler = handler;
+  message.parameter = parameter;
+
+  return write (elvin->control_socket_write,
+                &message, sizeof (message)) == sizeof (message);
+}
+
+bool receive_control_message (socket_t socket, Message message,
+                              ElvinError *error)
+{
+  int bytes_read;
+  message_type_of (message) = MESSAGE_ID_CONTROL;
+
+  bytes_read = read (socket, message + 4, sizeof (ControlMessage));
+
+  if (bytes_read == sizeof (ControlMessage))
+    return true;
+  else
+    return elvin_error_from_errno (error);
+}
+
+void handle_control_message (Elvin *elvin, Message message, ElvinError *error)
+{
+  ControlMessage *control_message = (ControlMessage *)(message + 4);
+
+  (*control_message->handler) (control_message->parameter);
+}
+
+/**
+ * Poll the router and control sockets for incoming messages.
+ */
+bool poll_message (Elvin *elvin, Message message, ElvinError *error)
+{
+  socket_t ready_socket =
+    select_ready (elvin->router_socket, elvin->control_socket_read, error);
+
+  if (ready_socket == elvin->router_socket)
+    receive_message (elvin->router_socket, message, error);
+  else if (ready_socket == elvin->control_socket_read)
+    receive_control_message (elvin->control_socket_read, message, error);
+
+  return elvin_error_ok (error);
+}
+
 bool elvin_poll (Elvin *elvin, ElvinError *error)
 {
   alloc_message (message);
@@ -222,7 +274,7 @@ bool elvin_poll (Elvin *elvin, ElvinError *error)
 
   elvin->polling = true;
 
-  if (receive_message (elvin->socket, message, error))
+  if (poll_message (elvin, message, error))
   {
     if (!dispatch_message (elvin, message, error))
     {
@@ -367,7 +419,7 @@ bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT,
                 notification, (uint32_t)security, notification_keys);
 
-  return send_message (elvin->socket, notify_emit, error);
+  return send_message (elvin->router_socket, notify_emit, error);
 }
 
 Subscription *elvin_subscription_init (Subscription *subscription)
@@ -514,7 +566,7 @@ bool send_and_receive (Elvin *elvin, Message request,
                        Message reply, MessageTypeID reply_type,
                        ElvinError *error)
 {
-  if (send_message (elvin->socket, request, error) &&
+  if (send_message (elvin->router_socket, request, error) &&
       receive_reply (elvin, reply, error))
   {
     if (message_type_of (reply) != reply_type)
@@ -555,7 +607,7 @@ bool send_and_receive (Elvin *elvin, Message request,
 bool receive_reply (Elvin *elvin, Message message, ElvinError *error)
 {
   while (elvin_error_ok (error) && elvin_is_open (elvin) &&
-         receive_message (elvin->socket, message, error))
+         receive_message (elvin->router_socket, message, error))
   {
     if (dispatch_message (elvin, message, error))
       message_free (message);
@@ -585,14 +637,14 @@ bool dispatch_message (Elvin *elvin, Message message, ElvinError *error)
 
   switch (message_type_of (message))
   {
+  case MESSAGE_ID_CONTROL:
+    handle_control_message (elvin, message, error);
+    break;
   case MESSAGE_ID_NOTIFY_DELIVER:
     handle_notify_deliver (elvin, message, error);
     break;
   case MESSAGE_ID_DISCONN:
     elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, ptr_at_offset (message, 4));
-    break;
-  case MESSAGE_ID_DISCONN_RPLY:
-    elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
     break;
   default:
     handled = false;
