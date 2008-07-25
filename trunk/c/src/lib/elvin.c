@@ -65,10 +65,12 @@ static bool dispatch_message (Elvin *elvin, Message message, ElvinError *error);
 static bool receive_reply (Elvin *elvin, Message message,
                                    ElvinError *error);
 
-static bool poll_message (Elvin *elvin, Message message, ElvinError *error);
+static bool poll_receive_message (Elvin *elvin, Message message, ElvinError *error);
 
-static void handle_control_message (Elvin *elvin, Message message,
-                                    ElvinError *error);
+static bool receive_control_message (socket_t socket, Message message,
+                                     ElvinError *error);
+
+static void handle_control_message (Elvin *elvin, Message message);
 
 static void handle_notify_deliver (Elvin *elvin, Message message,
                                    ElvinError *error);
@@ -212,6 +214,81 @@ bool elvin_event_loop (Elvin *elvin, ElvinError *error)
   return elvin_error_ok (error);
 }
 
+bool elvin_poll (Elvin *elvin, ElvinError *error)
+{
+  alloc_message (message);
+
+  if (elvin->polling)
+  {
+    return elvin_error_set (error, ELVIN_ERROR_USAGE,
+                            "elvin_poll () called concurrently");
+  }
+
+  elvin->polling = true;
+
+  if (poll_receive_message (elvin, message, error))
+  {
+    if (!dispatch_message (elvin, message, error))
+    {
+      elvin_error_set
+        (error, ELVIN_ERROR_PROTOCOL,
+         "Unexpected message type from router: %u", message_type_of (message));
+    }
+
+    message_free (message);
+  }
+
+  if (error->code == ELVIN_ERROR_PROTOCOL)
+    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
+
+  elvin->polling = false;
+
+  return elvin_error_ok (error);
+}
+
+/**
+ * Poll the router and control sockets for incoming messages.
+ */
+bool poll_receive_message (Elvin *elvin, Message message, ElvinError *error)
+{
+  socket_t ready_socket =
+    select_ready (elvin->router_socket, elvin->control_socket_read, error);
+
+  if (ready_socket == elvin->router_socket)
+    return receive_message (elvin->router_socket, message, error);
+  else if (ready_socket == elvin->control_socket_read)
+    return receive_control_message (elvin->control_socket_read, message, error);
+  else
+    return false;
+}
+
+/**
+ * Try to dispatch an incoming message from the router. Returns true
+ * if handled, false if not. The connection may be closed on return if
+ * a Disconn or DisconnRply is handled.
+ */
+bool dispatch_message (Elvin *elvin, Message message, ElvinError *error)
+{
+  bool handled = true;
+
+  switch (message_type_of (message))
+  {
+  case MESSAGE_ID_CONTROL:
+    handle_control_message (elvin, message);
+    break;
+  case MESSAGE_ID_NOTIFY_DELIVER:
+    handle_notify_deliver (elvin, message, error);
+    break;
+  case MESSAGE_ID_DISCONN:
+    elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, ptr_at_offset (message, 4));
+    break;
+  default:
+    handled = false;
+  }
+
+  return handled;
+}
+
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
 {
   ControlMessage message;
@@ -238,60 +315,12 @@ bool receive_control_message (socket_t socket, Message message,
     return elvin_error_from_pipe (error);
 }
 
-void handle_control_message (Elvin *elvin, Message message, ElvinError *error)
+/* TODO: do we want to allow handlers access to an error context? */
+void handle_control_message (Elvin *elvin, Message message)
 {
   ControlMessage *control_message = (ControlMessage *)(message + 4);
 
   (*control_message->handler) (control_message->parameter);
-}
-
-/**
- * Poll the router and control sockets for incoming messages.
- */
-bool poll_message (Elvin *elvin, Message message, ElvinError *error)
-{
-  socket_t ready_socket =
-    select_ready (elvin->router_socket, elvin->control_socket_read, error);
-
-  if (ready_socket == elvin->router_socket)
-    return receive_message (elvin->router_socket, message, error);
-  else if (ready_socket == elvin->control_socket_read)
-    return receive_control_message (elvin->control_socket_read, message, error);
-  else
-    return false;
-}
-
-bool elvin_poll (Elvin *elvin, ElvinError *error)
-{
-  alloc_message (message);
-
-  if (elvin->polling)
-  {
-    elvin_error_set (error, ELVIN_ERROR_USAGE, "poll () called concurrently");
-
-    return false;
-  }
-
-  elvin->polling = true;
-
-  if (poll_message (elvin, message, error))
-  {
-    if (!dispatch_message (elvin, message, error))
-    {
-      elvin_error_set
-        (error, ELVIN_ERROR_PROTOCOL,
-         "Unexpected message type from router: %u", message_type_of (message));
-    }
-
-    message_free (message);
-  }
-
-  if (error->code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
-
-  elvin->polling = false;
-
-  return elvin_error_ok (error);
 }
 
 void handle_nack (Message nack, ElvinError *error)
@@ -624,33 +653,6 @@ bool receive_reply (Elvin *elvin, Message message, ElvinError *error)
 
     return false;
   }
-}
-
-/**
- * Try to dispatch an incoming message from the router. Returns true
- * if handled, false if not. The connection may be closed on return if
- * a Disconn or DisconnRply is handled.
- */
-bool dispatch_message (Elvin *elvin, Message message, ElvinError *error)
-{
-  bool handled = true;
-
-  switch (message_type_of (message))
-  {
-  case MESSAGE_ID_CONTROL:
-    handle_control_message (elvin, message, error);
-    break;
-  case MESSAGE_ID_NOTIFY_DELIVER:
-    handle_notify_deliver (elvin, message, error);
-    break;
-  case MESSAGE_ID_DISCONN:
-    elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, ptr_at_offset (message, 4));
-    break;
-  default:
-    handled = false;
-  }
-
-  return handled;
 }
 
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
