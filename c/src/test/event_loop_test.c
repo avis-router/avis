@@ -23,11 +23,23 @@
 #include <avis/elvin.h>
 #include <avis/attributes.h>
 
-/* On non-Windows, use POSIX threads by default */
-#ifndef USE_PTHREADS
-  #ifndef WIN32
-    #define USE_PTHREADS 1
-  #endif
+#ifdef WIN32
+  typedef HANDLE thread_t;
+
+  #define create_thread(thread, handler, param) \
+    ((thread = CreateThread (NULL, 0, handler, param, 0, NULL)) == NULL)
+
+  #define sleep(secs) Sleep (secs * 1000)
+
+  #define decl_thread_proc(name, param) DWORD WINAPI name (LPVOID param)
+#else
+  #include <unistd.h>
+  #include <pthread.h>
+
+  typedef pthread_t thread_t;
+  #define create_thread(thread, handler, param) pthread_create (&thread, NULL, handler, param)
+
+  #define decl_thread_proc(name, param) void *name (void *param)
 #endif
 
 void close_listener (Elvin *elvin, CloseReason reason, const char *message,
@@ -43,23 +55,16 @@ void sub_listener (Subscription *sub, Attributes *attributes, bool secure,
           attributes_get_string (attributes, "message"));
 }
 
-#ifdef USE_PTHREADS
-
-#include <unistd.h>
-#include <pthread.h>
-
-static void *close_thread_main (void *data)
+static decl_thread_proc (close_thread_main, data)
 {
-  sleep (10);
+  sleep (2);
 
   printf ("Closing connection on timeout\n");
 
   elvin_close ((Elvin *)data);
 
-  return NULL;
+  return 0;
 }
-
-#endif /* USE_PTHREADS */
 
 int main (int argc, const char * argv[])
 {
@@ -67,10 +72,7 @@ int main (int argc, const char * argv[])
   Subscription *sub;
   ElvinError error = ELVIN_EMPTY_ERROR;
   const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
-
-  #ifdef USE_PTHREADS
-    pthread_t close_thread;
-  #endif
+  thread_t close_thread;
 
   if (!elvin_open (&elvin, uri, &error))
   {
@@ -80,10 +82,8 @@ int main (int argc, const char * argv[])
 
   elvin_add_close_listener (&elvin, close_listener, NULL);
 
-  #ifdef USE_PTHREADS
-    if (pthread_create (&close_thread, NULL, close_thread_main, &elvin))
-      exit (1);
-  #endif
+  if (create_thread (close_thread, close_thread_main, &elvin))
+    exit (1);
 
   /* TODO handle Ctrl+C */
   sub = elvin_subscribe (&elvin, "require (test) && string (message)", &error);
@@ -96,8 +96,9 @@ int main (int argc, const char * argv[])
 
   elvin_subscription_add_listener (sub, sub_listener, NULL);
 
-  printf ("Start event loop\n");
+  printf ("Start event loop...\n");
   elvin_event_loop (&elvin, &error);
+  printf ("End event loop\n");
 
   if (elvin_error_occurred (&error))
     elvin_perror ("receive", &error);
