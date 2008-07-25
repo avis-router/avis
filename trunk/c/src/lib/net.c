@@ -120,6 +120,62 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
   return sock;
 }
 
+bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
+                       ElvinError *error)
+{
+  #ifdef WIN32
+
+    SOCKET sockets [2];
+
+    if (!init_windows_sockets (error))
+      return -1;
+
+    if (!dumb_socketpair (sockets, 0))
+    {
+      *socket_read = sockets [0];
+      *socket_write = sockets [1];
+
+      return true;
+    } else
+    {
+      return false;
+    }
+
+  #else
+
+    int pipes [2];
+
+    if (pipe (pipes) == 0)
+    {
+      *socket_read = pipes [0];
+      *socket_write = pipes [1];
+
+      return true;
+    } else
+    {
+      return elvin_error_from_errno (error);
+    }
+
+  #endif /* defined (WIN32) */
+}
+
+void close_socket_pair (socket_t socket_read, socket_t socket_write)
+{
+  #ifdef WIN32
+
+    closesocket (socket_read);
+    closesocket (socket_write);
+
+    WSACleanup ();
+
+  #else
+
+    close (socket_read);
+    close (socket_write);
+
+  #endif
+}
+
 #ifdef WIN32
 
 #include <windows.h>
@@ -219,59 +275,6 @@ int dumb_socketpair (SOCKET socks [2], int make_overlapped)
 
   return SOCKET_ERROR;
 }
-
-bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
-                          ElvinError *error)
-{
-  SOCKET sockets [2];
-
-  if (!dumb_socketpair (sockets, 0))
-  {
-    *socket_read = sockets [0];
-    *socket_write = sockets [1];
-
-    return true;
-  } else
-  {
-    return false;
-  }
-}
-
-#else
-
-bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
-                       ElvinError *error)
-{
-  int pipes [2];
-
-  if (pipe (pipes) == 0)
-  {
-    *socket_read = pipes [0];
-    *socket_write = pipes [1];
-
-    return true;
-  } else
-  {
-    return elvin_error_from_errno (error);
-  }
-}
-
-#endif /* defined (WIN32) */
-
-void close_socket_pair (socket_t socket_read, socket_t socket_write)
-{
-  #ifdef WIN32
-    closesocket (socket_read);
-    closesocket (socket_write);
-
-    WSACleanup ();
-  #else
-    close (socket_read);
-    close (socket_write);
-  #endif
-}
-
-#ifdef WIN32
 
 bool init_windows_sockets (ElvinError *error)
 {
