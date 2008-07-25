@@ -57,13 +57,13 @@ void sub_listener (Subscription *sub, Attributes *attributes, bool secure,
           attributes_get_string (attributes, "message"));
 }
 
-static decl_thread_proc (close_thread_main, data)
+static decl_thread_proc (close_thread_main, elvin)
 {
   sleep (2);
 
   printf ("Closing connection on timeout\n");
 
-  elvin_close ((Elvin *)data);
+  elvin_invoke (elvin, (InvokeHandler)elvin_close, elvin);
 
   return 0;
 }
