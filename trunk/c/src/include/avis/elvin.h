@@ -572,10 +572,10 @@ bool elvin_remove_notification_listener (Elvin *elvin,
                                          GeneralNotificationListener listener);
 
 /**
- * Continuously poll an Elvin connection for an incoming messages from the
- * router until the client connection is closed. Clients that create
- * subscriptions should call this function after subscribing to receive
- * notifications and dispatch them to their listeners.
+ * Continuously poll an Elvin connection for an incoming messages from
+ * the router until the client connection is closed. Clients that
+ * create subscriptions should call this function after subscribing to
+ * receive notifications and dispatch them to their listeners.
  *
  * This function will block, and only return when the connection is
  * closed, by the client with elvin_close(), by the router, or due to
@@ -598,6 +598,7 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  *
  * @see elvin_close()
  * @see elvin_poll()
+ * @see elvin_event_loop()
  */
 bool elvin_event_loop (Elvin *elvin, ElvinError *error);
 
