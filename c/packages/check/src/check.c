@@ -209,12 +209,16 @@ void _fail_unless (int result, const char *file,
     if (msg == NULL)
       msg = expr;
     vsnprintf(buf, BUFSIZ, msg, ap);
-    va_end(ap);
+    va_end(ap); 
     send_failure_info (buf);
 #ifdef HAVE_FORK
     if (cur_fork_status() == CK_FORK)
       exit(1);
-#endif //HAVE_FORK
+#else
+    /* TODO: this is a total hack to work around Windows */
+    fprintf (stderr, "Test failed: %s\n", buf);
+    exit (1);
+#endif
   }
 }
 
