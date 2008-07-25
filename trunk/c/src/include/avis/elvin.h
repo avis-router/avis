@@ -35,15 +35,19 @@
 typedef ArrayList * Listeners;
 
 /**
- * A client connection to an Elvin router. Typically a client creates a
- * connection (elvin_open()) and then subscribes to notifications
- * (elvin_subscribe()) and/or sends them (elvin_send()).
+ * A client connection to an Elvin router. Typically a client creates
+ * a connection (elvin_open()) and then subscribes to notifications
+ * (elvin_subscribe()) and/or sends them (elvin_send()). For
+ * applications that create subscriptions, the usual model is to
+ * connect, subscribe and then call elvin_event_loop() to dispatch
+ * incoming notifications.
  *
  * <h2>Threading Model</h2>
  *
  * Elvin client connections are single-threaded, and are designed to
- * be driven by a single thread calling elvin_event_loop(). To safely
- * invoke operations from another thread, use elvin_invoke().
+ * be driven by a thread calling elvin_event_loop(). Multi-threaded
+ * applications should use elvin_invoke() to safely invoke operations in
+ * the event loop thread.
  *
  * @see elvin_open()
  * @see elvin_open_uri()
@@ -161,7 +165,7 @@ typedef void (*GeneralNotificationListener)
   (Elvin *elvin, Attributes *attributes, bool secure, void *user_data);
 
 /**
- * A handler function schedued to be called by elvin_invoke(). 
+ * A handler function schedued to be called by elvin_invoke().
  */
 typedef void (*InvokeHandler) (void *parameter);
 
@@ -487,10 +491,11 @@ bool elvin_close (Elvin *elvin);
 /**
  * Invoke a function call inside the Elvin event loop thread. This
  * call will return immediately, and the nominated handler will be
- * called from the event loop thread at the earliest opportunity. This
- * function is the only one that is safe to call from a thread other
- * when running the main event loop.
- * 
+ * called from the event loop thread (the one calling
+ * elvin_event_loop()) at the earliest opportunity. This function is
+ * the only one that is safe to call from any thread when running the
+ * main event loop.
+ *
  * @param elvin The Elvin connection.
  * @param handler The handler to call.
  * @param parameter The single parameter to supply to the handler
@@ -572,8 +577,12 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  * subscriptions should call this function after subscribing to receive
  * notifications and dispatch them to their listeners.
  *
- * This function will return when the connection is closed (either by the
- * client with elvin_close() or by the router), or if an error occurs.
+ * This function will block, and only return when the connection is
+ * closed, by the client with elvin_close(), by the router, or due to
+ * an error.
+ *
+ * To close the connection from another thread, call elvin_close()
+ * from elvin_invoke().
  *
  * Example:
  *
@@ -593,15 +602,17 @@ bool elvin_remove_notification_listener (Elvin *elvin,
 bool elvin_event_loop (Elvin *elvin, ElvinError *error);
 
 /**
- * Poll an Elvin connection for a single incoming message from the router.
- * This will block until a notification or disconnect message is received from
- * the router, or until ELVIN_IO_TIMEOUT milliseconds have passed (in which
- * case the error code will be set to ELVIN_ERROR_TIMEOUT). On receipt
- * of a notification, any listeners to the notification will be called from
- * this function. On receipt of a disconnect or socket close, the connection
- * will be shut down.
+ * Poll an Elvin connection for a single incoming message from the
+ * router. This will block until a notification or disconnect message
+ * is received from the router, or until ELVIN_IO_TIMEOUT milliseconds
+ * have passed (in which case the error code will be set to
+ * ELVIN_ERROR_TIMEOUT).
  *
- * This method should not normally be needed by clients: see
+ * On receipt of a notification, any listeners to the notification
+ * will be called from this function. On receipt of a disconnect or
+ * socket close, the connection will be shut down.
+ *
+ * This method wil not normally be useful to clients: see
  * elvin_event_loop() instead.
  *
  * @return True if no error occurred.
