@@ -37,7 +37,9 @@
   #include <pthread.h>
 
   typedef pthread_t thread_t;
-  #define create_thread(thread, handler, param) pthread_create (&thread, NULL, handler, param)
+
+  #define create_thread(thread, handler, param) \
+    pthread_create (&thread, NULL, handler, param)
 
   #define decl_thread_proc(name, param) void *name (void *param)
 #endif
