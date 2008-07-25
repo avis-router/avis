@@ -220,8 +220,8 @@ bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
   message.handler = handler;
   message.parameter = parameter;
 
-  return write (elvin->control_socket_write,
-                &message, sizeof (message)) == sizeof (message);
+  return pipe_write (elvin->control_socket_write,
+                     &message, sizeof (message)) == sizeof (message);
 }
 
 bool receive_control_message (socket_t socket, Message message,
@@ -230,12 +230,12 @@ bool receive_control_message (socket_t socket, Message message,
   int bytes_read;
   message_type_of (message) = MESSAGE_ID_CONTROL;
 
-  bytes_read = read (socket, message + 4, sizeof (ControlMessage));
+  bytes_read = pipe_read (socket, message + 4, sizeof (ControlMessage));
 
   if (bytes_read == sizeof (ControlMessage))
     return true;
   else
-    return elvin_error_from_errno (error);
+    return elvin_error_from_pipe (error);
 }
 
 void handle_control_message (Elvin *elvin, Message message, ElvinError *error)
