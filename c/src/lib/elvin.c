@@ -254,11 +254,11 @@ bool poll_message (Elvin *elvin, Message message, ElvinError *error)
     select_ready (elvin->router_socket, elvin->control_socket_read, error);
 
   if (ready_socket == elvin->router_socket)
-    receive_message (elvin->router_socket, message, error);
+    return receive_message (elvin->router_socket, message, error);
   else if (ready_socket == elvin->control_socket_read)
-    receive_control_message (elvin->control_socket_read, message, error);
-
-  return elvin_error_ok (error);
+    return receive_control_message (elvin->control_socket_read, message, error);
+  else
+    return false;
 }
 
 bool elvin_poll (Elvin *elvin, ElvinError *error)
