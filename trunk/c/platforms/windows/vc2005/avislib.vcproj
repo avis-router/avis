@@ -283,6 +283,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\avis\net.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\avis\stdtypes.h"
 				>
 			</File>
