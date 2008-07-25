@@ -45,6 +45,10 @@
 		C9B465D90DD82A9800A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465D70DD82A9800A1C448 /* messages.c */; };
 		C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B466750DD9374900A1C448 /* libcheck.dylib */; };
 		C9B467190DD9554E00A1C448 /* keys.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B467180DD9554E00A1C448 /* keys.h */; };
+		C9C88E0E0E39BBAE0010C768 /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = C9C88E0D0E39BBAE0010C768 /* net.c */; };
+		C9C88E120E39BBC40010C768 /* arrays.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E0F0E39BBC40010C768 /* arrays.h */; };
+		C9C88E130E39BBC40010C768 /* defs.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E100E39BBC40010C768 /* defs.h */; };
+		C9C88E140E39BBC40010C768 /* net.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E110E39BBC40010C768 /* net.h */; };
 		C9E7FF330DF9533B00F0210C /* libavis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libavis.dylib */; };
 		C9E7FF390DF9535700F0210C /* event_loop_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E7FF020DF951D800F0210C /* event_loop_test.c */; };
 		C9E7FF420DF9538300F0210C /* libavis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libavis.dylib */; };
@@ -153,6 +157,10 @@
 		C9B466750DD9374900A1C448 /* libcheck.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcheck.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B466850DD9377200A1C448 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B467180DD9554E00A1C448 /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../../src/include/avis/keys.h; sourceTree = SOURCE_ROOT; };
+		C9C88E0D0E39BBAE0010C768 /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = net.c; path = ../../src/lib/net.c; sourceTree = SOURCE_ROOT; };
+		C9C88E0F0E39BBC40010C768 /* arrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arrays.h; path = ../../src/include/avis/arrays.h; sourceTree = SOURCE_ROOT; };
+		C9C88E100E39BBC40010C768 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defs.h; path = ../../src/include/avis/defs.h; sourceTree = SOURCE_ROOT; };
+		C9C88E110E39BBC40010C768 /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = net.h; path = ../../src/include/avis/net.h; sourceTree = SOURCE_ROOT; };
 		C9E217F40E133A8E00FD24D9 /* check_ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = check_ext.h; path = ../../src/test/check_ext.h; sourceTree = SOURCE_ROOT; };
 		C9E7FF020DF951D800F0210C /* event_loop_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = event_loop_test.c; path = ../../src/test/event_loop_test.c; sourceTree = SOURCE_ROOT; };
 		C9E7FF370DF9533B00F0210C /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -251,6 +259,10 @@
 		08FB7795FE84155DC02AAC07 /* Client library */ = {
 			isa = PBXGroup;
 			children = (
+				C9C88E0F0E39BBC40010C768 /* arrays.h */,
+				C9C88E100E39BBC40010C768 /* defs.h */,
+				C9C88E110E39BBC40010C768 /* net.h */,
+				C9C88E0D0E39BBAE0010C768 /* net.c */,
 				C953D5A20E20BA05001F14EF /* errors_private.h */,
 				C99B745A0E1B3E6900D0A7B0 /* listeners.c */,
 				C99B745B0E1B3E6900D0A7B0 /* listeners.h */,
@@ -383,6 +395,9 @@
 				C9739E980E11EC5F00B7727F /* avis_client_config.h in Headers */,
 				C99B745D0E1B3E6900D0A7B0 /* listeners.h in Headers */,
 				C953D5A30E20BA05001F14EF /* errors_private.h in Headers */,
+				C9C88E120E39BBC40010C768 /* arrays.h in Headers */,
+				C9C88E130E39BBC40010C768 /* defs.h in Headers */,
+				C9C88E140E39BBC40010C768 /* net.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,6 +573,7 @@
 				C9F0DAB40E060C5D00DB5A88 /* sha1.c in Sources */,
 				C9739E960E11EC3100B7727F /* arrays.c in Sources */,
 				C99B745C0E1B3E6900D0A7B0 /* listeners.c in Sources */,
+				C9C88E0E0E39BBAE0010C768 /* net.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
