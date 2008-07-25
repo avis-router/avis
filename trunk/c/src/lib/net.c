@@ -204,39 +204,6 @@ bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
     return false;
   }
 }
-/*  struct addrinfo hints;
-  struct addrinfo *info;
-  int error_code;
-
-  if (!init_windows_sockets (error))
-    return -1;
-
-  memset (&hints, 0, sizeof (hints));
-  hints.ai_family = PF_INET;
-  hints.ai_socktype = SOCK_STREAM;
-
-  if ((error_code = getaddrinfo ("127.0.0.1", NULL, &hints, &info)))
-  {
-    elvin_error_set (error, host_to_elvin_error (error_code),
-                     gai_strerror (error_code));
-
-    return -1;
-  }
-
-  if ((*socket_read = socket (PF_INET, SOCK_STREAM, 0)) != -1 &&
-      (*socket_write = socket (PF_INET, SOCK_STREAM, 0)) != -1 &&
-      bind (*socket_read, info->ai_addr, info->ai_addrlen) == 0 &&
-      listen (*socket_read, SOMAXCONN) == 0 &&
-      connect (*socket_write, info->ai_addr, info->ai_addrlen) == 0)
-  {
-    return true;
-  } else
-  {
-    elvin_error_from_socket (error);
-
-    return false;
-  }
-  */
 
 #else
 
@@ -261,15 +228,15 @@ bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
 
 void close_control_socket (socket_t socket_read, socket_t socket_write)
 {
-#ifdef WIN32
-  closesocket (socket_read);
-  closesocket (socket_write);
- 
-  WSACleanup ();
-#else
-  close (socket_read)
-  close (socket_write);
-#endif
+  #ifdef WIN32
+    closesocket (socket_read);
+    closesocket (socket_write);
+
+    WSACleanup ();
+  #else
+    close (socket_read);
+    close (socket_write);
+  #endif
 }
 
 #ifdef WIN32
