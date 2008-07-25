@@ -26,6 +26,8 @@
   #define snprintf _snprintf
 
   static bool init_windows_sockets (ElvinError *error);
+
+  static int dumb_socketpair (SOCKET socks [2], int make_overlapped);
 #endif
 
 #define init_timeout(t) {(t) / 1000, ((t) % 1000) * 1000}
@@ -238,7 +240,7 @@ bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
 #else
 
 bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
-                          ElvinError *error)
+                       ElvinError *error)
 {
   int pipes [2];
 
