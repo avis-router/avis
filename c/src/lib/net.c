@@ -123,10 +123,132 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
   freeaddrinfo (info);
 
   if (sock == -1)
-    elvin_error_from_errno (error);
+    elvin_error_from_socket (error);
 
   return sock;
 }
+
+#ifdef WIN32
+
+#include <windows.h>
+#include <io.h>
+
+/* socketpair.c
+ * Copyright 2007 by Nathan C. Myers <ncm@cantrip.org>; all rights reserved.
+ * This code is Free Software.  It may be copied freely, in original or
+ * modified form, subject only to the restrictions that (1) the author is
+ * relieved from all responsibilities for any use for any purpose, and (2)
+ * this copyright notice must be retained, unchanged, in its entirety.  If
+ * for any reason the author might be held responsible for any consequences
+ * of copying or use, license is withheld.
+ */
+int dumb_socketpair(SOCKET socks[2], int make_overlapped)
+{
+  struct sockaddr_in addr;
+  SOCKET listener;
+  int e;
+  int addrlen = sizeof(addr);
+  DWORD flags = (make_overlapped ? WSA_FLAG_OVERLAPPED : 0);
+
+  if (socks == 0) {
+    WSASetLastError(WSAEINVAL);
+    return SOCKET_ERROR;
+  }
+
+  socks[0] = socks[1] = INVALID_SOCKET;
+  if ((listener = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+      return SOCKET_ERROR;
+
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = htonl(0x7f000001);
+  addr.sin_port = 0;
+
+  e = bind(listener, (const struct sockaddr*) &addr, sizeof(addr));
+  if (e == SOCKET_ERROR) {
+      e = WSAGetLastError();
+    closesocket(listener);
+      WSASetLastError(e);
+      return SOCKET_ERROR;
+  }
+  e = getsockname(listener, (struct sockaddr*) &addr, &addrlen);
+  if (e == SOCKET_ERROR) {
+      e = WSAGetLastError();
+    closesocket(listener);
+      WSASetLastError(e);
+      return SOCKET_ERROR;
+  }
+
+  do {
+      if (listen(listener, 1) == SOCKET_ERROR)                      break;
+      if ((socks[0] = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, flags))
+              == INVALID_SOCKET)                                    break;
+      if (connect(socks[0], (const struct sockaddr*) &addr,
+                  sizeof(addr)) == SOCKET_ERROR)                    break;
+      if ((socks[1] = accept(listener, NULL, NULL))
+              == INVALID_SOCKET)                                    break;
+      closesocket(listener);
+      return 0;
+  } while (0);
+  e = WSAGetLastError();
+  closesocket(listener);
+  closesocket(socks[0]);
+  closesocket(socks[1]);
+  WSASetLastError(e);
+  return SOCKET_ERROR;
+}
+
+bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
+                          ElvinError *error)
+{
+  SOCKET sockets [2];
+
+  if (!dumb_socketpair (sockets, 0))
+  {
+    *socket_read = sockets [0];
+    *socket_write = sockets [1];
+
+    return true;
+  } else
+  {
+    return false;
+  }
+}
+/*  struct addrinfo hints;
+  struct addrinfo *info;
+  int error_code;
+
+  if (!init_windows_sockets (error))
+    return -1;
+
+  memset (&hints, 0, sizeof (hints));
+  hints.ai_family = PF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+
+  if ((error_code = getaddrinfo ("127.0.0.1", NULL, &hints, &info)))
+  {
+    elvin_error_set (error, host_to_elvin_error (error_code),
+                     gai_strerror (error_code));
+
+    return -1;
+  }
+
+  if ((*socket_read = socket (PF_INET, SOCK_STREAM, 0)) != -1 &&
+      (*socket_write = socket (PF_INET, SOCK_STREAM, 0)) != -1 &&
+      bind (*socket_read, info->ai_addr, info->ai_addrlen) == 0 &&
+      listen (*socket_read, SOMAXCONN) == 0 &&
+      connect (*socket_write, info->ai_addr, info->ai_addrlen) == 0)
+  {
+    return true;
+  } else
+  {
+    elvin_error_from_socket (error);
+
+    return false;
+  }
+  */
+
+#else
 
 bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
                           ElvinError *error)
@@ -144,6 +266,8 @@ bool open_control_socket (socket_t *socket_read, socket_t *socket_write,
     return elvin_error_from_errno (error);
   }
 }
+
+#endif /* defined (WIN32) */
 
 #ifdef WIN32
 

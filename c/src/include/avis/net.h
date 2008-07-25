@@ -27,9 +27,14 @@
 
   typedef SOCKET socket_t;
 
+  #define pipe_read(socket, buff, length) recv (socket, buff, length, 0)
+  #define pipe_write(socket, buff, length) send (socket, buff, length, 0)
+
   #define close_socket(s) (closesocket (s), WSACleanup ())
 
   #define sock_op_timed_out() (WSAGetLastError () == WSAETIMEDOUT)
+
+  #define elvin_error_from_pipe elvin_error_from_socket
 
   #define elvin_error_from_socket(err) \
     elvin_error_set (err, errno_to_elvin_error (WSAGetLastError ()), \
@@ -43,11 +48,15 @@
 
   typedef int socket_t;
 
+  #define pipe_read(socket, buff, length) read (socket, buff, length)
+  #define pipe_write(socket, buff, length) write (socket, buff, length)
+
   #define close_socket(s) close (s)
 
   #define sock_op_timed_out() (errno == EAGAIN || errno == EWOULDBLOCK)
 
-  #define elvin_error_from_socket(err) elvin_error_from_errno (err)
+  #define elvin_error_from_pipe elvin_error_from_errno
+  #define elvin_error_from_socket elvin_error_from_errno
 #endif
 
 #include <avis/errors.h>
