@@ -106,8 +106,6 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
       } else
       {
         close_socket (sock);
-
-        sock = -1;
       }
     }
   }

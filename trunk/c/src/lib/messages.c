@@ -332,6 +332,9 @@ MessageFormat *message_format_for (MessageTypeID type)
 {
   MessageFormat *format;
 
+  if (type == 0)
+    return NULL;
+
   for (format = MESSAGE_FORMATS; format->id != -1; format++)
   {
     if (format->id == type)
