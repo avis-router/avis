@@ -118,7 +118,11 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
 
   if (!open_socket_pair (&elvin->control_socket_read,
                          &elvin->control_socket_write, error))
+  {
+    close_socket (elvin->router_socket);
+
     return false;
+  }
 
   elvin->polling = false;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
@@ -180,8 +184,6 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 
   close_socket (elvin->router_socket);
   close_socket_pair (elvin->control_socket_write, elvin->control_socket_read);
-
-  elvin->router_socket = -1;
 
   sub = elvin->subscriptions.items;
 
