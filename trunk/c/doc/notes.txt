@@ -2,8 +2,11 @@ TODO
 
 0.3 release
 
+* examples
+* API doc intro
 * check protocol stack
 * refactor tests
+* check todo's
 * use hashmap for subscriptions?
 * connection options?
 * hide non-public symbols?
