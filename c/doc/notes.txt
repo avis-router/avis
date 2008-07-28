@@ -4,8 +4,9 @@ TODO
 
 * DONE: test invoke
 * DONE: embed elvin error in connection
-* test on Windows, Solaris
+* DONE: test on Windows, Solaris
 * DONE: test failed connect
+* threads only for tests
 * examples
 * API doc intro
 * check protocol stack
