@@ -32,7 +32,7 @@ void close_listener (Elvin *elvin, CloseReason reason, const char *message,
 }
 
 void sub_listener (Subscription *sub, Attributes *attributes, bool secure,
-                   void *user_data, ElvinError *error)
+                   void *user_data)
 {
   printf ("Notified! Message = %s\n",
           attributes_get_string (attributes, "message"));
@@ -40,11 +40,11 @@ void sub_listener (Subscription *sub, Attributes *attributes, bool secure,
 
 static decl_thread_proc (close_thread_main, elvin)
 {
-  sleep (2);
+  sleep (10);
 
   printf ("Closing connection on timeout\n");
 
-  elvin_invoke (elvin, (InvokeHandler)elvin_close, elvin);
+  elvin_invoke_close (elvin);
 
   return 0;
 }
@@ -57,7 +57,7 @@ int main (int argc, const char * argv[])
   const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
   thread_t close_thread;
 
-  if (!elvin_open (&elvin, uri, &error))
+  if (!elvin_open (&elvin, uri))
   {
     elvin_perror ("open", &error);
     exit (1);
@@ -69,7 +69,7 @@ int main (int argc, const char * argv[])
     exit (1);
 
   /* TODO handle Ctrl+C */
-  sub = elvin_subscribe (&elvin, "require (test) && string (message)", &error);
+  sub = elvin_subscribe (&elvin, "require (test) && string (message)");
 
   if (!sub)
   {
@@ -80,11 +80,11 @@ int main (int argc, const char * argv[])
   elvin_subscription_add_listener (sub, sub_listener, NULL);
 
   printf ("Start event loop...\n");
-  elvin_event_loop (&elvin, &error);
+  elvin_event_loop (&elvin);
   printf ("End event loop\n");
 
-  if (elvin_error_occurred (&error))
-    elvin_perror ("receive", &error);
+  if (elvin_error_occurred (&elvin.error))
+    elvin_perror ("receive", &elvin.error);
 
   elvin_close (&elvin);
 

@@ -57,68 +57,67 @@ static void elvin_shutdown (Elvin *elvin, CloseReason reason,
                             const char *message);
 
 static bool send_and_receive (Elvin *elvin, Message request,
-                              Message reply, MessageTypeID reply_type,
-                              ElvinError *error);
+                              Message reply, MessageTypeID reply_type);
 
-static bool dispatch_message (Elvin *elvin, Message message, ElvinError *error);
+static bool dispatch_message (Elvin *elvin, Message message);
 
-static bool receive_reply (Elvin *elvin, Message message,
-                                   ElvinError *error);
+static bool receive_reply (Elvin *elvin, Message message);
 
-static bool poll_receive_message (Elvin *elvin, Message message, ElvinError *error);
+static bool poll_receive_message (Elvin *elvin, Message message);
 
 static bool receive_control_message (socket_t socket, Message message,
                                      ElvinError *error);
 
-static void handle_control_message (Elvin *elvin, Message message,
-                                    ElvinError *error);
+static void handle_control_message (Elvin *elvin, Message message);
 
-static void handle_notify_deliver (Elvin *elvin, Message message,
-                                   ElvinError *error);
+static void handle_notify_deliver (Elvin *elvin, Message message);
 
 static void handle_nack (Message message, ElvinError *error);
 
 static Subscription *subscription_with_id (Elvin *elvin, uint64_t id);
 
 static void deliver_notification (Elvin *elvin, Array *ids,
-                                  Attributes *attributes, bool secure,
-                                  ElvinError *error);
+                                  Attributes *attributes, bool secure);
 
 static Subscription *elvin_subscription_init (Subscription *subscription);
 
 static void elvin_subscription_free (Subscription *subscription);
 
-bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error)
+bool elvin_open (Elvin *elvin, const char *router_uri)
 {
   ElvinURI uri;
 
-  if (!elvin_uri_from_string (&uri, router_uri, error))
+  elvin_error_init (&elvin->error);
+
+  if (!elvin_uri_from_string (&uri, router_uri, &elvin->error))
     return false;
 
-  elvin_open_uri (elvin, &uri, error);
+  elvin_open_uri (elvin, &uri);
 
   elvin_uri_free (&uri);
 
-  return elvin_error_ok (error);
+  return elvin_error_ok (&elvin->error);
 }
 
-bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error)
+bool elvin_open_uri (Elvin *elvin, ElvinURI *uri)
 {
-  return elvin_open_with_keys (elvin, uri, EMPTY_KEYS, EMPTY_KEYS, error);
+  return elvin_open_with_keys (elvin, uri, EMPTY_KEYS, EMPTY_KEYS);
 }
 
 bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
-                           Keys *notification_keys, Keys *subscription_keys,
-                           ElvinError *error)
+                           Keys *notification_keys, Keys *subscription_keys)
 {
   alloc_message (conn_rqst);
   alloc_message (conn_rply);
 
-  if ((elvin->router_socket = open_socket (uri->host, uri->port, error)) == -1)
+  if ((elvin->router_socket =
+        open_socket (uri->host, uri->port, &elvin->error)) == -1)
+  {
     return false;
+  }
 
   if (!open_socket_pair (&elvin->control_socket_read,
-                         &elvin->control_socket_write, error))
+                         &elvin->control_socket_write, &elvin->error))
   {
     close_socket (elvin->router_socket);
 
@@ -131,13 +130,13 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   listeners_init (elvin->notification_listeners);
   elvin->notification_keys = notification_keys;
   elvin->subscription_keys = subscription_keys;
+  elvin_error_init (&elvin->error);
 
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST,
                 (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
                 EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
 
-  if (send_and_receive (elvin, conn_rqst, conn_rply,
-                        MESSAGE_ID_CONN_RPLY, error))
+  if (send_and_receive (elvin, conn_rqst, conn_rply, MESSAGE_ID_CONN_RPLY))
   {
 
     /* TODO check message reply options */
@@ -145,7 +144,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
     message_free (conn_rply);
   }
 
-  return elvin_error_ok (error);
+  return elvin_error_ok (&elvin->error);
 }
 
 bool elvin_is_open (Elvin *elvin)
@@ -155,7 +154,6 @@ bool elvin_is_open (Elvin *elvin)
 
 bool elvin_close (Elvin *elvin)
 {
-  ElvinError error = ELVIN_EMPTY_ERROR;
   alloc_message (disconn_rqst);
   alloc_message (disconn_rply);
 
@@ -164,12 +162,9 @@ bool elvin_close (Elvin *elvin)
 
   message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
 
-  send_and_receive (elvin, disconn_rqst, disconn_rply,
-                    MESSAGE_ID_DISCONN_RPLY, &error);
+  send_and_receive (elvin, disconn_rqst, disconn_rply, MESSAGE_ID_DISCONN_RPLY);
 
   elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
-
-  elvin_error_free (&error);
 
   return true;
 }
@@ -201,68 +196,76 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 
   listeners_free (&elvin->close_listeners);
   listeners_free (&elvin->notification_listeners);
+
+  elvin_error_free (&elvin->error);
 }
 
-bool elvin_event_loop (Elvin *elvin, ElvinError *error)
+bool elvin_event_loop (Elvin *elvin)
 {
-  while (elvin_is_open (elvin) && elvin_error_ok (error))
+  while (elvin_is_open (elvin) && elvin_error_ok (&elvin->error))
   {
-    elvin_poll (elvin, error);
+    elvin_poll (elvin);
 
     /* just keep looping on timeout */
-    if (error->code == ELVIN_ERROR_TIMEOUT)
-      elvin_error_reset (error);
+    if (elvin->error.code == ELVIN_ERROR_TIMEOUT)
+      elvin_error_reset (&elvin->error);
   }
 
-  return elvin_error_ok (error);
+  return elvin_error_ok (&elvin->error);
 }
 
-bool elvin_poll (Elvin *elvin, ElvinError *error)
+bool elvin_poll (Elvin *elvin)
 {
   alloc_message (message);
 
   if (elvin->polling)
   {
-    return elvin_error_set (error, ELVIN_ERROR_USAGE,
+    return elvin_error_set (&elvin->error, ELVIN_ERROR_USAGE,
                             "elvin_poll () called concurrently");
   }
 
   elvin->polling = true;
 
-  if (poll_receive_message (elvin, message, error))
+  if (poll_receive_message (elvin, message))
   {
-    if (!dispatch_message (elvin, message, error))
+    if (!dispatch_message (elvin, message))
     {
       elvin_error_set
-        (error, ELVIN_ERROR_PROTOCOL,
+        (&elvin->error, ELVIN_ERROR_PROTOCOL,
          "Unexpected message type from router: %u", message_type_of (message));
     }
 
     message_free (message);
   }
 
-  if (error->code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
+  if (elvin->error.code == ELVIN_ERROR_PROTOCOL)
+    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, elvin->error.message);
 
   elvin->polling = false;
 
-  return elvin_error_ok (error);
+  return elvin_error_ok (&elvin->error);
 }
 
 /**
  * Poll the router and control sockets for incoming messages.
  */
-bool poll_receive_message (Elvin *elvin, Message message, ElvinError *error)
+bool poll_receive_message (Elvin *elvin, Message message)
 {
   socket_t ready_socket =
-    select_ready (elvin->router_socket, elvin->control_socket_read, error);
+    select_ready (elvin->router_socket,
+                  elvin->control_socket_read, &elvin->error);
 
   if (ready_socket == elvin->router_socket)
-    return receive_message (elvin->router_socket, message, error);
-  else if (ready_socket == elvin->control_socket_read)
-    return receive_control_message (elvin->control_socket_read, message, error);
-  else
+  {
+    return receive_message (elvin->router_socket, message, &elvin->error);
+  } else if (ready_socket == elvin->control_socket_read)
+  {
+    return receive_control_message (elvin->control_socket_read, message,
+                                   &elvin->error);
+  } else
+  {
     return false;
+  }
 }
 
 /**
@@ -270,17 +273,17 @@ bool poll_receive_message (Elvin *elvin, Message message, ElvinError *error)
  * if handled, false if not. The connection may be closed on return if
  * a Disconn or DisconnRply is handled.
  */
-bool dispatch_message (Elvin *elvin, Message message, ElvinError *error)
+bool dispatch_message (Elvin *elvin, Message message)
 {
   bool handled = true;
 
   switch (message_type_of (message))
   {
   case MESSAGE_ID_CONTROL:
-    handle_control_message (elvin, message, error);
+    handle_control_message (elvin, message);
     break;
   case MESSAGE_ID_NOTIFY_DELIVER:
-    handle_notify_deliver (elvin, message, error);
+    handle_notify_deliver (elvin, message);
     break;
   case MESSAGE_ID_DISCONN:
     elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, ptr_at_offset (message, 4));
@@ -303,8 +306,7 @@ bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
                      &message, sizeof (message)) == sizeof (message);
 }
 
-static void elvin_invoke_close_handler (Elvin *elvin, void *param,
-                                        ElvinError *error)
+static void elvin_invoke_close_handler (Elvin *elvin, void *param)
 {
   elvin_close (elvin);
 }
@@ -329,12 +331,11 @@ bool receive_control_message (socket_t socket, Message message,
     return elvin_error_from_pipe (error);
 }
 
-/* TODO: do we want to allow handlers access to an error context? */
-void handle_control_message (Elvin *elvin, Message message, ElvinError *error)
+void handle_control_message (Elvin *elvin, Message message)
 {
   ControlMessage *control_message = (ControlMessage *)(message + 4);
 
-  (*control_message->handler) (elvin, control_message->parameter, error);
+  (*control_message->handler) (elvin, control_message->parameter);
 }
 
 void handle_nack (Message nack, ElvinError *error)
@@ -367,7 +368,7 @@ void handle_nack (Message nack, ElvinError *error)
   }
 }
 
-void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
+void handle_notify_deliver (Elvin *elvin, Message message)
 {
   Attributes *attributes = ptr_at_offset (message, 0);
   Array *secure_matches =
@@ -376,12 +377,12 @@ void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
     ptr_at_offset (message, sizeof (Attributes *) + sizeof (Array *));
   ListenersIterator l;
 
-  deliver_notification (elvin, secure_matches, attributes, true, error);
+  deliver_notification (elvin, secure_matches, attributes, true);
 
-  if (elvin_error_occurred (error))
+  if (elvin_error_occurred (&elvin->error))
     return;
 
-  deliver_notification (elvin, insecure_matches, attributes, false, error);
+  deliver_notification (elvin, insecure_matches, attributes, false);
 
   /* deliver to general notification listeners */
   for_each_listener (elvin->notification_listeners, l)
@@ -392,8 +393,7 @@ void handle_notify_deliver (Elvin *elvin, Message message, ElvinError *error)
 }
 
 void deliver_notification (Elvin *elvin, Array *ids,
-                           Attributes *attributes, bool secure,
-                           ElvinError *error)
+                           Attributes *attributes, bool secure)
 {
   int i;
   int64_t *id = ids->items;
@@ -405,7 +405,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 
     if (subscription == NULL)
     {
-      elvin_error_set (error, ELVIN_ERROR_PROTOCOL,
+      elvin_error_set (&elvin->error, ELVIN_ERROR_PROTOCOL,
                        "Invalid subscription ID from router: %llu", *id);
 
       return;
@@ -420,8 +420,7 @@ void deliver_notification (Elvin *elvin, Array *ids,
 }
 
 bool elvin_set_keys (Elvin *elvin,
-                     Keys *notification_keys, Keys *subscription_keys,
-                     ElvinError *error)
+                     Keys *notification_keys, Keys *subscription_keys)
 {
   alloc_message (sec_rqst);
   alloc_message (sec_rply);
@@ -431,7 +430,7 @@ bool elvin_set_keys (Elvin *elvin,
                 notification_keys, elvin->notification_keys,
                 subscription_keys, elvin->subscription_keys);
 
-  if (send_and_receive (elvin, sec_rqst, sec_rply, MESSAGE_ID_SEC_RPLY, error))
+  if (send_and_receive (elvin, sec_rqst, sec_rply, MESSAGE_ID_SEC_RPLY))
   {
     elvin_keys_free (elvin->notification_keys);
     elvin_keys_free (elvin->subscription_keys);
@@ -447,22 +446,21 @@ bool elvin_set_keys (Elvin *elvin,
   }
 }
 
-bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error)
+bool elvin_send (Elvin *elvin, Attributes *notification)
 {
   return elvin_send_with_keys (elvin, notification, EMPTY_KEYS,
-                               ALLOW_INSECURE_DELIVERY, error);
+                               ALLOW_INSECURE_DELIVERY);
 }
 
 bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
-                           Keys *notification_keys, SecureMode security,
-                           ElvinError *error)
+                           Keys *notification_keys, SecureMode security)
 {
   alloc_message (notify_emit);
 
   message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT,
                 notification, (uint32_t)security, notification_keys);
 
-  return send_message (elvin->router_socket, notify_emit, error);
+  return send_message (elvin->router_socket, notify_emit, &elvin->error);
 }
 
 Subscription *elvin_subscription_init (Subscription *subscription)
@@ -485,18 +483,16 @@ void elvin_subscription_free (Subscription *subscription)
   memset (subscription, 0, sizeof (Subscription));
 }
 
-Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
-                               ElvinError *error)
+Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr)
 {
   return elvin_subscribe_with_keys
-    (elvin, subscription_expr, EMPTY_KEYS, ALLOW_INSECURE_DELIVERY, error);
+    (elvin, subscription_expr, EMPTY_KEYS, ALLOW_INSECURE_DELIVERY);
 }
 
 Subscription *elvin_subscribe_with_keys (Elvin *elvin,
                                          const char *subscription_expr,
                                          Keys *keys,
-                                         SecureMode security,
-                                         ElvinError *error)
+                                         SecureMode security)
 {
   alloc_message (sub_add_rqst);
   alloc_message (sub_rply);
@@ -504,8 +500,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
   message_init (sub_add_rqst, MESSAGE_ID_SUB_ADD_RQST, subscription_expr,
                 (uint32_t)security, keys);
 
-  if (send_and_receive (elvin, sub_add_rqst, sub_rply,
-                        MESSAGE_ID_SUB_RPLY, error))
+  if (send_and_receive (elvin, sub_add_rqst, sub_rply, MESSAGE_ID_SUB_RPLY))
   {
     Subscription *subscription =
       array_list_add (&elvin->subscriptions, Subscription);
@@ -526,8 +521,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
   }
 }
 
-bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
-                        ElvinError *error)
+bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription)
 {
   alloc_message (sub_del_rqst);
   alloc_message (sub_rply);
@@ -536,8 +530,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
   message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
 
   succeeded =
-    send_and_receive (elvin, sub_del_rqst, sub_rply,
-                      MESSAGE_ID_SUB_RPLY, error);
+    send_and_receive (elvin, sub_del_rqst, sub_rply, MESSAGE_ID_SUB_RPLY);
 
   /* no free needed for sub_rply */
 
@@ -550,8 +543,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
 }
 
 bool elvin_subscription_set_expr (Subscription *subscription,
-                                  const char *subscription_expr,
-                                  ElvinError *error)
+                                  const char *subscription_expr)
 {
   alloc_message (sub_mod_rqst);
   alloc_message (sub_rply);
@@ -561,7 +553,7 @@ bool elvin_subscription_set_expr (Subscription *subscription,
                 EMPTY_KEYS, EMPTY_KEYS);
 
   if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
-                        MESSAGE_ID_SUB_RPLY, error))
+                        MESSAGE_ID_SUB_RPLY))
   {
     free (subscription->subscription_expr);
 
@@ -578,8 +570,7 @@ bool elvin_subscription_set_expr (Subscription *subscription,
 
 bool elvin_subscription_set_keys (Subscription *subscription,
                                   Keys *subscription_keys,
-                                  SecureMode security,
-                                  ElvinError *error)
+                                  SecureMode security)
 {
   alloc_message (sub_mod_rqst);
   alloc_message (sub_rply);
@@ -589,7 +580,7 @@ bool elvin_subscription_set_keys (Subscription *subscription,
                 "", (uint32_t)security, subscription_keys, subscription->keys);
 
   if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
-                        MESSAGE_ID_SUB_RPLY, error))
+                        MESSAGE_ID_SUB_RPLY))
   {
     elvin_keys_free (subscription->keys);
 
@@ -606,59 +597,58 @@ bool elvin_subscription_set_keys (Subscription *subscription,
 }
 
 bool send_and_receive (Elvin *elvin, Message request,
-                       Message reply, MessageTypeID reply_type,
-                       ElvinError *error)
+                       Message reply, MessageTypeID reply_type)
 {
-  if (send_message (elvin->router_socket, request, error) &&
-      receive_reply (elvin, reply, error))
+  if (send_message (elvin->router_socket, request, &elvin->error) &&
+      receive_reply (elvin, reply))
   {
     if (message_type_of (reply) != reply_type)
     {
       if (message_type_of (reply) == MESSAGE_ID_NACK)
       {
-        handle_nack (reply, error);
+        handle_nack (reply, &elvin->error);
       } else
       {
         elvin_error_set
-          (error, ELVIN_ERROR_PROTOCOL,
+          (&elvin->error, ELVIN_ERROR_PROTOCOL,
            "Unexpected reply from router: message ID %u",
            message_type_of (reply));
       }
     } else if (xid_of (request) != xid_of (reply))
     {
       elvin_error_set
-        (error, ELVIN_ERROR_PROTOCOL,
+        (&elvin->error, ELVIN_ERROR_PROTOCOL,
          "Mismatched transaction ID in reply from router: %u (should be %u)",
          xid_of (reply), xid_of (request));
     }
 
-    if (elvin_error_occurred (error))
+    if (elvin_error_occurred (&elvin->error))
       message_free (reply);
   }
 
   /* close connection on protocol error */
-  if (error->code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, error->message);
+  if (elvin->error.code == ELVIN_ERROR_PROTOCOL)
+    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, elvin->error.message);
 
-  return elvin_error_ok (error) && elvin_is_open (elvin);
+  return elvin_error_ok (&elvin->error) && elvin_is_open (elvin);
 }
 
 /**
  * Receive a reply to a request message, handling any number of preceding
  * incoming router-initiated messages.
  */
-bool receive_reply (Elvin *elvin, Message message, ElvinError *error)
+bool receive_reply (Elvin *elvin, Message message)
 {
-  while (elvin_error_ok (error) && elvin_is_open (elvin) &&
-         receive_message (elvin->router_socket, message, error))
+  while (elvin_error_ok (&elvin->error) && elvin_is_open (elvin) &&
+         receive_message (elvin->router_socket, message, &elvin->error))
   {
-    if (dispatch_message (elvin, message, error))
+    if (dispatch_message (elvin, message))
       message_free (message);
     else
       break;
   }
 
-  if (elvin_error_ok (error))
+  if (elvin_error_ok (&elvin->error))
   {
     return elvin_is_open (elvin);
   } else

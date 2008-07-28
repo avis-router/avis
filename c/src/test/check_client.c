@@ -49,27 +49,14 @@ static void close_listener
   (Elvin *elvin, CloseReason reason, const char *message, void *user_data);
 
 static void test_subscribe_sub_listener
-  (Subscription *sub, Attributes *attributes, bool secure, void *user_data,
-   ElvinError *error);
+  (Subscription *sub, Attributes *attributes, bool secure, void *user_data);
 
 static void test_subscribe_general_listener (Elvin *elvin,
                                              Attributes *attributes,
                                              bool secure,
-                                             void *user_data,
-                                             ElvinError *error);
+                                             void *user_data);
 
 static void check_secure_send_receive (Elvin *client, Subscription *secure_sub);
-
-static ElvinError error = ELVIN_EMPTY_ERROR;
-
-static void setup ()
-{
-}
-
-static void teardown ()
-{
-  elvin_error_free (&error);
-}
 
 const char *elvin_router ()
 {
@@ -98,8 +85,8 @@ START_TEST (test_connect)
 {
   Elvin elvin;
 
-  elvin_open (&elvin, elvin_router (), &error);
-  fail_on_error (&error);
+  elvin_open (&elvin, elvin_router ());
+  fail_on_error (&elvin.error);
 
   close_listener_called = false;
 
@@ -126,15 +113,15 @@ START_TEST (test_notify)
   Elvin elvin;
   Attributes *ntfn = attributes_create ();
 
-  elvin_open (&elvin, elvin_router (), &error);
-  fail_on_error (&error);
+  elvin_open (&elvin, elvin_router ());
+  fail_on_error (&elvin.error);
 
   attributes_set_int32 (ntfn, "int32", 42);
   attributes_set_int64 (ntfn, "int64", 0xDEADBEEFL);
   attributes_set_string (ntfn, "string", "paydirt");
 
-  elvin_send (&elvin, ntfn, &error);
-  fail_on_error (&error);
+  elvin_send (&elvin, ntfn);
+  fail_on_error (&elvin.error);
 
   attributes_destroy (ntfn);
 
@@ -156,20 +143,19 @@ START_TEST (test_subscribe)
 
   memset (data.items, 42, data.item_count);
 
-  elvin_open (&elvin, elvin_router (), &error);
-  fail_on_error (&error);
+  elvin_open (&elvin, elvin_router ());
+  fail_on_error (&elvin.error);
 
   /* check invalid subscription is handled */
-  sub = elvin_subscribe (&elvin, "size (bogus", &error);
+  sub = elvin_subscribe (&elvin, "size (bogus");
 
-  fail_unless_error_code (&error, ELVIN_ERROR_SYNTAX);
+  fail_unless_error_code (&elvin.error, ELVIN_ERROR_SYNTAX);
 
   sub =
     elvin_subscribe
       (&elvin,
-       "require (test) && string (message) && int32 == 32 && int64 == 64L",
-       &error);
-  fail_on_error (&error);
+       "require (test) && string (message) && int32 == 32 && int64 == 64L");
+  fail_on_error (&elvin.error);
 
   elvin_subscription_add_listener (sub, test_subscribe_sub_listener,
                                    "user_data");
@@ -182,27 +168,27 @@ START_TEST (test_subscribe)
   attributes_set_opaque (ntfn, "opaque", data);
 
   test_subscribe_received_ntfn = false;
-  elvin_send (&elvin, ntfn, &error) && elvin_poll (&elvin, &error);
-  fail_on_error (&error);
+  elvin_send (&elvin, ntfn) && elvin_poll (&elvin);
+  fail_on_error (&elvin.error);
 
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
 
-  elvin_unsubscribe (&elvin, sub, &error);
-  fail_on_error (&error);
+  elvin_unsubscribe (&elvin, sub);
+  fail_on_error (&elvin.error);
 
   /* test sub change*/
-  sub = elvin_subscribe (&elvin, "require (bogus)", &error);
-  fail_on_error (&error);
+  sub = elvin_subscribe (&elvin, "require (bogus)");
+  fail_on_error (&elvin.error);
 
   elvin_subscription_add_listener (sub, test_subscribe_sub_listener,
                                    "user_data");
 
-  elvin_subscription_set_expr (sub, "require (test)", &error);
-  fail_on_error (&error);
+  elvin_subscription_set_expr (sub, "require (test)");
+  fail_on_error (&elvin.error);
 
   test_subscribe_received_ntfn = false;
-  elvin_send (&elvin, ntfn, &error) && elvin_poll (&elvin, &error);
-  fail_on_error (&error);
+  elvin_send (&elvin, ntfn) && elvin_poll (&elvin);
+  fail_on_error (&elvin.error);
 
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
 
@@ -225,15 +211,15 @@ START_TEST (test_subscribe)
     (&elvin, test_subscribe_general_listener, NULL);
 
   test_subscribe_received_ntfn = false;
-  elvin_send (&elvin, ntfn, &error) && elvin_poll (&elvin, &error);
-  fail_on_error (&error);
+  elvin_send (&elvin, ntfn) && elvin_poll (&elvin);
+  fail_on_error (&elvin.error);
 
   fail_unless (test_subscribe_received_ntfn, "Did not get general notification");
 
   attributes_destroy (ntfn);
 
-  elvin_unsubscribe (&elvin, sub, &error);
-  fail_on_error (&error);
+  elvin_unsubscribe (&elvin, sub);
+  fail_on_error (&elvin.error);
 
   elvin_close (&elvin);
 }
@@ -241,7 +227,7 @@ END_TEST
 
 void test_subscribe_sub_listener (Subscription *sub,
                                   Attributes *attributes, bool secure,
-                                  void *user_data, ElvinError *error)
+                                  void *user_data)
 {
   Array *data = attributes_get_opaque (attributes, "opaque");
 
@@ -267,7 +253,7 @@ void test_subscribe_sub_listener (Subscription *sub,
 
 void test_subscribe_general_listener (Elvin *elvin,
                                       Attributes *attributes, bool secure,
-                                      void *user_data, ElvinError *error)
+                                      void *user_data)
 {
   test_subscribe_received_ntfn = true;
 }
@@ -281,6 +267,7 @@ START_TEST (test_security)
   Key alice_private;
   Keys *alice_ntfn_keys;
   Keys *bob_sub_keys;
+  ElvinError error = ELVIN_EMPTY_ERROR;
 
   elvin_uri_from_string (&uri, elvin_router (), &error);
   fail_on_error (&error);
@@ -297,16 +284,16 @@ START_TEST (test_security)
   /* subscribe with global keys */
 
   elvin_open_with_keys (&alice_client, &uri,
-                        elvin_keys_copy (alice_ntfn_keys), EMPTY_KEYS, &error);
-  fail_on_error (&error);
+                        elvin_keys_copy (alice_ntfn_keys), EMPTY_KEYS);
+  fail_on_error (&alice_client.error);
 
   elvin_open_with_keys (&bob_client, &uri, EMPTY_KEYS,
-                        elvin_keys_copy (bob_sub_keys), &error);
-  fail_on_error (&error);
+                        elvin_keys_copy (bob_sub_keys));
+  fail_on_error (&bob_client.error);
 
   bob_sub =
     elvin_subscribe_with_keys (&bob_client, "require (From-Alice)",
-                               EMPTY_KEYS, REQUIRE_SECURE_DELIVERY, &error);
+                               EMPTY_KEYS, REQUIRE_SECURE_DELIVERY);
 
   check_secure_send_receive (&alice_client, bob_sub);
 
@@ -315,23 +302,22 @@ START_TEST (test_security)
 
   /* check we can add global keys later for same result */
 
-  elvin_open_uri (&alice_client, &uri, &error);
-  fail_on_error (&error);
+  elvin_open_uri (&alice_client, &uri);
+  fail_on_error (&alice_client.error);
 
-  elvin_open_uri (&bob_client, &uri, &error);
-  fail_on_error (&error);
+  elvin_open_uri (&bob_client, &uri);
+  fail_on_error (&bob_client.error);
 
   elvin_set_keys (&alice_client, elvin_keys_copy (alice_ntfn_keys),
-                  EMPTY_KEYS, &error);
-  fail_on_error (&error);
+                  EMPTY_KEYS);
+  fail_on_error (&alice_client.error);
 
-  elvin_set_keys (&bob_client, EMPTY_KEYS, elvin_keys_copy (bob_sub_keys),
-                  &error);
-  fail_on_error (&error);
+  elvin_set_keys (&bob_client, EMPTY_KEYS, elvin_keys_copy (bob_sub_keys));
+  fail_on_error (&bob_client.error);
 
   bob_sub =
     elvin_subscribe_with_keys (&bob_client, "require (From-Alice)",
-                               EMPTY_KEYS, REQUIRE_SECURE_DELIVERY, &error);
+                               EMPTY_KEYS, REQUIRE_SECURE_DELIVERY);
 
   check_secure_send_receive (&alice_client, bob_sub);
 
@@ -340,17 +326,17 @@ START_TEST (test_security)
 
   /* check we can add subscription keys for same result */
   elvin_open_with_keys (&alice_client, &uri,
-                        elvin_keys_copy (alice_ntfn_keys), EMPTY_KEYS, &error);
-  fail_on_error (&error);
+                        elvin_keys_copy (alice_ntfn_keys), EMPTY_KEYS);
+  fail_on_error (&alice_client.error);
 
-  elvin_open_uri (&bob_client, &uri, &error);
-  fail_on_error (&error);
+  elvin_open_uri (&bob_client, &uri);
+  fail_on_error (&bob_client.error);
 
-  bob_sub = elvin_subscribe (&bob_client, "require (From-Alice)", &error);
+  bob_sub = elvin_subscribe (&bob_client, "require (From-Alice)");
 
   elvin_subscription_set_keys (bob_sub, elvin_keys_copy (bob_sub_keys),
-                               REQUIRE_SECURE_DELIVERY, &error);
-  fail_on_error (&error);
+                               REQUIRE_SECURE_DELIVERY);
+  fail_on_error (&bob_client.error);
 
   check_secure_send_receive (&alice_client, bob_sub);
 
@@ -366,8 +352,7 @@ END_TEST
 
 void test_security_sub_listener (Subscription *sub,
                                  Attributes *attributes,
-                                 bool secure, void *user_data,
-                                 ElvinError *error)
+                                 bool secure, void *user_data)
 {
   fail_unless (secure, "Not secure");
 
@@ -385,13 +370,13 @@ void check_secure_send_receive (Elvin *client, Subscription *secure_sub)
 
   test_subscribe_received_ntfn = false;
 
-  elvin_send (client, ntfn, &error);
-  fail_on_error (&error);
+  elvin_send (client, ntfn);
+  fail_on_error (&client->error);
 
   attributes_destroy (ntfn);
 
-  elvin_poll (secure_sub->elvin, &error);
-  fail_on_error (&error);
+  elvin_poll (secure_sub->elvin);
+  fail_on_error (&client->error);
 
   fail_unless (test_subscribe_received_ntfn, "Did not get notification");
 
@@ -406,8 +391,6 @@ TCase *client_tests ()
   tcase_add_test (tc_core, test_notify);
   tcase_add_test (tc_core, test_subscribe);
   tcase_add_test (tc_core, test_security);
-
-  tcase_add_checked_fixture (tc_core, setup, teardown);
 
   return tc_core;
 }
