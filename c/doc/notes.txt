@@ -2,12 +2,17 @@ TODO
 
 0.3 release
 
+* DONE: test invoke
+* DONE: embed elvin error in connection
+* test on Windows, Solaris
+* DONE: test failed connect
 * examples
 * API doc intro
 * check protocol stack
 * refactor tests
 * check todo's
 * strdup -> estrdup
+* valgrind
 * use hashmap for subscriptions?
 * connection options?
 * hide non-public symbols?
