@@ -25,6 +25,7 @@
 TCase *messages_tests ();
 TCase *client_tests ();
 TCase *collections_tests ();
+TCase *invoke_tests ();
 TCase *security_tests ();
 TCase *uri_tests ();
 
@@ -36,6 +37,7 @@ Suite *suite ()
   suite_add_tcase (s, messages_tests ());
   suite_add_tcase (s, client_tests ());
   suite_add_tcase (s, collections_tests ());
+  suite_add_tcase (s, invoke_tests ());
   suite_add_tcase (s, security_tests ());
 
   return s;
