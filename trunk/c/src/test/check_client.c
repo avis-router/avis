@@ -95,6 +95,14 @@ START_TEST (test_connect)
   elvin_close (&elvin);
 
   fail_unless (close_listener_called, "Close listener not called");
+
+  /* test failed connect */
+  elvin_open (&elvin, "elvin://bogus_host_name:1234");
+
+  fail_if (elvin.error.code == ELVIN_ERROR_NONE,
+           "Failed to handle missing router");
+
+  elvin_close (&elvin);
 }
 END_TEST
 
