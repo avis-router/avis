@@ -90,7 +90,7 @@ case $host in
     AVIS_LDFLAGS="$AVIS_LDFLAGS -lm"
     ;;
   sparc-sun-solaris*)
-    AVIS_LDFLAGS="$AVIS_LDFLAGS -lm -lsocket"
+    AVIS_LDFLAGS="$AVIS_LDFLAGS -lm -lsocket -lthread"
     ;;
 esac
 
