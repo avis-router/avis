@@ -88,6 +88,7 @@ fi
 case $host in 
   *-*-linux*)
     AVIS_LDFLAGS="$AVIS_LDFLAGS -lm"
+    AVIS_CFLAGS="$AVIS_CFLAGS -pthread"
     ;;
   sparc-sun-solaris*)
     AVIS_LDFLAGS="$AVIS_LDFLAGS -lm -lsocket -lthread"
