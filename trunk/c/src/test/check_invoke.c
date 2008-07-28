@@ -49,6 +49,8 @@ static void notify_thread_send (Elvin *elvin, void *param)
   attributes_set_int32 (ntfn, "test", 1);
 
   elvin_send (elvin, ntfn);
+
+  attributes_free (ntfn);
 }
 
 /**
