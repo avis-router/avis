@@ -64,6 +64,7 @@
 		C9F0DAB50E060C5D00DB5A88 /* keys_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F0DAB10E060C5D00DB5A88 /* keys_private.h */; };
 		C9F0DAB60E060C5D00DB5A88 /* avis_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F0DAB20E060C5D00DB5A88 /* avis_endian.h */; };
 		C9F0DAB70E060C5D00DB5A88 /* attributes_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F0DAB30E060C5D00DB5A88 /* attributes_private.h */; };
+		C9F52AC10E3D97B000707C1D /* check_invoke.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F52ABF0E3D97B000707C1D /* check_invoke.c */; };
 		FA4D5B570DF420DE0098EE7D /* byte_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B4E0DF420DE0098EE7D /* byte_buffer.c */; };
 		FA4D5B580DF420DE0098EE7D /* byte_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FA4D5B4F0DF420DE0098EE7D /* byte_buffer.h */; };
 		FA4D5B590DF420DE0098EE7D /* elvin_uri.c in Sources */ = {isa = PBXBuildFile; fileRef = FA4D5B500DF420DE0098EE7D /* elvin_uri.c */; };
@@ -176,6 +177,8 @@
 		C9F0DAB10E060C5D00DB5A88 /* keys_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys_private.h; path = ../../src/lib/keys_private.h; sourceTree = SOURCE_ROOT; };
 		C9F0DAB20E060C5D00DB5A88 /* avis_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = avis_endian.h; path = ../../src/lib/avis_endian.h; sourceTree = SOURCE_ROOT; };
 		C9F0DAB30E060C5D00DB5A88 /* attributes_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attributes_private.h; path = ../../src/lib/attributes_private.h; sourceTree = SOURCE_ROOT; };
+		C9F52ABF0E3D97B000707C1D /* check_invoke.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_invoke.c; path = ../../src/test/check_invoke.c; sourceTree = SOURCE_ROOT; };
+		C9F52AC00E3D97B000707C1D /* threads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = threads.h; path = ../../src/test/threads.h; sourceTree = SOURCE_ROOT; };
 		FA4D5B4E0DF420DE0098EE7D /* byte_buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = byte_buffer.c; path = ../../src/lib/byte_buffer.c; sourceTree = SOURCE_ROOT; };
 		FA4D5B4F0DF420DE0098EE7D /* byte_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = byte_buffer.h; path = ../../src/lib/byte_buffer.h; sourceTree = SOURCE_ROOT; };
 		FA4D5B500DF420DE0098EE7D /* elvin_uri.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin_uri.c; path = ../../src/lib/elvin_uri.c; sourceTree = SOURCE_ROOT; };
@@ -322,6 +325,8 @@
 		C931A0E50DF643D100313558 /* Unit tests */ = {
 			isa = PBXGroup;
 			children = (
+				C9F52ABF0E3D97B000707C1D /* check_invoke.c */,
+				C9F52AC00E3D97B000707C1D /* threads.h */,
 				C953D5A40E20BA21001F14EF /* check_uri.c */,
 				C9E217F40E133A8E00FD24D9 /* check_ext.h */,
 				C97245F20E0799DF00C9884C /* check_collections.c */,
@@ -587,6 +592,7 @@
 				C9F0DAA50E060BFD00DB5A88 /* check_security.c in Sources */,
 				C97245F90E079A5000C9884C /* check_collections.c in Sources */,
 				C953D5A50E20BA21001F14EF /* check_uri.c in Sources */,
+				C9F52AC10E3D97B000707C1D /* check_invoke.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
