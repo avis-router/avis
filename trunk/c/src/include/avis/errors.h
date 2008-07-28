@@ -27,11 +27,15 @@
 
 /**
  * Error reporting information for the Avis client library. Functions
- * in the library that may fail will require a pointer to an
- * ElvinError instance as their last parameter, which will be loaded
- * with an error code and message if the the function or any sub
- * function fails. Functions which would otherwise return void will
- * often also return true/false as a convenience.
+ * in the library that may fail will use a pointer to an
+ * ElvinError instance to indicate, via an error code and message, if the
+ * function or any sub function fails. As a convenience, functions which
+ * would otherwise return void will often return true/false to indicate
+ * error status.
+ *
+ * Note that the Elvin struct used for client connections contains an
+ * embedded error context that takes the place of an explicit error
+ * context parameter.
  *
  * Example:
  * <pre>

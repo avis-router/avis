@@ -32,17 +32,6 @@
 #include "byte_buffer.h"
 #include "check_ext.h"
 
-static ElvinError error = ELVIN_EMPTY_ERROR;
-
-static void setup ()
-{
-}
-
-static void teardown ()
-{
-  elvin_error_free (&error);
-}
-
 const char *elvin_router ()
 {
   const char *uri = getenv ("ELVIN");
@@ -53,13 +42,13 @@ const char *elvin_router ()
 /**
  * Send a notification.
  */
-static void notify_thread_send (Elvin *elvin, void *param, ElvinError *error)
+static void notify_thread_send (Elvin *elvin, void *param)
 {
   Attributes *ntfn = attributes_create ();
 
   attributes_set_int32 (ntfn, "test", 1);
 
-  elvin_send (elvin, ntfn, error);
+  elvin_send (elvin, ntfn);
 }
 
 /**
@@ -77,7 +66,7 @@ decl_thread_proc (notify_thread_main, elvin)
  */
 static void notify_listener (Subscription *subscription,
                             Attributes *attributes, bool secure,
-                            void *user_data, ElvinError *error)
+                            void *user_data)
 {
   elvin_close (subscription->elvin);
 }
@@ -92,20 +81,20 @@ START_TEST (test_notify)
   thread_t notify_thread;
   Subscription *sub;
 
-  elvin_open (&elvin, elvin_router (), &error);
-  fail_on_error (&error);
+  elvin_open (&elvin, elvin_router ());
+  fail_on_error (&elvin.error);
 
-  sub = elvin_subscribe (&elvin, "test == 1", &error);
-  fail_on_error (&error);
+  sub = elvin_subscribe (&elvin, "test == 1");
+  fail_on_error (&elvin.error);
 
   elvin_subscription_add_listener (sub, notify_listener, NULL);
 
   fail_if (create_thread (notify_thread, notify_thread_main, &elvin),
            "Thread create failed");
 
-  /* the notification listener should trigger close: timeout if not */
-  elvin_event_loop (&elvin, &error);
-  fail_on_error (&error);
+  /* notification listener should trigger close: test will timeout if not */
+  elvin_event_loop (&elvin);
+  fail_on_error (&elvin.error);
 
   elvin_close (&elvin);
 }
@@ -116,8 +105,6 @@ TCase *invoke_tests ()
   TCase *tc_core = tcase_create ("invoke");
 
   tcase_add_test (tc_core, test_notify);
-
-  tcase_add_checked_fixture (tc_core, setup, teardown);
 
   return tc_core;
 }

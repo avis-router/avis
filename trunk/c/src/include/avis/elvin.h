@@ -57,15 +57,16 @@ typedef ArrayList * Listeners;
  */
 typedef struct
 {
-  socket_t  router_socket;
-  socket_t  control_socket_read;
-  socket_t  control_socket_write;
-  ArrayList subscriptions;
-  Listeners close_listeners;
-  Listeners notification_listeners;
-  Keys *    notification_keys;
-  Keys *    subscription_keys;
-  bool      polling;
+  socket_t    router_socket;
+  socket_t    control_socket_read;
+  socket_t    control_socket_write;
+  ArrayList   subscriptions;
+  Listeners   close_listeners;
+  Listeners   notification_listeners;
+  Keys *      notification_keys;
+  Keys *      subscription_keys;
+  bool        polling;
+  ElvinError  error;
 } Elvin;
 
 /**
@@ -122,15 +123,12 @@ typedef enum
  * elvin_open_with_keys()).
  * @param user_data The user data pointer passed into
  * elvin_subscription_add_listener().
- * @param error An error context that may be used for calls back into
- * the Elvin connection. If an error occurs within this context it will
- * propagate back up out of the event loop.
  *
  * @see elvin_subscription_add_listener()
  */
 typedef void (*SubscriptionListener) (Subscription *subscription,
                                       Attributes *attributes, bool secure,
-                                      void *user_data, ElvinError *error);
+                                      void *user_data);
 
 /**
  * A listener for elvin connection close events.
@@ -161,50 +159,39 @@ typedef void (*CloseListener) (Elvin *elvin, CloseReason reason,
  * elvin_open_with_keys()). This will be true if at least one subscription
  * securely matched the notification.
  * @param user_data The user data passed in when adding the listener.
- * @param error An error context that may be used for calls back into
- * the Elvin connection. If an error occurs within this context it will
- * propagate back up out of the event loop.
  *
  * @see elvin_add_notification_listener()
  */
 typedef void (*GeneralNotificationListener)
-  (Elvin *elvin, Attributes *attributes, bool secure, void *user_data,
-   ElvinError *error);
+  (Elvin *elvin, Attributes *attributes, bool secure, void *user_data);
 
 /**
  * A handler function schedued to be called by elvin_invoke().
  *
  * @param elvin The Elvin connection that is calling the function.
  * @param parameter The parameter passed into elvin_invoke ().
- * @param error An error context that may be used for calls back into
- * the Elvin connection. If an error occurs within this context it will
- * propagate back up out of the event loop.
  */
-typedef void (*InvokeHandler) (Elvin *elvin, void *parameter,
-                               ElvinError *error);
+typedef void (*InvokeHandler) (Elvin *elvin, void *parameter);
 
 /**
  * Open a connection to an Elvin router.
  *
  * @param elvin The Elvin connection instance.
  * @param router_uri The URI for the router endpoint.
- * @param error The error info.
  *
  * @return true if the connection succeeded.
  *
  * Example:
  * <pre>
  * Elvin elvin;
- * ElvinError error = ELVIN_EMPTY_ERROR;
  *
- * if (!elvin_open (&elvin, "elvin://public.elvin.org", &error))
+ * if (!elvin_open (&elvin, "elvin://public.elvin.org"))
  * {
- *   elvin_perror ("open", &error);
+ *   elvin_perror ("open", &elvin.error);
  *   exit (1);
  * }
  *
  * elvin_close (&elvin);
- * elvin_error_free (&error);
  * </pre>
  *
  * @see elvin_open_uri()
@@ -212,20 +199,19 @@ typedef void (*InvokeHandler) (Elvin *elvin, void *parameter,
  * @see elvin_close()
  * @see elvin_is_open()
  */
-bool elvin_open (Elvin *elvin, const char *router_uri, ElvinError *error);
+bool elvin_open (Elvin *elvin, const char *router_uri);
 
 /**
  * Open a connection to an Elvin router.
  *
  * @param elvin The Elvin connection instance.
  * @param uri The URI for the router endpoint.
- * @param error The error info.
  *
  * @return true if the connection succeeded.
  *
  * @see elvin_open()
  */
-bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
+bool elvin_open_uri (Elvin *elvin, ElvinURI *uri);
 
 /**
  * Open a connection to an Elvin router with optional security constraints.
@@ -240,7 +226,6 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
  * @param subscription_keys These keys automatically apply to all
  *          subscriptions, exactly as if they were added to the keys
  *          in the elvin_subscribe_with_keys() call.
- * @param error The error info.
  *
  * @return true if the connection succeeded.
  *
@@ -248,8 +233,7 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri, ElvinError *error);
  * @see elvin_set_keys()
  */
 bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
-                           Keys *notification_keys, Keys *subscription_keys,
-                           ElvinError *error);
+                           Keys *notification_keys, Keys *subscription_keys);
 
 /**
  * Change the connection-wide keys used to secure the receipt and
@@ -264,40 +248,37 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
  *          they were added to the keys in the elvin_subscribe_with_keys(),
  *          call. This applies to all existing and future
  *          subscriptions.
- * @param error The error info.
  *
  * @see elvin_open_with_keys()
  * @see elvin_subscription_set_keys()
  */
 bool elvin_set_keys (Elvin *elvin,
-                     Keys *notification_keys, Keys *subscription_keys,
-                     ElvinError *error);
+                     Keys *notification_keys, Keys *subscription_keys);
+
 /**
  * Send a notification to an Elvin router.
  *
  * @param elvin The Elvin connection instance.
  * @param notification The notification attributes.
- * @param error The error info.
  *
  * @return True if the send succeeded.
  *
  * Example:
  * <pre>
  * Elvin *elvin = ...
- * ElvinError *error = ...
  * Attributes *notification = attributes_create ();
  *
  * attributes_set_int32 (notification, "favourite number", 42);
  * attributes_set_string (notification, "message", "hello world");
  *
- * elvin_send (elvin, notification, error);
+ * elvin_send (elvin, notification);
  *
  * attributes_destroy (notification);
  * </pre>
  *
  * @see elvin_subscribe()
  */
-bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
+bool elvin_send (Elvin *elvin, Attributes *notification);
 
 /**
  * Send a notification to an Elvin router with security constraints.
@@ -310,14 +291,12 @@ bool elvin_send (Elvin *elvin, Attributes *notification, ElvinError *error);
  *          be received by subscriptions with keys matching the set
  *          supplied here (or the connections' global notification keys: see
  *          elvin_subscription_set_keys()).
- * @param error The error info.
  *
  * @see elvin_send()
  * @see elvin_subscribe_with_keys()
  */
 bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
-                           Keys *notification_keys, SecureMode security,
-                           ElvinError *error);
+                           Keys *notification_keys, SecureMode security);
 
 /**
  * Subscribe to notifications from an Elvin router.
@@ -326,31 +305,28 @@ bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
  * @param subscription_expr The
  * <a href="http://avis.sourceforge.net/subscription_language.html">subscription expression</a>.
  * This expression is copied and freed when the subscription is disposed.
- * @param error The error info.
  *
  * @return The new subscription, or NULL on error.
  *
  * Example:
  * <pre>
  * Elvin *elvin = ...
- * ElvinError *error = ...
  * Subscription *subscription =
- *   elvin_subscribe (elvin, "string (message)", error);
+ *   elvin_subscribe (elvin, "string (message)");
  *
  * if (!subscription)
  * {
- *   elvin_perror ("subscribe", error);
+ *   elvin_perror ("subscribe", &elvin->error);
  *   exit (1);
  * }
  *
- * elvin_unsubscribe (elvin, subscription, error);
+ * elvin_unsubscribe (elvin, subscription);
  * </pre>
  *
  * @see elvin_subscribe_with_keys()
  * @see elvin_subscription_add_listener()
  */
-Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
-                               ElvinError *error);
+Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr);
 
 /**
  * Subscribe to notifications from an Elvin router with optional security
@@ -368,7 +344,6 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  *          receive notifications that are sent by clients with keys
  *          matching the set supplied here or the global
  *          subscription key set.
- * @param error The error info.
  *
  * @return The new subscription, or NULL on error.
  *
@@ -376,18 +351,17 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
  * <pre>
  * Elvin *elvin = ...
  * Keys *sub_keys = ...
- * ElvinError *error = ...
  * Subscription *subscription =
  *   elvin_subscribe_with_keys (elvin, "string (message)", keys,
- *                              REQUIRE_SECURE_DELIVERY, error);
+ *                              REQUIRE_SECURE_DELIVERY);
  *
  * if (!subscription)
  * {
- *   elvin_perror ("subscribe", error);
+ *   elvin_perror ("subscribe", &elvin->error);
  *   exit (1);
  * }
  *
- * elvin_unsubscribe (elvin, subscription, error);
+ * elvin_unsubscribe (elvin, subscription);
  * </pre>
  *
  * @see elvin_unsubscribe()
@@ -400,8 +374,7 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr,
 Subscription *elvin_subscribe_with_keys (Elvin *elvin,
                                          const char *subscription_expr,
                                          Keys *keys,
-                                         SecureMode security,
-                                         ElvinError *error);
+                                         SecureMode security);
 
 /**
  * Unsubscribe from a subscription created on an Elvin router.
@@ -411,27 +384,22 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
  * @param subscription The subscription to remove. This will be automatically
  * freed by the connection.
  *
- * @param error The error info.
- *
  * @return True if the unsubscribe succeeded.
  *
  * @see elvin_subscribe()
  */
-bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription,
-                        ElvinError *error);
+bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription);
 
 /**
  * Change the subscription expression for an existing subscription.
  *
  * @param subscription The subscription to change.
  * @param subscription_expr The new subscription expression.
- * @param error The error information.
  *
  * @see elvin_subscribe()
 */
 bool elvin_subscription_set_expr (Subscription *subscription,
-                                  const char *subscription_expr,
-                                  ElvinError *error);
+                                  const char *subscription_expr);
 
 /**
  * Change the keys used for receiving secure notifications.
@@ -443,15 +411,13 @@ bool elvin_subscription_set_expr (Subscription *subscription,
  *          receive notifications that are sent by clients with keys
  *          matching the set supplied here or the global
  *          subscription key set.
- * @param error The error information.
  *
  * @see elvin_subscribe_with_keys()
  * @see elvin_set_keys()
 */
 bool elvin_subscription_set_keys (Subscription *subscription,
                                   Keys *subscription_keys,
-                                  SecureMode security,
-                                  ElvinError *error);
+                                  SecureMode security);
 
 /**
  * Add a listener that will be called when notifications matching
@@ -603,10 +569,9 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  *
  * <pre>
  * Elvin *elvin = ...
- * ElvinError *error = ...
  *
- * if (!elvin_event_loop (elvin, error))
- *   elvin_perror ("elvin", error);
+ * if (!elvin_event_loop (elvin))
+ *   elvin_perror ("elvin", &elvin->error);
  * </pre>
  *
  * @return True if no error occurred.
@@ -615,7 +580,7 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  * @see elvin_poll()
  * @see elvin_event_loop()
  */
-bool elvin_event_loop (Elvin *elvin, ElvinError *error);
+bool elvin_event_loop (Elvin *elvin);
 
 /**
  * Poll an Elvin connection for a single incoming message from the
@@ -633,6 +598,6 @@ bool elvin_event_loop (Elvin *elvin, ElvinError *error);
  *
  * @return True if no error occurred.
  */
-bool elvin_poll (Elvin *elvin, ElvinError *error);
+bool elvin_poll (Elvin *elvin);
 
 #endif /* AVIS_ELVIN_H */
