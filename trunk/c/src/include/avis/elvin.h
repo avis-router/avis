@@ -458,9 +458,8 @@ bool elvin_subscription_remove_listener (Subscription *subscription,
 bool elvin_is_open (Elvin *elvin);
 
 /**
- * Close the elvin connection. If this is being used from a multi-threaded
- * program and an elvin_event_loop() is in process from another thread, this
- * will cause the event loop to exit normally.
+ * Close the elvin connection. This may be called any number of times, calls
+ * subsequent to the first have no effect.
  *
  * @param elvin The Elvin connection instance.
  *
@@ -473,7 +472,7 @@ bool elvin_close (Elvin *elvin);
  * call will return immediately, and the nominated handler will be
  * called from the event loop thread (the one calling
  * elvin_event_loop()) at the earliest opportunity. This function is
- * the only one that is safe to call from any thread when running the
+ * the only one that is safe to call threads other than the one running the
  * main event loop.
  *
  * @param elvin The Elvin connection.
@@ -558,12 +557,11 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  * create subscriptions should call this function after subscribing to
  * receive notifications and dispatch them to their listeners.
  *
- * This function will block, and only return when the connection is
- * closed, by the client with elvin_close(), by the router, or due to
- * an error.
+ * This function will block and only return when the connection is
+ * closed by the client with elvin_close(), by the router, or due to
+ * a protocol error.
  *
- * To close the connection from another thread, call elvin_close()
- * from elvin_invoke().
+ * To close the connection from another thread, call elvin_invoke_close().
  *
  * Example:
  *
