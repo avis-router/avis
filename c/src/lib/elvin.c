@@ -157,6 +157,8 @@ bool elvin_close (Elvin *elvin)
   alloc_message (disconn_rqst);
   alloc_message (disconn_rply);
 
+  elvin_error_reset (&elvin->error);
+
   if (elvin->router_socket == -1)
     return false;
 
