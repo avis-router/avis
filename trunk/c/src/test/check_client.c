@@ -49,12 +49,14 @@ static void close_listener
   (Elvin *elvin, CloseReason reason, const char *message, void *user_data);
 
 static void test_subscribe_sub_listener
-  (Subscription *sub, Attributes *attributes, bool secure, void *user_data);
+  (Subscription *sub, Attributes *attributes, bool secure, void *user_data,
+   ElvinError *error);
 
 static void test_subscribe_general_listener (Elvin *elvin,
                                              Attributes *attributes,
                                              bool secure,
-                                             void *user_data);
+                                             void *user_data,
+                                             ElvinError *error);
 
 static void check_secure_send_receive (Elvin *client, Subscription *secure_sub);
 
@@ -239,7 +241,7 @@ END_TEST
 
 void test_subscribe_sub_listener (Subscription *sub,
                                   Attributes *attributes, bool secure,
-                                  void *user_data)
+                                  void *user_data, ElvinError *error)
 {
   Array *data = attributes_get_opaque (attributes, "opaque");
 
@@ -256,7 +258,6 @@ void test_subscribe_sub_listener (Subscription *sub,
      "Invalid notification: PI != %f",
      attributes_get_real64 (attributes, "pi") );
 
-
   fail_unless (data != NULL, "Data missing");
   fail_unless (data->item_count == 100 * 1024, "Data wrong length");
   fail_unless (((uint8_t *)data->items) [10] == 42, "Data wrong");
@@ -266,7 +267,7 @@ void test_subscribe_sub_listener (Subscription *sub,
 
 void test_subscribe_general_listener (Elvin *elvin,
                                       Attributes *attributes, bool secure,
-                                      void *user_data)
+                                      void *user_data, ElvinError *error)
 {
   test_subscribe_received_ntfn = true;
 }
@@ -365,7 +366,8 @@ END_TEST
 
 void test_security_sub_listener (Subscription *sub,
                                  Attributes *attributes,
-                                 bool secure, void *user_data)
+                                 bool secure, void *user_data,
+                                 ElvinError *error)
 {
   fail_unless (secure, "Not secure");
 

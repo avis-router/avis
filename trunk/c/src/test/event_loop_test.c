@@ -23,26 +23,7 @@
 #include <avis/elvin.h>
 #include <avis/attributes.h>
 
-#ifdef WIN32
-  typedef HANDLE thread_t;
-
-  #define create_thread(thread, handler, param) \
-    ((thread = CreateThread (NULL, 0, handler, param, 0, NULL)) == NULL)
-
-  #define sleep(secs) Sleep (secs * 1000)
-
-  #define decl_thread_proc(name, param) DWORD WINAPI name (LPVOID param)
-#else
-  #include <unistd.h>
-  #include <pthread.h>
-
-  typedef pthread_t thread_t;
-
-  #define create_thread(thread, handler, param) \
-    pthread_create (&thread, NULL, handler, param)
-
-  #define decl_thread_proc(name, param) void *name (void *param)
-#endif
+#include "threads.h"
 
 void close_listener (Elvin *elvin, CloseReason reason, const char *message,
                      void *user_data)
@@ -51,7 +32,7 @@ void close_listener (Elvin *elvin, CloseReason reason, const char *message,
 }
 
 void sub_listener (Subscription *sub, Attributes *attributes, bool secure,
-                   void *user_data)
+                   void *user_data, ElvinError *error)
 {
   printf ("Notified! Message = %s\n",
           attributes_get_string (attributes, "message"));
