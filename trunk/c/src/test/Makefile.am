@@ -11,10 +11,12 @@ noinst_PROGRAMS=tests basic_test event_loop_test
 
 tests_SOURCES = \
   tests.c \
+  threads.h \
   check_messages.c \
   check_security.c \
   check_client.c \
   check_collections.c \
+  check_invoke.c \
   check_uri.c \
   check_ext.h
 
