@@ -189,6 +189,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\test\check_invoke.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\test\check_messages.c"
 				>
 			</File>
