@@ -70,7 +70,8 @@ static bool poll_receive_message (Elvin *elvin, Message message, ElvinError *err
 static bool receive_control_message (socket_t socket, Message message,
                                      ElvinError *error);
 
-static void handle_control_message (Elvin *elvin, Message message);
+static void handle_control_message (Elvin *elvin, Message message,
+                                    ElvinError *error);
 
 static void handle_notify_deliver (Elvin *elvin, Message message,
                                    ElvinError *error);
@@ -276,7 +277,7 @@ bool dispatch_message (Elvin *elvin, Message message, ElvinError *error)
   switch (message_type_of (message))
   {
   case MESSAGE_ID_CONTROL:
-    handle_control_message (elvin, message);
+    handle_control_message (elvin, message, error);
     break;
   case MESSAGE_ID_NOTIFY_DELIVER:
     handle_notify_deliver (elvin, message, error);
@@ -302,6 +303,17 @@ bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
                      &message, sizeof (message)) == sizeof (message);
 }
 
+static void elvin_invoke_close_handler (Elvin *elvin, void *param,
+                                        ElvinError *error)
+{
+  elvin_close (elvin);
+}
+
+bool elvin_invoke_close (Elvin *elvin)
+{
+  return elvin_invoke (elvin, elvin_invoke_close_handler, NULL);
+}
+
 bool receive_control_message (socket_t socket, Message message,
                               ElvinError *error)
 {
@@ -318,11 +330,11 @@ bool receive_control_message (socket_t socket, Message message,
 }
 
 /* TODO: do we want to allow handlers access to an error context? */
-void handle_control_message (Elvin *elvin, Message message)
+void handle_control_message (Elvin *elvin, Message message, ElvinError *error)
 {
   ControlMessage *control_message = (ControlMessage *)(message + 4);
 
-  (*control_message->handler) (control_message->parameter);
+  (*control_message->handler) (elvin, control_message->parameter, error);
 }
 
 void handle_nack (Message nack, ElvinError *error)

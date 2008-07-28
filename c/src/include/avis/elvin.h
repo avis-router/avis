@@ -122,12 +122,15 @@ typedef enum
  * elvin_open_with_keys()).
  * @param user_data The user data pointer passed into
  * elvin_subscription_add_listener().
+ * @param error An error context that may be used for calls back into
+ * the Elvin connection. If an error occurs within this context it will
+ * propagate back up out of the event loop.
  *
  * @see elvin_subscription_add_listener()
  */
 typedef void (*SubscriptionListener) (Subscription *subscription,
                                       Attributes *attributes, bool secure,
-                                      void *user_data);
+                                      void *user_data, ElvinError *error);
 
 /**
  * A listener for elvin connection close events.
@@ -158,16 +161,27 @@ typedef void (*CloseListener) (Elvin *elvin, CloseReason reason,
  * elvin_open_with_keys()). This will be true if at least one subscription
  * securely matched the notification.
  * @param user_data The user data passed in when adding the listener.
+ * @param error An error context that may be used for calls back into
+ * the Elvin connection. If an error occurs within this context it will
+ * propagate back up out of the event loop.
  *
  * @see elvin_add_notification_listener()
  */
 typedef void (*GeneralNotificationListener)
-  (Elvin *elvin, Attributes *attributes, bool secure, void *user_data);
+  (Elvin *elvin, Attributes *attributes, bool secure, void *user_data,
+   ElvinError *error);
 
 /**
  * A handler function schedued to be called by elvin_invoke().
+ *
+ * @param elvin The Elvin connection that is calling the function.
+ * @param parameter The parameter passed into elvin_invoke ().
+ * @param error An error context that may be used for calls back into
+ * the Elvin connection. If an error occurs within this context it will
+ * propagate back up out of the event loop.
  */
-typedef void (*InvokeHandler) (void *parameter);
+typedef void (*InvokeHandler) (Elvin *elvin, void *parameter,
+                               ElvinError *error);
 
 /**
  * Open a connection to an Elvin router.
@@ -503,14 +517,15 @@ bool elvin_close (Elvin *elvin);
  * @return True if the handler was queued for callback. False
  * indicates the connection is closed or there was an internal error.
  *
- * Example: close the connection from another thread.
- * <pre>
- * Elvin *elvin = ...;
- *
- * elvin_invoke (elvin, elvin_close, elvin);
- * </pre>
+ * @see elvin_invoke_close()
  */
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter);
+
+/**
+ * Shortcut to invoke elvin_close() via elvin_invoke(). This can be used by
+ * multi-threaded applications to safely shut down an Elvin connection.
+ */
+bool elvin_invoke_close (Elvin *elvin);
 
 /**
  * Add a listener that will be called when the connection is closed.
