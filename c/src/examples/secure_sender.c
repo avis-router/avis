@@ -67,7 +67,7 @@ int main (int argc, const char *argv [])
 
   /*
    * To ensure only known consumers can receive this message, we use
-   * a consumer key scheme, where the producer (this class) uses a
+   * a consumer key scheme, where the producer (this example) uses a
    * public key for its messages and consumers can receive only if
    * they know the private version of the key. It is effectively
    * impossible for untrusted consumers to work out the private key
@@ -93,7 +93,6 @@ int main (int argc, const char *argv [])
   /* Send message, requiring it be delivered securely */
   elvin_send_with_keys
     (&elvin, secret_message, sending_keys, REQUIRE_SECURE_DELIVERY);
-
 
   if (elvin_error_occurred (&elvin.error))
   {
