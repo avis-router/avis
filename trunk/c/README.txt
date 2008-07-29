@@ -35,6 +35,7 @@ src/
   include/avis/               Public header files for the library.
   lib/                        Source for the client library.
   test/                       Unit tests.
+  examples/                   API usage examples.
 
 packages/
 
@@ -84,6 +85,19 @@ Windows
 
 Open the "platforms/windows/vc2005/Avis.sln" file under Visual Studio
 2005 or later.
+
+
+Running The Examples
+======================================================================
+
+If you built from the command line, the examples will be in
+"src/examples".
+
+The "hello_world" example demonstrates sending and receiving
+notifications.
+
+The "secure_sender" and "secure_receiver" example pair show how to use
+the Elvin security model to restrict access to notifications.
 
 
 Using In Eclipse C Development Tools (CDT)
