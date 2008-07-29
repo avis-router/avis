@@ -97,7 +97,7 @@ bool elvin_error_set (ElvinError *error, int code, const char *message, ...)
 bool elvin_error_from_errno (ElvinError *error)
 {
   error->code = errno_to_elvin_error (errno);
-  error->message = strdup (strerror (errno));
+  error->message = estrdup (strerror (errno));
 
   return false;
 }
@@ -110,6 +110,16 @@ void *do_avis_emalloc (size_t size, const char *file, int line)
     avis_fail ("Out of memory: could not allocate %ul bytes", file, line, size);
 
    return data;
+}
+
+char *do_avis_estrdup (const char *str, const char *file, int line)
+{
+  char *dup = strdup (str);
+
+  if (dup == NULL)
+    avis_fail ("Out of memory: could not copy string", file, line);
+
+  return dup;
 }
 
 static bool in_fail = false;

@@ -24,6 +24,8 @@
 
 #define emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
 
+#define estrdup(str) do_avis_estrdup ((str), __FILE__, __LINE__)
+
 #define check_max_size(value, max, message, error) \
   if ((value) > (max)) \
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message);

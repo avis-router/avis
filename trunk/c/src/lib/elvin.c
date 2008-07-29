@@ -510,7 +510,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     elvin_subscription_init (subscription);
 
     subscription->elvin = elvin;
-    subscription->subscription_expr = strdup (subscription_expr);
+    subscription->subscription_expr = estrdup (subscription_expr);
     subscription->id = int64_at_offset (sub_rply, 4);
     subscription->keys = keys;
 
@@ -559,7 +559,7 @@ bool elvin_subscription_set_expr (Subscription *subscription,
   {
     free (subscription->subscription_expr);
 
-    subscription->subscription_expr = strdup (subscription_expr);
+    subscription->subscription_expr = estrdup (subscription_expr);
 
     /* no free needed for sub_rply */
 

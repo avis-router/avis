@@ -64,7 +64,7 @@ typedef struct
  *
  * The next param is the value to be assigned. For strings and opaques, this
  * value is "owned" by the poly value and will be free'd on calling
- * value_free(), so constant strings passed in here should be strdup()'d
+ * value_free(), so constant strings passed in here should be copied
  * before being used in a value that will be value_free()'d.
  * No type checking is done for the value parameter.
  */
@@ -107,7 +107,8 @@ void value_free (Value *value);
  * @see value_create_string_nocopy()
  */
 #define value_create_string(value) \
-  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_STRING, strdup (value)))
+  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_STRING, \
+   avis_estrdup (value)))
 
 /**
  * Allocate and init a string value, without copying it first. Use

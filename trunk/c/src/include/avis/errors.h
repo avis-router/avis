@@ -77,7 +77,11 @@ typedef struct
 
 void *do_avis_emalloc (size_t size, const char *file, int line);
 
+char *do_avis_estrdup (const char *str, const char *file, int line);
+
 #define avis_emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
+
+#define avis_estrdup(str) do_avis_estrdup ((str), __FILE__, __LINE__)
 
 /**
  * An empty error instance. This can be assigned to an error instance to

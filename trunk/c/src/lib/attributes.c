@@ -86,7 +86,7 @@ void attributes_set (Attributes *attributes, const char *name, Value *value)
   if (old_value)
     value_destroy (old_value);
 
-  hashtable_insert (attributes->table, strdup (name), value);
+  hashtable_insert (attributes->table, estrdup (name), value);
 }
 
 void attributes_set_nocopy (Attributes *attributes, char *name, Value *value)
