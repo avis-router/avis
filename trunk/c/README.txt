@@ -15,11 +15,12 @@ The Avis web site is http://avis.sourceforge.net.
 Supported Platforms
 ======================================================================
 
-The client library is written in portable C and is actively tested on
-Mac OS X, Linux, Solaris (5.9 and later), and Microsoft Windows XP. It
-can be built from the command line using the GNU automake-based build
-scripts, or using the projects provided for the Apple Xcode and
-Microsoft Visual Studio 2005 IDE's.
+The client library is written in portable C and is actively supported
+on Mac OS X (10.4 and 10.5), Linux (Fedora Core 3 onwards), Solaris
+(5.9 and later), and Microsoft Windows (XP and later). It can be built
+from the command line using the GNU automake-based build scripts, or
+using the projects provided for the Apple Xcode and Microsoft Visual
+Studio 2005 IDE's.
 
 
 Distribution Layout
@@ -109,16 +110,6 @@ Eclipse CDT plugin version 4.0.x or later):
  * Choose File -> Import...
 
  * Select "Existing project into workspace"
-
-
-Changing GNU automake
-======================================================================
-
-If you're messing with the GNU automake files (esp configure.ac),
-several custom macros are in "automake-macros". I haven't found a
-better way to get these to work with autoreconf than the following:
-
-  export ACLOCAL="aclocal -I $PWD/automake-macros"
 
 
 License
