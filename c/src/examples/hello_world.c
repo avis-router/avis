@@ -39,14 +39,27 @@ void sub_listener (Subscription *subscription, Attributes *attributes,
 }
 
 /**
+ * This example demonstrates sending and receiving Elvin notifications
+ * with the Elvin C API. See the comments in the source code for details.
+ *
+ * It requires that you have access to an Elvin router: by default it will
+ * use the public router at public.elvin.org. This will likely not work
+ * if you're behind a fascist corporate firewall, in which case you could
+ * download Avis from http://avis.sourceforge.net and install one locally.
+ *
  * Usage: hello_world [elvin_uri]
+ *
+ * elvin_uri: optional URI pointing to an Elvin router, e.g
+ *
+ *   elvin://public.elvin.org
+ *   elvin://localhost
  */
 int main (int argc, const char * argv[])
 {
   Elvin elvin;
   Attributes *notification;
   Subscription *subscription;
-  const char *uri = argc > 1 ? argv [1] : "elvin://localhost";
+  const char *uri = argc > 1 ? argv [1] : "elvin://public.elvin.org";
 
   /* Exit if we failed to connect for any reason */
   if (!elvin_open (&elvin, uri))
