@@ -98,9 +98,10 @@ AC_CONFIG_FILES([
    Makefile 
    src/Makefile 
    src/lib/Makefile
+   src/test/Makefile
+   src/examples/Makefile
    doc/Makefile
    doc/api/Makefile 
-   src/test/Makefile
    packages/Makefile 
    packages/hashtable/Makefile])
 
