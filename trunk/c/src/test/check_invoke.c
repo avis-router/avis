@@ -50,7 +50,7 @@ static void notify_thread_send (Elvin *elvin, void *param)
 
   elvin_send (elvin, ntfn);
 
-  attributes_free (ntfn);
+  attributes_destroy (ntfn);
 }
 
 /**
