@@ -261,7 +261,7 @@ bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
  * @see elvin_key_create_from_string()
  * @see elvin_key_create_from_data()
  */
-void elvin_key_free (Key *key);
+void elvin_key_free (Key key);
 
 /**
  * Copy a key.
