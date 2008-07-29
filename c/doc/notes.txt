@@ -6,14 +6,14 @@ TODO
 * DONE: embed elvin error in connection
 * DONE: test on Windows, Solaris
 * DONE: test failed connect
-* threads only for tests
+* DONE: threads only for tests
 * examples
 * API doc intro
 * check protocol stack
 * refactor tests
 * check todo's
 * strdup -> estrdup
-* valgrind
+* DONE: valgrind
 * use hashmap for subscriptions?
 * connection options?
 * hide non-public symbols?
