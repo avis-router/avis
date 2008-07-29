@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I automake-macros
+
 SUBDIRS = packages . src doc
 
 EXTRA_DIST = \
