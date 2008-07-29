@@ -237,8 +237,10 @@ real64_t attributes_get_real64 (Attributes *attributes, const char *name);
  * @param attributes The attributes to update.
  * @param name The name to use. This will be copied before being put into
  * the set.
- * @param value The value to associate with name. The string will be copied
- * before being added to the set.
+ * @param value The value to associate with name. The string will be
+ * copied before being added to the set. This must be a valid UTF-8
+ * string: an invalid UTF-8 string will likely trigger a protocol
+ * violation in the router and result in disconnection.
  *
  * @see attributes_set()
  */
