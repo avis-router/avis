@@ -19,6 +19,10 @@ AC_INIT([Avis Client], version_major.version_minor.version_patch,
 # place to put some extra build scripts installed
 AC_CONFIG_AUX_DIR([automake])
 
+# m4_pattern_allow([^AM_])
+
+AM_ACLOCAL_INCLUDE(automake-macros)
+
 # Call check's ./configure script recursively.
 AC_CONFIG_SUBDIRS([packages/check])
 
@@ -54,24 +58,12 @@ AC_CHECK_HEADERS([endian.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
-#AC_CACHE_CHECK([for struct sockaddr_in6], ac_cv_have_struct_sockaddr_in6, [
-#	AC_TRY_COMPILE(
-#		[
-##include <sys/types.h>
-##include <netinet/in.h>
-#		],
-#		[ struct sockaddr_in6 s; s.sin6_family = 0; ],
-#		[ ac_cv_have_struct_sockaddr_in6="yes" ],
-#		[ ac_cv_have_struct_sockaddr_in6="no" ]
-#	)
-#])
-#if test "x$ac_cv_have_struct_sockaddr_in6" = "xyes" ; then
-#	AC_DEFINE(HAVE_STRUCT_SOCKADDR_IN6, 1,
-#		[define if you have struct sockaddr_in6 data type])
-#fi
-
 # Checks for library functions.
 AC_FUNC_MALLOC
+
+# pthreads
+
+ACX_PTHREAD
 
 # gcc-specific stuff
 if `echo "$CC" | grep gcc >/dev/null 2>&1`; then
@@ -88,10 +80,9 @@ fi
 case $host in 
   *-*-linux*)
     AVIS_LDFLAGS="$AVIS_LDFLAGS -lm"
-    AVIS_CFLAGS="$AVIS_CFLAGS -pthread"
     ;;
   sparc-sun-solaris*)
-    AVIS_LDFLAGS="$AVIS_LDFLAGS -lm -lsocket -lthread"
+    AVIS_LDFLAGS="$AVIS_LDFLAGS -lm -lsocket"
     ;;
 esac
 
