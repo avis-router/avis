@@ -97,6 +97,16 @@ Eclipse CDT plugin version 4.0.x or later):
  * Select "Existing project into workspace"
 
 
+Changing GNU automake
+======================================================================
+
+If you're messing with the GNU automake files (esp configure.ac),
+several custom macros are in "automake-macros". I haven't found a
+better way to get these to work with autoreconf than the following:
+
+  export ACLOCAL="aclocal -I $PWD/automake-macros"
+
+
 License
 ======================================================================
 
