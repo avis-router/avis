@@ -2,12 +2,12 @@ Avis C Client Library
 ======================================================================
 
 This is the source distribution of the Avis client library for C. The
-Avis client library provides a C API for accessing Elvin event
-routers. This includes the Avis event router and the Mantara Elvin
-product.
+Avis client library provides a small, portable C API for accessing
+Elvin event routers. This includes the Avis event router and the
+Mantara Elvin product.
 
 If you're not sure where to get started, have a look at the API
-documentation in doc/api/html.
+documentation in doc/api/html and the examples in src/examples.
 
 The Avis web site is http://avis.sourceforge.net.
 
@@ -18,9 +18,9 @@ Supported Platforms
 The client library is written in portable C and is actively supported
 on Mac OS X (10.4 and 10.5), Linux (Fedora Core 3 onwards), Solaris
 (5.9 and later), and Microsoft Windows (XP and later). It can be built
-from the command line using the GNU automake-based build scripts, or
-using the projects provided for the Apple Xcode and Microsoft Visual
-Studio 2005 IDE's.
+from the command line using the GNU autoconf-based configure script,
+or using the projects provided for the Apple Xcode (3.1 and later) and
+Microsoft Visual Studio (2005 and later) IDE's.
 
 
 Distribution Layout
@@ -32,22 +32,19 @@ doc/
   api/html/                   API documentation.
 
 src/
-
   include/avis/               Public header files for the library.
   lib/                        Source for the client library.
   test/                       Unit tests.
   examples/                   API usage examples.
 
 packages/
-
   check/                      Check unit testing framework.
                               (modified from 0.9.5 release)
   hashtable/                  C hash table implementation.
 
 platforms/
-
   gnu_automake/               For building under GNU automake.
-  macosx/                     For building on Mac OS X Xcode.
+  macosx/                     For building on Mac OS X Xcode 3.1.
   windows/
     vc2005/                   For building on Windows under Visual
                               Studio 2005.
