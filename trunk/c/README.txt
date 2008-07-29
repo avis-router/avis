@@ -75,7 +75,7 @@ Mac OS X
 ----------------------------------------------------------------------
 
 The client library will build from the command line using the steps
-above, or you can build in Xcode (3.0 or later) using the project in
+above, or you can build in Xcode (3.1 or later) using the project in
 "platforms/macosx".
 
 Windows
@@ -92,10 +92,9 @@ If you built from the command line, the examples will be in
 "src/examples".
 
 The "hello_world" example demonstrates sending and receiving
+notifications. The "secure_sender" and "secure_receiver" example pair
+show how to use the Elvin security model to restrict access to
 notifications.
-
-The "secure_sender" and "secure_receiver" example pair show how to use
-the Elvin security model to restrict access to notifications.
 
 
 Using In Eclipse C Development Tools (CDT)
