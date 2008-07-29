@@ -2,13 +2,13 @@ TODO
 
 0.3 release
 
-* lost packet
 * API doc intro
 * examples on web site?
+* lost packet
 * check protocol stack
 * check todo's
-* strdup -> estrdup
 * Windows binary distro?
+* DONE: strdup -> estrdup
 * DONE: test invoke
 * DONE: embed elvin error in connection
 * DONE: test on Windows, Solaris
