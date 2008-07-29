@@ -15,10 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
 
 #include <avis/elvin.h>
 
@@ -54,14 +52,14 @@ void sub_listener (Subscription *subscription, Attributes *attributes,
  *   elvin://public.elvin.org
  *   elvin://localhost
  */
-int main (int argc, const char * argv[])
+int main (int argc, const char *argv [])
 {
+  const char *uri = argc > 1 ? argv [1] : "elvin://public.elvin.org";
   Elvin elvin;
   Attributes *notification;
   Subscription *subscription;
-  const char *uri = argc > 1 ? argv [1] : "elvin://public.elvin.org";
 
-  /* Exit if we failed to connect for any reason */
+  /* Try to connect, and exit if we fail */
   if (!elvin_open (&elvin, uri))
   {
     elvin_perror ("open", &elvin.error);
@@ -89,14 +87,14 @@ int main (int argc, const char * argv[])
   attributes_destroy (notification);
 
   /*
-   * Run event loop. This will receive and dispatch messages from the
-   * router, including the one we just sent. The subscription listener
+   * Start the event loop. This will receive and dispatch messages from the
+   * router, starting with the one we just sent. The subscription listener
    * closes the connection after printing the notification, which will
    * cause the event loop to exit.
    */
   elvin_event_loop (&elvin);
 
-  /** This is redundant in this case, but good practice. */
+  /** This is redundant in this case, but can't hurt. */
   elvin_close (&elvin);
 
   return 0;
