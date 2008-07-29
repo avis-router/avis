@@ -85,8 +85,9 @@ AC_SUBST(AVIS_LDFLAGS)
 AC_CONFIG_HEADERS([platforms/gnu_automake/avis_client_config.h])
 
 AC_CONFIG_FILES([
-   Makefile ])
+   Makefile
+   packages/Makefile])
 
-SUBDIRS=packages/zthread
+SUBDIRS=packages
 
 AC_OUTPUT
