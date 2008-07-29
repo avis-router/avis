@@ -6,9 +6,13 @@ AM_CFLAGS = @AVIS_CFLAGS@
 
 AM_LDFLAGS = @AVIS_LDFLAGS@
 
-noinst_PROGRAMS=hello_world
+noinst_PROGRAMS=hello_world secure_sender secure_receiver
 
 hello_world_SOURCES = hello_world.c
+hello_world_LDADD = $(top_srcdir)/src/lib/libavis.la
 
-hello_world_LDADD = \
-  $(top_srcdir)/src/lib/libavis.la
+secure_sender_SOURCES = secure_sender.c
+secure_sender_LDADD = $(top_srcdir)/src/lib/libavis.la
+
+secure_receiver_SOURCES = secure_receiver.c
+secure_receiver_LDADD = $(top_srcdir)/src/lib/libavis.la
