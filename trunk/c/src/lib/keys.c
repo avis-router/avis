@@ -154,13 +154,13 @@ void elvin_keys_free (Keys *keys)
   free_keyset (keyset_for_scheme (keys, 3));
 }
 
-void elvin_key_free (Key *key)
+void elvin_key_free (Key key)
 {
-  if (key && key->data)
+  if (key.data)
   {
-    free (key->data);
+    free (key.data);
 
-    key->data = NULL;
+    key.data = NULL;
   }
 }
 
@@ -170,7 +170,7 @@ void free_keyset (ArrayList *keyset)
   Key *key = keyset->items;
 
   for ( ; i > 0; i--, key++)
-    elvin_key_free (key);
+    elvin_key_free (*key);
 
   array_list_free (keyset);
 }
