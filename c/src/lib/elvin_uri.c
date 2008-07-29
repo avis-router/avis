@@ -231,9 +231,9 @@ bool parse_protocol (ElvinURI *uri, const char *index1, ElvinError *error)
     fail_if (index2 - index1 != 6 || memcmp (index1, "secure", 6) != 0,
                       "Invalid protocol alias");
 
-    items [0] = strdup ("xdr");
-    items [1] = strdup ("none");
-    items [2] = strdup ("ssl");
+    items [0] = estrdup ("xdr");
+    items [1] = estrdup ("none");
+    items [2] = estrdup ("ssl");
   } else
   {
     items [0] = substring (index1, index2);
@@ -272,7 +272,7 @@ bool parse_protocol (ElvinURI *uri, const char *index1, ElvinError *error)
 #define MAX_OPTION_LENGTH 255
 
 /** Finish adding chars to the buffer: generate a string and reset */
-#define buffer_finish(buff, curr) (*curr = '\0', curr = buff, strdup (buff))
+#define buffer_finish(buff, curr) (*curr = '\0', curr = buff, estrdup (buff))
 
 const char *parse_options (ElvinURI *uri, const char *index,
                            ElvinError *error)
