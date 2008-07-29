@@ -2,22 +2,27 @@ TODO
 
 0.3 release
 
+* lost packet
+* API doc intro
+* examples on web site?
+* check protocol stack
+* check todo's
+* strdup -> estrdup
+* Windows binary distro?
 * DONE: test invoke
 * DONE: embed elvin error in connection
 * DONE: test on Windows, Solaris
 * DONE: test failed connect
 * DONE: threads only for tests
-* examples
-* API doc intro
-* check protocol stack
-* refactor tests
-* check todo's
-* strdup -> estrdup
+* DONE: examples
 * DONE: valgrind
+
+Unallocated
+
+* refactor tests
 * use hashmap for subscriptions?
 * connection options?
 * hide non-public symbols?
-
 * NO_DELAY
 int flag = 1;
   int result = setsockopt(sock,            /* socket affected */
