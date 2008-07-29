@@ -36,7 +36,7 @@ void sub_listener (Subscription *subscription, Attributes *attributes,
   elvin_close (subscription->elvin);
 }
 
-/**
+/*
  * This example demonstrates sending and receiving Elvin notifications
  * with the Elvin C API. See the comments in the source code for details.
  *
@@ -70,6 +70,9 @@ int main (int argc, const char *argv [])
   /*
    * Subscribe to notifications with a string Greeting field and an integer
    * Number field.
+   *
+   * NOTE: we don't have to free the subscription, the connection does
+   * that for us on close.
    */
   subscription =
     elvin_subscribe (&elvin, "string (Greeting) && int32 (Number)");
@@ -94,7 +97,7 @@ int main (int argc, const char *argv [])
    */
   elvin_event_loop (&elvin);
 
-  /** This is redundant in this case, but can't hurt. */
+  /* This is redundant in this case, but can't hurt. */
   elvin_close (&elvin);
 
   return 0;
