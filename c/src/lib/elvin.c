@@ -290,6 +290,9 @@ bool dispatch_message (Elvin *elvin, Message message)
   case MESSAGE_ID_DISCONN:
     elvin_shutdown (elvin, REASON_ROUTER_SHUTDOWN, ptr_at_offset (message, 4));
     break;
+  case MESSAGE_ID_DROP_WARN:
+    DIAGNOSTIC ("Router sent a dropped packet warning");
+    break;
   default:
     handled = false;
   }
