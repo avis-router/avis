@@ -83,6 +83,10 @@ static Subscription *elvin_subscription_init (Subscription *subscription);
 
 static void elvin_subscription_free (Subscription *subscription);
 
+#define str_equals(str1, str2) strcmp ((str1), (str2)) == 0
+
+static bool is_supported_protocol (char **protocol);
+
 bool elvin_open (Elvin *elvin, const char *router_uri)
 {
   ElvinURI uri;
@@ -110,6 +114,13 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   alloc_message (conn_rqst);
   alloc_message (conn_rply);
 
+  if (!is_supported_protocol (uri->protocol))
+  {
+    return elvin_error_set (&elvin->error, ELVIN_ERROR_USAGE,
+                            "Unsupported URI protocol");
+  }
+
+  /* open router and control sockets */
   if ((elvin->router_socket =
         open_socket (uri->host, uri->port, &elvin->error)) == -1)
   {
@@ -124,6 +135,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
     return false;
   }
 
+  /* init other fields */
   elvin->polling = false;
   array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
   listeners_init (elvin->close_listeners);
@@ -132,6 +144,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   elvin->subscription_keys = subscription_keys;
   elvin_error_init (&elvin->error);
 
+  /* say hello to router */
   message_init (conn_rqst, MESSAGE_ID_CONN_RQST,
                 (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
                 EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
@@ -713,4 +726,11 @@ bool elvin_remove_notification_listener (Elvin *elvin,
                                          GeneralNotificationListener listener)
 {
   return listeners_remove (&elvin->notification_listeners, (Listener)listener);
+}
+
+bool is_supported_protocol (char **protocol)
+{
+  return str_equals (protocol [0], "tcp") &&
+         str_equals (protocol [1], "none") &&
+         str_equals (protocol [2], "xdr");
 }
