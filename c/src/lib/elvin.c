@@ -730,7 +730,8 @@ bool elvin_remove_notification_listener (Elvin *elvin,
 
 bool is_supported_protocol (char **protocol)
 {
-  return str_equals (protocol [0], "tcp") &&
-         str_equals (protocol [1], "none") &&
-         str_equals (protocol [2], "xdr");
+  return protocol == DEFAULT_URI_PROTOCOL ||
+         (str_equals (protocol [0], "tcp") &&
+          str_equals (protocol [1], "none") &&
+          str_equals (protocol [2], "xdr"));
 }
