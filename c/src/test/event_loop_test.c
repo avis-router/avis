@@ -68,7 +68,6 @@ int main (int argc, const char * argv[])
   if (create_thread (close_thread, close_thread_main, &elvin))
     exit (1);
 
-  /* TODO handle Ctrl+C */
   sub = elvin_subscribe (&elvin, "require (test) && string (message)");
 
   if (!sub)
