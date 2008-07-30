@@ -162,6 +162,8 @@ static MessageFormat MESSAGE_FORMATS [] =
     {XID, I64, END} /*{"xid", "subscriptionId"}*/},
   {MESSAGE_ID_SUB_RPLY,
     {XID, I64, END} /*{"xid"}*/},
+  {MESSAGE_ID_DROP_WARN,
+    {END}},
 
   {-1, {END}}
 };
