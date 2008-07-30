@@ -42,6 +42,8 @@ libavis_la_SOURCES = \
 libavis_la_LIBADD = \
   $(top_srcdir)/packages/hashtable/libhashtable.la
 
+libavis_la_LDFLAGS = -version-info 0:0:0
+
 includedir=${prefix}/include/avis
 
 include_HEADERS = \
