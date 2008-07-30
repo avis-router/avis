@@ -140,6 +140,11 @@ void attributes_set_nocopy (Attributes *attributes, char *name, Value *value);
 Value *attributes_get (Attributes *attributes, const char *name);
 
 /**
+ * Test if the attributes contains a mapping for a given field name.
+ */
+bool attributes_contains (Attributes *attributes, const char *name);
+
+/**
  * Remove the value mapped to a name.
  *
  * @param attributes The attributes to modify.
