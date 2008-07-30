@@ -104,6 +104,11 @@ Value *attributes_get (Attributes *attributes, const char *name)
   return hashtable_search (attributes->table, (void *)name);
 }
 
+bool attributes_contains (Attributes *attributes, const char *name)
+{
+  return hashtable_search (attributes->table, (void *)name) != NULL;
+}
+
 Value *attributes_remove (Attributes *attributes, const char *name)
 {
   return hashtable_remove (attributes->table, (void *)name);
