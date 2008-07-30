@@ -15,6 +15,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/*! \mainpage Index
+ *
+ * \section intro_sec Overview
+ *
+ * The Avis client library for C is a small, portable C library for
+ * accessing Elvin router services from native applications.
+ *
+ * \section usage_sec Usage
+ *
+ * The best way to learn how to use the API is to have a look at the
+ * examples. See the <code>src/examples</code> directory of the source
+ * distribution, or online at the <a
+ * href="http://avis.sourceforge.net/client_library.html">Avis client
+ * library web page</a>. Once you've understood the examples, have a
+ * look at the <a href="struct_elvin.html">API documentation for the
+ * Elvin struct</a>.
+ */
+
 /** \file
  * The main Avis client library definitions.
  */
