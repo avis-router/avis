@@ -1,13 +1,12 @@
 TODO
 
-0.3 release
+1.0 release
 
-* API doc intro
-* examples on web site?
-* lost packet
-* check protocol stack
-* check todo's
-* Windows binary distro?
+* DONE: API doc intro
+* DONE: examples on web site?
+* DONE: check todo's
+* DONE: lost packet
+* DONE: check protocol stack
 * DONE: strdup -> estrdup
 * DONE: test invoke
 * DONE: embed elvin error in connection
@@ -19,8 +18,9 @@ TODO
 
 Unallocated
 
+* Windows binary distro?
 * refactor tests
-* use hashmap for subscriptions?
+* use hashmap for subscriptions? could sort and binary search for speed
 * connection options?
 * hide non-public symbols?
 * NO_DELAY
