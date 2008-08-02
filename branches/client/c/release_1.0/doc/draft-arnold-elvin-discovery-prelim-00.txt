@@ -1,0 +1,899 @@
+
+
+
+
+
+
+Elvin Project                                                  D. Arnold
+Preliminary INTERNET-DRAFT                                       J. Boot
+                                                               T. Phelps
+Expires: 29 Dec 2001                                           B. Segall
+                                                                    DSTC
+                                                             29 Jun 2001
+
+                    Elvin Router Discovery Protocol
+               draft-arnold-elvin-discovery-prelim-00.txt
+
+
+1.  Status of this Memo
+
+   This document is an Internet-Draft and is NOT offered in accordance
+   with Section 10 of RFC2026, and the author does not provide the IETF
+   with any rights other than to publish as an Internet-Draft.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet- Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/1id-abstracts.html
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html
+
+2.  Abstract
+
+   This document describes a mechanism for automatic discovery of Elvin
+   routers by Elvin clients.
+
+   An Elvin router may be configured to accept connections from Elvin
+   clients using a variety of protocol stacks and points of attachment.
+   Each of these endpoints can be succinctly described using an Elvin
+   URI [EURI].
+
+   Configuring Elvin clients to connect using an appropriate URI is a
+   variation of a common problem.  The Elvin Router Discovery Protocol
+   provides a means of locating a suitable point of attachment to an
+   Elvin router that does not require external infrastructure support,
+   in contrast to alternative protocols such as SLP and DHCP.
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 1]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+3.  Terminology
+
+   This document discusses Elvin clients, client libraries, and routers.
+
+   An Elvin router (or server) is a daemon process that runs on a single
+   machine.  It acts as a distribution mechanism for Elvin messages. A
+   client is a program that uses the Elvin router, via a client library
+   for a particular programming language.  A client library implements
+   the Elvin protocol and manages clients' connections to an Elvin
+   router.
+
+   Further detail of these entities and their roles is provided in [EP].
+
+3.1.  Notation Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+4.  Introduction
+
+   Elvin client programs require a connection to an Elvin router in
+   order to send and receive messages.  Locating a suitable router
+   requires some means of discovering what routers are available and
+   communicating this to clients as they execute.
+
+   This problem is shared by many other systems, and common mechanisms
+   have been implemented to resolve it in various ways suited to various
+   circumstances.  These methods include manual (or static) configura-
+   tion, the Service Location Protocol [RFC2608], Dynamic Host Confi-
+   guration Protocol [RFC2131] or use of a directory service, such a
+   LDAP [RFC2251].  Common to all these mechanisms is an external system
+   that provides the location mechanism, some of which also require
+   human intervention.
+
+   This document describes a lightweight discovery mechanism that does
+   not require external infrastructure, administrator privileges or
+   manual configuration.  It can be used independently or in conjunction
+   with other discovery or location services as required.
+
+   The Elvin Router Discovery Protocol (ERDP) is an extension of the
+   base Elvin Protocol [EP].  It is OPTIONAL for Elvin clients, and
+   RECOMMENDED for Elvin router implementations.
+
+   Interactions between ERDP and the Elvin clustering protocol are not
+   discussed in this specification, but are included in [ERCP].
+
+
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 2]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+5.  Protocol
+
+   The basic principle of the discovery protocol is that clients solicit
+   advertisements from routers, and routers respond, advertising their
+   available endpoint URI.  The client can examine the URI as they are
+   discovered, discarding or selecting a particular router and point of
+   attachment using whatever criteria are applicable.
+
+                                ,-->     +---------+
+     +-------------+ ---SvrRqst-+-->   +---------+ |
+     | Producer or |            `--> +---------+ | |
+     |  Consumer   | <--.            |  Elvin  | |-+
+     +-------------+ <--+-SvrAdvt--- | Routers |-+     SOLICITATION and
+                     <--'            +---------+          ADVERTISEMENT
+
+   Both the solicitation and the resulting advertisements use a multi-
+   cast transport.  The use of multicast for the advertisements allows
+   active clients to maintain a cache of available routers, to be used
+   for future connection attempts.
+
+   The protocol manipulates the scope of the multicast packets to con-
+   trol the locality of solicitation and advertisement.  This enables
+   router and client configuration to match network topologies, and
+   minimises the impact of the discovery traffic.
+
+   In addition to responses to solicitations, routers advertise their
+   availability on startup, and whenever their offered configuration
+   changes.  A separate withdrawal packet is used to cancel the previous
+   advertisements, normally on router shutdown.
+
+         +-------------+
+       +-------------+ |                     +---------+
+     +-------------+ | | <--.                |  Elvin  |
+     | Producers & | |-+ <--+-SvrAdvtClose-- |  Router |
+     |  Consumers  |-+   <--'                +---------+  ADVERTISEMENT
+     +-------------+                                         WITHDRAWAL
+
+5.1.  Selecting Router URI
+
+   Client libraries can expose the advertised URI to client applica-
+   tions, enabling them to select a particular endpoint on the basis of
+   protocol stack, endpoint address or other properties of the URI
+   itself.
+
+   But these properties pertain only to the specific endpoint, not the
+   router.  Advertisement packets contain two properties of the router
+   itself used by the client to select a URI: a scope name and a default
+   flag.
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 3]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+5.1.1.  Scope Names
+
+   Scope names provide a means of selecting specifically provisioned
+   Elvin routers without knowledge of their location or identity.
+
+   A router MUST advertise a `scope name'.  A scope name is a UTF-8
+   encoded character string.  It MUST NOT contain the colon character
+   (UTF-8 0000 003a hexadecimal, from the US-ASCII repertoire).  Scope
+   names MAY be zero-length.
+
+   A client configured with an Elvin scope name MUST NOT connect to an
+   endpoint of a discovered router not advertising itself as a provider
+   of that scope.
+
+   The use of scope names retains the location transparency of dynamic
+   router discovery, while giving a simple means of provisioning multi-
+   ple Elvin routers or router networks, within a LAN environment.
+
+   Note that while there are no explicit semantics associated with a
+   scope name in the discovery protocol, the Elvin Router Clustering
+   Protocol requires that all routers in a cluster provide the same
+   named scope [ERCP].
+
+5.1.2.  Default Routers
+
+   In addition to the scope name, a router MAY advertise itself as a
+   default router.  Clients not configured with a scope name but using
+   router discovery to obtain router URI, MUST ignore all advertisements
+   without the `default' flag set.
+
+   This mechanism is the simplest means for a client to find its local
+   router.  The expanding search will search in an increasing radius
+   from the client's network location, and return the discovered routers
+   URI.
+
+5.2.  Abstract Protocol Definitions
+
+   The discovery protocol is specified at two levels: an abstract
+   description, able to be implemented using different marshaling and
+   transport protocols, and a concrete specification of one such imple-
+   mentation, defined as a standard protocol for IPv4 networks.
+
+
+
+
+
+
+
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 4]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+   The abstract protocol  specifies  three  packets  used  in  discovery
+   interactions between clients and routers.
+
+     Packet Type                      |  Abbreviation |  Usage
+    ----------------------------------+---------------+---------
+     Router Solicitation Request     |  SvrRqst      |  C -> R
+     Router Advertisement             |  SvrAdvt      |  R -> C
+     Router Advertisement Withdrawal  |  SvrAdvtClose |  R -> C
+
+   A concrete protocol implementation is free to use the most suitable
+   method for distinguishing packet types.  If a packet type number or
+   enumeration is used, it SHOULD reflect the above ordering.
+
+   Packets are described using a set of simple base types in a  pseudo-C
+   style   as   structures  composed  of  these  types.   The  following
+   definition is used in several packets:
+
+     typedef uint32 id32;
+
+   This type is an opaque 32-bit identifier.  No semantics  is  required
+   other  than  bitwise  comparison.   In all cases, a value of all zero
+   bits is reserved.
+
+   Concrete protocol implementations are free to use any type capable of
+   holding the required number of bits for these values.  In particular,
+   the signedness of the underlying type does not matter.
+
+5.2.1.  Router Solicitation Request
+
+   The client-side of the discovery protocol has two modes of operation:
+   passive and active.  During passive discovery, a client caches
+   observed router advertisements.  During active discovery, clients
+   explicitly solicit advertisements from routers.
+
+   Clients SHOULD implement active discovery and MAY add passive
+   discovery for better performance and network utilisation.
+
+   A client enters active discovery when the client application requests
+   solicitation of router advertisements.  A client program SHOULD NOT
+   commence active discovery unless it is necessary to satisfy a connec-
+   tion request from the application.
+
+   During active discovery, router solicitation requests are multicast
+   such that all active clients and routers observe the request packet.
+
+
+
+
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 5]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+     struct SvrRqst {
+       uint8  major_version;
+       uint8  minor_version;
+       uint8  locality;
+     };
+
+   Both clients and routers MUST discard SvrRqst packets with incompati-
+   ble protocol version numbers.  Protocols are defined to be compatible
+   when the major version numbers are the same, and the client's minor
+   version is equal to or less than the minor version of the SvrRqst
+   packet.
+
+   The protocol described in this document is major version 4 and minor
+   version 0.
+
+   To control the propagation of SvrRqst packets, a scoping mechanism
+   for the underlying multicast protocol SHOULD be used.  This is
+   expressed as a locality attribute whose range of values are mapped
+   onto the underlying protocol.
+
+   SvrRqst packets MUST have an initial locality between 0 and 15, and
+   SHOULD default to zero.  Values used SHOULD come from the set defined
+   below.
+
+   To reduce packet storms when many clients simultaneously attempt to
+   find a router (such as when an existing router crashes, or hourly
+   batch jobs start), a client MUST wait before sending a SvrRqst and
+   only send its own request if no other requests (from other clients)
+   are observed during the waiting period.
+
+   For a given locality value, the waiting period before sending the
+   SvrAdvt MUST NOT be less than the intervals defined below, and the
+   random variation from the base value MUST be re-calculated every time
+   a SvrRqst is sent.
+
+     Pre-Request Interval  |  Locality
+     ----------------------+-----------
+          0.0 seconds      |      0
+          0.4 +/- 0.2      |      1
+          2.0 +/- 1.0      |      2
+          2.0 +/- 1.0      |      4
+          2.0 +/- 1.0      |      8
+          4.0 +/- 2.0      |     16
+          4.0 +/- 2.0      |     32
+          8.0 +/- 4.0      |     64
+
+   If a version-compatible SvrRqst from another client with equal or
+   greater locality than that to be used for the next SvrRqst is
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 6]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+   observed during the pre-request interval, sending of the SvrRqst MUST
+   be suppressed.
+
+   If the client receives one or more version-compatible advertisement
+   (SvrAdvt) packets during the pre-request interval, the SvrRqst MUST
+   be postponed until the client application requests that further
+   advertisements be solicited (for example, because it cannot connect
+   to the router endpoints discovered so far).
+
+   If no requests for further solicitation have been received for a
+   period of five minutes after sending the last SvrRqst, discovery MUST
+   revert to passive mode, and the locality and pre-request intervals
+   are reset to their starting values.
+
+   Note that a SvrRqst from a downstream client can cause the suppres-
+   sion of a client's own SvrRqst with the same locality value, even
+   though the downstream SvrRqst's locality is exhausted, thus prevent-
+   ing the client's SvrRqst from reaching an upstream router that is
+   within the range of its locality value.
+
+   However, either of the two clients' next SvrRqst (with higher local-
+   ity value) will reach the router, and while the immediate client
+   loses one interval period, it has no permanent impact.
+
+   This could be avoided by allowing the client to compare the packet's
+   locality value with the current concrete protocol equivalent, but
+   this facility is not widely support by available multicast protocols.
+   For example, in IPv4, the locality value maps to the IP TTL field,
+   but the ability to examine the TTL of a received UDP packet is not
+   supported by the IPv4 socket API.
+
+
+5.3.  Router Advertisements
+
+   A router advertisement packet SHOULD be sent when the router is
+   started, and MUST be sent in response to version-compatible SvrRqst
+   packets received from clients, except, that it MUST NOT be sent more
+   often than once every two seconds.
+
+     struct SvrAdvt {
+       uint8    major_version;
+       uint8    minor_version;
+       boolean  default_flag;
+       id32     revision;
+       string   scope_name;
+       string   server_name;
+       string   uri[];
+     };
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 7]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+
+
+
+   Router advertisement packets specify the version of the discovery
+   protocol which defines their format.  A SvrAdvt sent in response to a
+   SvrRqst MUST use a compatible protocol version.  Where a router is
+   capable of using multiple Elvin protocol versions, this can be
+   reflected in the endpoint URI.  Clients and routers MUST discard
+   SvrAdvt packets with incompatible protocol versions.
+
+   The advertising router is identified by a Unicode string name.
+   Routers MUST ensure this name is universally unique over time.  It is
+   RECOMMENDED that the combination of the Elvin router's process iden-
+   tifier, fully-qualified domain name and starting timestamp are used.
+   The bitwise value of a router's name MUST NOT change during its exe-
+   cution.
+
+   Clients identify subsequent advertisements from the same router using
+   the value of this string.  Although the value is Unicode text, the
+   comparison MAY use bitwise identity.  After the first observed
+   SvrAdvt from a router, additional advertisements SHOULD be discarded
+   unless the revision number has changed.
+
+   The revision number distinguishes advertisements from the same
+   router, reflecting changes in the available protocols.  If an end-
+   point is withdrawn, the router's supported scope name or the value of
+   the default flag is altered, the revision number SHOULD be increased
+   to flush client's caches.
+
+   A router MAY add additional URI or change the order of URI supplied
+   in the advertisement without modifying the revision number as a means
+   of influencing the endpoints selected by connecting clients.
+
+   The scope name is the UTF-8 encoded scope name for the router.  The
+   scope name MAY be empty (zero length).
+
+   The set of URI reflect the endpoints available from the router.  A
+   SvrAdvt message SHOULD include all endpoints offered by the router.
+   Where the limitations of the underlying concrete protocol prevent
+   this, the router cannot advertise all its endpoints.  Each SvrAdvt
+   MUST contain at least one URI.
+
+   Note that the URI included in a SvrAdvt MAY specify multiple protocol
+   versions if the advertising router is capable of supporting this.
+   The version information in the SvrAdvt body does not imply that the
+   router necessarily supports that protocol version alone, or indeed at
+   all.
+
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 8]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+   The transmission of the initial SvrAdvt packet MUST use an equivalent
+   locality limit not exceeding 64 (one quarter of the available range).
+   SvrAdvt packets sent in response to a SvrRqst MUST set the protocol-
+   specific locality limit to that specified in the received SvrRqst.  A
+   router MUST remember the highest locality value it has sent for use
+   when withdrawing its advertisement.
+
+
+5.3.1.  Router Advertisement Withdrawal
+
+   A router shutting down SHOULD send a Router Advertisement Withdrawal
+   message.
+
+   struct SvrAdvtClose {
+     uint8    major_version;
+     uint8    minor_version;
+     string   server; }
+
+   Clients and routers MUST ignore SvrAdvtClose packets with incompati-
+   ble protocol version numbers.  Clients using active discovery only
+   (ie. no caching of router advertisements) SHOULD ignore all SvrAdvt-
+   Close packets.
+
+   Clients using passive discovery MUST monitor such messages and remove
+   all advertised URI for the specified router (as determined by the
+   router identification string) from their cache.
+
+   Routers that have sent SvrAdvt messages using multiple protocol ver-
+   sions SHOULD send a SvrAdvtClose in each of those protocol versions.
+
+   The protocol-specific locality limit of the SvrAdvtClose packet MUST
+   be set to the highest value sent in a SvrAdvt during the lifetime of
+   the router process.  This ensures that the withdrawal notice reaches
+   all passive discovery clients that might have a cached copy of the
+   router's advertisement.
+
+6.  Protocol Implementation
+
+   The router discovery protocol can be implemented using different
+   lower-layer protocols.  These concrete protocol implementations map
+   the abstract specification from the preceding section onto the facil-
+   ity of a network layer protocol.
+
+   Currently, mappings are defined for IPv4 and IPv6 protocols.
+
+
+
+
+
+
+
+Arnold, et al             Expires in 6 months                  [Page 9]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+6.1.  Use of IPv4
+
+   The implementation of ERDP on IPv4 uses IP any-source multicast as
+   the basic transport, and the XDR marshaling protocol for packet data.
+
+
+6.1.1.  Multicast Transport
+
+   Clients and routers MUST use the EDRP IP address and port for all of
+   the discovery packets.  The IPv4 multicast address is 224.4.0.1 and
+   the Elvin client port number 2917.
+
+   Packets MUST be sent using a direct mapping of the locality value, to
+   the IPv4 TTL field.
+
+
+6.1.2.  Marshalling
+
+   The Elvin client protocol uses XDR [RFC1832] to encode data.  All
+   messages sent between the a client and and Elvin router are encoded
+   as a sequence of encoded XDR types.  The ERDP IPv4 concrete protocol
+   follows this lead.
+
+   This section uses diagrams to illustrate clearly certain segment and
+   packet layouts.  In most illustrations, each box (delimited by a plus
+   sign at the 4 corners and vertical bars and dashes) depicts a 4 byte
+   block as XDR is 4 byte aligned.  Ellipses (...) between boxes show
+   zero or more additional bytes where required. Some packet diagrams
+   extend over multiple lines.  In these cases, '>>>>' at the end of the
+   line indicates continuation to the next line and '<<<<' at the begin-
+   ning of a line indicates a segment has some preceding blocks on the
+   previous line.  Numbers used along the top line of packet diagrams
+   indicate byte lengths.
+
+           +---------+---------+---------+...+---------+
+           | block 0 | block 1 | block 2 |...|block n-1|   PACKET
+           +---------+---------+---------+...+---------+
+
+
+6.1.2.1.  Packet Identification
+
+   The abstract packet descriptions deliberately leave the method for
+   identifying packets to the concrete encoding.  For XDR, each packet
+   is identified by the pkt_id enumeration below:
+
+
+
+
+
+
+
+Arnold, et al             Expires in 6 months                 [Page 10]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+     enum {
+         SvrRqst        = 16,
+         SvrAdvt        = 17,
+         SvrAdvtClose   = 18,
+     } pkt_id;
+
+
+   In XDR, enumerations are marshaled as 32 bit integral values.  Each
+   packet starts with a value from the above pkt_id enumeration.  The
+   format for the remainder of the packet is then specific to the value
+   of the packet identifier.
+
+          0   1   2   3
+        +---+---+---+---+---+---+---+...+---+---+---+
+        |     pkt_id    |         remainder         |    ENCODED PACKET
+        +---+---+---+---+---+---+---+...+---+---+---+
+        |<---header---->|<-----------data---------->|
+
+   Note that the XDR marshaling layer does not provide packet framing.
+   This is left to the underlying UDP layer.
+
+
+6.1.2.2.  Base Types
+
+   The protocol relies on four basic types used to construct each
+   packet:  boolean, uint8, id32, string.
+
+   Below is a summary of how these types are represented when using XDR
+   encoding.  Each data type used in the abstract descriptions of the
+   packets has a one-to-one mapping to a corresponding XDR data type as
+   defined in [RFC1832].
+     -------------------------------------------------------------------
+     Elvin Type  XDR Type       Encoding Summary
+     -------------------------------------------------------------------
+     boolean     bool           4 bytes, last byte is 0 or 1
+
+     uint8       unsigned int   4 bytes, last byte has value
+
+     id32        int            4 bytes, MSB first
+
+     string      string         4 byte length, UTF-8 encoded string, zero
+                                padded to next four byte boundary
+     -------------------------------------------------------------------
+
+6.2.  Use of IPv6
+
+   The protocol mapping to IPv6 is incomplete.
+
+
+
+
+Arnold, et al             Expires in 6 months                 [Page 11]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+   For IPv6 multicast, the client MUST use the following table to
+   translate locality values to multicast scopes.
+
+     Hop Limit  |  IPv6 Scope (and Name)
+     -----------+---------------------------------
+           0    |      1      (node)
+           1    |      2      (link-local)
+        2-15    |      5      (site-local)
+       16-31    |      8      (organisation-local)
+      32-255    |     14      (global)
+
+
+7.  Security Considerations
+
+   There are several possible attacks against the abstract discovery
+   protocol.  Additional weaknesses might be introduced by a concrete
+   protocol implementation.
+
+
+7.1.  Attacks
+
+   This section discusses attacks against the abstract protocol which
+   will transcend concrete implementations.
+
+
+7.1.1.  Router Advertisement Solicitation
+
+   An attacker could send a constant stream of SvrRqst packets to an
+   ERDP multicast group.  Aside from the loss of network bandwidth and
+   consumption of CPU in processing these requests, the protocol
+   requires that routers advertise no more often than once every two
+   seconds, preventing a packet storm.
+
+   Additionally, the SvrRqst packet could be initialised with a high
+   locality value, forcing router responses to be broadly distributed.
+
+
+7.1.2.  Router Advertisement
+
+   This protocol provides no means of authenticating packets.  Thus, it
+   is a simple matter for an attacker to forge Elvin router advertise-
+   ments, and `steal' clients, directing them to an imposter router.
+
+   More subtly, an attacker could alter the URI list in the advertise-
+   ment, and/or increase the revision number to force improper URI into
+   passive discovery client caches.
+
+   Clients SHOULD authenticate the router's identity on connection,
+
+
+
+Arnold, et al             Expires in 6 months                 [Page 12]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+   leaving this avenue only as a denial of service attack.
+
+
+7.1.3.  Router Advertisement Withdrawal
+
+   Again, since packets are not authenticated, an attacker could send
+   fake withdrawal packets for a router, causing a denial of service for
+   its clients.  The effect would be limited to delaying reconnection to
+   a router, because the client's solicitation would generate a new
+   advertisement from the router.
+
+
+7.2.  Preventative Measures
+
+   The are no novel preventative measures effective against these
+   attacks.  Most measures will rely on the underlying concrete protocol
+   implementation, but as an example, IP firewalling technology will
+   reduce the ability of an attacker to inject the false packets
+   required for the above attacks.
+
+
+
+8.  IANA Considerations
+
+   The abstract protocol requires no support from the IANA registry.
+
+   The IPv4 concrete protocol currently uses an unofficial IP multicast
+   address.  An official address allocation is being pursued.  The UDP
+   port number used is officially allocated for Elvin by the IANA.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold, et al             Expires in 6 months                 [Page 13]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+9.  References
+
+
+   [EP]        D. Arnold, J. Boot, T. Phelps, B. Segall, "Elvin Client
+               Protocol", Work in progress
+
+
+   [ERCP]      D. Arnold, J. Boot, T. Phelps, "Elvin Router Clustering
+               Protocol", Work in progress
+
+
+   [EURI]      D. Arnold, J. Boot, T. Phelps, B. Segall, "Elvin URI
+               Scheme", Work in progress
+
+
+   [RFC1832]   R. Srinivasan, "XDR: External Data Representation Stan-
+               dard", RFC 1832, August 1995.
+
+
+   [RFC2119]   S. Bradner, "Key words for use in RFCs to Indicate
+               Requirement Levels" RFC2119, March 1997
+
+
+   [RFC2131]   R. Droms, "Dynamic Host Configuration Protocol", RFC
+               2131, March 1997.
+
+
+   [RFC2234]   D. Crocker, P. Overell, "Augmented BNF for Syntax Specif-
+               ications: ABNF", RFC 2234, November 1997.
+
+
+   [RFC2251]   M. Wahl, T. Howes, S. Kille, "Lightweight Directory
+               Access Protocol (v3)", RFC 2251, December 1997
+
+
+   [RFC2279]   F. Yergeau, "UTF-8, a transformation format of ISO
+               10646", RFC 2279, January 1998.
+
+
+   [RFC2608]   E. Guttmann, C.Perkins, J. Veizades, M. Day, "Service
+               Location Protocol, Version 2", RFC2608, June 1999.
+
+
+   [UNICODE]   Unicode Consortium, The, "The Unicode Standard, Version
+               2.0", Addison-Wesley, February 1997.
+
+
+   [POSIX.1]   IEEE, "POSIX.1-1990", 1990.
+
+
+
+Arnold, et al             Expires in 6 months                 [Page 14]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+
+10.  Contact
+
+   Author's Address
+
+   David Arnold
+   Julian Boot
+   Ted Phelps
+   Bill Segall
+
+   Distributed Systems Technology Centre
+   Level7, General Purpose South
+   Staff House Road
+   University of Queensland
+   St Lucia QLD 4072
+   Australia
+
+   Phone:  +617 3365 4310
+   Fax:    +617 3365 4311
+   Email:  elvin@dstc.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold, et al             Expires in 6 months                 [Page 15]
+
+Internet Draft      Elvin Router Discovery Protocol          29 Jun 2001
+
+
+
+11.  Full Copyright Statement
+
+   Copyright (C) 2000-2001 DSTC Pty Ltd, Brisbane, Australia.
+
+   All Rights Reserved.
+
+   This specification may be reproduced or transmitted in any form or by
+   any   means,   electronic   or  mechanical,  including  photocopying,
+   recording,  or  by  any  information  storage  or  retrieval  system,
+   providing   that   the  content  remains  unaltered,  and  that  such
+   distribution is under the terms of this licence.
+
+   While every precaution has been taken  in  the  preparation  of  this
+   specification,  DSTC  Pty Ltd assumes no responsibility for errors or
+   omissions, or for damages resulting from the use of  the  information
+   herein.
+
+   DSTC Pty Ltd welcomes comments on this specification.  Please address
+   any  queries,  comments or fixes (please include the name and version
+   of the specification) to the address below:
+
+       DSTC Pty Ltd
+       Level 7, General Purpose South
+       University of Queensland
+       St Lucia, 4072
+       Tel: +61 7 3365 4310
+       Fax: +61 7 3365 4311
+       Email: elvin@dstc.com
+
+   Elvin is a trademark of DSTC  Pty  Ltd.   All  other  trademarks  and
+   registered marks belong to their respective owners.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arnold, et al             Expires in 6 months                 [Page 16]
+

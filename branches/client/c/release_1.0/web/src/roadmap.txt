@@ -1,0 +1,56 @@
+Avis Roadmap
+======================================================================
+
+This is a provisional roadmap reflecting current development goals.
+
+Release Schedule
+----------------------------------------------------------------------
+
+Router Release 2.0 (July 2008)
+
+ * Advanced federation (protocol version 1.1) and quench support
+   (subset C of the protocol spec).
+
+ * Web-based router statistics display.
+
+
+Completed
+----------------------------------------------------------------------
+
+Router Release 1.2 (January 2008)
+
+ * SSL/TLS encryption and authentication.
+
+Client Library Release 1.1 (January 2008)
+
+ * SSL/TLS encryption and authentication.
+
+Router Release 1.1 (August 2007)
+
+ * Wide-area federation.
+
+Client Library Release 1.0 (June 2007)
+
+* Includes subscription, notification, security, close event
+  notification, liveness checking and router connection option
+  support.
+
+Router Release 1.0 (March 2007)
+
+* Supports A & B subsets of the final 4.0 [protocol spec][client_spec].
+
+* Native installation packages for Mac OS X, Linux/Unix (tar-style
+  package and RPM) and Windows.
+
+
+Others
+----------------------------------------------------------------------
+
+Not yet scheduled:
+
+* Router auto discovery.
+
+* OSGi packaging for router and other components.
+
+
+[client_spec]: http://elvin.org/specs

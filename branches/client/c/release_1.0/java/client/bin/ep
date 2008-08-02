@@ -1,0 +1,24 @@
+#!/bin/sh
+
+basedir=`dirname "$0"`
+
+jar_dir="$basedir/../lib"
+
+if [ ! -f "$jar_dir/avis-tools.jar" ]; then
+  jar_dir="$basedir/../libexec/avis"
+fi
+
+if [ ! -f "$jar_dir/avis-tools.jar" ]; then
+  echo "Cannot find avis-tools.jar"
+  exit 1
+fi
+
+if [ $OSTYPE = "cygwin" ]  ||  [ $OSTYPE = "cygwin32" ] ; then
+  pathsep=";"
+else
+  pathsep=":"
+fi
+
+exec java -Xverify:none \
+  -cp "${jar_dir}/avis-client.jar${pathsep}${jar_dir}/avis-tools.jar" \
+  org.avis.tools.Ep ${1+"$@"}
