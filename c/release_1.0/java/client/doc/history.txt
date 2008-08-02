@@ -1,0 +1,246 @@
+Release 1.1.0 (January 21, 2008)
+----------------------------------------------------------------------
+
+This release adds support for secure connections to the router using
+TLS/SSL. It also includes a variety of improvements to the client API
+and distribution.
+
+ * The client can now encrypt and authenticate connections with the
+   router over secure URI's ("elvin:/secure/...").
+
+ * Added support for TLS/SSL to ec and ep.
+
+ * Client configuration options are now specified using an extensible
+   ElvinOptions class. The existing constructors now operate by
+   creating an instance of ElvinOptions and initialising it
+   appropriately.
+
+ * Non fatal errors and warnings detected by the client connection are
+   now emitted through a new ElvinLogListener interface, or logged to
+   the console. This removes the need for clients to use the Avis Log
+   API, which is not intended to be public.
+
+ * The connection to the router is now closed when any sort of
+   protocol violation is detected, even if the client could possibly
+   recover. This is a safer option than continuing with a possibly
+   broken router.
+
+ * Added REASON_IO_ERROR error code to CloseEvent.
+
+ * Added utilities to escape strings for use in subscription
+   expressions to the Subscription class.
+
+ * Source code for the router is now included with the client source
+   distribution, allowing it build and test inside Eclipse.
+
+ * Simplified example code.
+ 
+ * ep now correctly terminates when used with console input.
+
+ * Improved error message that occurs when using an unresolvable host
+   name in a URI.
+
+
+Release 1.0.6 (November 23, 2007)
+----------------------------------------------------------------------
+
+This release improves compatibility with older Mantara routers.
+
+ * Connection options are now sent with their legacy counterparts so
+   that older Mantara routers can process them. In the previous client
+   library release, specifying a new connection option that the
+   Mantara router did not understand, such as TCP.Send-Immediately,
+   would cause a connection failure.
+
+ * Subscription.remove () may now be called for subscriptions on a
+   closed connection without generating an error.
+
+ * Updated to the latest MINA 1.1.4 release.
+
+
+Release 1.0.5 (November 3, 2007)
+----------------------------------------------------------------------
+
+This release fixes an error that would cause the client to temporarily
+stall in some situations while waiting for queued callbacks to
+complete.
+
+ * Callbacks are now flushed by invoking them from the current thread
+   rather than waiting for the callback thread (which may end up
+   waiting on the current thread if it holds the client
+   mutex). Callback flushing typically occurs during calls such as
+   Subscription.remove (), Elvin.setKeys (), Elvin.close (), etc to
+   ensure that queued callbacks related to a removed subscription or
+   keyset are not delivered after the subscription has been removed.
+
+
+Release 1.0.4 (October 27, 2007)
+----------------------------------------------------------------------
+
+This release fixes a number of errors that have been identified when
+sharing a single connection between multiple threads.
+
+ * The fix applied in 1.0.3 for the "invalid subscription ID" warning
+   was not sufficient. A more robust technique has been implemented.
+
+ * The client's close () method could block and raise several errors
+   when under load.
+
+ * The use of Thread.interrupt () to terminate client threads could
+   put the client in an inconsistent state.
+
+ * The test suite has been improved to add tests for robustness when
+   used from multi-threaded clients.
+
+
+Release 1.0.3 (October 20, 2007)
+----------------------------------------------------------------------
+
+This release fixes three errors and adds a number of small
+improvements to the API.
+
+ * Under heavy load, a race condition in subscribe and unsubscribe was
+   resulting in "invalid subscription ID" log warnings.
+
+ * The TCP.Send-Immediately setting, which can be used to disable TCP
+   buffering, was not being honoured by the client.
+
+ * The Elvin constructor was erroneously declaring it throws the
+   checked URISyntaxException rather than the unchecked
+   InvalidURIException that is actually thrown when the URI is
+   invalid.
+
+ * Queued callbacks (e.g. for notifications) are now flushed so
+   clients will not see notifications for a subscription after a
+   remove (), setKeys (), etc. method returns.
+
+ * Improved ConnectionOptions API.
+
+ * NotConnectedException (a subclass of IOException) is now thrown
+   when an attempt to use a closed connection is detected.
+
+ * Added setAll () to Notification.
+
+
+Release 1.0.2 (September 1, 2007)
+----------------------------------------------------------------------
+
+This release corrects a packaging error in the previous release that
+resulted in two required classes not being included in the pre-built
+JAR. It also synchronises the client library's common shared
+components with those of Avis 1.1.
+
+  * Fixed creation of avis-client.jar: was missing listener classes
+    such as NotificationListener.
+
+  * avis-tools.jar no longer includes all classes: now uses
+    avis-client.jar.
+
+  * avis.common code library is now updated to be the same as released
+    in Avis 1.1. This introduces minor changes the API of some
+    packages in avis.common, however clients using this package should
+    not be relying on these classes in any case: only classes included
+    in the javadoc API are considered part of the client API.
+
+
+Release 1.0.1 (August 14, 2007)
+----------------------------------------------------------------------
+
+This release corrects an error in the client's communications with the
+router and adds a number of smaller improvements.
+
+ * The client was not calculating the length of strings with
+   multi-byte UTF-8 characters correctly, which would cause a protocol
+   violation and disconnection.
+
+ * The client's handling protocol violations and other errors has been
+   improved.
+
+ * A bug in the client's handling of a close () call from a callback
+   has been corrected.
+
+
+Release 1.0 (June 24, 2007)
+----------------------------------------------------------------------
+
+This release marks the first baseline of the Java client API. The core
+set of features required for an Elvin client library are now
+implemented and stable, including subscription, notification,
+security, close event notification, liveness checking and router
+connection option support.
+
+Still to come are SSL/TLS support and quench. A utility to add
+auto-reconnect-on-close behaviour is also planned.
+
+* Improved error messages for rejected requests from router.
+
+* Added close event notification support. Clients can now listen for
+  both client-initiated and router-initiated shutdowns.
+
+* Added connection liveness checking using the TestConn message when
+  connection is idle past a certain amount of time.
+
+* ec and ep now accept multiple key formats via the -C and -P
+  options. Now supports hex-coded, string and raw keys. sha1 now
+  generates compatible hex-coded keys.
+
+* ec now shows "[secure]" in the header of securely-received
+  notifications.
+
+* Simplified MINA I/O setup to use a single fixed codec factory.
+
+* Many code cleanups and javadoc improvements.
+
+
+Release 0.2 (June 11, 2007)
+----------------------------------------------------------------------
+
+This release contains many improvements and general solidification of
+the API, including a few incompatible changes. Added programming
+examples.
+
+* Added example code in src/examples and instructions in
+  doc/examples.txt.
+
+* Converted to using new InvalidURIException for ElvinURI rather than
+  checked URISyntaxException. This avoid irritation of having to
+  declare this exception in any code that creates a URI.
+
+* Added Elvin.closeOnExit ().
+
+* Added new constructor to Elvin.
+
+* Added Subscription.setSecureMode ().
+
+* Added ec/ep tools to client distribution.
+
+* Incompatible API change: Changed parameter order of secure mode/keys
+  in Elvin and Subscription.
+
+* Incompatible API change: Renamed
+  Subscription.addNotificationListener () to addListener ()
+
+* All arguments in Elvin, Subscription and Notification are now more
+  thoroughly checked for null etc
+
+* Fixed Elvin.unsubscribe (): was removing subscription before
+  acknowledgement from router.
+
+* Improved Notification.hashCode ().
+
+* Client will now expand argument references (e.g. "%1") in Nack error
+  messages generated by Mantara Elvin.
+
+* New InvalidSubscriptionException is now thrown on subscription
+  expression errors rather than a generic IOException.
+
+* Added support for IPv6 addresses in Elvin URI's.
+
+
+Release 0.1 (June 5, 2007)
+----------------------------------------------------------------------
+
+This release is to gain feedback on the API. There are still some
+features missing, including auto reconnect, keepalive and router
+notifications on connect/disconnect.
+

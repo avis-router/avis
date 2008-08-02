@@ -1,0 +1,402 @@
+<?xml version="1.0"?>
+<!--
+  ====================================================================== 
+  Avis Elvin Client Library For Java
+  ======================================================================
+-->
+<project name="avis.client" default="jars">
+  
+  <description>Avis client library</description>
+  
+  <property file="avis-client.properties" />
+  
+  <property
+    name="version" 
+    value="${avis.version.major}.${avis.version.minor}.${avis.version.patch}" />
+      
+  <property name="release-name" value="${version}${avis.release}" />
+  
+  <property name="client" value="${basedir}" />
+  <property name="common" value="${client}/../common" />
+  <property name="server" value="${client}/../server" />
+  <property name="avis-root" value="${client}/../.." />
+
+  <property name="src-zip-root" value="avis-client-${release-name}" />
+  <property name="src-zip" value="build/${src-zip-root}.zip" />
+  
+  <path id="classpath">
+    <fileset dir="${common}/lib">
+      <include name="*.jar" />
+    </fileset>    
+    
+    <pathelement path="classes/main" />
+    <pathelement path="classes/test" />
+    <pathelement path="classes/examples" />
+    <pathelement path="${common}/classes/main" />
+    <pathelement path="${common}/classes/test" />
+    <pathelement path="${server}/classes/main" />
+  </path>
+  
+  <target name="properties" unless="jars-uptodate">
+    <mkdir dir="classes/main" />
+  
+    <tstamp>
+      <format property="build-date"
+              pattern="dd-MMM-yyyy HH:mm:ss ZZ" locale="en" />
+    </tstamp>
+        
+    <filter token="build-date" value="${build-date}" />
+    
+    <copy file="avis-client.properties" todir="classes/main"
+          overwrite="yes" filtering="yes" />
+  </target>
+
+  <target name="compile" description="Compile source">
+    <ant dir="${common}" target="compile"
+         inheritall="false" inheritrefs="false" />
+    <ant antfile="${common}/build-common.xml" target="compile-main"
+         inheritrefs="true" />
+  </target>
+
+  <target name="compile-tests" depends="compile" description="Compile tests">
+    <ant antfile="${common}/build-common.xml" target="compile-tests"
+         inheritrefs="true" />
+  </target>
+ 
+  <target name="compile-examples" depends="compile"
+          description="Compile examples">
+    <ant antfile="${common}/build-common.xml"
+         target="compile-module" inheritrefs="true">
+      <property name="module" value="examples" />
+    </ant> 
+  </target>
+  
+  <target name="tests" depends="compile,compile-tests"
+          description="Run unit tests">
+    <ant antfile="${server}/build.xml" target="compile" inheritall="false"/> 
+    <ant antfile="${common}/build-common.xml" target="tests"
+         inheritrefs="true" />
+  </target>
+
+  <target name="check-javadoc-uptodate">
+    <dependset>
+      <srcfileset dir="src/main" includes="**/*.java" />
+      <srcfileset dir="${common}/src/main" includes="**/*.java" />
+      <targetfileset dir="build">
+        <include name="javadoc/**" />
+      </targetfileset>
+    </dependset>
+      
+    <condition property="javadoc-uptodate">
+      <and>
+        <available file="build/javadoc/index.html" />
+      </and>
+    </condition>
+  </target>
+ 
+  <target name="javadoc"
+          depends="check-javadoc-uptodate" unless="javadoc-uptodate"
+          description="Build Javadocs">
+    <javadoc destdir="build/javadoc"
+      author="true"
+      version="true"
+      use="true"
+      windowtitle="Avis Java Client Library For Elvin"
+      classpathref="classpath"
+      access="public"
+      excludepackagenames="org.apache.*,org.slf4j.*">
+      
+      <packageset dir="src/main" defaultexcludes="yes">
+        <include name="org/avis/client/**"/>
+      </packageset>
+      
+      <packageset dir="${common}/src/main" defaultexcludes="yes">
+        <include name="org/avis/common/**"/>
+        <include name="org/avis/security/**"/>
+        <include name="org/avis/util/**"/>
+      </packageset>
+      
+      <doctitle><![CDATA[<h1>Avis Client Library</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2008 Matthew Phillips. All Rights Reserved.</i>]]></bottom>
+      
+      <tag name="todo" scope="all" description="To do:"/>
+      
+      <group title="Avis Client Library"
+             packages="org.avis.client,org.avis.security"/>
+      <group title="Avis Common Support"
+             packages="org.avis.common,org.avis.util,org.avis.logging"/>
+    	
+      <link offline="true" href="http://java.sun.com/j2se/1.5.0/docs/api/"
+      	    packagelistLoc="${basedir}/doc/java5-package-list" />
+    </javadoc>
+  </target>
+ 
+  <target name="dist-client" depends="jar-client,jar-tools,javadoc"
+          description="Build the client library distribution package">
+    
+    <tempfile property="src_tmp" prefix="src_tmp" destdir="build" />
+ 
+    <!-- create copy of source with license headers -->
+    <property name="client_header" value="src/avis_java_header.txt" />
+    <property name="server_header" 
+              value="${server}/src/avis_java_header.txt" />
+
+    <copy todir="${src_tmp}/client">
+      <fileset dir=".">
+        <include name="src/**/*.java"/>
+      </fileset>
+      
+      <filterchain>
+        <concatfilter prepend="${client_header}" />
+      </filterchain>
+    </copy>
+
+    <copy todir="${src_tmp}/common">
+      <fileset dir="${common}">
+        <include name="src/**/*.java"/>
+      </fileset>
+      
+      <filterchain>
+        <concatfilter prepend="${client_header}" />
+      </filterchain>
+    </copy>
+    
+    <copy todir="${src_tmp}/server">
+      <fileset dir="${server}">
+        <include name="src/**/*.java"/>
+      </fileset>
+      
+      <filterchain>
+        <concatfilter prepend="${server_header}" />
+      </filterchain>
+    </copy>
+
+    <echo file="${src_tmp}/server/README.txt">
+This directory contains a minimal Avis router source distribution 
+intended to allow compilation and testing of the Avis client library.
+It is NOT a full Avis distribution: see http://avis.sourceforge.net.
+    </echo>
+
+    <zip destfile="${src-zip}">
+      
+      <!-- source -->
+      <zipfileset dir="${src_tmp}" prefix="${src-zip-root}">
+        <include name="**/*" />
+      </zipfileset>
+      
+      <!-- others -->
+      
+      <zipfileset dir="." prefix="${src-zip-root}/client">
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name=".settings/*" />
+        <include name="build.xml" />
+        <include name="lib/avis-client.jar" />
+        <include name="lib/avis-tools.jar" />
+        <include name="bin/ec.cmd" />
+        <include name="bin/ep.cmd" />
+        <include name="bin/sha1.cmd" />
+        <include name="src/avis_java_header.txt" />
+        <include name="avis-client.properties" />
+      </zipfileset>
+      
+      <zipfileset dir="doc" prefix="${src-zip-root}">
+        <include name="README.txt" />
+      </zipfileset>
+
+      <zipfileset dir="." prefix="${src-zip-root}/client">
+        <include name="doc/examples.txt" />
+        <include name="doc/history.txt" />
+        <include name="doc/java5-package-list/**" />
+      </zipfileset>
+     
+      <zipfileset dir="." prefix="${src-zip-root}/client" filemode="755">
+        <include name="bin/ec" />
+        <include name="bin/ep" />
+        <include name="bin/sha1" />
+      </zipfileset> 
+     
+      <zipfileset dir="build" prefix="${src-zip-root}/client">
+         <include name="javadoc/**" />
+      </zipfileset> 
+      
+      <zipfileset dir="${common}" prefix="${src-zip-root}/common">
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name=".settings/*" />
+        <include name="build.xml" />
+        <include name="build-common.xml" />
+        <include name="lib/*.jar" />
+      </zipfileset>
+
+      <zipfileset dir="${server}" prefix="${src-zip-root}/server">
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name=".settings/*" />
+        <include name="build.xml" />
+        <include name="lib/fastutil-subset.jar" />
+      </zipfileset>
+    </zip>
+    
+    <!-- blow away temporary files -->
+    <delete dir="${src_tmp}" /> 
+  </target>
+  
+  <!-- unzip client distro and check it can build a new distro -->
+  <target name="test-client-dist" depends="dist-client"
+          description="Test the client library distribution package">
+    <tempfile property="tmp" prefix="dist_tmp" destdir="build" />
+    
+    <unzip dest="${tmp}" src="${src-zip}" />
+    
+    <ant dir="${tmp}/${src-zip-root}/client" target="clean"
+         inheritall="false">
+      <property name="common" value="${common}" />
+    </ant>
+    
+    <ant dir="${tmp}/${src-zip-root}/client" target="dist-client"
+         inheritall="false">
+      <property name="common" value="${common}" />
+    </ant>
+    
+    <delete dir="${tmp}" />
+  </target>
+    
+  <target name="clean" description="Clean built artifacts">
+    <ant antfile="${common}/build-common.xml" target="clean"
+         inheritall="true" />
+    
+    <delete includeemptydirs="true">
+      <fileset dir="lib">
+        <include name="avis-client.jar" />
+        <include name="avis-tools.jar" />
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="check-jars-uptodate">
+    <dependset>
+      <srcfileset dir="${common}/classes/main" includes="**/*.class" />
+      <srcfileset dir="classes/main" includes="**/*.class" />
+      
+      <targetfileset dir="build">
+        <include name="avis-client.jar" />
+        <include name="avis-tools.jar" />
+      </targetfileset>
+    </dependset>
+      
+    <condition property="jars-uptodate">
+      <and>
+        <available file="build/avis-client.jar" />
+        <available file="build/avis-tools.jar" />
+      </and>
+    </condition>
+  </target>
+    
+  <target name="jars" depends="jar-client,jar-tools"
+          description="Build all JAR files" />
+  
+  <target name="jar-client" depends="compile,check-jars-uptodate,properties"
+          description="Build avis-client.jar" unless="jars-uptodate">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/jarx.jar" />
+
+    <mkdir dir="build" />
+      
+    <jarx archive="build/avis-client.jar" classpathref="classpath">
+   
+      <include name="org/avis/client/Elvin.class" />
+      <include name="avis-client.properties" />
+    </jarx>
+   
+    <mkdir dir="lib" />
+    <copy file="build/avis-client.jar" todir="lib" /> 
+  </target>
+  
+  <target name="jar-tools" depends="compile,jar-client,check-jars-uptodate"
+          description="Build avis-tools.jar used by ec/ep"
+          unless="jars-uptodate">
+    
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/jarx.jar" />
+
+    <mkdir dir="build" />
+      
+    <jarx archive="build/avis-tools.jar" classpathref="classpath">
+
+      <include name="org/avis/tools/Ec.class" />
+      <include name="org/avis/tools/Ep.class" />
+      <include name="org/avis/tools/Hash.class" />
+      
+      <include name="org/avis/io/StreamReader.class" />
+        
+      <exclude name="org/avis/client/*" />
+      <exclude name="org/avis/io/*" />
+      <exclude name="org/avis/security/*" />
+      <exclude name="org/avis/logging/*" />
+      <exclude name="org/apache/*" />
+    </jarx>
+
+    <mkdir dir="lib" />
+    <copy file="build/avis-tools.jar" todir="lib" />
+    
+  </target>
+ 
+  <target name="changelog"
+          description="Generate a change log (needs previous rev #)">
+    <!-- Use command below to get previous release rev #
+         svn log -stop-on-copy https://avis.svn.sourceforge.net/svnroot/avis/tags/release_0.7 -->
+    <input addproperty="release_rev" message="Enter rev # of last release" />
+    <property name="component" value="client" />
+    
+    <ant antfile="${common}/build-common.xml" target="changelog" 
+         inheritrefs="true" />
+  </target>
+  
+  <target name="example-helloworld" depends="compile-examples"
+          description="Run the Hello World example">
+    <antcall target="run-example">
+      <param name="example" value="HelloWorld" /> 
+    </antcall> 
+  </target> 
+
+  <target name="example-wall-broadcaster"
+         description="Run the Wall Broadcaster example">
+    <antcall target="run-example">
+      <param name="example" value="WallBroadcaster" /> 
+    </antcall> 
+  </target> 
+
+  <target name="example-wall-receiver"
+          description="Run the Wall Receiver example">
+    <antcall target="run-example">
+      <param name="example" value="WallReceiver" /> 
+    </antcall> 
+  </target>
+
+  <target name="example-secure-sender"
+          description="Run the Secure Sender example">
+    <antcall target="run-example">
+      <param name="example" value="SecureSender" /> 
+    </antcall> 
+  </target>
+
+  <target name="example-secure-receiver"
+          description="Run the Secure Receiver example">
+    <antcall target="run-example">
+      <param name="example" value="SecureReceiver" /> 
+    </antcall> 
+  </target>
+ 
+  <target name="run-example" depends="compile-examples">
+    <java classpathref="classpath"
+          classname="org.avis.client.examples.${example}" fork="true">
+     
+      <syspropertyset>
+        <propertyref prefix="elvin"  />
+      </syspropertyset> 
+    </java> 
+  </target> 
+ 
+</project>

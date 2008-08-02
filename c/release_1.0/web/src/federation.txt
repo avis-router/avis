@@ -1,0 +1,147 @@
+Federation
+======================================================================
+
+Elvin routers can be federated together to form wide-area event
+notification networks. A federated network of Elvin routers appears to
+provide a single space of events to clients.
+
+Federation Classes
+----------------------------------------------------------------------
+
+To federate two routers you first need to decide which events to
+exchange. For trusted routers this may be simply be all events,
+however you will usually want to be more specific as to what sorts of
+events you want to accept and provide.
+
+In Avis, a _federation class_ is used to specify events to import and
+export using [subscription expressions][subscription]. For example,
+you might define a `Public` federation class that allows [tickertape
+and presence][tickertape] events in and out using:
+
+<pre>
+<span class="variable-name">Federation.Subscribe</span>[<span class="constant">Public</span>] = \
+  Presence-Protocol == 1000 || string (Message)
+
+<span class="variable-name">Federation.Provide</span>[<span class="constant">Public</span>] = \
+   Distribution == "world" &amp;&amp; \
+   (Presence-Protocol == 1000 || string (Message))
+</pre>
+
+This example class allows any tickertape or presence event into the
+router, but only events with a `Distribution` field with the value
+"world" to be federated outwards.
+
+Connecting Routers
+----------------------------------------------------------------------
+
+To connect two routers you need to decide which one initiates the
+connection and which listens for connections. The router that
+initiates the connection needs a line like:
+
+<pre>
+<span class="variable-name">Federation.Connect</span>[<span class="constant">Public</span>] = ewaf://public.elvin.org
+</pre>
+
+This specifies that the router should connect to `public.elvin.org`
+using the `Public` federation class.
+
+Incoming Connections
+----------------------------------------------------------------------
+
+To have a router listen to for incoming federation connections you
+might have an entry like:
+
+<pre>
+<span class="variable-name">Federation.Listen</span> = ewaf://0.0.0.0:2916
+</pre>
+
+This listens for incoming federation connections on port 2916 on all
+network interfaces.
+
+The host that listens for incoming connections also needs a mapping
+from a remote host to a federation class to use for the
+connection. For example, to specify that connections from the host
+`public.elvin.org` should use the `Public` federation class, and that
+any hosts you manage called in the `somewhere.org` domain use the
+`Internal` class:
+
+<pre>
+<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Public</span>] = public.elvin.org
+<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Internal</span>] = *.somewhere.org
+</pre>
+
+You can also define a default mapping for hosts that do not match any
+of the `Apply-Class` mappings:
+
+<pre>
+<span class="variable-name">Federation.Default-Class</span> = Public
+</pre>
+
+As a security measure, if there is no mapping for a host either via
+`Apply-Class` or `Default-Class`, then it will be refused federation
+access.
+
+See the comments in `etc/avisd.conf` file for more information on
+setting up federation.
+
+Using TLS Authentication
+----------------------------------------------------------------------
+
+To use TLS authentication to restrict federation to only routers that
+you have established a pre-existing trust relationship with, you first
+need to either [exchange certificates][trust] to establish trust, or
+use certificates signed by the root Certification Authorities (CA's)
+trusted by both routers.
+
+Once a trust relationship is established, you can set up secure
+federation endpoints in `avisd.config`. For example, the settings
+below create a federation link to a trusted host named
+`hex.somewhere.org`.
+
+<pre>
+<span class="variable-name">Federation.Listen</span> = ewaf:/secure/0.0.0.0:29160
+
+<span class="comment-delimiter"># </span><span class="comment">Require that hex.somewhere.org be TLS-authenticated
+</span><span class="variable-name">Federation.Require-Authenticated</span> = hex.somewhere.org
+
+<span class="variable-name">Federation.Apply-Class</span>[<span class="constant">Trusted</span>] = hex.somewhere.org
+
+<span class="variable-name">Federation.Subscribe</span>[<span class="constant">Trusted</span>] = \
+  Presence-Protocol == 1000 || string (Message)
+
+<span class="variable-name">Federation.Provide</span>[<span class="constant">Trusted</span>] = TRUE
+</pre>
+
+This creates a secure listening endpoint on port 29160, and ensures
+that any host connecting to it that claims to be `hex.somewhere.org`
+is authenticated against its public key certificate in our keychain
+(or the root CA's chain of trust): this means that address-spoofing or
+other nefarious techniques cannot be used to access the trusted
+federation link.<sup>[1][]</sup>
+
+<div class="footnotes">
+
+<hr />
+
+Footnotes
+
+<ol>
+
+<li id="fn1-tls">
+
+<p> If you're thinking this sort of security thing would be better
+    handled at a lower level than Avis, you're probably right. If
+    you're using IPv6 you could choose to deal with security at the
+    transport layer. With IPv4 you're stuck with either TLS at the
+    application layer, or using a proxy/firewall arrangement in front
+    of the router.</p>
+
+</li>
+
+</ol>
+
+[1]: #fn1-tls
+[tickertape]: http://tickertape.org/documents/what_is_tickertape.html "About tickertape messaging"
+
+[subscription]: subscription_language.html
+[trust]: tls.html#creating-trust

@@ -1,0 +1,129 @@
+Avis Client Library Examples
+======================================================================
+
+Examples of using the Avis client library can be found in
+"src/examples".
+
+
+Running The Examples
+----------------------------------------------------------------------
+
+These examples can all be run from Ant via the tasks with "example-"
+as their prefix. Run "ant -projecthelp" to see the available example
+tasks.
+
+You will need an Elvin router to run any of these examples -- you can
+either install the Avis router (or other compatible Elvin router), or
+use the public Elvin router at elvin://public.elvin.org.
+
+To run an example from the console:
+
+  > ant example-helloworld
+
+or, if you aren't using a local router (i.e. elvin://localhost):
+
+  > ant example-helloworld -Delvin=elvin://public.elvin.org
+
+
+Looking Under The Hood
+----------------------------------------------------------------------
+
+In each example, an "ec" (Elvin Consumer) command is given that will
+show the Elvin messages being sent. The ec command can be found in the
+"bin" directory and is a useful way of dumping Elvin messages to the
+console for debugging or recording purposes.
+
+Try running ec in a separate console while running the examples.
+
+
+Hello World
+----------------------------------------------------------------------
+
+This example demonstrates two Elvin connections in one application,
+one sending the traditional "Hello World" message as a greeting, the
+other one listening for all greetings and printing them to the
+console.
+
+It also demonstrates an easy way to have one thread wait for another
+to receive a message. 
+
+command: ant example-helloworld
+
+ec command: ec -e elvin://localhost "require (Greeting)"
+
+
+Wall Broadcaster & Wall Receiver
+----------------------------------------------------------------------
+
+This example uses two console applications to simulate a simple Unix
+"wall"-style command that broadcasts text to a number of consoles.
+
+Start one or more Wall Receiver instances in one console each, and
+then run a Wall Broadcaster in another console.
+
+For example:
+
+  Console 1:
+  > ant example-wall-receiver
+
+  Console 2:
+  > ant example-wall-receiver
+
+  Console 3:
+  > ant example-wall-broadcaster
+
+Now type some text into Console 3 (you may need to press Enter to make
+it send) and see it sent to the two receivers. Try running more
+broadcasters and receivers.
+
+ec command: ec -e elvin://localhost "From == 'wall'"
+
+
+Secure Sender & Secure Receiver
+----------------------------------------------------------------------
+
+In this example we set up a situation where a sender wants to ensure
+that only receivers it trusts can see its messages. To ensure
+security:
+
+  * The sender and receiver(s) agree on a secret password and security
+    scheme (SHA-1 Consumer).
+
+  * The sender uses the public version of the key on notifications.
+
+  * Receivers use the private version of the key on their
+    subscriptions.
+
+See the documentation attached to the Avis KeyScheme class for more
+details on how security schemes work.
+
+Example usage:
+
+  Console 1:
+  > ant example-secure-receiver
+  ...
+  > Enter the password for receiving: password
+  > Listening for messages...
+
+  Console 2:
+  > ant example-secure-sender
+  ...
+  > Enter the password for sending: password
+  > Enter the text to send: Hello (secure) world
+  > Message sent!
+
+You should see the message text from Console 2 appear on Console 1. If
+you run the command again in Console 2, but use a different password,
+you will see that the Console 1 client will no longer be able to
+receive it.
+
+ec command: for this example you need to provide ec with the security
+key needed to receive the secure messages sent between the two
+clients. ec expects keys to be stored in key files, so create a file
+named "password.key" containing the single line:
+
+  "password"
+
+Then run ec as below:
+
+  > ec -e elvin://localhost -C password.key "From == 'secure-sender'"

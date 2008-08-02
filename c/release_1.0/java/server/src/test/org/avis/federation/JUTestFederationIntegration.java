@@ -1,0 +1,307 @@
+package org.avis.federation;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import org.avis.io.messages.NotifyEmit;
+import org.avis.logging.Log;
+import org.avis.router.Main;
+import org.avis.router.Router;
+import org.avis.router.SimpleClient;
+import org.avis.util.IllegalConfigOptionException;
+import org.avis.util.LogFailTester;
+
+import static java.lang.Thread.sleep;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+import static org.avis.federation.FederationManager.federationManagerFor;
+import static org.avis.federation.TestUtils.MAX_WAIT;
+import static org.avis.federation.TestUtils.waitForConnect;
+import static org.avis.logging.Log.INFO;
+import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.enableLogging;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.util.Streams.close;
+
+/**
+ * Full federation integration test between three routers. Starts each
+ * router as if started from command line and federates in a V:
+ * router1 -> router2 and router1 -> router3.
+ * 
+ * @author Matthew Phillips
+ */
+public class JUTestFederationIntegration
+{
+  private LogFailTester logTester;
+  private boolean oldLogInfoState;
+  private ArrayList<Closeable> autoClose;
+  
+  @Before
+  public void setup ()
+  {
+    oldLogInfoState = shouldLog (INFO);
+    
+    enableLogging (INFO, false);
+    
+    logTester = new LogFailTester ();
+    autoClose = new ArrayList<Closeable> ();
+  }
+  
+  @After
+  public void tearDown ()
+    throws Exception
+  {
+    enableLogging (INFO, oldLogInfoState);
+    
+    for (int i = autoClose.size () - 1; i >= 0; i--)
+    {
+      try
+      {
+        autoClose.get (i).close ();
+      } catch (Throwable ex)
+      {
+        alarm ("Failed to close", this, ex);
+      }
+    }
+    
+    logTester.assertOkAndDispose ();
+  }
+  
+  @Test
+  public void integration ()
+    throws Exception
+  {
+    File config1 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29170\n" + 
+      "Federation.Activated=yes\n" + 
+      "Federation.Connect[Test]=" +
+        "ewaf://127.0.0.1:29181 ewaf://127.0.0.1:29191\n" + 
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Request-Timeout=2"
+    );
+    
+    File config2 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29180\n" + 
+      "Federation.Activated=yes\n" + 
+      "Federation.Listen=ewaf://127.0.0.1:29181\n" + 
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Apply-Class[Test]=@127.0.0.1"
+    );
+    
+    File config3 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29190\n" + 
+      "Federation.Activated=yes\n" + 
+      "Federation.Listen=ewaf://127.0.0.1:29191\n" + 
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Apply-Class[Test]=127.0.0.1"
+    );
+
+    Log.enableLogging (Log.INFO, false);
+//     Log.enableLogging (Log.TRACE, true);
+//     Log.enableLogging (Log.DIAGNOSTIC, true);
+
+    startRouter (config2);
+    startRouter (config3);
+    Router router1 = startRouter (config1);
+
+    assertEquals (2, federationManagerFor (router1).connectors ().size ());
+
+    for (Connector connector : federationManagerFor (router1).connectors ())
+      waitForConnect (connector);
+    
+    SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
+    autoClose.add (client1);
+    SimpleClient client2 = new SimpleClient ("127.0.0.1", 29190);
+    autoClose.add (client2);
+    
+    client1.connect ();
+    client1.subscribe ("test == 1");
+    
+    client2.connect ();
+    client2.subscribe ("test == 2");
+    
+    client1.send (new NotifyEmit ("test", 2));
+    
+    client2.receive ();
+    
+    client2.send (new NotifyEmit ("test", 1));
+    
+    client1.receive ();
+  }
+  
+  /**
+   * Full integration test including TLS in connector/acceptor.
+   * 
+   * Router 1 connects -> Router 2
+   *                   -> Router 3
+   */
+  @Test
+  public void integrationTLS ()
+    throws Exception
+  {
+    String commonOptions = 
+      "TLS.Keystore=" + getClass ().getResource ("router.ks") + "\n" +
+      "TLS.Keystore-Passphrase=testing\n" +
+      "Federation.Activated=yes\n" +
+      "Federation.Subscribe[Test]=require (test)\n" + 
+      "Federation.Provide[Test]=require (test)\n" +
+      "Federation.Apply-Class[Test]=127.0.0.1\n" +
+      "Federation.Request-Timeout=2\n" +
+      "Federation.Require-Authenticated=127.0.0.1\n";
+    
+    File config1 = configFile
+    (
+      "Listen=elvin:/secure/127.0.0.1:29170\n" +
+      commonOptions +
+      "Federation.Connect[Test]=" +
+        "ewaf:/secure/127.0.0.1:29181 ewaf:/secure/127.0.0.1:29191\n" 
+    );
+    
+    File config2 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29180\n" +
+      commonOptions +
+      "Federation.Listen=" +
+        "ewaf:/secure/127.0.0.1:29181 " +
+        "ewaf://127.0.0.1:29182\n"
+    );
+    
+    File config3 = configFile
+    (
+      "Listen=elvin://127.0.0.1:29190\n" +
+      commonOptions +
+      "Federation.Listen=ewaf:/secure/127.0.0.1:29191\n"
+    );
+
+    // config with untrusted cert
+    File config4 = configFile
+    (
+      "Listen=elvin:/secure/127.0.0.1:29200\n" +
+      commonOptions +
+      "TLS.Keystore=" + getClass ().getResource ("untrusted.ks") + "\n" +
+      "Federation.Connect[Test]=ewaf:/secure/127.0.0.1:29181" 
+    );
+    
+    // config with trusted cert but not using TLS
+    File config5 = configFile
+    (
+      "Listen=elvin:/secure/127.0.0.1:29300\n" +
+      commonOptions +
+      "Federation.Connect[Test]=ewaf://127.0.0.1:29182" 
+    );
+    
+//    Log.enableLogging (Log.INFO, true);
+//    Log.enableLogging (Log.TRACE, true);
+//    Log.enableLogging (Log.DIAGNOSTIC, true);
+
+    startRouter (config2);
+    startRouter (config3);
+    Router router1 = startRouter (config1);
+
+    Collection<Connector> connectors = 
+      federationManagerFor (router1).connectors ();
+    
+    assertEquals (2, connectors.size ());
+    
+    for (Connector connector : connectors)
+      waitForConnect (connector);
+    
+    SimpleClient client1 = new SimpleClient ("127.0.0.1", 29180);
+    autoClose.add (client1);
+    SimpleClient client2 = new SimpleClient ("127.0.0.1", 29190);
+    autoClose.add (client2);
+    
+    client1.connect ();
+    client1.subscribe ("test == 1");
+    
+    client2.connect ();
+    client2.subscribe ("test == 2");
+    
+    client1.send (new NotifyEmit ("test", 2));
+    
+    client2.receive ();
+    
+    client2.send (new NotifyEmit ("test", 1));
+    
+    client1.receive ();
+    
+    client1.close ();
+    client2.close ();
+    
+    // check that federator with untrusted cert cannot connect
+    logTester.pause ();
+    
+    Router router4 = startRouter (config4);
+    
+    assertFailsToConnect (router4);
+    
+    router4.close ();
+    
+    // check that federator cannot connect insecurely
+    logTester.pause ();
+    
+    Router router5 = startRouter (config5);
+    
+    assertFailsToConnect (router5);
+    
+    router5.close ();
+    
+    logTester.unpause ();
+  }
+
+  private static void assertFailsToConnect (Router router)
+    throws InterruptedException
+  {
+    sleep (MAX_WAIT);
+    
+    for (Connector connector : federationManagerFor (router).connectors ())
+      assertFalse (connector.isConnected ());
+  }
+
+  private Router startRouter (File config) 
+    throws IllegalConfigOptionException, IOException
+  {
+    Router router = Main.start ("-c", config.getAbsolutePath ());
+    
+    autoClose.add (router);
+    
+    return router;
+  }
+
+  private static File configFile (String contents)
+    throws IOException
+  {
+    File configFile = File.createTempFile ("avis", ".conf");
+    
+    configFile.deleteOnExit ();
+    
+    PrintWriter configStream = new PrintWriter (configFile);
+    
+    try
+    {
+      configStream.append (contents);
+    } finally
+    {
+      close (configStream);
+    }
+    
+    return configFile;
+  }
+}

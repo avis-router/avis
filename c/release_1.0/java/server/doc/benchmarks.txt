@@ -1,0 +1,6 @@
+0.6dev (26/11/2006)
+
+test_threaded_clients
+real    0m5.980s
+user    0m0.535s
+sys     0m0.412s
