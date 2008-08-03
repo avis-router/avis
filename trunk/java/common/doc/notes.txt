@@ -12,6 +12,8 @@ Server 1.3
 * add note about windows registry Java currentversion = 1.6 when 1.5
   installed.
 * router src distro needs ec/ep
+* add log filter option to show notifs rather than trace. would need
+  custom log filter levels.
 
 Server 1.2
 
