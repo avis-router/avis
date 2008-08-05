@@ -47,16 +47,17 @@
 		C9739E980E11EC5F00B7727F /* avis_client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */; };
 		C99B745C0E1B3E6900D0A7B0 /* listeners.c in Sources */ = {isa = PBXBuildFile; fileRef = C99B745A0E1B3E6900D0A7B0 /* listeners.c */; };
 		C99B745D0E1B3E6900D0A7B0 /* listeners.h in Headers */ = {isa = PBXBuildFile; fileRef = C99B745B0E1B3E6900D0A7B0 /* listeners.h */; };
-		C9B038DA0E48305F00B59216 /* arrays.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E0F0E39BBC40010C768 /* arrays.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038DB0E48305F00B59216 /* attributes.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F0DAA70E060C3600DB5A88 /* attributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038DC0E48305F00B59216 /* defs.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E100E39BBC40010C768 /* defs.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038DD0E48305F00B59216 /* elvin.h in Headers */ = {isa = PBXBuildFile; fileRef = C906FBF30DD3FC3900375E7D /* elvin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038DE0E48305F00B59216 /* elvin_uri.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F0DAAA0E060C3600DB5A88 /* elvin_uri.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038DF0E48305F00B59216 /* errors.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F0DAA60E060C3600DB5A88 /* errors.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038E00E48305F00B59216 /* keys.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B467180DD9554E00A1C448 /* keys.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038E10E48305F00B59216 /* net.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E110E39BBC40010C768 /* net.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038E20E48305F00B59216 /* stdtypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C97363F70DF7D04900DCE905 /* stdtypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B038E30E48305F00B59216 /* values.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F0DAA80E060C3600DB5A88 /* values.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9B03A210E48443300B59216 /* arrays.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9C88E0F0E39BBC40010C768 /* arrays.h */; };
+		C9B03A220E48443300B59216 /* attributes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9F0DAA70E060C3600DB5A88 /* attributes.h */; };
+		C9B03A230E48443300B59216 /* defs.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9C88E100E39BBC40010C768 /* defs.h */; };
+		C9B03A240E48443300B59216 /* elvin_uri.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9F0DAAA0E060C3600DB5A88 /* elvin_uri.h */; };
+		C9B03A250E48443300B59216 /* errors.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9F0DAA60E060C3600DB5A88 /* errors.h */; };
+		C9B03A260E48443300B59216 /* keys.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B467180DD9554E00A1C448 /* keys.h */; };
+		C9B03A270E48443300B59216 /* net.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9C88E110E39BBC40010C768 /* net.h */; };
+		C9B03A280E48443300B59216 /* stdtypes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C97363F70DF7D04900DCE905 /* stdtypes.h */; };
+		C9B03A290E48443300B59216 /* values.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9F0DAA80E060C3600DB5A88 /* values.h */; };
+		C9B03A2A0E48443300B59216 /* elvin.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C906FBF30DD3FC3900375E7D /* elvin.h */; };
+		C9B03A620E48488C00B59216 /* avis_client_config.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */; };
 		C9B465D80DD82A9800A1C448 /* messages.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B465D60DD82A9800A1C448 /* messages.h */; };
 		C9B465D90DD82A9800A1C448 /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9B465D70DD82A9800A1C448 /* messages.c */; };
 		C9B466840DD9377200A1C448 /* libcheck.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B466750DD9374900A1C448 /* libcheck.dylib */; };
@@ -129,7 +130,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C906FBEC0DD3FBB300375E7D /* Client Library */;
+			remoteGlobalIDString = C906FBEC0DD3FBB300375E7D;
 			remoteInfo = "Client Library";
 		};
 		C9B466880DD9378100A1C448 /* PBXContainerItemProxy */ = {
@@ -161,6 +162,29 @@
 			remoteInfo = hashtable;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C9B03A200E48440100B59216 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Headers/avis;
+			dstSubfolderSpec = 1;
+			files = (
+				C9B03A620E48488C00B59216 /* avis_client_config.h in CopyFiles */,
+				C9B03A210E48443300B59216 /* arrays.h in CopyFiles */,
+				C9B03A220E48443300B59216 /* attributes.h in CopyFiles */,
+				C9B03A230E48443300B59216 /* defs.h in CopyFiles */,
+				C9B03A240E48443300B59216 /* elvin_uri.h in CopyFiles */,
+				C9B03A250E48443300B59216 /* errors.h in CopyFiles */,
+				C9B03A260E48443300B59216 /* keys.h in CopyFiles */,
+				C9B03A270E48443300B59216 /* net.h in CopyFiles */,
+				C9B03A280E48443300B59216 /* stdtypes.h in CopyFiles */,
+				C9B03A290E48443300B59216 /* values.h in CopyFiles */,
+				C9B03A2A0E48443300B59216 /* elvin.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C906FBD70DD3FA0800375E7D /* basic_test.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = basic_test.c; path = ../../src/test/basic_test.c; sourceTree = SOURCE_ROOT; };
@@ -203,7 +227,7 @@
 		C9739E940E11EC3100B7727F /* arrays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = arrays.c; path = ../../src/lib/arrays.c; sourceTree = SOURCE_ROOT; };
 		C99B745A0E1B3E6900D0A7B0 /* listeners.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listeners.c; path = ../../src/lib/listeners.c; sourceTree = SOURCE_ROOT; };
 		C99B745B0E1B3E6900D0A7B0 /* listeners.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = listeners.h; path = ../../src/lib/listeners.h; sourceTree = SOURCE_ROOT; };
-		C9B0389E0E482E8400B59216 /* AvisClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = AvisClient.framework; path = build/Release/AvisClient.framework; sourceTree = "<group>"; };
+		C9B0389E0E482E8400B59216 /* AvisClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AvisClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B0389F0E482E8400B59216 /* AvisClient-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AvisClient-Info.plist"; sourceTree = "<group>"; };
 		C9B465D60DD82A9800A1C448 /* messages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messages.h; path = ../../src/lib/messages.h; sourceTree = "<group>"; };
 		C9B465D70DD82A9800A1C448 /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/lib/messages.c; sourceTree = "<group>"; };
@@ -360,7 +384,6 @@
 				C9F0DAB30E060C5D00DB5A88 /* attributes_private.h */,
 				C9F0DAA90E060C3600DB5A88 /* log.h */,
 				C9ED37320DFA358A00FB55CE /* attributes.c */,
-				C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */,
 				FA4D5B4E0DF420DE0098EE7D /* byte_buffer.c */,
 				FA4D5B4F0DF420DE0098EE7D /* byte_buffer.h */,
 				FA4D5B500DF420DE0098EE7D /* elvin_uri.c */,
@@ -431,6 +454,7 @@
 		C9B038AC0E482F1C00B59216 /* Public Headers */ = {
 			isa = PBXGroup;
 			children = (
+				C97363CA0DF7CEFB00DCE905 /* avis_client_config.h */,
 				C9C88E0F0E39BBC40010C768 /* arrays.h */,
 				C9F0DAA70E060C3600DB5A88 /* attributes.h */,
 				C9C88E100E39BBC40010C768 /* defs.h */,
@@ -510,23 +534,6 @@
 				C9C88E120E39BBC40010C768 /* arrays.h in Headers */,
 				C9C88E130E39BBC40010C768 /* defs.h in Headers */,
 				C9C88E140E39BBC40010C768 /* net.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C9B038990E482E8400B59216 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C9B038DA0E48305F00B59216 /* arrays.h in Headers */,
-				C9B038DB0E48305F00B59216 /* attributes.h in Headers */,
-				C9B038DC0E48305F00B59216 /* defs.h in Headers */,
-				C9B038DD0E48305F00B59216 /* elvin.h in Headers */,
-				C9B038DE0E48305F00B59216 /* elvin_uri.h in Headers */,
-				C9B038DF0E48305F00B59216 /* errors.h in Headers */,
-				C9B038E00E48305F00B59216 /* keys.h in Headers */,
-				C9B038E10E48305F00B59216 /* net.h in Headers */,
-				C9B038E20E48305F00B59216 /* stdtypes.h in Headers */,
-				C9B038E30E48305F00B59216 /* values.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,11 +657,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C9B038A20E482E8400B59216 /* Build configuration list for PBXNativeTarget "AvisClient" */;
 			buildPhases = (
-				C9B038990E482E8400B59216 /* Headers */,
 				C9B0389A0E482E8400B59216 /* Resources */,
 				C9B0389B0E482E8400B59216 /* Sources */,
 				C9B0389C0E482E8400B59216 /* Frameworks */,
 				C9B039CB0E483A6B00B59216 /* Copy Avislib */,
+				C9B03A200E48440100B59216 /* CopyFiles */,
 			);
 			buildRules = (
 			);
