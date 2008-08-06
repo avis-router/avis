@@ -6,12 +6,16 @@
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
 	<array/>
+	<key>CFBundleExecutable</key>
+	<string>avis</string>
 	<key>CFBundleGetInfoString</key>
 	<string>Avis client library for Elvin</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.avis.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>avis</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleSignature</key>
@@ -20,9 +24,5 @@
 	<string>1.0</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright (C) 2008 Matthew Phillips</string>
-	<key>CFBundleExecutable</key>
-	<string>AvisClient</string>
-	<key>CFBundleName</key>
-	<string>AvisClient</string>
 </dict>
 </plist>
