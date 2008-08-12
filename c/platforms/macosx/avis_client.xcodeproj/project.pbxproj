@@ -178,9 +178,6 @@
 		C91316570E3EE96200BBFE9D /* secure_receiver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_receiver.c; path = ../../src/examples/secure_receiver.c; sourceTree = SOURCE_ROOT; };
 		C91316580E3EE96200BBFE9D /* secure_sender.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_sender.c; path = ../../src/examples/secure_sender.c; sourceTree = SOURCE_ROOT; };
 		C91316590E3EE96200BBFE9D /* hello_world.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hello_world.c; path = ../../src/examples/hello_world.c; sourceTree = SOURCE_ROOT; };
-		C913166D0E3EE97300BBFE9D /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = tests; path = /Users/matt/Development/avis/c/platforms/macosx/build/Release/tests; sourceTree = "<absolute>"; };
-		C913168A0E3EEA1700BBFE9D /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = tests; path = /Users/matt/Development/avis/c/platforms/macosx/build/Release/tests; sourceTree = "<absolute>"; };
-		C91316980E3EEA3B00BBFE9D /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = tests; path = /Users/matt/Development/avis/c/platforms/macosx/build/Release/tests; sourceTree = "<absolute>"; };
 		C931A03F0DF6422A00313558 /* check_client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_client.c; path = ../../src/test/check_client.c; sourceTree = SOURCE_ROOT; };
 		C931A0410DF6422A00313558 /* check_messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_messages.c; path = ../../src/test/check_messages.c; sourceTree = SOURCE_ROOT; };
 		C931A0420DF6422A00313558 /* tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tests.c; path = ../../src/test/tests.c; sourceTree = SOURCE_ROOT; };
@@ -216,16 +213,19 @@
 		C9B465D60DD82A9800A1C448 /* messages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messages.h; path = ../../src/lib/messages.h; sourceTree = "<group>"; };
 		C9B465D70DD82A9800A1C448 /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/lib/messages.c; sourceTree = "<group>"; };
 		C9B466750DD9374900A1C448 /* libcheck.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcheck.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9B466850DD9377200A1C448 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = tests; path = /Users/matt/Development/avis/c/platforms/macosx/build/Release/tests; sourceTree = "<absolute>"; };
 		C9B467180DD9554E00A1C448 /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../../src/include/avis/keys.h; sourceTree = SOURCE_ROOT; };
+		C9BB4B300E4979EF003E3841 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9BB4B320E4979EF003E3841 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9BB4B340E4979EF003E3841 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9BB4B360E4979EF003E3841 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9BB4B380E4979EF003E3841 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9BB4B3A0E4979EF003E3841 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9C88E0D0E39BBAE0010C768 /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = net.c; path = ../../src/lib/net.c; sourceTree = SOURCE_ROOT; };
 		C9C88E0F0E39BBC40010C768 /* arrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arrays.h; path = ../../src/include/avis/arrays.h; sourceTree = SOURCE_ROOT; };
 		C9C88E100E39BBC40010C768 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defs.h; path = ../../src/include/avis/defs.h; sourceTree = SOURCE_ROOT; };
 		C9C88E110E39BBC40010C768 /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = net.h; path = ../../src/include/avis/net.h; sourceTree = SOURCE_ROOT; };
 		C9E217F40E133A8E00FD24D9 /* check_ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = check_ext.h; path = ../../src/test/check_ext.h; sourceTree = SOURCE_ROOT; };
 		C9E7FF020DF951D800F0210C /* event_loop_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = event_loop_test.c; path = ../../src/test/event_loop_test.c; sourceTree = SOURCE_ROOT; };
-		C9E7FF370DF9533B00F0210C /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = tests; path = /Users/matt/Development/avis/c/platforms/macosx/build/Release/tests; sourceTree = "<absolute>"; };
-		C9E7FF460DF9538300F0210C /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = tests; path = /Users/matt/Development/avis/c/platforms/macosx/build/Release/tests; sourceTree = "<absolute>"; };
 		C9ED37320DFA358A00FB55CE /* attributes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = attributes.c; path = ../../src/lib/attributes.c; sourceTree = SOURCE_ROOT; };
 		C9F0DAA30E060BF400DB5A88 /* check_security.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = check_security.c; path = ../../src/test/check_security.c; sourceTree = SOURCE_ROOT; };
 		C9F0DAA60E060C3600DB5A88 /* errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = errors.h; path = ../../src/include/avis/errors.h; sourceTree = SOURCE_ROOT; };
@@ -391,6 +391,12 @@
 				C9B466750DD9374900A1C448 /* libcheck.dylib */,
 				FA4D5B770DF421FB0098EE7D /* libhashtable.a */,
 				C9B03B1B0E493A1A00B59216 /* avis.framework */,
+				C9BB4B300E4979EF003E3841 /* tests */,
+				C9BB4B320E4979EF003E3841 /* tests */,
+				C9BB4B340E4979EF003E3841 /* tests */,
+				C9BB4B360E4979EF003E3841 /* tests */,
+				C9BB4B380E4979EF003E3841 /* tests */,
+				C9BB4B3A0E4979EF003E3841 /* tests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -596,7 +602,7 @@
 			);
 			name = tests;
 			productName = Untitled;
-			productReference = C9B466850DD9377200A1C448 /* tests */;
+			productReference = C9BB4B300E4979EF003E3841 /* tests */;
 			productType = "com.apple.product-type.tool";
 		};
 		C913165A0E3EE97300BBFE9D /* hello_world */ = {
@@ -613,7 +619,7 @@
 			);
 			name = hello_world;
 			productName = Untitled;
-			productReference = C913166D0E3EE97300BBFE9D /* tests */;
+			productReference = C9BB4B360E4979EF003E3841 /* tests */;
 			productType = "com.apple.product-type.tool";
 		};
 		C91316800E3EEA1700BBFE9D /* secure_receiver */ = {
@@ -630,7 +636,7 @@
 			);
 			name = secure_receiver;
 			productName = Untitled;
-			productReference = C913168A0E3EEA1700BBFE9D /* tests */;
+			productReference = C9BB4B380E4979EF003E3841 /* tests */;
 			productType = "com.apple.product-type.tool";
 		};
 		C913168E0E3EEA3B00BBFE9D /* secure_sender */ = {
@@ -647,7 +653,7 @@
 			);
 			name = secure_sender;
 			productName = Untitled;
-			productReference = C91316980E3EEA3B00BBFE9D /* tests */;
+			productReference = C9BB4B3A0E4979EF003E3841 /* tests */;
 			productType = "com.apple.product-type.tool";
 		};
 		C9B03AFA0E493A1A00B59216 /* avis */ = {
@@ -699,7 +705,7 @@
 			);
 			name = event_loop_test;
 			productName = Untitled;
-			productReference = C9E7FF370DF9533B00F0210C /* tests */;
+			productReference = C9BB4B320E4979EF003E3841 /* tests */;
 			productType = "com.apple.product-type.tool";
 		};
 		C9E7FF3C0DF9538300F0210C /* basic_test */ = {
@@ -716,7 +722,7 @@
 			);
 			name = basic_test;
 			productName = Untitled;
-			productReference = C9E7FF460DF9538300F0210C /* tests */;
+			productReference = C9BB4B340E4979EF003E3841 /* tests */;
 			productType = "com.apple.product-type.tool";
 		};
 		FA4D5B760DF421FB0098EE7D /* hashtable */ = {
