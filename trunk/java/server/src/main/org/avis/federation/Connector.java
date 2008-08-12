@@ -150,7 +150,7 @@ public class Connector implements IoHandler, Closeable
     
     try
     {
-      if (future.isReady ())
+      if (future.isDone ())
       {
         open (future.getSession ());
       } else

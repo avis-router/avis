@@ -10,9 +10,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.mina.core.ExceptionMonitor;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.filter.ssl.SslFilter;
+import org.apache.mina.util.ExceptionMonitor;
 import org.junit.Before;
 import org.junit.Test;
 
