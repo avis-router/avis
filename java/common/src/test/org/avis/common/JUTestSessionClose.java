@@ -31,6 +31,7 @@ public class JUTestSessionClose
     InetSocketAddress address = new InetSocketAddress ("127.0.0.1", 29170);
 
     SocketAcceptor acceptor = new NioSocketAcceptor ();
+    acceptor.setReuseAddress (true);
     
     // close session as soon as it's opened
     acceptor.setHandler (new IoHandlerAdapter ()

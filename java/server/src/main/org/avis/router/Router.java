@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 
-import org.apache.mina.core.ExceptionMonitor;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecException;
+import org.apache.mina.util.ExceptionMonitor;
 
 import org.avis.common.ElvinURI;
 import org.avis.config.Options;
