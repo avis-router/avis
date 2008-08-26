@@ -1,0 +1,42 @@
+COMET approach, could miss notifs on proxy reset
+
+GET
+
+http://elvin/subscription?require (Message)
+
+----------------------------------------------------------------------
+
+Semi-persistent subscription approach. Sub is durable, expires after a
+period of non-use, fixed size notif buffer. Some way to indicate a sub
+has been missed due to slow poll. Could we use Atom?
+
+Create subscription
+
+POST
+
+->
+http://elvin/subscription/create
+Subscription: require (Message)
+Buffer: 200K
+
+<-
+201 Created
+Location: http://elvin/subscription/af1fb3f49aef;seq=1
+
+GET
+http://elvin/subscription/af1fb3f49aef;seq=3
+ETag: ...
+Preferred type: text/json  
+   (OR text/elvin-notification OR text/html OR text/xml+atom)
+
+  "notifications":
+  [
+    {"From": "Matthew"
+     "Message": "Hello!"}
+    []
+    []
+  ]
+
+  "next": "http://elvin/subscription/af1fb3f49aef;seq=2"
+  "prev": "http://elvin/subscription/af1fb3f49aef;seq=1"
+
