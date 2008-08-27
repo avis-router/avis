@@ -82,9 +82,12 @@ Client
 
 Server
 
- * ?do we want clients trusted by CA's to be trusted
- * Test large frames with new heap sizes
- * ?thread pool size option
+* allow some federation links to be required before router goes
+  online. means clients don't think they're connected to the world
+  when they're in a ghetto.
+* ?do we want clients trusted by CA's to be trusted
+* Test large frames with new heap sizes
+* ?thread pool size option
 * Password auth? Could use a KeyManager to use password auth? Not sure
   how X509KeyManager can be extended to do this. There may be an Elvin
   spec for this.
