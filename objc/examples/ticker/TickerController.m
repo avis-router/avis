@@ -2,6 +2,9 @@
 
 @implementation TickerController
 
+// TODO use http://deusty.blogspot.com/2006/11/easy-threading-in-cocoa.html for
+// threading
+
 typedef struct
 {
   SEL method;
