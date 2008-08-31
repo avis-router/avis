@@ -287,14 +287,19 @@ public class IoManager
     (DefaultIoFilterChainBuilder commonFilters, 
      Filter<InetAddress> authRequired)
   {
-    if (authRequired != Filter.MATCH_NONE)
+    if (authRequired == Filter.MATCH_NONE)
     {
-      commonFilters = new DefaultIoFilterChainBuilder (commonFilters); 
+      return commonFilters;
+    } else
+    {
+      DefaultIoFilterChainBuilder blacklistFilters = 
+        new DefaultIoFilterChainBuilder (commonFilters); 
       
-      commonFilters.addFirst ("blacklist", new BlacklistFilter (authRequired));
+      blacklistFilters.addFirst 
+        ("blacklist", new BlacklistFilter (authRequired));
+      
+      return blacklistFilters;
     }
-    
-    return commonFilters;
   }
 
   /**
