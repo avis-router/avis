@@ -39,17 +39,22 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
 {
   NSTextView *textView = [text documentView];
   NSRange endRange;
-
+  NSString *messageText = 
+    [NSString stringWithFormat: @">>> %@: %@: %@\n",
+     [attributes objectForKey: @"Group"],
+     [attributes objectForKey: @"From"],
+     [attributes objectForKey: @"Message"]];
+  
   endRange.location = [[textView textStorage] length];
   endRange.length = 0;
   
   [textView replaceCharactersInRange: endRange 
-                          withString: [attributes objectForKey:@"Message"]];
+                          withString: messageText];
 
   endRange.location = [[textView textStorage] length];
   [textView replaceCharactersInRange: endRange withString: @"\n"];
 
-  endRange.length = [[attributes objectForKey:@"Message"] length];
+  endRange.length = [messageText length];
   [textView scrollRangeToVisible: endRange];
   
   [attributes release];
