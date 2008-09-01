@@ -52,14 +52,14 @@ static CFDataRef cocoaEventLoopCallback (CFMessagePortRef local, SInt32 msgid,
 static void elvinNotificationListener (Elvin *elvin, Attributes *attributes, 
                                        bool secure, CFMessagePortRef cocoaPort)
 {
-  char *message = strdup (attributes_get_string (attributes, "Message"));
-  
-  runCocoaCallback (cocoaPort, @selector (handleNotify:), (void *)message);
+  runCocoaCallback (cocoaPort, @selector (handleNotify:), 
+                    attributes_clone (attributes));
 }
 
-- (void) handleNotify: (char *)message
+- (void) handleNotify: (Attributes *)attributes
 {
-  NSString *messageString = [NSString stringWithUTF8String: message];
+  NSString *messageString = 
+    [NSString stringWithUTF8String: attributes_get_string (attributes, "Message")];
   NSTextView *textView = [text documentView];
   NSRange endRange;
 
@@ -74,7 +74,7 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
   endRange.length = [messageString length];
   [textView scrollRangeToVisible: endRange];
   
-  free (message);
+  attributes_free (attributes);
 }
 
 - (void) elvinEventLoopThread: (NSObject *)object
@@ -90,7 +90,8 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
   {
     NSLog (@"Opened!");
     
-    elvin_subscribe (&elvin, "require (Message)");
+    elvin_subscribe (&elvin, 
+                     "string (Message) && string (Group) && string (From)");
     
     elvin_add_notification_listener 
       (&elvin, (GeneralNotificationListener)elvinNotificationListener, 
