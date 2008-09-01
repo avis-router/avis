@@ -2,83 +2,63 @@
 
 @implementation TickerController
 
-// TODO use http://deusty.blogspot.com/2006/11/easy-threading-in-cocoa.html for
-// threading
-
-typedef struct
-{
-  SEL method;
-  void *param;
-} Callback;
-
 - (void) applicationWillTerminate: (NSNotification *)notification
 {
   elvin_invoke_close (&elvin);
-  
-  CFMessagePortInvalidate (remoteCocoaPort); // do we need to do this?
-  CFRelease (remoteCocoaPort);
   
   while (elvin_is_open (&elvin))
     usleep (200000);
 }
 
-static void runCocoaCallback (CFMessagePortRef cocoaPort, SEL method, 
-                              void *param)
-{
-  Callback callback = {method, param};
-  
-  CFDataRef data = CFDataCreate (NULL, (void *)&callback, sizeof (callback));
-  
-  // send message async, no timeout
-  if (CFMessagePortSendRequest 
-      (cocoaPort, 0, data, 0, 0, NULL, NULL) != kCFMessagePortSuccess)
-  {
-    NSLog (@"Failed to send message into Cocoa event loop");
-  }
-  
-  CFRelease (data);  
-}
-
-static CFDataRef cocoaEventLoopCallback (CFMessagePortRef local, SInt32 msgid,
-                                         CFDataRef data, id instance) 
-{
-  Callback *callback = (Callback *)CFDataGetBytePtr (data);
-  
-  objc_msgSend (instance, callback->method, callback->param);
-  
-  return NULL;
-}
+#define attr_string(attrs, name) \
+ [NSString stringWithUTF8String: attributes_get_string (attrs, name)]
 
 static void elvinNotificationListener (Elvin *elvin, Attributes *attributes, 
-                                       bool secure, CFMessagePortRef cocoaPort)
+                                       bool secure, id self)
 {
-  runCocoaCallback (cocoaPort, @selector (handleNotify:), 
-                    attributes_clone (attributes));
+  NSArray *objects = 
+    [NSArray arrayWithObjects: 
+      attr_string (attributes, "Message"), 
+      attr_string (attributes, "Group"),
+      attr_string (attributes, "From"), nil];
+     
+  NSArray *keys = 
+    [NSArray arrayWithObjects:@"Message", @"Group", @"From", nil];
+
+  NSDictionary *message = 
+   [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+  
+  [message retain];
+  
+  [self performSelectorOnMainThread:@selector(handleNotify:) 
+                            withObject:message 
+                      waitUntilDone:NO];
 }
 
-- (void) handleNotify: (Attributes *)attributes
+- (void) handleNotify: (NSDictionary *)attributes
 {
-  NSString *messageString = 
-    [NSString stringWithUTF8String: attributes_get_string (attributes, "Message")];
   NSTextView *textView = [text documentView];
   NSRange endRange;
 
   endRange.location = [[textView textStorage] length];
   endRange.length = 0;
   
-  [textView replaceCharactersInRange: endRange withString: messageString];
+  [textView replaceCharactersInRange: endRange 
+                          withString: [attributes objectForKey:@"Message"]];
 
   endRange.location = [[textView textStorage] length];
   [textView replaceCharactersInRange: endRange withString: @"\n"];
 
-  endRange.length = [messageString length];
+  endRange.length = [[attributes objectForKey:@"Message"] length];
   [textView scrollRangeToVisible: endRange];
   
-  attributes_free (attributes);
+  [attributes release];
 }
 
 - (void) elvinEventLoopThread: (NSObject *)object
 {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
   elvin_open (&elvin, "elvin://elvin");
   
   if (elvin_error_occurred (&elvin.error))
@@ -86,44 +66,35 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
     elvin_perror ("connect", &elvin.error);
     
     return;
-  } else
+  }
+  
+  NSLog (@"Opened!");
+  
+  elvin_subscribe (&elvin, 
+                   "string (Message) && string (Group) && string (From)");
+  
+  elvin_add_notification_listener 
+    (&elvin, (GeneralNotificationListener)elvinNotificationListener, 
+     self);
+
+  [pool release];
+  
+  while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
-    NSLog (@"Opened!");
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    elvin_subscribe (&elvin, 
-                     "string (Message) && string (Group) && string (From)");
+    elvin_poll (&elvin);
+   
+    NSLog (@"Release!");
     
-    elvin_add_notification_listener 
-      (&elvin, (GeneralNotificationListener)elvinNotificationListener, 
-       remoteCocoaPort);
-    
-    elvin_event_loop (&elvin);
+    [pool release]; 
   }
   
   NSLog (@"Exit elvin event loop");
 }
 
 - (void) awakeFromNib
-{    
-  CFMessagePortContext context;
-  
-  memset (&context, 0, sizeof (context));
-  context.info = self;
-  
-  CFMessagePortRef localCocoaPort =
-    CFMessagePortCreateLocal 
-      (NULL, CFSTR ("Elvin"), (CFMessagePortCallBack)cocoaEventLoopCallback, 
-       &context, false);
-  
-  CFRunLoopSourceRef source = 
-    CFMessagePortCreateRunLoopSource (NULL, localCocoaPort, 0);
-  
-  CFRunLoopAddSource (CFRunLoopGetCurrent (), source, kCFRunLoopDefaultMode);
-
-  CFRelease (localCocoaPort); // should we release this here?
-
-  remoteCocoaPort = CFMessagePortCreateRemote (NULL, CFSTR ("Elvin"));
-  
+{      
   [NSThread detachNewThreadSelector: @selector (elvinEventLoopThread:) 
                            toTarget: self withObject: nil];
 }
