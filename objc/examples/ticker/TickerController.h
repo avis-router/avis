@@ -8,7 +8,7 @@
 
   Elvin elvin;
   
-  CFMessagePortRef remoteCocoaPort;
+// CFMessagePortRef remoteCocoaPort;
 }
 
 - (void) applicationWillTerminate: (NSNotification *)notification;
