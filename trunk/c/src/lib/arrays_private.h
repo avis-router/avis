@@ -80,4 +80,15 @@ bool array_list_remove_func (ArrayList *list, void (*func) ());
 
 bool array_list_remove_ptr (ArrayList *list, void *ptr);
 
+Array *array_init (Array *array, size_t item_count, size_t item_length);
+
+void array_free (Array *array);
+
+bool array_equals (Array *array1, Array *array2);
+
+Array *array_copy (Array *target, const Array *source, size_t item_size);
+
+#define array_clone(array, item_type) \
+  array_copy(emalloc (sizeof (Array)), array, sizeof (item_type))
+
 #endif /*ARRAYS_PRIVATE_H_*/
