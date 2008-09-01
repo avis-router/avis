@@ -36,7 +36,8 @@ TCase *collections_tests ();
 START_TEST (test_attributes)
 {
   Attributes *ntfn = attributes_create ();
-
+  Attributes *copy;
+  
   attributes_set_int32 (ntfn, "int32", 32);
   attributes_set_int64 (ntfn, "int64", 64);
   attributes_set_real64 (ntfn, "real64", 3.1415);
@@ -62,6 +63,29 @@ START_TEST (test_attributes)
     (attributes_get_string (ntfn, "nonexistent") == NULL,
      "nonexistent string attribute");
 
+  copy = attributes_clone (ntfn);
+  
+  fail_unless 
+    (attributes_get_int32 (copy, "int32") == 
+     attributes_get_int32 (ntfn, "int32"),
+     "int32 attribute copy failed");
+
+  fail_unless 
+    (attributes_get_real64 (copy, "real64") == 
+     attributes_get_real64 (ntfn, "real64"),
+     "real64 attribute copy failed");
+  
+  fail_unless
+    (strcmp (attributes_get_string (copy, "string"), 
+             attributes_get_string (ntfn, "string")) == 0,
+     "string attribute copy");
+
+  fail_if
+    (attributes_get_string (copy, "string") ==
+     attributes_get_string (ntfn, "string"),
+   "string attributes not copied");
+  
+  attributes_destroy (copy);
   attributes_destroy (ntfn);
 }
 END_TEST
