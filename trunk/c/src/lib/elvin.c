@@ -220,10 +220,6 @@ bool elvin_event_loop (Elvin *elvin)
   while (elvin_is_open (elvin) && elvin_error_ok (&elvin->error))
   {
     elvin_poll (elvin);
-
-    /* just keep looping on timeout */
-    if (elvin->error.code == ELVIN_ERROR_TIMEOUT)
-      elvin_error_reset (&elvin->error);
   }
 
   return elvin_error_ok (&elvin->error);
