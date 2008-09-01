@@ -52,7 +52,7 @@ extern Attributes _empty_attributes;
 #define EMPTY_ATTRIBUTES (&_empty_attributes)
 
 /**
- * Create a new named attributes instance on the heap.
+ * Create a new attributes instance on the heap.
  *
  * @see attributes_init()
  * @see attributes_free()
@@ -92,6 +92,27 @@ void attributes_free (Attributes *attributes);
  * Clear and deallocate all entries, leaving an empty set of attributes.
  */
 void attributes_clear (Attributes *attributes);
+
+/**
+ * Copy a set of attributes from a source to a target. Copies the values also.
+ *
+ * @param target The target for the copied attributes.
+ * @param source The source to copy from.
+ * @return A pointer to the target.
+ *
+ * @see attributes_clone()
+ */
+Attributes *attributes_copy (Attributes *target, const Attributes *source);
+
+/**
+ * Create a new set of attributes cloned from a source set.
+ *
+ * @param source The source to copy from.
+ * @return A pointer to the target.
+ *
+ * @see attributes_copy()
+ */
+#define attributes_clone(source) attributes_copy (attributes_create (), source)
 
 /**
  * The number of entries in a set of named attributes.
