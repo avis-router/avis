@@ -4,6 +4,9 @@ Release 1.1.0 (Not released)
 * Added attributes_copy () and related copy methods to other 
   structures.
 
+* Fixed doc for elvin_poll (): this does not time out as previously 
+  documented.
+
 
 Release 1.0.0 (August 2, 2008)
 ----------------------------------------------------------------------
