@@ -23,16 +23,16 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
       attr_string (attributes, "From"), nil];
      
   NSArray *keys = 
-    [NSArray arrayWithObjects:@"Message", @"Group", @"From", nil];
+    [NSArray arrayWithObjects: @"Message", @"Group", @"From", nil];
 
   NSDictionary *message = 
-   [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+   [NSDictionary dictionaryWithObjects: objects forKeys: keys];
   
   [message retain];
   
-  [self performSelectorOnMainThread:@selector(handleNotify:) 
-                            withObject:message 
-                      waitUntilDone:NO];
+  [self performSelectorOnMainThread: @selector (handleNotify:) 
+        withObject:message 
+        waitUntilDone:NO];
 }
 
 - (void) handleNotify: (NSDictionary *)attributes
@@ -52,7 +52,6 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
                           withString: messageText];
 
   endRange.location = [[textView textStorage] length];
-  endRange.length = [messageText length];
   [textView scrollRangeToVisible: endRange];
   
   [attributes release];
