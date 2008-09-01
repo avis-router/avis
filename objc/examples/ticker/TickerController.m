@@ -52,8 +52,6 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
                           withString: messageText];
 
   endRange.location = [[textView textStorage] length];
-  [textView replaceCharactersInRange: endRange withString: @"\n"];
-
   endRange.length = [messageText length];
   [textView scrollRangeToVisible: endRange];
   
