@@ -16,45 +16,44 @@
 static void elvinNotificationListener (Elvin *elvin, Attributes *attributes, 
                                        bool secure, id self)
 {
+  NSArray *keys = 
+    [NSArray arrayWithObjects: @"Message", @"Group", @"From", nil];
+
   NSArray *objects = 
     [NSArray arrayWithObjects: 
       attr_string (attributes, "Message"), 
       attr_string (attributes, "Group"),
       attr_string (attributes, "From"), nil];
-     
-  NSArray *keys = 
-    [NSArray arrayWithObjects: @"Message", @"Group", @"From", nil];
 
   NSDictionary *message = 
-   [NSDictionary dictionaryWithObjects: objects forKeys: keys];
+    [NSDictionary dictionaryWithObjects: objects forKeys: keys];
   
   [message retain];
   
   [self performSelectorOnMainThread: @selector (handleNotify:) 
-        withObject:message 
-        waitUntilDone:NO];
+        withObject: message 
+        waitUntilDone: NO];
 }
 
-- (void) handleNotify: (NSDictionary *)attributes
+- (void) handleNotify: (NSDictionary *)message
 {
   NSTextView *textView = [text documentView];
   NSRange endRange;
   NSString *messageText = 
     [NSString stringWithFormat: @">>> %@: %@: %@\n",
-     [attributes objectForKey: @"Group"],
-     [attributes objectForKey: @"From"],
-     [attributes objectForKey: @"Message"]];
+      [message objectForKey: @"Group"],
+      [message objectForKey: @"From"],
+      [message objectForKey: @"Message"]];
   
   endRange.location = [[textView textStorage] length];
   endRange.length = 0;
   
-  [textView replaceCharactersInRange: endRange 
-                          withString: messageText];
+  [textView replaceCharactersInRange: endRange withString: messageText];
 
   endRange.location = [[textView textStorage] length];
   [textView scrollRangeToVisible: endRange];
   
-  [attributes release];
+  [message release];
 }
 
 - (void) elvinEventLoopThread: (NSObject *)object
