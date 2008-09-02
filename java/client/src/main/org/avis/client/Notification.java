@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-import org.avis.io.messages.NotifyDeliver;
+import org.avis.io.messages.Notify;
 import org.avis.util.InvalidFormatException;
 import org.avis.util.Text;
 
@@ -65,9 +65,24 @@ public final class Notification
     this.attributes = new HashMap<String, Object> ();
   }
 
-  Notification (NotifyDeliver message)
+  /**
+   * Internal constructor for quickly creating a notification from an Elvin
+   * notify message. 
+   */
+  Notification (Notify message)
   {
     this.attributes = message.attributes;
+  }
+  
+  /**
+   * Internal constructor that bypasses key/value checks.
+   * 
+   * @param attributes attributes to assign in new notification.
+   * @param skipChecking Dummy.  
+   */
+  Notification (Map<String, Object> attributes, boolean skipChecking)
+  {
+    this.attributes = attributes;
   }
   
   /**
@@ -233,13 +248,9 @@ public final class Notification
 
   @Override
   public Notification clone ()
-    throws CloneNotSupportedException
   {
-    Notification copy = (Notification)super.clone ();
-    
-    copy.attributes = new HashMap<String, Object> (attributes);
-    
-    return copy;
+    return new Notification 
+      (new HashMap<String, Object> (this.attributes), true);
   }
   
   /**
