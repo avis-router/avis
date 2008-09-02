@@ -7,14 +7,6 @@
   IBOutlet id text;
 
   Elvin elvin;
-  
-// CFMessagePortRef remoteCocoaPort;
 }
-
-- (void) applicationWillTerminate: (NSNotification *)notification;
-
-- (void) awakeFromNib;
-
-- (void) elvinEventLoopThread: (NSObject *)object;
 
 @end

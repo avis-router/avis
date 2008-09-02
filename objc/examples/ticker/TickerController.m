@@ -56,11 +56,11 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
   [message release];
 }
 
-- (void) elvinEventLoopThread: (NSObject *)object
+- (void) elvinEventLoopThread: (NSObject *)unused
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   
-  elvin_open (&elvin, "elvin://elvin");
+  elvin_open (&elvin, "elvin://public.elvin.org");
   
   if (elvin_error_occurred (&elvin.error))
   {
@@ -97,7 +97,7 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
 - (void) awakeFromNib
 {      
   [NSThread detachNewThreadSelector: @selector (elvinEventLoopThread:) 
-                           toTarget: self withObject: nil];
+            toTarget: self withObject: nil];
 }
 
 @end
