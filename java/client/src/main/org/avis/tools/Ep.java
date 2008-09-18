@@ -55,7 +55,6 @@ public class Ep
 
     try
     {
-    
       System.err.println ("ep: Connected to server " +
                           options.elvinUri.toCanonicalString ());
     
