@@ -71,6 +71,8 @@ public abstract class ToolOptions extends CommandLineOptions
     this.clientOptions = new ElvinOptions ();
     
     clientOptions.notificationKeys = new Keys ();
+    
+    // ec/ep always use symmetrical key sets 
     clientOptions.subscriptionKeys = clientOptions.notificationKeys;
     
     handleOptions (args);
