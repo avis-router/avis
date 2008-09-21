@@ -179,6 +179,8 @@ Node BoolExp () :
   )? {return node1;}
 }
 
+/* TODO: could probably fold ops with same precedence: e.g. +/i */
+
 Node MathExp () :
 {
   Node node1;
