@@ -732,6 +732,36 @@ public class JUTestClient
     assertEquals (REASON_CLIENT_SHUTDOWN, listener.event.reason);
   }
   
+  /**
+   * Test shutting down a loaded client with incoming subscriptions is OK.
+   */
+  @Test
+  public void loadedClientClose ()
+    throws Exception
+  {
+    createServer ();
+    Elvin client1 = new Elvin (ELVIN_URI);
+    Elvin client2 = new Elvin (ELVIN_URI);
+    
+    // add a do-nothing listener
+    client1.subscribe ("require (test)").addListener (new NotificationListener ()
+    {
+      private int count;
+
+      public void notificationReceived (NotificationEvent e)
+      {
+        count++;
+        // System.out.println ("ntfn " + count++);
+      }
+    });
+    
+    for (int i = 0; i < 200; i++)
+      client2.send (new Notification ("test", 1));
+    
+    client2.close ();
+    client1.close ();    
+  }
+
   @Test
   public void serverClose ()
     throws Exception
