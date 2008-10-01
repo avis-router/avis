@@ -1623,7 +1623,7 @@ public final class Elvin implements Closeable
                            Set<Subscription> secureMatches,
                            Set<Subscription> insecureMatches)
     {
-      this.notification = new Notification (message);
+      this.notification = new Notification (message.attributes);
       this.secureMatches = secureMatches;
       this.insecureMatches = insecureMatches;
     }
