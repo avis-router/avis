@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-import org.avis.io.messages.Notify;
 import org.avis.util.InvalidFormatException;
 import org.avis.util.Text;
 
@@ -66,15 +65,6 @@ public final class Notification
   }
 
   /**
-   * Internal constructor for quickly creating a notification from an Elvin
-   * notify message. 
-   */
-  Notification (Notify message)
-  {
-    this.attributes = message.attributes;
-  }
-  
-  /**
    * Internal constructor that bypasses key/value checks.
    * 
    * @param attributes attributes to assign in new notification.
@@ -84,24 +74,52 @@ public final class Notification
   {
     this.attributes = attributes;
   }
+
+  /**
+   * Create a notification from a set of name/value pairs.
+   * 
+   * Example:
+   * <pre>
+   *   Notification ntfn = new Notification ("age", 42, "name", "foobar");
+   * </pre>
+   *
+   * This constructor is written using initial String, Object
+   * parameters rather than just a single Object... to avoid being
+   * accidentally used when an unknown single parameter is passed.
+   * 
+   * @param name1 The name of the first attribute.
+   * @param value1 The value of the first attribute.
+   * @param otherAttributes The rest of the name/value pairs (if any).
+   * 
+   * @throws IllegalArgumentException if attributes do not represent a
+   *           valid notification.
+   * 
+   * @see #setAll(Object...)
+   */
+  public Notification (String name1, Object value1, 
+                       Object... otherAttributes)
+  {
+    this ();
+    
+    set (name1, value1);
+    
+    setAll (otherAttributes);
+  }
   
   /**
    * Create a notification from an array of name/value pairs.
    * 
    * @throws IllegalArgumentException if attributes do not represent a
    *           valid notification.
+   * 
+   * @see #setAll(Object...)          
    */
-  public Notification (Object... attributes)
+  public Notification (Object [] attributes)
     throws IllegalArgumentException
   {
     this ();
     
-    if (attributes.length % 2 != 0)
-      throw new IllegalArgumentException
-        ("Attributes must be a list of name/value pairs");
-    
-    for (int i = 0; i < attributes.length; i += 2)
-      set (checkField (attributes [i]), attributes [i + 1]);
+    setAll (attributes);
   }
 
   /**
@@ -402,11 +420,37 @@ public final class Notification
    *                 string, or a value is not a string, integer,
    *                 long, double or byte array. Some values may
    *                 already have been added to the notification.
+   *                 
+   * @see #setAll(Object...)
    */
   public void setAll (Map<?, ?> map)
   {
     for (Map.Entry<?, ?> entry : map.entrySet ())
       set (checkField (entry.getKey ()), entry.getValue ());
+  }
+
+  /**
+   * Copy all values in a an array of name/value pairs into this 
+   * notification.
+   * 
+   * @param attributes The attributes to copy. This must be an array of
+   * name/value (string/object) pairs. 
+   * 
+   * @throws IllegalArgumentException if a name in the array is not a
+   *                 string, or a value is not a string, integer,
+   *                 long, double or byte array. Some values may
+   *                 already have been added to the notification.
+   *                 
+   * @see #setAll(Map)
+   */
+  public void setAll (Object... attributes)
+  {
+    if (attributes.length % 2 != 0)
+      throw new IllegalArgumentException
+        ("Attributes must be a list of name/value pairs");
+    
+    for (int i = 0; i < attributes.length; i += 2)
+      set (checkField (attributes [i]), attributes [i + 1]);
   }
 
   /**
