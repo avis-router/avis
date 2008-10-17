@@ -398,6 +398,15 @@ public final class Elvin implements Closeable
            IOException,
            ConnectionOptionsException
   {
+    if (!routerUri.protocol.equals (defaultProtocol ()) &&
+        !routerUri.protocol.equals (secureProtocol ()))
+    {
+      throw new IllegalArgumentException
+        ("Avis only supports protocols: " + 
+         defaultProtocol () + " and " + secureProtocol () + 
+         ": " + routerUri);
+    }
+    
     this.routerUri = routerUri;
     this.options = options.clone ();
     this.connectionOpen = new AtomicBoolean (true);
@@ -415,15 +424,6 @@ public final class Elvin implements Closeable
     
     this.replyLock = new Object ();
     this.callbacks = new Callbacks (this);
-    
-    if (!routerUri.protocol.equals (defaultProtocol ()) &&
-        !routerUri.protocol.equals (secureProtocol ()))
-    {
-      throw new IllegalArgumentException
-        ("Avis only supports protocols: " + 
-         defaultProtocol () + " and " + secureProtocol () + 
-         ": " + routerUri);
-    }
     
     boolean successfullyConnected = false;
     
