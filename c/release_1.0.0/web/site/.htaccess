@@ -1,0 +1,2 @@
+Redirect 301 /client-library/javadoc http://avis.sourceforge.net/client-library/java/apidoc
+Redirect 301 /client-library/examples http://avis.sourceforge.net/client-library/java/examples

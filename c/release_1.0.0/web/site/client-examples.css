@@ -1,0 +1,71 @@
+/* source code */
+
+.comment {
+  /* font-lock-comment-face */
+  color: #0000ff;
+}
+.comment-delimiter {
+  /* font-lock-comment-delimiter-face */
+  color: #0000ff;
+}
+
+.constant {
+  /* font-lock-constant-face */
+  color: #5f9ea0;
+}
+
+.function-name {
+  /* font-lock-function-name-face */
+  color: #0000ff;
+}
+.reservedWord {
+  /* font-lock-keyword-face */
+  color: #a020f0;
+}
+.literal {
+  /* font-lock-string-face */
+  color: #006400;
+}
+.type {
+  /* font-lock-type-face */
+  color: #228b22;
+}
+.variable-name {
+  /* font-lock-variable-name-face */
+  color: #b8860b;
+}
+
+table
+{ 
+  text-align: left
+}
+
+pre
+{ 
+  margin-left: 2em;
+}
+
+dt
+{
+  margin-left: 1em;
+}
+
+dl.function-definition dt
+{
+  font-family: monospace;
+}
+
+.bool-true
+{ 
+  background-color: rgb(126,255,20);
+}
+
+.bool-false
+{ 
+  background-color: rgb(255,72,61);
+}
+
+.bool-bottom
+{ 
+  background-color: rgb(204,204,204);
+}

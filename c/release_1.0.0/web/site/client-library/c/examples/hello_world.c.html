@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!-- Created by htmlize-1.34 in css mode. -->
+<html>
+  <head>
+    <title>hello_world.c</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #ffffff;
+      }
+      .comment {
+        /* font-lock-comment-face */
+        color: #0000ff;
+      }
+      .comment-delimiter {
+        /* font-lock-comment-delimiter-face */
+        color: #0000ff;
+      }
+      .function-name {
+        /* font-lock-function-name-face */
+        color: #0000ff;
+      }
+      .keyword {
+        /* font-lock-keyword-face */
+        color: #a020f0;
+      }
+      .negation-char {
+      }
+      .preprocessor {
+        /* font-lock-preprocessor-face */
+        color: #da70d6;
+      }
+      .string {
+        /* font-lock-string-face */
+        color: #006400;
+      }
+      .type {
+        /* font-lock-type-face */
+        color: #228b22;
+      }
+      .variable-name {
+        /* font-lock-variable-name-face */
+        color: #b8860b;
+      }
+
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment-delimiter">/*</span><span class="comment">
+ *  Avis Elvin client library for C.
+ *
+ *  Copyright (C) 2008 Matthew Phillips &lt;<a href="mailto:avis&#64;mattp.name">avis&#64;mattp.name</a>&gt;
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of version 3 of the GNU Lesser General
+ *  Public License as published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+ </span><span class="comment-delimiter">*/</span>
+
+<span class="preprocessor">#include</span> <span class="string">&lt;stdio.h&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="string">&lt;avis/elvin.h&gt;</span>
+
+<span class="comment-delimiter">/*</span><span class="comment">
+ * Listens for notifications from the router with Message and Number fields.
+ </span><span class="comment-delimiter">*/</span>
+<span class="type">void</span> <span class="function-name">sub_listener</span> (<span class="type">Subscription</span> *<span class="variable-name">subscription</span>, <span class="type">Attributes</span> *<span class="variable-name">attributes</span>,
+                   <span class="type">bool</span> <span class="variable-name">secure</span>, <span class="type">void</span> *<span class="variable-name">user_data</span>)
+{
+  printf (<span class="string">"Received greeting: %s\n"</span>,
+          attributes_get_string (attributes, <span class="string">"Greeting"</span>));
+
+  printf (<span class="string">"     Bonus number: %u\n"</span>,
+          attributes_get_int32 (attributes, <span class="string">"Number"</span>));
+
+  <span class="comment-delimiter">/* </span><span class="comment">NOTE: it's OK to access client connection from listener callbacks </span><span class="comment-delimiter">*/</span>
+  elvin_close (subscription-&gt;elvin);
+}
+
+<span class="comment-delimiter">/*</span><span class="comment">
+ * This example demonstrates sending and receiving Elvin notifications
+ * with the Elvin C API. See the comments in the source code for details.
+ *
+ * It requires that you have access to an Elvin router: by default it will
+ * use the public router at public.elvin.org. This will likely not work
+ * if you're behind a fascist corporate firewall, in which case you could
+ * download Avis from http://avis.sourceforge.net and install one locally.
+ *
+ * Usage: hello_world [elvin_uri]
+ *
+ * elvin_uri: optional URI pointing to an Elvin router, e.g
+ *
+ *   elvin://public.elvin.org
+ *   elvin://localhost
+ </span><span class="comment-delimiter">*/</span>
+<span class="type">int</span> <span class="function-name">main</span> (<span class="type">int</span> <span class="variable-name">argc</span>, <span class="keyword">const</span> <span class="type">char</span> *<span class="variable-name">argv</span> [])
+{
+  <span class="keyword">const</span> <span class="type">char</span> *<span class="variable-name">uri</span> = argc &gt; 1 ? argv [1] : <span class="string">"elvin://public.elvin.org"</span>;
+  <span class="type">Elvin</span> <span class="variable-name">elvin</span>;
+  <span class="type">Attributes</span> *<span class="variable-name">notification</span>;
+  <span class="type">Subscription</span> *<span class="variable-name">subscription</span>;
+
+  <span class="comment-delimiter">/* </span><span class="comment">Try to connect, and exit if we fail </span><span class="comment-delimiter">*/</span>
+  <span class="keyword">if</span> (<span class="negation-char">!</span>elvin_open (&amp;elvin, uri))
+  {
+    elvin_perror (<span class="string">"open"</span>, &amp;elvin.error);
+
+    <span class="keyword">return</span> 1;
+  }
+
+  <span class="comment-delimiter">/*</span><span class="comment">
+   * Subscribe to notifications with a string Greeting field and an integer
+   * Number field.
+   *
+   * NOTE: we don't have to free the subscription, the connection does
+   * that for us on close.
+   </span><span class="comment-delimiter">*/</span>
+  subscription =
+    elvin_subscribe (&amp;elvin, <span class="string">"string (Greeting) &amp;&amp; int32 (Number)"</span>);
+
+  elvin_subscription_add_listener (subscription, sub_listener, &amp;elvin);
+
+  <span class="comment-delimiter">/* </span><span class="comment">Send a notification that our subscription matches. </span><span class="comment-delimiter">*/</span>
+  notification = attributes_create ();
+
+  attributes_set_string (notification, <span class="string">"Greeting"</span>, <span class="string">"Hello World"</span>);
+  attributes_set_int32  (notification, <span class="string">"Number"</span>, 42);
+
+  elvin_send (&amp;elvin, notification);
+
+  attributes_destroy (notification);
+
+  <span class="comment-delimiter">/*</span><span class="comment">
+   * Start the event loop. This will receive and dispatch messages from the
+   * router, starting with the one we just sent. The subscription listener
+   * closes the connection after printing the notification, which will
+   * cause the event loop to exit.
+   </span><span class="comment-delimiter">*/</span>
+  elvin_event_loop (&amp;elvin);
+
+  <span class="comment-delimiter">/* </span><span class="comment">This is redundant in this case, but can't hurt. </span><span class="comment-delimiter">*/</span>
+  elvin_close (&amp;elvin);
+
+  <span class="keyword">return</span> 0;
+}
+</pre>
+  </body>
+</html>

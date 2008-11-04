@@ -1,0 +1,502 @@
+body {
+	background:#d1d1d1 url(images/body-bg.gif) top repeat-x;
+	font-family:helvetica,verdana,sans-serif;
+	font-size:100%;
+	color:#222;
+	margin-top:0px;
+}
+#nav-home, h1, h2, h3, h4, h5
+{ 
+  font-family:optima,"trebuchet ms",verdana,helvetica,sans-serif;
+  font-weight:normal;
+  letter-spacing:.005em;
+}
+
+h1, h2, h3, h4, h5 {
+	color:#555;
+}
+h1 {
+	font-size:2.2em;
+	font-weight:normal;
+	margin:-1px 0 10px 0;
+	letter-spacing:-.015em;
+	border-bottom:1px solid #f0f0f0;
+	line-height:2em;
+
+}
+
+h1, h2, h3, h4, p {
+	padding-left:3px;
+}
+.introblock h1 {
+	color:#666;
+	margin-bottom:.2em;
+	padding:0;
+	border:none;
+}
+h2 {
+	font-size:1.3em;
+	padding:.5em 0 .2em 0;
+	margin:.5em 0 .5em 0;
+	color:#e60;
+	border-bottom:2px solid #fc9;
+}
+h2 strong {
+	color:#c40;
+}
+h2 .faint {
+	color:#f93;
+}
+#left-col h2 {
+	font-size:1em;
+	line-height:1.25em;
+	margin:0;
+	border:0;
+	padding:0;
+	color:#f60;
+}
+#right-col div h2 {
+	background:none;
+}
+h3 {
+	font-size:1.2em;
+	margin:1em 0 0 0;
+	padding-bottom:.2em;
+	border-bottom:1px solid #fec;
+	color:#e60;
+}
+h3 strong {
+	color:#930;
+}
+h3 .faint {
+	color:#d75;
+}
+.introblock h2, .introblock h3 {
+	border:none;
+	background:none;
+	margin:0;
+}
+h4 {
+	font-size:1.3em;
+	margin:1.2em 0 .3em 0;
+	color:#952;
+}
+h4 .faint {
+	color:#b76;
+}
+h5 {
+	font-size:1em;
+	font-weight:bold;
+	margin:1em 0 .3em .5em;
+}
+.faint {
+	font-size:.85em;
+	letter-spacing:-.05em;
+	padding-right:.3em;
+}
+p {
+	margin:.7em 0;
+}
+blockquote {
+	color:#444;
+	font-family:georgia,serif;
+	font-style:italic;
+	padding:0 5em 0 0;
+}
+cite {
+	display:block;
+	text-align:right;
+	color:#444;
+	font-family:georgia,serif;
+	font-style:italic;
+}
+
+li, dd {
+	margin-bottom:.5em;
+}
+dd {
+	padding:.1em 0 .2em 2em;
+}
+a img {
+	border:none;
+}
+
+#nav-home
+{
+   
+}
+/*
+ Structure
+ */
+#nav, #main {
+	width:50em;
+	margin:0 auto;
+	text-align:left;
+}
+#main {
+	background:#fff url(images/bg-main.gif) top left repeat-y;
+}
+#content {
+	/* Getting obscured by other layers! */
+	background:url(images/bg-content.jpg) top left no-repeat;
+}
+
+
+#right-edge {
+	background:url(images/right-col.gif) top right repeat-y;
+}
+#left-edge {
+	background:url(images/left-col.gif) top left repeat-y;
+	width:100%;
+	/* Note:this width needed to prevent bug in IEeee */
+}
+#left-col {
+	position:absolute;
+	top:0;
+	left:0;
+	width:180px;
+}
+#right-col {
+	position:relative;
+	float:left;
+	padding:0 2em 2.5em 205px;
+	background:url(images/right-col-bg.gif) top left repeat-y;
+}
+
+/* 
+  Top nav
+ */
+ul#nav {
+        font-family:trebuchet ms,arial,tahoma,verdana,sans-serif;
+        letter-spacing:-.015em;
+	padding:0;
+	list-style:none;
+	background:#fff url(images/topbar-bg.jpg) 0 10px no-repeat;
+	height:76px;
+	margin-bottom:3px;
+}
+#nav li {
+        height:76px;
+        padding-top:22px;
+        padding-left: 30px;
+        font-size: 2.7em;
+}
+#nav li a {
+	height:76px;
+	display:block;
+	text-decoration:none;
+        color: white;
+}
+
+#nav-articles a {
+	background:url(images/nav-articles2.jpg) 0px 10px no-repeat;
+	width:79px;
+}
+#nav-articles a:hover {
+	background-position:-79px 10px;
+}
+#nav-about a {
+	background:url(images/nav-about2.jpg) 0px 10px no-repeat;
+	width:70px;
+}
+#nav-about a:hover {
+	background-position:-70px 10px;
+}
+#nav-contact a {
+	background:url(images/nav-contact2.jpg) 0px 10px no-repeat;
+	width:84px;
+}
+#nav-contact a:hover {
+	background-position:-84px 10px;
+}
+#nav-rss a {
+	background:url(images/nav-rss2.jpg) 0px 10px no-repeat;
+	width:63px;
+}
+#nav-rss a:hover {
+	background-position:-63px 10px;
+}
+#nav-sitemap a {
+	background:url(images/nav-sitemap2.jpg) 0px 10px no-repeat;
+	width:79px;
+}
+#nav-sitemap a:hover {
+	background-position:-79px 10px;
+}
+
+/* 
+  Footer
+ */
+#foot {
+	clear:both;
+	text-align:center;
+	font-size:.75em;
+	background:#fd9 url(images/footer-c.gif) bottom left repeat-x;
+	padding:0;
+}
+#foot ul {
+	list-style:none;
+}
+#foot li {
+	display:inline;
+	padding:.5em 0;
+}
+#foot li a {
+	padding:0 1.5em;
+	color:#000;
+}
+#foot .outer {
+	background:url(images/footer-l.gif) bottom left no-repeat;
+	float:left;
+	width:100%;
+}
+#foot .inner {
+	border-top:1px solid #db7;
+	background:url(images/footer-r.gif) bottom right no-repeat;
+	float:left;
+	width:100%;
+}
+
+
+.clear-all {
+	clear:both;
+	font-size:.0001%;
+	height:1px;
+}
+
+/* 
+  Side navigation
+ */
+#insert {
+	padding:1.3em;
+	font-size:.75em;
+	color:#999;
+	height:2.5em;
+}
+ul.sections {
+	margin:10px 0 0 10px ;
+}
+ul.sections, .cross-links {
+	list-style:none;
+	padding:0;
+	font-size:95%;
+}
+
+.info-box {
+	font-size:90%;
+}
+.info-box div.author {
+	padding:.5em .5em .5em 37px;
+	background:url(images/info-box-by.gif) 0 50% no-repeat;
+}
+.sections li, .info-box {
+	border:1px solid;
+	border-color:#ccc #bbb #b6b6b6 #ccc;
+	margin:0 0 3px 0;
+}
+.sections li {
+	background:#f1f1f1 url(images/s-bg.gif) top left repeat-x;
+}
+.info-box, .cross-links {
+	background:#f1f1f1 url(images/cross-links-bg.gif) top left repeat-x;
+}
+.cross-links {
+	border:1px solid;
+	border-color:#ccc #babad2 #ccc #ccc;
+	margin:10px 0;
+}
+.sections li a, .cross-links a {
+	display:block;
+}
+.sections li a, .cross-links a, dt a {
+	padding:.7em 3px .7em 37px;
+	text-decoration:none;
+}
+.sections a, .sections a:link, .sections a:visited, .cross-links a, .cross-links a:link, .cross-links a:visited, dt a, dt a:link, dt a:visited {
+	background-position:4px 50%;
+	background-repeat:no-repeat;
+}
+.sections a, .sections a:link, .sections a:visited, .cross-links a, .cross-links a:link, .cross-links a:visited {
+	color:#20e;
+}
+.sections a:hover, .sections a:active, .sections .on a, .cross-links a:hover, .cross-links a:active, dt a:hover, dt a:active {
+	background-position:-462px 50%;
+	background-repeat:no-repeat;
+}
+.sections a:hover, .sections a:active, .cross-links a:hover, .cross-links a:active {
+	color:#004;
+	text-decoration:none;
+}
+
+.sections li a:hover, .sections li.on a {
+	background-color:#fff;
+	color:#f00;
+}
+
+.indent {
+	margin:1em 1em 1em 3em;
+}
+.code .indent {
+	margin:0 0 0 1.5em;
+}
+
+.type2 {
+	background-color:#f9f9e0;
+	color:#520;
+}
+
+#article code {
+	font-family:monospace;
+	color:#620;
+}
+
+.term {
+	font-style:italic;
+	color:#080;
+}
+
+#side-search, #links49041 {
+	margin:.25em .75em;
+	padding:.4em .75em .7em;
+	border:1px solid #f93;
+}
+
+ul#links49041 {
+	list-style:none;
+	margin:1em .75em;
+	padding:.4em .75em .7em;
+	border:none;
+} 
+ul#links49041 li {padding:0; margin:0 2em 0 0; } 
+ul#links49041 li span {padding:3px; margin:0px;color:#000000; } 
+ul#links49041 li span a {color:#000000; } 
+
+/* links */
+
+#article *:link, #article *:visited 
+{
+    text-decoration: none;
+    /*color: rgb(187, 0, 0);*/
+    color: black;
+    border-bottom-width: 1px;
+    border-bottom-style: dotted;
+    border-bottom-color: rgb(187, 187, 187);
+}
+
+#article *:link:hover, #article *:visited:hover
+{
+    background-color: rgb(238, 238, 238);
+    color: rgb(85, 85, 85);
+}
+
+#article
+{
+  line-height:1.25em; 
+  width: 32em; /* required on Safari 3 for pre block to scroll */
+}
+
+/* footnotes */
+
+p.footnotes {
+	font-size: .91em;
+	text-indent: -1em;
+	padding-left: 1em;
+	}
+.footnotes hr {
+	margin-left: 0;
+	margin-bottom: 1.5em;
+	margin-top: 5em;
+	width: 8em;
+	border-style: solid;
+	border-width: 1px 0 0 0;
+	}
+.footnotes hr:after {
+	content: "";
+	}
+.footnotes p {
+	font-size: .91em;
+	}
+a.footnoteBackLink {
+	border: 0;
+	padding: 3px 4px 2px 4px;
+	vertical-align: -.2em;
+	font-size: 1.2em;
+	line-height: 0px;
+	color: #bbb;
+	}
+a.footnoteBackLink:hover {
+	color: #fff;
+	}
+
+#article pre
+{
+  overflow-x: auto;
+  margin-left: 2em;
+}
+
+/* source code */
+
+.comment {
+  /* font-lock-comment-face */
+  color: #0000ff;
+}
+.comment-delimiter {
+  /* font-lock-comment-delimiter-face */
+  color: #0000ff;
+}
+
+.constant {
+  /* font-lock-constant-face */
+  color: #5f9ea0;
+}
+
+.function-name {
+  /* font-lock-function-name-face */
+  color: #0000ff;
+}
+.keyword {
+  /* font-lock-keyword-face */
+  color: #a020f0;
+}
+.string {
+  /* font-lock-string-face */
+  color: #006400;
+}
+.type {
+  /* font-lock-type-face */
+  color: #228b22;
+}
+.variable-name {
+  /* font-lock-variable-name-face */
+  color: #b8860b;
+}
+
+table
+{ 
+  text-align: left
+}
+
+dt
+{
+  margin-left: 1em;
+}
+
+dl.function-definition dt
+{
+  font-family: monospace;
+}
+
+.bool-true
+{ 
+  background-color: rgb(126,255,20);
+}
+
+.bool-false
+{ 
+  background-color: rgb(255,72,61);
+}
+
+.bool-bottom
+{ 
+  background-color: rgb(204,204,204);
+}
