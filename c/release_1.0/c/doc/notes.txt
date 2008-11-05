@@ -1,3 +1,7 @@
+svn2cl -r 3075:HEAD https://avis.svn.sourceforge.net/svnroot/avis/trunk/c
+svn log --stop-on-copy   https://avis.svn.sourceforge.net/svnroot/avis/branches/client/c/release_1.0
+svn cp https://avis.svn.sourceforge.net/svnroot/avis/branches/client/c/release_1.0 https://avis.svn.sourceforge.net/svnroot/avis/tags/client/c/release_1.0.0
+
 TODO
 
 1.0 release

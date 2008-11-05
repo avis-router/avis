@@ -56,6 +56,14 @@ void array_free (Array *array)
   }
 }
 
+Array *array_copy (Array *target, const Array *source, size_t item_size)
+{
+  target->items = memdup (source->items, source->item_count * item_size);
+  target->items = source->items;
+  
+  return target;
+}
+
 bool array_equals (Array *array1, Array *array2)
 {
   return array1->item_count == array2->item_count &&

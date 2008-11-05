@@ -76,6 +76,32 @@ Value *value_init (Value *value, ValueType type, ...);
 void value_free (Value *value);
 
 /**
+ * Copy a value from a source to a target.
+ *
+ * @param target The target for the copy.
+ * @param source The source to copy from.
+ * @return A pointer to the target.
+ *
+ * @see value_clone()
+ */
+Value *value_copy (Value *target, const Value *source);
+
+/**
+ * Create a value cloned from a source value.
+ *
+ * @param source The source to copy from.
+ * @return A pointer to the target.
+ *
+ * @see value_copy()
+ */
+#define value_clone(source) value_copy (value_create (), source)
+
+/**
+ * Create an uninitialised value on the heap.
+ */
+#define value_create() ((Value *)avis_emalloc (sizeof (Value)))
+
+/**
  * Destroy (free and NULL) a value instance.
  */
 #define value_destroy(value) \
@@ -85,19 +111,19 @@ void value_free (Value *value);
  * Allocate and init an int32 value. Use value_destroy() when done.
  */
 #define value_create_int32(value) \
-  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_INT32, (int32_t)(value)))
+  (value_init (value_create (), TYPE_INT32, (int32_t)(value)))
 
 /**
  * Allocate and init an int64 value. Use value_destroy() when done.
  */
 #define value_create_int64(value) \
-  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_INT64, (int64_t)(value)))
+  (value_init (value_create (), TYPE_INT64, (int64_t)(value)))
 
 /**
  * Allocate and init a real64 value. Use value_destroy() when done.
  */
 #define value_create_real64(value) \
-  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_REAL64, (real64_t)(value)))
+  (value_init (value_create (), TYPE_REAL64, (real64_t)(value)))
 
 /**
  * Allocate and init a string value. Use value_destroy() when done. The
@@ -107,8 +133,7 @@ void value_free (Value *value);
  * @see value_create_string_nocopy()
  */
 #define value_create_string(value) \
-  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_STRING, \
-   avis_estrdup (value)))
+  (value_init (value_create (), TYPE_STRING, avis_estrdup (value)))
 
 /**
  * Allocate and init a string value, without copying it first. Use
@@ -118,7 +143,7 @@ void value_free (Value *value);
  * @see value_create_string()
  */
 #define value_create_string_nocopy(value) \
-  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_STRING, value))
+  (value_init (value_create (), TYPE_STRING, value))
 
 /**
  * Allocate and init an opaque value. Use value_destroy() when done.
@@ -130,7 +155,7 @@ void value_free (Value *value);
  * @see value_init()
  */
 #define value_create_opaque(value) \
-  (value_init ((Value *)avis_emalloc (sizeof (Value)), TYPE_OPAQUE, value))
+  (value_init (value_create (), TYPE_OPAQUE, value))
 
 /**
  * Initialise an array.
