@@ -1,4 +1,4 @@
-Release 1.1.0 (Not released)
+Release 1.1.0 (November 5, 2008)
 ----------------------------------------------------------------------
 
 * Added attributes_copy () and related copy methods to other 
@@ -6,6 +6,10 @@ Release 1.1.0 (Not released)
 
 * Fixed doc for elvin_poll (): this does not time out as previously 
   documented.
+
+* Added target for building avis.framework for Mac OS X.
+
+* Documentation fixes.
 
 
 Release 1.0.0 (August 2, 2008)
