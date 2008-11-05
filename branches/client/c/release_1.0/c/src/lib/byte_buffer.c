@@ -352,14 +352,6 @@ bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
 
   bytes = emalloc (length);
 
-  if (bytes == NULL)
-  {
-    elvin_error_set (error, errno_to_elvin_error (errno),
-                     "Not enough memory to allocate opaque");
-
-    return false;
-  }
-
   if (byte_buffer_read_bytes (buffer, bytes, length, error) &&
       byte_buffer_skip (buffer, padding_for (length), error))
   {

@@ -19,10 +19,10 @@
 #include <stdlib.h>
 
 #include <avis/stdtypes.h>
-#include <avis/values.h>
 #include <avis/errors.h>
 
-#include "byte_buffer.h"
+#include "values_private.h"
+#include "arrays_private.h"
 
 Value *value_init (Value *value, ValueType type, ...)
 {
@@ -62,6 +62,32 @@ void value_free (Value *value)
     free (value->value.str);
   else if (value->type == TYPE_OPAQUE)
     array_free (&value->value.bytes);
+}
+
+Value *value_copy (Value *target, const Value *source)
+{
+  target->type = source->type;
+  
+  switch (source->type)
+  {
+    case TYPE_INT32:
+      target->value.int32 = source->value.int32;
+      break;
+    case TYPE_INT64:
+      target->value.int64 = source->value.int64;
+      break;
+    case TYPE_REAL64:
+      target->value.real64 = source->value.real64;
+      break;
+    case TYPE_STRING:
+      target->value.str = estrdup (source->value.str);
+      break;
+    case TYPE_OPAQUE:
+      array_copy (&target->value.bytes, &source->value.bytes, 1);
+      break;
+  }
+  
+  return target;
 }
 
 bool value_read (ByteBuffer *buffer, Value *value, ElvinError *error)

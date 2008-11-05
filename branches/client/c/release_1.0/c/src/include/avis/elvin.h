@@ -601,18 +601,18 @@ bool elvin_event_loop (Elvin *elvin);
 /**
  * Poll an Elvin connection for a single incoming message from the
  * router. This will block until a notification or disconnect message
- * is received from the router, or until ELVIN_IO_TIMEOUT milliseconds
- * have passed (in which case the error code will be set to
- * ELVIN_ERROR_TIMEOUT).
+ * is received from the router.
  *
  * On receipt of a notification, any listeners to the notification
  * will be called from this function. On receipt of a disconnect or
  * socket close, the connection will be shut down.
  *
- * This method wil not normally be useful to clients: see
- * elvin_event_loop() instead.
+ * This method may be useful to clients that wish to coarsely interleave
+ * polled events with other actions (e.g. when embedding Elvin client
+ * connections in other event loops), but most clients will want to just call
+ * elvin_event_loop().
  *
- * @return True if no error occurred.
+ * @return After each processed event: true if no error occurred.
  */
 bool elvin_poll (Elvin *elvin);
 
