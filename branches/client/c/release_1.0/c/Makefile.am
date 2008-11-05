@@ -12,6 +12,7 @@ EXTRA_DIST = \
   platforms/gnu_automake/readme.txt \
   platforms/macosx/avis_client.xcodeproj/project.pbxproj \
   platforms/macosx/avis_client_config.h \
+  platforms/macosx/avis-Info.plist \
   platforms/windows/vc2005/avis_client_config.h \
   platforms/windows/vc2005/Avis.sln \
   platforms/windows/vc2005/avislib.vcproj \
