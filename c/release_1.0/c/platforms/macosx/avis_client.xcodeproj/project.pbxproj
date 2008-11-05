@@ -147,6 +147,13 @@
 			remoteGlobalIDString = C9B466740DD9374900A1C448;
 			remoteInfo = check;
 		};
+		C9C628C50EC11D00006BA6C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C906FBEC0DD3FBB300375E7D /* Client Library */;
+			remoteInfo = "Client Library";
+		};
 		C9E7FF280DF9533B00F0210C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -668,6 +675,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C9C628C60EC11D00006BA6C1 /* PBXTargetDependency */,
 			);
 			name = avis;
 			productName = AvisClient;
@@ -926,6 +934,11 @@
 			target = C9B466740DD9374900A1C448 /* check */;
 			targetProxy = C9B466880DD9378100A1C448 /* PBXContainerItemProxy */;
 		};
+		C9C628C60EC11D00006BA6C1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C906FBEC0DD3FBB300375E7D /* Client Library */;
+			targetProxy = C9C628C50EC11D00006BA6C1 /* PBXContainerItemProxy */;
+		};
 		C9E7FF270DF9533B00F0210C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C906FBEC0DD3FBB300375E7D /* Client Library */;
@@ -948,6 +961,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -972,10 +987,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
