@@ -41,7 +41,7 @@ public class ConnectionOptionSet extends OptionSet
   {
     // ------------ Options required for all Elvin implementations
     
-    add ("Packet.Max-Length", 1*K, 2*MB, 10*MB);
+    add ("Packet.Max-Length", 1*K, 2*MB, 500*MB);
     
     /*
      * todo: we only enforce max packet length, which by implication
