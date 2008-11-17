@@ -93,6 +93,7 @@
 #    define AVIS_PUBLIC_DATA   extern
 #  endif
 #else
+#  define AVIS_PUBLIC
 #  define AVIS_PUBLIC_DATA   extern
 #endif
 
