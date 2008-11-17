@@ -78,6 +78,10 @@
  */
 #define MAX_KEY_COUNT  (1 * _KB_)
 
+/*
+ * Allow building .DLL on Windows. Functions that should be public are
+ * tagged with AVIS_PUBLIC, data with AVIS_PUBLIC_DATA.
+ */
 #ifdef WIN32
 #  if !defined (AVIS_LIBRARY_STATIC)
 #    if defined (AVIS_BUILDING_LIB)
