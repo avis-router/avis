@@ -288,6 +288,11 @@ public class JUTestEvaluation
     testPred (StrWildcard.class, "foxa", "fo\\*a", FALSE);
     testPred (StrWildcard.class, "fo\\", "fo\\\\", TRUE);
     testPred (StrWildcard.class, "fo\\", "fo\\", TRUE);
+    testPred (StrWildcard.class, "abd", "a[bc]d", TRUE);
+    testPred (StrWildcard.class, "acd", "a[bc]d", TRUE);
+    testPred (StrWildcard.class, "add", "a[bc]d", FALSE);
+    testPred (StrWildcard.class, "abc", "a[a-z]c", TRUE);
+    testPred (StrWildcard.class, "abc", "a[^a-z]c", FALSE);
     
     // require
     ntfn = new HashMap<String, Object> ();
