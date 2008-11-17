@@ -22,9 +22,11 @@
 
 #include "byte_buffer.h"
 
+AVIS_PUBLIC
 bool attributes_write (ByteBuffer *buffer, Attributes *attributes, 
                        ElvinError *error);
 
+AVIS_PUBLIC
 bool attributes_read (ByteBuffer *buffer, Attributes *attributes, 
                       ElvinError *error);
 

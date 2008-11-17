@@ -81,35 +81,41 @@ typedef uint8_t * Message;
 /**
  * Initialise a message's fields from a variable length set of arguments.
  */
-Message message_init (Message message, MessageTypeID type, ...);
+AVIS_PUBLIC
+Message avis_message_init (Message message, MessageTypeID type, ...);
 
 #define message_destroy(message) \
-  (message_free (message), free (message), message = NULL)
+  (avis_message_free (message), free (message), message = NULL)
 
 /**
  * Free fields allocated inside a message dynamically allocated by
- * message_read().
+ * avis_message_read().
  */
-void message_free (Message message);
+AVIS_PUBLIC
+void avis_message_free (Message message);
 
 /**
  * Read an XDR-encoded message from a buffer. The buffer's max length must be
  * primed with the amount of data expected to be read and the position set to
  * the start of the data.
  *
- * @see message_read()
- * @see message_free()
+ * @see avis_message_read()
+ * @see avis_message_free()
  */
-bool message_read (ByteBuffer *buffer, Message message, ElvinError *error);
+AVIS_PUBLIC
+bool avis_message_read (ByteBuffer *buffer, Message message, ElvinError *error);
 
 /**
  * Write a message to a buffer in Elvin XDR-encoded form.
  */
-bool message_write (ByteBuffer *buffer, Message message, ElvinError *error);
+AVIS_PUBLIC
+bool avis_message_write (ByteBuffer *buffer, Message message, ElvinError *error);
 
-bool send_message (socket_t socket, Message message, ElvinError *error);
+AVIS_PUBLIC
+bool avis_send_message (socket_t socket, Message message, ElvinError *error);
 
-bool receive_message (socket_t socket, Message message, ElvinError *error);
+AVIS_PUBLIC
+bool avis_receive_message (socket_t socket, Message message, ElvinError *error);
 
 /** The message's type ID. */
 #define message_type_of(message) (*(uint32_t *)(message))

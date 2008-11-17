@@ -28,7 +28,7 @@
 static void auto_resize (ArrayList *list, size_t min_item_count,
                          size_t item_size);
 
-void *memdup (const void *source, size_t length)
+void *avis_memdup (const void *source, size_t length)
 {
   void *target = emalloc (length);
 
@@ -58,7 +58,7 @@ void array_free (Array *array)
 
 Array *array_copy (Array *target, const Array *source, size_t item_size)
 {
-  target->items = memdup (source->items, source->item_count * item_size);
+  target->items = avis_memdup (source->items, source->item_count * item_size);
   target->items = source->items;
   
   return target;

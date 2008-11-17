@@ -63,6 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(OutDir)"
 				IgnoreDefaultLibraryNames="libcmt.lib;libcmtd.lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -139,6 +140,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(OutDir)"
 				IgnoreDefaultLibraryNames="libcmt.lib;libcmtd.lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"

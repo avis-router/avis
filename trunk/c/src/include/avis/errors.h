@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include <avis/stdtypes.h>
+#include <avis/defs.h>
 
 /**
  * Error reporting information for the Avis client library. Functions
@@ -75,8 +76,10 @@ typedef struct
 #define ELVIN_ERROR_USAGE               (ELVIN_ERROR_BASE + 8)
 #define ELVIN_ERROR_TIMEOUT             (ELVIN_ERROR_BASE + 9)
 
+AVIS_PUBLIC
 void *do_avis_emalloc (size_t size, const char *file, int line);
 
+AVIS_PUBLIC
 char *do_avis_estrdup (const char *str, const char *file, int line);
 
 #define avis_emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
@@ -97,6 +100,7 @@ char *do_avis_estrdup (const char *str, const char *file, int line);
  *
  * @see elvin_error_reset()
  */
+AVIS_PUBLIC
 void elvin_error_free (ElvinError *error);
 
 /**
@@ -105,6 +109,7 @@ void elvin_error_free (ElvinError *error);
  * @see ELVIN_EMPTY_ERROR
  * @see elvin_error_reset()
  */
+AVIS_PUBLIC
 void elvin_error_init (ElvinError *error);
 
 /**
@@ -149,6 +154,7 @@ void elvin_error_init (ElvinError *error);
 /**
  * Like perror () but taking error info from an ElvinError instance.
  */
+AVIS_PUBLIC
 void elvin_perror (const char *tag, ElvinError *error);
 
 /**
@@ -159,6 +165,7 @@ void elvin_perror (const char *tag, ElvinError *error);
  *
  * @see elvin_error_set()
  */
+AVIS_PUBLIC
 bool elvin_error_from_errno (ElvinError *error);
 
 /**
@@ -180,6 +187,7 @@ bool elvin_error_from_errno (ElvinError *error);
  * @see elvin_error_from_errno()
  * @see elvin_error_free()
  */
+AVIS_PUBLIC
 bool elvin_error_set (ElvinError *error, int code, const char *message, ...);
 
 /**

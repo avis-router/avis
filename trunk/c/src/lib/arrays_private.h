@@ -36,56 +36,77 @@ typedef void (*FuncPtr) ();
 
 #define array_list_size(list) ((list)->item_count)
 
+AVIS_PUBLIC
 ArrayList *array_list_init (ArrayList *list, size_t item_size,
                             size_t initial_item_count);
 
+AVIS_PUBLIC
 void array_list_free (ArrayList *list);
 
 #define array_list_add(list, item_type) \
   ((item_type *)array_list_add_item (list, sizeof (item_type)))
 
+AVIS_PUBLIC
 void *array_list_add_item (ArrayList *list, size_t item_size);
 
+AVIS_PUBLIC
 void array_list_add_ptr (ArrayList *list, void *item);
 
+AVIS_PUBLIC
 void array_list_add_int (ArrayList *list, int value);
 
+AVIS_PUBLIC
 void array_list_add_func (ArrayList *list, void (*func) ());
 
 #define array_list_get(list, index, item_type) \
   (((item_type *)list->items) [index])
 
+AVIS_PUBLIC
 int array_list_get_int (ArrayList *list, size_t index);
 
+AVIS_PUBLIC
 void *array_list_get_ptr (ArrayList *list, size_t index);
 
+AVIS_PUBLIC
 FuncPtr array_list_get_func (ArrayList *list, size_t index);
 
 #define array_list_remove(list, index, item_type) \
   (array_list_remove_item (list, index, sizeof (item_type)))
 
+AVIS_PUBLIC
 void array_list_remove_item_using_ptr (ArrayList *list, void *item, size_t item_size);
 
+AVIS_PUBLIC
 void array_list_remove_item (ArrayList *list, size_t index, size_t item_size);
 
+AVIS_PUBLIC
 int32_t *array_list_find_int (ArrayList *list, int32_t int_value);
 
+AVIS_PUBLIC
 FuncPtr *array_list_find_func (ArrayList *list, void (*func) ());
 
+AVIS_PUBLIC
 void **array_list_find_ptr (ArrayList *list, void *ptr);
 
+AVIS_PUBLIC
 bool array_list_remove_int (ArrayList *list, int int_value);
 
+AVIS_PUBLIC
 bool array_list_remove_func (ArrayList *list, void (*func) ());
 
+AVIS_PUBLIC
 bool array_list_remove_ptr (ArrayList *list, void *ptr);
 
+AVIS_PUBLIC
 Array *array_init (Array *array, size_t item_count, size_t item_length);
 
+AVIS_PUBLIC
 void array_free (Array *array);
 
+AVIS_PUBLIC
 bool array_equals (Array *array1, Array *array2);
 
+AVIS_PUBLIC
 Array *array_copy (Array *target, const Array *source, size_t item_size);
 
 #define array_clone(array, item_type) \

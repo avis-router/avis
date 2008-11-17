@@ -18,6 +18,8 @@
 #ifndef AVIS_ARRAYS_H_
 #define AVIS_ARRAYS_H_
 
+#include <avis/defs.h>
+
 /**
  * A generic homogeneous, fixed length array of any type of item.
  */
@@ -44,6 +46,7 @@ typedef struct
 /**
  * Duplicate a block of memory a la strdup ().
  */
-void *memdup (const void *source, size_t length);
+AVIS_PUBLIC
+void *avis_memdup (const void *source, size_t length);
 
 #endif /*AVIS_ARRAYS_H_*/

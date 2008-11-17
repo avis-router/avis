@@ -184,7 +184,7 @@ static bool write_using_format (ByteBuffer *buffer,
                                 Message message,
                                 ElvinError *error);
 
-Message message_init (Message message, MessageTypeID type, ...)
+Message avis_message_init (Message message, MessageTypeID type, ...)
 {
   MessageFormat *format = message_format_for (type);
   va_list args;
@@ -224,7 +224,7 @@ Message message_init (Message message, MessageTypeID type, ...)
   return message;
 }
 
-void message_free (Message message)
+void avis_message_free (Message message)
 {
   MessageFormat *format = message_format_for (message_type_of (message));
   Message message_field = message + 4;
@@ -255,7 +255,7 @@ void message_free (Message message)
   memset (message, 0, MAX_MESSAGE_SIZE);
 }
 
-bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
+bool avis_message_read (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   uint32_t type = byte_buffer_read_int32 (buffer, error);
   MessageFormat *format;
@@ -280,13 +280,13 @@ bool message_read (ByteBuffer *buffer, Message message, ElvinError *error)
     return true;
   } else
   {
-    message_free (message);
+    avis_message_free (message);
 
     return false;
   }
 }
 
-bool message_write (ByteBuffer *buffer, Message message, ElvinError *error)
+bool avis_message_write (ByteBuffer *buffer, Message message, ElvinError *error)
 {
   MessageFormat *format = message_format_for (message_type_of (message));
 
@@ -348,7 +348,7 @@ MessageFormat *message_format_for (MessageTypeID type)
   return NULL;
 }
 
-bool send_message (socket_t socket, Message message, ElvinError *error)
+bool avis_send_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
@@ -357,7 +357,7 @@ bool send_message (socket_t socket, Message message, ElvinError *error)
   byte_buffer_init (&buffer);
   byte_buffer_skip (&buffer, 4, error);
 
-  message_write (&buffer, message, error);
+  avis_message_write (&buffer, message, error);
 
   frame_size = (uint32_t)buffer.position - 4;
 
@@ -383,7 +383,7 @@ bool send_message (socket_t socket, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-bool receive_message (socket_t socket, Message message, ElvinError *error)
+bool avis_receive_message (socket_t socket, Message message, ElvinError *error)
 {
   ByteBuffer buffer;
   uint32_t frame_size;
@@ -429,7 +429,7 @@ bool receive_message (socket_t socket, Message message, ElvinError *error)
       position += bytes_read;
   } while (position < buffer.max_data_length && elvin_error_ok (error));
 
-  if (elvin_error_ok (error) && message_read (&buffer, message, error))
+  if (elvin_error_ok (error) && avis_message_read (&buffer, message, error))
   {
     if (buffer.position < frame_size)
       elvin_error_set (error, ELVIN_ERROR_PROTOCOL, "Message underflow");
