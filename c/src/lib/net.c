@@ -34,7 +34,7 @@
 
 #define max(a,b) (a > b ? a : b)
 
-socket_t select_ready (socket_t socket1, socket_t socket2, ElvinError *error)
+socket_t avis_select_ready (socket_t socket1, socket_t socket2, ElvinError *error)
 {
   fd_set socks;
   int ready_sockets;
@@ -60,7 +60,7 @@ socket_t select_ready (socket_t socket1, socket_t socket2, ElvinError *error)
   }
 }
 
-socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
+socket_t avis_open_socket (const char *host, uint16_t port, ElvinError *error)
 {
   struct addrinfo hints;
   struct addrinfo *info;
@@ -118,7 +118,7 @@ socket_t open_socket (const char *host, uint16_t port, ElvinError *error)
   return sock;
 }
 
-bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
+bool avis_open_socket_pair (socket_t *socket_read, socket_t *socket_write,
                        ElvinError *error)
 {
   #ifdef WIN32
@@ -157,7 +157,7 @@ bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
   #endif /* defined (WIN32) */
 }
 
-void close_socket_pair (socket_t socket_read, socket_t socket_write)
+void avis_close_socket_pair (socket_t socket_read, socket_t socket_write)
 {
   #ifdef WIN32
 

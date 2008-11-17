@@ -180,7 +180,7 @@ Key elvin_key_create_from_string (const char *str)
   size_t length = strlen (str);
   Key key;
 
-  key.data = memdup (str, length);
+  key.data = avis_memdup (str, length);
   key.length = length;
 
   return key;
@@ -190,7 +190,7 @@ Key elvin_key_create_from_data (const uint8_t *data, size_t length)
 {
   Key key;
 
-  key.data = memdup (data, length);
+  key.data = avis_memdup (data, length);
   key.length = length;
 
   return key;

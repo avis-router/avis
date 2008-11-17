@@ -78,4 +78,22 @@
  */
 #define MAX_KEY_COUNT  (1 * _KB_)
 
+#ifdef WIN32
+#  if !defined (AVIS_LIBRARY_STATIC)
+#    if defined (AVIS_BUILDING_LIB)
+#      define AVIS_PUBLIC       __declspec(dllexport)
+#      define AVIS_PUBLIC_DATA  extern __declspec(dllexport)
+#    else
+#      define AVIS_PUBLIC       __declspec(dllimport)
+#      define AVIS_PUBLIC_DATA  extern __declspec(dllimport)
+#    endif
+#  else
+    /* Static links must use extern */
+#    define AVIS_PUBLIC        extern
+#    define AVIS_PUBLIC_DATA   extern
+#  endif
+#else
+#  define AVIS_PUBLIC_DATA   extern
+#endif
+
 #endif /* AVIS_DEFS_H_ */

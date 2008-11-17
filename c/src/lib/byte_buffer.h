@@ -37,52 +37,70 @@ typedef struct
 #define byte_buffer_create() \
   (byte_buffer_init ((ByteBuffer *)emalloc (sizeof (ByteBuffer))))
 
+AVIS_PUBLIC
 ByteBuffer *byte_buffer_init (ByteBuffer *buffer);
 
+AVIS_PUBLIC
 ByteBuffer *byte_buffer_init_sized (ByteBuffer *buffer, size_t initial_size);
 
 #define byte_buffer_destroy(buffer) \
   (byte_buffer_free (buffer), free (buffer), buffer = NULL)
 
+AVIS_PUBLIC
 void byte_buffer_free (ByteBuffer *buffer);
 
+AVIS_PUBLIC
 int32_t byte_buffer_read_int32 (ByteBuffer *buffer, ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_write_int32 (ByteBuffer *buffer, int32_t value,
                               ElvinError *error);
 
+AVIS_PUBLIC
 int64_t byte_buffer_read_int64 (ByteBuffer *buffer, ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_write_int64 (ByteBuffer *buffer, int64_t value,
                               ElvinError *error);
 
+AVIS_PUBLIC
 real64_t byte_buffer_read_real64 (ByteBuffer *buffer, ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_write_real64 (ByteBuffer *buffer, real64_t value,
                                ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
                                ElvinError *error);
 
+AVIS_PUBLIC
 char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_read_bytes (ByteBuffer *buffer, uint8_t *bytes,
                              size_t bytes_len, ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_write_bytes (ByteBuffer *buffer, uint8_t *bytes,
                               size_t bytes_len, ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
                                   ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_write_byte_array (ByteBuffer *buffer, Array *array,
                                    ElvinError *error);
 
+AVIS_PUBLIC
 bool byte_buffer_set_position (ByteBuffer *buffer, size_t position,
                                ElvinError *error);
 
+AVIS_PUBLIC
 void byte_buffer_set_max_length (ByteBuffer *buffer, int max_capacity);
 
+AVIS_PUBLIC
 bool byte_buffer_ensure_capacity (ByteBuffer *buffer, size_t min_length,
                                   ElvinError *error);
 

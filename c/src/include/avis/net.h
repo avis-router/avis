@@ -62,20 +62,25 @@
 
 #include <avis/errors.h>
 #include <avis/stdtypes.h>
+#include <avis/defs.h>
 
-socket_t open_socket (const char *host, uint16_t port, ElvinError *error);
+AVIS_PUBLIC
+socket_t avis_open_socket (const char *host, uint16_t port, ElvinError *error);
 
 /**
  * Select a socket ready for reading. If both are ready, return socket2.s
  */
-socket_t select_ready (socket_t socket1, socket_t socket2, ElvinError *error);
+AVIS_PUBLIC
+socket_t avis_select_ready (socket_t socket1, socket_t socket2, ElvinError *error);
 
 /**
  * Open a bi-directional control socket.
  */
-bool open_socket_pair (socket_t *socket_read, socket_t *socket_write,
+AVIS_PUBLIC
+bool avis_open_socket_pair (socket_t *socket_read, socket_t *socket_write,
                           ElvinError *error);
 
-void close_socket_pair (socket_t socket_read, socket_t socket_write);
+AVIS_PUBLIC
+void avis_close_socket_pair (socket_t socket_read, socket_t socket_write);
 
 #endif /* AVIS_NET_H_ */

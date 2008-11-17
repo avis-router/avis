@@ -217,6 +217,7 @@ typedef void (*InvokeHandler) (Elvin *elvin, void *parameter);
  * @see elvin_close()
  * @see elvin_is_open()
  */
+AVIS_PUBLIC
 bool elvin_open (Elvin *elvin, const char *router_uri);
 
 /**
@@ -229,6 +230,7 @@ bool elvin_open (Elvin *elvin, const char *router_uri);
  *
  * @see elvin_open()
  */
+AVIS_PUBLIC
 bool elvin_open_uri (Elvin *elvin, ElvinURI *uri);
 
 /**
@@ -250,6 +252,7 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri);
  * @see elvin_open_uri()
  * @see elvin_set_keys()
  */
+AVIS_PUBLIC
 bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
                            Keys *notification_keys, Keys *subscription_keys);
 
@@ -270,6 +273,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
  * @see elvin_open_with_keys()
  * @see elvin_subscription_set_keys()
  */
+AVIS_PUBLIC
 bool elvin_set_keys (Elvin *elvin,
                      Keys *notification_keys, Keys *subscription_keys);
 
@@ -296,6 +300,7 @@ bool elvin_set_keys (Elvin *elvin,
  *
  * @see elvin_subscribe()
  */
+AVIS_PUBLIC
 bool elvin_send (Elvin *elvin, Attributes *notification);
 
 /**
@@ -313,6 +318,7 @@ bool elvin_send (Elvin *elvin, Attributes *notification);
  * @see elvin_send()
  * @see elvin_subscribe_with_keys()
  */
+AVIS_PUBLIC
 bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
                            Keys *notification_keys, SecureMode security);
 
@@ -344,6 +350,7 @@ bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
  * @see elvin_subscribe_with_keys()
  * @see elvin_subscription_add_listener()
  */
+AVIS_PUBLIC
 Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr);
 
 /**
@@ -389,6 +396,7 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr);
  * @see elvin_subscription_set_keys()
  * @see elvin_poll()
  */
+AVIS_PUBLIC
 Subscription *elvin_subscribe_with_keys (Elvin *elvin,
                                          const char *subscription_expr,
                                          Keys *keys,
@@ -406,6 +414,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
  *
  * @see elvin_subscribe()
  */
+AVIS_PUBLIC
 bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription);
 
 /**
@@ -416,6 +425,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription);
  *
  * @see elvin_subscribe()
 */
+AVIS_PUBLIC
 bool elvin_subscription_set_expr (Subscription *subscription,
                                   const char *subscription_expr);
 
@@ -433,6 +443,7 @@ bool elvin_subscription_set_expr (Subscription *subscription,
  * @see elvin_subscribe_with_keys()
  * @see elvin_set_keys()
 */
+AVIS_PUBLIC
 bool elvin_subscription_set_keys (Subscription *subscription,
                                   Keys *subscription_keys,
                                   SecureMode security);
@@ -450,6 +461,7 @@ bool elvin_subscription_set_keys (Subscription *subscription,
  * @see elvin_subscription_remove_listener()
  * @see elvin_add_notification_listener()
  */
+AVIS_PUBLIC
 void elvin_subscription_add_listener (Subscription *subscription,
                                       SubscriptionListener listener,
                                       void *user_data);
@@ -464,6 +476,7 @@ void elvin_subscription_add_listener (Subscription *subscription,
  *
  * @see elvin_subscription_add_listener()
  */
+AVIS_PUBLIC
 bool elvin_subscription_remove_listener (Subscription *subscription,
                                          SubscriptionListener listener);
 /**
@@ -473,6 +486,7 @@ bool elvin_subscription_remove_listener (Subscription *subscription,
  *
  * @see elvin_close()
  */
+AVIS_PUBLIC
 bool elvin_is_open (Elvin *elvin);
 
 /**
@@ -483,6 +497,7 @@ bool elvin_is_open (Elvin *elvin);
  *
  * @return True if the connection was closed, false if it was already closed.
  */
+AVIS_PUBLIC
 bool elvin_close (Elvin *elvin);
 
 /**
@@ -502,12 +517,14 @@ bool elvin_close (Elvin *elvin);
  *
  * @see elvin_invoke_close()
  */
+AVIS_PUBLIC
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter);
 
 /**
  * Shortcut to invoke elvin_close() via elvin_invoke(). This can be used by
  * multi-threaded applications to safely shut down an Elvin connection.
  */
+AVIS_PUBLIC
 bool elvin_invoke_close (Elvin *elvin);
 
 /**
@@ -522,6 +539,7 @@ bool elvin_invoke_close (Elvin *elvin);
  *
  * @see elvin_remove_close_listener()
  */
+AVIS_PUBLIC
 void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
                                void *user_data);
 
@@ -535,6 +553,7 @@ void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
  *
  * @see elvin_add_close_listener()
  */
+AVIS_PUBLIC
 bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener);
 
 /**
@@ -552,6 +571,7 @@ bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener);
  * @see elvin_subscribe()
  * @see elvin_subscription_add_listener()
  */
+AVIS_PUBLIC
 void elvin_add_notification_listener (Elvin *elvin,
                                       GeneralNotificationListener listener,
                                       void *user_data);
@@ -566,6 +586,7 @@ void elvin_add_notification_listener (Elvin *elvin,
  *
  * @see elvin_add_close_listener()
  */
+AVIS_PUBLIC
 bool elvin_remove_notification_listener (Elvin *elvin,
                                          GeneralNotificationListener listener);
 
@@ -597,6 +618,7 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  * @see elvin_event_loop()
  * @see elvin_invoke()
  */
+AVIS_PUBLIC
 bool elvin_event_loop (Elvin *elvin);
 
 /**
@@ -615,6 +637,7 @@ bool elvin_event_loop (Elvin *elvin);
  *
  * @return True if no error occurred.
  */
+AVIS_PUBLIC
 bool elvin_poll (Elvin *elvin);
 
 #endif /* AVIS_ELVIN_H */

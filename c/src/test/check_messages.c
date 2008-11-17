@@ -254,12 +254,12 @@ START_TEST (test_message_io)
   alloc_message (connRqst2);
 
   /* write message out */
-  message_init (connRqst, MESSAGE_ID_CONN_RQST,
+  avis_message_init (connRqst, MESSAGE_ID_CONN_RQST,
                 (uint32_t)DEFAULT_CLIENT_PROTOCOL_MAJOR,
                 (uint32_t)DEFAULT_CLIENT_PROTOCOL_MINOR,
                 EMPTY_ATTRIBUTES, EMPTY_KEYS, EMPTY_KEYS);
 
-  message_write (buffer, connRqst, &error);
+  avis_message_write (buffer, connRqst, &error);
 
   fail_on_error (&error);
 
@@ -272,7 +272,7 @@ START_TEST (test_message_io)
 
   byte_buffer_set_max_length (buffer, frame_size);
 
-  message_read (buffer, connRqst2, &error);
+  avis_message_read (buffer, connRqst2, &error);
 
   fail_on_error (&error);
 
@@ -286,7 +286,7 @@ START_TEST (test_message_io)
 
   byte_buffer_destroy (buffer);
 
-  message_free (connRqst2);
+  avis_message_free (connRqst2);
 }
 END_TEST
 
@@ -307,12 +307,12 @@ START_TEST (test_dud_router)
 
   /* write message out */
 
-  message_init (message1, MESSAGE_ID_CONN_RQST,
+  avis_message_init (message1, MESSAGE_ID_CONN_RQST,
                 (uint32_t)DEFAULT_CLIENT_PROTOCOL_MAJOR,
                 (uint32_t)DEFAULT_CLIENT_PROTOCOL_MINOR,
                 attributes, EMPTY_KEYS, EMPTY_KEYS);
 
-  message_write (buffer, message1, &error);
+  avis_message_write (buffer, message1, &error);
   fail_on_error (&error);
 
   /* create an underflow */
@@ -322,12 +322,12 @@ START_TEST (test_dud_router)
 
   byte_buffer_set_position (buffer, 0, &error);
 
-  message_read (buffer, message2, &error);
+  avis_message_read (buffer, message2, &error);
 
   fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
-  /* message2 should be freed by message_read () on error, but should be OK to
+  /* message2 should be freed by avis_message_read () on error, but should be OK to
    * free again */
-  message_free (message2);
+  avis_message_free (message2);
 
   /* create a corrupt message */
   buffer->max_data_length = buffer->data_length = length;
@@ -336,25 +336,25 @@ START_TEST (test_dud_router)
   /* generate "error: Invalid value type: 4294967295" */
   ((uint32_t *)buffer->data) [8] = 0xFFFFFFFF;
 
-  message_read (buffer, message2, &error);
+  avis_message_read (buffer, message2, &error);
 
   fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
-  message_free (message2);
+  avis_message_free (message2);
 
   byte_buffer_destroy (buffer);
 
   /* create a message that's too big: too many attributes */
   buffer = byte_buffer_create ();
-  message_write (buffer, message1, &error);
+  avis_message_write (buffer, message1, &error);
 
   byte_buffer_set_position (buffer, 16, &error);
   byte_buffer_write_int32 (buffer, 0xFFFFFFFF, &error);
   byte_buffer_set_position (buffer, 0, &error);
 
-  message_read (buffer, message2, &error);
+  avis_message_read (buffer, message2, &error);
 
   fail_unless_error_code (&error, ELVIN_ERROR_PROTOCOL);
-  message_free (message2);
+  avis_message_free (message2);
 
   byte_buffer_destroy (buffer);
 

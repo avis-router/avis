@@ -23,8 +23,10 @@
 
 #include "byte_buffer.h"
 
+AVIS_PUBLIC
 bool elvin_keys_read (ByteBuffer *buffer, Keys *keys, ElvinError *error);
 
+AVIS_PUBLIC
 bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error);
 
 #endif /*KEYS_PRIVATE_H_*/
