@@ -490,8 +490,8 @@ bool elvin_close (Elvin *elvin);
  * call will return immediately, and the nominated handler will be
  * called from the event loop thread (the one calling
  * elvin_event_loop()) at the earliest opportunity. This function is
- * the only one that is safe to call threads other than the one running the
- * main event loop.
+ * the only one that is safe to call from threads other than the one
+ * running the main event loop.
  *
  * @param elvin The Elvin connection.
  * @param handler The handler to call.
@@ -595,6 +595,7 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  * @see elvin_close()
  * @see elvin_poll()
  * @see elvin_event_loop()
+ * @see elvin_invoke()
  */
 bool elvin_event_loop (Elvin *elvin);
 
@@ -607,12 +608,12 @@ bool elvin_event_loop (Elvin *elvin);
  * will be called from this function. On receipt of a disconnect or
  * socket close, the connection will be shut down.
  *
- * This method may be useful to clients that wish to coarsely interleave
- * polled events with other actions (e.g. when embedding Elvin client
- * connections in other event loops), but most clients will want to just call
- * elvin_event_loop().
+ * This method may be useful to clients that wish to coarsely
+ * interleave polled events with other actions (e.g. when embedding
+ * Elvin client connections in other event loops), but most clients
+ * will want to just call elvin_event_loop().
  *
- * @return After each processed event: true if no error occurred.
+ * @return True if no error occurred.
  */
 bool elvin_poll (Elvin *elvin);
 
