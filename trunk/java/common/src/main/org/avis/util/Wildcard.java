@@ -40,6 +40,7 @@ public final class Wildcard
   public static Pattern toPattern (String wildcard, int flags)
   {
     StringBuilder regex = new StringBuilder (wildcard.length () * 2);
+    boolean inRange = false;
     
     for (int i = 0; i < wildcard.length (); i++)
     {
@@ -63,8 +64,16 @@ public final class Wildcard
             regex.append ("\\\\");
           }
           break;
+        case '[':
+          inRange  = true;
+          regex.append ('[');
+          break;
+        case ']':
+          inRange = false;
+          regex.append (']');
+          break;
         default:
-          if (isLetterOrDigit (c) || isWhitespace (c))
+          if (inRange || isLetterOrDigit (c) || isWhitespace (c))
             regex.append (c);
           else
             regex.append ('\\').append (c);
