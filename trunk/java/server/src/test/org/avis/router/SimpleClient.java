@@ -131,7 +131,10 @@ public class SimpleClient implements IoHandler, Closeable
      * sequence.
      */
      if (!clientSession.write (message).awaitUninterruptibly (RECEIVE_TIMEOUT))
-       throw new RuntimeIoException ("Failed to send " + message.name ());    
+     {
+       throw new RuntimeIoException 
+         ("Timed out waiting to send " + message.name ());
+     }
   }
   
   public Message receive ()
