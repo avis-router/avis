@@ -43,5 +43,8 @@ dist-windows: api-docs
 	cp src/include/avis/*.h ${dist_windows_dir}/include/avis 
 	cp platforms/windows/vc2005/Release/avis.dll ${dist_windows_dir}
 	cp platforms/windows/vc2005/Release/avis.lib ${dist_windows_dir}
+	cp LICENSE.txt ${dist_windows_dir}
 	rsync -av doc/api/html/ ${dist_windows_dir}/doc
+	rm -f ${dist_windows}.zip
 	cd ${dist_windows_dir}/.. && zip -r ../${dist_windows}.zip .
+	rm -rf ${dist_windows_dir}
