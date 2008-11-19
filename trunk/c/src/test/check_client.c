@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef WIN32
+#ifdef _WIN32
   #include <float.h>
 
   /* pull in M_PI */

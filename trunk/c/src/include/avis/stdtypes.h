@@ -29,7 +29,7 @@ typedef double real64_t;
   #include <stdint.h>
 #elif defined(HAVE_INTTYPES_H)
   #include <inttypes.h>
-#elif defined(WIN32)
+#elif defined(_WIN32)
   typedef __int8 int8_t;
   typedef __int16 int16_t;
   typedef __int32 int32_t;

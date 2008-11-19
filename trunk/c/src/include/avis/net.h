@@ -21,7 +21,7 @@
 #ifndef AVIS_NET_H_
 #define AVIS_NET_H_
 
-#ifdef WIN32
+#ifdef _WIN32
   #include <winsock2.h>
   #include <ws2tcpip.h>
 

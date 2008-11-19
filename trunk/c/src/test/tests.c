@@ -16,9 +16,9 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include <stdlib.h>
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
-#endif /* !WIN32 */
+#endif /* !_WIN32 */
 
 #include <check.h>
 

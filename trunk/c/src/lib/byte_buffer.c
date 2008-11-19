@@ -22,7 +22,7 @@
 #include <assert.h>
 
 /* ntohl () and htonl()  */
-#ifdef WIN32
+#ifdef _WIN32
   #include <winsock2.h>
 #else
   #include <arpa/inet.h>
