@@ -13,7 +13,7 @@ In XCode, add "avis.framework" to the project. At this point you can
 use the Avis client API and compile the project, but to actually run
 your app you need to copy avis.framework to the build area:
 
-  > cp -rp Frameworks/avis.frameworks build
+  > cp -rp Frameworks/avis.framework build
 
 If you forget to do this, you will see messages like "dyld: Library
 not loaded: ... Reason: image not found".
