@@ -34,9 +34,9 @@
 #include "check_log.h"
 #include "check_print.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <winsock2.h>
-#endif //WIN32
+#endif //_WIN32
 
 static void srunner_send_evt (SRunner *sr, void *obj, enum cl_event evt);
 
@@ -218,26 +218,26 @@ void xml_lfun (SRunner *sr, FILE *file, enum print_output printmode,
 {
   TestResult *tr;
   Suite *s;
-#ifdef WIN32
+#ifdef _WIN32
   static time_t inittv, endtv;
-#else //WIN32
+#else //_WIN32
   static struct timeval inittv, endtv;
-#endif //WIN32
+#endif //_WIN32
   static char t[sizeof "yyyy-mm-dd hh:mm:ss"] = {0};
 
   if (t[0] == 0)
   {
-#ifdef WIN32
+#ifdef _WIN32
    struct tm *now;
    time(&inittv);
    now = localtime(&inittv);
    strftime(t, sizeof("yyyy-mm-dd hh:mm:ss"), "%Y-%m-%d %H:%M:%S", now);
-#else //WIN32
+#else //_WIN32
    struct tm now;
    gettimeofday(&inittv, NULL);
    localtime_r(&(inittv.tv_sec), &now);
    strftime(t, sizeof("yyyy-mm-dd hh:mm:ss"), "%Y-%m-%d %H:%M:%S", &now);
-#endif //WIN32
+#endif //_WIN32
   }
 
   switch (evt) {
@@ -248,17 +248,17 @@ void xml_lfun (SRunner *sr, FILE *file, enum print_output printmode,
     break;
   case CLENDLOG_SR:
     {
-#ifdef WIN32 
+#ifdef _WIN32 
       double diff;
 	  time(&endtv);
 	  diff = difftime(endtv, inittv);
 	  fprintf(file, "  <duration>%f</duration>\n", diff);
-#else //WIN32
+#else //_WIN32
 	  gettimeofday(&endtv, NULL);
       fprintf(file, "  <duration>%f</duration>\n",
           (endtv.tv_sec + (float)(endtv.tv_usec)/1000000) - \
           (inittv.tv_sec + (float)(inittv.tv_usec/1000000)));
-#endif //WIN32
+#endif //_WIN32
       fprintf(file, "</testsuites>\n");
     }
     break;

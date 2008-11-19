@@ -39,14 +39,14 @@
 #include "check_pack.h"
 
 /* typedef an unsigned int that has at least 4 bytes */
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h>
 #define write _write
 #define read _read
 #define ck_uint32 unsigned int 
-#else //WIN32
+#else //_WIN32
 #define ck_uint32 uint32_t
-#endif //WIN32
+#endif //_WIN32
 
 static void  pack_int   (char **buf, int val);
 static int   upack_int  (char **buf);
@@ -260,11 +260,11 @@ void ppack (int fdes, enum ck_msg_type type, CheckMsg *msg)
 {
   char *buf;
   int n;
-#ifdef WIN32
+#ifdef _WIN32
   int r;
-#else //WIN32
+#else //_WIN32
   ssize_t r;
-#endif //WIN32
+#endif //_WIN32
 
   n = pack (type, &buf, msg);
   r = write (fdes, buf, n);
