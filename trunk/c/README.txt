@@ -45,9 +45,8 @@ packages/
 platforms/
   gnu_automake/               For building under GNU automake.
   macosx/                     For building on Mac OS X Xcode 3.1.
-  windows/
-    vc2005/                   For building on Windows under Visual
-                              Studio 2005.
+  windows/                    For building on Microsoft Windows 
+                              under Visual Studio 2005.
 
 
 Building The Client Library
@@ -69,8 +68,7 @@ Set the ELVIN environment variable to change the default Elvin URI for
 the router. e.g.
 
   > export ELVIN="elvin://public.elvin.org"
- 
- 
+
 Mac OS X
 ----------------------------------------------------------------------
 
@@ -78,11 +76,11 @@ The client library will build from the command line using the steps
 above, or you can build in Xcode (3.1 or later) using the project in
 "platforms/macosx".
 
-Windows
+Microsoft Windows
 ----------------------------------------------------------------------
 
-Open the "platforms/windows/vc2005/Avis.sln" file under Visual Studio
-2005 or later.
+Open the "platforms/windows/Avis.sln" file under Visual Studio 2005 or
+later.
 
 
 Running The Examples
