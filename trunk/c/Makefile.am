@@ -60,5 +60,5 @@ dist-mac: api-docs
 	cp -rp platforms/macosx/build/Release/avis.framework ${dist_mac_dir}
 	chmod -R og-w ${dist_mac_dir}/avis.framework
 	rsync -av doc/api/html/ ${dist_mac_dir}/doc
-	tar jcvf ${dist_mac}.tar.bz2 -C tmp	 .
+	tar jcvf ${dist_mac}.tar.bz2 -C tmp .
 	rm -rf ${dist_mac_dir}
