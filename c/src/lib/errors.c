@@ -27,7 +27,7 @@
 #include "errors_private.h"
 #include "log.h"
 
-#ifdef WIN32
+#ifdef _WIN32
   #define vsnprintf _vsnprintf
 #endif
 

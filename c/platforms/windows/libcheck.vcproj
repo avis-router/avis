@@ -2,9 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="avis"
-	ProjectGUID="{677652D5-C265-4E8B-BE09-1C1F261D0793}"
-	RootNamespace="avis"
+	Name="libcheck"
+	ProjectGUID="{CDFAD8DD-7E10-4DF3-9547-44DD56FEA0C0}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -19,7 +18,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
@@ -41,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\development\avis\c\platforms\windows\vc2005;..\..\..\src\include;.;.\avislib;..\..\..\packages\hashtable"
-				PreprocessorDefinitions="AVIS_BUILDING_LIB"
+				AdditionalIncludeDirectories=".\libcheck"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -50,8 +49,6 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
-				CallingConvention="0"
-				CompileAs="1"
 				DisableSpecificWarnings="4996"
 			/>
 			<Tool
@@ -64,14 +61,11 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib"
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libcheck.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -83,12 +77,6 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -96,7 +84,7 @@
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
@@ -117,15 +105,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\development\avis\c\platforms\windows\vc2005;..\..\..\src\include;.;.\avislib;..\..\..\packages\hashtable"
-				PreprocessorDefinitions="AVIS_BUILDING_LIB;WIN32"
+				AdditionalIncludeDirectories=".\libcheck"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				CallingConvention="0"
-				CompileAs="1"
 				DisableSpecificWarnings="4996"
 			/>
 			<Tool
@@ -138,14 +124,11 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib"
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libcheck.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -155,12 +138,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -176,55 +153,39 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\src\lib\arrays.c"
+				RelativePath="..\..\packages\check\src\check.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\attributes.c"
+				RelativePath="..\..\packages\check\src\check_error.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\byte_buffer.c"
+				RelativePath="..\..\packages\check\src\check_list.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\elvin.c"
+				RelativePath="..\..\packages\check\src\check_log.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\elvin_uri.c"
+				RelativePath="..\..\packages\check\src\check_msg.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\errors.c"
+				RelativePath="..\..\packages\check\src\check_pack.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\keys.c"
+				RelativePath="..\..\packages\check\src\check_print.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\listeners.c"
+				RelativePath="..\..\packages\check\src\check_run.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\log.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\messages.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\net.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\sha1.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\values.c"
+				RelativePath="..\..\packages\check\src\check_str.c"
 				>
 			</File>
 		</Filter>
@@ -234,83 +195,43 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\include\avis\arrays.h"
+				RelativePath="..\..\packages\check\src\check.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\arrays_private.h"
+				RelativePath="..\..\packages\check\src\check_error.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\avis\attributes.h"
+				RelativePath="..\..\packages\check\src\check_impl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\attributes_private.h"
+				RelativePath="..\..\packages\check\src\check_list.h"
 				>
 			</File>
 			<File
-				RelativePath=".\avis_client_config.h"
+				RelativePath="..\..\packages\check\src\check_log.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\avis_endian.h"
+				RelativePath="..\..\packages\check\src\check_msg.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\lib\byte_buffer.h"
+				RelativePath="..\..\packages\check\src\check_pack.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\avis\defs.h"
+				RelativePath="..\..\packages\check\src\check_print.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\avis\elvin.h"
+				RelativePath="..\..\packages\check\src\check_str.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\avis\elvin_uri.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\avis\errors.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\errors_private.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\avis\keys.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\keys_private.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\listeners.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\messages.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\avis\net.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\avis\stdtypes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\avis\values.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\lib\values_private.h"
+				RelativePath=".\libcheck\config.h"
 				>
 			</File>
 		</Filter>

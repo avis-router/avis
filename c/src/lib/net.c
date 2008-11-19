@@ -22,7 +22,7 @@
 #include <avis/defs.h>
 #include <avis/net.h>
 
-#ifdef WIN32
+#ifdef _WIN32
   #define snprintf _snprintf
 
   static bool init_windows_sockets (ElvinError *error);
@@ -69,7 +69,7 @@ socket_t avis_open_socket (const char *host, uint16_t port, ElvinError *error)
   socket_t sock = -1;
   char service [10];
 
-  #ifdef WIN32
+  #ifdef _WIN32
     if (!init_windows_sockets (error))
       return -1;
   #endif
@@ -121,7 +121,7 @@ socket_t avis_open_socket (const char *host, uint16_t port, ElvinError *error)
 bool avis_open_socket_pair (socket_t *socket_read, socket_t *socket_write,
                        ElvinError *error)
 {
-  #ifdef WIN32
+  #ifdef _WIN32
 
     SOCKET sockets [2];
 
@@ -154,12 +154,12 @@ bool avis_open_socket_pair (socket_t *socket_read, socket_t *socket_write,
       return elvin_error_from_errno (error);
     }
 
-  #endif /* defined (WIN32) */
+  #endif /* defined (_WIN32) */
 }
 
 void avis_close_socket_pair (socket_t socket_read, socket_t socket_write)
 {
-  #ifdef WIN32
+  #ifdef _WIN32
 
     closesocket (socket_read);
     closesocket (socket_write);
@@ -174,7 +174,7 @@ void avis_close_socket_pair (socket_t socket_read, socket_t socket_write)
   #endif
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #include <windows.h>
 #include <io.h>
