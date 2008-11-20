@@ -45,6 +45,8 @@ dist-windows: api-docs
 	mkdir -p ${dist_windows_dir}/include/avis
 	cp LICENSE.txt ${dist_windows_dir}
 	cp src/include/avis/*.h ${dist_windows_dir}/include/avis 
+	cp platforms/windows/avis_client_config.h \
+	  ${dist_windows_dir}/include/avis 
 	cp platforms/windows/Release/avis.dll ${dist_windows_dir}
 	cp platforms/windows/Release/avis.lib ${dist_windows_dir}
 	rsync -av doc/api/html/ ${dist_windows_dir}/doc
