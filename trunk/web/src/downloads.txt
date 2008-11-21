@@ -2,20 +2,14 @@ Avis Downloads
 ======================================================================
 
 The downloads listed here are for the latest stable version of the
-router (${server.version}) and client libraries (Java
-${java-client.version}, C ${c-client.version}). See the [Avis
-Sourceforge download page][all_downloads] for older releases.
-
-Avis Router
-----------------------------------------------------------------------
-
-The Avis router is the core Avis server component that provides
-an Elvin publish/subscribe message router service.
+Avis event router (${server.version}): see the [Avis Sourceforge
+download page][all_downloads] for older releases.
 
 After you've downloaded the router, you may want to look at the
 [installation guide][install].
 
-### Installer Binaries
+Binaries
+----------------------------------------------------------------------
 
 The installer packages contain precompiled Avis binaries packaged for
 various platforms. They contain the Avis router and the `ec` and `ep`
@@ -39,20 +33,21 @@ command line.
     binary package ready to be installed on most Unix systems. See the
     `README.txt` file that accompanies the distribution.
 
-### Source
+Source
+----------------------------------------------------------------------
 
-* **[Download the Avis router source][router_src]**.
+The source distribution contains the Avis Java source, plus the
+scripts needed to build it and pre-built .JAR files.
+
+* **[Download the Avis router source][router_src]** (release
+    ${server.version}).
 
 Avis Client Libraries
 ----------------------------------------------------------------------
 
-The [Avis client libraries][client_info] provide an API for
-programming clients that use an Elvin router.
-
-* **[Download the Avis client library for Java][java-client-src]**
-    (source and binary)
-
-* **[Download the Avis client library for C][c-client-src]** (source)
+The Avis client libraries provide an API for programming clients that
+use an Elvin router. See the [client library page][client_info] for
+downloads and further information.
 
 Subversion
 ----------------------------------------------------------------------
@@ -90,9 +85,4 @@ To get a released version of the client library:
 [router_mac]: http://downloads.sourceforge.net/avis/Avis-${server.version}.tbz
 
 [router_unix]: http://downloads.sourceforge.net/avis/avis-${server.version}.tar.bz2
-
-[java-client-src]: http://downloads.sourceforge.net/avis/avis-client-${java-client.version}.zip
-
-[c-client-src]: http://downloads.sourceforge.net/avis/avis-client-${c-client.version}.tar.gz
-
 

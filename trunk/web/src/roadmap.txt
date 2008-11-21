@@ -6,9 +6,11 @@ This is a provisional roadmap reflecting current development goals.
 Release Schedule
 ----------------------------------------------------------------------
 
-Router Release 1.3 (October 2008)
+Router Release 1.3 (Unscheduled)
 
  * Web-based router statistics display and simple router control.
+
+ * Move to MINA 2.0 network I/O framework.
 
 Router Release 2.0 (Unscheduled)
 
@@ -22,6 +24,10 @@ Router Release 2.0 (Unscheduled)
 
 Completed
 ----------------------------------------------------------------------
+
+C Client Library 1.1 (November 2008)
+
+ * Improved packaging for Mac OS X and Windows.
 
 C Client Library 1.0 (August 2008)
 
