@@ -1,6 +1,9 @@
 Release 1.1.0 (November 21, 2008)
 ----------------------------------------------------------------------
 
+This release adds some minor improvements to the API and documentation
+and adds binary packages for Mac OS X and Microsoft Windows.
+
 * Added attributes_copy () and related copy methods to other 
   structures.
 
