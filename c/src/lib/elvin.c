@@ -128,7 +128,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   }
 
   if (!avis_open_socket_pair (&elvin->control_socket_read,
-                         &elvin->control_socket_write, &elvin->error))
+                              &elvin->control_socket_write, &elvin->error))
   {
     close_socket (elvin->router_socket);
 
@@ -145,9 +145,10 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   elvin_error_init (&elvin->error);
 
   /* say hello to router */
-  avis_message_init (conn_rqst, MESSAGE_ID_CONN_RQST,
-                (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
-                EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
+  avis_message_init
+    (conn_rqst, MESSAGE_ID_CONN_RQST,
+     (uint32_t)uri->version_major, (uint32_t)uri->version_minor,
+     EMPTY_ATTRIBUTES, notification_keys, subscription_keys);
 
   if (send_and_receive (elvin, conn_rqst, conn_rply, MESSAGE_ID_CONN_RPLY))
   {
@@ -194,7 +195,8 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
     return;
 
   close_socket (elvin->router_socket);
-  avis_close_socket_pair (elvin->control_socket_write, elvin->control_socket_read);
+  avis_close_socket_pair (elvin->control_socket_write,
+                          elvin->control_socket_read);
 
   sub = elvin->subscriptions.items;
 
@@ -264,7 +266,7 @@ bool poll_receive_message (Elvin *elvin, Message message)
 {
   socket_t ready_socket =
     avis_select_ready (elvin->router_socket,
-                  elvin->control_socket_read, &elvin->error);
+                       elvin->control_socket_read, &elvin->error);
 
   if (ready_socket == elvin->router_socket)
   {
@@ -272,7 +274,7 @@ bool poll_receive_message (Elvin *elvin, Message message)
   } else if (ready_socket == elvin->control_socket_read)
   {
     return receive_control_message (elvin->control_socket_read, message,
-                                   &elvin->error);
+                                    &elvin->error);
   } else
   {
     return false;
@@ -441,8 +443,8 @@ bool elvin_set_keys (Elvin *elvin,
 
   /* TODO (opt) could compute delta here to possibly reduce message size */
   avis_message_init (sec_rqst, MESSAGE_ID_SEC_RQST,
-                notification_keys, elvin->notification_keys,
-                subscription_keys, elvin->subscription_keys);
+                     notification_keys, elvin->notification_keys,
+                     subscription_keys, elvin->subscription_keys);
 
   if (send_and_receive (elvin, sec_rqst, sec_rply, MESSAGE_ID_SEC_RPLY))
   {
@@ -472,7 +474,7 @@ bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
   alloc_message (notify_emit);
 
   avis_message_init (notify_emit, MESSAGE_ID_NOTIFY_EMIT,
-                notification, (uint32_t)security, notification_keys);
+                     notification, (uint32_t)security, notification_keys);
 
   return avis_send_message (elvin->router_socket, notify_emit, &elvin->error);
 }
@@ -512,7 +514,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
   alloc_message (sub_rply);
 
   avis_message_init (sub_add_rqst, MESSAGE_ID_SUB_ADD_RQST, subscription_expr,
-                (uint32_t)security, keys);
+                     (uint32_t)security, keys);
 
   if (send_and_receive (elvin, sub_add_rqst, sub_rply, MESSAGE_ID_SUB_RPLY))
   {
@@ -563,8 +565,8 @@ bool elvin_subscription_set_expr (Subscription *subscription,
   alloc_message (sub_rply);
 
   avis_message_init (sub_mod_rqst, MESSAGE_ID_SUB_MOD_RQST, subscription->id,
-                subscription_expr, subscription->security,
-                EMPTY_KEYS, EMPTY_KEYS);
+                     subscription_expr, subscription->security,
+                     EMPTY_KEYS, EMPTY_KEYS);
 
   if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
                         MESSAGE_ID_SUB_RPLY))
@@ -590,8 +592,9 @@ bool elvin_subscription_set_keys (Subscription *subscription,
   alloc_message (sub_rply);
 
   /* TODO (opt) could delta keys here to potentially reduce message size */
-  avis_message_init (sub_mod_rqst, MESSAGE_ID_SUB_MOD_RQST, subscription->id,
-                "", (uint32_t)security, subscription_keys, subscription->keys);
+  avis_message_init
+    (sub_mod_rqst, MESSAGE_ID_SUB_MOD_RQST, subscription->id,
+     "", (uint32_t)security, subscription_keys, subscription->keys);
 
   if (send_and_receive (subscription->elvin, sub_mod_rqst, sub_rply,
                         MESSAGE_ID_SUB_RPLY))
