@@ -1,4 +1,4 @@
-Release 1.1.0 (November 5, 2008)
+Release 1.1.0 (November 21, 2008)
 ----------------------------------------------------------------------
 
 * Added attributes_copy () and related copy methods to other 
@@ -9,7 +9,12 @@ Release 1.1.0 (November 5, 2008)
 
 * Added target for building avis.framework for Mac OS X.
 
-* Documentation fixes.
+* Visual Studio project now generates a .DLL rather than a static
+  .LIB.
+
+* Added binary distributions for Mac OS X and Windows.
+
+* Various documentation fixes.
 
 
 Release 1.0.0 (August 2, 2008)
