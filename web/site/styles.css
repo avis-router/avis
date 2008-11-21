@@ -500,3 +500,31 @@ dl.function-definition dt
 { 
   background-color: rgb(204,204,204);
 }
+
+#article ul
+{
+  border-left: 0px;
+  margin-left: 0px;
+}
+
+#article > ul
+{
+  padding-left: 30px;
+}
+
+#article > ul ul
+{
+  padding-left: 20px;
+}
+
+#article li
+{
+  list-style-type: disc;
+  /* list-style-type: none; */
+}
+
+#article li p
+{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
