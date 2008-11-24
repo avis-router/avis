@@ -63,7 +63,7 @@ CK_CPPSTART
 
 #include <sys/types.h>
 
-#ifdef _WIN32
+#ifdef WIN32
   #define pid_t int
 #endif
 
