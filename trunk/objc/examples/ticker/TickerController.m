@@ -1,43 +1,10 @@
 #import "TickerController.h"
+#import "AppController.h"
 
 @implementation TickerController
 
-- (void) applicationWillTerminate: (NSNotification *)notification
+- (void) handleNotify: (NSDictionary *) message
 {
-  elvin_invoke_close (&elvin);
-  
-  while (elvin_is_open (&elvin))
-    usleep (200000);
-}
-
-#define attr_string(attrs, name) \
- [NSString stringWithUTF8String: attributes_get_string (attrs, name)]
-
-static void elvinNotificationListener (Elvin *elvin, Attributes *attributes, 
-                                       bool secure, id self)
-{
-  NSArray *keys = 
-    [NSArray arrayWithObjects: @"Message", @"Group", @"From", nil];
-
-  NSArray *objects = 
-    [NSArray arrayWithObjects: 
-      attr_string (attributes, "Message"), 
-      attr_string (attributes, "Group"),
-      attr_string (attributes, "From"), nil];
-
-  NSDictionary *message = 
-    [NSDictionary dictionaryWithObjects: objects forKeys: keys];
-  
-  [message retain];
-  
-  [self performSelectorOnMainThread: @selector (handleNotify:) 
-        withObject: message 
-        waitUntilDone: NO];
-}
-
-- (void) handleNotify: (NSDictionary *)message
-{
-  NSTextView *textView = [text documentView];
   NSRange endRange;
   NSString *messageText = 
     [NSString stringWithFormat: @">>> %@: %@: %@\n",
@@ -45,59 +12,23 @@ static void elvinNotificationListener (Elvin *elvin, Attributes *attributes,
       [message objectForKey: @"From"],
       [message objectForKey: @"Message"]];
   
-  endRange.location = [[textView textStorage] length];
+  endRange.location = [[text textStorage] length];
   endRange.length = 0;
   
-  [textView replaceCharactersInRange: endRange withString: messageText];
+  [text replaceCharactersInRange: endRange withString: messageText];
 
-  endRange.location = [[textView textStorage] length];
-  [textView scrollRangeToVisible: endRange];
+  endRange.location = [[text textStorage] length];
+  [text scrollRangeToVisible: endRange];
   
   [message release];
 }
 
-- (void) elvinEventLoopThread: (NSObject *)unused
-{
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
-  elvin_open (&elvin, "elvin://public.elvin.org");
-  
-  if (elvin_error_occurred (&elvin.error))
-  {
-    elvin_perror ("connect", &elvin.error);
-    
-    return;
-  }
-  
-  NSLog (@"Opened!");
-  
-  elvin_subscribe (&elvin, 
-                   "string (Message) && string (Group) && string (From)");
-  
-  elvin_add_notification_listener 
-    (&elvin, (GeneralNotificationListener)elvinNotificationListener, 
-     self);
-
-  [pool release];
-  
-  while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
-  {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    elvin_poll (&elvin);
-   
-    NSLog (@"Release!");
-    
-    [pool release]; 
-  }
-  
-  NSLog (@"Exit elvin event loop");
-}
-
 - (void) awakeFromNib
-{      
-  [NSThread detachNewThreadSelector: @selector (elvinEventLoopThread:) 
-            toTarget: self withObject: nil];
+{ 
+  [appController 
+    subscribe: @"string (Message) && string (Group) && string (From)" 
+    withObject: self
+    usingHandler: @selector (handleNotify:)];
 }
 
 @end
