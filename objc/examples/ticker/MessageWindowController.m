@@ -7,6 +7,8 @@
 {
   [appController sendMessage: [[messageText textStorage] string] 
                      toGroup: [group stringValue]];
+  
+  [[sender window] close];
 }
 
 @end

@@ -53,7 +53,7 @@ typedef struct
                            toTarget: self withObject: nil];  
 }
 
-- (void) applicationWillTerminate: (NSNotification *)notification
+- (void) applicationWillTerminate: (NSNotification *) notification
 {
   elvin_invoke_close (&elvin);
   
@@ -67,7 +67,9 @@ typedef struct
   {
     NSLog (@"No nib file for message?");
     return;
-  }  
+  }
+  
+  [messageWindow makeKeyAndOrderFront: nil];
 }
 
 - (void) openTickerWindow
@@ -79,6 +81,8 @@ typedef struct
     NSLog (@"No nib file for ticker?");
     return;
   }
+  
+  [tickerWindow makeKeyAndOrderFront: nil];
 }
 
 static void elvinNotificationListener (Subscription *sub, 
@@ -119,6 +123,13 @@ static void elvinNotificationListener (Subscription *sub,
     (sub, (SubscriptionListener)elvinNotificationListener, callback);
 }
 
+static void doSendMessage (Elvin *elvin, Attributes *message)
+{
+  elvin_send (elvin, message);
+  
+  attributes_destroy (message);
+}
+
 - (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
 {
   NSLog (@"Send message %@ to %@", messageText, group);
@@ -130,10 +141,7 @@ static void elvinNotificationListener (Subscription *sub,
   attributes_set_string (message, "From", "Matthew");
   attributes_set_int32  (message, "org.tickertape.message", 3001);
 
-  // TODO: not thread safe
-  elvin_send (&elvin, message);
-  
-  attributes_destroy (message);
+  elvin_invoke (&elvin, (InvokeHandler)doSendMessage, message);
 }
 
 @end
