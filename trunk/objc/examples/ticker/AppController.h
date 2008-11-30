@@ -4,6 +4,9 @@
 
 @interface AppController : NSObject
 {
+  IBOutlet id tickerWindow;
+  IBOutlet id messageWindow;
+  
   Elvin elvin;
 }
 
