@@ -61,13 +61,16 @@ typedef struct
     usleep (200000);
 }
 
-- (void) createNewMessage: (id)sender
+- (void) createNewMessage: (id) sender
 {
   if (![NSBundle loadNibNamed: @"MessageWindow" owner: self])
   {
     NSLog (@"No nib file for message?");
     return;
   }
+  
+  // TODO this is leaking the MessageWindowController object
+  // possibly due to circular ref?
   
   [messageWindow makeKeyAndOrderFront: nil];
 }
@@ -95,18 +98,16 @@ static void elvinNotificationListener (Subscription *sub,
 
   NSArray *objects = 
     [NSArray arrayWithObjects: 
-    attr_string (attributes, "Message"), 
-    attr_string (attributes, "Group"),
-    attr_string (attributes, "From"), nil];
+      attr_string (attributes, "Message"), 
+      attr_string (attributes, "Group"),
+      attr_string (attributes, "From"), nil];
 
   NSDictionary *message = 
     [NSDictionary dictionaryWithObjects: objects forKeys: keys];
 
-  [message retain];
-
   [callback->object performSelectorOnMainThread: callback->selector
                                      withObject: message 
-                                  waitUntilDone: NO];
+                                  waitUntilDone: YES];
 }
   
 - (void) subscribe: (NSString *) subscription
