@@ -30,7 +30,8 @@ usage ()
      -c file          : Load config from file$NL\
      -daemon          : Run as daemon$NL\
      -pidfile file    : Output process ID to file$NL\
-     -logfile file    : Log output to file (only with -daemon)$NL"
+     -logfile file    : Log output to file (only with -daemon)$NL\
+     -jvmopts file    : Any extra options to be passed to the Java VM$NL"
  
   echo "$help" >&2
 }
@@ -40,6 +41,7 @@ while [ $# -gt 0 ]; do
     -pidfile) pidfile=$2; shift 2;;
     -daemon)  daemon=1; shift;;
     -logfile) logfile=$2; shift 2;;
+    -jvmopts) jvmopts=$2; shift 2;;
     -v|-vv)   avis_opts="$avis_opts $1"; shift;;
     -p|-c)    avis_opts="$avis_opts $1 $2"; shift;
   	      if [ ! -z $1 ]; then shift; fi;;
@@ -49,7 +51,7 @@ done
 
 java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
 
-command="java $java_options -jar $avisd_jar $avis_opts"
+command="java $java_options $jvmopts -jar $avisd_jar  $avis_opts"
 
 if [ $daemon -eq 1 ]; then
 
