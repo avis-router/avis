@@ -17,7 +17,6 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) handleNotify: (NSDictionary *) message
 {
-  NSRange endRange;
   NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
   [dateFormatter setDateStyle: NSDateFormatterShortStyle];
   [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
@@ -62,6 +61,7 @@ static NSAttributedString *attributedString (NSString *string,
     appendAttributedString: attributedString (@"\n", messageAttrs)];
   
   // insert text
+  NSRange endRange;
   endRange.location = [[text textStorage] length];
   endRange.length = 0;
   
