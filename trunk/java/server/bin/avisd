@@ -31,7 +31,7 @@ usage ()
      -daemon          : Run as daemon$NL\
      -pidfile file    : Output process ID to file$NL\
      -logfile file    : Log output to file (only with -daemon)$NL\
-     -jvmopts file    : Any extra options to be passed to the Java VM$NL"
+     -jvmopts opts    : Any extra options to be passed to the Java VM$NL"
  
   echo "$help" >&2
 }
