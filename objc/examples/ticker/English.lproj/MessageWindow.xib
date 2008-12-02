@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
+			<integer value="4"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -28,7 +28,7 @@
 			<object class="NSWindowTemplate" id="659476792">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{196, 300}, {480, 210}}</string>
+				<string key="NSWindowRect">{{196, 298}, {480, 212}}</string>
 				<int key="NSWTFlags">603979776</int>
 				<string key="NSWindowTitle">New Message</string>
 				<string key="NSWindowClass">NSWindow</string>
@@ -97,7 +97,7 @@
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
-												<int key="NSFlags">274403</int>
+												<int key="NSFlags">274307</int>
 												<object class="NSColor" key="NSBackgroundColor" id="590060486">
 													<int key="NSColorSpace">3</int>
 													<bytes key="NSWhite">MQA</bytes>
@@ -232,6 +232,8 @@
 								<object class="NSMutableArray" key="NSPopUpListData">
 									<bool key="EncodedWithXMLCoder">YES</bool>
 									<string>Chat</string>
+									<string>News</string>
+									<string>Elvin</string>
 								</object>
 								<reference key="NSDelegate" ref="849910291"/>
 								<object class="NSComboTableView" key="NSTableView" id="534013164">
@@ -305,12 +307,13 @@
 									<int key="NSDraggingSourceMaskForNonLocal">0</int>
 									<bool key="NSAllowsTypeSelect">YES</bool>
 								</object>
+								<bool key="NSButtonBordered">NO</bool>
 							</object>
 						</object>
 						<object class="NSTextField" id="591080732">
 							<reference key="NSNextResponder" ref="919697228"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 170}, {48, 17}}</string>
+							<string key="NSFrame">{{17, 172}, {48, 17}}</string>
 							<reference key="NSSuperview" ref="919697228"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="538309975">
@@ -369,7 +372,7 @@
 							</object>
 						</object>
 					</object>
-					<string key="NSFrameSize">{480, 210}</string>
+					<string key="NSFrameSize">{480, 212}</string>
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
@@ -483,11 +486,11 @@
 						<reference key="object" ref="919697228"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1046075743"/>
 							<reference ref="591080732"/>
-							<reference ref="792193171"/>
-							<reference ref="298874505"/>
 							<reference ref="849910291"/>
+							<reference ref="1046075743"/>
+							<reference ref="298874505"/>
+							<reference ref="792193171"/>
 						</object>
 						<reference key="parent" ref="659476792"/>
 					</object>
@@ -625,9 +628,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{332, 561}, {480, 210}}</string>
+					<string>{{332, 559}, {480, 212}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{332, 561}, {480, 210}}</string>
+					<string>{{332, 559}, {480, 212}}</string>
 					<reference ref="9"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
