@@ -25,13 +25,19 @@ static void createUUID (char *uuid)
   
   CFStringGetCString (cfUUIDString, uuid, UUID_STRING_LENGTH, 
                       kCFStringEncodingASCII);
+  
+  CFRelease (cfUUIDString);
+  CFRelease (cfUUID);
 }
 
 static void getCurrentUser (char *userName)
 {
   CFStringRef cfUserName = CSCopyUserName (FALSE);
+  
   CFStringGetCString (cfUserName, userName, USER_NAME_LENGTH, 
-                      kCFStringEncodingUTF8);  
+                      kCFStringEncodingUTF8);
+  
+  CFRelease (cfUserName);
 }
 
 - (void) elvinEventLoopThread
