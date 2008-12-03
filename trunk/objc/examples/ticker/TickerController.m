@@ -81,6 +81,33 @@ static NSAttributedString *attributedString (NSString *string,
     usingHandler: @selector (handleNotify:)];
 }
 
+/*
+ * Delegate override to enable message text field to support TAB out but still
+ * allow Enter/Return to insert new lines.
+ */
+- (BOOL) textView: (NSTextView *) textView doCommandBySelector: (SEL) selector
+{
+  if (selector == @selector (insertTab:))
+  {
+    if (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0)
+    {
+      [textView insertTabIgnoringFieldEditor: self];
+      
+      return YES;
+    } else
+    {
+      return NO;
+    }
+  } else if (selector == @selector (insertNewline:))
+  {
+    [textView insertNewlineIgnoringFieldEditor: self];
+    
+    return YES;
+  }
+  
+  return NO;
+}
+
 - (void) sendMessage: (id) sender
 {
   [appController sendMessage: [[sendText textStorage] string] 
