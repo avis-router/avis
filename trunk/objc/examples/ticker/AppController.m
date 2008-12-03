@@ -3,6 +3,8 @@
 
 @implementation AppController
 
+#define UUID_STRING_LENGTH 100
+
 typedef struct
 {
   id  object;
@@ -11,6 +13,18 @@ typedef struct
 
 #define attr_string(attrs, name) \
   [NSString stringWithUTF8String: attributes_get_string (attrs, name)]
+
+static void createUUID (char *uuid)
+{
+  CFUUIDRef     cfUUID;
+  CFStringRef   cfUUIDString;
+  
+  cfUUID = CFUUIDCreate (kCFAllocatorDefault);
+  cfUUIDString = CFUUIDCreateString (kCFAllocatorDefault, cfUUID);
+  
+  CFStringGetCString (cfUUIDString, uuid, UUID_STRING_LENGTH, 
+                      kCFStringEncodingASCII);
+}
 
 - (void) elvinEventLoopThread
 {
@@ -133,6 +147,10 @@ static void doSendMessage (Elvin *elvin, Attributes *message)
 
 - (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
 {
+  char messageID [UUID_STRING_LENGTH];
+  
+  createUUID (messageID);
+  
   NSLog (@"Send message %@ to %@", messageText, group);
   
   Attributes *message = attributes_create ();
@@ -140,6 +158,7 @@ static void doSendMessage (Elvin *elvin, Attributes *message)
   attributes_set_string (message, "Group", [group UTF8String]);
   attributes_set_string (message, "Message", [messageText UTF8String]);
   attributes_set_string (message, "From", "Matthew");
+  attributes_set_string (message, "Message-Id", messageID);
   attributes_set_int32  (message, "org.tickertape.message", 3001);
 
   elvin_invoke (&elvin, (InvokeHandler)doSendMessage, message);
