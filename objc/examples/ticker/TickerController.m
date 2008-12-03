@@ -81,4 +81,12 @@ static NSAttributedString *attributedString (NSString *string,
     usingHandler: @selector (handleNotify:)];
 }
 
+- (void) sendMessage: (id) sender
+{
+  [appController sendMessage: [[sendText textStorage] string] 
+                     toGroup: [sendGroup stringValue]];
+  
+  [sendText setString: @""];
+}
+
 @end
