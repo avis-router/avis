@@ -4,6 +4,7 @@
 @implementation AppController
 
 #define UUID_STRING_LENGTH 100
+#define USER_NAME_LENGTH   80
 
 typedef struct
 {
@@ -24,6 +25,13 @@ static void createUUID (char *uuid)
   
   CFStringGetCString (cfUUIDString, uuid, UUID_STRING_LENGTH, 
                       kCFStringEncodingASCII);
+}
+
+static void getCurrentUser (char *userName)
+{
+  CFStringRef cfUserName = CSCopyUserName (FALSE);
+  CFStringGetCString (cfUserName, userName, USER_NAME_LENGTH, 
+                      kCFStringEncodingUTF8);  
 }
 
 - (void) elvinEventLoopThread
@@ -148,8 +156,10 @@ static void doSendMessage (Elvin *elvin, Attributes *message)
 - (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
 {
   char messageID [UUID_STRING_LENGTH];
+  char userName [USER_NAME_LENGTH];
   
   createUUID (messageID);
+  getCurrentUser (userName);
   
   NSLog (@"Send message %@ to %@", messageText, group);
   
@@ -157,7 +167,7 @@ static void doSendMessage (Elvin *elvin, Attributes *message)
   
   attributes_set_string (message, "Group", [group UTF8String]);
   attributes_set_string (message, "Message", [messageText UTF8String]);
-  attributes_set_string (message, "From", "Matthew");
+  attributes_set_string (message, "From", userName);
   attributes_set_string (message, "Message-Id", messageID);
   attributes_set_int32  (message, "org.tickertape.message", 3001);
 
