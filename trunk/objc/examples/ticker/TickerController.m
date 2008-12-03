@@ -3,6 +3,9 @@
 
 @implementation TickerController
 
+#define TICKER_SUBSCRIPTION \
+  @"string (Message) && string (Group) && string (From)"
+
 #define color(r, g, b) \
   [NSColor colorWithCalibratedRed: (r)/255.0 green: (g)/255.0 \
    blue: (b)/255.0 alpha: 1]
@@ -76,9 +79,8 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) awakeFromNib
 { 
   [appController 
-    subscribe: @"string (Message) && string (Group) && string (From)" 
-    withObject: self
-    usingHandler: @selector (handleNotify:)];
+    subscribe: TICKER_SUBSCRIPTION 
+    withObject: self usingHandler: @selector (handleNotify:)];
 }
 
 /*
