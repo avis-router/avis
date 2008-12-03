@@ -16,7 +16,7 @@ typedef struct
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   
-  elvin_open (&elvin, "elvin://localhost");
+  elvin_open (&elvin, "elvin://elvin");
   
   if (elvin_error_occurred (&elvin.error))
   {

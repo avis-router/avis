@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="5"/>
+			<integer value="3"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -28,7 +28,7 @@
 			<object class="NSWindowTemplate" id="280171350">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{419, 479}, {660, 369}}</string>
+				<string key="NSWindowRect">{{313, 569}, {915, 360}}</string>
 				<int key="NSWTFlags">1946157056</int>
 				<string key="NSWindowTitle">Ticker</string>
 				<string key="NSWindowClass">NSWindow</string>
@@ -51,7 +51,7 @@
 										<object class="NSTextView" id="168406328">
 											<reference key="NSNextResponder" ref="285478854"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{603, 14}</string>
+											<string key="NSFrameSize">{858, 14}</string>
 											<reference key="NSSuperview" ref="285478854"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="982392851">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -69,7 +69,7 @@
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="168406328"/>
-												<double key="NSWidth">6.030000e+02</double>
+												<double key="NSWidth">8.580000e+02</double>
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
@@ -133,7 +133,7 @@
 											<nil key="NSDelegate"/>
 										</object>
 									</object>
-									<string key="NSFrame">{{1, 1}, {603, 327}}</string>
+									<string key="NSFrame">{{1, 1}, {858, 318}}</string>
 									<reference key="NSSuperview" ref="641752411"/>
 									<reference key="NSNextKeyView" ref="168406328"/>
 									<reference key="NSDocView" ref="168406328"/>
@@ -147,7 +147,7 @@
 								<object class="NSScroller" id="1008930221">
 									<reference key="NSNextResponder" ref="641752411"/>
 									<int key="NSvFlags">256</int>
-									<string key="NSFrame">{{604, 1}, {15, 327}}</string>
+									<string key="NSFrame">{{859, 1}, {15, 318}}</string>
 									<reference key="NSSuperview" ref="641752411"/>
 									<reference key="NSTarget" ref="641752411"/>
 									<string key="NSAction">_doScroller:</string>
@@ -166,7 +166,7 @@
 									<double key="NSPercent">9.456522e-01</double>
 								</object>
 							</object>
-							<string key="NSFrame">{{20, 20}, {620, 329}}</string>
+							<string key="NSFrame">{{20, 20}, {875, 320}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<reference key="NSNextKeyView" ref="285478854"/>
 							<int key="NSsFlags">18</int>
@@ -175,11 +175,12 @@
 							<reference key="NSContentView" ref="285478854"/>
 						</object>
 					</object>
-					<string key="NSFrameSize">{660, 369}</string>
+					<string key="NSFrameSize">{915, 360}</string>
 					<reference key="NSSuperview"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
+				<string key="NSFrameAutosaveName">tickerWindow</string>
 			</object>
 			<object class="NSCustomObject" id="62509022">
 				<string key="NSClassName">TickerController</string>
@@ -327,9 +328,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{161, 469}, {660, 369}}</string>
+					<string>{{313, 560}, {915, 360}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{161, 469}, {660, 369}}</string>
+					<string>{{313, 560}, {915, 360}}</string>
 					<reference ref="9"/>
 					<string>{{33, 99}, {480, 360}}</string>
 					<string>{3.40282e+38, 3.40282e+38}</string>
