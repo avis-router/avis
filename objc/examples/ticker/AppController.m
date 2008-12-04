@@ -1,8 +1,6 @@
 #import "AppController.h"
 #import "TickerController.h"
 
-@implementation AppController
-
 #define UUID_STRING_LENGTH 100
 #define USER_NAME_LENGTH   80
 
@@ -12,13 +10,19 @@ typedef struct
   SEL selector;
 } Callback;
 
+typedef struct
+{
+  NSString * subscription;
+  Callback   callback;
+} SubscribeContext;
+
 #define attr_string(attrs, name) \
   [NSString stringWithUTF8String: attributes_get_string (attrs, name)]
 
 static void createUUID (char *uuid)
 {
-  CFUUIDRef     cfUUID;
-  CFStringRef   cfUUIDString;
+  CFUUIDRef cfUUID;
+  CFStringRef cfUUIDString;
   
   cfUUID = CFUUIDCreate (kCFAllocatorDefault);
   cfUUIDString = CFUUIDCreateString (kCFAllocatorDefault, cfUUID);
@@ -39,6 +43,8 @@ static void getCurrentUser (char *userName)
   
   CFRelease (cfUserName);
 }
+
+@implementation AppController
 
 - (void) elvinEventLoopThread
 {
@@ -116,9 +122,9 @@ static void getCurrentUser (char *userName)
   [tickerWindow makeKeyAndOrderFront: nil];
 }
 
-static void elvinNotificationListener (Subscription *sub, 
-                                       Attributes *attributes, 
-                                       bool secure, Callback *callback)
+static void notificationListener (Subscription *sub, 
+                                  Attributes *attributes, 
+                                  bool secure, Callback *callback)
 {
   // TODO copy all attrs
   NSArray *keys = 
@@ -137,22 +143,34 @@ static void elvinNotificationListener (Subscription *sub,
                                      withObject: message 
                                   waitUntilDone: YES];
 }
+
+static void subscribe (Elvin *elvin, SubscribeContext *context)
+{
+  Subscription *sub = 
+    elvin_subscribe (elvin, [context->subscription UTF8String]);
+    
+  Callback *callback = malloc (sizeof (Callback));
+  *callback = context->callback;
   
+  elvin_subscription_add_listener 
+    (sub, (SubscriptionListener)notificationListener, callback);
+    
+  free (context);
+}
+
 - (void) subscribe: (NSString *) subscription
         withObject: (id) object usingHandler: (SEL) handler
 {
-  // TODO not thread safe
-  Subscription *sub = elvin_subscribe (&elvin, [subscription UTF8String]);
-  Callback *callback = malloc (sizeof (Callback));
+  SubscribeContext *context = malloc (sizeof (SubscribeContext));
   
-  callback->object = object;
-  callback->selector = handler;
+  context->subscription = subscription;
+  context->callback.object = object;
+  context->callback.selector = handler;
   
-  elvin_subscription_add_listener 
-    (sub, (SubscriptionListener)elvinNotificationListener, callback);
+  elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
 }
 
-static void doSendMessage (Elvin *elvin, Attributes *message)
+static void sendMessage (Elvin *elvin, Attributes *message)
 {
   elvin_send (elvin, message);
   
@@ -177,7 +195,7 @@ static void doSendMessage (Elvin *elvin, Attributes *message)
   attributes_set_string (message, "Message-Id", messageID);
   attributes_set_int32  (message, "org.tickertape.message", 3001);
 
-  elvin_invoke (&elvin, (InvokeHandler)doSendMessage, message);
+  elvin_invoke (&elvin, (InvokeHandler)sendMessage, message);
 }
 
 @end
