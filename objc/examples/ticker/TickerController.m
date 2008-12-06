@@ -72,6 +72,7 @@ static NSAttributedString *attributedString (NSString *string,
                           withAttributedString: displayedMessage];
 
   // scroll to end
+  // todo do not scroll if not at end when when we started
   endRange.location = [[text textStorage] length];
   [text scrollRangeToVisible: endRange];
 }
