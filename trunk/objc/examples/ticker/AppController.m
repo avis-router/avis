@@ -36,7 +36,7 @@ static void createUUID (char *uuid)
 
 static void getCurrentUser (char *userName)
 {
-  CFStringRef cfUserName = CSCopyUserName (FALSE);
+  CFStringRef cfUserName = CSCopyUserName (false);
   
   CFStringGetCString (cfUserName, userName, USER_NAME_LENGTH, 
                       kCFStringEncodingUTF8);
