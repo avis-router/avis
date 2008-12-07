@@ -65,16 +65,17 @@ static NSAttributedString *attributedString (NSString *string,
   
   // insert text
   NSRange endRange;
-  endRange.location = [[text textStorage] length];
+  endRange.location = [[tickerMessagesTextView textStorage] length];
   endRange.length = 0;
   
-  [[text textStorage] replaceCharactersInRange: endRange
-                          withAttributedString: displayedMessage];
+  [[tickerMessagesTextView textStorage] 
+    replaceCharactersInRange: endRange
+        withAttributedString: displayedMessage];
 
   // scroll to end
   // todo do not scroll if not at end when when we started
-  endRange.location = [[text textStorage] length];
-  [text scrollRangeToVisible: endRange];
+  endRange.location = [[tickerMessagesTextView textStorage] length];
+  [tickerMessagesTextView scrollRangeToVisible: endRange];
 }
 
 - (void) awakeFromNib
@@ -113,10 +114,10 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) sendMessage: (id) sender
 {
-  [appController sendMessage: [[sendText textStorage] string] 
-                     toGroup: [sendGroup stringValue]];
+  [appController sendMessage: [[messageText textStorage] string] 
+                     toGroup: [messageGroup stringValue]];
   
-  [sendText setString: @""];
+  [messageText setString: @""];
 }
 
 @end

@@ -510,7 +510,7 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">text</string>
+						<string key="label">tickerMessagesTextView</string>
 						<reference key="source" ref="62509022"/>
 						<reference key="destination" ref="168406328"/>
 					</object>
@@ -534,7 +534,7 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">sendGroup</string>
+						<string key="label">messageGroup</string>
 						<reference key="source" ref="62509022"/>
 						<reference key="destination" ref="683708684"/>
 					</object>
@@ -542,7 +542,7 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">sendText</string>
+						<string key="label">messageText</string>
 						<reference key="source" ref="62509022"/>
 						<reference key="destination" ref="997158927"/>
 					</object>
@@ -877,9 +877,9 @@
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>appController</string>
-							<string>sendGroup</string>
-							<string>sendText</string>
-							<string>text</string>
+							<string>messageGroup</string>
+							<string>messageText</string>
+							<string>tickerMessagesTextView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
