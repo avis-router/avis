@@ -114,8 +114,22 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (IBAction) sendMessage: (id) sender
 {
-  [appController sendMessage: [[messageText textStorage] string] 
-                     toGroup: [messageGroup stringValue]];
+  NSString *message = [[messageText textStorage] string];
+  
+  if ([[message stringByTrimmingCharactersInSet: 
+        [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
+  {
+    NSAlert *alert = 
+      [NSAlert alertWithMessageText: @"Message Text Is Empty" 
+       defaultButton: @"Don't Send" alternateButton: @"Send Empty Text"
+       otherButton: nil 
+       informativeTextWithFormat: @"Send Anyway?"];
+    
+    if ([alert runModal] == NSAlertDefaultReturn)
+      return;
+  }
+  
+  [appController sendMessage: message toGroup: [messageGroup stringValue]];
   
   [messageText setString: @""];
 }
