@@ -8,6 +8,7 @@
   IBOutlet id appController;
 }
 
+- (IBAction) sendMessage: (id) sender;
 
 @end
 

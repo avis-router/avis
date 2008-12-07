@@ -3,7 +3,7 @@
 
 @implementation MessageWindowController
 
-- (void) sendMessage: (id) sender
+- (IBAction) sendMessage: (id) sender
 {
   [appController sendMessage: [[messageText textStorage] string] 
                      toGroup: [group stringValue]];

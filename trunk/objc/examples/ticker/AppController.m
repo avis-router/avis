@@ -179,6 +179,8 @@ static void sendMessage (Elvin *elvin, Attributes *message)
 
 - (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
 {
+  NSAssert (group != nil && messageText != nil, @"IB connection failure");
+  
   char messageID [UUID_STRING_LENGTH];
   char userName [USER_NAME_LENGTH];
   

@@ -112,7 +112,7 @@ static NSAttributedString *attributedString (NSString *string,
   return NO;
 }
 
-- (void) sendMessage: (id) sender
+- (IBAction) sendMessage: (id) sender
 {
   [appController sendMessage: [[messageText textStorage] string] 
                      toGroup: [messageGroup stringValue]];
