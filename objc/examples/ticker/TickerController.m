@@ -131,7 +131,8 @@ static NSAttributedString *attributedString (NSString *string,
   NSString *message = [[messageText textStorage] string];
   
   // check for empty text
-  if (sender != self && [[message stringByTrimmingCharactersInSet: 
+  if (sender != self && 
+      [[message stringByTrimmingCharactersInSet: 
         [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
   {
     NSAlert *alert = 
