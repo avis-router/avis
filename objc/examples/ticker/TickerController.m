@@ -29,11 +29,11 @@ static NSAttributedString *attributedString (NSString *string,
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
                                forKey: NSForegroundColorAttributeName];
   NSDictionary *groupAttrs = 
-    [NSDictionary dictionaryWithObject: color (0, 120, 0) 
+    [NSDictionary dictionaryWithObject: color (48, 80, 10) 
                                forKey: NSForegroundColorAttributeName];
   
   NSDictionary *fromAttrs = 
-    [NSDictionary dictionaryWithObject: color (162, 95, 0) 
+    [NSDictionary dictionaryWithObject: color (86, 56, 12) 
                                 forKey: NSForegroundColorAttributeName];
 
   NSDictionary *messageAttrs = 
@@ -76,7 +76,7 @@ static NSAttributedString *attributedString (NSString *string,
         withAttributedString: displayedMessage];
 
   [tickerMessagesTextView 
-    setFont: [NSFont fontWithName: @"Lucida Sans" size: 12.0]];
+    setFont: [NSFont fontWithName: @"Lucida Sans" size: 0]];
   
   // scroll to end
   // todo do not scroll if not at end when when we started
