@@ -26,16 +26,19 @@ static NSAttributedString *attributedString (NSString *string,
 
   // define reusable display attributes
   NSDictionary *dateAttrs = 
-   [NSDictionary dictionaryWithObject: color (102, 102, 102) 
+    [NSDictionary dictionaryWithObject: color (102, 102, 102) 
                                forKey: NSForegroundColorAttributeName];
-
+  NSDictionary *groupAttrs = 
+    [NSDictionary dictionaryWithObject: color (0, 120, 0) 
+                               forKey: NSForegroundColorAttributeName];
+  
   NSDictionary *fromAttrs = 
-    [NSDictionary dictionaryWithObject: color (51, 51, 51) 
+    [NSDictionary dictionaryWithObject: color (162, 95, 0) 
                                 forKey: NSForegroundColorAttributeName];
 
   NSDictionary *messageAttrs = 
-   [NSDictionary dictionaryWithObject: color (0, 0, 128) 
-                               forKey: NSForegroundColorAttributeName];
+    [NSDictionary dictionaryWithObject: color (0, 64, 128) 
+                                forKey: NSForegroundColorAttributeName];
   
   // build formatted message
   NSMutableAttributedString *displayedMessage = 
@@ -48,9 +51,9 @@ static NSAttributedString *attributedString (NSString *string,
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
-    attributedString ([message objectForKey: @"Group"], fromAttrs)];
+    attributedString ([message objectForKey: @"Group"], groupAttrs)];
   
-  [displayedMessage appendAttributedString: attributedString (@": ", fromAttrs)];
+  [displayedMessage appendAttributedString: attributedString (@": ", groupAttrs)];
   
   [displayedMessage appendAttributedString: 
     attributedString ([message objectForKey: @"From"], fromAttrs)];
@@ -67,11 +70,14 @@ static NSAttributedString *attributedString (NSString *string,
   NSRange endRange;
   endRange.location = [[tickerMessagesTextView textStorage] length];
   endRange.length = 0;
-  
+ 
   [[tickerMessagesTextView textStorage] 
     replaceCharactersInRange: endRange
         withAttributedString: displayedMessage];
 
+  [tickerMessagesTextView 
+    setFont: [NSFont fontWithName: @"Lucida Sans" size: 12.0]];
+  
   // scroll to end
   // todo do not scroll if not at end when when we started
   endRange.location = [[tickerMessagesTextView textStorage] length];
