@@ -118,11 +118,20 @@ static NSAttributedString *attributedString (NSString *string,
   return NO;
 }
 
+- (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
+                     contextInfo: (void *) contextInfo
+{
+  // re-send request: when sender is self the checks are overridden
+  if (code != NSAlertDefaultReturn)
+    [self sendMessage: self];
+}
+
 - (IBAction) sendMessage: (id) sender
 {
   NSString *message = [[messageText textStorage] string];
   
-  if ([[message stringByTrimmingCharactersInSet: 
+  // check for empty text
+  if (sender != self && [[message stringByTrimmingCharactersInSet: 
         [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
   {
     NSAlert *alert = 
@@ -131,8 +140,13 @@ static NSAttributedString *attributedString (NSString *string,
        otherButton: nil 
        informativeTextWithFormat: @"Send the message anyway?"];
     
-    if ([alert runModal] == NSAlertDefaultReturn)
-      return;
+    [alert beginSheetModalForWindow: [messageText window] 
+           modalDelegate: self 
+           didEndSelector: 
+             @selector (emptyMessageCheckDidEnd:returnCode:contextInfo:) 
+           contextInfo: nil];
+            
+    return;
   }
   
   [appController sendMessage: message toGroup: [messageGroup stringValue]];
