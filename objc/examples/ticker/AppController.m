@@ -40,7 +40,7 @@ static void getCurrentUser (char *userName)
   
   CFStringGetCString (cfUserName, userName, USER_NAME_LENGTH, 
                       kCFStringEncodingUTF8);
-  
+
   CFRelease (cfUserName);
 }
 
@@ -186,8 +186,6 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   
   createUUID (messageID);
   getCurrentUser (userName);
-  
-  NSLog (@"Send message %@ to %@", messageText, group);
   
   Attributes *message = attributes_create ();
   
