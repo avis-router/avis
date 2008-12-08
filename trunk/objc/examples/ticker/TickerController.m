@@ -126,10 +126,10 @@ static NSAttributedString *attributedString (NSString *string,
         [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
   {
     NSAlert *alert = 
-      [NSAlert alertWithMessageText: @"Message Text Is Empty" 
-       defaultButton: @"Don't Send" alternateButton: @"Send Empty Text"
+      [NSAlert alertWithMessageText: @"The ticker message text is empty." 
+       defaultButton: @"Don't Send" alternateButton: @"Send Empty Message"
        otherButton: nil 
-       informativeTextWithFormat: @"Send Anyway?"];
+       informativeTextWithFormat: @"Send the message anyway?"];
     
     if ([alert runModal] == NSAlertDefaultReturn)
       return;
