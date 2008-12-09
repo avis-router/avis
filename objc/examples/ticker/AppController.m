@@ -193,6 +193,7 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   attributes_set_string (message, "Message", [messageText UTF8String]);
   attributes_set_string (message, "From", userName);
   attributes_set_string (message, "Message-Id", messageID);
+  attributes_set_string (message, "User-Agent", "Blue Sticker");
   attributes_set_int32  (message, "org.tickertape.message", 3001);
 
   elvin_invoke (&elvin, (InvokeHandler)sendMessage, message);

@@ -76,7 +76,7 @@ static NSAttributedString *attributedString (NSString *string,
         withAttributedString: displayedMessage];
 
   [tickerMessagesTextView 
-    setFont: [NSFont fontWithName: @"Lucida Sans" size: 11]];
+    setFont: [NSFont fontWithName: @"Lucida Grande" size: 11]];
   
   // scroll to end
   // todo do not scroll if not at end when when we started
