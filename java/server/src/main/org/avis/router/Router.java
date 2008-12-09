@@ -921,8 +921,9 @@ public class Router implements IoHandler, Closeable
       {
         if (connection.isOpen ())
         {
-          diagnostic ("Client disconnected without warning", this);
-          
+          diagnostic ("Client for session " + idFor (session) + 
+                      " disconnected without warning", this);
+
           connection.close ();
         }
       } finally
