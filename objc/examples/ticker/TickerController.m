@@ -39,7 +39,12 @@ static NSAttributedString *attributedString (NSString *string,
   NSDictionary *groupAttrs = 
     [NSDictionary dictionaryWithObject: color (48, 80, 10) 
                                forKey: NSForegroundColorAttributeName];
-  
+
+//  NSDictionary *groupAttrs = 
+//    [NSDictionary dictionaryWithObjectsAndKeys:
+//     color (48, 80, 10), NSForegroundColorAttributeName, 
+//     @"test", NSLinkAttributeName, nil];
+
   NSDictionary *fromAttrs = 
     [NSDictionary dictionaryWithObject: color (86, 56, 12) 
                                 forKey: NSForegroundColorAttributeName];
@@ -146,18 +151,12 @@ static NSAttributedString *attributedString (NSString *string,
       [[message stringByTrimmingCharactersInSet: 
         [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
   {
-    NSAlert *alert = 
-      [NSAlert alertWithMessageText: @"The ticker message text is empty." 
-       defaultButton: @"Don't Send" alternateButton: @"Send Empty Message"
-       otherButton: nil 
-       informativeTextWithFormat: @"Send the message anyway?"];
+    NSBeginAlertSheet 
+      (@"The ticker message text is empty.", @"Don't Send", 
+       @"Send Empty Message", nil,  [messageText window], self, 
+       @selector (emptyMessageCheckDidEnd:returnCode:contextInfo:), nil, nil, 
+       @"Send the message anyway?");
     
-    [alert beginSheetModalForWindow: [messageText window] 
-           modalDelegate: self 
-           didEndSelector: 
-             @selector (emptyMessageCheckDidEnd:returnCode:contextInfo:) 
-           contextInfo: nil];
-            
     return;
   }
   
