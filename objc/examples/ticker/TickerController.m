@@ -221,6 +221,8 @@ static NSAttributedString *attributedString (NSString *string,
   [appController sendMessage: message toGroup: [messageGroup stringValue] 
                    inReplyTo: replyToMessageId];
   
+  replyToMessageId = nil;
+  
   [messageText setString: @""];
 }
 
