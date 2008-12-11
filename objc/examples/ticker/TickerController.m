@@ -191,7 +191,8 @@ static NSAttributedString *attributedString (NSString *string,
     MessageLink *messageLink = link;
     
     [messageGroup setStringValue: messageLink->group];
-        
+    
+    [replyToMessageId release];
     replyToMessageId = [messageLink->messageId retain];
     
     [[messageText window] makeFirstResponder: messageText];
