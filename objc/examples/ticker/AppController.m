@@ -1,6 +1,8 @@
 #import "AppController.h"
 #import "TickerController.h"
 
+#include <avis/values.h>
+
 #define UUID_STRING_LENGTH 100
 #define USER_NAME_LENGTH   80
 
@@ -136,9 +138,17 @@ static void notificationListener (Subscription *sub,
       attr_string (attributes, "Group"),
       attr_string (attributes, "From"), nil];
 
-  NSDictionary *message = 
-    [NSDictionary dictionaryWithObjects: objects forKeys: keys];
+  NSMutableDictionary *message = 
+    [NSMutableDictionary dictionaryWithObjects: objects forKeys: keys];
 
+  const char *messageIdAttr = attributes_get_string (attributes, "Message-Id");
+  
+  if (messageIdAttr)
+  {
+    [message setValue: [NSString stringWithUTF8String: messageIdAttr]
+                                               forKey: @"Message-Id"];
+  }
+  
   [callback->object performSelectorOnMainThread: callback->selector
                                      withObject: message 
                                   waitUntilDone: YES];
@@ -178,6 +188,7 @@ static void sendMessage (Elvin *elvin, Attributes *message)
 }
 
 - (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
+           inReplyTo: (NSString *) replyToId
 {
   NSAssert (group != nil && messageText != nil, @"IB connection failure");
   
@@ -195,6 +206,9 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   attributes_set_string (message, "Message-Id", messageID);
   attributes_set_string (message, "User-Agent", "Blue Sticker");
   attributes_set_int32  (message, "org.tickertape.message", 3001);
+  
+  if (replyToId != nil)
+    attributes_set_string (message, "In-Reply-To", [replyToId UTF8String]);
 
   elvin_invoke (&elvin, (InvokeHandler)sendMessage, message);
 }
