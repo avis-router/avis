@@ -94,7 +94,7 @@ static void getCurrentUser (char *userName)
   elvin_invoke_close (&elvin);
   
   while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
-    usleep (200000);
+    usleep (100000);
 }
 
 - (void) createNewMessage: (id) sender
