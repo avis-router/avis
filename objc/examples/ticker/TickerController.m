@@ -72,7 +72,7 @@ static NSAttributedString *attributedString (NSString *string,
   NSRect visibleRect = [tickerMessagesScroller documentVisibleRect];
   NSRect tickerMessagesRect = [tickerMessagesTextView bounds];
   
-  BOOL wasScrolledToEnd = 
+  bool wasScrolledToEnd = 
     bottomY (visibleRect) == bottomY (tickerMessagesRect);
   
   NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
@@ -192,7 +192,7 @@ static NSAttributedString *attributedString (NSString *string,
     
     [messageGroup setStringValue: messageLink->group];
         
-    replyToMessageId = messageLink->messageId;
+    replyToMessageId = [messageLink->messageId retain];
     
     [[messageText window] makeFirstResponder: messageText];
 
@@ -232,6 +232,7 @@ static NSAttributedString *attributedString (NSString *string,
   [appController sendMessage: message toGroup: [messageGroup stringValue] 
                    inReplyTo: replyToMessageId];
   
+  [replyToMessageId release];
   replyToMessageId = nil;
   
   [messageText setString: @""];
