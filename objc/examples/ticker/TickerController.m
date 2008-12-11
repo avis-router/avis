@@ -35,6 +35,17 @@
   return link;
 }
 
+- (void) dealloc
+{
+  [super dealloc];
+  
+  [messageId release];
+  [group release];
+  
+  messageId = nil;
+  group = nil;
+}
+
 @end
 
 @implementation TickerController
