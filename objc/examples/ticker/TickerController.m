@@ -2,6 +2,12 @@
 #import "AppController.h"
 
 /*
+ * TODO: use example at 
+ * http://developer.apple.com/samplecode/TextLinks/listing2.html
+ * to add custom cursor to links.
+ */
+
+/*
  * Used to link original message group/ID with message links in the message 
  * view.
  */
