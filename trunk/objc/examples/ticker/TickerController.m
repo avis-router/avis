@@ -10,6 +10,8 @@
   [NSColor colorWithCalibratedRed: (r)/255.0 green: (g)/255.0 \
    blue: (b)/255.0 alpha: 1]
 
+#define bottomY(rect) ((rect).origin.y + (rect).size.height)
+
 static NSAttributedString *attributedString (NSString *string, 
                                              NSDictionary *attrs)
 {
@@ -20,6 +22,12 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) handleNotify: (NSDictionary *) message
 {
+  NSRect visibleRect = [tickerMessagesScroller documentVisibleRect];
+  NSRect tickerMessagesRect = [tickerMessagesTextView bounds];
+  
+  BOOL wasScrolledToEnd = 
+    bottomY (visibleRect) == bottomY (tickerMessagesRect);
+  
   NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
   [dateFormatter setDateStyle: NSDateFormatterShortStyle];
   [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
@@ -78,10 +86,13 @@ static NSAttributedString *attributedString (NSString *string,
   [tickerMessagesTextView 
     setFont: [NSFont fontWithName: @"Lucida Grande" size: 11]];
   
-  // scroll to end
-  // todo do not scroll if not at end when when we started
-  endRange.location = [[tickerMessagesTextView textStorage] length];
-  [tickerMessagesTextView scrollRangeToVisible: endRange];
+  // scroll to end if that's how it was when we started
+  if (wasScrolledToEnd)
+  {
+    endRange.location = [[tickerMessagesTextView textStorage] length];
+    
+    [tickerMessagesTextView scrollRangeToVisible: endRange];
+  }
 }
 
 - (void) awakeFromNib
