@@ -7,6 +7,8 @@
   IBOutlet id messageGroup;
   IBOutlet id messageText;
   IBOutlet id appController;
+  
+  NSString *replyToMessageId;
 }
 
 - (IBAction) sendMessage: (id) sender;

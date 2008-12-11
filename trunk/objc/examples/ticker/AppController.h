@@ -10,7 +10,8 @@
   Elvin elvin;
 }
 
-- (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group;
+- (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
+           inReplyTo: (NSString *) replyToId;
 
 - (void) subscribe: (NSString *) subscription withObject: (id) object 
       usingHandler: (SEL) handler;

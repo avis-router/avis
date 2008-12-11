@@ -1,6 +1,36 @@
 #import "TickerController.h"
 #import "AppController.h"
 
+/*
+ * Used to link original message group/ID with message links in the message 
+ * view.
+ */
+@interface MessageLink : NSObject
+{
+  @public
+  
+  NSString *messageId;
+  NSString *group;
+}
+
++ (MessageLink *) initWithMessage: (NSDictionary *) message;
+
+@end
+
+@implementation MessageLink
+
++ (MessageLink *) initWithMessage: (NSDictionary *) message
+{
+  MessageLink *link = [[MessageLink new] retain];
+  
+  link->messageId = [[message valueForKey: @"Message-Id"] retain];
+  link->group = [[message valueForKey: @"Group"] retain];
+  
+  return link;
+}
+
+@end
+
 @implementation TickerController
 
 #define TICKER_SUBSCRIPTION \
@@ -37,13 +67,9 @@ static NSAttributedString *attributedString (NSString *string,
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
                                forKey: NSForegroundColorAttributeName];
   NSDictionary *groupAttrs = 
-    [NSDictionary dictionaryWithObject: color (48, 80, 10) 
-                               forKey: NSForegroundColorAttributeName];
-
-//  NSDictionary *groupAttrs = 
-//    [NSDictionary dictionaryWithObjectsAndKeys:
-//     color (48, 80, 10), NSForegroundColorAttributeName, 
-//     @"test", NSLinkAttributeName, nil];
+    [NSDictionary dictionaryWithObjectsAndKeys:
+     color (48, 80, 10), NSForegroundColorAttributeName, 
+     [MessageLink initWithMessage: message], NSLinkAttributeName, nil];
 
   NSDictionary *fromAttrs = 
     [NSDictionary dictionaryWithObject: color (86, 56, 12) 
@@ -102,6 +128,8 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) awakeFromNib
 { 
+  [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
+  
   [appController 
     subscribe: TICKER_SUBSCRIPTION 
     withObject: self usingHandler: @selector (handleNotify:)];
@@ -134,6 +162,30 @@ static NSAttributedString *attributedString (NSString *string,
   return NO;
 }
 
+/*
+ * Delegate handler for links for text views.
+ */
+- (BOOL) textView: (NSTextView *) textView
+    clickedOnLink: (id) link atIndex: (unsigned) charIndex
+{
+  if ([link isKindOfClass: [MessageLink class]])
+  {
+    // handle clicks on links to messages to initiate a reply
+    MessageLink *messageLink = link;
+    
+    [messageGroup setStringValue: messageLink->group];
+        
+    replyToMessageId = messageLink->messageId;
+    
+    [[messageText window] makeFirstResponder: messageText];
+
+    return YES;
+  } else
+  {
+    return NO;
+  }
+}
+
 - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
                      contextInfo: (void *) contextInfo
 {
@@ -160,7 +212,8 @@ static NSAttributedString *attributedString (NSString *string,
     return;
   }
   
-  [appController sendMessage: message toGroup: [messageGroup stringValue]];
+  [appController sendMessage: message toGroup: [messageGroup stringValue] 
+                   inReplyTo: replyToMessageId];
   
   [messageText setString: @""];
 }
