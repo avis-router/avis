@@ -2,8 +2,6 @@
 
 #import "ElvinConnection.h"
 
-#include <avis/elvin.h>
-
 @interface AppController : NSObject
 {
   IBOutlet id tickerWindow;
