@@ -18,13 +18,13 @@
   NSString *group;
 }
 
-+ (MessageLink *) initWithMessage: (NSDictionary *) message;
++ (MessageLink *) linkForMessage: (NSDictionary *) message;
 
 @end
 
 @implementation MessageLink
 
-+ (MessageLink *) initWithMessage: (NSDictionary *) message
++ (MessageLink *) linkForMessage: (NSDictionary *) message
 {
   MessageLink *link = [[MessageLink new] retain];
   
@@ -92,7 +92,7 @@ static NSAttributedString *attributedString (NSString *string,
   NSDictionary *groupAttrs = 
     [NSDictionary dictionaryWithObjectsAndKeys:
      color (48, 80, 10), NSForegroundColorAttributeName, 
-     [MessageLink initWithMessage: message], NSLinkAttributeName, nil];
+     [MessageLink linkForMessage: message], NSLinkAttributeName, nil];
 
   NSDictionary *fromAttrs = 
     [NSDictionary dictionaryWithObject: color (86, 56, 12) 
@@ -237,9 +237,9 @@ static NSAttributedString *attributedString (NSString *string,
     return;
   }
   
-  [appController.elvin sendTickerMessage: message 
-    toGroup: [messageGroup stringValue] 
-                        inReplyTo: replyToMessageId];
+  [appController.elvin 
+    sendTickerMessage: message toGroup: [messageGroup stringValue] 
+    inReplyTo: replyToMessageId];
   
   [replyToMessageId release];
   replyToMessageId = nil;

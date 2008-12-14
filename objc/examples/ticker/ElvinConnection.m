@@ -1,7 +1,6 @@
 #import "ElvinConnection.h"
 
 #define UUID_STRING_LENGTH 100
-#define USER_NAME_LENGTH   80
 
 #define attr_string(attrs, name) \
   [NSString stringWithUTF8String: attributes_get_string (attrs, name)]
@@ -35,17 +34,19 @@ static void createUUID (char *uuid)
 
 @implementation SubscriptionContext
 
-- (id) initWithSubscription: (NSString *) newSubscriptionExpr 
++ (id) contextWithSubscription: (NSString *) newSubscriptionExpr 
       delegate: (id) newDelegate selector: (SEL) newSelector
 {
-  if (![super init])
+  SubscriptionContext *context = [[SubscriptionContext new] retain];
+  
+  if (context == nil)
     return nil;
   
-  subscriptionExpr = [newSubscriptionExpr retain];
-  delegate = newDelegate;
-  selector = newSelector;
+  context->subscriptionExpr = [newSubscriptionExpr retain];
+  context->delegate = newDelegate;
+  context->selector = newSelector;
   
-  return self;
+  return context;
 }
 
 - (void) dealloc
@@ -78,7 +79,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 - (void) dealloc
 {
   [self disconnect];
-    
+  
+  [elvinUrl release];    
   [subscriptions release];
 
   [super dealloc];
@@ -116,7 +118,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 // TODO add liveness checking to Elvin C API
 - (void) elvinEventLoopThread
 {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
   NSLog (@"Start connect to Elvin");
   
@@ -160,7 +162,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   // start event loop
   while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
-    pool = [[NSAutoreleasePool alloc] init];
+    pool = [NSAutoreleasePool new];
     
     elvin_poll (&elvin);
    
@@ -225,8 +227,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context)
         withDelegate: (id) delegate usingSelector: (SEL) selector
 {
   SubscriptionContext *context = 
-    [[[SubscriptionContext alloc] initWithSubscription: subscriptionExpr 
-                                  delegate: delegate selector: selector] retain];
+    [SubscriptionContext contextWithSubscription: subscriptionExpr 
+                         delegate: delegate selector: selector];
 
   [subscriptions addObject: context];
   
