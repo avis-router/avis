@@ -208,9 +208,16 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context)
   context->subscription = 
     elvin_subscribe (elvin, [context->subscriptionExpr UTF8String]);
   
-  elvin_subscription_add_listener 
-    (context->subscription, (SubscriptionListener)notificationListener, 
-     context);
+  if (elvin_error_ok (&elvin->error))
+  {
+    elvin_subscription_add_listener 
+      (context->subscription, (SubscriptionListener)notificationListener, 
+       context);
+  } else
+  {
+    NSLog (@"Error while trying to subscribe: %s (%i)", 
+           elvin->error.message, elvin->error.code);
+  }
 }
 
 - (void) subscribe: (NSString *) subscriptionExpr
@@ -228,6 +235,12 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context)
 static void sendMessage (Elvin *elvin, Attributes *message)
 {
   elvin_send (elvin, message);
+  
+  if (elvin_error_occurred (&elvin->error))
+  {
+    NSLog (@"Error while trying to send message: %s (%i)", 
+           elvin->error.message, elvin->error.code);
+  }
   
   attributes_destroy (message);
 }
