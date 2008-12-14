@@ -1,5 +1,4 @@
 #import "TickerController.h"
-#import "AppController.h"
 
 /*
  * TODO: use example at 
@@ -147,7 +146,7 @@ static NSAttributedString *attributedString (NSString *string,
 { 
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   
-  [appController 
+  [appController.elvin
     subscribe: TICKER_SUBSCRIPTION 
     withObject: self usingHandler: @selector (handleNotify:)];
 }
@@ -230,8 +229,8 @@ static NSAttributedString *attributedString (NSString *string,
     return;
   }
   
-  [appController sendMessage: message toGroup: [messageGroup stringValue] 
-                   inReplyTo: replyToMessageId];
+  [appController.elvin sendMessage: message toGroup: [messageGroup stringValue] 
+                       inReplyTo: replyToMessageId];
   
   [replyToMessageId release];
   replyToMessageId = nil;
