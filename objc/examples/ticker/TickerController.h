@@ -4,7 +4,6 @@
 
 @interface TickerController : NSObject
 {
-  IBOutlet id              tickerMessagesScroller;
   IBOutlet id              tickerMessagesTextView;
   IBOutlet id              messageGroup;
   IBOutlet id              messageText;
