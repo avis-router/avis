@@ -68,7 +68,14 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) handleNotify: (NSDictionary *) message
 {
-  NSRect visibleRect = [tickerMessagesScroller documentVisibleRect];
+  NSRange endRange;
+  endRange.location = [[tickerMessagesTextView textStorage] length];
+  endRange.length = 0;
+
+  // decide on whether we're scrolled to the end of the messages
+  NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
+  NSRect visibleRect = NSOffsetRect ([tickerMessagesTextView visibleRect], 
+                                     -containerOrigin.x, -containerOrigin.y);
   NSRect tickerMessagesRect = [tickerMessagesTextView bounds];
   
   bool wasScrolledToEnd = 
@@ -78,7 +85,7 @@ static NSAttributedString *attributedString (NSString *string,
   [dateFormatter setDateStyle: NSDateFormatterShortStyle];
   [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
 
-  // define reusable display attributes
+  // define display attributes
   NSDictionary *dateAttrs = 
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
                                forKey: NSForegroundColorAttributeName];
@@ -94,10 +101,17 @@ static NSAttributedString *attributedString (NSString *string,
   NSDictionary *messageAttrs = 
     [NSDictionary dictionaryWithObject: color (0, 64, 128) 
                                 forKey: NSForegroundColorAttributeName];
-  
+
   // build formatted message
   NSMutableAttributedString *displayedMessage = 
     [[NSMutableAttributedString new] autorelease]; 
+
+  // start new line for all but first message
+  if (endRange.location != 0)
+  {
+    [displayedMessage 
+      appendAttributedString: attributedString (@"\n", messageAttrs)];
+  }
 
   [displayedMessage appendAttributedString: 
     attributedString ([dateFormatter stringFromDate: [NSDate date]], 
@@ -117,15 +131,9 @@ static NSAttributedString *attributedString (NSString *string,
   
   [displayedMessage appendAttributedString: 
     attributedString ([message objectForKey: @"Message"], messageAttrs)];
-  
-  [displayedMessage 
-    appendAttributedString: attributedString (@"\n", messageAttrs)];
-  
+    
   // insert text
-  NSRange endRange;
-  endRange.location = [[tickerMessagesTextView textStorage] length];
-  endRange.length = 0;
- 
+
   [[tickerMessagesTextView textStorage] 
     replaceCharactersInRange: endRange
         withAttributedString: displayedMessage];

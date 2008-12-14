@@ -113,6 +113,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     context->subscription = nil;
 }
 
+// TODO add liveness checking to Elvin C API
 - (void) elvinEventLoopThread
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
