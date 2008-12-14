@@ -10,11 +10,33 @@
   elvin = 
     [[[ElvinConnection alloc] initWithUrl: @"elvin://elvin" 
                               lifecycleDelegate: self] retain];
+
+ NSNotificationCenter *notificationCenter = 
+   [[NSWorkspace sharedWorkspace] notificationCenter];
+
+ [notificationCenter addObserver: self selector: @selector (handleWake:)
+   name: NSWorkspaceDidWakeNotification object: nil]; 
+   
+ [notificationCenter addObserver: self selector: @selector (handleSleep:)
+   name: NSWorkspaceWillPowerOffNotification object: nil]; 
+   
+ [notificationCenter addObserver: self selector: @selector (handleSleep:)
+   name: NSWorkspaceWillSleepNotification object: nil]; 
+}
+
+- (void) handleSleep: (void *) unused
+{
+  [elvin disconnect];
+}
+
+- (void) handleWake: (void *) unused
+{
+  [elvin connect];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) notification
 {
-  [elvin close];
+  [elvin disconnect];
   
   [elvin release];
   elvin = nil;
@@ -25,7 +47,8 @@
  */
 - (void) elvinConnectionDidOpen: (ElvinConnection *) connection
 {
-  [self openTickerWindow];
+  if (tickerWindow == nil)
+    [self openTickerWindow];
 }
 
 - (void) openTickerWindow

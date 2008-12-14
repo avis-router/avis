@@ -230,7 +230,8 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   [appController.elvin sendTickerMessage: message 
-    toGroup: [messageGroup stringValue] inReplyTo: replyToMessageId];
+    toGroup: [messageGroup stringValue] 
+                        inReplyTo: replyToMessageId];
   
   [replyToMessageId release];
   replyToMessageId = nil;
