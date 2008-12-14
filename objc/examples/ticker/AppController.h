@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+#import "ElvinConnection.h"
+
 #include <avis/elvin.h>
 
 @interface AppController : NSObject
@@ -7,13 +9,11 @@
   IBOutlet id tickerWindow;
   IBOutlet id messageWindow;
   
-  Elvin elvin;
+  ElvinConnection *elvin;
 }
 
-- (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
-           inReplyTo: (NSString *) replyToId;
+- (void) openTickerWindow;
 
-- (void) subscribe: (NSString *) subscription withObject: (id) object 
-      usingHandler: (SEL) handler;
+@property (readonly, assign) ElvinConnection *elvin;
 
 @end

@@ -1,12 +1,15 @@
 #import <Cocoa/Cocoa.h>
 
+#import "AppController.h"
+
 @interface TickerController : NSObject
 {
   IBOutlet id tickerMessagesScroller;
   IBOutlet id tickerMessagesTextView;
   IBOutlet id messageGroup;
   IBOutlet id messageText;
-  IBOutlet id appController;
+  
+  IBOutlet AppController *appController;
   
   NSString *replyToMessageId;
 }
