@@ -156,7 +156,7 @@ static NSAttributedString *attributedString (NSString *string,
   
   [appController.elvin
     subscribe: TICKER_SUBSCRIPTION 
-    withObject: self usingHandler: @selector (handleNotify:)];
+    withDelegate: self usingSelector: @selector (handleNotify:)];
 }
 
 /*
