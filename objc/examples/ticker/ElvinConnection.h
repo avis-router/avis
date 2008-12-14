@@ -7,16 +7,19 @@
   Elvin elvin;
   NSString *elvinUrl;
   id lifecycleDelegate;
+  NSMutableArray *subscriptions;
 }
 
 - (id) initWithUrl: (NSString *) url lifecycleDelegate: (id) delegate;
 
-- (void) close;
+- (void) disconnect;
+
+- (void) connect;
 
 - (void) sendTickerMessage: (NSString *) messageText 
          toGroup: (NSString *) group inReplyTo: (NSString *) replyToId;
 
-- (void) subscribe: (NSString *) subscription withObject: (id) object 
+- (void) subscribe: (NSString *) subscriptionExpr withObject: (id) object 
          usingHandler: (SEL) handler;
 
 @end

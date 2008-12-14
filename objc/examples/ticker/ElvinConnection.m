@@ -1,21 +1,7 @@
 #import "ElvinConnection.h"
 
-#include <avis/values.h>
-
 #define UUID_STRING_LENGTH 100
 #define USER_NAME_LENGTH   80
-
-typedef struct
-{
-  id  object;
-  SEL selector;
-} Callback;
-
-typedef struct
-{
-  NSString * subscription;
-  Callback   callback;
-} SubscribeContext;
 
 #define attr_string(attrs, name) \
   [NSString stringWithUTF8String: attributes_get_string (attrs, name)]
@@ -45,7 +31,45 @@ static void getCurrentUser (char *userName)
   CFRelease (cfUserName);
 }
 
+@interface SubscriptionContext : NSObject
+{
+  @public
+  
+  NSString *subscriptionExpr;
+  Subscription *subscription;
+  id  delegate;
+  SEL selector;
+}
+
+@end
+
+@implementation SubscriptionContext
+
+- (id) initWithSubscription: (NSString *) newSubscriptionExpr 
+      delegate: (id) newDelegate selector: (SEL) newSelector
+{
+  if (![super init])
+    return nil;
+  
+  subscriptionExpr = [newSubscriptionExpr retain];
+  delegate = newDelegate;
+  selector = newSelector;
+  
+  return self;
+}
+
+- (void) dealloc
+{
+  [super dealloc];
+  
+  [subscriptionExpr release];
+}
+
+@end
+
 @implementation ElvinConnection
+
+static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
 - (id) initWithUrl: (NSString *) url lifecycleDelegate: (id) delegate
 {
@@ -54,28 +78,54 @@ static void getCurrentUser (char *userName)
   
   elvinUrl = [url retain];
   lifecycleDelegate = delegate;
-  
-  [NSThread detachNewThreadSelector: @selector (elvinEventLoopThread) 
-                           toTarget: self withObject: nil];
-                           
+  subscriptions = [[NSMutableArray arrayWithCapacity: 5] retain];
+
+  [self connect];
+    
   return self;
 }
 
 - (void) dealloc
 {
-  [self close];
-  
+  [self disconnect];
+    
+  [subscriptions release];
+
   [super dealloc];
 }
 
-- (void) close
+- (void) connect
+{
+  NSLog (@"Start connect to Elvin");
+  
+  [NSThread detachNewThreadSelector: @selector (elvinEventLoopThread) 
+                           toTarget: self withObject: nil];
+}
+
+- (void) disconnect
 {
   if (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
+    NSLog (@"Disconnect from Elvin");
+    
     elvin_invoke_close (&elvin);
     
     while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
       usleep (100000);
+  }
+  
+  memset (&elvin, 0, sizeof (Elvin));
+}
+
+- (void) renewExistingSubscriptions
+{
+  NSLog (@"Array has %i items", [subscriptions count]);
+  
+  for (SubscriptionContext *context in subscriptions)
+  {
+    NSLog (@"Renew old sub");
+    
+    elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
   }
 }
 
@@ -92,8 +142,10 @@ static void getCurrentUser (char *userName)
     return;
   }
   
-  NSLog (@"Opened!");
+  NSLog (@"Connected to Elvin at %@", elvinUrl);
 
+  [self renewExistingSubscriptions];
+  
   if ([lifecycleDelegate 
         respondsToSelector: @selector (elvinConnectionDidOpen:)])
   {
@@ -118,7 +170,7 @@ static void getCurrentUser (char *userName)
 
 static void notificationListener (Subscription *sub, 
                                   Attributes *attributes, 
-                                  bool secure, Callback *callback)
+                                  bool secure, SubscriptionContext *context)
 {
   // TODO copy all attrs
   NSArray *keys = 
@@ -141,33 +193,29 @@ static void notificationListener (Subscription *sub,
                                                forKey: @"Message-Id"];
   }
   
-  [callback->object performSelectorOnMainThread: callback->selector
+  [context->delegate performSelectorOnMainThread: context->selector
                                      withObject: message 
                                   waitUntilDone: YES];
 }
 
-static void subscribe (Elvin *elvin, SubscribeContext *context)
+static void subscribe (Elvin *elvin, SubscriptionContext *context)
 {
-  Subscription *sub = 
-    elvin_subscribe (elvin, [context->subscription UTF8String]);
-    
-  Callback *callback = malloc (sizeof (Callback));
-  *callback = context->callback;
+  context->subscription = 
+    elvin_subscribe (elvin, [context->subscriptionExpr UTF8String]);
   
   elvin_subscription_add_listener 
-    (sub, (SubscriptionListener)notificationListener, callback);
-    
-  free (context);
+    (context->subscription, (SubscriptionListener)notificationListener, 
+     context);
 }
 
-- (void) subscribe: (NSString *) subscription
+- (void) subscribe: (NSString *) subscriptionExpr
         withObject: (id) object usingHandler: (SEL) handler
 {
-  SubscribeContext *context = malloc (sizeof (SubscribeContext));
-  
-  context->subscription = subscription;
-  context->callback.object = object;
-  context->callback.selector = handler;
+  SubscriptionContext *context = 
+    [[[SubscriptionContext alloc] initWithSubscription: subscriptionExpr 
+                                  delegate: object selector: handler] retain];
+
+  [subscriptions addObject: context];
   
   elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
 }
