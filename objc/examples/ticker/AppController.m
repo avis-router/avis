@@ -11,17 +11,17 @@
     [[[ElvinConnection alloc] initWithUrl: @"elvin://elvin" 
                               lifecycleDelegate: self] retain];
 
- NSNotificationCenter *notificationCenter = 
-   [[NSWorkspace sharedWorkspace] notificationCenter];
+  NSNotificationCenter *notificationCenter = 
+    [[NSWorkspace sharedWorkspace] notificationCenter];
 
- [notificationCenter addObserver: self selector: @selector (handleWake:)
-   name: NSWorkspaceDidWakeNotification object: nil]; 
+  [notificationCenter addObserver: self selector: @selector (handleWake:)
+    name: NSWorkspaceDidWakeNotification object: nil]; 
    
- [notificationCenter addObserver: self selector: @selector (handleSleep:)
-   name: NSWorkspaceWillPowerOffNotification object: nil]; 
+  [notificationCenter addObserver: self selector: @selector (handleSleep:)
+    name: NSWorkspaceWillPowerOffNotification object: nil]; 
    
- [notificationCenter addObserver: self selector: @selector (handleSleep:)
-   name: NSWorkspaceWillSleepNotification object: nil]; 
+  [notificationCenter addObserver: self selector: @selector (handleSleep:)
+    name: NSWorkspaceWillSleepNotification object: nil]; 
 }
 
 - (void) handleSleep: (void *) unused

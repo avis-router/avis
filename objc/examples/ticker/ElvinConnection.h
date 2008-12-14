@@ -20,7 +20,7 @@
 - (void) sendTickerMessage: (NSString *) messageText 
          toGroup: (NSString *) group inReplyTo: (NSString *) replyToId;
 
-- (void) subscribe: (NSString *) subscriptionExpr withObject: (id) object 
-         usingHandler: (SEL) handler;
+- (void) subscribe: (NSString *) subscriptionExpr withDelegate: (id) delegate 
+         usingSelector: (SEL) handler;
 
 @end

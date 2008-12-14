@@ -222,11 +222,11 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context)
 }
 
 - (void) subscribe: (NSString *) subscriptionExpr
-        withObject: (id) object usingHandler: (SEL) handler
+        withDelegate: (id) delegate usingSelector: (SEL) selector
 {
   SubscriptionContext *context = 
     [[[SubscriptionContext alloc] initWithSubscription: subscriptionExpr 
-                                  delegate: object selector: handler] retain];
+                                  delegate: delegate selector: selector] retain];
 
   [subscriptions addObject: context];
   
