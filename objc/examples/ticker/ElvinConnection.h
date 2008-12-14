@@ -4,11 +4,11 @@
 
 @interface ElvinConnection : NSObject 
 {
-  Elvin elvin;
-  NSString *elvinUrl;
-  id lifecycleDelegate;
-  NSMutableArray *subscriptions;
-  NSThread *eventLoopThread;
+  Elvin            elvin;
+  NSString *       elvinUrl;
+  NSMutableArray * subscriptions;
+  NSThread *       eventLoopThread;
+  id               lifecycleDelegate;
 }
 
 - (id) initWithUrl: (NSString *) url lifecycleDelegate: (id) delegate;
