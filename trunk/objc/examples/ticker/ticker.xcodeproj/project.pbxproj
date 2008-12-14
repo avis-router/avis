@@ -15,9 +15,7 @@
 		C9B038390E48282400B59216 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B038380E48282400B59216 /* TickerController.m */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
-		C9CF60EA0EDFA31100A76D46 /* MessageWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9CF60E80EDFA31100A76D46 /* MessageWindow.xib */; };
 		C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */; };
-		C9CF61BF0EDFB31B00A76D46 /* MessageWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF61BE0EDFB31B00A76D46 /* MessageWindowController.m */; };
 		C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF62D30EE0BF5F00A76D46 /* AppController.m */; };
 /* End PBXBuildFile section */
 
@@ -50,10 +48,7 @@
 		C9B038370E48282400B59216 /* TickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerController.h; sourceTree = "<group>"; };
 		C9B038380E48282400B59216 /* TickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TickerController.m; sourceTree = "<group>"; };
 		C9B03B590E493EDF00B59216 /* avis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = avis.framework; path = Frameworks/avis.framework; sourceTree = "<group>"; };
-		C9CF60E90EDFA31100A76D46 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MessageWindow.xib; sourceTree = "<group>"; };
 		C9CF60F60EDFA44A00A76D46 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/TickerWindow.xib; sourceTree = "<group>"; };
-		C9CF61BD0EDFB31B00A76D46 /* MessageWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageWindowController.h; sourceTree = "<group>"; };
-		C9CF61BE0EDFB31B00A76D46 /* MessageWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageWindowController.m; sourceTree = "<group>"; };
 		C9CF62D20EE0BF5F00A76D46 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		C9CF62D30EE0BF5F00A76D46 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,8 +73,6 @@
 				C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */,
 				C9CF62D20EE0BF5F00A76D46 /* AppController.h */,
 				C9CF62D30EE0BF5F00A76D46 /* AppController.m */,
-				C9CF61BD0EDFB31B00A76D46 /* MessageWindowController.h */,
-				C9CF61BE0EDFB31B00A76D46 /* MessageWindowController.m */,
 				C9B038370E48282400B59216 /* TickerController.h */,
 				C9B038380E48282400B59216 /* TickerController.m */,
 			);
@@ -138,7 +131,6 @@
 			children = (
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 				C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */,
-				C9CF60E80EDFA31100A76D46 /* MessageWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 			);
@@ -201,7 +193,6 @@
 			files = (
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
-				C9CF60EA0EDFA31100A76D46 /* MessageWindow.xib in Resources */,
 				C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -215,7 +206,6 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				C9B038390E48282400B59216 /* TickerController.m in Sources */,
-				C9CF61BF0EDFB31B00A76D46 /* MessageWindowController.m in Sources */,
 				C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */,
 				C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */,
 			);
@@ -238,14 +228,6 @@
 				1DDD58150DA1D0A300B32029 /* English */,
 			);
 			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		C9CF60E80EDFA31100A76D46 /* MessageWindow.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C9CF60E90EDFA31100A76D46 /* English */,
-			);
-			name = MessageWindow.xib;
 			sourceTree = "<group>";
 		};
 		C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */ = {
