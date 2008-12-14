@@ -28,22 +28,11 @@
   [self openTickerWindow];
 }
 
-- (void) createNewMessage: (id) sender
-{
-  if (![NSBundle loadNibNamed: @"MessageWindow" owner: self])
-  {
-    NSLog (@"No nib file for message?");
-    return;
-  }
-  
-  // TODO this is leaking the MessageWindowController object
-  // possibly due to circular ref?
-  
-  [messageWindow makeKeyAndOrderFront: nil];
-}
-
 - (void) openTickerWindow
 {
+  // TODO this would leak the TickerController object
+  // possibly due to circular ref?
+
   NSLog (@"Open Ticker Window");
   
   if (![NSBundle loadNibNamed: @"TickerWindow" owner: self])
