@@ -7,11 +7,8 @@
 
 static void createUUID (char *uuid)
 {
-  CFUUIDRef cfUUID;
-  CFStringRef cfUUIDString;
-  
-  cfUUID = CFUUIDCreate (kCFAllocatorDefault);
-  cfUUIDString = CFUUIDCreateString (kCFAllocatorDefault, cfUUID);
+  CFUUIDRef cfUUID = CFUUIDCreate (kCFAllocatorDefault);
+  CFStringRef cfUUIDString = CFUUIDCreateString (kCFAllocatorDefault, cfUUID);
   
   CFStringGetCString (cfUUIDString, uuid, UUID_STRING_LENGTH, 
                       kCFStringEncodingASCII);
@@ -66,9 +63,9 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 {
   if (![super init])
     return nil;
-  
+
+  lifecycleDelegate = delegate;  
   elvinUrl = [url retain];
-  lifecycleDelegate = delegate;
   subscriptions = [[NSMutableArray arrayWithCapacity: 5] retain];
 
   [self connect];
@@ -135,6 +132,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
       [NSThread sleepForTimeInterval: 5];
     } else if ([eventLoopThread isCancelled])
     {
+      [pool release];
+      
       return;
     } else
     {
@@ -169,6 +168,12 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     NSLog (@"Polled");
     
     [pool release]; 
+  }
+  
+  if (elvin_error_occurred (&elvin.error))
+  {
+    NSLog (@"Exiting elvin event loop on error: %s (%i)", 
+           elvin.error.message, elvin.error.code);
   }
   
   elvin_close (&elvin);
