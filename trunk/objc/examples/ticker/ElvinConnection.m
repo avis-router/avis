@@ -87,8 +87,9 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 - (void) connect
 {
   eventLoopThread = 
-    [[NSThread alloc] initWithTarget: self selector: @selector (elvinEventLoopThread) 
-                             object: nil];
+    [[NSThread alloc] 
+       initWithTarget: self selector: @selector (elvinEventLoopThread) 
+       object: nil];
                              
   [eventLoopThread start];
 }
@@ -158,7 +159,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   // start event loop
   while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    pool = [[NSAutoreleasePool alloc] init];
     
     elvin_poll (&elvin);
    
