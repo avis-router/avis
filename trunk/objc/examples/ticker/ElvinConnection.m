@@ -118,7 +118,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
   NSLog (@"Start connect to Elvin");
   
-  for (;;) // until connected or cancelled
+  // loop until connected or cancelled
+  for (;;) 
   {  
     elvin_open (&elvin, [elvinUrl UTF8String]);
 
@@ -126,6 +127,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     {
       NSLog (@"Failed to connect to elvin %@: %s (%i)", elvinUrl, 
              elvin.error.message, elvin.error.code);
+             
+      [NSThread sleepForTimeInterval: 5];
     } else if ([eventLoopThread isCancelled])
     {
       return;
@@ -133,8 +136,6 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     {
       break;
     }
-    
-    [NSThread sleepForTimeInterval: 5];
   }
   
   NSLog (@"Connected to Elvin at %@", elvinUrl);
@@ -143,6 +144,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   for (SubscriptionContext *context in subscriptions)
     subscribe (&elvin, context);
       
+  // let delegate know we're ready
   if ([lifecycleDelegate 
         respondsToSelector: @selector (elvinConnectionDidOpen:)])
   {
@@ -153,6 +155,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   
   [pool release];
   
+  // start event loop
   while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];

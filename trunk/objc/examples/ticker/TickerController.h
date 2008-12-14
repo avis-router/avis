@@ -4,14 +4,13 @@
 
 @interface TickerController : NSObject
 {
-  IBOutlet id tickerMessagesScroller;
-  IBOutlet id tickerMessagesTextView;
-  IBOutlet id messageGroup;
-  IBOutlet id messageText;
+  IBOutlet id              tickerMessagesScroller;
+  IBOutlet id              tickerMessagesTextView;
+  IBOutlet id              messageGroup;
+  IBOutlet id              messageText;
+  IBOutlet AppController * appController;
   
-  IBOutlet AppController *appController;
-  
-  NSString *replyToMessageId;
+  NSString *               replyToMessageId;
 }
 
 - (IBAction) sendMessage: (id) sender;
