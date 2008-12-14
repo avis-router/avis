@@ -8,6 +8,7 @@
   NSString *elvinUrl;
   id lifecycleDelegate;
   NSMutableArray *subscriptions;
+  NSThread *eventLoopThread;
 }
 
 - (id) initWithUrl: (NSString *) url lifecycleDelegate: (id) delegate;

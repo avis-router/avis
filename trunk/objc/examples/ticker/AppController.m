@@ -26,18 +26,21 @@
 
 - (void) handleSleep: (void *) unused
 {
+  NSLog (@"Disconnect on sleep");
+  
   [elvin disconnect];
 }
 
 - (void) handleWake: (void *) unused
 {
+  NSLog (@"Reconnect on wake");
+  
   [elvin connect];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) notification
 {
   [elvin disconnect];
-  
   [elvin release];
   elvin = nil;
 }

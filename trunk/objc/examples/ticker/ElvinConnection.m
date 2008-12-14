@@ -96,14 +96,17 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
 - (void) connect
 {
-  NSLog (@"Start connect to Elvin");
-  
-  [NSThread detachNewThreadSelector: @selector (elvinEventLoopThread) 
-                           toTarget: self withObject: nil];
+  eventLoopThread = 
+    [[NSThread alloc] initWithTarget: self selector: @selector (elvinEventLoopThread) 
+                             object: nil];
+                             
+  [eventLoopThread start];
 }
 
 - (void) disconnect
 {
+  [eventLoopThread cancel];
+  
   if (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
     NSLog (@"Disconnect from Elvin");
@@ -114,38 +117,43 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
       usleep (100000);
   }
   
-  memset (&elvin, 0, sizeof (Elvin));
-}
-
-- (void) renewExistingSubscriptions
-{
-  NSLog (@"Array has %i items", [subscriptions count]);
-  
+  // nuke defunct Elvin subscription pointers
   for (SubscriptionContext *context in subscriptions)
-  {
-    NSLog (@"Renew old sub");
-    
-    elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
-  }
+    context->subscription = nil;
 }
 
 - (void) elvinEventLoopThread
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  NSLog (@"Start connect to Elvin");
   
-  elvin_open (&elvin, [elvinUrl UTF8String]);
-  
-  if (elvin_error_occurred (&elvin.error))
-  {
-    elvin_perror ("connect", &elvin.error);
+  for (;;) // until connected or cancelled
+  {  
+    elvin_open (&elvin, [elvinUrl UTF8String]);
+
+    if (elvin_error_occurred (&elvin.error))
+    {
+      NSLog (@"Failed to connect to elvin %@: %s (%i)", elvinUrl, 
+             elvin.error.message, elvin.error.code);
+    } else if ([eventLoopThread isCancelled])
+    {
+      return;
+    } else
+    {
+      break;
+    }
     
-    return;
+    [NSThread sleepForTimeInterval: 5];
   }
   
   NSLog (@"Connected to Elvin at %@", elvinUrl);
 
-  [self renewExistingSubscriptions];
-  
+  // renew any existing subscriptions
+  // TODO: calling subscribe () directly fails and borks entire connection
+  for (SubscriptionContext *context in subscriptions)
+    elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
+    
   if ([lifecycleDelegate 
         respondsToSelector: @selector (elvinConnectionDidOpen:)])
   {
@@ -164,6 +172,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     
     [pool release]; 
   }
+  
+  elvin_close (&elvin);
   
   NSLog (@"Exit elvin event loop");
 }
