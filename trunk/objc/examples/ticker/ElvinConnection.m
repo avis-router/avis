@@ -21,16 +21,6 @@ static void createUUID (char *uuid)
   CFRelease (cfUUID);
 }
 
-static void getCurrentUser (char *userName)
-{
-  CFStringRef cfUserName = CSCopyUserName (false);
-  
-  CFStringGetCString (cfUserName, userName, USER_NAME_LENGTH, 
-                      kCFStringEncodingUTF8);
-
-  CFRelease (cfUserName);
-}
-
 @interface SubscriptionContext : NSObject
 {
   @public
@@ -150,10 +140,9 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   NSLog (@"Connected to Elvin at %@", elvinUrl);
 
   // renew any existing subscriptions
-  // TODO: calling subscribe () directly fails and borks entire connection
   for (SubscriptionContext *context in subscriptions)
-    elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
-    
+    subscribe (&elvin, context);
+      
   if ([lifecycleDelegate 
         respondsToSelector: @selector (elvinConnectionDidOpen:)])
   {
@@ -169,6 +158,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     elvin_poll (&elvin);
+   
+    NSLog (@"Polled");
     
     [pool release]; 
   }
@@ -243,16 +234,14 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   NSAssert (group != nil && messageText != nil, @"IB connection failure");
   
   char messageID [UUID_STRING_LENGTH];
-  char userName [USER_NAME_LENGTH];
   
   createUUID (messageID);
-  getCurrentUser (userName);
   
   Attributes *message = attributes_create ();
   
   attributes_set_string (message, "Group", [group UTF8String]);
   attributes_set_string (message, "Message", [messageText UTF8String]);
-  attributes_set_string (message, "From", userName);
+  attributes_set_string (message, "From", [NSFullUserName () UTF8String]);
   attributes_set_string (message, "Message-Id", messageID);
   attributes_set_string (message, "User-Agent", "Blue Sticker");
   attributes_set_int32  (message, "org.tickertape.message", 3001);
