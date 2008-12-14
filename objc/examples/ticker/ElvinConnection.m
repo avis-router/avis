@@ -179,7 +179,7 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   attributes_destroy (message);
 }
 
-- (void) sendMessage: (NSString *) messageText toGroup: (NSString *) group
+- (void) sendTickerMessage: (NSString *) messageText toGroup: (NSString *) group
            inReplyTo: (NSString *) replyToId
 {
   NSAssert (group != nil && messageText != nil, @"IB connection failure");
