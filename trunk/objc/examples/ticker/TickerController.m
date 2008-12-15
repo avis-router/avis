@@ -14,9 +14,9 @@
 {
   @public
   
-  NSString *messageId;
-  NSString *group;
-  BOOL public;
+  NSString * messageId;
+  NSString * group;
+  BOOL       public;
 }
 
 + (MessageLink *) linkForMessage: (NSDictionary *) message;
@@ -28,6 +28,7 @@
 + (MessageLink *) linkForMessage: (NSDictionary *) message
 {
   MessageLink *link = [[MessageLink new] retain];
+  
   NSString *distribution  = [message valueForKey: @"Distribution"];
   
   link->messageId = [[message valueForKey: @"Message-Id"] retain];
@@ -202,14 +203,13 @@ static NSAttributedString *attributedString (NSString *string,
     MessageLink *messageLink = link;
     
     [messageGroup setStringValue: messageLink->group];
+    [publicCheckbox setState: (messageLink->public ? NSOnState : NSOffState)];
     
     [replyToMessageId release];
     replyToMessageId = [messageLink->messageId retain];
     
     [[messageText window] makeFirstResponder: messageText];
 
-    [publicCheckbox setState: messageLink->public ? NSOnState : NSOffState];
-    
     return YES;
   } else
   {
