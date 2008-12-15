@@ -210,6 +210,10 @@ static void notificationListener (Subscription *sub,
 
   copy_optional_string_attribute (attributes, message, @"Message-Id");
   copy_optional_string_attribute (attributes, message, @"Distribution");
+  copy_optional_string_attribute (attributes, message, @"MIME_TYPE");
+  copy_optional_string_attribute (attributes, message, @"MIME_ARGS");
+  copy_optional_string_attribute (attributes, message, @"Attachment");
+  copy_optional_string_attribute (attributes, message, @"User-Agent");
   
   [context->delegate performSelectorOnMainThread: context->selector
                                      withObject: message 
