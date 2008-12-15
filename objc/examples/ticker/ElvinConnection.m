@@ -17,6 +17,16 @@ static void createUUID (char *uuid)
   CFRelease (cfUUID);
 }
 
+static void copy_optional_string_attribute (Attributes *attributes, 
+                                            NSMutableDictionary *message,
+                                            NSString *name)
+{
+  const char *attrValue = attributes_get_string (attributes, [name UTF8String]);
+  
+  if (attrValue)
+    [message setValue: [NSString stringWithUTF8String: attrValue] forKey: name];
+}
+
 @interface SubscriptionContext : NSObject
 {
   @public
@@ -198,13 +208,8 @@ static void notificationListener (Subscription *sub,
   NSMutableDictionary *message = 
     [NSMutableDictionary dictionaryWithObjects: objects forKeys: keys];
 
-  const char *messageIdAttr = attributes_get_string (attributes, "Message-Id");
-  
-  if (messageIdAttr)
-  {
-    [message setValue: [NSString stringWithUTF8String: messageIdAttr]
-                                               forKey: @"Message-Id"];
-  }
+  copy_optional_string_attribute (attributes, message, @"Message-Id");
+  copy_optional_string_attribute (attributes, message, @"Distribution");
   
   [context->delegate performSelectorOnMainThread: context->selector
                                      withObject: message 
@@ -254,7 +259,7 @@ static void sendMessage (Elvin *elvin, Attributes *message)
 }
 
 - (void) sendTickerMessage: (NSString *) messageText toGroup: (NSString *) group
-           inReplyTo: (NSString *) replyToId
+                 inReplyTo: (NSString *) replyToId sendPublic: (BOOL) isPublic
 {
   NSAssert (group != nil && messageText != nil, @"IB connection failure");
   
@@ -274,6 +279,9 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   if (replyToId != nil)
     attributes_set_string (message, "In-Reply-To", [replyToId UTF8String]);
 
+  if (isPublic)
+    attributes_set_string (message, "Distribution", "world");
+  
   elvin_invoke (&elvin, (InvokeHandler)sendMessage, message);
 }
 
