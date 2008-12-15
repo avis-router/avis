@@ -297,7 +297,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) setAttachedURL: (NSURL *) url
 {
   [messageText setString: [url absoluteString]];
-  NSLog (@"class = %@", [attachedUrlLabel stringValue]);
+//  NSLog (@"class = %@", [attachedUrlLabel stringValue]);
   [attachedUrlLabel setString: [url absoluteString]];
   [attachedUrlLabel setVisible: YES];
 }

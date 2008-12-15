@@ -9,6 +9,7 @@
   IBOutlet id              messageText;
   IBOutlet id              publicCheckbox;
   IBOutlet id              attachedUrlLabel;
+
   IBOutlet AppController * appController;
   
   NSString *               replyToMessageId;

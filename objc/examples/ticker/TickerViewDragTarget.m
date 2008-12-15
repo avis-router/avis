@@ -23,7 +23,7 @@
 
 - (BOOL) prepareForDragOperation: (id <NSDraggingInfo>) sender
 {
-    return YES;
+  return YES;
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>) sender
