@@ -259,7 +259,7 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
-#pragma mark PUBLIC IB actions
+#pragma mark PUBLIC methods
 
 - (IBAction) sendMessage: (id) sender
 {
@@ -292,6 +292,14 @@ static NSAttributedString *attributedString (NSString *string,
   
   [messageText setString: @""];
   [publicCheckbox setState: NSOffState];
+}
+
+- (void) setAttachedURL: (NSURL *) url
+{
+  [messageText setString: [url absoluteString]];
+  NSLog (@"class = %@", [attachedUrlLabel stringValue]);
+  [attachedUrlLabel setString: [url absoluteString]];
+  [attachedUrlLabel setVisible: YES];
 }
 
 #pragma mark PRIVATE Methods handling "Empty Text" sheet
