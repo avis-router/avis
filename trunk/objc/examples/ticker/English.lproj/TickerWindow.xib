@@ -33,6 +33,7 @@
 				<string key="NSWindowTitle">Ticker</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
+				<string key="NSWindowContentMinSize">{500, 200}</string>
 				<object class="NSView" key="NSWindowView" id="228325107">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -490,7 +491,7 @@
 						</object>
 						<object class="NSButton" id="181069474">
 							<reference key="NSNextResponder" ref="228325107"/>
-							<int key="NSvFlags">260</int>
+							<int key="NSvFlags">257</int>
 							<string key="NSFrame">{{801, 49}, {63, 18}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
@@ -520,6 +521,7 @@
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
+				<string key="NSMinSize">{500, 222}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSFrameAutosaveName">tickerWindow</string>
 			</object>
@@ -860,7 +862,9 @@
 					<string>3.IBWindowTemplateEditedContentRect</string>
 					<string>3.NSWindowTemplate.visibleAtLaunch</string>
 					<string>3.editorWindowContentRectSynchronizationRect</string>
+					<string>3.windowTemplate.hasMinSize</string>
 					<string>3.windowTemplate.maxSize</string>
+					<string>3.windowTemplate.minSize</string>
 					<string>4.IBPluginDependency</string>
 					<string>42.IBAttributePlaceholdersKey</string>
 					<string>42.IBPluginDependency</string>
@@ -891,12 +895,14 @@
 					<reference ref="8"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{139, 432}, {907, 424}}</string>
+					<string>{{320, 481}, {907, 424}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{139, 432}, {907, 424}}</string>
+					<string>{{320, 481}, {907, 424}}</string>
 					<reference ref="9"/>
 					<string>{{33, 99}, {480, 360}}</string>
+					<integer value="1"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
+					<string>{500, 200}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableDictionary">
 						<string key="NS.key.0">ToolTip</string>
