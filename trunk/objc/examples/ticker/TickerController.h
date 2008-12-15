@@ -7,6 +7,7 @@
   IBOutlet id              tickerMessagesTextView;
   IBOutlet id              messageGroup;
   IBOutlet id              messageText;
+  IBOutlet id              publicCheckbox;
   IBOutlet AppController * appController;
   
   NSString *               replyToMessageId;

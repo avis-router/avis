@@ -16,6 +16,7 @@
   
   NSString *messageId;
   NSString *group;
+  BOOL public;
 }
 
 + (MessageLink *) linkForMessage: (NSDictionary *) message;
@@ -27,9 +28,12 @@
 + (MessageLink *) linkForMessage: (NSDictionary *) message
 {
   MessageLink *link = [[MessageLink new] retain];
+  NSString *distribution  = [message valueForKey: @"Distribution"];
   
   link->messageId = [[message valueForKey: @"Message-Id"] retain];
   link->group = [[message valueForKey: @"Group"] retain];
+  link->public = 
+    distribution != nil && [distribution caseInsensitiveCompare: @"world"] == 0;
   
   return link;
 }
@@ -204,6 +208,8 @@ static NSAttributedString *attributedString (NSString *string,
     
     [[messageText window] makeFirstResponder: messageText];
 
+    [publicCheckbox setState: messageLink->public ? NSOnState : NSOffState];
+    
     return YES;
   } else
   {
@@ -239,12 +245,14 @@ static NSAttributedString *attributedString (NSString *string,
   
   [appController.elvin 
     sendTickerMessage: message toGroup: [messageGroup stringValue] 
-    inReplyTo: replyToMessageId];
+    inReplyTo: replyToMessageId 
+    sendPublic: [publicCheckbox state] == NSOnState];
   
   [replyToMessageId release];
   replyToMessageId = nil;
   
   [messageText setString: @""];
+  [publicCheckbox setState: NSOffState];
 }
 
 @end
