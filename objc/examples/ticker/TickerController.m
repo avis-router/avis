@@ -3,7 +3,8 @@
 /*
  * TODO: use example at 
  * http://developer.apple.com/samplecode/TextLinks/listing2.html
- * to add custom cursor to links.
+ * to add custom cursor to links. 
+ * OR use NSView::addTrackingArea
  */
 
 static NSURL *extractAttachedLink (NSDictionary *message)
