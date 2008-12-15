@@ -21,6 +21,8 @@ static NSURL *extractAttachedLink (NSDictionary *message)
   }
 }
 
+#pragma mark PRIVATE MessageLink internal class definition
+
 /*
  * Used to link original message group/ID with message links in the message 
  * view.
@@ -77,6 +79,8 @@ static NSURL *extractAttachedLink (NSDictionary *message)
    blue: (b)/255.0 alpha: 1]
 
 #define bottomY(rect) ((rect).origin.y + (rect).size.height)
+
+#pragma mark PRIVATE Delegates handling callback from Elvin
 
 static NSAttributedString *attributedString (NSString *string, 
                                              NSDictionary *attrs)
@@ -199,6 +203,8 @@ static NSAttributedString *attributedString (NSString *string,
     withDelegate: self usingSelector: @selector (handleNotify:)];
 }
 
+#pragma mark PRIVATE Delegates for text view
+
 /*
  * Delegate override to enable message text field to support TAB out but still
  * allow Enter/Return to insert new lines.
@@ -252,23 +258,20 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
-- (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
-                     contextInfo: (void *) contextInfo
-{
-  // re-send request: when sender is self the checks are overridden
-  if (code != NSAlertDefaultReturn)
-    [self sendMessage: self];
-}
+#pragma mark PUBLIC IB actions
 
 - (IBAction) sendMessage: (id) sender
 {
   NSString *message = [[messageText textStorage] string];
-  
+
   // check for empty text
   if (sender != self && 
       [[message stringByTrimmingCharactersInSet: 
         [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
   {
+    // allow our willPositionSheet to put sheet under text editor
+    [[messageText window] setDelegate: self];
+    
     NSBeginAlertSheet 
       (@"The ticker message text is empty.", @"Don't Send", 
        @"Send Empty Message", nil,  [messageText window], self, 
@@ -288,6 +291,32 @@ static NSAttributedString *attributedString (NSString *string,
   
   [messageText setString: @""];
   [publicCheckbox setState: NSOffState];
+}
+
+#pragma mark PRIVATE Methods handling "Empty Text" sheet
+
+/*
+ * Handles request for sheet location: locates the "empty text" sheet on
+ * the text area itself rather than the top of the window.
+ */
+- (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
+        usingRect: (NSRect) rect 
+{
+  NSRect fieldRect = [[[messageText superview] superview] frame];
+  
+  fieldRect.size.height = 0;
+  
+  return fieldRect;
+}
+
+- (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
+                     contextInfo: (void *) contextInfo
+{
+  [[messageText window] setDelegate: nil];
+  
+  // re-send request: when sender is self the checks are overridden
+  if (code != NSAlertDefaultReturn)
+    [self sendMessage: self];
 }
 
 @end
