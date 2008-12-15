@@ -6,6 +6,21 @@
  * to add custom cursor to links.
  */
 
+static NSURL *extractAttachedLink (NSDictionary *message)
+{
+  if ([[message objectForKey: @"MIME_TYPE"] isEqual: @"x-elvin/url"])
+  {
+    return [NSURL URLWithString: [message objectForKey: @"MIME_ARGS"]];
+  } else if ([message objectForKey: @"Attachment"])
+  {
+    // TODO
+    return nil;
+  } else
+  {
+    return nil;
+  }
+}
+
 /*
  * Used to link original message group/ID with message links in the message 
  * view.
@@ -136,7 +151,27 @@ static NSAttributedString *attributedString (NSString *string,
   
   [displayedMessage appendAttributedString: 
     attributedString ([message objectForKey: @"Message"], messageAttrs)];
+  
+  NSURL *attachedLink = extractAttachedLink (message);
+  
+  if (attachedLink)
+  {
+    [displayedMessage 
+      appendAttributedString: attributedString (@" (", messageAttrs)];
     
+    NSDictionary *linkAttrs = 
+      [NSDictionary dictionaryWithObjectsAndKeys:
+       color (0, 0, 255), NSForegroundColorAttributeName, 
+       [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
+       attachedLink, NSLinkAttributeName, nil];
+    
+    [displayedMessage appendAttributedString: 
+      attributedString ([attachedLink absoluteString], linkAttrs)];
+    
+    [displayedMessage 
+      appendAttributedString: attributedString (@")", messageAttrs)];
+  }
+  
   // insert text
 
   [[tickerMessagesTextView textStorage] 
