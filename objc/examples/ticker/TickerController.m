@@ -7,6 +7,17 @@
  * OR use NSView::addTrackingArea
  */
 
+#define TICKER_SUBSCRIPTION \
+  @"string (Message) && string (Group) && string (From)"
+
+#define color(r, g, b) \
+  [NSColor colorWithCalibratedRed: (r)/255.0 green: (g)/255.0 \
+   blue: (b)/255.0 alpha: 1]
+
+#define bottomY(rect) ((rect).origin.y + (rect).size.height)
+
+#pragma mark PRIVATE Utility functions
+
 static NSURL *extractAttachedLink (NSDictionary *message)
 {
   if ([[message objectForKey: @"MIME_TYPE"] isEqual: @"x-elvin/url"])
@@ -20,6 +31,14 @@ static NSURL *extractAttachedLink (NSDictionary *message)
   {
     return nil;
   }
+}
+
+static NSAttributedString *attributedString (NSString *string, 
+                                             NSDictionary *attrs)
+{
+  return 
+    [[[NSAttributedString alloc] initWithString: string attributes: attrs] 
+      autorelease];
 }
 
 #pragma mark PRIVATE MessageLink internal class definition
@@ -37,8 +56,6 @@ static NSURL *extractAttachedLink (NSDictionary *message)
   BOOL       public;
 }
 
-+ (MessageLink *) linkForMessage: (NSDictionary *) message;
-
 @end
 
 @implementation MessageLink
@@ -47,7 +64,7 @@ static NSURL *extractAttachedLink (NSDictionary *message)
 {
   MessageLink *link = [[MessageLink new] retain];
   
-  NSString *distribution  = [message valueForKey: @"Distribution"];
+  NSString *distribution = [message valueForKey: @"Distribution"];
   
   link->messageId = [[message valueForKey: @"Message-Id"] retain];
   link->group = [[message valueForKey: @"Group"] retain];
@@ -72,24 +89,7 @@ static NSURL *extractAttachedLink (NSDictionary *message)
 
 @implementation TickerController
 
-#define TICKER_SUBSCRIPTION \
-  @"string (Message) && string (Group) && string (From)"
-
-#define color(r, g, b) \
-  [NSColor colorWithCalibratedRed: (r)/255.0 green: (g)/255.0 \
-   blue: (b)/255.0 alpha: 1]
-
-#define bottomY(rect) ((rect).origin.y + (rect).size.height)
-
 #pragma mark PRIVATE Delegates handling callback from Elvin
-
-static NSAttributedString *attributedString (NSString *string, 
-                                             NSDictionary *attrs)
-{
-  return 
-    [[[NSAttributedString alloc] initWithString: string attributes: attrs] 
-      autorelease];
-}
 
 - (void) handleNotify: (NSDictionary *) message
 {
@@ -166,7 +166,7 @@ static NSAttributedString *attributedString (NSString *string,
     
     NSDictionary *linkAttrs = 
       [NSDictionary dictionaryWithObjectsAndKeys:
-       color (0, 0, 255), NSForegroundColorAttributeName, 
+       [NSColor blueColor], NSForegroundColorAttributeName, 
        [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
        attachedLink, NSLinkAttributeName, nil];
     
@@ -270,7 +270,7 @@ static NSAttributedString *attributedString (NSString *string,
       [[message stringByTrimmingCharactersInSet: 
         [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
   {
-    // allow our willPositionSheet to put sheet under text editor
+    // make self the delegate to put sheet under text editor
     [[messageText window] setDelegate: self];
     
     NSBeginAlertSheet 

@@ -134,17 +134,17 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   {  
     elvin_open (&elvin, [elvinUrl UTF8String]);
 
-    if (elvin_error_occurred (&elvin.error))
+    if ([eventLoopThread isCancelled])
+    {
+      [pool release];
+      
+      return;
+    } else if (elvin_error_occurred (&elvin.error))
     {
       NSLog (@"Failed to connect to elvin %@: %s (%i)", elvinUrl, 
              elvin.error.message, elvin.error.code);
              
       [NSThread sleepForTimeInterval: 5];
-    } else if ([eventLoopThread isCancelled])
-    {
-      [pool release];
-      
-      return;
     } else
     {
       break;
@@ -175,10 +175,10 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     
     elvin_poll (&elvin);
    
-    NSLog (@"Polled");
-    
     [pool release]; 
   }
+
+  pool = [NSAutoreleasePool new];  
   
   if (elvin_error_occurred (&elvin.error))
   {
@@ -189,13 +189,14 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   elvin_close (&elvin);
   
   NSLog (@"Exit elvin event loop");
+  
+  [pool release]; 
 }
 
 static void notificationListener (Subscription *sub, 
                                   Attributes *attributes, 
                                   bool secure, SubscriptionContext *context)
 {
-  // TODO copy all attrs
   NSArray *keys = 
     [NSArray arrayWithObjects: @"Message", @"Group", @"From", nil];
 
