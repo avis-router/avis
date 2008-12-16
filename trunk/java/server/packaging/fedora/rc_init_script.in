@@ -22,7 +22,14 @@ AVISD=__PREFIX__/sbin/avisd
 AVISD_CONFIG=/etc/avis/avisd.config
 AVISD_LOGFILE=/var/log/avisd.log
 AVISD_PIDFILE=/var/run/avisd.pid
-AVISD_OPTIONS="-daemon -c $AVISD_CONFIG -logfile $AVISD_LOGFILE -pidfile $AVISD_PIDFILE"
+AVISD_OPTIONS=\
+  "-daemon -c $AVISD_CONFIG -logfile $AVISD_LOGFILE -pidfile $AVISD_PIDFILE"
+
+# Uncomment below to generate a .hprof memory dump in out of memory error
+
+# AVISD_OPTIONS=\
+#   "$AVISD_OPTIONS -jvmopts \"-XX:+HeapDumpOnOutOfMemoryError \
+#    -XX:HeapDumpPath=/tmp\""
 
 # Source networking configuration.
 . /etc/sysconfig/network
