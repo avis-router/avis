@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Avis daemon startup script.
+# See usage () below or run with "-h" for options.
+#
+# NOTE: to debug out of memory errors in the VN, run script with:
+#   -jvmopts="-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp"
+
 set -e
 
 daemon=0
