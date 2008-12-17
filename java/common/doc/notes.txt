@@ -8,6 +8,11 @@ Releases
 
 Server 1.3
 
+* BUG: server can get OOM in writes as well as reads (see
+  oom_notes.txt, basically
+  SocketAcceptorIoProcessor/SocketSessionImpl.writeRequestQueue is
+  holding 120M). Seen when spamming lots of small messages from
+  David's clock hearbeat (Linux 1.6.0_03, 1.2.1, 2008-12-17).
 * BUG: federation keepalive issue? see Boris' logs between F1 and F2
 * BUG: slow big frames https://issues.apache.org/jira/browse/DIRMINA-609.
 * add note about windows registry Java currentversion = 1.6 when 1.5
