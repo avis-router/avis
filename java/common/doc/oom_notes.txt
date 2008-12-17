@@ -1,0 +1,38 @@
+One instance of "java.util.concurrent.ConcurrentLinkedQueue" loaded by "<system class loader>" occupies 127,534,344 (98.74%) bytes. The instance is referenced by org.apache.mina.transport.socket.nio.SocketSessionImpl @ 0xacecd138 , loaded by "sun.misc.Launcher$AppClassLoader @ 0xacdd2190".
+
+Keywords
+java.util.concurrent.ConcurrentLinkedQueue
+sun.misc.Launcher$AppClassLoader @ 0xacdd2190
+Shortest Paths To the Accumulation Point 
+
+Class Name	Shallow Heap	Retained Heap
+
+java.util.concurrent.ConcurrentLinkedQueue @ 0xacece168
+16	127,534,344
+
+<Java Local> java.lang.Thread @ 0xacdea190 SocketAcceptorIoProcessor-0.0 Thread
+104	840
+
+writeRequestQueue org.apache.mina.transport.socket.nio.SocketSessionImpl @ 0xacecd138 »
+216	888
+
+Total: 2 entries
+Accumulated Objects 
+
+Class name	Shallow Heap	Retained Heap	Percentage
+
+java.util.concurrent.ConcurrentLinkedQueue @ 0xacece168
+16	127,534,344	98.74%
+
+java.util.concurrent.ConcurrentLinkedQueue$Node @ 0xacff16f8
+16	127,534,176	98.74%
+
+java.util.concurrent.ConcurrentLinkedQueue$Node @ 0xb488b098
+16	152	0.00%
+
+Total: 2 entries
+32	127,534,328	0.987
+Accumulated Objects by Class 
+
+Label	Number Of Objects	Used Heap Size	Retained Heap Size
+java.util.concurrent.ConcurrentLinkedQueue$Node	2	32	127,534,328
