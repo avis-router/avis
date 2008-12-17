@@ -1,3 +1,26 @@
+Log:
+
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+Dumping heap to /tmp/java_pid2468.hprof ...
+Heap dump file created [136427331 bytes in 3.096 secs]
+Exception in thread "pool-1-thread-1749" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1793" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-3" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-4" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1791" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1789" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1780" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1795" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1784" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1783" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1765" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "pool-1-thread-1807" Exception in thread "pool-1-thread-1808" java.lang.OutOfMemoryError: GC overhead limit exceeded
+Exception in thread "SocketAcceptor-0" java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+---
+
+From .hprof in Memory Analyser Tool in Eclipse:
+
 One instance of "java.util.concurrent.ConcurrentLinkedQueue" loaded by "<system class loader>" occupies 127,534,344 (98.74%) bytes. The instance is referenced by org.apache.mina.transport.socket.nio.SocketSessionImpl @ 0xacecd138 , loaded by "sun.misc.Launcher$AppClassLoader @ 0xacdd2190".
 
 Keywords
