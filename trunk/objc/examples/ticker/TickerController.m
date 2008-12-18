@@ -169,10 +169,19 @@ static NSAttributedString *attributedString (NSString *string,
        [NSColor blueColor], NSForegroundColorAttributeName, 
        [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
        attachedLink, NSLinkAttributeName, nil];
-    
+
     [displayedMessage appendAttributedString: 
-      attributedString ([attachedLink absoluteString], linkAttrs)];
-    
+      attributedString ([attachedLink scheme], linkAttrs)];
+
+    [displayedMessage appendAttributedString: 
+      attributedString (@"://", linkAttrs)];
+                
+    [displayedMessage appendAttributedString: 
+      attributedString ([attachedLink host], linkAttrs)];
+
+    [displayedMessage appendAttributedString: 
+      attributedString (@"/...", linkAttrs)];
+          
     [displayedMessage 
       appendAttributedString: attributedString (@")", messageAttrs)];
   }
