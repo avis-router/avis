@@ -160,28 +160,36 @@ static NSAttributedString *attributedString (NSString *string,
   NSURL *attachedLink = extractAttachedLink (message);
   
   if (attachedLink)
-  {
-    [displayedMessage 
-      appendAttributedString: attributedString (@" (", messageAttrs)];
-    
+  {    
     NSDictionary *linkAttrs = 
       [NSDictionary dictionaryWithObjectsAndKeys:
        [NSColor blueColor], NSForegroundColorAttributeName, 
        [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
        attachedLink, NSLinkAttributeName, nil];
 
-    [displayedMessage appendAttributedString: 
-      attributedString ([attachedLink scheme], linkAttrs)];
+    [displayedMessage 
+      appendAttributedString: attributedString (@" (", messageAttrs)];
 
-    [displayedMessage appendAttributedString: 
-      attributedString (@"://", linkAttrs)];
-                
-    [displayedMessage appendAttributedString: 
-      attributedString ([attachedLink host], linkAttrs)];
+    if ([[attachedLink path] length] <= 60)
+    {
+      [displayedMessage appendAttributedString: 
+        attributedString ([attachedLink absoluteString], linkAttrs)];
+    } else
+    {
+      // display truncated URL
+      [displayedMessage appendAttributedString: 
+        attributedString ([attachedLink scheme], linkAttrs)];
 
-    [displayedMessage appendAttributedString: 
-      attributedString (@"/...", linkAttrs)];
-          
+      [displayedMessage appendAttributedString: 
+        attributedString (@"://", linkAttrs)];
+                  
+      [displayedMessage appendAttributedString: 
+        attributedString ([attachedLink host], linkAttrs)];
+
+      [displayedMessage appendAttributedString: 
+        attributedString (@"/...", linkAttrs)];
+    }           
+    
     [displayedMessage 
       appendAttributedString: attributedString (@")", messageAttrs)];
   }
