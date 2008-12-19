@@ -170,7 +170,7 @@ static NSAttributedString *attributedString (NSString *string,
     [displayedMessage 
       appendAttributedString: attributedString (@" (", messageAttrs)];
 
-    if ([[attachedLink path] length] <= 60)
+    if ([[attachedLink path] length] <= 40)
     {
       [displayedMessage appendAttributedString: 
         attributedString ([attachedLink absoluteString], linkAttrs)];
@@ -313,10 +313,8 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) setAttachedURL: (NSURL *) url
 {
-  [messageText setString: [url absoluteString]];
-//  NSLog (@"class = %@", [attachedUrlLabel stringValue]);
-  [attachedUrlLabel setString: [url absoluteString]];
-  [attachedUrlLabel setVisible: YES];
+  [attachedUrlLabel setStringValue: [url absoluteString]];
+  [attachedUrlLabel setHidden: NO];
 }
 
 #pragma mark PRIVATE Methods handling "Empty Text" sheet
