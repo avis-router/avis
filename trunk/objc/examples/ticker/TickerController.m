@@ -219,6 +219,8 @@ static NSAttributedString *attributedString (NSString *string,
   [appController.elvin
     subscribe: TICKER_SUBSCRIPTION 
     withDelegate: self usingSelector: @selector (handleNotify:)];
+    
+//  [self setAttachedURL: [NSURL URLWithString: @"http://google.com"]];
 }
 
 #pragma mark PRIVATE Delegates for text view
@@ -313,6 +315,17 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) setAttachedURL: (NSURL *) url
 {
+  id textView = [[messageText superview] superview];
+  
+  NSRect messageTextBounds = [textView frame];
+  NSRect urlBounds = [attachedUrlLabel frame];
+   
+  messageTextBounds.size.height -= urlBounds.size.height;
+  messageTextBounds.origin.y += urlBounds.size.height;
+  
+  [textView setFrame: messageTextBounds];
+  [textView setNeedsDisplay: YES];
+
   [attachedUrlLabel setStringValue: [url absoluteString]];
   [attachedUrlLabel setHidden: NO];
 }
