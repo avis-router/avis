@@ -220,7 +220,7 @@ static NSAttributedString *attributedString (NSString *string,
     subscribe: TICKER_SUBSCRIPTION 
     withDelegate: self usingSelector: @selector (handleNotify:)];
     
-//  [self setAttachedURL: [NSURL URLWithString: @"http://google.com"]];
+  [attachedUrlLabel setObjectValue: nil];
 }
 
 #pragma mark PRIVATE Delegates for text view
@@ -301,10 +301,16 @@ static NSAttributedString *attributedString (NSString *string,
     return;
   }
   
+  NSURL *attachedURL = [NSURL URLWithString: [attachedUrlLabel stringValue]];
+  
   [appController.elvin 
     sendTickerMessage: message toGroup: [messageGroup stringValue] 
     inReplyTo: replyToMessageId 
+    attachedURL: attachedURL
     sendPublic: [publicCheckbox state] == NSOnState];
+  
+  // clear URL
+  [self setAttachedURL: nil];
   
   [replyToMessageId release];
   replyToMessageId = nil;
@@ -315,19 +321,45 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) setAttachedURL: (NSURL *) url
 {
-  id textView = [[messageText superview] superview];
-  
-  NSRect messageTextBounds = [textView frame];
-  NSRect urlBounds = [attachedUrlLabel frame];
-   
-  messageTextBounds.size.height -= urlBounds.size.height;
-  messageTextBounds.origin.y += urlBounds.size.height;
-  
-  [textView setFrame: messageTextBounds];
-  [textView setNeedsDisplay: YES];
+  id textContainerView = [[messageText superview] superview];
+    
+  if (url)
+  {
+    NSDictionary *linkAttrs = 
+      [NSDictionary dictionaryWithObjectsAndKeys:
+       [NSColor blueColor], NSForegroundColorAttributeName, 
+       [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
+       [NSFont userFontOfSize: 11], NSFontAttributeName,
+        url, NSLinkAttributeName, nil];
 
-  [attachedUrlLabel setStringValue: [url absoluteString]];
-  [attachedUrlLabel setHidden: NO];
+    NSMutableAttributedString *urlText = 
+     [[NSMutableAttributedString new] autorelease]; 
+
+    [urlText appendAttributedString: 
+      attributedString ([url absoluteString], linkAttrs)];
+      
+    NSRect messageTextBounds = [textContainerView frame];
+    NSRect urlBounds = [attachedUrlLabel frame];
+
+    messageTextBounds.size.height -= urlBounds.size.height;
+    messageTextBounds.origin.y += urlBounds.size.height;
+    
+    [textContainerView setFrame: messageTextBounds];
+    [textContainerView setNeedsDisplay: YES];
+
+    [attachedUrlLabel setAttributedStringValue: urlText];
+    [attachedUrlLabel setHidden: NO];
+  } else
+  {
+    NSRect frame = [[textContainerView superview] frame];
+    frame.origin.x = frame.origin.y = 0;
+    
+    [attachedUrlLabel setHidden: YES];
+    [attachedUrlLabel setObjectValue: nil];
+    
+    [textContainerView setFrame: frame];
+    [textContainerView setNeedsDisplay: YES];
+  }
 }
 
 #pragma mark PRIVATE Methods handling "Empty Text" sheet
@@ -339,7 +371,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
         usingRect: (NSRect) rect 
 {
-  NSRect fieldRect = [[[messageText superview] superview] frame];
+  NSRect fieldRect = [[[[messageText superview] superview] superview] frame];
   
   fieldRect.size.height = 0;
   

@@ -17,8 +17,11 @@
 
 - (void) connect;
 
-- (void) sendTickerMessage: (NSString *) messageText toGroup: (NSString *) group
-                 inReplyTo: (NSString *) replyToId sendPublic: (BOOL) isPublic;
+- (void) sendTickerMessage: (NSString *) messageText 
+                   toGroup: (NSString *) group
+                 inReplyTo: (NSString *) replyToId 
+               attachedURL: (NSURL *) url
+                sendPublic: (BOOL) isPublic;
 
 - (void) subscribe: (NSString *) subscriptionExpr withDelegate: (id) delegate 
          usingSelector: (SEL) handler;

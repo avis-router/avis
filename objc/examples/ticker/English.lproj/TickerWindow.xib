@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="22"/>
+			<integer value="76"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -425,10 +425,7 @@
 													</object>
 													<object class="NSTextViewSharedData" key="NSSharedData">
 														<int key="NSFlags">274323</int>
-														<object class="NSColor" key="NSBackgroundColor">
-															<int key="NSColorSpace">1</int>
-															<bytes key="NSRGB">MSAwLjExNjE4Mzc2IDAuNzIwNjQ1NzkAA</bytes>
-														</object>
+														<reference key="NSBackgroundColor" ref="179330826"/>
 														<reference key="NSInsertionColor" ref="743761704"/>
 														<object class="NSDictionary" key="NSSelectedAttributes">
 															<bool key="EncodedWithXMLCoder">YES</bool>
@@ -469,10 +466,7 @@
 											<reference key="NSSuperview" ref="1042000017"/>
 											<reference key="NSNextKeyView" ref="997158927"/>
 											<reference key="NSDocView" ref="997158927"/>
-											<object class="NSColor" key="NSBGColor">
-												<int key="NSColorSpace">1</int>
-												<bytes key="NSRGB">MSAwLjMwODk3Mjc4IDAuODY4OTUyMjcAA</bytes>
-											</object>
+											<reference key="NSBGColor" ref="179330826"/>
 											<reference key="NSCursor" ref="45488758"/>
 											<int key="NScvFlags">4</int>
 										</object>
@@ -512,8 +506,8 @@
 									<reference key="NSSuperview" ref="498777286"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="35645547">
-										<int key="NSCellFlags">67239488</int>
-										<int key="NSCellFlags2">272632576</int>
+										<int key="NSCellFlags">69336641</int>
+										<int key="NSCellFlags2">1346374400</int>
 										<string key="NSContents">http://example.com/1234567890/1234567890/1234567890/1234567890/1234567890/</string>
 										<reference key="NSSupport" ref="1025890261"/>
 										<reference key="NSControlView" ref="955484920"/>
