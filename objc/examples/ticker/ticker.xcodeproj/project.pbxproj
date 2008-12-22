@@ -19,6 +19,7 @@
 		C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */; };
 		C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF62D30EE0BF5F00A76D46 /* AppController.m */; };
 		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
+		C9F5609E0EFF457C005D9245 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9F5609D0EFF457C005D9245 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +57,7 @@
 		C9CF62D20EE0BF5F00A76D46 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		C9CF62D30EE0BF5F00A76D46 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
+		C9F5609D0EFF457C005D9245 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */,
+				C9F5609E0EFF457C005D9245 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +151,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C9F5609D0EFF457C005D9245 /* QuartzCore.framework */,
 				C9B03B590E493EDF00B59216 /* avis.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,

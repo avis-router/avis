@@ -1,6 +1,7 @@
 * handle router shutdown/protocol error after open
 + attached URL's
   * DONE clear attached URL.
+  * fix drag second link
   * why doesn't cursor change until clicked?
   * truncation in middle
   * animate appearance
