@@ -93,6 +93,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   [super dealloc];
 }
 
+// TODO add close listener
 - (void) connect
 {
   eventLoopThread = 
@@ -263,8 +264,11 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   attributes_destroy (message);
 }
 
-- (void) sendTickerMessage: (NSString *) messageText toGroup: (NSString *) group
-                 inReplyTo: (NSString *) replyToId sendPublic: (BOOL) isPublic
+- (void) sendTickerMessage: (NSString *) messageText 
+                   toGroup: (NSString *) group
+                 inReplyTo: (NSString *) replyToId 
+               attachedURL: (NSURL *) url
+                sendPublic: (BOOL) isPublic
 {
   NSAssert (group != nil && messageText != nil, @"IB connection failure");
   
@@ -286,6 +290,13 @@ static void sendMessage (Elvin *elvin, Attributes *message)
 
   if (isPublic)
     attributes_set_string (message, "Distribution", "world");
+  
+  if (url)
+  {
+    attributes_set_string (message, "MIME_TYPE", "x-elvin/url");
+    attributes_set_string (message, "MIME_ARGS", 
+                           [[url absoluteString] UTF8String]);
+  }
   
   elvin_invoke (&elvin, (InvokeHandler)sendMessage, message);
 }
