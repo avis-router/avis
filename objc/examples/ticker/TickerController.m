@@ -349,14 +349,21 @@ static NSAttributedString *attributedString (NSString *string,
     [textContainerView setNeedsDisplay: YES];
 
     [attachedUrlLabel setAttributedStringValue: urlText];
+    
     [attachedUrlPanel setHidden: NO];
-    [attachedUrlLabel setHidden: NO];
+    for (NSControl *subview in [attachedUrlPanel subviews])
+      [subview setHidden: NO];
+      
   } else
   {
+    // hide URL panel
     NSRect frame = [[textContainerView superview] frame];
     frame.origin.x = frame.origin.y = 0;
     
-    [attachedUrlLabel setHidden: YES];
+    [attachedUrlPanel setHidden: YES];
+    for (NSControl *subview in [attachedUrlPanel subviews])
+      [subview setHidden: YES];
+
     [attachedUrlLabel setObjectValue: nil];
     
     [textContainerView setFrame: frame];
