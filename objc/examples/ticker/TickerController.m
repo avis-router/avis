@@ -1,22 +1,20 @@
 #import "TickerController.h"
 
-/*
- * TODO: use example at 
- * http://developer.apple.com/samplecode/TextLinks/listing2.html
- * to add custom cursor to links. 
- * OR use NSView::addTrackingArea
- */
-
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From)"
 
-#define color(r, g, b) \
-  [NSColor colorWithCalibratedRed: (r)/255.0 green: (g)/255.0 \
-   blue: (b)/255.0 alpha: 1]
-
-#define bottomY(rect) ((rect).origin.y + (rect).size.height)
-
 #pragma mark PRIVATE Utility functions
+
+static inline NSColor *color (float r, float g, float b)
+{
+  return [NSColor colorWithCalibratedRed: r/255.0 green: g/255.0 blue: b/255.0 
+                                          alpha: 1];
+}
+
+static inline float bottomY (NSRect rect) 
+{
+  return rect.origin.y + rect.size.height;
+}
 
 static NSURL *extractAttachedLink (NSDictionary *message)
 {
@@ -320,10 +318,15 @@ static NSAttributedString *attributedString (NSString *string,
   [publicCheckbox setState: NSOffState];
 }
 
+- (IBAction) clearAttachedURL: (id) sender
+{
+  [self setAttachedURL: nil];
+}
+
 - (void) setAttachedURL: (NSURL *) url
 {
-  id textContainerView = [[messageText superview] superview];
-    
+  NSView *textContainerView = [[messageText superview] superview];
+
   if (url)
   {
     NSMutableParagraphStyle *paraStyle = 
@@ -359,7 +362,6 @@ static NSAttributedString *attributedString (NSString *string,
     [attachedUrlPanel setHidden: NO];
     for (NSControl *subview in [attachedUrlPanel subviews])
       [subview setHidden: NO];
-      
   } else
   {
     // hide URL panel
@@ -375,11 +377,6 @@ static NSAttributedString *attributedString (NSString *string,
     [textContainerView setFrame: frame];
     [textContainerView setNeedsDisplay: YES];
   }
-}
-
-- (IBAction) clearAttachedURL: (id) sender
-{
-  [self setAttachedURL: nil];
 }
 
 #pragma mark PRIVATE Methods handling "Empty Text" sheet
