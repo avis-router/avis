@@ -221,6 +221,7 @@ static NSAttributedString *attributedString (NSString *string,
     withDelegate: self usingSelector: @selector (handleNotify:)];
     
   [attachedUrlLabel setObjectValue: nil];
+  // [self setAttachedURL: [NSURL URLWithString: @"http://developer.apple.com/documentation/Cocoa/Conceptual/DragandDrop/Tasks/acceptingdrags.html#//apple_ref/doc/uid/20000993"]];
 }
 
 #pragma mark PRIVATE Delegates for text view
@@ -329,7 +330,7 @@ static NSAttributedString *attributedString (NSString *string,
       [NSDictionary dictionaryWithObjectsAndKeys:
        [NSColor blueColor], NSForegroundColorAttributeName, 
        [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
-       [NSFont userFontOfSize: 11], NSFontAttributeName,
+       [NSFont fontWithName: @"Lucida Grande" size: 11], NSFontAttributeName,
         url, NSLinkAttributeName, nil];
 
     NSMutableAttributedString *urlText = 
@@ -339,7 +340,7 @@ static NSAttributedString *attributedString (NSString *string,
       attributedString ([url absoluteString], linkAttrs)];
       
     NSRect messageTextBounds = [textContainerView frame];
-    NSRect urlBounds = [attachedUrlLabel frame];
+    NSRect urlBounds = [attachedUrlPanel frame];
 
     messageTextBounds.size.height -= urlBounds.size.height;
     messageTextBounds.origin.y += urlBounds.size.height;
@@ -348,6 +349,7 @@ static NSAttributedString *attributedString (NSString *string,
     [textContainerView setNeedsDisplay: YES];
 
     [attachedUrlLabel setAttributedStringValue: urlText];
+    [attachedUrlPanel setHidden: NO];
     [attachedUrlLabel setHidden: NO];
   } else
   {
@@ -360,6 +362,11 @@ static NSAttributedString *attributedString (NSString *string,
     [textContainerView setFrame: frame];
     [textContainerView setNeedsDisplay: YES];
   }
+}
+
+- (IBAction) clearAttachedURL: (id) sender
+{
+  [self setAttachedURL: nil];
 }
 
 #pragma mark PRIVATE Methods handling "Empty Text" sheet
