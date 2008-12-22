@@ -326,11 +326,17 @@ static NSAttributedString *attributedString (NSString *string,
     
   if (url)
   {
+    NSMutableParagraphStyle *paraStyle = 
+      [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+      
+    [paraStyle setLineBreakMode: NSLineBreakByTruncatingMiddle];
+    
     NSDictionary *linkAttrs = 
       [NSDictionary dictionaryWithObjectsAndKeys:
        [NSColor blueColor], NSForegroundColorAttributeName, 
        [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
        [NSFont fontWithName: @"Lucida Grande" size: 11], NSFontAttributeName,
+       paraStyle, NSParagraphStyleAttributeName,
         url, NSLinkAttributeName, nil];
 
     NSMutableAttributedString *urlText = 

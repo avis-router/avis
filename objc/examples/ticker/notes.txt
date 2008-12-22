@@ -1,9 +1,10 @@
 * handle router shutdown/protocol error after open
 + attached URL's
-  * clear attached URL. clear all?
+  * DONE clear attached URL.
   * why doesn't cursor change until clicked?
   * truncation in middle
   * animate appearance
+  * handle .webloc
 + replying
   * underline links
   * links across group/from
