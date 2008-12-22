@@ -372,13 +372,11 @@ static NSAttributedString *attributedString (NSString *string,
        [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
        [NSFont fontWithName: @"Lucida Grande" size: 11], NSFontAttributeName,
        paraStyle, NSParagraphStyleAttributeName,
-        url, NSLinkAttributeName, nil];
+       url, NSLinkAttributeName, nil];
 
-    NSMutableAttributedString *urlText = 
-     [[NSMutableAttributedString new] autorelease]; 
-
-    [urlText appendAttributedString: 
-      attributedString ([url absoluteString], linkAttrs)];
+    NSAttributedString *urlText = 
+     [[[NSAttributedString alloc] 
+       initWithString: [url absoluteString] attributes: linkAttrs] autorelease];
 
     [attachedUrlLabel setAttributedStringValue: urlText];
 
