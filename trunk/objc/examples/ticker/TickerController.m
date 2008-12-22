@@ -1,3 +1,5 @@
+#import <QuartzCore/QuartzCore.h>
+
 #import "TickerController.h"
 
 #define TICKER_SUBSCRIPTION \
@@ -218,7 +220,8 @@ static NSAttributedString *attributedString (NSString *string,
     subscribe: TICKER_SUBSCRIPTION 
     withDelegate: self usingSelector: @selector (handleNotify:)];
     
-  [attachedUrlLabel setObjectValue: nil];
+//  [attachedUrlLabel setObjectValue: nil];
+  [self setAttachedURL: nil];
   // [self setAttachedURL: [NSURL URLWithString: @"http://developer.apple.com/documentation/Cocoa/Conceptual/DragandDrop/Tasks/acceptingdrags.html#//apple_ref/doc/uid/20000993"]];
 }
 
@@ -323,6 +326,30 @@ static NSAttributedString *attributedString (NSString *string,
   [self setAttachedURL: nil];
 }
 
+- (void) setAttachedURLPanelHidden: (BOOL) hidden
+{
+  // non Core Animation
+  //    [attachedUrlPanel setHidden: NO];    
+  //    for (NSControl *subview in [attachedUrlPanel subviews])
+  //      [subview setHidden: NO];
+    
+  [attachedUrlPanel setHidden: hidden];
+    
+  [CATransaction begin];
+  [CATransaction setValue: [NSNumber numberWithFloat: 1]
+                   forKey: kCATransactionAnimationDuration];
+               
+  [[attachedUrlPanel layer] setHidden: hidden];    
+  
+  for (NSControl *subview in [attachedUrlPanel subviews])
+    [[subview layer] setHidden: hidden];
+
+  [CATransaction commit];
+  
+  for (NSControl *subview in [attachedUrlPanel subviews])
+    [subview setHidden: hidden];
+}
+
 - (void) setAttachedURL: (NSURL *) url
 {
   NSView *textContainerView = [[messageText superview] superview];
@@ -358,19 +385,16 @@ static NSAttributedString *attributedString (NSString *string,
     [textContainerView setNeedsDisplay: YES];
 
     [attachedUrlLabel setAttributedStringValue: urlText];
-    
-    [attachedUrlPanel setHidden: NO];
-    for (NSControl *subview in [attachedUrlPanel subviews])
-      [subview setHidden: NO];
+
+    [self setAttachedURLPanelHidden: NO];
+
   } else
   {
     // hide URL panel
     NSRect frame = [[textContainerView superview] frame];
     frame.origin.x = frame.origin.y = 0;
     
-    [attachedUrlPanel setHidden: YES];
-    for (NSControl *subview in [attachedUrlPanel subviews])
-      [subview setHidden: YES];
+    [self setAttachedURLPanelHidden: YES];
 
     [attachedUrlLabel setObjectValue: nil];
     
