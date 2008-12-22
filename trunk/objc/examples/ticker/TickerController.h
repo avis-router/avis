@@ -22,5 +22,7 @@
 
 - (void) setAttachedURL: (NSURL *) url;
 
+- (NSURL *) attachedURL;
+
 @end
 

@@ -302,12 +302,10 @@ static NSAttributedString *attributedString (NSString *string,
     return;
   }
   
-  NSURL *attachedURL = [NSURL URLWithString: [attachedUrlLabel stringValue]];
-  
   [appController.elvin 
     sendTickerMessage: message toGroup: [messageGroup stringValue] 
     inReplyTo: replyToMessageId 
-    attachedURL: attachedURL
+    attachedURL: [self attachedURL]
     sendPublic: [publicCheckbox state] == NSOnState];
   
   // clear URL
@@ -387,6 +385,14 @@ static NSAttributedString *attributedString (NSString *string,
 
     [attachedUrlLabel setObjectValue: nil];
   }
+}
+
+- (NSURL *) attachedURL
+{
+  if ([attachedUrlPanel isHidden])
+    return nil;
+  else 
+    return [NSURL URLWithString: [attachedUrlLabel stringValue]];
 }
 
 #pragma mark PRIVATE Methods handling "Empty Text" sheet
