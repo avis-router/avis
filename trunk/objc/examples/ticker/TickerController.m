@@ -327,6 +327,9 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) setAttachedURLPanelHidden: (BOOL) hidden
 {
+  if (hidden == [attachedUrlPanel isHidden])
+    return;
+
   NSView *textContainerView = [[messageText superview] superview];
     
   [attachedUrlPanel setHidden: hidden];
@@ -380,12 +383,11 @@ static NSAttributedString *attributedString (NSString *string,
     [attachedUrlLabel setAttributedStringValue: urlText];
 
     [self setAttachedURLPanelHidden: NO];
-
   } else
   {    
     [self setAttachedURLPanelHidden: YES];
 
-    [attachedUrlLabel setObjectValue: nil];    
+    [attachedUrlLabel setObjectValue: nil];
   }
 }
 
