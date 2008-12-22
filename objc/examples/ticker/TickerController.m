@@ -328,32 +328,52 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) setAttachedURLPanelHidden: (BOOL) hidden
 {
+  NSView *textContainerView = [[messageText superview] superview];
+    
   // non Core Animation
   //    [attachedUrlPanel setHidden: NO];    
   //    for (NSControl *subview in [attachedUrlPanel subviews])
   //      [subview setHidden: NO];
     
   [attachedUrlPanel setHidden: hidden];
-    
-  [CATransaction begin];
-  [CATransaction setValue: [NSNumber numberWithFloat: 1]
-                   forKey: kCATransactionAnimationDuration];
-               
+                   
   [[attachedUrlPanel layer] setHidden: hidden];    
+  
+  [CATransaction begin];
   
   for (NSControl *subview in [attachedUrlPanel subviews])
     [[subview layer] setHidden: hidden];
 
-  [CATransaction commit];
+  if (hidden)
+  {
+    NSRect frame = [[textContainerView superview] frame];
+    frame.origin.x = frame.origin.y = 0;
+    
+    [[textContainerView layer] setFrame: CGRectMake (0, 0, frame.size.width, frame.size.height)];
+    
+    [textContainerView setFrame: frame];
+  } else
+  {
+    NSRect messageTextBounds = [textContainerView frame];
+    NSRect urlBounds = [attachedUrlPanel frame];
+
+    messageTextBounds.origin.y += urlBounds.size.height;
+    
+    messageTextBounds.size.height -= urlBounds.size.height;
+    
+    [[textContainerView layer] setFrame: CGRectMake (messageTextBounds.origin.x, messageTextBounds.origin.y, messageTextBounds.size.width, messageTextBounds.size.height)];
+    
+    [textContainerView setFrame: messageTextBounds];
+  }
   
+  [CATransaction commit];
+
   for (NSControl *subview in [attachedUrlPanel subviews])
     [subview setHidden: hidden];
 }
 
 - (void) setAttachedURL: (NSURL *) url
 {
-  NSView *textContainerView = [[messageText superview] superview];
-
   if (url)
   {
     NSMutableParagraphStyle *paraStyle = 
@@ -374,32 +394,16 @@ static NSAttributedString *attributedString (NSString *string,
 
     [urlText appendAttributedString: 
       attributedString ([url absoluteString], linkAttrs)];
-      
-    NSRect messageTextBounds = [textContainerView frame];
-    NSRect urlBounds = [attachedUrlPanel frame];
-
-    messageTextBounds.size.height -= urlBounds.size.height;
-    messageTextBounds.origin.y += urlBounds.size.height;
-    
-    [textContainerView setFrame: messageTextBounds];
-    [textContainerView setNeedsDisplay: YES];
 
     [attachedUrlLabel setAttributedStringValue: urlText];
 
     [self setAttachedURLPanelHidden: NO];
 
   } else
-  {
-    // hide URL panel
-    NSRect frame = [[textContainerView superview] frame];
-    frame.origin.x = frame.origin.y = 0;
-    
+  {    
     [self setAttachedURLPanelHidden: YES];
 
-    [attachedUrlLabel setObjectValue: nil];
-    
-    [textContainerView setFrame: frame];
-    [textContainerView setNeedsDisplay: YES];
+    [attachedUrlLabel setObjectValue: nil];    
   }
 }
 
