@@ -220,7 +220,6 @@ static NSAttributedString *attributedString (NSString *string,
     subscribe: TICKER_SUBSCRIPTION 
     withDelegate: self usingSelector: @selector (handleNotify:)];
     
-//  [attachedUrlLabel setObjectValue: nil];
   [self setAttachedURL: nil];
   // [self setAttachedURL: [NSURL URLWithString: @"http://developer.apple.com/documentation/Cocoa/Conceptual/DragandDrop/Tasks/acceptingdrags.html#//apple_ref/doc/uid/20000993"]];
 }
@@ -330,46 +329,29 @@ static NSAttributedString *attributedString (NSString *string,
 {
   NSView *textContainerView = [[messageText superview] superview];
     
-  // non Core Animation
-  //    [attachedUrlPanel setHidden: NO];    
-  //    for (NSControl *subview in [attachedUrlPanel subviews])
-  //      [subview setHidden: NO];
-    
   [attachedUrlPanel setHidden: hidden];
                    
-  [[attachedUrlPanel layer] setHidden: hidden];    
-  
-  [CATransaction begin];
-  
   for (NSControl *subview in [attachedUrlPanel subviews])
-    [[subview layer] setHidden: hidden];
+    [[subview animator] setHidden: hidden];
 
+  NSRect newFrame;
+  
+  // adjust message text area size
   if (hidden)
   {
-    NSRect frame = [[textContainerView superview] frame];
-    frame.origin.x = frame.origin.y = 0;
-    
-    [[textContainerView layer] setFrame: CGRectMake (0, 0, frame.size.width, frame.size.height)];
-    
-    [textContainerView setFrame: frame];
+    newFrame = [[textContainerView superview] frame];
+    newFrame.origin.x = newFrame.origin.y = 0;
   } else
   {
-    NSRect messageTextBounds = [textContainerView frame];
     NSRect urlBounds = [attachedUrlPanel frame];
+    
+    newFrame = [textContainerView frame];
 
-    messageTextBounds.origin.y += urlBounds.size.height;
-    
-    messageTextBounds.size.height -= urlBounds.size.height;
-    
-    [[textContainerView layer] setFrame: CGRectMake (messageTextBounds.origin.x, messageTextBounds.origin.y, messageTextBounds.size.width, messageTextBounds.size.height)];
-    
-    [textContainerView setFrame: messageTextBounds];
+    newFrame.origin.y += urlBounds.size.height;
+    newFrame.size.height -= urlBounds.size.height;
   }
   
-  [CATransaction commit];
-
-  for (NSControl *subview in [attachedUrlPanel subviews])
-    [subview setHidden: hidden];
+  [[textContainerView animator] setFrame: newFrame];
 }
 
 - (void) setAttachedURL: (NSURL *) url

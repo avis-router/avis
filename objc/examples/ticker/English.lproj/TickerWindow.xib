@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="79"/>
+			<integer value="80"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -194,7 +194,7 @@
 									<int key="NSfFlags">1044</int>
 								</object>
 								<reference key="NSControlView" ref="674616255"/>
-								<object class="NSColor" key="NSBackgroundColor" id="1052766587">
+								<object class="NSColor" key="NSBackgroundColor" id="753540347">
 									<int key="NSColorSpace">6</int>
 									<string key="NSCatalogName">System</string>
 									<string key="NSColorName">controlColor</string>
@@ -404,7 +404,6 @@
 													</object>
 													<string key="NSFrameSize">{364, 14}</string>
 													<reference key="NSSuperview" ref="207462133"/>
-													<bool key="NSViewIsLayerTreeHost">YES</bool>
 													<object class="NSTextContainer" key="NSTextContainer" id="425912443">
 														<object class="NSLayoutManager" key="NSLayoutManager">
 															<object class="NSTextStorage" key="NSTextStorage">
@@ -467,7 +466,10 @@
 											<reference key="NSSuperview" ref="1042000017"/>
 											<reference key="NSNextKeyView" ref="997158927"/>
 											<reference key="NSDocView" ref="997158927"/>
-											<reference key="NSBGColor" ref="179330826"/>
+											<object class="NSColor" key="NSBGColor">
+												<int key="NSColorSpace">1</int>
+												<bytes key="NSRGB">MSAxIDEAA</bytes>
+											</object>
 											<reference key="NSCursor" ref="45488758"/>
 											<int key="NScvFlags">4</int>
 										</object>
@@ -510,7 +512,6 @@
 											<int key="NSvFlags">-2147483350</int>
 											<string key="NSFrameSize">{352, 17}</string>
 											<reference key="NSSuperview" ref="936041297"/>
-											<bool key="NSViewIsLayerTreeHost">YES</bool>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSTextFieldCell" key="NSCell" id="35645547">
 												<int key="NSCellFlags">69336641</int>
@@ -518,7 +519,8 @@
 												<string key="NSContents">http://example.com/1234567890/1234567890/1234567890/1234567890/1234567890/</string>
 												<reference key="NSSupport" ref="1025890261"/>
 												<reference key="NSControlView" ref="955484920"/>
-												<reference key="NSBackgroundColor" ref="1052766587"/>
+												<bool key="NSDrawsBackground">YES</bool>
+												<reference key="NSBackgroundColor" ref="753540347"/>
 												<reference key="NSTextColor" ref="126066771"/>
 											</object>
 										</object>
@@ -527,7 +529,6 @@
 											<int key="NSvFlags">-2147483351</int>
 											<string key="NSFrame">{{352, 3}, {13, 13}}</string>
 											<reference key="NSSuperview" ref="936041297"/>
-											<bool key="NSViewIsLayerTreeHost">YES</bool>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSButtonCell" key="NSCell" id="788226220">
 												<int key="NSCellFlags">67239424</int>
@@ -554,13 +555,12 @@
 									</object>
 									<string key="NSFrameSize">{366, 17}</string>
 									<reference key="NSSuperview" ref="498777286"/>
-									<bool key="NSViewIsLayerTreeHost">YES</bool>
 									<object class="NSDictionary" key="NSViewAnimations">
 										<string key="NS.key.0">subviews</string>
 										<object class="CATransition" key="NS.object.0">
 											<real value="1.000000e+00" key="endProgress"/>
 											<object class="CIDissolveTransition" key="filter">
-												<real value="0.000000e+00" key="CI_inputTime"/>
+												<reference key="CI_inputTime" ref="8"/>
 												<bool key="CIEnabled">YES</bool>
 											</object>
 											<real value="0.000000e+00" key="startProgress"/>
@@ -603,7 +603,6 @@
 							</object>
 							<string key="NSFrame">{{234, 20}, {366, 48}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
-							<bool key="NSViewIsLayerTreeHost">YES</bool>
 							<string key="NSClassName">NSView</string>
 						</object>
 					</object>
