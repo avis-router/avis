@@ -218,8 +218,8 @@ static void notificationListener (Subscription *sub,
   copy_optional_string_attribute (attributes, message, @"User-Agent");
   
   [context->delegate performSelectorOnMainThread: context->selector
-                                     withObject: message 
-                                  waitUntilDone: YES];
+                                      withObject: message 
+                                   waitUntilDone: YES];
 }
 
 static void subscribe (Elvin *elvin, SubscriptionContext *context)
