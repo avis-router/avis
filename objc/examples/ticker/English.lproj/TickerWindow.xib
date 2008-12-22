@@ -504,7 +504,7 @@
 								</object>
 								<object class="NSCustomView" id="936041297">
 									<reference key="NSNextResponder" ref="498777286"/>
-									<int key="NSvFlags">-2147483358</int>
+									<int key="NSvFlags">290</int>
 									<object class="NSMutableArray" key="NSSubviews">
 										<bool key="EncodedWithXMLCoder">YES</bool>
 										<object class="NSTextField" id="955484920">
@@ -555,49 +555,6 @@
 									</object>
 									<string key="NSFrameSize">{366, 17}</string>
 									<reference key="NSSuperview" ref="498777286"/>
-									<object class="NSDictionary" key="NSViewAnimations">
-										<string key="NS.key.0">subviews</string>
-										<object class="CATransition" key="NS.object.0">
-											<real value="1.000000e+00" key="endProgress"/>
-											<object class="CIDissolveTransition" key="filter">
-												<reference key="CI_inputTime" ref="8"/>
-												<bool key="CIEnabled">YES</bool>
-											</object>
-											<real value="0.000000e+00" key="startProgress"/>
-											<string key="subtype">fromTop</string>
-											<reference key="transitionFlags" ref="8"/>
-											<string key="type">fade</string>
-											<reference key="autoreverses" ref="8"/>
-											<real value="0.000000e+00" key="beginTime"/>
-											<real value="0.000000e+00" key="duration"/>
-											<string key="fillMode">removed</string>
-											<real value="0.000000e+00" key="frameInterval"/>
-											<reference key="removedOnCompletion" ref="9"/>
-											<real value="0.000000e+00" key="repeatCount"/>
-											<real value="0.000000e+00" key="repeatDuration"/>
-											<real value="1.000000e+00" key="speed"/>
-											<real value="0.000000e+00" key="timeOffset"/>
-											<object class="NSArray" key="__CACodingContents">
-												<bool key="EncodedWithXMLCoder">YES</bool>
-												<string>autoreverses</string>
-												<string>beginTime</string>
-												<string>duration</string>
-												<string>endProgress</string>
-												<string>fillMode</string>
-												<string>filter</string>
-												<string>frameInterval</string>
-												<string>removedOnCompletion</string>
-												<string>repeatCount</string>
-												<string>repeatDuration</string>
-												<string>speed</string>
-												<string>startProgress</string>
-												<string>subtype</string>
-												<string>timeOffset</string>
-												<string>transitionFlags</string>
-												<string>type</string>
-											</object>
-										</object>
-									</object>
 									<string key="NSClassName">NSView</string>
 								</object>
 							</object>
