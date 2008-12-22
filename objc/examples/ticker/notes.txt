@@ -1,0 +1,16 @@
+* handle router shutdown/protocol error after open
++ attached URL's
+  * clear attached URL. clear all?
+  * why doesn't cursor change until clicked?
+  * truncation in middle
+  * animate appearance
++ replying
+  * underline links
+  * links across group/from
+  * handle personal reply
+  * reply to control in message editor
+  * reply-to icon in text
++ presence
++ multiple windows
++ filtering
+*   reduce subscription to optimize filtering
