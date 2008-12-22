@@ -5,8 +5,11 @@
   * truncation in middle
   * animate appearance
   * handle .webloc
+  * handle v3.0 MIME encoding
 + replying
-  * underline links
+  * underline links. use example at 
+    http://developer.apple.com/samplecode/TextLinks/listing2.html OR use 
+    NSView::addTrackingArea
   * links across group/from
   * handle personal reply
   * reply to control in message editor
