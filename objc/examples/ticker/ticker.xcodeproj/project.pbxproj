@@ -20,6 +20,8 @@
 		C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF62D30EE0BF5F00A76D46 /* AppController.m */; };
 		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
 		C9F5609E0EFF457C005D9245 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9F5609D0EFF457C005D9245 /* QuartzCore.framework */; };
+		C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F561BA0F00B1A2005D9245 /* PreferencesController.m */; };
+		C9F561BF0F00B247005D9245 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9F561BE0F00B247005D9245 /* Preferences.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -58,6 +60,9 @@
 		C9CF62D30EE0BF5F00A76D46 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		C9F5609D0EFF457C005D9245 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		C9F561B90F00B1A2005D9245 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesController.h; sourceTree = "<group>"; };
+		C9F561BA0F00B1A2005D9245 /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesController.m; sourceTree = "<group>"; };
+		C9F561BE0F00B247005D9245 /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +82,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
+				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
 				C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */,
 				C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */,
 				C9CF62D20EE0BF5F00A76D46 /* AppController.h */,
@@ -144,6 +151,7 @@
 				C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				C9F561BE0F00B247005D9245 /* Preferences.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -207,6 +215,7 @@
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */,
 				C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */,
+				C9F561BF0F00B247005D9245 /* Preferences.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +231,7 @@
 				C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */,
 				C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */,
 				C98291870EF662090031BF6E /* TickerViewDragTarget.m in Sources */,
+				C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
