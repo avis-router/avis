@@ -2,8 +2,10 @@
 
 #define UUID_STRING_LENGTH 100
 
-#define attr_string(attrs, name) \
-  [NSString stringWithUTF8String: attributes_get_string (attrs, name)]
+static inline NSString *attr_string (Attributes *attrs, const char *name)
+{
+  return [NSString stringWithUTF8String: attributes_get_string (attrs, name)];
+}
 
 static void createUUID (char *uuid)
 {
@@ -17,9 +19,9 @@ static void createUUID (char *uuid)
   CFRelease (cfUUID);
 }
 
-static void copy_optional_string_attribute (Attributes *attributes, 
-                                            NSMutableDictionary *message,
-                                            NSString *name)
+static void copy_string_attr (Attributes *attributes, 
+                              NSMutableDictionary *message,
+                              NSString *name)
 {
   const char *attrValue = attributes_get_string (attributes, [name UTF8String]);
   
@@ -41,7 +43,7 @@ static void copy_optional_string_attribute (Attributes *attributes,
 
 @implementation SubscriptionContext
 
-+ (id) contextWithSubscription: (NSString *) newSubscriptionExpr 
++ (id) context: (NSString *) newSubscriptionExpr 
       delegate: (id) newDelegate selector: (SEL) newSelector
 {
   SubscriptionContext *context = [[SubscriptionContext new] retain];
@@ -210,12 +212,12 @@ static void notificationListener (Subscription *sub,
   NSMutableDictionary *message = 
     [NSMutableDictionary dictionaryWithObjects: objects forKeys: keys];
 
-  copy_optional_string_attribute (attributes, message, @"Message-Id");
-  copy_optional_string_attribute (attributes, message, @"Distribution");
-  copy_optional_string_attribute (attributes, message, @"MIME_TYPE");
-  copy_optional_string_attribute (attributes, message, @"MIME_ARGS");
-  copy_optional_string_attribute (attributes, message, @"Attachment");
-  copy_optional_string_attribute (attributes, message, @"User-Agent");
+  copy_string_attr (attributes, message, @"Message-Id");
+  copy_string_attr (attributes, message, @"Distribution");
+  copy_string_attr (attributes, message, @"MIME_TYPE");
+  copy_string_attr (attributes, message, @"MIME_ARGS");
+  copy_string_attr (attributes, message, @"Attachment");
+  copy_string_attr (attributes, message, @"User-Agent");
   
   [context->delegate performSelectorOnMainThread: context->selector
                                       withObject: message 
@@ -243,7 +245,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context)
         withDelegate: (id) delegate usingSelector: (SEL) selector
 {
   SubscriptionContext *context = 
-    [SubscriptionContext contextWithSubscription: subscriptionExpr 
+    [SubscriptionContext context: subscriptionExpr 
                          delegate: delegate selector: selector];
 
   [subscriptions addObject: context];
@@ -265,6 +267,7 @@ static void sendMessage (Elvin *elvin, Attributes *message)
 }
 
 - (void) sendTickerMessage: (NSString *) messageText 
+                fromSender: (NSString *) from
                    toGroup: (NSString *) group
                  inReplyTo: (NSString *) replyToId 
                attachedURL: (NSURL *) url
@@ -280,7 +283,7 @@ static void sendMessage (Elvin *elvin, Attributes *message)
   
   attributes_set_string (message, "Group", [group UTF8String]);
   attributes_set_string (message, "Message", [messageText UTF8String]);
-  attributes_set_string (message, "From", [NSFullUserName () UTF8String]);
+  attributes_set_string (message, "From", [from UTF8String]);
   attributes_set_string (message, "Message-Id", messageID);
   attributes_set_string (message, "User-Agent", "Blue Sticker");
   attributes_set_int32  (message, "org.tickertape.message", 3001);

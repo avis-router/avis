@@ -1,7 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
-#import "ElvinConnection.h"
-
+@class ElvinConnection;
 @class PreferencesController;
 
 @interface AppController : NSObject

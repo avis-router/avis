@@ -1,11 +1,9 @@
 #import "AppController.h"
+#import "ElvinConnection.h"
 #import "TickerController.h"
 #import "PreferencesController.h"
 
-static inline NSString *prefsString (NSString *name)
-{
-  return [[NSUserDefaults standardUserDefaults] stringForKey: name];
-}
+#import "utils.h"
 
 NSString *PreferencesContext = @"PreferencesContext";
 
@@ -34,11 +32,12 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 + (void) initialize
 {
-  NSMutableDictionary *defaultValues = [NSMutableDictionary dictionary];
+  NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
 
-  [defaultValues setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
+  [defaults setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
+  [defaults setObject: NSFullUserName () forKey: @"OnlineUserName"];
 
-  [[NSUserDefaults standardUserDefaults] registerDefaults: defaultValues];
+  [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 

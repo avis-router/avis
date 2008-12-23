@@ -1,6 +1,7 @@
-#import <QuartzCore/QuartzCore.h>
-
+#import "ElvinConnection.h"
 #import "TickerController.h"
+
+#import "utils.h"
 
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From)"
@@ -303,7 +304,9 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   [appController.elvin 
-    sendTickerMessage: message toGroup: [messageGroup stringValue] 
+    sendTickerMessage: message 
+    fromSender: prefsString (@"OnlineUserName")
+    toGroup: [messageGroup stringValue] 
     inReplyTo: replyToMessageId 
     attachedURL: [self attachedURL]
     sendPublic: [publicCheckbox state] == NSOnState];
