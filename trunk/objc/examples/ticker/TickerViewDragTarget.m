@@ -17,7 +17,7 @@
     return NSDragOperationCopy;
 }
 
-- (void) draggingExited: (id <NSDraggingInfo>)sender
+- (void) draggingExited: (id <NSDraggingInfo>) sender
 {
 }
 

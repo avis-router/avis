@@ -18,6 +18,7 @@
 - (void) connect;
 
 - (void) sendTickerMessage: (NSString *) messageText 
+                fromSender: (NSString *) from
                    toGroup: (NSString *) group
                  inReplyTo: (NSString *) replyToId 
                attachedURL: (NSURL *) url
