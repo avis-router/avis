@@ -331,7 +331,7 @@ static NSAttributedString *attributedString (NSString *string,
     
   [attachedUrlPanel setHidden: hidden];
                    
-  for (NSControl *subview in [attachedUrlPanel subviews])
+  for (NSView *subview in [attachedUrlPanel subviews])
     [[subview animator] setHidden: hidden];
 
   NSRect newFrame;
