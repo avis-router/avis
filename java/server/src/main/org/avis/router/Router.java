@@ -74,6 +74,7 @@ import static org.avis.io.messages.Nack.NO_SUCH_SUB;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
 import static org.avis.logging.Log.TRACE;
+import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
@@ -906,8 +907,8 @@ public class Router implements IoHandler, Closeable
   public void sessionClosed (IoSession session)
     throws Exception
   {
-    if (shouldLog (TRACE))
-      trace ("Server session " + idFor (session) + " closed", this);
+    if (shouldLog (DIAGNOSTIC))
+      diagnostic ("Server session " + idFor (session) + " closed", this);
     
     sessions.remove (session);
 
