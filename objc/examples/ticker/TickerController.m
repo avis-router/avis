@@ -307,8 +307,7 @@ static NSAttributedString *attributedString (NSString *string,
     inReplyTo: replyToMessageId 
     attachedURL: [self attachedURL]
     sendPublic: [publicCheckbox state] == NSOnState];
-  
-  // clear URL
+
   [self setAttachedURL: nil];
   
   [replyToMessageId release];

@@ -1,12 +1,19 @@
-* handle router shutdown/protocol error after open
++ cleanup
+  * generalise tickerviewdragtarget
++ preferences
+  * debug vs release
+  * set URL 
++ reliable connection
+  * handle router shutdown/protocol error after open
+  * check how send failure handled
 + attached URL's
-  * DONE clear attached URL.
-  * fix drag second link
   * why doesn't cursor change until clicked?
-  * truncation in middle
-  * animate appearance
   * handle .webloc
   * handle v3.0 MIME encoding
+  * DONE clear attached URL.
+  * DONE fix drag second link
+  * DONE truncation in middle
+  * DONE animate appearance
 + replying
   * underline links. use example at 
     http://developer.apple.com/samplecode/TextLinks/listing2.html OR use 
@@ -18,4 +25,4 @@
 + presence
 + multiple windows
 + filtering
-*   reduce subscription to optimize filtering
+  * reduce subscription to optimize filtering
