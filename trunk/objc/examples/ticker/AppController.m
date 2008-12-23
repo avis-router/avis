@@ -13,6 +13,7 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 @interface AppController ()
   - (void) openTickerWindow;
+  - (void) disconnectElvin;
 @end
 
 @implementation AppController
@@ -68,16 +69,26 @@ NSString *PreferencesContext = @"PreferencesContext";
                    options: 0 context: PreferencesContext];       
 }
 
+- (void) applicationWillTerminate: (NSNotification *) notification 
+{
+  [self disconnectElvin];
+}
+
 - (void) dealloc
 {
   [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
   [[NSUserDefaultsController sharedUserDefaultsController] removeObserver: self];
   
+  [self disconnectElvin];
+  
+  [super dealloc];
+}
+
+- (void) disconnectElvin
+{
   [elvin disconnect];
   [elvin release];
   elvin = nil;
-
-  [super dealloc];
 }
 
 /*
