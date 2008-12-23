@@ -34,8 +34,12 @@ NSString *PreferencesContext = @"PreferencesContext";
 {
   NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
 
+  NSString *defaultUserName = 
+    [NSString stringWithFormat: @"%@@%@", 
+     NSFullUserName (), [[NSProcessInfo processInfo] hostName]];
+     
   [defaults setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
-  [defaults setObject: NSFullUserName () forKey: @"OnlineUserName"];
+  [defaults setObject: defaultUserName forKey: @"OnlineUserName"];
 
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
