@@ -1,9 +1,37 @@
 #import "AppController.h"
 #import "TickerController.h"
+#import "PreferencesController.h"
+
+#pragma mark Declare Private Methods
+
+@interface AppController ()
+  - (void) openTickerWindow;
+@end
 
 @implementation AppController
 
+#pragma mark Public methods
+
 @synthesize elvin;
+
+- (IBAction) showPreferencesWindow: (id) sender
+{
+  if (!preferencesController)
+    preferencesController = [PreferencesController new];
+    
+  [preferencesController showWindow: self];
+}
+
+#pragma mark Private methods
+
++ (void) initialize
+{
+  NSMutableDictionary *defaultValues = [NSMutableDictionary dictionary];
+
+  [defaultValues setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
+
+  [[NSUserDefaults standardUserDefaults] registerDefaults: defaultValues];
+}
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
