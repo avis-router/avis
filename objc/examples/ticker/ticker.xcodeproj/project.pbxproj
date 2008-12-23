@@ -83,7 +83,6 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				C952189C0F019E6600BA83EC /* utils.h */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
 				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
 				C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */,
@@ -141,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */,
+				C952189C0F019E6600BA83EC /* utils.h */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = "Other Sources";

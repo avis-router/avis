@@ -1,3 +1,4 @@
+#import <Foundation/Foundation.h>
 
 static inline NSString *prefsString (NSString *name)
 {
