@@ -2,6 +2,13 @@
 #import "TickerController.h"
 #import "PreferencesController.h"
 
+static inline NSString *prefsString (NSString *name)
+{
+  return [[NSUserDefaults standardUserDefaults] stringForKey: name];
+}
+
+NSString *PreferencesContext = @"PreferencesContext";
+
 #pragma mark Declare Private Methods
 
 @interface AppController ()
@@ -36,20 +43,57 @@
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
   elvin = 
-    [[[ElvinConnection alloc] initWithUrl: @"elvin://elvin" 
-                              lifecycleDelegate: self] retain];
+    [[[ElvinConnection alloc] 
+      initWithUrl: prefsString (@"ElvinURL") lifecycleDelegate: self] 
+      retain];
 
-  NSNotificationCenter *notificationCenter = 
+  // listen for sleep/wake
+  NSNotificationCenter *workspaceNotifications = 
     [[NSWorkspace sharedWorkspace] notificationCenter];
 
-  [notificationCenter addObserver: self selector: @selector (handleWake:)
+  [workspaceNotifications addObserver: self selector: @selector (handleWake:)
     name: NSWorkspaceDidWakeNotification object: nil]; 
    
-  [notificationCenter addObserver: self selector: @selector (handleSleep:)
+  [workspaceNotifications addObserver: self selector: @selector (handleSleep:)
     name: NSWorkspaceWillPowerOffNotification object: nil]; 
    
-  [notificationCenter addObserver: self selector: @selector (handleSleep:)
+  [workspaceNotifications addObserver: self selector: @selector (handleSleep:)
     name: NSWorkspaceWillSleepNotification object: nil]; 
+  
+  // listen for preference changes
+  NSUserDefaultsController *userPreferences = 
+    [NSUserDefaultsController sharedUserDefaultsController];
+		
+  [userPreferences addObserver: self forKeyPath: @"values.ElvinURL" 
+                   options: 0 context: PreferencesContext];       
+}
+
+- (void) dealloc
+{
+  [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
+  [[NSUserDefaultsController sharedUserDefaultsController] removeObserver: self];
+  
+  [elvin disconnect];
+  [elvin release];
+  elvin = nil;
+
+  [super dealloc];
+}
+
+/*
+ * Handle preference changes.
+ */
+- (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
+         change: (NSDictionary *) change context: (void *) context
+{
+  if (context == PreferencesContext)
+  {
+		NSLog (@"Elvin URL changed: %@", prefsString (@"ElvinURL"));
+	} else 
+  {
+		[super observeValueForKeyPath: keyPath ofObject: object change: change 
+           context: context];
+	}
 }
 
 - (void) handleSleep: (void *) unused
@@ -64,13 +108,6 @@
   NSLog (@"Reconnect on wake");
   
   [elvin connect];
-}
-
-- (void) applicationWillTerminate: (NSNotification *) notification
-{
-  [elvin disconnect];
-  [elvin release];
-  elvin = nil;
 }
 
 /*

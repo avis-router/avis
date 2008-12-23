@@ -13,8 +13,8 @@
   PreferencesController * preferencesController;
 }
 
-- (IBAction) showPreferencesWindow: (id) sender;
-
 @property (readonly, assign) ElvinConnection *elvin;
+
+- (IBAction) showPreferencesWindow: (id) sender;
 
 @end
