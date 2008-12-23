@@ -10,21 +10,9 @@
     return nil;
 }
 
-- (void) windowDidLoad
-{
-    NSLog(@"Nib file is loaded");
-}
-
-//- (IBAction) changeBackgroundColor:(id)sender
+//- (void) windowDidLoad
 //{
-//    NSColor *color = [colorWell color];
-//    NSLog(@"Color changed: %@", color);
-//}
-//
-//- (IBAction)changeNewEmptyDoc:(id)sender
-//{
-//    int state = [checkbox state];
-//    NSLog(@"Checkbox changed %d", state);
+//  // zip
 //}
 
 @end
