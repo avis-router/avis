@@ -29,7 +29,7 @@
 			<object class="NSWindowTemplate" id="723233295">
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{458, 435}, {408, 90}}</string>
+				<string key="NSWindowRect">{{458, 429}, {408, 96}}</string>
 				<int key="NSWTFlags">-1543503872</int>
 				<string key="NSWindowTitle">Preferences</string>
 				<string key="NSWindowClass">NSPanel</string>
@@ -43,7 +43,7 @@
 						<object class="NSTextField" id="685721004">
 							<reference key="NSNextResponder" ref="620545317"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 22}, {84, 17}}</string>
+							<string key="NSFrame">{{17, 28}, {84, 17}}</string>
 							<reference key="NSSuperview" ref="620545317"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="616256804">
@@ -79,7 +79,7 @@
 						<object class="NSComboBox" id="553691117">
 							<reference key="NSNextResponder" ref="620545317"/>
 							<int key="NSvFlags">266</int>
-							<string key="NSFrame">{{106, 16}, {285, 26}}</string>
+							<string key="NSFrame">{{106, 22}, {285, 26}}</string>
 							<reference key="NSSuperview" ref="620545317"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSComboBoxCell" key="NSCell" id="836561191">
@@ -186,7 +186,7 @@
 						<object class="NSTextField" id="786444673">
 							<reference key="NSNextResponder" ref="620545317"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{106, 48}, {174, 22}}</string>
+							<string key="NSFrame">{{106, 54}, {174, 22}}</string>
 							<reference key="NSSuperview" ref="620545317"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="229525908">
@@ -209,7 +209,7 @@
 						<object class="NSTextField" id="361376993">
 							<reference key="NSNextResponder" ref="620545317"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{24, 50}, {77, 17}}</string>
+							<string key="NSFrame">{{24, 56}, {77, 17}}</string>
 							<reference key="NSSuperview" ref="620545317"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="1053509876">
@@ -223,7 +223,7 @@
 							</object>
 						</object>
 					</object>
-					<string key="NSFrameSize">{408, 90}</string>
+					<string key="NSFrameSize">{408, 96}</string>
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
@@ -231,10 +231,6 @@
 				<string key="NSFrameAutosaveName">Preferences</string>
 			</object>
 			<object class="NSUserDefaultsController" id="139261505">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>OnlineUserName</string>
-				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</object>
@@ -430,9 +426,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilderKit</string>
 					<string>com.apple.InterfaceBuilderKit</string>
-					<string>{{524, 364}, {408, 90}}</string>
+					<string>{{524, 358}, {408, 96}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{524, 364}, {408, 90}}</string>
+					<string>{{524, 358}, {408, 96}}</string>
 					<reference ref="8"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

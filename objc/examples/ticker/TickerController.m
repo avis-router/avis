@@ -225,61 +225,6 @@ static NSAttributedString *attributedString (NSString *string,
   // [self setAttachedURL: [NSURL URLWithString: @"http://developer.apple.com/documentation/Cocoa/Conceptual/DragandDrop/Tasks/acceptingdrags.html#//apple_ref/doc/uid/20000993"]];
 }
 
-#pragma mark PRIVATE Delegates for text view
-
-/*
- * Delegate override to enable message text field to support TAB out but still
- * allow Enter/Return to insert new lines.
- */
-- (BOOL) textView: (NSTextView *) textView doCommandBySelector: (SEL) selector
-{
-  if (selector == @selector (insertTab:))
-  {
-    if (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0)
-    {
-      [textView insertTabIgnoringFieldEditor: self];
-      
-      return YES;
-    } else
-    {
-      return NO;
-    }
-  } else if (selector == @selector (insertNewline:))
-  {
-    [textView insertNewlineIgnoringFieldEditor: self];
-    
-    return YES;
-  }
-  
-  return NO;
-}
-
-/*
- * Delegate handler for links for text views.
- */
-- (BOOL) textView: (NSTextView *) textView
-    clickedOnLink: (id) link atIndex: (unsigned) charIndex
-{
-  if ([link isKindOfClass: [MessageLink class]])
-  {
-    // handle clicks on links to messages to initiate a reply
-    MessageLink *messageLink = link;
-    
-    [messageGroup setStringValue: messageLink->group];
-    [publicCheckbox setState: (messageLink->public ? NSOnState : NSOffState)];
-    
-    [replyToMessageId release];
-    replyToMessageId = [messageLink->messageId retain];
-    
-    [[messageText window] makeFirstResponder: messageText];
-
-    return YES;
-  } else
-  {
-    return NO;
-  }
-}
-
 #pragma mark PUBLIC methods
 
 - (IBAction) sendMessage: (id) sender
@@ -395,6 +340,61 @@ static NSAttributedString *attributedString (NSString *string,
     return nil;
   else 
     return [NSURL URLWithString: [attachedUrlLabel stringValue]];
+}
+
+#pragma mark PRIVATE Delegates for text view
+
+/*
+ * Delegate override to enable message text field to support TAB out but still
+ * allow Enter/Return to insert new lines.
+ */
+- (BOOL) textView: (NSTextView *) textView doCommandBySelector: (SEL) selector
+{
+  if (selector == @selector (insertTab:))
+  {
+    if (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0)
+    {
+      [textView insertTabIgnoringFieldEditor: self];
+      
+      return YES;
+    } else
+    {
+      return NO;
+    }
+  } else if (selector == @selector (insertNewline:))
+  {
+    [textView insertNewlineIgnoringFieldEditor: self];
+    
+    return YES;
+  }
+  
+  return NO;
+}
+
+/*
+ * Delegate handler for links for text views.
+ */
+- (BOOL) textView: (NSTextView *) textView
+    clickedOnLink: (id) link atIndex: (unsigned) charIndex
+{
+  if ([link isKindOfClass: [MessageLink class]])
+  {
+    // handle clicks on links to messages to initiate a reply
+    MessageLink *messageLink = link;
+    
+    [messageGroup setStringValue: messageLink->group];
+    [publicCheckbox setState: (messageLink->public ? NSOnState : NSOffState)];
+    
+    [replyToMessageId release];
+    replyToMessageId = [messageLink->messageId retain];
+    
+    [[messageText window] makeFirstResponder: messageText];
+
+    return YES;
+  } else
+  {
+    return NO;
+  }
 }
 
 #pragma mark PRIVATE Methods handling "Empty Text" sheet
