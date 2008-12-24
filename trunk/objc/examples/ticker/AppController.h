@@ -6,7 +6,6 @@
 @interface AppController : NSObject
 {
   IBOutlet id tickerWindow;
-  IBOutlet id messageWindow;
   
   ElvinConnection       * elvin;
   PreferencesController * preferencesController;
