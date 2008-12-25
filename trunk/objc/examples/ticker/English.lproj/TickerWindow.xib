@@ -567,6 +567,13 @@
 			<object class="NSCustomObject" id="62509022">
 				<string key="NSClassName">TickerController</string>
 			</object>
+			<object class="NSUserDefaultsController" id="816690533">
+				<object class="NSMutableArray" key="NSDeclaredKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>DefaultSendGroup</string>
+				</object>
+				<bool key="NSSharedInstance">YES</bool>
+			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
@@ -730,6 +737,22 @@
 						<reference key="destination" ref="683708684"/>
 					</object>
 					<int key="connectionID">85</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: values.DefaultSendGroup</string>
+						<reference key="source" ref="915942187"/>
+						<reference key="destination" ref="816690533"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="915942187"/>
+							<reference key="NSDestination" ref="816690533"/>
+							<string key="NSLabel">value: values.DefaultSendGroup</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">values.DefaultSendGroup</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">88</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -946,6 +969,11 @@
 						<reference key="object" ref="788226220"/>
 						<reference key="parent" ref="276602352"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">86</int>
+						<reference key="object" ref="816690533"/>
+						<reference key="parent" ref="1002"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1075,7 +1103,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">85</int>
+			<int key="maxID">88</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
