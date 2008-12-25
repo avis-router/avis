@@ -217,8 +217,6 @@ static NSAttributedString *attributedString (NSString *string,
 { 
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   
-  [messageGroup setStringValue: prefsString (@"DefaultSendGroup")];
-  
   [appController.elvin
     subscribe: TICKER_SUBSCRIPTION 
     withDelegate: self usingSelector: @selector (handleNotify:)];
@@ -265,9 +263,6 @@ static NSAttributedString *attributedString (NSString *string,
   
   [messageText setString: @""];
   [publicCheckbox setState: NSOffState];
-  
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  [defaults setObject: [messageGroup stringValue] forKey: @"DefaultSendGroup"];
 }
 
 - (IBAction) clearAttachedURL: (id) sender
