@@ -40,6 +40,7 @@ NSString *PreferencesContext = @"PreferencesContext";
      
   [defaults setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
   [defaults setObject: defaultUserName forKey: @"OnlineUserName"];
+  [defaults setObject: @"Chat" forKey: @"DefaultSendGroup"];
 
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }

@@ -33,10 +33,10 @@ static void copy_string_attr (Attributes *attributes,
 {
   @public
   
-  NSString *subscriptionExpr;
-  Subscription *subscription;
-  id  delegate;
-  SEL selector;
+  NSString *     subscriptionExpr;
+  Subscription * subscription;
+  id             delegate;
+  SEL            selector;
 }
 
 @end
@@ -59,10 +59,10 @@ static void copy_string_attr (Attributes *attributes,
 }
 
 - (void) dealloc
-{
-  [super dealloc];
-  
+{  
   [subscriptionExpr release];
+  
+  [super dealloc];
 }
 
 @end

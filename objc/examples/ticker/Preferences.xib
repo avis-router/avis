@@ -30,7 +30,7 @@
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{458, 429}, {408, 96}}</string>
-				<int key="NSWTFlags">-1543503872</int>
+				<int key="NSWTFlags">603979776</int>
 				<string key="NSWindowTitle">Preferences</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
@@ -87,7 +87,7 @@
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents">elvin://public.elvin.org</string>
 								<reference key="NSSupport" ref="523346097"/>
-								<string key="NSPlaceholderString">Please Enter A URL</string>
+								<string key="NSPlaceholderString">Elvin Router URL</string>
 								<reference key="NSControlView" ref="553691117"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<object class="NSColor" key="NSBackgroundColor" id="763874350">
@@ -194,7 +194,7 @@
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="523346097"/>
-								<string key="NSPlaceholderString">User Name</string>
+								<string key="NSPlaceholderString">Your Online Name</string>
 								<reference key="NSControlView" ref="786444673"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="763874350"/>
