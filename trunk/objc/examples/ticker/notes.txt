@@ -1,4 +1,5 @@
 + cleanup
+  * ticker controller to take control of ticker window
   * generalise tickerviewdragtarget
 + preferences
   * debug vs release
