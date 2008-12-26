@@ -39,8 +39,8 @@
 #include "avis_client_config.h"
 
 /**
- * ID of synthetic control messages. Using 0 means avis_message_free () will treat
- * it as a disposed message.
+ * ID of synthetic control messages. Using value of 0 makes
+ * avis_message_free () treat it as a disposed message.
  */
 #define MESSAGE_ID_CONTROL 0
 
@@ -55,6 +55,8 @@ typedef struct
 
 static void elvin_shutdown (Elvin *elvin, CloseReason reason,
                             const char *message);
+
+static bool send_liveness (Elvin *elvin);
 
 static bool send_and_receive (Elvin *elvin, Message request,
                               Message reply, MessageTypeID reply_type);
@@ -142,6 +144,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   listeners_init (elvin->notification_listeners);
   elvin->notification_keys = notification_keys;
   elvin->subscription_keys = subscription_keys;
+  elvin->last_receive_time = time (NULL);
   elvin_error_init (&elvin->error);
 
   /* say hello to router */
@@ -227,6 +230,16 @@ bool elvin_event_loop (Elvin *elvin)
   return elvin_error_ok (&elvin->error);
 }
 
+bool send_liveness (Elvin *elvin)
+{
+  alloc_message (test_conn);
+
+  avis_message_init (test_conn, MESSAGE_ID_TEST_CONN);
+
+  return avis_send_message (elvin->router_socket, test_conn, 
+                            &elvin->error);
+}
+
 bool elvin_poll (Elvin *elvin)
 {
   alloc_message (message);
@@ -237,6 +250,12 @@ bool elvin_poll (Elvin *elvin)
                             "elvin_poll () called concurrently");
   }
 
+  if (time (NULL) - elvin->last_receive_time > 10000)
+  {
+    if (!send_liveness (elvin))
+      return false;
+  }
+
   elvin->polling = true;
 
   if (poll_receive_message (elvin, message))
@@ -245,16 +264,24 @@ bool elvin_poll (Elvin *elvin)
     {
       elvin_error_set
         (&elvin->error, ELVIN_ERROR_PROTOCOL,
-         "Unexpected message type from router: %u", message_type_of (message));
+         "Unexpected message type from router: %u", 
+         message_type_of (message));
     }
 
     avis_message_free (message);
   }
 
-  if (elvin->error.code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, elvin->error.message);
-
   elvin->polling = false;
+
+  if (elvin->error.code == ELVIN_ERROR_PROTOCOL)
+  {
+    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, 
+                    elvin->error.message);
+  } else if (time (NULL) - elvin->last_receive_time > 10000)
+  {
+    elvin_shutdown (elvin, REASON_ROUTER_STOPPED_RESPONDING, 
+                    elvin->error.message);
+  }
 
   return elvin_error_ok (&elvin->error);
 }
@@ -270,7 +297,10 @@ bool poll_receive_message (Elvin *elvin, Message message)
 
   if (ready_socket == elvin->router_socket)
   {
-    return avis_receive_message (elvin->router_socket, message, &elvin->error);
+    elvin->last_receive_time = time (NULL);
+
+    return avis_receive_message (elvin->router_socket, message, 
+                                 &elvin->error);
   } else if (ready_socket == elvin->control_socket_read)
   {
     return receive_control_message (elvin->control_socket_read, message,
@@ -303,6 +333,9 @@ bool dispatch_message (Elvin *elvin, Message message)
     break;
   case MESSAGE_ID_DROP_WARN:
     DIAGNOSTIC ("Router sent a dropped packet warning");
+    break;
+  case MESSAGE_ID_CONF_CONN:
+    DIAGNOSTIC ("Router repied to a liveness check");
     break;
   default:
     handled = false;
@@ -643,26 +676,36 @@ bool send_and_receive (Elvin *elvin, Message request,
       avis_message_free (reply);
   }
 
-  /* close connection on protocol error */
+  /* close connection on protocol error/receive timeout */
   if (elvin->error.code == ELVIN_ERROR_PROTOCOL)
-    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, elvin->error.message);
+  {
+    elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, 
+                    elvin->error.message);
+  } else if (elvin->error.code == ELVIN_ERROR_TIMEOUT)
+  {
+    elvin_shutdown (elvin, REASON_ROUTER_STOPPED_RESPONDING, 
+                    elvin->error.message);
+  }
 
   return elvin_error_ok (&elvin->error) && elvin_is_open (elvin);
 }
 
 /**
- * Receive a reply to a request message, handling any number of preceding
- * incoming router-initiated messages.
+ * Receive a reply to a request message, handling any number of
+ * preceding incoming router-initiated messages.
  */
 bool receive_reply (Elvin *elvin, Message message)
 {
-  while (elvin_error_ok (&elvin->error) && elvin_is_open (elvin) &&
+  bool replied = false;
+
+  while (!replied &&
+         elvin_error_ok (&elvin->error) && elvin_is_open (elvin) &&
          avis_receive_message (elvin->router_socket, message, &elvin->error))
   {
     if (dispatch_message (elvin, message))
       avis_message_free (message);
     else
-      break;
+      replied = true;
   }
 
   if (elvin_error_ok (&elvin->error))

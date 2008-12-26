@@ -164,6 +164,10 @@ static MessageFormat MESSAGE_FORMATS [] =
     {XID, I64, END} /*{"xid"}*/},
   {MESSAGE_ID_DROP_WARN,
     {END}},
+  {MESSAGE_ID_TEST_CONN,
+    {END}},
+  {MESSAGE_ID_CONF_CONN,
+    {END}},
 
   {-1, {END}}
 };
