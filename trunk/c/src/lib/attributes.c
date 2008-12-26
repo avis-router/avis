@@ -101,11 +101,17 @@ unsigned int attributes_size (Attributes *attributes)
 AttributesIter *attributes_iter_init (AttributesIter *iter, 
                                       const Attributes *attributes)
 {
-  hashtable_iterator_init ((struct hashtable_itr *)&iter->hash_iter, 
-                           attributes->table);
+  if (hashtable_count (attributes->table) > 0)
+  {
+    hashtable_iterator_init ((struct hashtable_itr *)&iter->hash_iter, 
+                             attributes->table);
   
-  iter->has_next = hashtable_count (attributes->table) > 0;
-  
+    iter->has_next = true;
+  } else
+  {
+    iter->has_next = false;
+  }
+
   return iter;
 }
 
