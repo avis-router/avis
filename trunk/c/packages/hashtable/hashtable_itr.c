@@ -5,16 +5,11 @@
 #include "hashtable_itr.h"
 #include <stdlib.h> /* defines NULL */
 
-/*****************************************************************************/
-/* hashtable_iterator    - iterator constructor */
-
 struct hashtable_itr *
-hashtable_iterator(struct hashtable *h)
+hashtable_iterator_init (struct hashtable_itr *itr, struct hashtable *h)
 {
     unsigned int i, tablelength;
-    struct hashtable_itr *itr = (struct hashtable_itr *)
-        malloc(sizeof(struct hashtable_itr));
-    if (NULL == itr) return NULL;
+    
     itr->h = h;
     itr->e = NULL;
     itr->parent = NULL;
@@ -31,8 +26,23 @@ hashtable_iterator(struct hashtable *h)
             break;
         }
     }
+    
     return itr;
 }
+
+/*****************************************************************************/
+/* hashtable_iterator    - iterator constructor */
+
+struct hashtable_itr *
+hashtable_iterator(struct hashtable *h)
+{
+    struct hashtable_itr *itr = (struct hashtable_itr *)
+        malloc(sizeof(struct hashtable_itr));
+    if (NULL == itr) return NULL;
+    
+    return hashtable_iterator_init (itr, h);    
+}
+
 
 /*****************************************************************************/
 /* key      - return the key of the (key,value) pair at the current position */
