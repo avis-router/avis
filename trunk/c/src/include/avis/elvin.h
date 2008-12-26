@@ -85,6 +85,7 @@ typedef struct
   Keys *      subscription_keys;
   bool        polling;
   ElvinError  error;
+  time_t      last_receive_time;
 } Elvin;
 
 /**
@@ -124,7 +125,13 @@ typedef enum
    * been violated. This would only happen in the case of a serious bug in
    * the client or router.
    */
-  REASON_PROTOCOL_VIOLATION
+  REASON_PROTOCOL_VIOLATION,
+
+  /**
+   * The router failed to respond to a message. Either a low-level
+   * network error has occurred, or the router has crashed.
+   */
+  REASON_ROUTER_STOPPED_RESPONDING
 } CloseReason;
 
 /**

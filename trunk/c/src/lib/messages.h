@@ -50,7 +50,9 @@ typedef enum
   MESSAGE_ID_SUB_MOD_RQST   = 59,
   MESSAGE_ID_SUB_DEL_RQST   = 60,
   MESSAGE_ID_SUB_RPLY       = 61,
-  MESSAGE_ID_DROP_WARN      = 62
+  MESSAGE_ID_DROP_WARN      = 62,
+  MESSAGE_ID_TEST_CONN      = 63,
+  MESSAGE_ID_CONF_CONN      = 64
 } MessageTypeID;
 
 /**
