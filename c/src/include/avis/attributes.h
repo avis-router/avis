@@ -40,12 +40,32 @@ struct hashtable;
  * information.
  *
  * @see attributes_create()
+ * @see AttributesIter
  * @see Value
  */
 typedef struct
 {
   struct hashtable *table;
 } Attributes;
+
+/**
+ * An iterator over an Attributes collection.
+ *
+ * @see attributes_iter_init()
+ */
+typedef struct
+{
+  /* below is a copy of hashtable_iter from hashtable_iter.h */
+  struct
+  {
+    void *h;
+    void *e;
+    void *parent;
+    unsigned int index;
+  } hash_iter;
+  
+  bool has_next;
+} AttributesIter;
 
 AVIS_PUBLIC_DATA 
 Attributes _empty_attributes;
@@ -124,6 +144,74 @@ Attributes *attributes_copy (Attributes *target, const Attributes *source);
  */
 AVIS_PUBLIC
 unsigned int attributes_size (Attributes *attributes);
+
+/**
+ * Create and initialise an AttributesIter instance.
+ */
+#define attributes_iter_create(attributes) \
+  attributes_iter_init \
+    ((AttributesIter *)avis_emalloc (sizeof (AttributesIter)), (attributes))
+
+/** 
+ * Free and NULL an attributes iterator.
+ */
+#define attributes_iter_destroy(iter) (free (iter), (iter) = NULL)
+
+/**
+ * Initialise an attributes iterator to iterate over the given
+ * attributes set.
+ * <p>
+ * Example usage:
+ * <pre>
+ * Attributes *attrs = ...;
+ * AttributesIter i;
+ * 
+ * attributes_iter_init (&i, attrs);
+ * 
+ * while (attributes_iter_has_next (&i))
+ * {
+ *   const char *name = attributes_iter_name (&i);
+ *   const Value *value = attributes_iter_value (&i);
+ * 
+ *   ...
+ *
+ *   attributes_iter_next (&i);
+ * }
+ * </pre>
+ *
+ * @see attributes_iter_has_next()
+ * @see attributes_iter_next()
+ * @see attributes_iter_name()
+ * @see attributes_iter_value()
+ */
+AVIS_PUBLIC
+AttributesIter *attributes_iter_init (AttributesIter *iter, 
+                                      const Attributes *attributes);
+
+/**
+ * Returns the name of the attribute pointed to by the iterator, or
+ * NULL if the iterator is finished.
+ */
+AVIS_PUBLIC
+const char *attributes_iter_name (const AttributesIter *iter);
+
+/**
+ * Returns the value of the attribute pointed to by the iterator, or
+ * NULL if the iterator is finished.
+ */
+AVIS_PUBLIC
+const Value *attributes_iter_value (const AttributesIter *iter);
+
+#define attributes_iter_has_next(iter) ((iter)->has_next)
+
+/**
+ * Advanced the iterator to the next attribute.
+ *
+ * @return True if attributes_iter_has_next() would return true after
+ * the advance (i.e. the iterator points to an attribute).
+ */
+AVIS_PUBLIC
+bool attributes_iter_next (AttributesIter *iter);
 
 /**
  * Set the value mapped to a name. If an existing value exists, it will be

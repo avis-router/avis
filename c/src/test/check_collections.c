@@ -90,6 +90,50 @@ START_TEST (test_attributes)
 }
 END_TEST
 
+START_TEST (test_attributes_iter)
+{
+  Attributes *attrs = attributes_create ();
+  AttributesIter i;
+  const char *name;
+  const Value *value;
+  unsigned count = 0;
+  bool found_number = false;
+  
+  attributes_iter_init (&i, attrs);
+  
+  fail_if (attributes_iter_has_next (&i), "bogus has next");
+  
+  attributes_set_int32 (attrs, "number 1", 1);
+  attributes_set_int64 (attrs, "number 2", 64);
+  attributes_set_real64 (attrs, "number 3", 3.1415);
+  attributes_set_string (attrs, "string", "hello world");
+  
+  attributes_iter_init (&i, attrs);
+  
+  while (attributes_iter_has_next (&i))
+  {
+    name = attributes_iter_name (&i);
+    value = attributes_iter_value (&i);
+    
+    if (strcmp (name, "number 1") == 0)
+    {
+      fail_unless (value->type == TYPE_INT32 && value->value.int32 == 1, 
+                   "bogus attribute value");
+                   
+      found_number = true;
+    }
+    
+    count++;
+    attributes_iter_next (&i);
+  }
+  
+  fail_unless (found_number, "number not found");
+  fail_unless (count == attributes_size (attrs), "bogus iterator count");
+    
+  attributes_destroy (attrs);
+}
+END_TEST
+
 START_TEST (test_array_list)
 {
   ArrayList *list = array_list_create (int, 5);
@@ -141,6 +185,7 @@ TCase *collections_tests ()
   TCase *tc_core = tcase_create ("collections");
 
   tcase_add_test (tc_core, test_attributes);
+  tcase_add_test (tc_core, test_attributes_iter);
   tcase_add_test (tc_core, test_array_list);
 
   return tc_core;

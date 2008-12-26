@@ -98,6 +98,52 @@ unsigned int attributes_size (Attributes *attributes)
   return hashtable_count (attributes->table);
 }
 
+AttributesIter *attributes_iter_init (AttributesIter *iter, 
+                                      const Attributes *attributes)
+{
+  hashtable_iterator_init ((struct hashtable_itr *)&iter->hash_iter, 
+                           attributes->table);
+  
+  iter->has_next = hashtable_count (attributes->table) > 0;
+  
+  return iter;
+}
+
+const char *attributes_iter_name (const AttributesIter *iter)
+{
+  if (iter->has_next)
+  {
+    return (const char *)hashtable_iterator_key 
+      ((struct hashtable_itr *)&iter->hash_iter);
+  } else
+  {
+    return NULL;
+  }
+}
+
+const Value *attributes_iter_value (const AttributesIter *iter)
+{
+  if (iter->has_next)
+  {
+    return (const Value *)hashtable_iterator_value 
+      ((struct hashtable_itr *)&iter->hash_iter);
+  } else
+  {
+    return NULL;
+  }
+}
+
+bool attributes_iter_next (AttributesIter *iter)
+{
+  if (iter->has_next)
+  {
+    iter->has_next = 
+      hashtable_iterator_advance ((struct hashtable_itr *)&iter->hash_iter);
+  }
+  
+  return iter->has_next;
+}
+
 void attributes_set (Attributes *attributes, const char *name, Value *value)
 {
   Value *old_value = attributes_remove (attributes, name);

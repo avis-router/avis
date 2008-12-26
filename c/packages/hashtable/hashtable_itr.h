@@ -16,6 +16,12 @@ struct hashtable_itr
     unsigned int index;
 };
 
+/*****************************************************************************/
+/* hashtable_iterator_init
+ */
+/* Added by MPP */
+struct hashtable_itr *
+hashtable_iterator_init (struct hashtable_itr *itr, struct hashtable *h);
 
 /*****************************************************************************/
 /* hashtable_iterator
