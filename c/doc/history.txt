@@ -1,3 +1,22 @@
+Release 1.2.0 (December 27, 2008)
+----------------------------------------------------------------------
+
+This release improves overall reliability.
+
+* Added liveness checking to detect crashed router and low-level
+  network failures.
+
+* Fixed bug that meant requests requiring a router response did not
+  time out if the router failed to respond. This involved changing
+  elvin_poll () to return on timeout (see API doc for details).
+
+* Library now closes the connection on various fatal errors.
+
+* Added API for iterating over notification attributes.
+
+* Fixed crash on some kinds of router failure.
+
+
 Release 1.1.0 (November 21, 2008)
 ----------------------------------------------------------------------
 
