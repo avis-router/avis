@@ -631,7 +631,9 @@ bool elvin_event_loop (Elvin *elvin);
 /**
  * Poll an Elvin connection for a single incoming message from the
  * router. This will block until a notification or disconnect message
- * is received from the router.
+ * is received from the router, or until AVIS_IO_TIMEOUT milliseconds
+ * have passed (in which case the error status will be
+ * ELVIN_ERROR_TIMEOUT).
  *
  * On receipt of a notification, any listeners to the notification
  * will be called from this function. On receipt of a disconnect or
