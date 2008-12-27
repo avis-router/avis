@@ -33,6 +33,9 @@
 /** Timeout (in milliseconds) for I/O operations. */
 #define AVIS_IO_TIMEOUT 10000
 
+/** Maximum idle interval (in seconds) before sending a liveness test message. */
+#define AVIS_LIVENESS_IDLE_INTERVAL 60
+
 #define _KB_  1024
 #define _MB_  _KB_ * _KB_
 

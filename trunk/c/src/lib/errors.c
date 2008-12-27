@@ -78,10 +78,12 @@ void elvin_perror (const char *tag, ElvinError *error)
 
 bool elvin_error_set (ElvinError *error, int code, const char *message, ...)
 {
-  /* do not allow earlier error to override */
+  /* do not allow overrride of earlier error */
   if (error->code != ELVIN_ERROR_NONE)
   {
-    DIAGNOSTIC1 ("Ignoring error override: %s", message);
+    DIAGNOSTIC2 
+      ("Ignoring error due to existing error state: ignored error \"%s\" (%u)", 
+        message, code);
 
     return false;
   }

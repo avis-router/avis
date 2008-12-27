@@ -20,6 +20,18 @@
 
 #include <avis/elvin.h>
 
+static void close_listener (Elvin *elvin, CloseReason reason,
+                            const char *message, void *user_data);
+                      
+static void sub_listener (Subscription *subscription, Attributes *attributes,
+                          bool secure, void *user_data);
+
+void close_listener (Elvin *elvin, CloseReason reason,
+                     const char *message, void *user_data)
+{
+  printf ("Connection closed: %s (%u)\n", message, reason); 
+}
+                               
 void sub_listener (Subscription *subscription, Attributes *attributes,
                    bool secure, void *user_data)
 {
@@ -68,8 +80,8 @@ void sub_listener (Subscription *subscription, Attributes *attributes,
  */
 int main (int argc, const char *argv [])
 {
-  const char *uri = argc == 3 ? argv [1] : "elvin://public.elvin.org";
-  const char *expr = argc == 3 ? argv [2] : NULL;
+  const char *uri = argc == 3 ? argv [1] : "elvin://localhost";
+  const char *expr = argc == 3 ? argv [2] : "require (Message)";
   Elvin elvin;
   Subscription *subscription;
 
@@ -88,6 +100,8 @@ int main (int argc, const char *argv [])
     return 2;
   }
 
+  elvin_add_close_listener (&elvin, close_listener, NULL);
+  
   subscription = elvin_subscribe (&elvin, expr);
 
   if (!elvin_error_ok (&elvin.error))
@@ -96,6 +110,8 @@ int main (int argc, const char *argv [])
 
     return 3;
   }
+  
+  printf ("Connected to %s\n", uri);
 
   elvin_subscription_add_listener (subscription, sub_listener, &elvin);
 

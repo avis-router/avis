@@ -75,6 +75,7 @@ typedef struct
 #define ELVIN_ERROR_NACK                (ELVIN_ERROR_BASE + 7)
 #define ELVIN_ERROR_USAGE               (ELVIN_ERROR_BASE + 8)
 #define ELVIN_ERROR_TIMEOUT             (ELVIN_ERROR_BASE + 9)
+#define ELVIN_ERROR_ROUTER_FAILURE      (ELVIN_ERROR_BASE + 10)
 
 AVIS_PUBLIC
 void *do_avis_emalloc (size_t size, const char *file, int line);
