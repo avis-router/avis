@@ -125,78 +125,80 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     context->subscription = nil;
 }
 
-// TODO add liveness checking to Elvin C API
-- (void) elvinEventLoopThread
+- (BOOL) openConnection
 {
-  NSAutoreleasePool *pool = [NSAutoreleasePool new];
-
-  NSLog (@"Start connect to Elvin");
-  
-  // loop until connected or cancelled
-  for (;;) 
-  {  
-    elvin_open (&elvin, [elvinUrl UTF8String]);
-
-    if ([eventLoopThread isCancelled])
-    {
-      [pool release];
-      
-      return;
-    } else if (elvin_error_occurred (&elvin.error))
-    {
-      NSLog (@"Failed to connect to elvin %@: %s (%i)", elvinUrl, 
-             elvin.error.message, elvin.error.code);
-             
-      [NSThread sleepForTimeInterval: 5];
-    } else
-    {
-      break;
-    }
-  }
-  
-  NSLog (@"Connected to Elvin at %@", elvinUrl);
-
-  // renew any existing subscriptions
-  for (SubscriptionContext *context in subscriptions)
-    subscribe (&elvin, context);
-      
-  // let delegate know we're ready
-  if ([lifecycleDelegate 
-        respondsToSelector: @selector (elvinConnectionDidOpen:)])
+  if (elvin_open (&elvin, [elvinUrl UTF8String]))
   {
-    [lifecycleDelegate 
-      performSelectorOnMainThread: @selector (elvinConnectionDidOpen:)
-                       withObject: self waitUntilDone: YES];
+    // renew any existing subscriptions
+    for (SubscriptionContext *context in subscriptions)
+      subscribe (&elvin, context);
+        
+    // let delegate know we're ready
+    if ([lifecycleDelegate 
+          respondsToSelector: @selector (elvinConnectionDidOpen:)])
+    {
+      [lifecycleDelegate 
+        performSelectorOnMainThread: @selector (elvinConnectionDidOpen:)
+                         withObject: self waitUntilDone: YES];
+    }
+    
+    return TRUE;
+  } else
+  {           
+    return FALSE;
   }
-  
-  [pool release];
-  
-  // start event loop
+}
+
+- (void) runElvinEventLoop
+{
   while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
-    pool = [NSAutoreleasePool new];
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
     
     elvin_poll (&elvin);
    
     if (elvin.error.code == ELVIN_ERROR_TIMEOUT)
       elvin_error_reset (&elvin.error);
-      
+
     [pool release]; 
   }
+}
 
-  pool = [NSAutoreleasePool new];  
-  
-  if (elvin_error_occurred (&elvin.error))
+// TODO add callback on close
+- (void) elvinEventLoopThread
+{
+  while (![eventLoopThread isCancelled])
   {
-    NSLog (@"Exiting elvin event loop on error: %s (%i)", 
-           elvin.error.message, elvin.error.code);
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    
+    NSLog (@"Start connect to Elvin");
+    
+    if ([self openConnection])
+    {
+      NSLog (@"Connected to Elvin at: %@", elvinUrl);
+      
+      [self runElvinEventLoop];
+      
+      if (elvin_error_occurred (&elvin.error))
+      {
+        NSLog (@"Exiting Elvin event loop on error: %s (%i)", 
+               elvin.error.message, elvin.error.code);
+      }
+    } else
+    {
+      NSLog (@"Failed to connect to elvin %@: %s (%i): will retry shortly...", 
+             elvinUrl, elvin.error.message, elvin.error.code);
+             
+      if (![eventLoopThread isCancelled])
+        [NSThread sleepForTimeInterval: 5];
+    }
+    
+    elvin_close (&elvin);
+ 
+    [pool release];
   }
   
-  elvin_close (&elvin);
-  
-  NSLog (@"Exit elvin event loop");
-  
-  [pool release]; 
+  NSLog (@"Elvin thread is terminating");
 }
 
 static void notificationListener (Subscription *sub, 
