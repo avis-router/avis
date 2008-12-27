@@ -53,6 +53,8 @@ typedef struct
   void *        parameter;
 } ControlMessage;
 
+static void elvin_free (Elvin *elvin);
+
 static void elvin_shutdown (Elvin *elvin, CloseReason reason,
                             const char *message);
 
@@ -174,24 +176,32 @@ bool elvin_close (Elvin *elvin)
   alloc_message (disconn_rqst);
   alloc_message (disconn_rply);
 
-  elvin_error_reset (&elvin->error);
+  if (elvin->router_socket != -1)
+  {
+    avis_message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
 
-  if (elvin->router_socket == -1)
+    send_and_receive 
+      (elvin, disconn_rqst, disconn_rply, MESSAGE_ID_DISCONN_RPLY);
+
+    elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
+  }
+  
+  if (elvin->notification_listeners != NULL)
+  {
+    elvin_free (elvin);
+    
+    elvin->notification_listeners = NULL;
+    elvin->close_listeners = NULL;
+    
+    return true;
+  } else
+  {
     return false;
-
-  avis_message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
-
-  send_and_receive (elvin, disconn_rqst, disconn_rply, MESSAGE_ID_DISCONN_RPLY);
-
-  elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
-
-  return true;
+  }
 }
 
 void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 {
-  size_t i;
-  Subscription *sub;
   ListenersIterator l;
 
   if (elvin->router_socket == -1)
@@ -200,6 +210,15 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
   close_socket (elvin->router_socket);
   avis_close_socket_pair (elvin->control_socket_write,
                           elvin->control_socket_read);
+
+  for_each_listener (elvin->close_listeners, l)
+    (*l.entry->listener) (elvin, reason, message, l.entry->user_data);
+}
+
+void elvin_free (Elvin *elvin)
+{
+  size_t i;
+  Subscription *sub;
 
   sub = elvin->subscriptions.items;
 
@@ -210,9 +229,6 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 
   elvin_keys_destroy (elvin->notification_keys);
   elvin_keys_destroy (elvin->subscription_keys);
-
-  for_each_listener (elvin->close_listeners, l)
-    (*l.entry->listener) (elvin, reason, message, l.entry->user_data);
 
   listeners_free (&elvin->close_listeners);
   listeners_free (&elvin->notification_listeners);
@@ -225,23 +241,18 @@ bool elvin_event_loop (Elvin *elvin)
   while (elvin_is_open (elvin) && elvin_error_ok (&elvin->error))
   {
     elvin_poll (elvin);
+
+    /* timeout is OK, continue loop */
+    if (elvin->error.code == ELVIN_ERROR_TIMEOUT)
+      elvin_error_reset (&elvin->error);
   }
 
   return elvin_error_ok (&elvin->error);
 }
 
-bool send_liveness (Elvin *elvin)
-{
-  alloc_message (test_conn);
-
-  avis_message_init (test_conn, MESSAGE_ID_TEST_CONN);
-
-  return avis_send_message (elvin->router_socket, test_conn, 
-                            &elvin->error);
-}
-
 bool elvin_poll (Elvin *elvin)
 {
+  time_t liveness_sent_at = 0;
   alloc_message (message);
 
   if (elvin->polling)
@@ -250,8 +261,11 @@ bool elvin_poll (Elvin *elvin)
                             "elvin_poll () called concurrently");
   }
 
-  if (time (NULL) - elvin->last_receive_time > 10000)
+  /* maybe send a liveness test message */
+  if (time (NULL) - elvin->last_receive_time > AVIS_LIVENESS_IDLE_INTERVAL)
   {
+    liveness_sent_at = time (NULL);
+
     if (!send_liveness (elvin))
       return false;
   }
@@ -277,8 +291,20 @@ bool elvin_poll (Elvin *elvin)
   {
     elvin_shutdown (elvin, REASON_PROTOCOL_VIOLATION, 
                     elvin->error.message);
-  } else if (time (NULL) - elvin->last_receive_time > 10000)
+  } else if (elvin->last_receive_time < liveness_sent_at)
   {
+    /* 
+     * if we got here on a timeout and still no router response, flip error
+     * to become a liveness failure.
+     */
+    if (elvin->error.code == ELVIN_ERROR_TIMEOUT)
+    {
+      elvin_error_reset (&elvin->error);
+      
+      elvin_error_set (&elvin->error, ELVIN_ERROR_ROUTER_FAILURE, 
+                       "Router has stopped responding");
+    }
+    
     elvin_shutdown (elvin, REASON_ROUTER_STOPPED_RESPONDING, 
                     elvin->error.message);
   }
@@ -342,6 +368,18 @@ bool dispatch_message (Elvin *elvin, Message message)
   }
 
   return handled;
+}
+
+bool send_liveness (Elvin *elvin)
+{
+  DIAGNOSTIC ("Liveness check: sending TestConn");
+
+  alloc_message (test_conn);
+
+  avis_message_init (test_conn, MESSAGE_ID_TEST_CONN);
+
+  return avis_send_message (elvin->router_socket, test_conn, 
+                            &elvin->error);
 }
 
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
@@ -713,8 +751,6 @@ bool receive_reply (Elvin *elvin, Message message)
     return elvin_is_open (elvin);
   } else
   {
-    avis_message_free (message);
-
     return false;
   }
 }

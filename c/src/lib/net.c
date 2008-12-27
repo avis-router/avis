@@ -34,21 +34,23 @@
 
 #define max(a,b) (a > b ? a : b)
 
-socket_t avis_select_ready (socket_t socket1, socket_t socket2, ElvinError *error)
+socket_t avis_select_ready (socket_t socket1, socket_t socket2, 
+                            ElvinError *error)
 {
   fd_set socks;
   int ready_sockets;
+  struct timeval timeout = init_timeout (AVIS_IO_TIMEOUT);
 
   FD_ZERO (&socks);
   FD_SET (socket1, &socks);
   FD_SET (socket2, &socks);
 
   ready_sockets =
-    select (max (socket1, socket2) + 1, &socks, NULL, NULL, NULL);
+    select (max (socket1, socket2) + 1, &socks, NULL, NULL, &timeout);
 
   if (ready_sockets == 0)
   {
-    elvin_error_set (error, ELVIN_ERROR_INTERNAL, "No sockets selected");
+    elvin_error_set (error, ELVIN_ERROR_TIMEOUT, "Receive timeout");
 
     return -1;
   } else if (ready_sockets == 1)
