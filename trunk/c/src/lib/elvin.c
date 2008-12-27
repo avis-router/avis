@@ -372,9 +372,9 @@ bool dispatch_message (Elvin *elvin, Message message)
 
 bool send_liveness (Elvin *elvin)
 {
-  DIAGNOSTIC ("Liveness check: sending TestConn");
-
   alloc_message (test_conn);
+  
+  DIAGNOSTIC ("Liveness check: sending TestConn");
 
   avis_message_init (test_conn, MESSAGE_ID_TEST_CONN);
 
