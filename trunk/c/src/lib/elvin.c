@@ -175,8 +175,9 @@ bool elvin_close (Elvin *elvin)
 {
   alloc_message (disconn_rqst);
   alloc_message (disconn_rply);
+  bool open = elvin->router_socket != -1;
 
-  if (elvin->router_socket != -1)
+  if (open)
   {
     avis_message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
 
@@ -186,18 +187,9 @@ bool elvin_close (Elvin *elvin)
     elvin_shutdown (elvin, REASON_CLIENT_SHUTDOWN, "Client is closing");
   }
   
-  if (elvin->notification_listeners != NULL)
-  {
-    elvin_free (elvin);
-    
-    elvin->notification_listeners = NULL;
-    elvin->close_listeners = NULL;
-    
-    return true;
-  } else
-  {
-    return false;
-  }
+  elvin_free (elvin);
+        
+  return open;
 }
 
 void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)

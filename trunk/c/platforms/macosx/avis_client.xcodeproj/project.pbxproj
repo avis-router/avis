@@ -383,6 +383,7 @@
 		08FB7795FE84155DC02AAC07 /* Client library */ = {
 			isa = PBXGroup;
 			children = (
+				C906FBF40DD3FC3900375E7D /* elvin.c */,
 				C9C88E0D0E39BBAE0010C768 /* net.c */,
 				C953D5A20E20BA05001F14EF /* errors_private.h */,
 				C99B745A0E1B3E6900D0A7B0 /* listeners.c */,
@@ -405,7 +406,6 @@
 				FA4D5B560DF420DE0098EE7D /* values_private.h */,
 				C9B465D60DD82A9800A1C448 /* messages.h */,
 				C9B465D70DD82A9800A1C448 /* messages.c */,
-				C906FBF40DD3FC3900375E7D /* elvin.c */,
 			);
 			name = "Client library";
 			sourceTree = "<group>";
