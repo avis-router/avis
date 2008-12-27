@@ -178,6 +178,9 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
     
     elvin_poll (&elvin);
    
+    if (elvin.error.code == ELVIN_ERROR_TIMEOUT)
+      elvin_error_reset (&elvin.error);
+      
     [pool release]; 
   }
 
