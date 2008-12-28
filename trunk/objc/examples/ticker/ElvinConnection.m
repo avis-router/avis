@@ -5,6 +5,8 @@
 NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
 NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
 
+#pragma mark PRIVATE Utility functions
+
 static inline NSString *attr_string (Attributes *attrs, const char *name)
 {
   return [NSString stringWithUTF8String: attributes_get_string (attrs, name)];
@@ -31,6 +33,8 @@ static void copy_string_attr (Attributes *attributes,
   if (attrValue)
     [message setValue: [NSString stringWithUTF8String: attrValue] forKey: name];
 }
+
+#pragma mark PRIVATE SubscriptionContext internal class
 
 @interface SubscriptionContext : NSObject
 {
@@ -70,6 +74,8 @@ static void copy_string_attr (Attributes *attributes,
 
 @end
 
+#pragma mark PRIVATE ElvinConnection
+
 static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
 static void close_listener (Elvin *elvin, CloseReason reason,
@@ -79,6 +85,14 @@ static void close_listener (Elvin *elvin, CloseReason reason,
 static void notification_listener (Subscription *sub, 
                                    Attributes *attributes, 
                                    bool secure, SubscriptionContext *context);
+
+static void send_message (Elvin *elvin, Attributes *message);
+
+@interface ElvinConnection ()
+  - (BOOL) openConnection;
+  - (void) elvinEventLoopThread;
+  - (void) runElvinEventLoop;
+@end
 
 @implementation ElvinConnection
                                                                   
@@ -104,6 +118,8 @@ static void notification_listener (Subscription *sub,
 
   [super dealloc];
 }
+
+#pragma mark PUBLIC
 
 - (void) connect
 {
@@ -134,91 +150,37 @@ static void notification_listener (Subscription *sub,
     context->subscription = nil;
 }
 
-- (BOOL) openConnection
+#pragma PUBLIC Elvin publish/subscribe
+
+- (void) subscribe: (NSString *) subscriptionExpr
+        withDelegate: (id) delegate usingSelector: (SEL) selector
 {
-  if (elvin_open (&elvin, [elvinUrl UTF8String]))
-  {    
-    // renew any existing subscriptions
-    for (SubscriptionContext *context in subscriptions)
-      subscribe (&elvin, context);
-        
-//    // let delegate know we're ready
-//    if ([lifecycleDelegate 
-//          respondsToSelector: @selector (elvinConnectionDidOpen:)])
-//    {
-//      [lifecycleDelegate 
-//        performSelectorOnMainThread: @selector (elvinConnectionDidOpen:)
-//                         withObject: self waitUntilDone: YES];
-//    }
+  SubscriptionContext *context = 
+    [SubscriptionContext context: subscriptionExpr 
+                         delegate: delegate selector: selector];
 
-    [[NSNotificationCenter defaultCenter] 
-      postNotificationName: ElvinConnectionOpenedNotification object: self];
-   
-    elvin_add_close_listener (&elvin, (CloseListener)close_listener, self);
- 
-    return TRUE;
-  } else
-  {           
-    return FALSE;
-  }
-}
-
-- (void) runElvinEventLoop
-{
-  while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
-  {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-    elvin_poll (&elvin);
-   
-    if (elvin.error.code == ELVIN_ERROR_TIMEOUT)
-      elvin_error_reset (&elvin.error);
-
-    [pool release]; 
-  }
-}
-
-- (void) elvinEventLoopThread
-{
-  while (![eventLoopThread isCancelled])
-  {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-    NSLog (@"Start connect to Elvin");
-    
-    if ([self openConnection])
-    {
-      NSLog (@"Connected to Elvin at: %@", elvinUrl);
-      
-      [self runElvinEventLoop];
-      
-      if (elvin_error_occurred (&elvin.error))
-      {
-        NSLog (@"Exited Elvin event loop on error: %s (%i)", 
-               elvin.error.message, elvin.error.code);
-      }
-    } else
-    {
-      NSLog (@"Failed to connect to elvin %@: %s (%i): will retry shortly...", 
-             elvinUrl, elvin.error.message, elvin.error.code);
-             
-      if (![eventLoopThread isCancelled])
-        [NSThread sleepForTimeInterval: 5];
-    }
-    
-    elvin_close (&elvin);
- 
-    [pool release];
-  }
+  [subscriptions addObject: context];
   
-  NSLog (@"Elvin thread is terminating");
+  // TODO make thread safe
+  if (elvin_is_open (&elvin))
+    elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
 }
 
-void close_listener (Elvin *elvin, CloseReason reason,
-                     const char *message, ElvinConnection *self)
+static void subscribe (Elvin *elvin, SubscriptionContext *context)
 {
-  [[NSNotificationCenter defaultCenter] 
-     postNotificationName: ElvinConnectionClosedNotification object: self];
+  context->subscription = 
+    elvin_subscribe (elvin, [context->subscriptionExpr UTF8String]);
+  
+  if (elvin_error_ok (&elvin->error))
+  {
+    elvin_subscription_add_listener 
+      (context->subscription, (SubscriptionListener)notification_listener, 
+       context);
+  } else
+  {
+    NSLog (@"Error while trying to subscribe: %s (%i)", 
+           elvin->error.message, elvin->error.code);
+  }
 }
 
 void notification_listener (Subscription *sub, 
@@ -247,50 +209,6 @@ void notification_listener (Subscription *sub,
   [context->delegate performSelectorOnMainThread: context->selector
                                       withObject: message 
                                    waitUntilDone: YES];
-}
-
-static void subscribe (Elvin *elvin, SubscriptionContext *context)
-{
-  context->subscription = 
-    elvin_subscribe (elvin, [context->subscriptionExpr UTF8String]);
-  
-  if (elvin_error_ok (&elvin->error))
-  {
-    elvin_subscription_add_listener 
-      (context->subscription, (SubscriptionListener)notification_listener, 
-       context);
-  } else
-  {
-    NSLog (@"Error while trying to subscribe: %s (%i)", 
-           elvin->error.message, elvin->error.code);
-  }
-}
-
-- (void) subscribe: (NSString *) subscriptionExpr
-        withDelegate: (id) delegate usingSelector: (SEL) selector
-{
-  SubscriptionContext *context = 
-    [SubscriptionContext context: subscriptionExpr 
-                         delegate: delegate selector: selector];
-
-  [subscriptions addObject: context];
-  
-  // TODO make thread safe
-  if (elvin_is_open (&elvin))
-    elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
-}
-
-static void send_message (Elvin *elvin, Attributes *message)
-{
-  elvin_send (elvin, message);
-  
-  if (elvin_error_occurred (&elvin->error))
-  {
-    NSLog (@"Error while trying to send message: %s (%i)", 
-           elvin->error.message, elvin->error.code);
-  }
-  
-  attributes_destroy (message);
 }
 
 - (void) sendTickerMessage: (NSString *) messageText 
@@ -329,6 +247,99 @@ static void send_message (Elvin *elvin, Attributes *message)
   }
   
   elvin_invoke (&elvin, (InvokeHandler)send_message, message);
+}
+
+void send_message (Elvin *elvin, Attributes *message)
+{
+  elvin_send (elvin, message);
+  
+  if (elvin_error_occurred (&elvin->error))
+  {
+    NSLog (@"Error while trying to send message: %s (%i)", 
+           elvin->error.message, elvin->error.code);
+  }
+  
+  attributes_destroy (message);
+}
+
+#pragma mark PRIVATE Elvin event loop
+
+- (void) elvinEventLoopThread
+{
+  while (![eventLoopThread isCancelled])
+  {
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    
+    NSLog (@"Start connect to Elvin");
+    
+    if ([self openConnection])
+    {
+      NSLog (@"Connected to Elvin at: %@", elvinUrl);
+      
+      [self runElvinEventLoop];
+      
+      if (elvin_error_occurred (&elvin.error))
+      {
+        NSLog (@"Exited Elvin event loop on error: %s (%i)", 
+               elvin.error.message, elvin.error.code);
+      }
+    } else
+    {
+      NSLog (@"Failed to connect to elvin %@: %s (%i): will retry shortly...", 
+             elvinUrl, elvin.error.message, elvin.error.code);
+             
+      if (![eventLoopThread isCancelled])
+        [NSThread sleepForTimeInterval: 5];
+    }
+    
+    elvin_close (&elvin);
+ 
+    [pool release];
+  }
+  
+  NSLog (@"Elvin thread is terminating");
+}
+
+- (BOOL) openConnection
+{
+  if (elvin_open (&elvin, [elvinUrl UTF8String]))
+  {    
+    // renew any existing subscriptions
+    for (SubscriptionContext *context in subscriptions)
+      subscribe (&elvin, context);
+        
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: ElvinConnectionOpenedNotification object: self];
+   
+    elvin_add_close_listener (&elvin, (CloseListener)close_listener, self);
+ 
+    return TRUE;
+  } else
+  {           
+    return FALSE;
+  }
+}
+
+- (void) runElvinEventLoop
+{
+  while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
+  {
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    
+    elvin_poll (&elvin);
+   
+    if (elvin.error.code == ELVIN_ERROR_TIMEOUT)
+      elvin_error_reset (&elvin.error);
+
+    [pool release]; 
+  }
+}
+
+void close_listener (Elvin *elvin, CloseReason reason,
+                     const char *message, ElvinConnection *self)
+{
+  [[NSNotificationCenter defaultCenter] 
+     postNotificationName: ElvinConnectionClosedNotification object: self];
 }
 
 @end
