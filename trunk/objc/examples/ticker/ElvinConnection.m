@@ -114,11 +114,11 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   {
     NSLog (@"Disconnect from Elvin");
     
-    elvin_invoke_close (&elvin);
-    
-    while (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
-      usleep (100000);
+    elvin_invoke_close (&elvin);    
   }
+  
+  while (![eventLoopThread isFinished])
+    usleep (100000);
   
   // nuke defunct Elvin subscription pointers
   for (SubscriptionContext *context in subscriptions)
@@ -181,7 +181,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
       
       if (elvin_error_occurred (&elvin.error))
       {
-        NSLog (@"Exiting Elvin event loop on error: %s (%i)", 
+        NSLog (@"Exited Elvin event loop on error: %s (%i)", 
                elvin.error.message, elvin.error.code);
       }
     } else
