@@ -10,7 +10,6 @@ NSString *PreferencesContext = @"PreferencesContext";
 #pragma mark Declare Private Methods
 
 @interface AppController ()
-  - (void) openTickerWindow;
   - (void) disconnectElvin;
 @end
 
@@ -48,8 +47,7 @@ NSString *PreferencesContext = @"PreferencesContext";
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
   elvin = 
-    [[[ElvinConnection alloc] 
-      initWithUrl: prefsString (@"ElvinURL") lifecycleDelegate: self] 
+    [[[ElvinConnection alloc] initWithUrl: prefsString (@"ElvinURL")] 
       retain];
 
   // listen for sleep/wake
@@ -70,7 +68,11 @@ NSString *PreferencesContext = @"PreferencesContext";
     [NSUserDefaultsController sharedUserDefaultsController];
 		
   [userPreferences addObserver: self forKeyPath: @"values.ElvinURL" 
-                   options: 0 context: PreferencesContext];       
+                   options: 0 context: PreferencesContext];
+                   
+  [self showTickerWindow: self];
+  
+  [elvin connect];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) notification 
@@ -125,26 +127,18 @@ NSString *PreferencesContext = @"PreferencesContext";
   [elvin connect];
 }
 
-/*
- * Handles delegate call from Elvin connection.
- */
-- (void) elvinConnectionDidOpen: (ElvinConnection *) connection
-{
-  if (tickerWindow == nil)
-    [self openTickerWindow];
-}
-
-- (void) openTickerWindow
+- (IBAction) showTickerWindow: (id) sender
 {
   // TODO this would leak the TickerController object
   // possibly due to circular ref?
 
-  NSLog (@"Open Ticker Window");
-  
-  if (![NSBundle loadNibNamed: @"TickerWindow" owner: self])
+  if (!tickerWindow)
   {
-    NSLog (@"No nib file for ticker?");
-    return;
+    if (![NSBundle loadNibNamed: @"TickerWindow" owner: self])
+    {
+      NSLog (@"No nib file for ticker?");
+      return;
+    }
   }
   
   [tickerWindow makeKeyAndOrderFront: nil];

@@ -213,8 +213,22 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
+- (void) handleElvinOpen: (void *) unused
+{
+  [sendButton setEnabled: YES];
+  [sendButton setToolTip: nil];
+}
+
+- (void) handleElvinClose: (void *) unused
+{
+  [sendButton setEnabled: NO];
+  [sendButton setToolTip: @"Cannot send: currently disconnected"];
+}
+
 - (void) awakeFromNib
 { 
+  [self handleElvinClose: nil];
+  
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   
   [appController.elvin
@@ -223,6 +237,23 @@ static NSAttributedString *attributedString (NSString *string,
     
   [self setAttachedURL: nil];
   // [self setAttachedURL: [NSURL URLWithString: @"http://developer.apple.com/documentation/Cocoa/Conceptual/DragandDrop/Tasks/acceptingdrags.html#//apple_ref/doc/uid/20000993"]];
+  
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+
+  [notifications addObserver: self selector: @selector (handleElvinOpen:)
+    name: ElvinConnectionOpenedNotification object: nil]; 
+    
+  [notifications addObserver: self selector: @selector (handleElvinClose:)
+    name: ElvinConnectionClosedNotification object: nil]; 
+}
+
+- (void) dealloc
+{
+  NSLog (@"Dealloc");
+  
+  [[NSNotificationCenter defaultCenter] removeObserver: self]; 
+  
+  [super dealloc];
 }
 
 #pragma mark PUBLIC methods

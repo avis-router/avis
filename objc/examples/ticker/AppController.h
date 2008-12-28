@@ -13,6 +13,8 @@
 
 @property (readonly, assign) ElvinConnection *elvin;
 
+- (IBAction) showTickerWindow: (id) sender;
+
 - (IBAction) showPreferencesWindow: (id) sender;
 
 @end
