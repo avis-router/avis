@@ -2,6 +2,9 @@
 
 #define UUID_STRING_LENGTH 100
 
+NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
+NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
+
 static inline NSString *attr_string (Attributes *attrs, const char *name)
 {
   return [NSString stringWithUTF8String: attributes_get_string (attrs, name)];
@@ -67,20 +70,27 @@ static void copy_string_attr (Attributes *attributes,
 
 @end
 
-@implementation ElvinConnection
-
 static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
-- (id) initWithUrl: (NSString *) url lifecycleDelegate: (id) delegate
+static void close_listener (Elvin *elvin, CloseReason reason,
+                            const char *message,
+                            ElvinConnection *self);
+
+static void notification_listener (Subscription *sub, 
+                                   Attributes *attributes, 
+                                   bool secure, SubscriptionContext *context);
+
+@implementation ElvinConnection
+                                                                  
+- (id) initWithUrl: (NSString *) url
 {
   if (![super init])
     return nil;
 
-  lifecycleDelegate = delegate;  
+  memset (&elvin, 0, sizeof (Elvin));
+  
   elvinUrl = [url retain];
   subscriptions = [[NSMutableArray arrayWithCapacity: 5] retain];
-
-  [self connect];
     
   return self;
 }
@@ -95,7 +105,6 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   [super dealloc];
 }
 
-// TODO add close listener
 - (void) connect
 {
   eventLoopThread = 
@@ -128,20 +137,25 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 - (BOOL) openConnection
 {
   if (elvin_open (&elvin, [elvinUrl UTF8String]))
-  {
+  {    
     // renew any existing subscriptions
     for (SubscriptionContext *context in subscriptions)
       subscribe (&elvin, context);
         
-    // let delegate know we're ready
-    if ([lifecycleDelegate 
-          respondsToSelector: @selector (elvinConnectionDidOpen:)])
-    {
-      [lifecycleDelegate 
-        performSelectorOnMainThread: @selector (elvinConnectionDidOpen:)
-                         withObject: self waitUntilDone: YES];
-    }
-    
+//    // let delegate know we're ready
+//    if ([lifecycleDelegate 
+//          respondsToSelector: @selector (elvinConnectionDidOpen:)])
+//    {
+//      [lifecycleDelegate 
+//        performSelectorOnMainThread: @selector (elvinConnectionDidOpen:)
+//                         withObject: self waitUntilDone: YES];
+//    }
+
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: ElvinConnectionOpenedNotification object: self];
+   
+    elvin_add_close_listener (&elvin, (CloseListener)close_listener, self);
+ 
     return TRUE;
   } else
   {           
@@ -164,7 +178,6 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   }
 }
 
-// TODO add callback on close
 - (void) elvinEventLoopThread
 {
   while (![eventLoopThread isCancelled])
@@ -201,9 +214,16 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
   NSLog (@"Elvin thread is terminating");
 }
 
-static void notificationListener (Subscription *sub, 
-                                  Attributes *attributes, 
-                                  bool secure, SubscriptionContext *context)
+void close_listener (Elvin *elvin, CloseReason reason,
+                     const char *message, ElvinConnection *self)
+{
+  [[NSNotificationCenter defaultCenter] 
+     postNotificationName: ElvinConnectionClosedNotification object: self];
+}
+
+void notification_listener (Subscription *sub, 
+                            Attributes *attributes, 
+                            bool secure, SubscriptionContext *context)
 {
   NSArray *keys = 
     [NSArray arrayWithObjects: @"Message", @"Group", @"From", nil];
@@ -237,7 +257,7 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context)
   if (elvin_error_ok (&elvin->error))
   {
     elvin_subscription_add_listener 
-      (context->subscription, (SubscriptionListener)notificationListener, 
+      (context->subscription, (SubscriptionListener)notification_listener, 
        context);
   } else
   {
@@ -255,10 +275,12 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context)
 
   [subscriptions addObject: context];
   
-  elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
+  // TODO make thread safe
+  if (elvin_is_open (&elvin))
+    elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
 }
 
-static void sendMessage (Elvin *elvin, Attributes *message)
+static void send_message (Elvin *elvin, Attributes *message)
 {
   elvin_send (elvin, message);
   
@@ -306,7 +328,7 @@ static void sendMessage (Elvin *elvin, Attributes *message)
                            [[url absoluteString] UTF8String]);
   }
   
-  elvin_invoke (&elvin, (InvokeHandler)sendMessage, message);
+  elvin_invoke (&elvin, (InvokeHandler)send_message, message);
 }
 
 @end

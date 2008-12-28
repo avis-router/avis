@@ -568,10 +568,6 @@
 				<string key="NSClassName">TickerController</string>
 			</object>
 			<object class="NSUserDefaultsController" id="816690533">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>DefaultSendGroup</string>
-				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</object>
@@ -753,6 +749,14 @@
 						</object>
 					</object>
 					<int key="connectionID">88</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">sendButton</string>
+						<reference key="source" ref="62509022"/>
+						<reference key="destination" ref="903812012"/>
+					</object>
+					<int key="connectionID">89</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1103,7 +1107,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">88</int>
+			<int key="maxID">89</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1161,11 +1165,13 @@
 							<string>messageGroup</string>
 							<string>messageText</string>
 							<string>publicCheckbox</string>
+							<string>sendButton</string>
 							<string>tickerMessagesTextView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>AppController</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

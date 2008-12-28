@@ -2,16 +2,18 @@
 
 #include <avis/elvin.h>
 
+extern NSString *ElvinConnectionOpenedNotification;
+extern NSString *ElvinConnectionClosedNotification;
+
 @interface ElvinConnection : NSObject 
 {
   Elvin            elvin;
   NSString *       elvinUrl;
   NSMutableArray * subscriptions;
   NSThread *       eventLoopThread;
-  id               lifecycleDelegate;
 }
 
-- (id) initWithUrl: (NSString *) url lifecycleDelegate: (id) delegate;
+- (id) initWithUrl: (NSString *) url;
 
 - (void) disconnect;
 

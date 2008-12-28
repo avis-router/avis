@@ -10,6 +10,7 @@
   IBOutlet id              publicCheckbox;
   IBOutlet id              attachedUrlLabel;
   IBOutlet id              attachedUrlPanel;
+  IBOutlet id              sendButton;
   
   IBOutlet AppController * appController;
   
