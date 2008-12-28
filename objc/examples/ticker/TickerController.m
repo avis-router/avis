@@ -89,6 +89,7 @@ static NSAttributedString *attributedString (NSString *string,
 @end
 
 @interface TickerController ()
+  - (void) setConnectedStatus: (BOOL) connected;
   - (void) handleNotify: (NSDictionary *) message;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
@@ -108,7 +109,7 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) awakeFromNib
 { 
-  [self handleElvinClose: nil];
+  [self setConnectedStatus: NO];
   
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   [self setAttachedURL: nil];
@@ -138,14 +139,28 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) handleElvinOpen: (void *) unused
 {
-  [sendButton setEnabled: YES];
-  [sendButton setToolTip: nil];
+  if ([[NSThread currentThread] isMainThread])
+    [self setConnectedStatus: YES];
+  else
+    [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
+          withObject: nil waitUntilDone: NO];
 }
 
 - (void) handleElvinClose: (void *) unused
 {
-  [sendButton setEnabled: NO];
-  [sendButton setToolTip: @"Cannot send: currently disconnected"];
+  if ([[NSThread currentThread] isMainThread])
+    [self setConnectedStatus: NO];
+  else
+    [self performSelectorOnMainThread: @selector (handleElvinClose:) 
+          withObject: nil waitUntilDone: NO];
+}
+
+- (void) setConnectedStatus: (BOOL) connected
+{
+  [sendButton setEnabled: connected];
+
+  [sendButton setToolTip: 
+    connected ? nil : @"Cannot send: currently disconnected"];
 }
 
 - (void) handleNotify: (NSDictionary *) message

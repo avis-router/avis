@@ -161,7 +161,6 @@ static void send_message (Elvin *elvin, Attributes *message);
 
   [subscriptions addObject: context];
   
-  // TODO make thread safe
   if (elvin_is_open (&elvin))
     elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
 }
@@ -218,6 +217,7 @@ void notification_listener (Subscription *sub,
                attachedURL: (NSURL *) url
                 sendPublic: (BOOL) isPublic
 {
+  // TODO error on closed connection
   NSAssert (group != nil && messageText != nil, @"IB connection failure");
   
   char messageID [UUID_STRING_LENGTH];
