@@ -88,9 +88,65 @@ static NSAttributedString *attributedString (NSString *string,
 
 @end
 
+@interface TickerController ()
+  - (void) handleNotify: (NSDictionary *) message;
+  - (void) handleElvinOpen: (void *) unused;
+  - (void) handleElvinClose: (void *) unused;
+  - (void) setAttachedURLPanelHidden: (BOOL) hidden;
+  - (BOOL) textView: (NSTextView *) textView doCommandBySelector: (SEL) selector;
+  - (BOOL) textView: (NSTextView *) textView
+           clickedOnLink: (id) link atIndex: (unsigned) charIndex;
+  - (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
+           usingRect: (NSRect) rect;
+  - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
+           contextInfo: (void *) contextInfo;
+@end
+
 @implementation TickerController
 
+#pragma mark PRIVATE Cocoa overrides
+
+- (void) awakeFromNib
+{ 
+  [self handleElvinClose: nil];
+  
+  [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
+  [self setAttachedURL: nil];
+  
+  [appController.elvin
+    subscribe: TICKER_SUBSCRIPTION 
+    withDelegate: self usingSelector: @selector (handleNotify:)];    
+  
+  // listen for elvin open/close
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+
+  [notifications addObserver: self selector: @selector (handleElvinOpen:)
+    name: ElvinConnectionOpenedNotification object: nil]; 
+    
+  [notifications addObserver: self selector: @selector (handleElvinClose:)
+    name: ElvinConnectionClosedNotification object: nil]; 
+}
+
+- (void) dealloc
+{
+  [[NSNotificationCenter defaultCenter] removeObserver: self]; 
+  
+  [super dealloc];
+}
+
 #pragma mark PRIVATE Delegates handling callback from Elvin
+
+- (void) handleElvinOpen: (void *) unused
+{
+  [sendButton setEnabled: YES];
+  [sendButton setToolTip: nil];
+}
+
+- (void) handleElvinClose: (void *) unused
+{
+  [sendButton setEnabled: NO];
+  [sendButton setToolTip: @"Cannot send: currently disconnected"];
+}
 
 - (void) handleNotify: (NSDictionary *) message
 {
@@ -213,49 +269,6 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
-- (void) handleElvinOpen: (void *) unused
-{
-  [sendButton setEnabled: YES];
-  [sendButton setToolTip: nil];
-}
-
-- (void) handleElvinClose: (void *) unused
-{
-  [sendButton setEnabled: NO];
-  [sendButton setToolTip: @"Cannot send: currently disconnected"];
-}
-
-- (void) awakeFromNib
-{ 
-  [self handleElvinClose: nil];
-  
-  [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
-  
-  [appController.elvin
-    subscribe: TICKER_SUBSCRIPTION 
-    withDelegate: self usingSelector: @selector (handleNotify:)];
-    
-  [self setAttachedURL: nil];
-  // [self setAttachedURL: [NSURL URLWithString: @"http://developer.apple.com/documentation/Cocoa/Conceptual/DragandDrop/Tasks/acceptingdrags.html#//apple_ref/doc/uid/20000993"]];
-  
-  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
-
-  [notifications addObserver: self selector: @selector (handleElvinOpen:)
-    name: ElvinConnectionOpenedNotification object: nil]; 
-    
-  [notifications addObserver: self selector: @selector (handleElvinClose:)
-    name: ElvinConnectionClosedNotification object: nil]; 
-}
-
-- (void) dealloc
-{
-  NSLog (@"Dealloc");
-  
-  [[NSNotificationCenter defaultCenter] removeObserver: self]; 
-  
-  [super dealloc];
-}
-
 #pragma mark PUBLIC methods
 
 - (IBAction) sendMessage: (id) sender
@@ -296,11 +309,6 @@ static NSAttributedString *attributedString (NSString *string,
   [publicCheckbox setState: NSOffState];
 }
 
-- (IBAction) clearAttachedURL: (id) sender
-{
-  [self setAttachedURL: nil];
-}
-
 - (void) setAttachedURLPanelHidden: (BOOL) hidden
 {
   if (hidden == [attachedUrlPanel isHidden])
@@ -331,6 +339,11 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   [[textContainerView animator] setFrame: newFrame];
+}
+
+- (IBAction) clearAttachedURL: (id) sender
+{
+  [self setAttachedURL: nil];
 }
 
 - (void) setAttachedURL: (NSURL *) url
@@ -406,7 +419,7 @@ static NSAttributedString *attributedString (NSString *string,
  * Delegate handler for links for text views.
  */
 - (BOOL) textView: (NSTextView *) textView
-    clickedOnLink: (id) link atIndex: (unsigned) charIndex
+         clickedOnLink: (id) link atIndex: (unsigned) charIndex
 {
   if ([link isKindOfClass: [MessageLink class]])
   {
@@ -435,7 +448,7 @@ static NSAttributedString *attributedString (NSString *string,
  * the text area itself rather than the top of the window.
  */
 - (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
-        usingRect: (NSRect) rect 
+           usingRect: (NSRect) rect 
 {
   NSRect fieldRect = [[[[messageText superview] superview] superview] frame];
   
@@ -445,7 +458,7 @@ static NSAttributedString *attributedString (NSString *string,
 }
 
 - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
-                     contextInfo: (void *) contextInfo
+         contextInfo: (void *) contextInfo
 {
   [[messageText window] setDelegate: nil];
   
