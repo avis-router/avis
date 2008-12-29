@@ -11,6 +11,7 @@
   IBOutlet id              attachedUrlLabel;
   IBOutlet id              attachedUrlPanel;
   IBOutlet id              sendButton;
+  IBOutlet id              dragTarget;
   
   IBOutlet AppController * appController;
   

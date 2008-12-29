@@ -114,6 +114,9 @@ static NSAttributedString *attributedString (NSString *string,
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   [self setAttachedURL: nil];
   
+  [dragTarget 
+    registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];
+  
   [appController.elvin
     subscribe: TICKER_SUBSCRIPTION 
     withDelegate: self usingSelector: @selector (handleNotify:)];    
@@ -399,6 +402,25 @@ static NSAttributedString *attributedString (NSString *string,
     return nil;
   else 
     return [NSURL URLWithString: [attachedUrlLabel stringValue]];
+}
+
+#pragma mark URL dragging destination
+
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>) sender
+{
+  if ([sender draggingSource] == self) 
+    return NSDragOperationNone;
+  else
+    return NSDragOperationCopy;
+}
+
+- (BOOL) performDragOperation: (id <NSDraggingInfo>) sender
+{
+  NSPasteboard *pasteboard = [sender draggingPasteboard];
+  
+  [self setAttachedURL: [NSURL URLFromPasteboard: pasteboard]];
+  
+  return YES;
 }
 
 #pragma mark PRIVATE Delegates for text view

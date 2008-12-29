@@ -11,7 +11,7 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		C98291870EF662090031BF6E /* TickerViewDragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C98291860EF662090031BF6E /* TickerViewDragTarget.m */; };
+		C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C9521BAC0F08CE4100BA83EC /* DragTarget.m */; };
 		C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */; };
 		C9B038390E48282400B59216 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B038380E48282400B59216 /* TickerController.m */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
@@ -49,8 +49,8 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C952189C0F019E6600BA83EC /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
-		C98291850EF662090031BF6E /* TickerViewDragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerViewDragTarget.h; sourceTree = "<group>"; };
-		C98291860EF662090031BF6E /* TickerViewDragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TickerViewDragTarget.m; sourceTree = "<group>"; };
+		C9521BAB0F08CE4100BA83EC /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragTarget.h; sourceTree = "<group>"; };
+		C9521BAC0F08CE4100BA83EC /* DragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragTarget.m; sourceTree = "<group>"; };
 		C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElvinConnection.h; sourceTree = "<group>"; };
 		C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElvinConnection.m; sourceTree = "<group>"; };
 		C9B038370E48282400B59216 /* TickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerController.h; sourceTree = "<group>"; };
@@ -83,6 +83,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C9521BAB0F08CE4100BA83EC /* DragTarget.h */,
+				C9521BAC0F08CE4100BA83EC /* DragTarget.m */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
 				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
 				C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */,
@@ -91,8 +93,6 @@
 				C9CF62D30EE0BF5F00A76D46 /* AppController.m */,
 				C9B038370E48282400B59216 /* TickerController.h */,
 				C9B038380E48282400B59216 /* TickerController.m */,
-				C98291850EF662090031BF6E /* TickerViewDragTarget.h */,
-				C98291860EF662090031BF6E /* TickerViewDragTarget.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -232,8 +232,8 @@
 				C9B038390E48282400B59216 /* TickerController.m in Sources */,
 				C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */,
 				C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */,
-				C98291870EF662090031BF6E /* TickerViewDragTarget.m in Sources */,
 				C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */,
+				C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
