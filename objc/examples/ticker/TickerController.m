@@ -123,7 +123,7 @@ static NSAttributedString *attributedString (NSString *string,
 }
 
 - (void) awakeFromNib
-{ 
+{
   [self setConnectedStatus: [appController.elvin isConnected]];
   
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];

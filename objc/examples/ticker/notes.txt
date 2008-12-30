@@ -1,11 +1,11 @@
 + cleanup
-  * ticker controller to take control of ticker window
-  * generalise tickerviewdragtarget
+  * DONE: ticker controller to take control of ticker window
+  * DONE: generalise tickerviewdragtarget
 + preferences
   * debug vs release
-  * set URL 
+  * DONE: set URL 
 + reliable connection
-  * handle router shutdown/protocol error after open
+  * DONE: handle router shutdown/protocol error after open
   * check how send failure handled
 + attached URL's
   * why doesn't cursor change until clicked?
