@@ -5,6 +5,8 @@ Release 1.2.1 (???)
 
 * Added elvin_reset ().
 
+* Added error check for elvin_invoke ().
+
 
 Release 1.2.0 (December 27, 2008)
 ----------------------------------------------------------------------
