@@ -19,6 +19,8 @@ extern NSString *ElvinConnectionClosedNotification;
 
 - (void) connect;
 
+- (BOOL) isConnected;
+
 - (void) sendTickerMessage: (NSString *) messageText 
                 fromSender: (NSString *) from
                    toGroup: (NSString *) group

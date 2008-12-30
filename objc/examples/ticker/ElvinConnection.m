@@ -61,6 +61,7 @@ static void copy_string_attr (Attributes *attributes,
   context->subscriptionExpr = [newSubscriptionExpr retain];
   context->delegate = newDelegate;
   context->selector = newSelector;
+  context->subscription = nil;
   
   return context;
 }
@@ -100,8 +101,8 @@ static void send_message (Elvin *elvin, Attributes *message);
 {
   if (![super init])
     return nil;
-
-  memset (&elvin, 0, sizeof (Elvin));
+    
+  elvin_reset (&elvin);
   
   elvinUrl = [url retain];
   subscriptions = [[NSMutableArray arrayWithCapacity: 5] retain];
@@ -120,6 +121,11 @@ static void send_message (Elvin *elvin, Attributes *message);
 }
 
 #pragma mark PUBLIC
+
+- (BOOL) isConnected
+{
+  return elvin_is_open (&elvin);
+}
 
 - (void) connect
 {

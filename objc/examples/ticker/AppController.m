@@ -10,7 +10,8 @@ NSString *PreferencesContext = @"PreferencesContext";
 #pragma mark Declare Private Methods
 
 @interface AppController ()
-  - (void) disconnectElvin;
+  - (void) initElvin;
+  - (void) deallocElvin;
 @end
 
 @implementation AppController
@@ -44,11 +45,39 @@ NSString *PreferencesContext = @"PreferencesContext";
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
-- (void) applicationDidFinishLaunching: (NSNotification *) notification 
+- (void) dealloc
 {
-  elvin = 
+  [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
+  [[NSUserDefaultsController sharedUserDefaultsController] removeObserver: self];
+  
+  [self deallocElvin];
+  
+  [super dealloc];
+}
+
+- (void) initElvin
+{
+ if (!elvin)
+ {
+   elvin = 
     [[[ElvinConnection alloc] initWithUrl: prefsString (@"ElvinURL")] 
       retain];
+  }
+}
+
+- (void) deallocElvin
+{
+  if (elvin)
+  {
+    [elvin disconnect];
+    [elvin release];
+    elvin = nil;
+  }
+}
+
+- (void) applicationDidFinishLaunching: (NSNotification *) notification 
+{
+  [self initElvin];
 
   // listen for sleep/wake
   NSNotificationCenter *workspaceNotifications = 
@@ -77,24 +106,7 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 - (void) applicationWillTerminate: (NSNotification *) notification 
 {
-  [self disconnectElvin];
-}
-
-- (void) dealloc
-{
-  [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
-  [[NSUserDefaultsController sharedUserDefaultsController] removeObserver: self];
-  
-  [self disconnectElvin];
-  
-  [super dealloc];
-}
-
-- (void) disconnectElvin
-{
-  [elvin disconnect];
-  [elvin release];
-  elvin = nil;
+  [self deallocElvin];
 }
 
 /*
@@ -106,6 +118,10 @@ NSString *PreferencesContext = @"PreferencesContext";
   if (context == PreferencesContext)
   {
 		NSLog (@"Elvin URL changed: %@", prefsString (@"ElvinURL"));
+    
+    [self deallocElvin];
+    [self initElvin];
+    [elvin connect];
 	} else 
   {
 		[super observeValueForKeyPath: keyPath ofObject: object change: change 
