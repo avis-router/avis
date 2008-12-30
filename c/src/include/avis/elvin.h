@@ -494,7 +494,7 @@ bool elvin_subscription_remove_listener (Subscription *subscription,
  * @see elvin_close()
  */
 AVIS_PUBLIC
-bool elvin_is_open (Elvin *elvin);
+bool elvin_is_open (const Elvin *elvin);
 
 /**
  * Close the elvin connection. This may be called any number of times, calls
@@ -503,10 +503,22 @@ bool elvin_is_open (Elvin *elvin);
  * @param elvin The Elvin connection instance.
  *
  * @return True if the connection was closed, false if it was already closed.
+ *
+ * @see elvin_reset()
  */
 AVIS_PUBLIC
 bool elvin_close (Elvin *elvin);
 
+/**
+ * Reset a new Elvin instance to safe defaults such that the instance appears
+ * to be closed (elvin_is_open(), elvin_close() and elvin_free() are safe to 
+ * call). This should NOT be called on an open connection: use elvin_close().
+ * 
+ * @see elvin_close()
+ */
+AVIS_PUBLIC
+void elvin_reset (Elvin *elvin);
+  
 /**
  * Invoke a function call inside the Elvin event loop thread. This
  * call will return immediately, and the nominated handler will be
