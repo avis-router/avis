@@ -1,7 +1,9 @@
 Release 1.2.1 (???)
 ----------------------------------------------------------------------
 
-* Fixed memory leak in elvin_close ()
+* Fixed memory leak in elvin_close ().
+
+* Added elvin_reset ().
 
 
 Release 1.2.0 (December 27, 2008)
