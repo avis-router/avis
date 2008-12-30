@@ -11,7 +11,7 @@
   PreferencesController * preferencesController;
 }
 
-@property (readonly, assign) ElvinConnection *elvin;
+@property (readonly) ElvinConnection *elvin;
 
 - (IBAction) showTickerWindow: (id) sender;
 

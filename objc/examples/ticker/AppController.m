@@ -119,9 +119,7 @@ NSString *PreferencesContext = @"PreferencesContext";
   {
 		NSLog (@"Elvin URL changed: %@", prefsString (@"ElvinURL"));
     
-    [self deallocElvin];
-    [self initElvin];
-    [elvin connect];
+    elvin.elvinUrl = prefsString (@"ElvinURL");
 	} else 
   {
 		[super observeValueForKeyPath: keyPath ofObject: object change: change 
