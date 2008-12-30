@@ -166,7 +166,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
   return elvin_error_ok (&elvin->error);
 }
 
-bool elvin_is_open (Elvin *elvin)
+bool elvin_is_open (const Elvin *elvin)
 {
   return elvin->router_socket != -1;
 }
@@ -190,6 +190,12 @@ bool elvin_close (Elvin *elvin)
   elvin_free (elvin);
         
   return open;
+}
+
+void elvin_reset (Elvin *elvin)
+{
+  memset (elvin, 0, sizeof (Elvin));
+  elvin->router_socket = -1;
 }
 
 void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
@@ -226,6 +232,8 @@ void elvin_free (Elvin *elvin)
   listeners_free (&elvin->notification_listeners);
 
   elvin_error_free (&elvin->error);
+  
+  elvin_reset (elvin);
 }
 
 bool elvin_event_loop (Elvin *elvin)
