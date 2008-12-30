@@ -96,6 +96,8 @@ static void send_message (Elvin *elvin, Attributes *message);
 @end
 
 @implementation ElvinConnection
+
+@dynamic elvinUrl;
                                                                   
 - (id) initWithUrl: (NSString *) url
 {
@@ -112,6 +114,8 @@ static void send_message (Elvin *elvin, Attributes *message);
 
 - (void) dealloc
 {
+  NSLog (@"Dealloc elvin");
+  
   [self disconnect];
   
   [elvinUrl release];    
@@ -121,6 +125,28 @@ static void send_message (Elvin *elvin, Attributes *message);
 }
 
 #pragma mark PUBLIC
+
+- (NSString *) elvinUrl
+{
+  return elvinUrl;
+}
+
+- (void) setElvinUrl: (NSString *) newElvinUrl
+{
+  if (![elvinUrl isEqual: newElvinUrl])
+  {
+    BOOL wasConnected = [self isConnected];
+    
+    if (wasConnected)
+      [self disconnect];
+    
+    [elvinUrl release];
+    elvinUrl = [newElvinUrl retain];
+
+    if (wasConnected)
+      [self connect];
+  }
+}
 
 - (BOOL) isConnected
 {

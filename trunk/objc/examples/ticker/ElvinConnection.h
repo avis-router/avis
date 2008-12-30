@@ -13,6 +13,8 @@ extern NSString *ElvinConnectionClosedNotification;
   NSThread *       eventLoopThread;
 }
 
+@property (retain) NSString *elvinUrl;
+
 - (id) initWithUrl: (NSString *) url;
 
 - (void) disconnect;
