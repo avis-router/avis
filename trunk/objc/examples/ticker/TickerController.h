@@ -1,22 +1,23 @@
 #import <Cocoa/Cocoa.h>
 
-#import "AppController.h"
+@class AppController;
 
-@interface TickerController : NSObject
+@interface TickerController : NSWindowController
 {
-  IBOutlet id              tickerMessagesTextView;
-  IBOutlet id              messageGroup;
-  IBOutlet id              messageText;
-  IBOutlet id              publicCheckbox;
-  IBOutlet id              attachedUrlLabel;
-  IBOutlet id              attachedUrlPanel;
-  IBOutlet id              sendButton;
-  IBOutlet id              dragTarget;
+  IBOutlet id     tickerMessagesTextView;
+  IBOutlet id     messageGroup;
+  IBOutlet id     messageText;
+  IBOutlet id     publicCheckbox;
+  IBOutlet id     attachedUrlLabel;
+  IBOutlet id     attachedUrlPanel;
+  IBOutlet id     sendButton;
+  IBOutlet id     dragTarget;
   
-  IBOutlet AppController * appController;
-  
-  NSString *               replyToMessageId;
+  AppController * appController;
+  NSString *      replyToMessageId;
 }
+
+- (id) initWithAppController: (AppController *) appController;
 
 - (IBAction) sendMessage: (id) sender;
 

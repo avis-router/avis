@@ -1,5 +1,7 @@
-#import "ElvinConnection.h"
 #import "TickerController.h"
+
+#import "AppController.h"
+#import "ElvinConnection.h"
 
 #import "utils.h"
 
@@ -106,6 +108,19 @@ static NSAttributedString *attributedString (NSString *string,
 @implementation TickerController
 
 #pragma mark PRIVATE Cocoa overrides
+
+- (id) initWithAppController: (AppController *) theAppController
+{
+  if ([super initWithWindowNibName: @"TickerWindow"])
+  {
+    appController = theAppController;
+    
+    return self;
+  } else
+  {
+    return nil;
+  }
+}
 
 - (void) awakeFromNib
 { 

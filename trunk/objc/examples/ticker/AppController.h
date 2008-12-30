@@ -1,13 +1,13 @@
 #import <Cocoa/Cocoa.h>
 
 @class ElvinConnection;
+@class TickerController;
 @class PreferencesController;
 
 @interface AppController : NSObject
 {
-  IBOutlet id tickerWindow;
-  
-  ElvinConnection       * elvin;
+  ElvinConnection *       elvin;
+  TickerController *      tickerController;
   PreferencesController * preferencesController;
 }
 
