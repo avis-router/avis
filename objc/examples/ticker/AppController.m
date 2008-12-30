@@ -20,6 +20,14 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 @synthesize elvin;
 
+- (IBAction) showTickerWindow: (id) sender
+{
+  if (!tickerController)
+    tickerController = [[TickerController alloc] initWithAppController: self];
+      
+  [tickerController showWindow: self];
+}
+
 - (IBAction) showPreferencesWindow: (id) sender
 {
   if (!preferencesController)
@@ -139,23 +147,6 @@ NSString *PreferencesContext = @"PreferencesContext";
   NSLog (@"Reconnect on wake");
   
   [elvin connect];
-}
-
-- (IBAction) showTickerWindow: (id) sender
-{
-  // TODO this would leak the TickerController object
-  // possibly due to circular ref?
-
-  if (!tickerWindow)
-  {
-    if (![NSBundle loadNibNamed: @"TickerWindow" owner: self])
-    {
-      NSLog (@"No nib file for ticker?");
-      return;
-    }
-  }
-  
-  [tickerWindow makeKeyAndOrderFront: nil];
 }
 
 @end
