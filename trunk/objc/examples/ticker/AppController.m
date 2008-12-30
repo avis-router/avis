@@ -117,6 +117,16 @@ NSString *PreferencesContext = @"PreferencesContext";
   [self deallocElvin];
 }
 
+/**
+ * Re-open ticker window on app re-activate.
+ */
+- (BOOL) applicationOpenUntitledFile: (NSApplication *) application
+{
+  [self showTickerWindow: self];
+  
+  return YES;
+}
+
 /*
  * Handle preference changes.
  */
