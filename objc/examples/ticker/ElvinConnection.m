@@ -190,7 +190,7 @@ static void send_message (Elvin *elvin, Attributes *message);
   SubscriptionContext *context = 
     [SubscriptionContext context: subscriptionExpr 
                          delegate: delegate selector: selector];
-
+  
   [subscriptions addObject: context];
   
   if (elvin_is_open (&elvin))

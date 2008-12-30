@@ -53,6 +53,11 @@ NSString *PreferencesContext = @"PreferencesContext";
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
+- (void) awakeFromNib
+{
+  [self initElvin];
+}
+
 - (void) dealloc
 {
   [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
@@ -85,8 +90,6 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
-  [self initElvin];
-
   // listen for sleep/wake
   NSNotificationCenter *workspaceNotifications = 
     [[NSWorkspace sharedWorkspace] notificationCenter];

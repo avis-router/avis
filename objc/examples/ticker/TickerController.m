@@ -111,18 +111,12 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (id) initWithAppController: (AppController *) theAppController
 {
-  if ([super initWithWindowNibName: @"TickerWindow"])
-  {
-    appController = theAppController;
-    
-    return self;
-  } else
-  {
-    return nil;
-  }
+  appController = theAppController;
+  
+  return [super initWithWindowNibName: @"TickerWindow"];
 }
 
-- (void) awakeFromNib
+- (void) windowDidLoad
 {
   [self setConnectedStatus: [appController.elvin isConnected]];
   
