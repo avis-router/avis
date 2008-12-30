@@ -385,12 +385,18 @@ bool send_liveness (Elvin *elvin)
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
 {
   ControlMessage message;
-
+  int bytes_read;
+   
   message.handler = handler;
   message.parameter = parameter;
 
-  return pipe_write (elvin->control_socket_write,
-                     &message, sizeof (message)) == sizeof (message);
+  bytes_read = 
+    pipe_write (elvin->control_socket_write, &message, sizeof (message));
+                     
+  if (bytes_read == sizeof (message))
+    return true;
+  else
+    return elvin_error_from_pipe (&elvin->error);                     
 }
 
 static void elvin_invoke_close_handler (Elvin *elvin, void *param)
