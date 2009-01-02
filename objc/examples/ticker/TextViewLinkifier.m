@@ -155,8 +155,6 @@
 
 - (void) underline: (NSRange) range underlined: (BOOL) isUnderlined
 {
-  NSLog (@"underline range %i", range.length);
-  
   NSDictionary *linkAttributes = 
     [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: isUnderlined] 
       forKey: NSUnderlineStyleAttributeName];
