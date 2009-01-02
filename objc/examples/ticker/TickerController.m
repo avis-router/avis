@@ -386,7 +386,7 @@ static NSAttributedString *attributedString (NSString *string,
   if (url)
   {
     NSMutableParagraphStyle *paraStyle = 
-      [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+      [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
       
     [paraStyle setLineBreakMode: NSLineBreakByTruncatingMiddle];
     
