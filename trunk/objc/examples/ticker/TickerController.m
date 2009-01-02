@@ -99,8 +99,6 @@ static NSAttributedString *attributedString (NSString *string,
   - (BOOL) textView: (NSTextView *) textView doCommandBySelector: (SEL) selector;
   - (BOOL) textView: (NSTextView *) textView
            clickedOnLink: (id) link atIndex: (unsigned) charIndex;
-  - (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
-           usingRect: (NSRect) rect;
   - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
            contextInfo: (void *) contextInfo;
 @end
@@ -231,12 +229,12 @@ static NSAttributedString *attributedString (NSString *string,
   [displayedMessage appendAttributedString: 
     attributedString ([message objectForKey: @"Group"], groupAttrs)];
   
-  [displayedMessage appendAttributedString: attributedString (@": ", groupAttrs)];
+  [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
     attributedString ([message objectForKey: @"From"], fromAttrs)];
   
-  [displayedMessage appendAttributedString: attributedString (@": ", fromAttrs)];
+  [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
     attributedString ([message objectForKey: @"Message"], messageAttrs)];
@@ -248,11 +246,11 @@ static NSAttributedString *attributedString (NSString *string,
     NSDictionary *linkAttrs = 
       [NSDictionary dictionaryWithObjectsAndKeys:
        [NSColor blueColor], NSForegroundColorAttributeName, 
-       [NSNumber numberWithBool: YES], NSUnderlineStyleAttributeName,
+       [NSNumber numberWithBool: NO], NSUnderlineStyleAttributeName,
        attachedLink, NSLinkAttributeName, nil];
 
     [displayedMessage 
-      appendAttributedString: attributedString (@" (", messageAttrs)];
+      appendAttributedString: attributedString (@" (", dateAttrs)];
 
     if ([[attachedLink path] length] <= 40)
     {
@@ -275,7 +273,7 @@ static NSAttributedString *attributedString (NSString *string,
     }           
     
     [displayedMessage 
-      appendAttributedString: attributedString (@")", messageAttrs)];
+      appendAttributedString: attributedString (@")", dateAttrs)];
   }
   
   // insert text
@@ -493,15 +491,15 @@ static NSAttributedString *attributedString (NSString *string,
  * Handles request for sheet location: locates the "empty text" sheet on
  * the text area itself rather than the top of the window.
  */
-- (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
-           usingRect: (NSRect) rect 
-{
-  NSRect fieldRect = [[[[messageText superview] superview] superview] frame];
-  
-  fieldRect.size.height = 0;
-  
-  return fieldRect;
-}
+//- (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
+//           usingRect: (NSRect) rect 
+//{
+//  NSRect fieldRect = [[[[messageText superview] superview] superview] frame];
+//  
+//  fieldRect.size.height = 0;
+//  
+//  return fieldRect;
+//}
 
 - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
          contextInfo: (void *) contextInfo
