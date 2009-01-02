@@ -175,9 +175,10 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) handleNotify: (NSDictionary *) message
 {
-  NSRange endRange;
-  endRange.location = [[tickerMessagesTextView textStorage] length];
-  endRange.length = 0;
+  NSRange range;
+  
+  range.location = [[tickerMessagesTextView textStorage] length];
+  range.length = 0;
 
   // decide on whether we're scrolled to the end of the messages
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
@@ -187,7 +188,7 @@ static NSAttributedString *attributedString (NSString *string,
   
   bool wasScrolledToEnd = 
     bottomY (visibleRect) == bottomY (tickerMessagesRect);
-  
+
   NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
   [dateFormatter setDateStyle: NSDateFormatterShortStyle];
   [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
@@ -213,16 +214,19 @@ static NSAttributedString *attributedString (NSString *string,
     [NSDictionary dictionaryWithObject: color (0, 64, 128) 
       forKey: NSForegroundColorAttributeName];
 
+  // start new line for all but first message
+  if (range.location > 0)
+  {
+   [[tickerMessagesTextView textStorage] 
+     replaceCharactersInRange: range 
+     withAttributedString: attributedString (@"\n", dateAttrs)];
+     
+    range.location = [[tickerMessagesTextView textStorage] length];
+  }
+  
   // build formatted message
   NSMutableAttributedString *displayedMessage = 
     [[NSMutableAttributedString new] autorelease]; 
-
-  // start new line for all but first message
-  if (endRange.location != 0)
-  {
-    [displayedMessage 
-      appendAttributedString: attributedString (@"\n", messageAttrs)];
-  }
 
   [displayedMessage appendAttributedString: 
     attributedString ([dateFormatter stringFromDate: [NSDate date]], 
@@ -286,8 +290,7 @@ static NSAttributedString *attributedString (NSString *string,
   // insert text
 
   [[tickerMessagesTextView textStorage] 
-    replaceCharactersInRange: endRange
-        withAttributedString: displayedMessage];
+    replaceCharactersInRange: range withAttributedString: displayedMessage];
 
   [tickerMessagesTextView 
     setFont: [NSFont fontWithName: @"Lucida Grande" size: 11]];
@@ -295,9 +298,9 @@ static NSAttributedString *attributedString (NSString *string,
   // scroll to end if that's how it was when we started
   if (wasScrolledToEnd)
   {
-    endRange.location = [[tickerMessagesTextView textStorage] length];
+    range.location = [[tickerMessagesTextView textStorage] length];
     
-    [tickerMessagesTextView scrollRangeToVisible: endRange];
+    [tickerMessagesTextView scrollRangeToVisible: range];
   }
 }
 
