@@ -193,21 +193,25 @@ static NSAttributedString *attributedString (NSString *string,
   [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
 
   // define display attributes
+  NSDictionary *replyLinkAttrs = 
+    [NSDictionary dictionaryWithObject:
+     [MessageLink linkForMessage: message] forKey: NSLinkAttributeName];
+     
   NSDictionary *dateAttrs = 
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
-                               forKey: NSForegroundColorAttributeName];
+      forKey: NSForegroundColorAttributeName];
+      
   NSDictionary *groupAttrs = 
-    [NSDictionary dictionaryWithObjectsAndKeys:
-     color (48, 80, 10), NSForegroundColorAttributeName, 
-     [MessageLink linkForMessage: message], NSLinkAttributeName, nil];
+    [NSDictionary dictionaryWithObject: color (48, 80, 10) 
+      forKey: NSForegroundColorAttributeName];
 
   NSDictionary *fromAttrs = 
     [NSDictionary dictionaryWithObject: color (86, 56, 12) 
-                                forKey: NSForegroundColorAttributeName];
+      forKey: NSForegroundColorAttributeName];
 
   NSDictionary *messageAttrs = 
     [NSDictionary dictionaryWithObject: color (0, 64, 128) 
-                                forKey: NSForegroundColorAttributeName];
+      forKey: NSForegroundColorAttributeName];
 
   // build formatted message
   NSMutableAttributedString *displayedMessage = 
@@ -238,6 +242,9 @@ static NSAttributedString *attributedString (NSString *string,
   
   [displayedMessage appendAttributedString: 
     attributedString ([message objectForKey: @"Message"], messageAttrs)];
+  
+  [displayedMessage addAttributes: replyLinkAttrs 
+    range: NSMakeRange (0, [displayedMessage length])];
   
   NSURL *attachedLink = extractAttachedLink (message);
   

@@ -2,7 +2,7 @@
 
 /**
  * See http://developer.apple.com/samplecode/TextLinks/listing5.html for 
- * the startingpoint for this class.
+ * the starting point for this class.
  */
  
 @interface TextViewLinkifier ()
@@ -96,8 +96,8 @@
     // Find the next link inside the range
     NSString *linkObject = 
       [attrString attribute: NSLinkAttributeName 
-        atIndex: NSMaxRange(attrsRange)
-        effectiveRange: &attrsRange];
+        atIndex: NSMaxRange (attrsRange)
+        longestEffectiveRange: &attrsRange inRange: visibleCharRange];
 
     if (linkObject != nil)
     {
