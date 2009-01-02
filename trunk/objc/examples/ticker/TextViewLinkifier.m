@@ -66,28 +66,23 @@
     [area release];
   }
   
-  NSAttributedString * attrString;
-  NSPoint              containerOrigin;
-  NSRect               visibleRect;
-  NSRange              visibleGlyphRange, visibleCharRange, attrsRange;
-
-  attrString = [view textStorage];
+  NSAttributedString *attrString = [view textStorage];
 
   // Figure what part of us is visible (we're typically inside a scrollview)
-  containerOrigin = [view textContainerOrigin];
-  visibleRect = 
+  NSPoint containerOrigin = [view textContainerOrigin];
+  NSRect visibleRect = 
     NSOffsetRect ([view visibleRect], -containerOrigin.x, -containerOrigin.y);
 
   // Figure the range of characters which is visible
-  visibleGlyphRange = 
+  NSRange visibleGlyphRange = 
     [[view layoutManager] glyphRangeForBoundingRect: visibleRect 
                           inTextContainer: [view textContainer]];
-  visibleCharRange = 
+  NSRange visibleCharRange = 
     [[view layoutManager] characterRangeForGlyphRange: visibleGlyphRange 
                           actualGlyphRange: NULL];
 
   // Prime for the loop
-  attrsRange = NSMakeRange (visibleCharRange.location, 0);
+  NSRange attrsRange = NSMakeRange (visibleCharRange.location, 0);
 
   // Loop until we reach the end of the visible range of characters
   // find all visible URLs and set up cursor rects
@@ -101,7 +96,7 @@
 
     if (linkObject != nil)
     {
-      unsigned rectCount;
+      NSUInteger rectCount;
 
       // Find the rectangles where this range falls. (We could use 
       // -boundingRectForGlyphRange:..., but that gives a single rectangle, 
@@ -118,7 +113,7 @@
          [NSValue valueWithRange: attrsRange] forKey: @"range"];
          
       // For each rectangle, find its visible portion
-      for (unsigned rectIndex = 0; rectIndex < rectCount; rectIndex++)
+      for (NSUInteger rectIndex = 0; rectIndex < rectCount; rectIndex++)
       {
         NSRect rect = 
           NSIntersectionRect (rects [rectIndex], [view visibleRect]);
