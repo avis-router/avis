@@ -263,7 +263,7 @@ static NSAttributedString *attributedString (NSString *string,
     [displayedMessage 
       appendAttributedString: attributedString (@" (", dateAttrs)];
 
-    if ([[attachedLink path] length] <= 40)
+    if ([[attachedLink absoluteString] length] <= 40)
     {
       [displayedMessage appendAttributedString: 
         attributedString ([attachedLink absoluteString], linkAttrs)];
