@@ -15,6 +15,15 @@
 
 @dynamic view;
 
+- (void) dealloc
+{
+  [view release];
+  
+  [[NSNotificationCenter defaultCenter] removeObserver: self];
+  
+  [super dealloc];
+}
+
 - (NSTextView *) view
 {
   return view;
@@ -28,12 +37,16 @@
   
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
 
-  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
-    name: NSViewFrameDidChangeNotification object: view];
+  [notifications removeObserver: self];
   
+  // track scrolling
+  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
+    name: NSViewBoundsDidChangeNotification 
+    object: [[view enclosingScrollView] contentView]];
+      
   [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
     name: NSTextViewDidChangeTypingAttributesNotification object: view];
-
+                           
   [self updateTrackingAreas];
 }
 
@@ -155,7 +168,6 @@
       forKey: NSUnderlineStyleAttributeName];
   
   [[view textStorage] addAttributes: linkAttributes range: range];
-  [view setNeedsDisplay: YES];
 }
 
 @end
