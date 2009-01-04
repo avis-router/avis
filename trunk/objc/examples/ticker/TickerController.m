@@ -332,15 +332,15 @@ static NSAttributedString *attributedString (NSString *string,
     sendTickerMessage: message 
     fromSender: prefsString (@"OnlineUserName")
     toGroup: [messageGroup stringValue] 
-    inReplyTo: inReplyTo 
-    attachedURL: [self attachedURL]
-    sendPublic: [publicCheckbox state] == NSOnState];
+    inReplyTo: self.inReplyTo 
+    attachedURL: self.attachedURL
+    sendPublic: self.allowPublic];
 
   self.attachedURL = nil;
   self.inReplyTo = nil;
+  self.allowPublic = NO;
   
   [messageText setString: @""];
-  [publicCheckbox setState: NSOffState];
 }
 
 - (void) setAttachedURLPanelHidden: (BOOL) hidden
@@ -492,9 +492,9 @@ static NSAttributedString *attributedString (NSString *string,
     MessageLink *messageLink = link;
     
     [messageGroup setStringValue: messageLink->group];
-    [publicCheckbox setState: (messageLink->public ? NSOnState : NSOffState)];
     
     self.inReplyTo = messageLink->messageId;
+    self.allowPublic = messageLink->public;
     
     [[messageText window] makeFirstResponder: messageText];
 
