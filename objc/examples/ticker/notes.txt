@@ -2,11 +2,11 @@
   * DONE: ticker controller to take control of ticker window
   * DONE: generalise tickerviewdragtarget
 + preferences
-  * debug vs release
+  * DONE: debug vs release
   * DONE: set URL 
 + reliable connection
+  * send failure not detected
   * DONE: handle router shutdown/protocol error after open
-  * check how send failure handled
 + attached URL's
   * why doesn't cursor change until clicked?
   * handle .webloc
@@ -16,13 +16,16 @@
   * DONE truncation in middle
   * DONE animate appearance
 + replying
-  * underline links. use example at 
-    http://developer.apple.com/samplecode/TextLinks/listing2.html OR use 
-    NSView::addTrackingArea
-  * links across group/from
-  * handle personal reply
+  * change group -> reset reply ID
   * reply to control in message editor
   * reply-to icon in text
+  * link underline lag
+  * reply underline not handling scrolling
+  * handle personal reply
+  * DONE: underline links. use example at 
+    http://developer.apple.com/samplecode/TextLinks/listing2.html OR use 
+    NSView::addTrackingArea
+  * DONE: links across group/from
 + presence
 + multiple windows
 + filtering
