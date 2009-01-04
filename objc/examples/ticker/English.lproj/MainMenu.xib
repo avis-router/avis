@@ -189,7 +189,7 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
-								<object class="NSMenuItem" id="736873277">
+								<object class="NSMenuItem" id="29967924">
 									<reference key="NSMenu" ref="720053764"/>
 									<string key="NSTitle">Cancel Reply</string>
 									<string key="NSKeyEquiv">r</string>
@@ -208,16 +208,16 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
-								<object class="NSMenuItem" id="402711332">
+								<object class="NSMenuItem" id="329711689">
 									<reference key="NSMenu" ref="720053764"/>
 									<string key="NSTitle">Remove Link</string>
-									<string key="NSKeyEquiv">u</string>
+									<string key="NSKeyEquiv">l</string>
 									<int key="NSKeyEquivModMask">1572864</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
-								<object class="NSMenuItem" id="413759766">
+								<object class="NSMenuItem" id="241459863">
 									<reference key="NSMenu" ref="720053764"/>
 									<bool key="NSIsDisabled">YES</bool>
 									<bool key="NSIsSeparator">YES</bool>
@@ -675,7 +675,7 @@
 			<object class="NSCustomObject" id="940462991">
 				<string key="NSClassName">AppController</string>
 			</object>
-			<object class="NSUserDefaultsController" id="218204969">
+			<object class="NSUserDefaultsController" id="502840369">
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</object>
@@ -958,7 +958,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">clearReply:</string>
 						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="736873277"/>
+						<reference key="destination" ref="29967924"/>
 					</object>
 					<int key="connectionID">495</int>
 				</object>
@@ -966,7 +966,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">clearAttachedURL:</string>
 						<reference key="source" ref="1014"/>
-						<reference key="destination" ref="402711332"/>
+						<reference key="destination" ref="329711689"/>
 					</object>
 					<int key="connectionID">497</int>
 				</object>
@@ -1070,9 +1070,9 @@
 							<reference ref="776162233"/>
 							<reference ref="1010469920"/>
 							<reference ref="574045979"/>
-							<reference ref="736873277"/>
-							<reference ref="413759766"/>
-							<reference ref="402711332"/>
+							<reference ref="29967924"/>
+							<reference ref="241459863"/>
+							<reference ref="329711689"/>
 							<reference ref="634908527"/>
 						</object>
 						<reference key="parent" ref="379814623"/>
@@ -1480,17 +1480,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">493</int>
-						<reference key="object" ref="736873277"/>
+						<reference key="object" ref="29967924"/>
 						<reference key="parent" ref="720053764"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">494</int>
-						<reference key="object" ref="413759766"/>
+						<reference key="object" ref="241459863"/>
 						<reference key="parent" ref="720053764"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">496</int>
-						<reference key="object" ref="402711332"/>
+						<reference key="object" ref="329711689"/>
 						<reference key="parent" ref="720053764"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -1500,7 +1500,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">499</int>
-						<reference key="object" ref="218204969"/>
+						<reference key="object" ref="502840369"/>
 						<reference key="parent" ref="1049"/>
 					</object>
 				</object>
