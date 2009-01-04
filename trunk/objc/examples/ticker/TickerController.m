@@ -146,6 +146,18 @@ static NSAttributedString *attributedString (NSString *string,
   [super dealloc];
 }
 
+- (BOOL) validateMenuItem: (NSMenuItem*) item
+{
+	SEL action = [item action];
+	
+	if (action == @selector (clearAttachedURL:))
+    return self.attachedURL != nil;
+  else if (action == @selector (clearReply:))
+    return self.inReplyTo != nil;
+	else
+		return YES;
+}
+
 #pragma mark PRIVATE Delegates handling callback from Elvin
 
 - (void) handleElvinOpen: (void *) unused
