@@ -153,8 +153,9 @@
   NSDictionary *linkAttributes = 
     [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: isUnderlined] 
       forKey: NSUnderlineStyleAttributeName];
-      
+  
   [[view textStorage] addAttributes: linkAttributes range: range];
+  [view setNeedsDisplay: YES];
 }
 
 @end
