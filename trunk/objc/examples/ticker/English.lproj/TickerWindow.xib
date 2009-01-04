@@ -338,7 +338,7 @@
 						<object class="NSButton" id="181069474">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">257</int>
-							<string key="NSFrame">{{636, 47}, {51, 21}}</string>
+							<string key="NSFrame">{{636, 47}, {52, 21}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="139553521">
@@ -556,18 +556,18 @@
 							<reference key="NSSuperview" ref="228325107"/>
 							<string key="NSClassName">NSView</string>
 						</object>
-						<object class="NSButton" id="446862388">
+						<object class="NSButton" id="698150087">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">-2147483359</int>
 							<string key="NSFrame">{{610, 48}, {24, 21}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
-							<object class="NSButtonCell" key="NSCell" id="924241824">
+							<object class="NSButtonCell" key="NSCell" id="15347265">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">134217728</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="1025890261"/>
-								<reference key="NSControlView" ref="446862388"/>
+								<reference key="NSControlView" ref="698150087"/>
 								<int key="NSButtonFlags">105136383</int>
 								<int key="NSButtonFlags2">134</int>
 								<object class="NSCustomResource" key="NSNormalImage">
@@ -803,7 +803,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">replyButton</string>
 						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="446862388"/>
+						<reference key="destination" ref="698150087"/>
 					</object>
 					<int key="connectionID">115</int>
 				</object>
@@ -811,7 +811,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">clearReply:</string>
 						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="446862388"/>
+						<reference key="destination" ref="698150087"/>
 					</object>
 					<int key="connectionID">116</int>
 				</object>
@@ -834,10 +834,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: inReplyTo</string>
-						<reference key="source" ref="446862388"/>
+						<reference key="source" ref="698150087"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="446862388"/>
+							<reference key="NSSource" ref="698150087"/>
 							<reference key="NSDestination" ref="1001"/>
 							<string key="NSLabel">hidden: inReplyTo</string>
 							<string key="NSBinding">hidden</string>
@@ -855,17 +855,25 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
 						<reference key="source" ref="903812012"/>
-						<reference key="destination" ref="446862388"/>
+						<reference key="destination" ref="698150087"/>
 					</object>
 					<int key="connectionID">125</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
-						<reference key="source" ref="446862388"/>
+						<reference key="source" ref="698150087"/>
 						<reference key="destination" ref="181069474"/>
 					</object>
 					<int key="connectionID">126</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">clearReply:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="683708684"/>
+					</object>
+					<int key="connectionID">127</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -915,7 +923,7 @@
 							<reference ref="903812012"/>
 							<reference ref="498777286"/>
 							<reference ref="641752411"/>
-							<reference ref="446862388"/>
+							<reference ref="698150087"/>
 							<reference ref="181069474"/>
 							<reference ref="683708684"/>
 							<reference ref="674616255"/>
@@ -1090,17 +1098,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">113</int>
-						<reference key="object" ref="446862388"/>
+						<reference key="object" ref="698150087"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="924241824"/>
+							<reference ref="15347265"/>
 						</object>
 						<reference key="parent" ref="228325107"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">114</int>
-						<reference key="object" ref="924241824"/>
-						<reference key="parent" ref="446862388"/>
+						<reference key="object" ref="15347265"/>
+						<reference key="parent" ref="698150087"/>
 					</object>
 				</object>
 			</object>
@@ -1164,7 +1172,7 @@
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
-							<reference key="object" ref="446862388"/>
+							<reference key="object" ref="698150087"/>
 							<string key="toolTip">Clear reply</string>
 						</object>
 					</object>
@@ -1199,7 +1207,7 @@
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="181069474"/>
-							<string key="toolTip">Allow message to be posted globally outside the firewall</string>
+							<string key="toolTip">Allow message to be visible to the entire network</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1244,7 +1252,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">126</int>
+			<int key="maxID">127</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
