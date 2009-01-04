@@ -120,6 +120,7 @@ static NSAttributedString *attributedString (NSString *string,
   
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   [self setAttachedURL: nil];
+  [self setInReplyTo: nil];
   
   [dragTarget 
     registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];
@@ -331,14 +332,12 @@ static NSAttributedString *attributedString (NSString *string,
     sendTickerMessage: message 
     fromSender: prefsString (@"OnlineUserName")
     toGroup: [messageGroup stringValue] 
-    inReplyTo: replyToMessageId 
+    inReplyTo: inReplyTo 
     attachedURL: [self attachedURL]
     sendPublic: [publicCheckbox state] == NSOnState];
 
-  [self setAttachedURL: nil];
-  
-  [replyToMessageId release];
-  replyToMessageId = nil;
+  self.attachedURL = nil;
+  self.inReplyTo = nil;
   
   [messageText setString: @""];
   [publicCheckbox setState: NSOffState];
@@ -378,8 +377,10 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (IBAction) clearAttachedURL: (id) sender
 {
-  [self setAttachedURL: nil];
+  self.attachedURL = nil;
 }
+
+@dynamic attachedURL;
 
 - (void) setAttachedURL: (NSURL *) url
 {
@@ -420,6 +421,16 @@ static NSAttributedString *attributedString (NSString *string,
   else 
     return [NSURL URLWithString: [attachedUrlLabel stringValue]];
 }
+
+- (IBAction) clearReply: (id) sender
+{
+  self.inReplyTo = nil;
+  self.allowPublic = NO;
+}
+
+@synthesize inReplyTo;
+
+@synthesize allowPublic;
 
 #pragma mark URL dragging destination
 
@@ -483,8 +494,7 @@ static NSAttributedString *attributedString (NSString *string,
     [messageGroup setStringValue: messageLink->group];
     [publicCheckbox setState: (messageLink->public ? NSOnState : NSOffState)];
     
-    [replyToMessageId release];
-    replyToMessageId = [messageLink->messageId retain];
+    self.inReplyTo = messageLink->messageId;
     
     [[messageText window] makeFirstResponder: messageText];
 

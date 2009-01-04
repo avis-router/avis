@@ -11,11 +11,17 @@
   IBOutlet id     attachedUrlLabel;
   IBOutlet id     attachedUrlPanel;
   IBOutlet id     sendButton;
+  IBOutlet id     replyButton;
   IBOutlet id     dragTarget;
   
   AppController * appController;
-  NSString *      replyToMessageId;
+  NSString *      inReplyTo;
+  BOOL            allowPublic;
 }
+
+@property (readwrite, retain) IBOutlet NSURL *    attachedURL;
+@property (readwrite, retain) IBOutlet NSString * inReplyTo;
+@property (readwrite, assign) IBOutlet BOOL       allowPublic;
 
 - (id) initWithAppController: (AppController *) appController;
 
@@ -23,9 +29,6 @@
 
 - (IBAction) clearAttachedURL: (id) sender;
 
-- (void) setAttachedURL: (NSURL *) url;
-
-- (NSURL *) attachedURL;
+- (IBAction) clearReply: (id) sender;
 
 @end
-
