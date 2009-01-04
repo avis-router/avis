@@ -43,7 +43,10 @@
   [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
     name: NSViewBoundsDidChangeNotification 
     object: [[view enclosingScrollView] contentView]];
-      
+  
+  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
+    name: NSViewFrameDidChangeNotification object: view];
+    
   [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
     name: NSTextViewDidChangeTypingAttributesNotification object: view];
                            
@@ -78,7 +81,9 @@
     [view removeTrackingArea: area];
     [area release];
   }
-  
+ 
+  // [NSCursor pop];
+   
   NSAttributedString *attrString = [view textStorage];
 
   // Figure what part of us is visible (we're typically inside a scrollview)
@@ -145,7 +150,8 @@
 
 - (void) mouseEntered: (NSEvent *) event
 {
-  [[NSCursor pointingHandCursor] push];
+  if ([NSCursor currentCursor] != [NSCursor pointingHandCursor])
+    [[NSCursor pointingHandCursor] push];
   
   NSValue *range = [(NSDictionary *)[event userData] valueForKey: @"range"];
   
@@ -154,7 +160,8 @@
 
 - (void) mouseExited: (NSEvent *) event
 {
-  [[NSCursor pointingHandCursor] pop];
+  if ([NSCursor currentCursor] == [NSCursor pointingHandCursor])
+    [NSCursor pop];
   
   NSValue *range = [(NSDictionary *)[event userData] valueForKey: @"range"];
   
