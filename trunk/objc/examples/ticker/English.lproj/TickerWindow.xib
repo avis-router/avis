@@ -52,7 +52,7 @@
 										<object class="NSTextView" id="168406328">
 											<reference key="NSNextResponder" ref="285478854"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{732, 14}</string>
+											<string key="NSFrameSize">{0, 0}</string>
 											<reference key="NSSuperview" ref="285478854"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="982392851">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -70,7 +70,7 @@
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="168406328"/>
-												<double key="NSWidth">7.320000e+02</double>
+												<double key="NSWidth">0.000000e+00</double>
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
@@ -130,7 +130,6 @@
 											</object>
 											<int key="NSTVFlags">7</int>
 											<string key="NSMaxSize">{1733, 1e+07}</string>
-											<string key="NSMinize">{223, 0}</string>
 											<nil key="NSDelegate"/>
 										</object>
 									</object>
@@ -163,7 +162,6 @@
 									<int key="NSvFlags">256</int>
 									<string key="NSFrame">{{-100, -100}, {87, 18}}</string>
 									<reference key="NSSuperview" ref="641752411"/>
-									<bool key="NSEnabled">YES</bool>
 									<int key="NSsFlags">1</int>
 									<reference key="NSTarget" ref="641752411"/>
 									<string key="NSAction">_doScroller:</string>
@@ -174,7 +172,7 @@
 							<string key="NSFrame">{{-1, 76}, {722, 361}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<reference key="NSNextKeyView" ref="285478854"/>
-							<int key="NSsFlags">146</int>
+							<int key="NSsFlags">18</int>
 							<reference key="NSVScroller" ref="1008930221"/>
 							<reference key="NSHScroller" ref="860786182"/>
 							<reference key="NSContentView" ref="285478854"/>
@@ -552,7 +550,7 @@
 									<string key="NSClassName">NSView</string>
 								</object>
 							</object>
-							<string key="NSFrame">{{234, 20}, {374, 48}}</string>
+							<string key="NSFrame">{{230, 20}, {374, 48}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<string key="NSClassName">NSView</string>
 						</object>
