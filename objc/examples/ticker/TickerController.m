@@ -188,11 +188,6 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) handleNotify: (NSDictionary *) message
 {
-  NSRange range;
-  
-  range.location = [[tickerMessagesTextView textStorage] length];
-  range.length = 0;
-
   // decide on whether we're scrolled to the end of the messages
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
   NSRect visibleRect = NSOffsetRect ([tickerMessagesTextView visibleRect], 
@@ -227,14 +222,17 @@ static NSAttributedString *attributedString (NSString *string,
     [NSDictionary dictionaryWithObject: color (0, 64, 128) 
       forKey: NSForegroundColorAttributeName];
 
+  NSRange range;
+  
+  range.location = [[tickerMessagesTextView textStorage] length];
+  range.length = 0;
+  
   // start new line for all but first message
   if (range.location > 0)
   {
    [[tickerMessagesTextView textStorage] 
      replaceCharactersInRange: range 
      withAttributedString: attributedString (@"\n", dateAttrs)];
-     
-    range.location = [[tickerMessagesTextView textStorage] length];
   }
   
   // build formatted message
@@ -300,10 +298,11 @@ static NSAttributedString *attributedString (NSString *string,
       appendAttributedString: attributedString (@")", dateAttrs)];
   }
   
-  // insert text
-
+  // append text
   [[tickerMessagesTextView textStorage] 
-    replaceCharactersInRange: range withAttributedString: displayedMessage];
+    replaceCharactersInRange: 
+      NSMakeRange ([[tickerMessagesTextView textStorage] length], 0) 
+    withAttributedString: displayedMessage];
 
   [tickerMessagesTextView 
     setFont: [NSFont fontWithName: @"Lucida Grande" size: 11]];
@@ -311,9 +310,8 @@ static NSAttributedString *attributedString (NSString *string,
   // scroll to end if that's how it was when we started
   if (wasScrolledToEnd)
   {
-    range.location = [[tickerMessagesTextView textStorage] length];
-    
-    [tickerMessagesTextView scrollRangeToVisible: range];
+    [tickerMessagesTextView scrollRangeToVisible: 
+      NSMakeRange ([[tickerMessagesTextView textStorage] length], 0)];
   }
 }
 
