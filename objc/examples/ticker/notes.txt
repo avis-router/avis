@@ -6,6 +6,7 @@
   * DONE: set URL 
 + reliable connection
   * send failure not detected
+  * elvin connection needs to be made thread safe: synchronized
   * DONE: handle router shutdown/protocol error after open
 + attached URL's
   * why doesn't cursor change until clicked?
