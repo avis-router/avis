@@ -1,4 +1,5 @@
-+ cleanup
++ general/cleanup
+  * DONE: flip public/reply buttons
   * DONE: ticker controller to take control of ticker window
   * DONE: generalise tickerviewdragtarget
 + preferences
@@ -6,7 +7,9 @@
   * DONE: set URL 
 + reliable connection
   * send failure not detected
+  * use shutdown () or no select wakeup for BSD (?)
   * elvin connection needs to be made thread safe: synchronized
+  * 60 second pause to detect fail via firewall (see below)
   * DONE: handle router shutdown/protocol error after open
 + attached URL's
   * why doesn't cursor change until clicked?
@@ -23,6 +26,9 @@
   * link underline lag
   * reply underline not handling scrolling
   * handle personal reply
+  * tooltip for client etc on messages
+  * DONE:   cricinfo scores not wrapping properly
+  * scrolling with mouse wheel leaves underline
   * DONE: underline links. use example at 
     http://developer.apple.com/samplecode/TextLinks/listing2.html OR use 
     NSView::addTrackingArea
@@ -31,3 +37,52 @@
 + multiple windows
 + filtering
   * reduce subscription to optimize filtering
+
+
+---
+
+While blocked trying to connect outside firewall
+
+Sampling process 4057 for 3 seconds with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Analysis of sampling ticker (pid 4057) every 1 millisecond
+Call graph:
+    2470 Thread_2503
+      2470 start
+        2470 NSApplicationMain
+          2470 -[NSApplication run]
+            2470 -[NSApplication sendEvent:]
+              2470 -[NSApplication _handleKeyEquivalent:]
+                2470 -[NSMenu performKeyEquivalent:]
+                  2470 -[NSCarbonMenuImpl performActionWithHighlightingForItemAtIndex:]
+                    2470 -[NSMenu performActionForItemAtIndex:]
+                      2470 -[NSApplication sendAction:to:from:]
+                        2470 -[NSApplication terminate:]
+                          2470 -[NSNotificationCenter postNotificationName:object:]
+                            2470 -[NSNotificationCenter postNotificationName:object:userInfo:]
+                              2470 _CFXNotificationPostNotification
+                                2470 __CFXNotificationPost
+                                  2470 _nsnote_callback
+                                    2470 -[AppController deallocElvin]
+                                      2470 -[ElvinConnection disconnect]
+                                        2470 usleep$UNIX2003
+                                          2470 __semwait_signal
+                                            2470 __semwait_signal
+    2470 Thread_2603
+      2470 thread_start
+        2470 _pthread_start
+          2470 __NSThread__main__
+            2470 -[NSThread main]
+              2470 -[ElvinConnection elvinEventLoopThread]
+                2470 -[ElvinConnection openConnection]
+                  2470 elvin_open
+                    2470 elvin_open_with_keys
+                      2470 connect$UNIX2003
+                        2470 connect$UNIX2003
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        __semwait_signal        2470
+        connect$UNIX2003        2470
+Sample analysis of process 4057 written to file /dev/stdout
