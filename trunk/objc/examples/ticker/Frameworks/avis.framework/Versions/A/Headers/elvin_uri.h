@@ -25,8 +25,10 @@
 #include <avis/arrays.h>
 #include <avis/stdtypes.h>
 #include <avis/errors.h>
+#include <avis/defs.h>
 
-extern char * _elvin_uri_default_protocol [3];
+AVIS_PUBLIC_DATA
+char * _elvin_uri_default_protocol [3];
 
 #define DEFAULT_URI_PROTOCOL (_elvin_uri_default_protocol)
 
@@ -76,12 +78,14 @@ typedef struct
  *
  * @see elvin_uri_free()
  */
+AVIS_PUBLIC
 bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
                             ElvinError *error);
 
 /**
  * Free any resources allocated to a URI.
  */
+AVIS_PUBLIC
 void elvin_uri_free (ElvinURI *uri);
 
 #endif /*AVIS_ELVIN_URI_H_*/

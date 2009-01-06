@@ -23,6 +23,7 @@
 
 #include <string.h>
 
+#include <avis/defs.h>
 #include <avis/stdtypes.h>
 #include <avis/arrays.h>
 
@@ -122,9 +123,9 @@ struct KeyScheme_t;
  */
 typedef struct KeyScheme_t * KeyScheme;
 
-extern struct KeyScheme_t _KEY_SCHEME_SHA1_DUAL;
-extern struct KeyScheme_t _KEY_SCHEME_SHA1_PRODUCER;
-extern struct KeyScheme_t _KEY_SCHEME_SHA1_CONSUMER;
+AVIS_PUBLIC_DATA struct KeyScheme_t _KEY_SCHEME_SHA1_DUAL;
+AVIS_PUBLIC_DATA struct KeyScheme_t _KEY_SCHEME_SHA1_PRODUCER;
+AVIS_PUBLIC_DATA struct KeyScheme_t _KEY_SCHEME_SHA1_CONSUMER;
 
 /**
  * The SHA-1 dual key scheme.
@@ -147,7 +148,7 @@ extern struct KeyScheme_t _KEY_SCHEME_SHA1_CONSUMER;
  */
 #define KEY_SCHEME_SHA1_CONSUMER (&_KEY_SCHEME_SHA1_CONSUMER)
 
-extern Keys _empty_keys;
+AVIS_PUBLIC_DATA Keys _empty_keys;
 
 /**
  * Create an empty keys collection.
@@ -176,6 +177,7 @@ extern Keys _empty_keys;
  *
  * @see elvin_keys_create()
  */
+AVIS_PUBLIC
 Keys *elvin_keys_init (Keys *keys);
 
 /**
@@ -188,6 +190,7 @@ Keys *elvin_keys_init (Keys *keys);
  * @see elvin_keys_free()
  * @see elvin_key_copy()
  */
+AVIS_PUBLIC
 Keys *elvin_keys_copy (Keys *keys);
 
 /**
@@ -197,11 +200,13 @@ Keys *elvin_keys_copy (Keys *keys);
  * @see Keys
  * @see elvin_keys_init()
  */
+AVIS_PUBLIC
 void elvin_keys_free (Keys *keys);
 
 /**
  * Test if two key collections are logically equal.
  */
+AVIS_PUBLIC
 bool elvin_keys_equal (Keys *keys1, Keys *keys2);
 
 /**
@@ -217,6 +222,7 @@ bool elvin_keys_equal (Keys *keys1, Keys *keys2);
  * @see elvin_keys_add_dual_consumer()
  * @see elvin_keys_add_dual_producer()
  */
+AVIS_PUBLIC
 bool elvin_keys_add (Keys *keys, KeyScheme scheme, Key key);
 
 /**
@@ -235,6 +241,7 @@ bool elvin_keys_add (Keys *keys, KeyScheme scheme, Key key);
  * @see elvin_keys_add()
  * @see elvin_keys_add_dual_producer()
  */
+AVIS_PUBLIC
 bool elvin_keys_add_dual_consumer (Keys *keys, KeyScheme scheme, Key key);
 
 /**
@@ -253,6 +260,7 @@ bool elvin_keys_add_dual_consumer (Keys *keys, KeyScheme scheme, Key key);
  * @see elvin_keys_add()
  * @see elvin_keys_add_dual_consumer()
  */
+AVIS_PUBLIC
 bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
 
 /**
@@ -261,6 +269,7 @@ bool elvin_keys_add_dual_producer (Keys *keys, KeyScheme scheme, Key key);
  * @see elvin_key_create_from_string()
  * @see elvin_key_create_from_data()
  */
+AVIS_PUBLIC
 void elvin_key_free (Key key);
 
 /**
@@ -279,6 +288,7 @@ void elvin_key_free (Key key);
  * @see elvin_key_create_from_data()
  * @see elvin_key_free()
  */
+AVIS_PUBLIC
 Key elvin_key_create_from_string (const char *str);
 
 /**
@@ -291,6 +301,7 @@ Key elvin_key_create_from_string (const char *str);
  * @see elvin_key_create_public()
  * @see elvin_key_free()
  */
+AVIS_PUBLIC
 Key elvin_key_create_from_data (const uint8_t *data, size_t length);
 
 /**
@@ -304,11 +315,13 @@ Key elvin_key_create_from_data (const uint8_t *data, size_t length);
  * @see elvin_key_create_from_data()
  * @see elvin_key_free()
  */
+AVIS_PUBLIC
 Key elvin_key_create_public (Key private_key, KeyScheme scheme);
 
 /**
  * Test if two keys are equal.
  */
+AVIS_PUBLIC
 bool elvin_key_equal (Key key1, Key key2);
 
 #endif /* ELVIN_KEYS_H */

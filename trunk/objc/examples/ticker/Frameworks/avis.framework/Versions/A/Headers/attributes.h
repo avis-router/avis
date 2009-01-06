@@ -40,6 +40,7 @@ struct hashtable;
  * information.
  *
  * @see attributes_create()
+ * @see AttributesIter
  * @see Value
  */
 typedef struct
@@ -47,7 +48,27 @@ typedef struct
   struct hashtable *table;
 } Attributes;
 
-extern Attributes _empty_attributes;
+/**
+ * An iterator over an Attributes collection.
+ *
+ * @see attributes_iter_init()
+ */
+typedef struct
+{
+  /* below is a copy of hashtable_iter from hashtable_iter.h */
+  struct
+  {
+    void *h;
+    void *e;
+    void *parent;
+    unsigned int index;
+  } hash_iter;
+  
+  bool has_next;
+} AttributesIter;
+
+AVIS_PUBLIC_DATA 
+Attributes _empty_attributes;
 
 #define EMPTY_ATTRIBUTES (&_empty_attributes)
 
@@ -67,6 +88,7 @@ extern Attributes _empty_attributes;
  * @see attributes_create()
  * @see attributes_clear()
  */
+AVIS_PUBLIC
 Attributes *attributes_init (Attributes *);
 
 /**
@@ -86,11 +108,13 @@ Attributes *attributes_init (Attributes *);
  * @see attributes_create()
  * @see attributes_clear()
  */
+AVIS_PUBLIC
 void attributes_free (Attributes *attributes);
 
 /**
  * Clear and deallocate all entries, leaving an empty set of attributes.
  */
+AVIS_PUBLIC
 void attributes_clear (Attributes *attributes);
 
 /**
@@ -102,6 +126,7 @@ void attributes_clear (Attributes *attributes);
  *
  * @see attributes_clone()
  */
+AVIS_PUBLIC
 Attributes *attributes_copy (Attributes *target, const Attributes *source);
 
 /**
@@ -117,7 +142,76 @@ Attributes *attributes_copy (Attributes *target, const Attributes *source);
 /**
  * The number of entries in a set of named attributes.
  */
+AVIS_PUBLIC
 unsigned int attributes_size (Attributes *attributes);
+
+/**
+ * Create and initialise an AttributesIter instance.
+ */
+#define attributes_iter_create(attributes) \
+  attributes_iter_init \
+    ((AttributesIter *)avis_emalloc (sizeof (AttributesIter)), (attributes))
+
+/** 
+ * Free and NULL an attributes iterator.
+ */
+#define attributes_iter_destroy(iter) (free (iter), (iter) = NULL)
+
+/**
+ * Initialise an attributes iterator to iterate over the given
+ * attributes set.
+ * <p>
+ * Example usage:
+ * <pre>
+ * Attributes *attrs = ...;
+ * AttributesIter i;
+ * 
+ * attributes_iter_init (&i, attrs);
+ * 
+ * while (attributes_iter_has_next (&i))
+ * {
+ *   const char *name = attributes_iter_name (&i);
+ *   const Value *value = attributes_iter_value (&i);
+ * 
+ *   ...
+ *
+ *   attributes_iter_next (&i);
+ * }
+ * </pre>
+ *
+ * @see attributes_iter_has_next()
+ * @see attributes_iter_next()
+ * @see attributes_iter_name()
+ * @see attributes_iter_value()
+ */
+AVIS_PUBLIC
+AttributesIter *attributes_iter_init (AttributesIter *iter, 
+                                      const Attributes *attributes);
+
+/**
+ * Returns the name of the attribute pointed to by the iterator, or
+ * NULL if the iterator is finished.
+ */
+AVIS_PUBLIC
+const char *attributes_iter_name (const AttributesIter *iter);
+
+/**
+ * Returns the value of the attribute pointed to by the iterator, or
+ * NULL if the iterator is finished.
+ */
+AVIS_PUBLIC
+const Value *attributes_iter_value (const AttributesIter *iter);
+
+#define attributes_iter_has_next(iter) ((iter)->has_next)
+
+/**
+ * Advanced the iterator to the next attribute.
+ *
+ * @return True if attributes_iter_has_next() would return true after
+ * the advance (i.e. the iterator points to an attribute).
+ */
+AVIS_PUBLIC
+bool attributes_iter_next (AttributesIter *iter);
 
 /**
  * Set the value mapped to a name. If an existing value exists, it will be
@@ -132,6 +226,7 @@ unsigned int attributes_size (Attributes *attributes);
  * @see attributes_set_direct()
  * @see attributes_remove()
  */
+AVIS_PUBLIC
 void attributes_set (Attributes *attributes, const char *name, Value *value);
 
 /**
@@ -147,6 +242,7 @@ void attributes_set (Attributes *attributes, const char *name, Value *value);
  * @see attributes_remove()
  * @see value_create_string_nocopy()
  */
+AVIS_PUBLIC
 void attributes_set_nocopy (Attributes *attributes, char *name, Value *value);
 
 /**
@@ -158,11 +254,13 @@ void attributes_set_nocopy (Attributes *attributes, char *name, Value *value);
  *
  * @see attributes_set()
  */
+AVIS_PUBLIC
 Value *attributes_get (Attributes *attributes, const char *name);
 
 /**
  * Test if the attributes contains a mapping for a given field name.
  */
+AVIS_PUBLIC
 bool attributes_contains (Attributes *attributes, const char *name);
 
 /**
@@ -177,6 +275,7 @@ bool attributes_contains (Attributes *attributes, const char *name);
  *
  * @see attributes_set()
  */
+AVIS_PUBLIC
 Value *attributes_remove (Attributes *attributes, const char *name);
 
 /**
@@ -203,6 +302,7 @@ Value *attributes_remove (Attributes *attributes, const char *name);
  * @see attributes_set_int32()
  * @see attributes_get()
  */
+AVIS_PUBLIC
 int32_t attributes_get_int32 (Attributes *attributes, const char *name);
 
 /**
@@ -229,6 +329,7 @@ int32_t attributes_get_int32 (Attributes *attributes, const char *name);
  * @see attributes_set_int64()
  * @see attributes_get()
  */
+AVIS_PUBLIC
 int64_t attributes_get_int64 (Attributes *attributes, const char *name);
 
 /**
@@ -255,6 +356,7 @@ int64_t attributes_get_int64 (Attributes *attributes, const char *name);
  * @see attributes_set_real64()
  * @see attributes_get()
  */
+AVIS_PUBLIC
 real64_t attributes_get_real64 (Attributes *attributes, const char *name);
 
 /**
@@ -284,6 +386,7 @@ real64_t attributes_get_real64 (Attributes *attributes, const char *name);
  * @see attributes_set_string()
  * @see attributes_get()
  */
+AVIS_PUBLIC
 const char *attributes_get_string (Attributes *attributes, const char *name);
 
 /**
@@ -313,6 +416,7 @@ const char *attributes_get_string (Attributes *attributes, const char *name);
  * @see attributes_set_opaque()
  * @see attributes_get()
  */
+AVIS_PUBLIC
 Array *attributes_get_opaque (Attributes *attributes, const char *name);
 
 #endif /* AVIS_ATTRIBUTES_H */

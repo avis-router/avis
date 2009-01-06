@@ -85,6 +85,7 @@ typedef struct
   Keys *      subscription_keys;
   bool        polling;
   ElvinError  error;
+  time_t      last_receive_time;
 } Elvin;
 
 /**
@@ -124,7 +125,13 @@ typedef enum
    * been violated. This would only happen in the case of a serious bug in
    * the client or router.
    */
-  REASON_PROTOCOL_VIOLATION
+  REASON_PROTOCOL_VIOLATION,
+
+  /**
+   * The router failed to respond to a message. Either a low-level
+   * network error has occurred, or the router has crashed.
+   */
+  REASON_ROUTER_STOPPED_RESPONDING
 } CloseReason;
 
 /**
@@ -217,6 +224,7 @@ typedef void (*InvokeHandler) (Elvin *elvin, void *parameter);
  * @see elvin_close()
  * @see elvin_is_open()
  */
+AVIS_PUBLIC
 bool elvin_open (Elvin *elvin, const char *router_uri);
 
 /**
@@ -229,6 +237,7 @@ bool elvin_open (Elvin *elvin, const char *router_uri);
  *
  * @see elvin_open()
  */
+AVIS_PUBLIC
 bool elvin_open_uri (Elvin *elvin, ElvinURI *uri);
 
 /**
@@ -250,6 +259,7 @@ bool elvin_open_uri (Elvin *elvin, ElvinURI *uri);
  * @see elvin_open_uri()
  * @see elvin_set_keys()
  */
+AVIS_PUBLIC
 bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
                            Keys *notification_keys, Keys *subscription_keys);
 
@@ -270,6 +280,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
  * @see elvin_open_with_keys()
  * @see elvin_subscription_set_keys()
  */
+AVIS_PUBLIC
 bool elvin_set_keys (Elvin *elvin,
                      Keys *notification_keys, Keys *subscription_keys);
 
@@ -296,6 +307,7 @@ bool elvin_set_keys (Elvin *elvin,
  *
  * @see elvin_subscribe()
  */
+AVIS_PUBLIC
 bool elvin_send (Elvin *elvin, Attributes *notification);
 
 /**
@@ -313,6 +325,7 @@ bool elvin_send (Elvin *elvin, Attributes *notification);
  * @see elvin_send()
  * @see elvin_subscribe_with_keys()
  */
+AVIS_PUBLIC
 bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
                            Keys *notification_keys, SecureMode security);
 
@@ -344,6 +357,7 @@ bool elvin_send_with_keys (Elvin *elvin, Attributes *notification,
  * @see elvin_subscribe_with_keys()
  * @see elvin_subscription_add_listener()
  */
+AVIS_PUBLIC
 Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr);
 
 /**
@@ -389,6 +403,7 @@ Subscription *elvin_subscribe (Elvin *elvin, const char *subscription_expr);
  * @see elvin_subscription_set_keys()
  * @see elvin_poll()
  */
+AVIS_PUBLIC
 Subscription *elvin_subscribe_with_keys (Elvin *elvin,
                                          const char *subscription_expr,
                                          Keys *keys,
@@ -406,6 +421,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
  *
  * @see elvin_subscribe()
  */
+AVIS_PUBLIC
 bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription);
 
 /**
@@ -416,6 +432,7 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription);
  *
  * @see elvin_subscribe()
 */
+AVIS_PUBLIC
 bool elvin_subscription_set_expr (Subscription *subscription,
                                   const char *subscription_expr);
 
@@ -433,6 +450,7 @@ bool elvin_subscription_set_expr (Subscription *subscription,
  * @see elvin_subscribe_with_keys()
  * @see elvin_set_keys()
 */
+AVIS_PUBLIC
 bool elvin_subscription_set_keys (Subscription *subscription,
                                   Keys *subscription_keys,
                                   SecureMode security);
@@ -450,6 +468,7 @@ bool elvin_subscription_set_keys (Subscription *subscription,
  * @see elvin_subscription_remove_listener()
  * @see elvin_add_notification_listener()
  */
+AVIS_PUBLIC
 void elvin_subscription_add_listener (Subscription *subscription,
                                       SubscriptionListener listener,
                                       void *user_data);
@@ -464,6 +483,7 @@ void elvin_subscription_add_listener (Subscription *subscription,
  *
  * @see elvin_subscription_add_listener()
  */
+AVIS_PUBLIC
 bool elvin_subscription_remove_listener (Subscription *subscription,
                                          SubscriptionListener listener);
 /**
@@ -473,7 +493,8 @@ bool elvin_subscription_remove_listener (Subscription *subscription,
  *
  * @see elvin_close()
  */
-bool elvin_is_open (Elvin *elvin);
+AVIS_PUBLIC
+bool elvin_is_open (const Elvin *elvin);
 
 /**
  * Close the elvin connection. This may be called any number of times, calls
@@ -482,16 +503,29 @@ bool elvin_is_open (Elvin *elvin);
  * @param elvin The Elvin connection instance.
  *
  * @return True if the connection was closed, false if it was already closed.
+ *
+ * @see elvin_reset()
  */
+AVIS_PUBLIC
 bool elvin_close (Elvin *elvin);
 
+/**
+ * Reset a new Elvin instance to safe defaults such that the instance appears
+ * to be closed (elvin_is_open(), elvin_close() and elvin_free() are safe to 
+ * call). This should NOT be called on an open connection: use elvin_close().
+ * 
+ * @see elvin_close()
+ */
+AVIS_PUBLIC
+void elvin_reset (Elvin *elvin);
+  
 /**
  * Invoke a function call inside the Elvin event loop thread. This
  * call will return immediately, and the nominated handler will be
  * called from the event loop thread (the one calling
  * elvin_event_loop()) at the earliest opportunity. This function is
- * the only one that is safe to call threads other than the one running the
- * main event loop.
+ * the only one that is safe to call from threads other than the one
+ * running the main event loop.
  *
  * @param elvin The Elvin connection.
  * @param handler The handler to call.
@@ -502,12 +536,14 @@ bool elvin_close (Elvin *elvin);
  *
  * @see elvin_invoke_close()
  */
+AVIS_PUBLIC
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter);
 
 /**
  * Shortcut to invoke elvin_close() via elvin_invoke(). This can be used by
  * multi-threaded applications to safely shut down an Elvin connection.
  */
+AVIS_PUBLIC
 bool elvin_invoke_close (Elvin *elvin);
 
 /**
@@ -522,6 +558,7 @@ bool elvin_invoke_close (Elvin *elvin);
  *
  * @see elvin_remove_close_listener()
  */
+AVIS_PUBLIC
 void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
                                void *user_data);
 
@@ -535,6 +572,7 @@ void elvin_add_close_listener (Elvin *elvin, CloseListener listener,
  *
  * @see elvin_add_close_listener()
  */
+AVIS_PUBLIC
 bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener);
 
 /**
@@ -552,6 +590,7 @@ bool elvin_remove_close_listener (Elvin *elvin, CloseListener listener);
  * @see elvin_subscribe()
  * @see elvin_subscription_add_listener()
  */
+AVIS_PUBLIC
 void elvin_add_notification_listener (Elvin *elvin,
                                       GeneralNotificationListener listener,
                                       void *user_data);
@@ -566,6 +605,7 @@ void elvin_add_notification_listener (Elvin *elvin,
  *
  * @see elvin_add_close_listener()
  */
+AVIS_PUBLIC
 bool elvin_remove_notification_listener (Elvin *elvin,
                                          GeneralNotificationListener listener);
 
@@ -595,25 +635,30 @@ bool elvin_remove_notification_listener (Elvin *elvin,
  * @see elvin_close()
  * @see elvin_poll()
  * @see elvin_event_loop()
+ * @see elvin_invoke()
  */
+AVIS_PUBLIC
 bool elvin_event_loop (Elvin *elvin);
 
 /**
  * Poll an Elvin connection for a single incoming message from the
  * router. This will block until a notification or disconnect message
- * is received from the router.
+ * is received from the router, or until AVIS_IO_TIMEOUT milliseconds
+ * have passed (in which case the error status will be
+ * ELVIN_ERROR_TIMEOUT).
  *
  * On receipt of a notification, any listeners to the notification
  * will be called from this function. On receipt of a disconnect or
  * socket close, the connection will be shut down.
  *
- * This method may be useful to clients that wish to coarsely interleave
- * polled events with other actions (e.g. when embedding Elvin client
- * connections in other event loops), but most clients will want to just call
- * elvin_event_loop().
+ * This method may be useful to clients that wish to coarsely
+ * interleave polled events with other actions (e.g. when embedding
+ * Elvin client connections in other event loops), but most clients
+ * will want to just call elvin_event_loop().
  *
- * @return After each processed event: true if no error occurred.
+ * @return True if no error occurred.
  */
+AVIS_PUBLIC
 bool elvin_poll (Elvin *elvin);
 
 #endif /* AVIS_ELVIN_H */
