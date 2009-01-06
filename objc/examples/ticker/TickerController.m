@@ -456,6 +456,11 @@ static NSAttributedString *attributedString (NSString *string,
   self.allowPublic = NO;
 }
 
+- (IBAction) togglePublic: (id) sender
+{
+  self.allowPublic = !self.allowPublic;
+}
+
 @synthesize inReplyTo;
 
 @synthesize allowPublic;
