@@ -2,7 +2,6 @@
 
 @interface PreferencesController : NSWindowController
 {
-  IBOutlet NSComboBox *elvinURL;
 }
 
 @end

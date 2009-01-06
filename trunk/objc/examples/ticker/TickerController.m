@@ -87,10 +87,16 @@ static NSAttributedString *attributedString (NSString *string,
   group = nil;
 }
 
+/**
+ * TODO: this is for tooltip display. Should make this an interface or 
+ * somesuch.
+ */
 - (NSString *) description
 {
   return [NSString stringWithFormat: 
-           @"Public: %@\nClient: %@", public ? @"yes" : @"no", userAgent];
+           @"Public: %@\nClient: %@", 
+           public ? @"yes" : @"no", 
+           userAgent ? userAgent : @"Unknown"];
 }
 
 @end
