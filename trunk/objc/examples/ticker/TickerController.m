@@ -258,6 +258,9 @@ static NSAttributedString *attributedString (NSString *string,
   
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
+  // save start of actual message (minus date)
+  range.location = [displayedMessage length];
+
   [displayedMessage appendAttributedString: 
     attributedString ([ntfn objectForKey: @"Group"], groupAttrs)];
   
@@ -271,8 +274,10 @@ static NSAttributedString *attributedString (NSString *string,
   [displayedMessage appendAttributedString: 
     attributedString ([ntfn objectForKey: @"Message"], messageAttrs)];
   
-  [displayedMessage addAttributes: replyLinkAttrs 
-    range: NSMakeRange (0, [displayedMessage length])];
+  // create link to message
+  range.length = [displayedMessage length] - range.location;
+  
+  [displayedMessage addAttributes: replyLinkAttrs range: range];
   
   NSURL *attachedLink = extractAttachedLink (ntfn);
   
