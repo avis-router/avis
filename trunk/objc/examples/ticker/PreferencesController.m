@@ -10,9 +10,4 @@
     return nil;
 }
 
-//- (void) windowDidLoad
-//{
-//  // zip
-//}
-
 @end

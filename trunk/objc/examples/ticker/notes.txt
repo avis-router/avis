@@ -27,7 +27,7 @@
   * reply button rollover: see subclass NSButton, override cellClass: Cell startTrackingAt:inView:
   * reply underline not handling scrolling
   * handle personal reply
-  * tooltip for client etc on messages
+  * tooltip for client etc on messages  
   * highlight parents
   * DONE:   cricinfo scores not wrapping properly
   * scrolling with mouse wheel leaves underline
