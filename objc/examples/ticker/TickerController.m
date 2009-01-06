@@ -1,4 +1,5 @@
 #import "TickerController.h"
+#import "RolloverButton.h"
 
 #import "AppController.h"
 #import "ElvinConnection.h"
@@ -116,6 +117,8 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) windowDidLoad
 {
+  replyButton.rolloverImage = [NSImage imageNamed: @"Reply_Rollover"];
+  
   [self setConnectedStatus: [appController.elvin isConnected]];
   
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];

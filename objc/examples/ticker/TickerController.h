@@ -1,6 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class AppController;
+@class RolloverButton;
 
 @interface TickerController : NSWindowController
 {
@@ -11,8 +12,9 @@
   IBOutlet id     attachedUrlLabel;
   IBOutlet id     attachedUrlPanel;
   IBOutlet id     sendButton;
-  IBOutlet id     replyButton;
   IBOutlet id     dragTarget;
+  
+  IBOutlet RolloverButton *replyButton;
   
   AppController * appController;
   NSString *      inReplyTo;

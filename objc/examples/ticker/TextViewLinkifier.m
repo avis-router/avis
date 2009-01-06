@@ -78,12 +78,14 @@
   // clear old rects
   for (NSTrackingArea *area in view.trackingAreas)
   {
-    [view removeTrackingArea: area];
-    [area release];
+    // TODO
+//    if ([area owner] == self)
+//    {
+      [view removeTrackingArea: area];
+      [area release];
+//    }
   }
  
-  // [NSCursor pop];
-   
   NSAttributedString *attrString = [view textStorage];
 
   // Figure what part of us is visible (we're typically inside a scrollview)
