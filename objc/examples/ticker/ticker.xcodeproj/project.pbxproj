@@ -6,6 +6,21 @@
 	objectVersion = 45;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		C9DFB3A30F132DCB00365453 /* Disk Image */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C9DFB3A60F132DE900365453 /* Build configuration list for PBXAggregateTarget "Disk Image" */;
+			buildPhases = (
+				C9DFB3A20F132DCB00365453 /* ShellScript */,
+			);
+			dependencies = (
+				C9DFB3AA0F132E2F00365453 /* PBXTargetDependency */,
+			);
+			name = "Disk Image";
+			productName = "Disk Image";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -26,6 +41,16 @@
 		C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F561BA0F00B1A2005D9245 /* PreferencesController.m */; };
 		C9F561BF0F00B247005D9245 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9F561BE0F00B247005D9245 /* Preferences.xib */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C9DFB3A90F132E2F00365453 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090 /* ticker */;
+			remoteInfo = ticker;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		C9B03B890E49405400B59216 /* CopyFiles */ = {
@@ -216,6 +241,7 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* ticker */,
+				C9DFB3A30F132DCB00365453 /* Disk Image */,
 			);
 		};
 /* End PBXProject section */
@@ -237,6 +263,24 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		C9DFB3A20F132DCB00365453 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/ticker.app/Contents/MacOS/ticker",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/ticker.dmg",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"src = $BUILT_PRODUCTS_DIR/ticker.app\"\nhdiutil create -ov -srcfolder \"$BUILT_PRODUCTS_DIR/ticker.app\" -format UDBZ \"$BUILT_PRODUCTS_DIR/ticker.dmg\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -254,6 +298,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C9DFB3AA0F132E2F00365453 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* ticker */;
+			targetProxy = C9DFB3A90F132E2F00365453 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
@@ -353,6 +405,27 @@
 			};
 			name = Release;
 		};
+		C9DFB3A40F132DCB00365453 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Disk Image";
+			};
+			name = Debug;
+		};
+		C9DFB3A50F132DCB00365453 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Disk Image";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -370,6 +443,15 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9DFB3A60F132DE900365453 /* Build configuration list for PBXAggregateTarget "Disk Image" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9DFB3A40F132DCB00365453 /* Debug */,
+				C9DFB3A50F132DCB00365453 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
