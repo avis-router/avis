@@ -25,6 +25,7 @@
 
 #include <avis/stdtypes.h>
 #include <avis/arrays.h>
+#include <avis/defs.h>
 
 /**
  * The type tag for polymorphic values. These are the same as the type codes
@@ -68,11 +69,13 @@ typedef struct
  * before being used in a value that will be value_free()'d.
  * No type checking is done for the value parameter.
  */
+AVIS_PUBLIC
 Value *value_init (Value *value, ValueType type, ...);
 
 /**
  * Free any resources held by a value instance.
  */
+AVIS_PUBLIC
 void value_free (Value *value);
 
 /**
@@ -84,6 +87,7 @@ void value_free (Value *value);
  *
  * @see value_clone()
  */
+AVIS_PUBLIC
 Value *value_copy (Value *target, const Value *source);
 
 /**
@@ -166,11 +170,13 @@ Value *value_copy (Value *target, const Value *source);
  *
  * @see array_create()
  */
+AVIS_PUBLIC
 Array *array_init (Array *array, size_t item_count, size_t item_length);
 
 /**
  * Free resources held by an array.
  */
+AVIS_PUBLIC
 void array_free (Array *array);
 
 /**
@@ -202,6 +208,7 @@ void array_free (Array *array);
 /**
  * Test if two arrays are bitwise identical.
  */
+AVIS_PUBLIC
 bool array_equals (Array *array1, Array *array2);
 
 #endif /*AVIS_VALUES_H_*/

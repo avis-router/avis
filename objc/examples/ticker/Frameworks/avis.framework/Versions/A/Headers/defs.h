@@ -33,6 +33,9 @@
 /** Timeout (in milliseconds) for I/O operations. */
 #define AVIS_IO_TIMEOUT 10000
 
+/** Maximum idle interval (in seconds) before sending a liveness test message. */
+#define AVIS_LIVENESS_IDLE_INTERVAL 60
+
 #define _KB_  1024
 #define _MB_  _KB_ * _KB_
 
@@ -77,5 +80,28 @@
  * might be useful if this library ever forms the basis of a server.
  */
 #define MAX_KEY_COUNT  (1 * _KB_)
+
+/*
+ * Allow building .DLL on Windows. Functions that should be public are
+ * tagged with AVIS_PUBLIC, data with AVIS_PUBLIC_DATA.
+ */
+#ifdef _WIN32
+#  if !defined (AVIS_LIBRARY_STATIC)
+#    if defined (AVIS_BUILDING_LIB)
+#      define AVIS_PUBLIC       __declspec(dllexport)
+#      define AVIS_PUBLIC_DATA  extern __declspec(dllexport)
+#    else
+#      define AVIS_PUBLIC       __declspec(dllimport)
+#      define AVIS_PUBLIC_DATA  extern __declspec(dllimport)
+#    endif
+#  else
+    /* Static links must use extern */
+#    define AVIS_PUBLIC        extern
+#    define AVIS_PUBLIC_DATA   extern
+#  endif
+#else
+#  define AVIS_PUBLIC
+#  define AVIS_PUBLIC_DATA   extern
+#endif
 
 #endif /* AVIS_DEFS_H_ */
