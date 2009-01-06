@@ -5,6 +5,7 @@
  */
 @interface TextViewWithLinks : NSTextView
 {
+  NSValue *underlinedRange;
 }
 
 @end

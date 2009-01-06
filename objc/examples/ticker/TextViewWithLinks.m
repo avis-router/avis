@@ -13,6 +13,7 @@ static inline NSValue *rangeFor (NSEvent *event)
 @interface TextViewWithLinks ()
   - (void) updateTrackingAreas;
   - (void) handleTrackingUpdate: (void *) unused;
+  - (void) setUnderlinedRange: (NSValue *) range;
   - (void) underline: (NSRange) range underlined: (BOOL) isUnderlined;
 @end
 
@@ -27,6 +28,8 @@ static inline NSValue *rangeFor (NSEvent *event)
 
 - (void) handleTrackingUpdate: (void *) unused
 {
+  [self setUnderlinedRange: nil];
+  
   if (![self inLiveResize])
     [self updateTrackingAreas];
 }
@@ -64,6 +67,8 @@ static inline NSValue *rangeFor (NSEvent *event)
 
 - (void) updateTrackingAreas
 {
+  [self setUnderlinedRange: nil];
+  
   // clear old rects
   for (NSTrackingArea *area in self.trackingAreas)
     [self removeTrackingArea: area];
@@ -144,31 +149,40 @@ static inline NSValue *rangeFor (NSEvent *event)
   return [(id)userData description];
 }
 
-- (void) mouseEntered: (NSEvent *) event
-{
-  NSValue *range = rangeFor (event);
-  
-  if (range)
-    [self underline: [range rangeValue] underlined: YES];
-}
-
-- (void) mouseExited: (NSEvent *) event
-{
-  NSValue *range = rangeFor (event);
-  
-  if (range)
-    [self underline: [range rangeValue] underlined: NO];
-}
-
 - (void) cursorUpdate: (NSEvent *) event
 {
   NSPoint hitPoint = 
-    [self convertPoint: [event locationInWindow] fromView: nil];
-
+  [self convertPoint: [event locationInWindow] fromView: nil];
+  
   if ([self mouse: hitPoint inRect: [[event trackingArea] rect]]) 
     [[NSCursor pointingHandCursor] set];
   else
     [[NSCursor IBeamCursor] set];
+}
+
+- (void) setUnderlinedRange: (NSValue *) range
+{
+  if (underlinedRange)
+  {
+    [self underline: [underlinedRange rangeValue] underlined: NO];
+  
+    [underlinedRange release];
+  }
+  
+  underlinedRange = [range retain];
+  
+  if (underlinedRange)
+    [self underline: [range rangeValue] underlined: YES];
+}
+
+- (void) mouseEntered: (NSEvent *) event
+{
+  [self setUnderlinedRange: rangeFor (event)];
+}
+
+- (void) mouseExited: (NSEvent *) event
+{
+  [self setUnderlinedRange: nil];
 }
 
 - (void) underline: (NSRange) range underlined: (BOOL) isUnderlined
