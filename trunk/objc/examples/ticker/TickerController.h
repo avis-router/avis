@@ -33,4 +33,6 @@
 
 - (IBAction) clearReply: (id) sender;
 
+- (IBAction) togglePublic: (id) sender;
+
 @end
