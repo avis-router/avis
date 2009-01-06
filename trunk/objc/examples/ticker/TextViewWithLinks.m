@@ -1,61 +1,50 @@
-#import "TextViewLinkifier.h"
+#import "TextViewWithLinks.h"
 
 /**
  * See http://developer.apple.com/samplecode/TextLinks/listing5.html for 
  * the starting point for this class.
  */
- 
-@interface TextViewLinkifier ()
+
+static inline NSValue *rangeFor (NSEvent *event)
+{
+  return [(NSDictionary *)[event userData] valueForKey: @"range"];
+}
+
+@interface TextViewWithLinks ()
   - (void) updateTrackingAreas;
   - (void) handleTrackingUpdate: (void *) unused;
   - (void) underline: (NSRange) range underlined: (BOOL) isUnderlined;
 @end
 
-@implementation TextViewLinkifier
-
-@dynamic view;
+@implementation TextViewWithLinks
 
 - (void) dealloc
 {
-  [view release];
-  
   [[NSNotificationCenter defaultCenter] removeObserver: self];
   
   [super dealloc];
 }
 
-- (NSTextView *) view
+- (void) handleTrackingUpdate: (void *) unused
 {
-  return view;
+  if (![self inLiveResize])
+    [self updateTrackingAreas];
 }
 
-- (void) setView: (NSTextView *) theView
+- (void) awakeFromNib
 {
-  [view release];
-  
-  view = [theView retain];
-  
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
 
-  [notifications removeObserver: self];
-  
   // track scrolling
   [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
     name: NSViewBoundsDidChangeNotification 
-    object: [[view enclosingScrollView] contentView]];
+    object: [[self enclosingScrollView] contentView]];
   
   [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
-    name: NSViewFrameDidChangeNotification object: view];
+    name: NSViewFrameDidChangeNotification object: self];
     
   [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
-    name: NSTextViewDidChangeTypingAttributesNotification object: view];
-                           
-  [self updateTrackingAreas];
-}
-
-- (void) handleTrackingUpdate: (void *) unused
-{
-  [self updateTrackingAreas];
+    name: NSTextViewDidChangeTypingAttributesNotification object: self];  
 }
 
 - (NSCursor *) cursorForLink: (NSObject *) linkObject
@@ -76,29 +65,24 @@
 - (void) updateTrackingAreas
 {
   // clear old rects
-  for (NSTrackingArea *area in view.trackingAreas)
-  {
-    // TODO
-//    if ([area owner] == self)
-//    {
-      [view removeTrackingArea: area];
-      [area release];
-//    }
-  }
- 
-  NSAttributedString *attrString = [view textStorage];
+  for (NSTrackingArea *area in self.trackingAreas)
+    [self removeTrackingArea: area];
+  
+  [self removeAllToolTips];
+  
+  NSAttributedString *attrString = [self textStorage];
 
   // Figure what part of us is visible (we're typically inside a scrollview)
-  NSPoint containerOrigin = [view textContainerOrigin];
+  NSPoint containerOrigin = [self textContainerOrigin];
   NSRect visibleRect = 
-    NSOffsetRect ([view visibleRect], -containerOrigin.x, -containerOrigin.y);
+    NSOffsetRect ([self visibleRect], -containerOrigin.x, -containerOrigin.y);
 
   // Figure the range of characters which is visible
   NSRange visibleGlyphRange = 
-    [[view layoutManager] glyphRangeForBoundingRect: visibleRect 
-                          inTextContainer: [view textContainer]];
+    [[self layoutManager] glyphRangeForBoundingRect: visibleRect 
+                          inTextContainer: [self textContainer]];
   NSRange visibleCharRange = 
-    [[view layoutManager] characterRangeForGlyphRange: visibleGlyphRange 
+    [[self layoutManager] characterRangeForGlyphRange: visibleGlyphRange 
                           actualGlyphRange: NULL];
 
   // Prime for the loop
@@ -123,9 +107,9 @@
       // which might be overly large when a link runs through more than one 
       // line.)
       NSRectArray rects = 
-        [[view layoutManager] rectArrayForCharacterRange: attrsRange
+        [[self layoutManager] rectArrayForCharacterRange: attrsRange
           withinSelectedCharacterRange: NSMakeRange (NSNotFound, 0)
-          inTextContainer: [view textContainer]
+          inTextContainer: [self textContainer]
           rectCount: &rectCount];
 
       NSDictionary *userInfo = 
@@ -136,38 +120,55 @@
       for (NSUInteger rectIndex = 0; rectIndex < rectCount; rectIndex++)
       {
         NSRect rect = 
-          NSIntersectionRect (rects [rectIndex], [view visibleRect]);
+          NSIntersectionRect (rects [rectIndex], [self visibleRect]);
         
+        // create a tracking area and and tooltip
         NSTrackingArea *area = 
           [[NSTrackingArea alloc] initWithRect: rect
             options: (NSTrackingMouseEnteredAndExited | 
                       NSTrackingActiveInKeyWindow | NSTrackingCursorUpdate)
             owner: self userInfo: userInfo];
         
-        [view addTrackingArea: area]; 
+        [self addTrackingArea: area];
+        [self addToolTipRect: rect owner: self userData: linkObject];
+        
+        [area release];
       }
     }
   }
 }
 
+- (NSString *) view: (NSView *) view stringForToolTip: (NSToolTipTag) tag 
+              point: (NSPoint) point userData: (void *) userData
+{
+  return [(id)userData description];
+}
+
 - (void) mouseEntered: (NSEvent *) event
 {
-  if ([NSCursor currentCursor] != [NSCursor pointingHandCursor])
-    [[NSCursor pointingHandCursor] push];
+  NSValue *range = rangeFor (event);
   
-  NSValue *range = [(NSDictionary *)[event userData] valueForKey: @"range"];
-  
-  [self underline: [range rangeValue] underlined: YES];
+  if (range)
+    [self underline: [range rangeValue] underlined: YES];
 }
 
 - (void) mouseExited: (NSEvent *) event
 {
-  if ([NSCursor currentCursor] == [NSCursor pointingHandCursor])
-    [NSCursor pop];
+  NSValue *range = rangeFor (event);
   
-  NSValue *range = [(NSDictionary *)[event userData] valueForKey: @"range"];
-  
-  [self underline: [range rangeValue] underlined: NO];
+  if (range)
+    [self underline: [range rangeValue] underlined: NO];
+}
+
+- (void) cursorUpdate: (NSEvent *) event
+{
+  NSPoint hitPoint = 
+    [self convertPoint: [event locationInWindow] fromView: nil];
+
+  if ([self mouse: hitPoint inRect: [[event trackingArea] rect]]) 
+    [[NSCursor pointingHandCursor] set];
+  else
+    [[NSCursor IBeamCursor] set];
 }
 
 - (void) underline: (NSRange) range underlined: (BOOL) isUnderlined
@@ -176,7 +177,7 @@
     [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: isUnderlined] 
       forKey: NSUnderlineStyleAttributeName];
   
-  [[view textStorage] addAttributes: linkAttributes range: range];
+  [[self textStorage] addAttributes: linkAttributes range: range];
 }
 
 @end
