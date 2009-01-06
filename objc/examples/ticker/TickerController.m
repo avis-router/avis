@@ -45,35 +45,33 @@ static NSAttributedString *attributedString (NSString *string,
       autorelease];
 }
 
-#pragma mark PRIVATE MessageLink internal class definition
+#pragma mark PRIVATE TickerMessage internal class definition
 
-/*
- * Used to link original message group/ID with message links in the message 
- * view.
- */
-@interface MessageLink : NSObject
+@interface TickerMessage : NSObject
 {
   @public
   
   NSString * messageId;
   NSString * group;
+  NSString * userAgent;
   BOOL       public;
 }
 
 @end
 
-@implementation MessageLink
+@implementation TickerMessage
 
-+ (MessageLink *) linkForMessage: (NSDictionary *) message
++ (TickerMessage *) messageForNotification: (NSDictionary *) notification
 {
-  MessageLink *link = [[MessageLink new] retain];
+  TickerMessage *link = [[TickerMessage new] retain];
   
-  NSString *distribution = [message valueForKey: @"Distribution"];
+  NSString *distribution = [notification valueForKey: @"Distribution"];
   
-  link->messageId = [[message valueForKey: @"Message-Id"] retain];
-  link->group = [[message valueForKey: @"Group"] retain];
+  link->messageId = [[notification valueForKey: @"Message-Id"] retain];
+  link->group = [[notification valueForKey: @"Group"] retain];
   link->public = 
     distribution != nil && [distribution caseInsensitiveCompare: @"world"] == 0;
+  link->userAgent = [[notification valueForKey: @"User-Agent"] retain];
   
   return link;
 }
@@ -87,6 +85,12 @@ static NSAttributedString *attributedString (NSString *string,
   
   messageId = nil;
   group = nil;
+}
+
+- (NSString *) description
+{
+  return [NSString stringWithFormat: 
+           @"Public: %@\nClient: %@", public ? @"yes" : @"no", userAgent];
 }
 
 @end
@@ -189,7 +193,7 @@ static NSAttributedString *attributedString (NSString *string,
     connected ? nil : @"Cannot send: currently disconnected"];
 }
 
-- (void) handleNotify: (NSDictionary *) message
+- (void) handleNotify: (NSDictionary *) ntfn
 {
   // decide on whether we're scrolled to the end of the messages
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
@@ -207,7 +211,7 @@ static NSAttributedString *attributedString (NSString *string,
   // define display attributes
   NSDictionary *replyLinkAttrs = 
     [NSDictionary dictionaryWithObject:
-     [MessageLink linkForMessage: message] forKey: NSLinkAttributeName];
+     [TickerMessage messageForNotification: ntfn] forKey: NSLinkAttributeName];
      
   NSDictionary *dateAttrs = 
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
@@ -249,22 +253,22 @@ static NSAttributedString *attributedString (NSString *string,
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
-    attributedString ([message objectForKey: @"Group"], groupAttrs)];
+    attributedString ([ntfn objectForKey: @"Group"], groupAttrs)];
   
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
-    attributedString ([message objectForKey: @"From"], fromAttrs)];
+    attributedString ([ntfn objectForKey: @"From"], fromAttrs)];
   
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
-    attributedString ([message objectForKey: @"Message"], messageAttrs)];
+    attributedString ([ntfn objectForKey: @"Message"], messageAttrs)];
   
   [displayedMessage addAttributes: replyLinkAttrs 
     range: NSMakeRange (0, [displayedMessage length])];
   
-  NSURL *attachedLink = extractAttachedLink (message);
+  NSURL *attachedLink = extractAttachedLink (ntfn);
   
   if (attachedLink)
   {    
@@ -499,10 +503,10 @@ static NSAttributedString *attributedString (NSString *string,
 - (BOOL) textView: (NSTextView *) textView
          clickedOnLink: (id) link atIndex: (unsigned) charIndex
 {
-  if ([link isKindOfClass: [MessageLink class]])
+  if ([link isKindOfClass: [TickerMessage class]])
   {
     // handle clicks on links to messages to initiate a reply
-    MessageLink *messageLink = link;
+    TickerMessage *messageLink = link;
     
     [messageGroup setStringValue: messageLink->group];
     

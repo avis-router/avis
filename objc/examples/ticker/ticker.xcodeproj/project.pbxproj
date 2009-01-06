@@ -12,7 +12,6 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C9521BAC0F08CE4100BA83EC /* DragTarget.m */; };
-		C9521D790F0A067000BA83EC /* TextViewLinkifier.m in Sources */ = {isa = PBXBuildFile; fileRef = C9521D780F0A067000BA83EC /* TextViewLinkifier.m */; };
 		C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */; };
 		C9B038390E48282400B59216 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B038380E48282400B59216 /* TickerController.m */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
@@ -22,6 +21,7 @@
 		C9DFB1C00F12CF9700365453 /* Reply_Normal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */; };
 		C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */; };
 		C9DFB2130F12DA9900365453 /* RolloverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DFB2120F12DA9900365453 /* RolloverButton.m */; };
+		C9DFB2AB0F12FF2300365453 /* TextViewWithLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */; };
 		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
 		C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F561BA0F00B1A2005D9245 /* PreferencesController.m */; };
 		C9F561BF0F00B247005D9245 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9F561BE0F00B247005D9245 /* Preferences.xib */; };
@@ -54,8 +54,6 @@
 		C952189C0F019E6600BA83EC /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		C9521BAB0F08CE4100BA83EC /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragTarget.h; sourceTree = "<group>"; };
 		C9521BAC0F08CE4100BA83EC /* DragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragTarget.m; sourceTree = "<group>"; };
-		C9521D770F0A067000BA83EC /* TextViewLinkifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextViewLinkifier.h; sourceTree = "<group>"; };
-		C9521D780F0A067000BA83EC /* TextViewLinkifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextViewLinkifier.m; sourceTree = "<group>"; };
 		C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElvinConnection.h; sourceTree = "<group>"; };
 		C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElvinConnection.m; sourceTree = "<group>"; };
 		C9B038370E48282400B59216 /* TickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerController.h; sourceTree = "<group>"; };
@@ -68,6 +66,8 @@
 		C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reply_Rollover.tiff; sourceTree = "<group>"; };
 		C9DFB2110F12DA9900365453 /* RolloverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RolloverButton.h; sourceTree = "<group>"; };
 		C9DFB2120F12DA9900365453 /* RolloverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RolloverButton.m; sourceTree = "<group>"; };
+		C9DFB2A90F12FF2300365453 /* TextViewWithLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextViewWithLinks.h; sourceTree = "<group>"; };
+		C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextViewWithLinks.m; sourceTree = "<group>"; };
 		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		C9F561B90F00B1A2005D9245 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesController.h; sourceTree = "<group>"; };
 		C9F561BA0F00B1A2005D9245 /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesController.m; sourceTree = "<group>"; };
@@ -90,20 +90,20 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				C9DFB2110F12DA9900365453 /* RolloverButton.h */,
-				C9DFB2120F12DA9900365453 /* RolloverButton.m */,
 				C9CF62D20EE0BF5F00A76D46 /* AppController.h */,
 				C9CF62D30EE0BF5F00A76D46 /* AppController.m */,
 				C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */,
 				C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */,
 				C9B038370E48282400B59216 /* TickerController.h */,
 				C9B038380E48282400B59216 /* TickerController.m */,
-				C9521D770F0A067000BA83EC /* TextViewLinkifier.h */,
-				C9521D780F0A067000BA83EC /* TextViewLinkifier.m */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
 				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
 				C9521BAB0F08CE4100BA83EC /* DragTarget.h */,
 				C9521BAC0F08CE4100BA83EC /* DragTarget.m */,
+				C9DFB2A90F12FF2300365453 /* TextViewWithLinks.h */,
+				C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */,
+				C9DFB2110F12DA9900365453 /* RolloverButton.h */,
+				C9DFB2120F12DA9900365453 /* RolloverButton.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -248,8 +248,8 @@
 				C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */,
 				C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */,
 				C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */,
-				C9521D790F0A067000BA83EC /* TextViewLinkifier.m in Sources */,
 				C9DFB2130F12DA9900365453 /* RolloverButton.m in Sources */,
+				C9DFB2AB0F12FF2300365453 /* TextViewWithLinks.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
