@@ -1,3 +1,5 @@
+#import "Growl/GrowlApplicationBridge.h"
+
 #import "TickerController.h"
 #import "RolloverButton.h"
 
@@ -199,8 +201,26 @@ static NSAttributedString *attributedString (NSString *string,
     connected ? nil : @"Cannot send: currently disconnected"];
 }
 
+- (void) notifyGrowl: (NSDictionary *) ntfn
+{
+ NSLog (@"notify");
+ 
+ [GrowlApplicationBridge
+	 notifyWithTitle: @"Ticker message received"
+   description: 
+     [NSString stringWithFormat: @"%@: %@", [ntfn objectForKey: @"From"],
+      [ntfn objectForKey: @"Message"]]
+	 notificationName: @"Ticker Message"
+   iconData: nil
+   priority: 0
+	 isSticky: NO
+	 clickContext: nil];
+}
+
 - (void) handleNotify: (NSDictionary *) ntfn
 {
+  [self notifyGrowl: ntfn];
+  
   // decide on whether we're scrolled to the end of the messages
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
   NSRect visibleRect = NSOffsetRect ([tickerMessagesTextView visibleRect], 

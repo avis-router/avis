@@ -1,3 +1,5 @@
+#import "Growl/GrowlApplicationBridge.h"
+
 #import "AppController.h"
 #import "ElvinConnection.h"
 #import "TickerController.h"
@@ -53,11 +55,6 @@ NSString *PreferencesContext = @"PreferencesContext";
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
-- (void) awakeFromNib
-{
-  [self initElvin];
-}
-
 - (void) dealloc
 {
   [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
@@ -88,8 +85,18 @@ NSString *PreferencesContext = @"PreferencesContext";
   }
 }
 
+/**
+ * TODO this must be done here or ticker window starts before connection: FIX
+ */
+- (void) awakeFromNib
+{
+  [self initElvin];
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
+  [GrowlApplicationBridge setGrowlDelegate: @""];
+    
   // listen for sleep/wake
   NSNotificationCenter *workspaceNotifications = 
     [[NSWorkspace sharedWorkspace] notificationCenter];
