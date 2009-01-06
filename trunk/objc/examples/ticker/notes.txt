@@ -35,6 +35,7 @@
     http://developer.apple.com/samplecode/TextLinks/listing2.html OR use 
     NSView::addTrackingArea
   * DONE: links across group/from
++ growl
 + presence
 + multiple windows
 + filtering
