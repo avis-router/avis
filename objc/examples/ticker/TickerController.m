@@ -108,7 +108,7 @@ static NSAttributedString *attributedString (NSString *string,
 #pragma mark -
 
 @interface TickerController ()
-  - (void) setConnectedStatus: (BOOL) connected;
+//  - (void) setConnectedStatus: (BOOL) connected;
   - (void) handleNotify: (NSDictionary *) message;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
@@ -160,7 +160,7 @@ static NSAttributedString *attributedString (NSString *string,
 {
   replyButton.rolloverImage = [NSImage imageNamed: @"Reply_Rollover"];
   
-  [self setConnectedStatus: [appController.elvin isConnected]];
+  self.canSend = [appController.elvin isConnected];
   
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   
@@ -171,7 +171,7 @@ static NSAttributedString *attributedString (NSString *string,
     registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];  
 }
 
-- (BOOL) validateMenuItem: (NSMenuItem*) item
+- (BOOL) validateMenuItem: (NSMenuItem *) item
 {
   SEL action = [item action];
   
@@ -179,6 +179,8 @@ static NSAttributedString *attributedString (NSString *string,
     return self.attachedURL != nil;
   else if (action == @selector (clearReply:))
     return self.inReplyTo != nil;
+  else if (action == @selector (sendMessage:))
+    return self.canSend;
   else
     return YES;
 }
@@ -186,7 +188,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) handleElvinOpen: (void *) unused
 {
   if ([[NSThread currentThread] isMainThread])
-    [self setConnectedStatus: YES];
+    self.canSend = YES;
   else
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
           withObject: nil waitUntilDone: NO];
@@ -195,18 +197,10 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) handleElvinClose: (void *) unused
 {
   if ([[NSThread currentThread] isMainThread])
-    [self setConnectedStatus: NO];
+    self.canSend = NO;
   else
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
           withObject: nil waitUntilDone: NO];
-}
-
-- (void) setConnectedStatus: (BOOL) connected
-{
-  [sendButton setEnabled: connected];
-
-  [sendButton setToolTip: 
-    connected ? nil : @"Cannot send: currently disconnected"];
 }
 
 - (void) notifyGrowl: (NSDictionary *) ntfn
@@ -365,6 +359,23 @@ static NSAttributedString *attributedString (NSString *string,
 }
 
 #pragma mark -
+
+@dynamic canSend;
+
+- (BOOL) canSend
+{
+  return canSend;
+}
+
+- (void) setCanSend: (BOOL) newValue
+{
+  canSend = newValue;
+  
+  [sendButton setEnabled: canSend];
+  
+  [sendButton setToolTip: 
+   canSend ? nil : @"Cannot send: currently disconnected"];
+}
 
 - (IBAction) sendMessage: (id) sender
 {
