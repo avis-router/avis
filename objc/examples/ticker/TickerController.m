@@ -11,7 +11,7 @@
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From)"
 
-#pragma mark PRIVATE Utility functions
+#pragma mark -
 
 static inline NSColor *color (float r, float g, float b)
 {
@@ -47,7 +47,7 @@ static NSAttributedString *attributedString (NSString *string,
       autorelease];
 }
 
-#pragma mark PRIVATE TickerMessage internal class definition
+#pragma mark -
 
 @interface TickerMessage : NSObject
 {
@@ -103,6 +103,8 @@ static NSAttributedString *attributedString (NSString *string,
 
 @end
 
+#pragma mark -
+
 @interface TickerController ()
   - (void) setConnectedStatus: (BOOL) connected;
   - (void) handleNotify: (NSDictionary *) message;
@@ -118,14 +120,21 @@ static NSAttributedString *attributedString (NSString *string,
 
 @implementation TickerController
 
-#pragma mark PRIVATE Cocoa overrides
-
 - (id) initWithAppController: (AppController *) theAppController
 {
   appController = theAppController;
   
   return [super initWithWindowNibName: @"TickerWindow"];
 }
+
+- (void) dealloc
+{
+  [[NSNotificationCenter defaultCenter] removeObserver: self]; 
+  
+  [super dealloc];
+}
+
+#pragma mark -
 
 - (void) windowDidLoad
 {
@@ -138,33 +147,26 @@ static NSAttributedString *attributedString (NSString *string,
   [self setInReplyTo: nil];
   
   [dragTarget 
-    registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];
+   registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];
   
   [appController.elvin
-    subscribe: TICKER_SUBSCRIPTION 
-    withDelegate: self usingSelector: @selector (handleNotify:)];    
+   subscribe: TICKER_SUBSCRIPTION 
+   withDelegate: self usingSelector: @selector (handleNotify:)];    
   
   // listen for elvin open/close
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
-
-  [notifications addObserver: self selector: @selector (handleElvinOpen:)
-    name: ElvinConnectionOpenedNotification object: nil]; 
-    
-  [notifications addObserver: self selector: @selector (handleElvinClose:)
-    name: ElvinConnectionClosedNotification object: nil]; 
-}
-
-- (void) dealloc
-{
-  [[NSNotificationCenter defaultCenter] removeObserver: self]; 
   
-  [super dealloc];
+  [notifications addObserver: self selector: @selector (handleElvinOpen:)
+                        name: ElvinConnectionOpenedNotification object: nil]; 
+  
+  [notifications addObserver: self selector: @selector (handleElvinClose:)
+                        name: ElvinConnectionClosedNotification object: nil]; 
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem*) item
 {
   SEL action = [item action];
-
+  
   if (action == @selector (clearAttachedURL:))
     return self.attachedURL != nil;
   else if (action == @selector (clearReply:))
@@ -172,8 +174,6 @@ static NSAttributedString *attributedString (NSString *string,
   else
     return YES;
 }
-
-#pragma mark PRIVATE Delegates handling callback from Elvin
 
 - (void) handleElvinOpen: (void *) unused
 {
@@ -348,7 +348,7 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
-#pragma mark PUBLIC methods
+#pragma mark -
 
 - (IBAction) sendMessage: (id) sender
 {
@@ -480,7 +480,9 @@ static NSAttributedString *attributedString (NSString *string,
 
 @synthesize allowPublic;
 
-#pragma mark URL dragging destination
+#pragma mark -
+
+#pragma mark URL D&D
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>) sender
 {
@@ -499,7 +501,7 @@ static NSAttributedString *attributedString (NSString *string,
   return YES;
 }
 
-#pragma mark PRIVATE Delegates for text view
+#pragma mark Text view delegates
 
 /*
  * Delegate override to enable message text field to support TAB out but still
@@ -553,7 +555,7 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
-#pragma mark PRIVATE Methods handling "Empty Text" sheet
+#pragma mark "Empty Text" sheet delegates
 
 /*
  * Handles request for sheet location: locates the "empty text" sheet on

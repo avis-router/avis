@@ -13,27 +13,9 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 @implementation AppController
 
-#pragma mark Public methods
-
 @synthesize elvin;
 
-- (IBAction) showTickerWindow: (id) sender
-{
-  if (!tickerController)
-    tickerController = [[TickerController alloc] initWithAppController: self];
-      
-  [tickerController showWindow: self];
-}
-
-- (IBAction) showPreferencesWindow: (id) sender
-{
-  if (!preferencesController)
-    preferencesController = [PreferencesController new];
-    
-  [preferencesController showWindow: self];
-}
-
-#pragma mark Private methods
+#pragma mark -
 
 + (void) initialize
 {
@@ -78,6 +60,8 @@ NSString *PreferencesContext = @"PreferencesContext";
   [super dealloc];
 }
 
+#pragma mark -
+
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
   [GrowlApplicationBridge setGrowlDelegate: @""];
@@ -119,6 +103,26 @@ NSString *PreferencesContext = @"PreferencesContext";
   
   return YES;
 }
+
+#pragma mark -
+
+- (IBAction) showTickerWindow: (id) sender
+{
+  if (!tickerController)
+    tickerController = [[TickerController alloc] initWithAppController: self];
+  
+  [tickerController showWindow: self];
+}
+
+- (IBAction) showPreferencesWindow: (id) sender
+{
+  if (!preferencesController)
+    preferencesController = [PreferencesController new];
+  
+  [preferencesController showWindow: self];
+}
+
+#pragma mark -
 
 /*
  * Handle preference changes.
