@@ -11,10 +11,7 @@
   for (NSTrackingArea *area in [self trackingAreas])
   {
     if ([area owner] == self)
-    {
       [self removeTrackingArea: area];
-      [area release];
-    }
   }
   
   NSRect frame = [self frame];
@@ -26,6 +23,8 @@
       owner: self userInfo: nil];
   
   [self addTrackingArea: area];
+  
+  [area release];
 }
 
 - (void) setRollover: (BOOL) rolledOver
