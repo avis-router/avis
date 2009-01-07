@@ -203,18 +203,13 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) notifyGrowl: (NSDictionary *) ntfn
 {
- NSLog (@"notify");
- 
  [GrowlApplicationBridge
-	 notifyWithTitle: @"Ticker message received"
+   notifyWithTitle: @"Ticker message received"
    description: 
      [NSString stringWithFormat: @"%@: %@", [ntfn objectForKey: @"From"],
       [ntfn objectForKey: @"Message"]]
-	 notificationName: @"Ticker Message"
-   iconData: nil
-   priority: 0
-	 isSticky: NO
-	 clickContext: nil];
+   notificationName: @"Ticker Message"
+   iconData: nil priority: 0 isSticky: NO clickContext: nil];
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
