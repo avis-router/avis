@@ -1,6 +1,7 @@
 + general/cleanup
   * icon
   * rename to "Ticker"
+  * DONE: "Toggle Public" should be a checkbox
   * DONE: flip public/reply buttons
   * DONE: ticker controller to take control of ticker window
   * DONE: generalise tickerviewdragtarget
@@ -23,15 +24,15 @@
   * DONE truncation in middle
   * DONE animate appearance
 + replying
+  * reply-to icon in text
+  * highlight parents
+  * handle personal reply
   * DONE: send menu item disabled when disconnected
   * DONE: change group -> reset reply ID
   * DONE: reply to control in message editor
-  * reply-to icon in text
   * DONE: link underline lag
   * DONE: reply button rollover: see subclass NSButton, override cellClass: Cell startTrackingAt:inView:
-  * handle personal reply
   * DONE: tooltip for client etc on messages  
-  * highlight parents
   * DONE: cricinfo scores not wrapping properly
   * DONE: scrolling with mouse wheel leaves underline
   * DONE: underline links. use example at 
