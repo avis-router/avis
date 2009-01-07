@@ -5,7 +5,7 @@
 NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
 NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
 
-#pragma mark PRIVATE Utility functions
+#pragma mark -
 
 static inline NSString *attr_string (Attributes *attrs, const char *name)
 {
@@ -34,7 +34,23 @@ static void copy_string_attr (Attributes *attributes,
     [message setValue: [NSString stringWithUTF8String: attrValue] forKey: name];
 }
 
-#pragma mark PRIVATE SubscriptionContext internal class
+#pragma mark -
+
+@class SubscriptionContext;
+
+static void subscribe (Elvin *elvin, SubscriptionContext *context);
+
+static void close_listener (Elvin *elvin, CloseReason reason,
+                            const char *message,
+                            ElvinConnection *self);
+
+static void notification_listener (Subscription *sub, 
+                                   Attributes *attributes, 
+                                   bool secure, SubscriptionContext *context);
+
+static void send_message (Elvin *elvin, Attributes *message);
+
+#pragma mark -
 
 @interface SubscriptionContext : NSObject
 {
@@ -75,19 +91,7 @@ static void copy_string_attr (Attributes *attributes,
 
 @end
 
-#pragma mark PRIVATE ElvinConnection
-
-static void subscribe (Elvin *elvin, SubscriptionContext *context);
-
-static void close_listener (Elvin *elvin, CloseReason reason,
-                            const char *message,
-                            ElvinConnection *self);
-
-static void notification_listener (Subscription *sub, 
-                                   Attributes *attributes, 
-                                   bool secure, SubscriptionContext *context);
-
-static void send_message (Elvin *elvin, Attributes *message);
+#pragma mark -
 
 @interface ElvinConnection ()
   - (BOOL) openConnection;
@@ -98,7 +102,7 @@ static void send_message (Elvin *elvin, Attributes *message);
 @implementation ElvinConnection
 
 @dynamic elvinUrl;
-                                                                  
+
 - (id) initWithUrl: (NSString *) url
 {
   if (![super init])
@@ -123,8 +127,6 @@ static void send_message (Elvin *elvin, Attributes *message);
 
   [super dealloc];
 }
-
-#pragma mark PUBLIC
 
 - (NSString *) elvinUrl
 {
@@ -182,7 +184,7 @@ static void send_message (Elvin *elvin, Attributes *message);
     context->subscription = nil;
 }
 
-#pragma PUBLIC Elvin publish/subscribe
+#pragma Elvin publish/subscribe
 
 - (void) subscribe: (NSString *) subscriptionExpr
         withDelegate: (id) delegate usingSelector: (SEL) selector
@@ -294,7 +296,7 @@ void send_message (Elvin *elvin, Attributes *message)
   attributes_destroy (message);
 }
 
-#pragma mark PRIVATE Elvin event loop
+#pragma mark Event loop
 
 - (void) elvinEventLoopThread
 {
