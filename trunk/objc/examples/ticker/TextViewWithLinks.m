@@ -5,11 +5,6 @@
  * the starting point for this class.
  */
 
-static inline NSValue *rangeFor (NSEvent *event)
-{
-  return [(NSDictionary *)[event userData] valueForKey: @"range"];
-}
-
 @interface TextViewWithLinks ()
   - (void) updateTrackingAreas;
   - (void) handleTrackingUpdate: (void *) unused;
@@ -18,6 +13,22 @@ static inline NSValue *rangeFor (NSEvent *event)
 @end
 
 @implementation TextViewWithLinks
+
+- (void) awakeFromNib
+{
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+
+  // track scrolling
+  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
+    name: NSViewBoundsDidChangeNotification 
+    object: [[self enclosingScrollView] contentView]];
+  
+  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
+    name: NSViewFrameDidChangeNotification object: self];
+  
+  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
+    name: NSTextViewDidChangeTypingAttributesNotification object: self];
+}
 
 - (void) dealloc
 {
@@ -32,37 +43,6 @@ static inline NSValue *rangeFor (NSEvent *event)
   
   if (![self inLiveResize])
     [self updateTrackingAreas];
-}
-
-- (void) awakeFromNib
-{
-  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
-
-  // track scrolling
-  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
-    name: NSViewBoundsDidChangeNotification 
-    object: [[self enclosingScrollView] contentView]];
-  
-  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
-    name: NSViewFrameDidChangeNotification object: self];
-    
-  [notifications addObserver: self selector: @selector (handleTrackingUpdate:)
-    name: NSTextViewDidChangeTypingAttributesNotification object: self];  
-}
-
-- (NSCursor *) cursorForLink: (NSObject *) linkObject
-    atIndex: (unsigned) charIndex
-{
-  NSCursor *result = nil;
-
-  //  If the delegate implements the method, consult it.
-  //  if ([[self delegate] respondsToSelector: @selector (cursorForLink:atIndex:ofTextView:)])
-  //    result = [[self delegate] cursorForLink: linkObject atIndex: charIndex ofTextView: self];
-
-  if (result == nil)
-    result = [NSCursor pointingHandCursor];
-
-  return result;
 }
 
 - (void) updateTrackingAreas
@@ -143,6 +123,21 @@ static inline NSValue *rangeFor (NSEvent *event)
   }
 }
 
+- (NSCursor *) cursorForLink: (NSObject *) linkObject
+    atIndex: (unsigned) charIndex
+{
+  NSCursor *result = nil;
+
+  //  If the delegate implements the method, consult it.
+  //  if ([[self delegate] respondsToSelector: @selector (cursorForLink:atIndex:ofTextView:)])
+  //    result = [[self delegate] cursorForLink: linkObject atIndex: charIndex ofTextView: self];
+
+  if (result == nil)
+    result = [NSCursor pointingHandCursor];
+
+  return result;
+}
+
 - (NSString *) view: (NSView *) view stringForToolTip: (NSToolTipTag) tag 
               point: (NSPoint) point userData: (void *) userData
 {
@@ -152,7 +147,7 @@ static inline NSValue *rangeFor (NSEvent *event)
 - (void) cursorUpdate: (NSEvent *) event
 {
   NSPoint hitPoint = 
-  [self convertPoint: [event locationInWindow] fromView: nil];
+    [self convertPoint: [event locationInWindow] fromView: nil];
   
   if ([self mouse: hitPoint inRect: [[event trackingArea] rect]]) 
     [[NSCursor pointingHandCursor] set];
@@ -177,7 +172,8 @@ static inline NSValue *rangeFor (NSEvent *event)
 
 - (void) mouseEntered: (NSEvent *) event
 {
-  [self setUnderlinedRange: rangeFor (event)];
+  [self setUnderlinedRange: 
+    [(NSDictionary *)[event userData] valueForKey: @"range"]];
 }
 
 - (void) mouseExited: (NSEvent *) event
