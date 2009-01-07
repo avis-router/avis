@@ -108,7 +108,6 @@ static NSAttributedString *attributedString (NSString *string,
 #pragma mark -
 
 @interface TickerController ()
-//  - (void) setConnectedStatus: (BOOL) connected;
   - (void) handleNotify: (NSDictionary *) message;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
@@ -164,8 +163,8 @@ static NSAttributedString *attributedString (NSString *string,
   
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   
-  [self setAttachedURL: nil];
-  [self setInReplyTo: nil];
+  self.attachedURL = nil;
+  self.inReplyTo = nil;
   
   [dragTarget 
     registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];  
@@ -411,7 +410,7 @@ static NSAttributedString *attributedString (NSString *string,
         [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
   {
     // make self the delegate to put sheet under text editor
-    [[messageText window] setDelegate: self];
+    // [[messageText window] setDelegate: self];
     
     NSBeginAlertSheet 
       (@"The ticker message text is empty.", @"Don't Send", 
