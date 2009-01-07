@@ -1,4 +1,6 @@
 + general/cleanup
+  * icon
+  * rename to "Ticker"
   * DONE: flip public/reply buttons
   * DONE: ticker controller to take control of ticker window
   * DONE: generalise tickerviewdragtarget
@@ -6,6 +8,7 @@
   * DONE: debug vs release
   * DONE: set URL 
 + reliable connection
+  * start with perf tool -> send button never enabled
   * send failure not detected
   * use shutdown () or no select wakeup for BSD (?)
   * elvin connection needs to be made thread safe: synchronized
@@ -20,6 +23,7 @@
   * DONE truncation in middle
   * DONE animate appearance
 + replying
+  * send menu item disabled when disconnected
   * change group -> reset reply ID
   * reply to control in message editor
   * reply-to icon in text

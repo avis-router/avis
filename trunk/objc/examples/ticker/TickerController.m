@@ -11,6 +11,8 @@
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From)"
 
+#define MAX_GROWL_MESSAGE_LENTGH 200
+
 #pragma mark -
 
 static inline NSColor *color (float r, float g, float b)
@@ -122,9 +124,27 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (id) initWithAppController: (AppController *) theAppController
 {
-  appController = theAppController;
+  self = [super initWithWindowNibName: @"TickerWindow"];
   
-  return [super initWithWindowNibName: @"TickerWindow"];
+  if (self)
+  {
+    appController = theAppController;
+      
+    [appController.elvin
+      subscribe: TICKER_SUBSCRIPTION 
+      withDelegate: self usingSelector: @selector (handleNotify:)];    
+    
+    // listen for elvin open/close
+    NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+    
+    [notifications addObserver: self selector: @selector (handleElvinOpen:)
+                          name: ElvinConnectionOpenedNotification object: nil]; 
+    
+    [notifications addObserver: self selector: @selector (handleElvinClose:)
+                          name: ElvinConnectionClosedNotification object: nil]; 
+  }
+  
+  return self;
 }
 
 - (void) dealloc
@@ -143,24 +163,12 @@ static NSAttributedString *attributedString (NSString *string,
   [self setConnectedStatus: [appController.elvin isConnected]];
   
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
+  
   [self setAttachedURL: nil];
   [self setInReplyTo: nil];
   
   [dragTarget 
-   registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];
-  
-  [appController.elvin
-   subscribe: TICKER_SUBSCRIPTION 
-   withDelegate: self usingSelector: @selector (handleNotify:)];    
-  
-  // listen for elvin open/close
-  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
-  
-  [notifications addObserver: self selector: @selector (handleElvinOpen:)
-                        name: ElvinConnectionOpenedNotification object: nil]; 
-  
-  [notifications addObserver: self selector: @selector (handleElvinClose:)
-                        name: ElvinConnectionClosedNotification object: nil]; 
+    registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];  
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem*) item
@@ -203,13 +211,21 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) notifyGrowl: (NSDictionary *) ntfn
 {
- [GrowlApplicationBridge
-   notifyWithTitle: @"Ticker message received"
-   description: 
-     [NSString stringWithFormat: @"%@: %@", [ntfn objectForKey: @"From"],
-      [ntfn objectForKey: @"Message"]]
-   notificationName: @"Ticker Message"
-   iconData: nil priority: 0 isSticky: NO clickContext: nil];
+  NSString *message =
+   [NSString stringWithFormat: @"%@: %@", 
+    [ntfn objectForKey: @"From"], [ntfn objectForKey: @"Message"]];
+ 
+  // Growl should really handle long messages but...
+  if ([message length] > MAX_GROWL_MESSAGE_LENTGH)
+  {
+    message = [NSString stringWithFormat: @"%@...", 
+                [message substringToIndex: MAX_GROWL_MESSAGE_LENTGH]];
+  }
+  
+  [GrowlApplicationBridge
+    notifyWithTitle: @"Ticker message received"
+    description: message notificationName: @"Ticker Message"
+    iconData: nil priority: 0 isSticky: NO clickContext: nil];
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
