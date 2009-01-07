@@ -11,11 +11,6 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 #pragma mark Declare Private Methods
 
-@interface AppController ()
-  - (void) initElvin;
-  - (void) deallocElvin;
-@end
-
 @implementation AppController
 
 #pragma mark Public methods
@@ -55,42 +50,32 @@ NSString *PreferencesContext = @"PreferencesContext";
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
+- (id) init
+{
+  self = [super init];
+  
+  if (self)
+  {
+    elvin = 
+      [[[ElvinConnection alloc] initWithUrl: prefsString (@"ElvinURL")] 
+        retain];    
+  }
+  
+  return self;
+}
+
 - (void) dealloc
 {
   [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
   [[NSUserDefaultsController sharedUserDefaultsController] removeObserver: self];
   
-  [self deallocElvin];
+  NSLog (@"Delloc");
+  
+  [elvin disconnect];
+  [elvin release];
+  elvin = nil;
   
   [super dealloc];
-}
-
-- (void) initElvin
-{
- if (!elvin)
- {
-   elvin = 
-    [[[ElvinConnection alloc] initWithUrl: prefsString (@"ElvinURL")] 
-      retain];
-  }
-}
-
-- (void) deallocElvin
-{
-  if (elvin)
-  {
-    [elvin disconnect];
-    [elvin release];
-    elvin = nil;
-  }
-}
-
-/**
- * TODO this must be done here or ticker window starts before connection: FIX
- */
-- (void) awakeFromNib
-{
-  [self initElvin];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
@@ -117,14 +102,12 @@ NSString *PreferencesContext = @"PreferencesContext";
   [userPreferences addObserver: self forKeyPath: @"values.ElvinURL" 
                    options: 0 context: PreferencesContext];
                    
-  [self showTickerWindow: self];
-  
   [elvin connect];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) notification 
 {
-  [self deallocElvin];
+  [elvin disconnect];
 }
 
 /**
