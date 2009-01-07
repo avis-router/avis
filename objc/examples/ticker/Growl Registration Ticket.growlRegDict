@@ -7,10 +7,14 @@
 	<key>AllNotifications</key>
 	<array>
 		<string>Ticker Message</string>
+		<string>Personal Message</string>
+		<string>Connection Status</string>
 	</array>
 	<key>DefaultNotifications</key>
 	<array>
 		<string>Ticker Message</string>
+		<string>Personal Message</string>
+		<string>Connection Status</string>
 	</array>
 </dict>
 </plist>

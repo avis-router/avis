@@ -221,10 +221,29 @@ static NSAttributedString *attributedString (NSString *string,
                 [message substringToIndex: MAX_GROWL_MESSAGE_LENTGH]];
   }
   
+  NSString *userName = prefsString (@"OnlineUserName");
+  NSString *type;
+  int priority = 0;
+  BOOL sticky = NO;
+  
+  if ([[ntfn objectForKey: @"Group"] isEqual: userName])
+  {
+    type = @"Personal Message";
+    
+    if (![[ntfn objectForKey: @"From"] isEqual: userName])
+    {
+      priority = 1;
+      sticky = YES;
+    }
+  } else
+  {
+    type = @"Ticker Message";
+  }
+  
   [GrowlApplicationBridge
-    notifyWithTitle: @"Ticker message received"
-    description: message notificationName: @"Ticker Message"
-    iconData: nil priority: 0 isSticky: NO clickContext: nil];
+    notifyWithTitle: @"Message received"
+    description: message notificationName: type
+    iconData: nil priority: priority isSticky: sticky clickContext: nil];
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
