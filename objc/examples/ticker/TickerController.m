@@ -181,7 +181,12 @@ static NSAttributedString *attributedString (NSString *string,
     return self.inReplyTo != nil;
   else if (action == @selector (sendMessage:))
     return self.canSend;
-  else
+  else if (action == @selector (togglePublic:)) 
+  {
+    [item setState: allowPublic ? NSOnState : NSOffState];
+    
+    return YES; 
+  } else
     return YES;
 }
 
