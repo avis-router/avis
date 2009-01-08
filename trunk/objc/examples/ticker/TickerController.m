@@ -67,7 +67,7 @@ static NSAttributedString *attributedString (NSString *string,
 
 + (TickerMessage *) messageForNotification: (NSDictionary *) notification
 {
-  TickerMessage *link = [[TickerMessage new] retain];
+  TickerMessage *link = [[TickerMessage new] autorelease];
   
   NSString *distribution = [notification valueForKey: @"Distribution"];
   
@@ -82,13 +82,14 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) dealloc
 {
-  [super dealloc];
-  
   [messageId release];
   [group release];
+  [userAgent release];
   
   messageId = nil;
   group = nil;
+  
+  [super dealloc];
 }
 
 /**
@@ -247,8 +248,6 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) handleNotify: (NSDictionary *) ntfn
 {
-  [self notifyGrowl: ntfn];
-  
   // decide on whether we're scrolled to the end of the messages
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
   NSRect visibleRect = NSOffsetRect ([tickerMessagesTextView visibleRect], 
@@ -340,7 +339,7 @@ static NSAttributedString *attributedString (NSString *string,
     [displayedMessage 
       appendAttributedString: attributedString (@" (", dateAttrs)];
 
-    if ([[attachedLink absoluteString] length] <= 40)
+    if ([[attachedLink absoluteString] length] <= 70)
     {
       [displayedMessage appendAttributedString: 
         attributedString ([attachedLink absoluteString], linkAttrs)];
@@ -379,6 +378,9 @@ static NSAttributedString *attributedString (NSString *string,
     [tickerMessagesTextView scrollRangeToVisible: 
       NSMakeRange ([[tickerMessagesTextView textStorage] length], 0)];
   }
+  
+  // Growl can sometimes pause - do last
+  [self notifyGrowl: ntfn];
 }
 
 #pragma mark -

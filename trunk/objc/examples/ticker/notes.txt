@@ -2,8 +2,9 @@
   * icon
   * rename to "Ticker"
   * see if we can avoid updating tracking areas during live scroll
-  * allow delete from ticker list
   * move tooltip gen to ticker controller
+  * animate reply/public button
+  * DONE: allow delete from ticker list
   * DONE: remove public button -> replace with icon
   * DONE: "Toggle Public" should be a checkbox
   * DONE: flip public/reply buttons
