@@ -173,7 +173,8 @@ static NSAttributedString *attributedString (NSString *string,
 - (BOOL) validateMenuItem: (NSMenuItem *) item
 {
   SEL action = [item action];
-  
+ 
+  NSLog (@"validate %@", NSStringFromSelector (action));
   if (action == @selector (clearAttachedURL:))
     return self.attachedURL != nil;
   else if (action == @selector (clearReply:))
@@ -557,9 +558,9 @@ static NSAttributedString *attributedString (NSString *string,
  * Delegate override to enable message text field to support TAB out but still
  * allow Enter/Return to insert new lines.
  */
-- (BOOL) textView: (NSTextView *) textView doCommandBySelector: (SEL) selector
+- (BOOL) textView: (NSTextView *) textView doCommandBySelector: (SEL) command
 {
-  if (selector == @selector (insertTab:))
+  if (command == @selector (insertTab:))
   {
     if (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0)
     {
@@ -570,7 +571,7 @@ static NSAttributedString *attributedString (NSString *string,
     {
       return NO;
     }
-  } else if (selector == @selector (insertNewline:))
+  } else if (command == @selector (insertNewline:))
   {
     [textView insertNewlineIgnoringFieldEditor: self];
     
