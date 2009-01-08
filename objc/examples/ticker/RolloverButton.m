@@ -29,6 +29,9 @@
 
 - (void) setRollover: (BOOL) rolledOver
 {
+  if (rolloverImage == nil)
+    return;
+  
   if (rolledOver)
   {
     if (originalImage == nil)

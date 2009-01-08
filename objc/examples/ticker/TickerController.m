@@ -174,7 +174,6 @@ static NSAttributedString *attributedString (NSString *string,
 {
   SEL action = [item action];
  
-  NSLog (@"validate %@", NSStringFromSelector (action));
   if (action == @selector (clearAttachedURL:))
     return self.attachedURL != nil;
   else if (action == @selector (clearReply:))
