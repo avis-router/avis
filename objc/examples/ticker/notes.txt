@@ -1,6 +1,8 @@
 + general/cleanup
   * icon
   * rename to "Ticker"
+  * see if we can avoid updating tracking areas during live scroll
+  * allow delete from ticker list
   * DONE: "Toggle Public" should be a checkbox
   * DONE: flip public/reply buttons
   * DONE: ticker controller to take control of ticker window
@@ -10,6 +12,7 @@
   * DONE: set URL 
 + reliable connection
   * start with perf tool -> send button never enabled
+  * bogus URL failure
   * send failure not detected
   * use shutdown () or no select wakeup for BSD (?)
   * elvin connection needs to be made thread safe: synchronized
@@ -26,7 +29,7 @@
 + replying
   * reply-to icon in text
   * highlight parents
-  * handle personal reply
+  * handle personal reply: thread ID
   * DONE: send menu item disabled when disconnected
   * DONE: change group -> reset reply ID
   * DONE: reply to control in message editor

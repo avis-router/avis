@@ -31,6 +31,7 @@
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
 		C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C9521BAC0F08CE4100BA83EC /* DragTarget.m */; };
 		C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */; };
+		C9AEA1630F15ADE300C70410 /* TickerMessagesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */; };
 		C9B038390E48282400B59216 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B038380E48282400B59216 /* TickerController.m */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
@@ -87,6 +88,8 @@
 		C9521BAC0F08CE4100BA83EC /* DragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragTarget.m; sourceTree = "<group>"; };
 		C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElvinConnection.h; sourceTree = "<group>"; };
 		C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElvinConnection.m; sourceTree = "<group>"; };
+		C9AEA1610F15ADE300C70410 /* TickerMessagesTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerMessagesTextView.h; sourceTree = "<group>"; };
+		C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TickerMessagesTextView.m; sourceTree = "<group>"; };
 		C9B038370E48282400B59216 /* TickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerController.h; sourceTree = "<group>"; };
 		C9B038380E48282400B59216 /* TickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TickerController.m; sourceTree = "<group>"; };
 		C9B03B590E493EDF00B59216 /* avis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = avis.framework; path = Frameworks/avis.framework; sourceTree = "<group>"; };
@@ -128,6 +131,8 @@
 				C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */,
 				C9B038370E48282400B59216 /* TickerController.h */,
 				C9B038380E48282400B59216 /* TickerController.m */,
+				C9AEA1610F15ADE300C70410 /* TickerMessagesTextView.h */,
+				C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
 				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
 				C9521BAB0F08CE4100BA83EC /* DragTarget.h */,
@@ -304,6 +309,7 @@
 				C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */,
 				C9DFB2130F12DA9900365453 /* RolloverButton.m in Sources */,
 				C9DFB2AB0F12FF2300365453 /* TextViewWithLinks.m in Sources */,
+				C9AEA1630F15ADE300C70410 /* TickerMessagesTextView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
