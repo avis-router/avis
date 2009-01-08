@@ -86,9 +86,6 @@ static NSAttributedString *attributedString (NSString *string,
   [group release];
   [userAgent release];
   
-  messageId = nil;
-  group = nil;
-  
   [super dealloc];
 }
 
