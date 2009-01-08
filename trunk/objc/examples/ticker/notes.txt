@@ -3,6 +3,8 @@
   * rename to "Ticker"
   * see if we can avoid updating tracking areas during live scroll
   * allow delete from ticker list
+  * move tooltip gen to ticker controller
+  * DONE: remove public button -> replace with icon
   * DONE: "Toggle Public" should be a checkbox
   * DONE: flip public/reply buttons
   * DONE: ticker controller to take control of ticker window
@@ -28,6 +30,7 @@
   * DONE animate appearance
 + replying
   * reply-to icon in text
+  * Growl pause on send
   * highlight parents
   * handle personal reply: thread ID
   * DONE: send menu item disabled when disconnected
