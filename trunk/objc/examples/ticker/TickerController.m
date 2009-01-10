@@ -11,7 +11,7 @@
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From)"
 
-#define MAX_GROWL_MESSAGE_LENTGH 200
+#define MAX_GROWL_MESSAGE_LENGTH 200
 
 #pragma mark -
 
@@ -56,9 +56,13 @@ static NSAttributedString *attributedString (NSString *string,
   @public
   
   NSString * messageId;
+  NSString * from;
+  NSString * message;
   NSString * group;
   NSString * userAgent;
+  NSURL    * url;
   BOOL       public;
+  NSDate   * receivedAt;
 }
 
 @end
@@ -72,10 +76,14 @@ static NSAttributedString *attributedString (NSString *string,
   NSString *distribution = [notification valueForKey: @"Distribution"];
   
   link->messageId = [[notification valueForKey: @"Message-Id"] retain];
+  link->from = [[notification valueForKey: @"From"] retain];
+  link->message = [[notification valueForKey: @"Message"] retain];
   link->group = [[notification valueForKey: @"Group"] retain];
   link->public = 
     distribution != nil && [distribution caseInsensitiveCompare: @"world"] == 0;
   link->userAgent = [[notification valueForKey: @"User-Agent"] retain];
+  link->url = [extractAttachedLink (notification) retain];
+  link->receivedAt = [[NSDate date] retain];
   
   return link;
 }
@@ -83,8 +91,12 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) dealloc
 {
   [messageId release];
+  [from release];
+  [message release];
   [group release];
   [userAgent release];
+  [url release];
+  [receivedAt release];
   
   [super dealloc];
 }
@@ -107,6 +119,7 @@ static NSAttributedString *attributedString (NSString *string,
 
 @interface TickerController ()
   - (void) handleNotify: (NSDictionary *) message;
+  - (void) notifyGrowl: (NSDictionary *) ntfn;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
   - (void) setAttachedURLPanelHidden: (BOOL) hidden;
@@ -205,46 +218,10 @@ static NSAttributedString *attributedString (NSString *string,
           withObject: nil waitUntilDone: NO];
 }
 
-- (void) notifyGrowl: (NSDictionary *) ntfn
-{
-  NSString *message =
-   [NSString stringWithFormat: @"%@: %@", 
-    [ntfn objectForKey: @"From"], [ntfn objectForKey: @"Message"]];
- 
-  // Growl should really handle long messages but...
-  if ([message length] > MAX_GROWL_MESSAGE_LENTGH)
-  {
-    message = [NSString stringWithFormat: @"%@...", 
-                [message substringToIndex: MAX_GROWL_MESSAGE_LENTGH]];
-  }
-  
-  NSString *userName = prefsString (@"OnlineUserName");
-  NSString *type;
-  int priority = 0;
-  BOOL sticky = NO;
-  
-  if ([[ntfn objectForKey: @"Group"] isEqual: userName])
-  {
-    type = @"Personal Message";
-    
-    if (![[ntfn objectForKey: @"From"] isEqual: userName])
-    {
-      priority = 1;
-      sticky = YES;
-    }
-  } else
-  {
-    type = @"Ticker Message";
-  }
-  
-  [GrowlApplicationBridge
-    notifyWithTitle: @"Message received"
-    description: message notificationName: type
-    iconData: nil priority: priority isSticky: sticky clickContext: nil];
-}
-
 - (void) handleNotify: (NSDictionary *) ntfn
 {
+  TickerMessage *message = [TickerMessage messageForNotification: ntfn];
+  
   // decide on whether we're scrolled to the end of the messages
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
   NSRect visibleRect = NSOffsetRect ([tickerMessagesTextView visibleRect], 
@@ -260,8 +237,7 @@ static NSAttributedString *attributedString (NSString *string,
 
   // define display attributes
   NSDictionary *replyLinkAttrs = 
-    [NSDictionary dictionaryWithObject:
-     [TickerMessage messageForNotification: ntfn] forKey: NSLinkAttributeName];
+    [NSDictionary dictionaryWithObject: message forKey: NSLinkAttributeName];
      
   NSDictionary *dateAttrs = 
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
@@ -297,7 +273,7 @@ static NSAttributedString *attributedString (NSString *string,
     [[NSMutableAttributedString new] autorelease]; 
 
   [displayedMessage appendAttributedString: 
-    attributedString ([dateFormatter stringFromDate: [NSDate date]], 
+    attributedString ([dateFormatter stringFromDate: message->receivedAt], 
                       dateAttrs)];
   
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
@@ -306,51 +282,49 @@ static NSAttributedString *attributedString (NSString *string,
   range.location = [displayedMessage length];
 
   [displayedMessage appendAttributedString: 
-    attributedString ([ntfn objectForKey: @"Group"], groupAttrs)];
+    attributedString (message->group, groupAttrs)];
   
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
-    attributedString ([ntfn objectForKey: @"From"], fromAttrs)];
+    attributedString (message->from, fromAttrs)];
   
   [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
   
   [displayedMessage appendAttributedString: 
-    attributedString ([ntfn objectForKey: @"Message"], messageAttrs)];
+    attributedString (message->message, messageAttrs)];
   
   // create link to message
   range.length = [displayedMessage length] - range.location;
   
   [displayedMessage addAttributes: replyLinkAttrs range: range];
   
-  NSURL *attachedLink = extractAttachedLink (ntfn);
-  
-  if (attachedLink)
+  if (message->url)
   {    
     NSDictionary *linkAttrs = 
       [NSDictionary dictionaryWithObjectsAndKeys:
        [NSColor blueColor], NSForegroundColorAttributeName, 
        [NSNumber numberWithBool: NO], NSUnderlineStyleAttributeName,
-       attachedLink, NSLinkAttributeName, nil];
+       message->url, NSLinkAttributeName, nil];
 
     [displayedMessage 
       appendAttributedString: attributedString (@" (", dateAttrs)];
 
-    if ([[attachedLink absoluteString] length] <= 70)
+    if ([[message->url absoluteString] length] <= 70)
     {
       [displayedMessage appendAttributedString: 
-        attributedString ([attachedLink absoluteString], linkAttrs)];
+        attributedString ([message->url absoluteString], linkAttrs)];
     } else
     {
       // display truncated URL
       [displayedMessage appendAttributedString: 
-        attributedString ([attachedLink scheme], linkAttrs)];
+        attributedString ([message->url scheme], linkAttrs)];
 
       [displayedMessage appendAttributedString: 
         attributedString (@"://", linkAttrs)];
                   
       [displayedMessage appendAttributedString: 
-        attributedString ([attachedLink host], linkAttrs)];
+        attributedString ([message->url host], linkAttrs)];
 
       [displayedMessage appendAttributedString: 
         attributedString (@"/...", linkAttrs)];
@@ -380,6 +354,44 @@ static NSAttributedString *attributedString (NSString *string,
   [self notifyGrowl: ntfn];
 }
 
+- (void) notifyGrowl: (NSDictionary *) ntfn
+{
+  NSString *message =
+   [NSString stringWithFormat: @"%@: %@", 
+    [ntfn objectForKey: @"From"], [ntfn objectForKey: @"Message"]];
+ 
+  // Growl should really handle long messages...
+  if ([message length] > MAX_GROWL_MESSAGE_LENGTH)
+  {
+    message = [NSString stringWithFormat: @"%@...", 
+                [message substringToIndex: MAX_GROWL_MESSAGE_LENGTH]];
+  }
+  
+  NSString *userName = prefsString (@"OnlineUserName");
+  NSString *type;
+  int priority = 0;
+  BOOL sticky = NO;
+  
+  if ([[ntfn objectForKey: @"Group"] isEqual: userName])
+  {
+    type = @"Personal Message";
+    
+    if (![[ntfn objectForKey: @"From"] isEqual: userName])
+    {
+      priority = 1;
+      sticky = YES;
+    }
+  } else
+  {
+    type = @"Ticker Message";
+  }
+  
+  [GrowlApplicationBridge
+    notifyWithTitle: @"Message received"
+    description: message notificationName: type
+    iconData: nil priority: priority isSticky: sticky clickContext: nil];
+}
+
 #pragma mark -
 
 @dynamic canSend;
@@ -396,7 +408,7 @@ static NSAttributedString *attributedString (NSString *string,
   [sendButton setEnabled: canSend];
   
   [sendButton setToolTip: 
-   canSend ? nil : @"Cannot send: currently disconnected"];
+    canSend ? nil : @"Cannot send: currently disconnected"];
 }
 
 - (IBAction) sendMessage: (id) sender
