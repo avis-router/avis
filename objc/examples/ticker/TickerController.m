@@ -558,9 +558,7 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>) sender
 {
-  NSPasteboard *pasteboard = [sender draggingPasteboard];
-  
-  [self setAttachedURL: [NSURL URLFromPasteboard: pasteboard]];
+  self.attachedURL = [NSURL URLFromPasteboard: [sender draggingPasteboard]];
   
   return YES;
 }
@@ -603,12 +601,12 @@ static NSAttributedString *attributedString (NSString *string,
   if ([link isKindOfClass: [TickerMessage class]])
   {
     // handle clicks on links to messages to initiate a reply
-    TickerMessage *messageLink = link;
+    TickerMessage *message = link;
     
-    [messageGroup setStringValue: messageLink->group];
+    [messageGroup setStringValue: message->group];
     
-    self.inReplyTo = messageLink->messageId;
-    self.allowPublic = messageLink->public;
+    self.inReplyTo = message->messageId;
+    self.allowPublic = message->public;
     
     [[messageText window] makeFirstResponder: messageText];
 
