@@ -5,7 +5,7 @@
  * the starting point for this class.
  */
 
-@interface TextViewWithLinks ()
+@interface TextViewWithLinks (PRIVATE)
   - (void) updateTrackingAreas;
   - (void) handleTrackingUpdate: (void *) unused;
   - (void) setUnderlinedRange: (NSValue *) range;

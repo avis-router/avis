@@ -93,7 +93,7 @@ static void send_message (Elvin *elvin, Attributes *message);
 
 #pragma mark -
 
-@interface ElvinConnection ()
+@interface ElvinConnection (PRIVATE)
   - (BOOL) openConnection;
   - (void) elvinEventLoopThread;
   - (void) runElvinEventLoop;

@@ -117,9 +117,9 @@ static NSAttributedString *attributedString (NSString *string,
 
 #pragma mark -
 
-@interface TickerController ()
+@interface TickerController (PRIVATE)
   - (void) handleNotify: (NSDictionary *) message;
-  - (void) notifyGrowl: (NSDictionary *) ntfn;
+  - (void) notifyGrowl: (TickerMessage *) message;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
   - (void) setAttachedURLPanelHidden: (BOOL) hidden;
@@ -228,7 +228,7 @@ static NSAttributedString *attributedString (NSString *string,
                                      -containerOrigin.x, -containerOrigin.y);
   NSRect tickerMessagesRect = [tickerMessagesTextView bounds];
   
-  bool wasScrolledToEnd = 
+  BOOL wasScrolledToEnd = 
     bottomY (visibleRect) == bottomY (tickerMessagesRect);
 
   NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
@@ -239,7 +239,7 @@ static NSAttributedString *attributedString (NSString *string,
   NSDictionary *replyLinkAttrs = 
     [NSDictionary dictionaryWithObject: message forKey: NSLinkAttributeName];
      
-  NSDictionary *dateAttrs = 
+  NSDictionary *lowlightAttrs = 
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
       forKey: NSForegroundColorAttributeName];
       
@@ -265,7 +265,7 @@ static NSAttributedString *attributedString (NSString *string,
   {
    [[tickerMessagesTextView textStorage] 
      replaceCharactersInRange: range 
-     withAttributedString: attributedString (@"\n", dateAttrs)];
+     withAttributedString: attributedString (@"\n", lowlightAttrs)];
   }
   
   // build formatted message
@@ -274,9 +274,10 @@ static NSAttributedString *attributedString (NSString *string,
 
   [displayedMessage appendAttributedString: 
     attributedString ([dateFormatter stringFromDate: message->receivedAt], 
-                      dateAttrs)];
+                      lowlightAttrs)];
   
-  [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
+  [displayedMessage 
+    appendAttributedString: attributedString (@": ", lowlightAttrs)];
   
   // save start of actual message (minus date)
   range.location = [displayedMessage length];
@@ -284,12 +285,14 @@ static NSAttributedString *attributedString (NSString *string,
   [displayedMessage appendAttributedString: 
     attributedString (message->group, groupAttrs)];
   
-  [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
+  [displayedMessage appendAttributedString: 
+    attributedString (@": ", lowlightAttrs)];
   
   [displayedMessage appendAttributedString: 
     attributedString (message->from, fromAttrs)];
   
-  [displayedMessage appendAttributedString: attributedString (@": ", dateAttrs)];
+  [displayedMessage appendAttributedString: 
+    attributedString (@": ", lowlightAttrs)];
   
   [displayedMessage appendAttributedString: 
     attributedString (message->message, messageAttrs)];
@@ -308,7 +311,7 @@ static NSAttributedString *attributedString (NSString *string,
        message->url, NSLinkAttributeName, nil];
 
     [displayedMessage 
-      appendAttributedString: attributedString (@" (", dateAttrs)];
+      appendAttributedString: attributedString (@" (", lowlightAttrs)];
 
     if ([[message->url absoluteString] length] <= 70)
     {
@@ -331,7 +334,7 @@ static NSAttributedString *attributedString (NSString *string,
     }           
     
     [displayedMessage 
-      appendAttributedString: attributedString (@")", dateAttrs)];
+      appendAttributedString: attributedString (@")", lowlightAttrs)];
   }
   
   // append text
@@ -351,20 +354,20 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   // Growl can sometimes pause - do last
-  [self notifyGrowl: ntfn];
+  [self notifyGrowl: message];
 }
 
-- (void) notifyGrowl: (NSDictionary *) ntfn
+- (void) notifyGrowl: (TickerMessage *) message
 {
-  NSString *message =
-   [NSString stringWithFormat: @"%@: %@", 
-    [ntfn objectForKey: @"From"], [ntfn objectForKey: @"Message"]];
+  NSString *description =
+   [NSString stringWithFormat: @"%@: %@", message->from, message->message];
  
   // Growl should really handle long messages...
-  if ([message length] > MAX_GROWL_MESSAGE_LENGTH)
+  if ([description length] > MAX_GROWL_MESSAGE_LENGTH)
   {
-    message = [NSString stringWithFormat: @"%@...", 
-                [message substringToIndex: MAX_GROWL_MESSAGE_LENGTH]];
+    description = 
+      [NSString stringWithFormat: @"%@...", 
+        [description substringToIndex: MAX_GROWL_MESSAGE_LENGTH]];
   }
   
   NSString *userName = prefsString (@"OnlineUserName");
@@ -372,11 +375,11 @@ static NSAttributedString *attributedString (NSString *string,
   int priority = 0;
   BOOL sticky = NO;
   
-  if ([[ntfn objectForKey: @"Group"] isEqual: userName])
+  if ([message->group isEqual: userName])
   {
     type = @"Personal Message";
     
-    if (![[ntfn objectForKey: @"From"] isEqual: userName])
+    if (![message->from isEqual: userName])
     {
       priority = 1;
       sticky = YES;
@@ -388,7 +391,7 @@ static NSAttributedString *attributedString (NSString *string,
   
   [GrowlApplicationBridge
     notifyWithTitle: @"Message received"
-    description: message notificationName: type
+    description: description notificationName: type
     iconData: nil priority: priority isSticky: sticky clickContext: nil];
 }
 
