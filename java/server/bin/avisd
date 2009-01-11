@@ -1,21 +1,16 @@
 #!/bin/sh
 
-# Avis daemon startup script.
-# See usage () below or run with "-h" for options.
-#
-# NOTE: to debug out of memory errors in the VN, run script with:
-#   -jvmopts="-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp"
-
 set -e
 
 daemon=0
 avis_opts=""
-basedir=`dirname "$0"`
+
 # find avis-router.jar in either lib or libexec/avis
-avisd_jar="$basedir/../lib/avis-router.jar"
+base_dir=`dirname "$0"`
+avisd_jar="$base_dir/../lib/avis-router.jar"
 
 if [ ! -f "$avisd_jar" ]; then
-  avisd_jar="$basedir/../libexec/avis/avis-router.jar"
+  avisd_jar="$base_dir/../libexec/avis/avis-router.jar"
 fi
 
 if [ ! -f "$avisd_jar" ]; then
@@ -36,8 +31,7 @@ usage ()
      -c file          : Load config from file$NL\
      -daemon          : Run as daemon$NL\
      -pidfile file    : Output process ID to file$NL\
-     -logfile file    : Log output to file (only with -daemon)$NL\
-     -jvmopts opts    : Any extra options to be passed to the Java VM$NL"
+     -logfile file    : Log output to file (only with -daemon)$NL"
  
   echo "$help" >&2
 }
@@ -47,7 +41,6 @@ while [ $# -gt 0 ]; do
     -pidfile) pidfile=$2; shift 2;;
     -daemon)  daemon=1; shift;;
     -logfile) logfile=$2; shift 2;;
-    -jvmopts) jvmopts=$2; shift 2;;
     -v|-vv)   avis_opts="$avis_opts $1"; shift;;
     -p|-c)    avis_opts="$avis_opts $1 $2"; shift;
   	      if [ ! -z $1 ]; then shift; fi;;
@@ -57,12 +50,12 @@ done
 
 java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
 
-command="java $java_options $jvmopts -jar $avisd_jar  $avis_opts"
+command="java $java_options -jar $avisd_jar $avis_opts"
 
 if [ $daemon -eq 1 ]; then
 
-  if [ -z "$logfile" ]; then
-    logfile="/dev/null"
+  if [ -z $logfile ]; then
+    logfile=/dev/null
   fi
   
   ( exec $command < /dev/null >> $logfile 2>&1 ) &
