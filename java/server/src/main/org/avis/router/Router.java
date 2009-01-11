@@ -274,7 +274,7 @@ public class Router implements IoHandler, Closeable
     if (!sessions.isEmpty ())
     {
       warn ("Sessions took too long to close: " +
-            sessions.size () + " still open", this);
+            sessions.size () + " still open)", this);
     }
     
     sessions.clear ();
