@@ -6,13 +6,14 @@ daemon=0
 avis_opts=""
 
 # find avis-router.jar in either lib or libexec/avis
-avisd_jar=$(dirname "$0")/../lib/avis-router.jar
+base_dir=`dirname "$0"`
+avisd_jar="$base_dir/../lib/avis-router.jar"
 
-if [ ! -f $avisd_jar ]; then
-  avisd_jar=$(dirname "$0")/../libexec/avis/avis-router.jar
+if [ ! -f "$avisd_jar" ]; then
+  avisd_jar="$base_dir/../libexec/avis/avis-router.jar"
 fi
 
-if [ ! -e "$avisd_jar" ]; then
+if [ ! -f "$avisd_jar" ]; then
   echo "Cannot find avis-router.jar"
   exit 1
 fi
@@ -63,7 +64,7 @@ if [ $daemon -eq 1 ]; then
 else
   if [ "x$pidfile" != "x" ]; then echo $$ > "$pidfile"; fi
   
-  if [ -z $logfile ]; then
+  if [ -z "$logfile" ]; then
     exec $command
   else
     exec $command >> $logfile 2>&1
