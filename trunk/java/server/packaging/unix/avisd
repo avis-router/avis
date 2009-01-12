@@ -1,0 +1,108 @@
+#! /sbin/sh
+
+# Set default parameters
+AVIS_ROOT=/home/phillipm/avis/avis-1.2.1/root
+AVIS_VAR_ROOT=/var
+
+ECHO=/bin/echo
+AVISD=$AVIS_ROOT/sbin/avisd
+AVISD_CONFDIR=$AVIS_ROOT/etc/avis
+AVISD_CONF=$AVISD_CONFDIR/avisd.config
+AVISD_OPTS=""
+AVISD_PIDFILE=$AVIS_VAR_ROOT/run/avisd.pid
+AVISD_LOGFILE=$AVIS_VAR_ROOT/log/avisd.log
+
+# Check that package files are still installed (LSB needs exit 5 if not)
+test -x $AVISD || (echo "avisd not found" && exit 5)
+test -f $AVISD_CONF || (echo "avisd configuration file $AVISD_CONF not found" && exit 5)
+test -d `dirname $AVISD_PIDFILE` || (echo "avisd pidfile directory not found" && exit 5)
+
+# See how we were called.
+case "$1" in
+  start)
+	$ECHO "Starting Avis Router: \c"
+
+        # Start daemon
+        $AVISD -daemon -logfile $AVISD_LOGFILE -pidfile $AVISD_PIDFILE \
+          -c $AVISD_CONF $AVISD_OPTS
+	RETVAL=$?
+
+	# Check result
+	if test $RETVAL -eq 0 ; then
+	    $ECHO "avisd."
+        else
+	    $ECHO "error!"
+	fi
+
+	exit $RETVAL
+        ;;
+
+  stop)
+	$ECHO "Stopping Avis Router: \c"
+
+        # Check for PID file
+	if test -f $AVISD_PIDFILE
+	then
+	    # Send signal
+	    if kill `cat $AVISD_PIDFILE`
+	    then
+		$ECHO "avisd."
+		rm $AVISD_PIDFILE
+	    else
+		$ECHO "no such process!"
+	    fi
+	else
+	    $ECHO "no pidfile!"
+	    exit 7
+	fi
+        ;;
+
+  reload)
+	# LSB-3.1 s20.2 requires "unimplemented feature" return code
+	# if reload is not implemented
+	exit 3
+	;;
+
+  restart|force-reload)
+	if test -f $AVISD_PIDFILE; then
+	    $0 stop
+	fi
+	sleep 2
+	$0 start
+	;;
+
+  try-restart)
+	# According to LSB-3.1 s20.2, try-restart should only restart the
+	# service if it's already running.
+	if test -f $AVISD_PIDFILE; then
+	    $0 stop
+	    sleep 2
+	    $0 start
+	fi
+	;;
+
+  status)
+	if test -f $AVISD_PIDFILE
+	then
+	    AVISD_PIDFILE_PID=`cat $AVISD_PIDFILE`
+	else
+	    echo "Avis Router is not running"
+	    exit 3
+	fi
+
+	ps -fp $AVISD_PIDFILE_PID | grep $AVISD > /dev/null
+	if test $? = 0 ; then
+	    echo "Avis Router is running (pid:$AVISD_PIDFILE_PID)"
+	    exit 0
+	else
+	    echo "Avis Router is not running but pidfile exists"
+	    exit 1
+	fi
+	;;
+
+  *)
+        echo "Usage: avisd {start|stop|restart|try-restart|reload|force-reload|status}"
+        exit 1
+esac
+
+exit 0
