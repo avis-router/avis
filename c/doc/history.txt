@@ -7,6 +7,9 @@ Release 1.2.1 (???)
 
 * Added error check for elvin_invoke ().
 
+* elvin_close () now invokes shutdown () on socket: should result in
+  better behaviour on BSD.
+
 
 Release 1.2.0 (December 27, 2008)
 ----------------------------------------------------------------------
