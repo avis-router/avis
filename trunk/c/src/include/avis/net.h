@@ -30,7 +30,7 @@
   #define pipe_read(socket, buff, length) recv (socket, buff, length, 0)
   #define pipe_write(socket, buff, length) send (socket, buff, length, 0)
 
-  #define close_socket(s) (closesocket (s), s = -1, WSACleanup ())
+  #define close_socket(s) (closesocket (s), (s) = -1, WSACleanup ())
 
   #define sock_op_timed_out() (WSAGetLastError () == WSAETIMEDOUT)
 
@@ -52,7 +52,7 @@
   #define pipe_read(socket, buff, length) read (socket, buff, length)
   #define pipe_write(socket, buff, length) write (socket, buff, length)
 
-  #define close_socket(s) (close (s), s = -1)
+  #define close_socket(s) (shutdown ((s), SHUT_RDWR), close (s), (s) = -1)
 
   #define sock_op_timed_out() (errno == EAGAIN || errno == EWOULDBLOCK)
 
