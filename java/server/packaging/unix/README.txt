@@ -40,13 +40,25 @@ installed in:
 You can leave the config here, or copy it wherever you would prefer to
 keep the config file.
 
-Run Avis with:
+To test, run Avis with:
 
   > /usr/local/sbin/avisd
 
-Or, if you have a customised configuration:
+Or, if you have a customised the configuration:
 
   > /usr/local/sbin/avisd -c /usr/local/etc/avis/avisd.config
+
+To make Avis into a system service, you can use the packaged "avisd"
+file as the template for an /etc/init.d startup file.
+
+  > sudo cp avisd /etc/init.d
+  > chown root /etc/init.d/avisd
+  > vi /etc/init.d/avisd          [customize settings at top]
+  > /etc/init.d/avisd start       [test that it starts]
+  > /etc/init.d/avisd top         [test that it stops]
+
+Then link the script into the run level system as usual (Avis usually
+runs at runlevels 2-5).
 
 
 Manual Uninstallation

@@ -446,6 +446,7 @@
    
     <!-- add installer files -->
     <copy file="packaging/unix/README.txt" todir="${temp}" />
+    <copy file="packaging/unix/avisd" todir="${temp}" />
     <copy file="packaging/unix/install.sh" todir="${temp}" />
 
     <!-- tar it up -->
@@ -454,6 +455,7 @@
       <tarfileset prefix="avis-${release-name}" dir="${temp}"
                   mode="0755">
         <include name="install.sh" />
+        <include name="avisd" />
         <include name="root/bin/*" />
         <include name="root/sbin/*" />
       </tarfileset>
