@@ -54,6 +54,7 @@ import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.ListenerList;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 import static org.apache.mina.core.future.IoFutureListener.CLOSE;
@@ -73,8 +74,8 @@ import static org.avis.io.messages.Nack.NOT_IMPL;
 import static org.avis.io.messages.Nack.NO_SUCH_SUB;
 import static org.avis.io.messages.Nack.PARSE_ERROR;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
-import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
@@ -222,6 +223,8 @@ public class Router implements IoHandler, Closeable
       closing = true; 
     }
     
+    // TODO suspend reading *before* shutting down
+    
     closeListeners.fire (this);
     closeListeners = null;
     
@@ -260,7 +263,7 @@ public class Router implements IoHandler, Closeable
 
   private void waitForAllSessionsToClose ()
   {
-    long finish = currentTimeMillis () + 20000;
+    long finish = currentTimeMillis () + 10000;
     
     try
     {
@@ -268,7 +271,7 @@ public class Router implements IoHandler, Closeable
         sleep (100);
     } catch (InterruptedException ex)
     {
-      Thread.currentThread ().interrupt ();
+      currentThread ().interrupt ();
     }
     
     if (!sessions.isEmpty ())
@@ -279,7 +282,7 @@ public class Router implements IoHandler, Closeable
     
     sessions.clear ();
   }
-  
+
   public Set<ElvinURI> listenURIs ()
   {
     return routerOptions.listenURIs ();
@@ -465,7 +468,11 @@ public class Router implements IoHandler, Closeable
       nackLimit (session, message, "Too many keys");
     } else
     {
-      updateTcpSendImmediately (session, connection.options);
+      if (!enableTcpNoDelay 
+            (session, connection.options.getInt ("TCP.Send-Immediately") != 0))
+      {
+        connection.options.remove ("TCP.Send-Immediately"); 
+      }
 
       // we don't support per-session Receive-Queue.Max-Length
       connection.options.remove ("Receive-Queue.Max-Length");
@@ -802,19 +809,6 @@ public class Router implements IoHandler, Closeable
     send (session,
           new Disconn (REASON_PROTOCOL_VIOLATION,
                        diagnosticMessage)).addListener (CLOSE);
-  }
-
-  /**
-   * Handle the TCP.Send-Immediately connection option if set.
-   */
-  private static void updateTcpSendImmediately (IoSession session,
-                                                Options options)
-  {
-    if (!enableTcpNoDelay (session, 
-                           options.getInt ("TCP.Send-Immediately") != 0))
-    {
-      options.remove ("TCP.Send-Immediately"); 
-    }
   }
 
   /**
