@@ -87,6 +87,7 @@ import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokens
 import static org.avis.util.Text.className;
 import static org.avis.util.Text.formatNotification;
 import static org.avis.util.Text.idFor;
+import static org.avis.util.Text.shortException;
 
 public class Router implements IoHandler, Closeable
 {
@@ -886,7 +887,10 @@ public class Router implements IoHandler, Closeable
     if (ex instanceof IOException)
     {
       diagnostic ("IO exception while processing message from " + 
-                  idFor (session), this, ex);
+                  idFor (session) + ": " + shortException (ex), this);
+      
+      if (shouldLog (TRACE))
+        trace ("Trace of IO exception from " + idFor (session), this, ex);
     } else
     {
       alarm ("Server exception", this, ex);
@@ -965,7 +969,7 @@ public class Router implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    diagnostic ("Server session " + idFor (session) + 
+    diagnostic ("Client session " + idFor (session) + 
                 " opened for connection on " + session.getServiceAddress () + 
                 (isSecure (session) ? " (using TLS)" : ""), this);
     
