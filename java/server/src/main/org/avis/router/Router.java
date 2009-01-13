@@ -737,8 +737,8 @@ public class Router implements IoHandler, Closeable
                                     QuenchPlaceHolder message)
   {
     diagnostic
-      ("Rejecting quench request from client: quench is not supported",
-       Router.class);
+      ("Rejecting quench request from client " + idFor (session) + 
+       ": quench is not supported", Router.class);
     
     send (session, new Nack (message, NOT_IMPL, "Quench not supported"));
   }
@@ -854,8 +854,8 @@ public class Router implements IoHandler, Closeable
       }
     }
     
-    diagnostic ("Subscription add/modify failed with parse error: " +
-                message, Router.class);
+    diagnostic ("Subscription add/modify for client " + idFor (session) + 
+                " failed with parse error: " + message, Router.class);
     diagnostic ("Subscription was: " + expr, Router.class);
     
     send (session, new Nack (inReplyTo, code, message, args));
@@ -884,9 +884,13 @@ public class Router implements IoHandler, Closeable
     throws Exception
   {
     if (ex instanceof IOException)
-      diagnostic ("IO exception while processing message", this, ex);
-    else
+    {
+      diagnostic ("IO exception while processing message from " + 
+                  idFor (session), this, ex);
+    } else
+    {
       alarm ("Server exception", this, ex);
+    }
   }
   
   public void messageSent (IoSession session, Object message)
@@ -902,7 +906,7 @@ public class Router implements IoHandler, Closeable
     throws Exception
   {
     if (shouldLog (DIAGNOSTIC))
-      diagnostic ("Server session " + idFor (session) + " closed", this);
+      diagnostic ("Session for client " + idFor (session) + " closed", this);
     
     sessions.remove (session);
 
@@ -916,7 +920,7 @@ public class Router implements IoHandler, Closeable
       {
         if (connection.isOpen ())
         {
-          diagnostic ("Client for session " + idFor (session) + 
+          diagnostic ("Client" + idFor (session) + 
                       " disconnected without warning", this);
 
           connection.close ();
