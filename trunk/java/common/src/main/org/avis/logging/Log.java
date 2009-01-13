@@ -117,6 +117,11 @@ public final class Log
     log (TRACE, message, source);
   }
   
+  public static void trace (String message, Object source, Throwable ex)
+  {
+    log (TRACE, message, source, ex);
+  }
+  
   public static void info (String message, Object source)
   {
     log (INFO, message, source);
