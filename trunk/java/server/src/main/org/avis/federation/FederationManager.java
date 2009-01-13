@@ -121,7 +121,7 @@ public class FederationManager implements CloseListener
     return connectors == null;
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings ("unchecked")
   private static Collection<Connector> initConnectors
     (Router router,
      String serverDomain,
@@ -171,9 +171,9 @@ public class FederationManager implements CloseListener
     return connectors;
   }
 
-  private String initServerDomain (Options federationConfig)
+  private String initServerDomain (Options config)
   {
-    String domain = federationConfig.getString ("Federation.Router-Name");
+    String domain = config.getString ("Federation.Router-Name");
     
     if (domain.length () == 0)
     {
@@ -204,7 +204,7 @@ public class FederationManager implements CloseListener
  
     /*
      * RuntimeMXBean.getName () returns pid@hostname on many VM's: if
-     * it looks like this is the case, use it otherwise fall back on
+     * it looks like this is the case use it, otherwise fall back on
      * hashcode + hostname.
      */
     if (runtimeName.matches ("\\d+@.+"))
@@ -213,7 +213,7 @@ public class FederationManager implements CloseListener
       return instanceId + '@' + localHostName ();
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings ("unchecked")
   private static Acceptor initAcceptor (Router router, 
                                         String serverDomain,
                                         FederationClasses classes,
@@ -234,19 +234,19 @@ public class FederationManager implements CloseListener
         return new Acceptor (router, serverDomain, classes, uris, config);
       } catch (IOException ex)
       {
-        throw new IllegalConfigOptionException ("Federation.Listen", 
-                                          shortException (ex));
+        throw new IllegalConfigOptionException 
+          ("Federation.Listen", shortException (ex));
       }
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static FederationClasses initClasses (Options federationConfig)
+  @SuppressWarnings ("unchecked")
+  private static FederationClasses initClasses (Options config)
   {
     FederationClasses classes = new FederationClasses ();
     
     Map<String, Node> provide = 
-      (Map<String, Node>)federationConfig.getParamOption ("Federation.Provide");
+      (Map<String, Node>)config.getParamOption ("Federation.Provide");
     
     for (Entry<String, Node> entry : provide.entrySet ())
     {
@@ -256,7 +256,7 @@ public class FederationManager implements CloseListener
     }
     
     Map<String, Node> subscribe = 
-      (Map<String, Node>)federationConfig.getParamOption ("Federation.Subscribe");
+      (Map<String, Node>)config.getParamOption ("Federation.Subscribe");
     
     for (Entry<String, Node> entry : subscribe.entrySet ())
     {
@@ -278,7 +278,7 @@ public class FederationManager implements CloseListener
     }
     
     Map<String, ?> applyClass = 
-      federationConfig.getParamOption ("Federation.Apply-Class");
+      config.getParamOption ("Federation.Apply-Class");
     
     for (Entry<String, ?> entry : applyClass.entrySet ())
     {
@@ -296,12 +296,12 @@ public class FederationManager implements CloseListener
     
     classes.setDefaultClass 
       (classes.define 
-        (federationConfig.getString ("Federation.Default-Class")));
+        (config.getString ("Federation.Default-Class")));
     
     return classes;
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings ("unchecked")
   private static void initAddAttributes (Options config,
                                          FederationClasses classes)
   {
