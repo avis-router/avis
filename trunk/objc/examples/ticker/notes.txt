@@ -1,9 +1,11 @@
 + general/cleanup
-  * icon
+  * lighten icon, look at shadow centre
+  * BUG?: cursor update failed on restart + receive one new ext message
   * rename to "Ticker"
   * see if we can avoid updating tracking areas during live scroll
   * move tooltip gen to ticker controller
   * animate reply/public button
+  * DONE: icon
   * DONE: allow delete from ticker list
   * DONE: remove public button -> replace with icon
   * DONE: "Toggle Public" should be a checkbox
@@ -31,9 +33,9 @@
   * DONE animate appearance
 + replying
   * reply-to icon in text
-  * Growl pause on send
   * highlight parents
   * handle personal reply: thread ID
+  * DONE: Growl pause on send
   * DONE: send menu item disabled when disconnected
   * DONE: change group -> reset reply ID
   * DONE: reply to control in message editor
@@ -47,7 +49,8 @@
     NSView::addTrackingArea
   * DONE: links across group/from
 + growl
-  * elvin connect/disconnect
+  * click on growl to show message
+  * DONE: elvin connect/disconnect
 + presence
 + multiple windows
 + filtering

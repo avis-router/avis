@@ -71,21 +71,21 @@ static NSAttributedString *attributedString (NSString *string,
 
 + (TickerMessage *) messageForNotification: (NSDictionary *) notification
 {
-  TickerMessage *link = [[TickerMessage new] autorelease];
+  TickerMessage *message = [[TickerMessage new] autorelease];
   
   NSString *distribution = [notification valueForKey: @"Distribution"];
   
-  link->messageId = [[notification valueForKey: @"Message-Id"] retain];
-  link->from = [[notification valueForKey: @"From"] retain];
-  link->message = [[notification valueForKey: @"Message"] retain];
-  link->group = [[notification valueForKey: @"Group"] retain];
-  link->public = 
+  message->messageId = [[notification valueForKey: @"Message-Id"] retain];
+  message->from = [[notification valueForKey: @"From"] retain];
+  message->message = [[notification valueForKey: @"Message"] retain];
+  message->group = [[notification valueForKey: @"Group"] retain];
+  message->public = 
     distribution != nil && [distribution caseInsensitiveCompare: @"world"] == 0;
-  link->userAgent = [[notification valueForKey: @"User-Agent"] retain];
-  link->url = [extractAttachedLink (notification) retain];
-  link->receivedAt = [[NSDate date] retain];
+  message->userAgent = [[notification valueForKey: @"User-Agent"] retain];
+  message->url = [extractAttachedLink (notification) retain];
+  message->receivedAt = [[NSDate date] retain];
   
-  return link;
+  return message;
 }
 
 - (void) dealloc
@@ -119,7 +119,8 @@ static NSAttributedString *attributedString (NSString *string,
 
 @interface TickerController (PRIVATE)
   - (void) handleNotify: (NSDictionary *) message;
-  - (void) notifyGrowl: (TickerMessage *) message;
+  - (void) notifyGrowlOnTickerMessage: (TickerMessage *) message;
+  - (void) notifyGrowlOnElvinStatusChange: (NSString *) status;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
   - (void) setAttachedURLPanelHidden: (BOOL) hidden;
@@ -203,19 +204,29 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) handleElvinOpen: (void *) unused
 {
   if ([[NSThread currentThread] isMainThread])
+  {
     self.canSend = YES;
-  else
+
+    [self notifyGrowlOnElvinStatusChange: @"connected"];
+  } else
+  {
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
           withObject: nil waitUntilDone: NO];
+  }
 }
 
 - (void) handleElvinClose: (void *) unused
 {
   if ([[NSThread currentThread] isMainThread])
+  {
     self.canSend = NO;
-  else
+    
+    [self notifyGrowlOnElvinStatusChange: @"disconnected"];
+  } else
+  {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
           withObject: nil waitUntilDone: NO];
+  }
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
@@ -354,10 +365,23 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   // Growl can sometimes pause - do last
-  [self notifyGrowl: message];
+  [self notifyGrowlOnTickerMessage: message];
 }
 
-- (void) notifyGrowl: (TickerMessage *) message
+- (void) notifyGrowlOnElvinStatusChange: (NSString *) status
+{
+  NSString *message = 
+    [NSString stringWithFormat: @"Elvin %@ (%@)", 
+      status, [appController.elvin elvinUrl]];
+  
+  [GrowlApplicationBridge
+    notifyWithTitle: @"Elvin Connection"
+    description: message  
+    notificationName: @"Connection Status"
+    iconData: nil priority: 1 isSticky: NO clickContext: nil];
+}
+
+- (void) notifyGrowlOnTickerMessage: (TickerMessage *) message
 {
   NSString *description =
    [NSString stringWithFormat: @"%@: %@", message->from, message->message];
