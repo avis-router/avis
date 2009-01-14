@@ -53,6 +53,7 @@
   * DONE: elvin connect/disconnect
 + presence
 + multiple windows
+  * move growl notif to app controller
 + filtering
   * reduce subscription to optimize filtering
 
