@@ -21,9 +21,10 @@ NSString *PreferencesContext = @"PreferencesContext";
 {
   NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
 
+  // TODO NSHost:name sometimes blocks for 60 seconds ... why?
   NSString *defaultUserName = 
     [NSString stringWithFormat: @"%@@%@", 
-     NSFullUserName (), [[NSProcessInfo processInfo] hostName]];
+     NSFullUserName (), [[NSHost currentHost] name]];
      
   [defaults setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
   [defaults setObject: defaultUserName forKey: @"OnlineUserName"];
