@@ -9,7 +9,7 @@
 #import "utils.h"
 
 #define TICKER_SUBSCRIPTION \
-  @"string (Message) && string (Group) && string (From)"
+  @"string (Message) && string (Group) && string (From) && ! Group == 'lawley-rcvstore'"
 
 #define MAX_GROWL_MESSAGE_LENGTH 200
 
@@ -440,7 +440,7 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (IBAction) sendMessage: (id) sender
 {
-  NSString *message = [[messageText textStorage] string];
+  NSString *message = [messageText string];
 
   // check for empty text
   if (sender != self && 
@@ -451,7 +451,7 @@ static NSAttributedString *attributedString (NSString *string,
     // [[messageText window] setDelegate: self];
     
     NSBeginAlertSheet 
-      (@"The ticker message text is empty.", @"Don't Send", 
+      (@"The message text is empty.", @"Don't Send", 
        @"Send Empty Message", nil,  [messageText window], self, 
        @selector (emptyMessageCheckDidEnd:returnCode:contextInfo:), nil, nil, 
        @"Send the message anyway?");
