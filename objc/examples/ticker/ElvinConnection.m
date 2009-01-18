@@ -1,6 +1,6 @@
 #import "ElvinConnection.h"
 
-#define UUID_STRING_LENGTH 100
+#import "utils.h"
 
 NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
 NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
@@ -10,18 +10,6 @@ NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
 static inline NSString *attr_string (Attributes *attrs, const char *name)
 {
   return [NSString stringWithUTF8String: attributes_get_string (attrs, name)];
-}
-
-static void createUUID (char *uuid)
-{
-  CFUUIDRef cfUUID = CFUUIDCreate (kCFAllocatorDefault);
-  CFStringRef cfUUIDString = CFUUIDCreateString (kCFAllocatorDefault, cfUUID);
-  
-  CFStringGetCString (cfUUIDString, uuid, UUID_STRING_LENGTH, 
-                      kCFStringEncodingASCII);
-  
-  CFRelease (cfUUIDString);
-  CFRelease (cfUUID);
 }
 
 static void copy_string_attr (Attributes *attributes, 

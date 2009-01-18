@@ -30,6 +30,11 @@
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
 		C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */ = {isa = PBXBuildFile; fileRef = C94B47A70F1731C900BADAE8 /* Ticker.icns */; };
+		C94B49880F22AC7B00BADAE8 /* PresenceEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */; };
+		C94B49950F22AF8D00BADAE8 /* PresenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B49940F22AF8D00BADAE8 /* PresenceController.m */; };
+		C94B499D0F22B0F400BADAE8 /* PresenceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */; };
+		C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */; };
+		C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B4A200F22BAEF00BADAE8 /* utils.m */; };
 		C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C9521BAC0F08CE4100BA83EC /* DragTarget.m */; };
 		C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */; };
 		C9AEA1630F15ADE300C70410 /* TickerMessagesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */; };
@@ -85,7 +90,15 @@
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = "Growl Registration Ticket.growlRegDict"; sourceTree = "<group>"; };
 		C94B47A70F1731C900BADAE8 /* Ticker.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Ticker.icns; path = Icon/Ticker.icns; sourceTree = "<group>"; };
-		C952189C0F019E6600BA83EC /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		C94B49860F22AC7B00BADAE8 /* PresenceEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceEntity.h; sourceTree = "<group>"; };
+		C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceEntity.m; sourceTree = "<group>"; };
+		C94B49930F22AF8D00BADAE8 /* PresenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceController.h; sourceTree = "<group>"; };
+		C94B49940F22AF8D00BADAE8 /* PresenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceController.m; sourceTree = "<group>"; };
+		C94B499B0F22B0F400BADAE8 /* PresenceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceConnection.h; sourceTree = "<group>"; };
+		C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceConnection.m; sourceTree = "<group>"; };
+		C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PresenceWindow.xib; sourceTree = "<group>"; };
+		C94B4A1F0F22BAEF00BADAE8 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		C94B4A200F22BAEF00BADAE8 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		C9521BAB0F08CE4100BA83EC /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragTarget.h; sourceTree = "<group>"; };
 		C9521BAC0F08CE4100BA83EC /* DragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragTarget.m; sourceTree = "<group>"; };
 		C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElvinConnection.h; sourceTree = "<group>"; };
@@ -133,6 +146,12 @@
 				C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */,
 				C9B038370E48282400B59216 /* TickerController.h */,
 				C9B038380E48282400B59216 /* TickerController.m */,
+				C94B49930F22AF8D00BADAE8 /* PresenceController.h */,
+				C94B49940F22AF8D00BADAE8 /* PresenceController.m */,
+				C94B499B0F22B0F400BADAE8 /* PresenceConnection.h */,
+				C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */,
+				C94B49860F22AC7B00BADAE8 /* PresenceEntity.h */,
+				C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */,
 				C9AEA1610F15ADE300C70410 /* TickerMessagesTextView.h */,
 				C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
@@ -190,7 +209,8 @@
 			isa = PBXGroup;
 			children = (
 				32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */,
-				C952189C0F019E6600BA83EC /* utils.h */,
+				C94B4A1F0F22BAEF00BADAE8 /* utils.h */,
+				C94B4A200F22BAEF00BADAE8 /* utils.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -202,6 +222,7 @@
 				C94B47A70F1731C900BADAE8 /* Ticker.icns */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
 				C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */,
+				C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */,
 				C9F561BE0F00B247005D9245 /* Preferences.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -277,6 +298,7 @@
 				C9DFB1C00F12CF9700365453 /* Reply_Normal.tiff in Resources */,
 				C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */,
 				C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */,
+				C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +336,10 @@
 				C9DFB2130F12DA9900365453 /* RolloverButton.m in Sources */,
 				C9DFB2AB0F12FF2300365453 /* TextViewWithLinks.m in Sources */,
 				C9AEA1630F15ADE300C70410 /* TickerMessagesTextView.m in Sources */,
+				C94B49880F22AC7B00BADAE8 /* PresenceEntity.m in Sources */,
+				C94B49950F22AF8D00BADAE8 /* PresenceController.m in Sources */,
+				C94B499D0F22B0F400BADAE8 /* PresenceConnection.m in Sources */,
+				C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

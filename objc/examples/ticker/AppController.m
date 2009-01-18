@@ -2,7 +2,9 @@
 
 #import "AppController.h"
 #import "ElvinConnection.h"
+#import "PresenceConnection.h"
 #import "TickerController.h"
+#import "PresenceController.h"
 #import "PreferencesController.h"
 
 #import "utils.h"
@@ -14,6 +16,8 @@ NSString *PreferencesContext = @"PreferencesContext";
 @implementation AppController
 
 @synthesize elvin;
+
+@synthesize presence;
 
 #pragma mark -
 
@@ -41,7 +45,8 @@ NSString *PreferencesContext = @"PreferencesContext";
   {
     elvin = 
       [[[ElvinConnection alloc] initWithUrl: prefsString (@"ElvinURL")] 
-        retain];    
+        retain];
+    presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
   }
   
   return self;
@@ -113,6 +118,14 @@ NSString *PreferencesContext = @"PreferencesContext";
     tickerController = [[TickerController alloc] initWithAppController: self];
   
   [tickerController showWindow: self];
+}
+
+- (IBAction) showPresenceWindow: (id) sender
+{
+  if (!presenceController)
+    presenceController = [[PresenceController alloc] initWithAppController: self];
+  
+  [presenceController showWindow: self];
 }
 
 - (IBAction) showPreferencesWindow: (id) sender
