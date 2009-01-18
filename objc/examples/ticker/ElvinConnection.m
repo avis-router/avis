@@ -199,7 +199,7 @@ static void send_message (Elvin *elvin, Attributes *message);
     elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
 }
 
-static void subscribe (Elvin *elvin, SubscriptionContext *context)
+void subscribe (Elvin *elvin, SubscriptionContext *context)
 {
   context->subscription = 
     elvin_subscribe (elvin, [context->subscriptionExpr UTF8String]);
