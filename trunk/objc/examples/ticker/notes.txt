@@ -1,5 +1,6 @@
 + general/cleanup
   * lighten icon, look at shadow centre
+  * change dock icon when disconnected
   * BUG?: cursor update failed on restart + receive one new ext message
   * rename to "Ticker"
   * see if we can avoid updating tracking areas during live scroll
@@ -52,6 +53,7 @@
   * click on growl to show message
   * DONE: elvin connect/disconnect
 + presence
+  * presence history
 + multiple windows
   * move growl notif to app controller
 + filtering
