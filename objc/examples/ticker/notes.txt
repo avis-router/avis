@@ -33,9 +33,9 @@
   * DONE truncation in middle
   * DONE animate appearance
 + replying
+  * handle personal reply: copy thread ID <- reply to is ref to message
   * reply-to icon in text
   * highlight parents
-  * handle personal reply: thread ID
   * DONE: Growl pause on send
   * DONE: send menu item disabled when disconnected
   * DONE: change group -> reset reply ID
