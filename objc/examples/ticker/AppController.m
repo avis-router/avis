@@ -24,7 +24,12 @@ NSString *PreferencesContext = @"PreferencesContext";
 
 + (void) initialize
 {
+  NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
   NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
+
+  // assign user a UUID if needed
+  if (![preferences objectForKey: PrefOnlineUserUUID])
+    [preferences setObject: uuidString () forKey: PrefOnlineUserUUID];
 
   // TODO NSHost:name sometimes blocks for 60 seconds ... why?
   NSString *defaultUserName = 
@@ -34,9 +39,8 @@ NSString *PreferencesContext = @"PreferencesContext";
   [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
   [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];
   [defaults setObject: defaultUserName forKey: PrefOnlineUserName];
-  [defaults setObject: uuidString () forKey: PrefOnlineUserUUID];
-  
-  [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
+    
+  [preferences registerDefaults: defaults];
 }
 
 - (id) init
