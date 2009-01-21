@@ -12,6 +12,12 @@ typedef enum
   NSDate *     lastUpdatedAt;
 }
 
++ (OnlineStatus) statusFromString: (NSString *) string;
+
+- (id) initWithId: (NSString *) newId;
+
++ entityWithName: (NSString *) name;
+
 @property (readonly, retain)           NSString *   presenceId;
 @property (readwrite, retain) IBOutlet NSString *   name;
 @property (readwrite, assign) IBOutlet OnlineStatus status;

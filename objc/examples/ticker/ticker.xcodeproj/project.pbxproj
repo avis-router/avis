@@ -43,6 +43,7 @@
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */; };
 		C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF62D30EE0BF5F00A76D46 /* AppController.m */; };
+		C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DDD3B40F26B4090082AF4C /* Preferences.m */; };
 		C9DFB1C00F12CF9700365453 /* Reply_Normal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */; };
 		C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */; };
 		C9DFB2130F12DA9900365453 /* RolloverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DFB2120F12DA9900365453 /* RolloverButton.m */; };
@@ -111,6 +112,8 @@
 		C9CF60F60EDFA44A00A76D46 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/TickerWindow.xib; sourceTree = "<group>"; };
 		C9CF62D20EE0BF5F00A76D46 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		C9CF62D30EE0BF5F00A76D46 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
+		C9DDD3B30F26B4090082AF4C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
+		C9DDD3B40F26B4090082AF4C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preferences.m; sourceTree = "<group>"; };
 		C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reply_Normal.tiff; sourceTree = "<group>"; };
 		C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reply_Rollover.tiff; sourceTree = "<group>"; };
 		C9DFB2110F12DA9900365453 /* RolloverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RolloverButton.h; sourceTree = "<group>"; };
@@ -156,6 +159,8 @@
 				C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
 				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
+				C9DDD3B30F26B4090082AF4C /* Preferences.h */,
+				C9DDD3B40F26B4090082AF4C /* Preferences.m */,
 				C9521BAB0F08CE4100BA83EC /* DragTarget.h */,
 				C9521BAC0F08CE4100BA83EC /* DragTarget.m */,
 				C9DFB2A90F12FF2300365453 /* TextViewWithLinks.h */,
@@ -340,6 +345,7 @@
 				C94B49950F22AF8D00BADAE8 /* PresenceController.m in Sources */,
 				C94B499D0F22B0F400BADAE8 /* PresenceConnection.m in Sources */,
 				C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */,
+				C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

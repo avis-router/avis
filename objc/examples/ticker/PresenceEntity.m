@@ -4,20 +4,38 @@
 
 @implementation PresenceEntity
 
-- (id) init: (NSString *) newId name: (NSString *) newName
++ (OnlineStatus) statusFromString: (NSString *) string
+{
+  if ([string isEqual: @"online"])
+    return ONLINE;
+  else if ([string isEqual: @"unavailable"])
+    return UNAVAILABLE;
+  else if ([string isEqual: @"unavailable?"])
+    return MAYBE_UNAVAILABLE;
+  else if ([string isEqual: @"coffee"])
+    return COFFEE;
+  else
+    return OFFLINE;
+}
+
+- (id) initWithId: (NSString *) newId;
 {
   if (!(self = [super init]))
     return nil;
     
   presenceId = [newId retain];
-  name = [newName retain];
   
   return self;
 }
 
-- (id) initWithName: (NSString *) newName
-{    
-  return [self init: uuidString () name: newName];
++ entityWithName: (NSString *) name
+{
+  PresenceEntity *entity = 
+    [[[PresenceEntity alloc] initWithId: uuidString ()] autorelease];
+  
+  [entity setName: name];
+  
+  return entity;
 }
 
 @synthesize presenceId;
