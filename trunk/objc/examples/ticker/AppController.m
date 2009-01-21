@@ -6,8 +6,7 @@
 #import "TickerController.h"
 #import "PresenceController.h"
 #import "PreferencesController.h"
-
-#import "utils.h"
+#import "Preferences.h"
 
 NSString *PreferencesContext = @"PreferencesContext";
 
@@ -31,7 +30,7 @@ NSString *PreferencesContext = @"PreferencesContext";
      NSFullUserName (), [[NSHost currentHost] name]];
      
   [defaults setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
-  [defaults setObject: defaultUserName forKey: @"OnlineUserName"];
+  [defaults setObject: defaultUserName forKey: PrefOnlineUserName];
   [defaults setObject: @"Chat" forKey: @"DefaultSendGroup"];
 
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
@@ -44,7 +43,7 @@ NSString *PreferencesContext = @"PreferencesContext";
   if (self)
   {
     elvin = 
-      [[[ElvinConnection alloc] initWithUrl: prefsString (@"ElvinURL")] 
+      [[[ElvinConnection alloc] initWithUrl: prefString (@"ElvinURL")] 
         retain];
     presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
   }
@@ -146,9 +145,9 @@ NSString *PreferencesContext = @"PreferencesContext";
 {
   if (context == PreferencesContext)
   {
-		NSLog (@"Elvin URL changed: %@", prefsString (@"ElvinURL"));
+		NSLog (@"Elvin URL changed: %@", prefString (@"ElvinURL"));
     
-    elvin.elvinUrl = prefsString (@"ElvinURL");
+    elvin.elvinUrl = prefString (@"ElvinURL");
 	} else 
   {
 		[super observeValueForKeyPath: keyPath ofObject: object change: change 

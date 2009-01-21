@@ -6,7 +6,7 @@
 #import "AppController.h"
 #import "ElvinConnection.h"
 
-#import "utils.h"
+#import "Preferences.h"
 
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From) && ! Group == 'lawley-rcvstore'"
@@ -394,7 +394,7 @@ static NSAttributedString *attributedString (NSString *string,
         [description substringToIndex: MAX_GROWL_MESSAGE_LENGTH]];
   }
   
-  NSString *userName = prefsString (@"OnlineUserName");
+  const NSString *userName = prefString (PrefOnlineUserName);
   NSString *type;
   int priority = 0;
   BOOL sticky = NO;
@@ -461,7 +461,7 @@ static NSAttributedString *attributedString (NSString *string,
   
   [appController.elvin 
     sendTickerMessage: message 
-    fromSender: prefsString (@"OnlineUserName")
+    fromSender: prefString (@"OnlineUserName")
     toGroup: [messageGroup stringValue] 
     inReplyTo: self.inReplyTo 
     attachedURL: self.attachedURL
