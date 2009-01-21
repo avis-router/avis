@@ -7,23 +7,6 @@ NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
 
 #pragma mark -
 
-static inline NSString *attr_string (Attributes *attrs, const char *name)
-{
-  return [NSString stringWithUTF8String: attributes_get_string (attrs, name)];
-}
-
-static void copy_string_attr (Attributes *attributes, 
-                              NSMutableDictionary *message,
-                              NSString *name)
-{
-  const char *attrValue = attributes_get_string (attributes, [name UTF8String]);
-  
-  if (attrValue)
-    [message setValue: [NSString stringWithUTF8String: attrValue] forKey: name];
-}
-
-#pragma mark -
-
 @class SubscriptionContext;
 
 static void subscribe (Elvin *elvin, SubscriptionContext *context);
@@ -208,24 +191,43 @@ void notification_listener (Subscription *sub,
                             Attributes *attributes, 
                             bool secure, SubscriptionContext *context)
 {
-  NSArray *keys = 
-    [NSArray arrayWithObjects: @"Message", @"Group", @"From", nil];
+  NSMutableDictionary *message = [NSMutableDictionary dictionary];
+  
+  AttributesIter i;
 
-  NSArray *objects = 
-    [NSArray arrayWithObjects: 
-      attr_string (attributes, "Message"), 
-      attr_string (attributes, "Group"),
-      attr_string (attributes, "From"), nil];
+  attributes_iter_init (&i, attributes);
+  
+  while (attributes_iter_has_next (&i))
+  {
+    const Value *value = attributes_iter_value (&i);
 
-  NSMutableDictionary *message = 
-    [NSMutableDictionary dictionaryWithObjects: objects forKeys: keys];
-
-  copy_string_attr (attributes, message, @"Message-Id");
-  copy_string_attr (attributes, message, @"Distribution");
-  copy_string_attr (attributes, message, @"MIME_TYPE");
-  copy_string_attr (attributes, message, @"MIME_ARGS");
-  copy_string_attr (attributes, message, @"Attachment");
-  copy_string_attr (attributes, message, @"User-Agent");
+    NSObject *objcValue;
+    
+    switch (value->type)
+    {
+      case TYPE_STRING:
+        objcValue = [NSString stringWithUTF8String: value->value.str];
+        break;
+      case TYPE_INT32:
+        objcValue = [NSNumber numberWithInt: value->value.int32];
+        break;
+      case TYPE_INT64:
+        objcValue = [NSNumber numberWithLongLong: value->value.int64];
+        break;
+      case TYPE_REAL64:
+        objcValue = [NSNumber numberWithDouble: value->value.real64];
+        break;
+      case TYPE_OPAQUE:
+        objcValue = [NSData dataWithBytes: value->value.bytes.items 
+                                   length:value->value.bytes.item_count];
+        break;
+    }
+    
+    [message setValue: objcValue 
+      forKey: [NSString stringWithUTF8String: attributes_iter_name (&i)]];
+    
+    attributes_iter_next (&i);
+  }
   
   [context->delegate performSelectorOnMainThread: context->selector
                                       withObject: message 
