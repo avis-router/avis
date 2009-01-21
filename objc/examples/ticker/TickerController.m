@@ -440,6 +440,9 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (IBAction) sendMessage: (id) sender
 {
+  // TODO error on closed connection
+  NSAssert (messageGroup != nil && messageText != nil, @"IB connection failure");
+    
   NSString *message = [messageText string];
 
   // check for empty text

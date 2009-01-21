@@ -4,11 +4,12 @@
 #import "PresenceEntity.h"
 #import "Preferences.h"
 
-static NSString *stringValueForKey (NSDictionary *notification, NSString *key)
+static NSString *stringValueForAttribute (NSDictionary *notification, 
+                                          NSString *attribute)
 {
-  NSObject *value = [notification valueForKey: key];
-  
-  if ([value class] == [NSString class])
+  NSObject *value = [notification valueForKey: attribute];
+
+  if ([value isKindOfClass: [NSString class]])
     return (NSString *)value;
   else
     return nil;
@@ -19,7 +20,10 @@ static NSString *stringValueForKey (NSDictionary *notification, NSString *key)
 @interface PresenceConnection (PRIVATE)
   - (void) handlePresenceNotification: (NSDictionary *) notification;
   - (NSString *) presenceSubscription;
+  - (void) requestPresenceInfo;
   - (PresenceEntity *) findOrCreateUser: (NSString *) presenceId;
+  - (void) handleElvinOpen: (void *) unused;
+  - (void) handleElvinClose: (void *) unused;
 @end
 
 @implementation PresenceConnection
@@ -32,13 +36,21 @@ static NSString *stringValueForKey (NSDictionary *notification, NSString *key)
   elvin = theElvinConnection;
   entities = [[NSMutableArray arrayWithCapacity: 5] retain];
   
-//  [entities addObject: [[PresenceEntity alloc] initWithName: @"Matthew"]];
-//  [entities addObject: [[PresenceEntity alloc] initWithName: @"Fred"]];
-//  [entities addObject: [[PresenceEntity alloc] initWithName: @"John"]];
-
   // TODO resub on user name change
   [elvin subscribe: [self presenceSubscription] withDelegate: self 
      usingSelector: @selector (handlePresenceNotification:)];
+ 
+  if ([elvin isConnected])
+    [self requestPresenceInfo];
+  
+  // listen for elvin open/close
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+  
+  [notifications addObserver: self selector: @selector (handleElvinOpen:)
+                        name: ElvinConnectionOpenedNotification object: nil]; 
+  
+  [notifications addObserver: self selector: @selector (handleElvinClose:)
+                        name: ElvinConnectionClosedNotification object: nil]; 
   
   return self;
 }
@@ -50,24 +62,14 @@ static NSString *stringValueForKey (NSDictionary *notification, NSString *key)
   [super dealloc];
 }
 
-
-@synthesize entities;
-
-- (NSString *) presenceSubscription
-{
-  // TODO escape user name
-  // TODO restrict subscription
-  return [NSString stringWithFormat: 
-            @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
-              string (Client-Id) && User != \"%@\"", prefString (PrefOnlineUserName)];
-}
+#pragma mark -
 
 - (void) handlePresenceNotification: (NSDictionary *) notification
 {
   NSString *clientId = [notification valueForKey: @"Client-Id"];
   NSString *userName = [notification valueForKey: @"User"];
-  NSString *status = stringValueForKey (notification, @"Status");
-  NSString *statusText = stringValueForKey (notification, @"Status-Text");
+  NSString *status = stringValueForAttribute (notification, @"Status");
+  NSString *statusText = stringValueForAttribute (notification, @"Status-Text");
   
   PresenceEntity *user = [self findOrCreateUser: clientId];
   
@@ -78,6 +80,30 @@ static NSString *stringValueForKey (NSDictionary *notification, NSString *key)
   
   if (statusText)
     [user setStatusText: statusText];
+}
+
+- (void) handleElvinOpen: (void *) unused
+{
+  [self requestPresenceInfo];
+}
+
+- (void) handleElvinClose: (void *) unused
+{
+  // TODO
+}
+
+#pragma mark -
+
+@synthesize entities;
+
+- (NSString *) presenceSubscription
+{
+  // TODO escape user name
+  // TODO restrict subscription
+  return [NSString stringWithFormat: 
+          @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
+          string (Client-Id) && User != \"%@\"", 
+          prefString (PrefOnlineUserName)];
 }
 
 - (PresenceEntity *) findOrCreateUser: (NSString *) presenceId
@@ -101,6 +127,15 @@ static NSString *stringValueForKey (NSDictionary *notification, NSString *key)
   }
   
   return entity;
+}
+
+- (void) requestPresenceInfo
+{
+  // TODO support users, groups and distribution
+  [elvin sendPresenceRequestMessage: prefString (PrefOnlineUserUUID) 
+                      fromRequestor: prefString (PrefOnlineUserName) 
+                          toGroups: @"|elvin|dsto|" andUsers: @"" 
+                        sendPublic: YES];
 }
 
 @end

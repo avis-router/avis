@@ -1,7 +1,5 @@
 #import "PreferencesController.h"
 
-const NSString *PrefOnlineUserName = @"OnlineUserName";
-
 @implementation PreferencesController
 
 - (id) init
