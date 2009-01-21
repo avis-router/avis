@@ -241,9 +241,6 @@ void notification_listener (Subscription *sub,
                attachedURL: (NSURL *) url
                 sendPublic: (BOOL) isPublic
 {
-  // TODO error on closed connection
-  NSAssert (group != nil && messageText != nil, @"IB connection failure");
-  
   char messageID [UUID_STRING_LENGTH];
   
   createUUID (messageID);
@@ -269,6 +266,26 @@ void notification_listener (Subscription *sub,
     attributes_set_string (message, "MIME_ARGS", 
                            [[url absoluteString] UTF8String]);
   }
+  
+  elvin_invoke (&elvin, (InvokeHandler)send_message, message);
+}
+
+- (void) sendPresenceRequestMessage: (NSString *) userID 
+                      fromRequestor: (NSString *) requestor
+                           toGroups: (NSString *) groups 
+                           andUsers: (NSString *) users
+                         sendPublic: (BOOL) isPublic
+{
+  Attributes *message = attributes_create ();
+  
+  attributes_set_string (message, "Presence-Request",  [userID UTF8String]);
+  attributes_set_string (message, "Requestor",         [requestor UTF8String]);
+  attributes_set_int32  (message, "Presence-Protocol", 1000);
+  attributes_set_string (message, "Groups",            [groups UTF8String]);
+  attributes_set_string (message, "Users",             [users UTF8String]);
+  
+  if (isPublic)
+    attributes_set_string (message, "Distribution", "world");
   
   elvin_invoke (&elvin, (InvokeHandler)send_message, message);
 }

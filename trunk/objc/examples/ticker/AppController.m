@@ -8,6 +8,8 @@
 #import "PreferencesController.h"
 #import "Preferences.h"
 
+#import "utils.h"
+
 NSString *PreferencesContext = @"PreferencesContext";
 
 #pragma mark Declare Private Methods
@@ -29,10 +31,11 @@ NSString *PreferencesContext = @"PreferencesContext";
     [NSString stringWithFormat: @"%@@%@", 
      NSFullUserName (), [[NSHost currentHost] name]];
      
-  [defaults setObject: @"elvin://public.elvin.org" forKey: @"ElvinURL"];
+  [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
+  [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];
   [defaults setObject: defaultUserName forKey: PrefOnlineUserName];
-  [defaults setObject: @"Chat" forKey: @"DefaultSendGroup"];
-
+  [defaults setObject: uuidString () forKey: PrefOnlineUserUUID];
+  
   [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
@@ -45,6 +48,7 @@ NSString *PreferencesContext = @"PreferencesContext";
     elvin = 
       [[[ElvinConnection alloc] initWithUrl: prefString (@"ElvinURL")] 
         retain];
+    
     presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
   }
   

@@ -30,6 +30,12 @@ extern NSString *ElvinConnectionClosedNotification;
                attachedURL: (NSURL *) url
                 sendPublic: (BOOL) isPublic;
 
+- (void) sendPresenceRequestMessage: (NSString *) userID 
+                      fromRequestor: (NSString *) requestor
+                           toGroups: (NSString *) groups 
+                           andUsers: (NSString *) users
+                         sendPublic: (BOOL) isPublic;
+
 - (void) subscribe: (NSString *) subscriptionExpr withDelegate: (id) delegate 
          usingSelector: (SEL) handler;
 
