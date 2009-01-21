@@ -5,11 +5,11 @@
 @interface PresenceConnection : NSObject
 {
   ElvinConnection * elvin;
-  NSMutableArray *  entities;
+  NSMutableSet *    entities;
 }
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection;
 
-@property (readonly, assign) IBOutlet NSArray * entities;
+@property (readonly, assign) IBOutlet NSSet * entities;
 
 @end

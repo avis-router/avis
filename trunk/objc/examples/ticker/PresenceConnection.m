@@ -34,7 +34,7 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
     return nil;
 
   elvin = theElvinConnection;
-  entities = [[NSMutableArray arrayWithCapacity: 5] retain];
+  entities = [[NSMutableSet setWithCapacity: 5] retain];
   
   // TODO resub on user name change
   [elvin subscribe: [self presenceSubscription] withDelegate: self 
@@ -122,8 +122,18 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
   if (!entity)
   {
     entity = [[PresenceEntity alloc] initWithId: presenceId];
+
+    NSSet *addedEntities = [NSSet setWithObject: entity];
     
+    [self willChangeValueForKey: @"entities" 
+                withSetMutation: NSKeyValueUnionSetMutation
+                   usingObjects: addedEntities];
+          
     [entities addObject: entity];
+    
+    [self didChangeValueForKey: @"entities" 
+               withSetMutation: NSKeyValueUnionSetMutation
+                  usingObjects: addedEntities];
   }
   
   return entity;

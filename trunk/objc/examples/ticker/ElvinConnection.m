@@ -219,7 +219,7 @@ void notification_listener (Subscription *sub,
         break;
       case TYPE_OPAQUE:
         objcValue = [NSData dataWithBytes: value->value.bytes.items 
-                                   length:value->value.bytes.item_count];
+                                   length: value->value.bytes.item_count];
         break;
     }
     

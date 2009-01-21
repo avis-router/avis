@@ -107,3 +107,413 @@ Sort by top of stack, same collapsed (when >= 5):
         __semwait_signal        2470
         connect$UNIX2003        2470
 Sample analysis of process 4057 written to file /dev/stdout
+
+
+
+-----
+
+Deadlock on exit
+
+Sampling process 34486 for 3 seconds with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Analysis of sampling ticker (pid 34486) every 1 millisecond
+Call graph:
+    2012 Thread_2503
+      2012 start
+        2012 NSApplicationMain
+          2012 -[NSApplication run]
+            2012 -[NSApplication sendEvent:]
+              2012 -[NSApplication _handleKeyEquivalent:]
+                2012 -[NSMenu performKeyEquivalent:]
+                  2012 -[NSCarbonMenuImpl performActionWithHighlightingForItemAtIndex:]
+                    2012 -[NSMenu performActionForItemAtIndex:]
+                      2012 -[NSApplication sendAction:to:from:]
+                        2012 -[NSApplication terminate:]
+                          2012 -[NSNotificationCenter postNotificationName:object:]
+                            2012 -[NSNotificationCenter postNotificationName:object:userInfo:]
+                              2012 _CFXNotificationPostNotification
+                                2012 __CFXNotificationPost
+                                  2012 _nsnote_callback
+                                    2012 -[ElvinConnection disconnect]
+                                      2012 usleep$UNIX2003
+                                        2012 __semwait_signal
+                                          2012 __semwait_signal
+    2012 Thread_2603
+      2012 thread_start
+        2012 _pthread_start
+          2012 __NSThread__main__
+            2012 -[NSThread main]
+              2012 -[ElvinConnection elvinEventLoopThread]
+                2012 -[ElvinConnection runElvinEventLoop]
+                  2012 elvin_poll
+                    2012 dispatch_message
+                      2012 elvin_close
+                        2012 send_and_receive
+                          2012 dispatch_message
+                            2012 deliver_notification
+                              2012 notification_listener
+                                2012 -[NSObject(NSThreadPerformAdditions) performSelectorOnMainThread:withObject:waitUntilDone:]
+                                  2012 -[NSObject(NSThreadPerformAdditions) performSelector:onThread:withObject:waitUntilDone:modes:]
+                                    2012 -[NSCondition wait]
+                                      2012 pthread_cond_wait$UNIX2003
+                                        2012 __semwait_signal
+                                          2012 __semwait_signal
+    2012 Thread_2703
+      2012 thread_start
+        2012 _pthread_start
+          2012 __NSThread__main__
+            2012 -[NSThread main]
+              2012 -[NSUIHeartBeat _heartBeatThread:]
+                1867 usleep$UNIX2003
+                  1867 __semwait_signal
+                    1867 __semwait_signal
+                135 -[NSWindow(NSWindow_Theme) heartBeat:]
+                  135 -[NSButtonCell(NSDefaultButtonIndicatorPrivate) heartBeat:]
+                    119 -[NSView _lightWeightRecursiveDisplayInRect:]
+                      109 CFArrayApplyFunction
+                        109 _lightWeightRecursiveDisplayInRect2
+                          107 -[NSView _lightWeightRecursiveDisplayInRect:]
+                            104 CFArrayApplyFunction
+                              103 _lightWeightRecursiveDisplayInRect2
+                                103 -[NSView _lightWeightRecursiveDisplayInRect:]
+                                  101 -[NSView _drawRect:clip:]
+                                    98 -[NSControl drawRect:]
+                                      78 -[NSButtonCell drawWithFrame:inView:]
+                                        78 -[NSButtonCell drawBezelWithFrame:inView:]
+                                          77 -[NSButtonCell _coreUIDrawBezelWithFrame:inView:]
+                                            75 CUIRenderer::Draw(CGRect, CGContext*, __CFDictionary const*, __CFDictionary const**)
+                                              74 CUIRenderer::DrawPushButton(CUIContext const*)
+                                                67 CGContextDrawImages
+                                                  66 ripc_DrawImages
+                                                    63 ripc_RenderImage
+                                                      63 ripl_BltImage
+                                                        61 ripl_Mark
+                                                          61 argb32_image
+                                                            56 argb32_image_mark
+                                                              35 argb32_image_mark
+                                                              17 argb32_sample_argb32
+                                                                17 argb32_sample_argb32
+                                                              4 argb32_sample_ARGB32
+                                                                4 argb32_sample_ARGB32
+                                                            5 argb32_image_mark_RGB32
+                                                              5 argb32_image_mark_RGB32
+                                                        2 ripd_Mark
+                                                          2 argb32_image
+                                                            2 argb32_mark
+                                                              2 argb32_mark_pixelshape
+                                                                2 argb32_mark_pixelshape
+                                                    1 CGRectStandardize
+                                                      1 CGRectStandardize
+                                                    1 ripc_AcquireImage
+                                                      1 CGSImageDataLock
+                                                        1 img_data_lock
+                                                          1 malloc_zone_malloc
+                                                            1 __spin_lock
+                                                              1 __spin_lock
+                                                    1 ripc_DrawImages
+                                                  1 ceil
+                                                    1 ceil
+                                                6 CGContextEndTransparencyLayer
+                                                  5 ripc_EndLayer
+                                                    5 ripc_RenderImage
+                                                      5 ripl_BltImage
+                                                        4 ripd_Mark
+                                                          4 argb32_image
+                                                            4 sseCGSBlendXXXX8888
+                                                              4 sseCGSBlendXXXX8888
+                                                        1 ripd_Unlock
+                                                          1 CGSDeviceUnlock
+                                                            1 CGSBoundingShapeAdd
+                                                              1 shape_accum_add_bounds
+                                                                1 shape_accum_add_bounds
+                                                  1 CGContextEndTransparencyLayer
+                                                1 CUIPenCG::BeginLayerWithRect(void*, CGRect, __CFDictionary const*)
+                                                  1 CGContextBeginTransparencyLayerWithRect
+                                                    1 ripc_BeginLayer
+                                                      1 malloc_zone_malloc
+                                                        1 szone_malloc
+                                                          1 szone_malloc
+                                              1 CUIPenCG::GetCTM(void*)
+                                                1 CGContextGetCTM
+                                                  1 CGContextGetCTM
+                                            2 -[NSButtonCell _coreUIBezelDrawOptionsWithFrame:inView:]
+                                              2 CFDictionarySetValue
+                                                1 __CFDictionaryFindBuckets2
+                                                  1 __CFDictionaryFindBuckets2
+                                                1 __CFDictionaryGrow
+                                                  1 malloc_zone_malloc
+                                                    1 szone_malloc
+                                                      1 szone_malloc
+                                          1 objc_msgSend
+                                            1 objc_msgSend
+                                      17 -[NSButtonCell drawInteriorWithFrame:inView:]
+                                        16 -[NSButtonCell _configureAndDrawTitleWithRect:cellFrame:controlView:]
+                                          8 CGContextDrawImage
+                                            8 ripc_DrawImage
+                                              6 ripc_RenderImage
+                                                6 ripl_BltImage
+                                                  5 ripd_Mark
+                                                    5 argb32_image
+                                                      5 argb32_mark
+                                                        5 argb32_mark_pixelshape
+                                                          5 argb32_mark_pixelshape
+                                                  1 ripd_Unlock
+                                                    1 CGSDeviceUnlock
+                                                      1 _CGSUnlockWindow
+                                                        1 _CGSUnlockWindow
+                                              2 ripc_AcquireImage
+                                                2 CGSImageDataLock
+                                                  2 img_data_lock
+                                                    1 CGColorTransformConvertNeedsCMS
+                                                      1 resolveSource
+                                                        1 resolveSource
+                                                    1 img_data_lock
+                                          3 -[NSButtonCell attributedTitle]
+                                            2 -[NSCell _unformattedAttributedStringValue:]
+                                              1 -[NSCell _textAttributes]
+                                                1 -[NSCFDictionary setObject:forKey:]
+                                                  1 -[NSCFDictionary setObject:forKey:]
+                                              1 -[NSConcreteAttributedString initWithString:attributes:]
+                                                1 -[NSRLEArray init]
+                                                  1 -[NSRLEArray initWithRefCountedRunArray:]
+                                                    1 -[NSRLEArray _makeNewListFrom:]
+                                                      1 NSAllocateCollectable
+                                                        1 malloc_zone_calloc
+                                                          1 szone_calloc
+                                                            1 szone_calloc
+                                            1 -[NSObject(NSObject) autorelease]
+                                              1 __NSAutoreleaseObject
+                                                1 __NSAutoreleaseObject
+                                          2 CGContextScaleCTM
+                                            2 CGAffineTransformScale
+                                              2 CGAffineTransformScale
+                                          2 objc_msgSend
+                                            2 objc_msgSend
+                                          1 CGGStateSetCompositeOperation
+                                            1 maybeCopyRenderingState
+                                              1 calloc
+                                                1 malloc_zone_calloc
+                                                  1 szone_calloc
+                                                    1 __bzero
+                                                      1 __bzero
+                                        1 objc_msgSend
+                                          1 objc_msgSend
+                                      1 -[NSControl _shouldShowFirstResponderForCell:]
+                                        1 objc_msgSend
+                                          1 objc_msgSend
+                                      1 floor$fenv_access_off
+                                        1 floor$fenv_access_off
+                                      1 objc_msgSend
+                                        1 objc_msgSend
+                                    1 CGContextRestoreGState
+                                      1 CGGStackRestore
+                                        1 CGGStateRelease
+                                          1 free
+                                            1 szone_free
+                                              1 szone_free
+                                    1 NSRectClipList
+                                      1 CGContextClipToRects
+                                        1 CGContextClipToRect
+                                          1 CGGStateClipToRect
+                                            1 maybeCopyClipState
+                                              1 CGClipStackCreateMutableCopy
+                                                1 calloc
+                                                  1 malloc_zone_calloc
+                                                    1 szone_calloc
+                                                      1 tiny_malloc_from_free_list
+                                                        1 tiny_malloc_from_free_list
+                                    1 objc_msgSend
+                                      1 objc_msgSend
+                                  2 -[NSView unlockFocus]
+                                    1 -[NSFocusStack popTopView]
+                                      1 PSgrestore
+                                        1 -[NSCFArray removeLastObject]
+                                          1 -[NSCFArray removeObjectAtIndex:]
+                                            1 _CFArrayReplaceValues
+                                              1 _CFArrayReplaceValues
+                                    1 -[NSFocusStack unfocusView:]
+                                      1 -[NSFocusStack unfocusView:]
+                              1 objc_msgSend
+                                1 objc_msgSend
+                            1 -[NSView lockFocusIfCanDraw]
+                              1 PSgsave
+                                1 CGContextSaveGState
+                                  1 CGGStackSave
+                                    1 CGGStateCreateCopy
+                                      1 CGGStateClipCopy
+                                        1 CGGStateClipCopy
+                            1 -[NSView unlockFocus]
+                              1 -[NSFocusStack fixInvalidatedFocusForFocusView]
+                                1 -[NSWindowGraphicsContext focusStack]
+                                  1 __NSAppKitGetThreadSpecificData
+                                    1 __NSAppKitGetThreadSpecificData
+                            1 objc_msgSend
+                              1 objc_msgSend
+                          1 -[NSConcreteMapTable setObject:forKey:]
+                            1 objc_msgSend
+                              1 objc_msgSend
+                          1 -[NSRectSet initWithRect:]
+                            1 -[NSRectSet initWithRect:]
+                      7 -[NSView _drawRect:clip:]
+                        5 -[NSThemeFrame drawRect:]
+                          5 -[NSFrameView drawRect:]
+                            5 -[NSFrameView drawThemeContentFill:inView:]
+                              4 -[NSThemeFrame drawWindowBackgroundRect:]
+                                4 -[NSFrameView drawWindowBackgroundRect:]
+                                  4 NSDrawWindowBackground
+                                    3 NSRectFillUsingOperation
+                                      3 CGContextFillRect
+                                        3 CGContextFillRects
+                                          3 ripc_DrawRects
+                                            3 ripc_Render
+                                              3 ripl_BltShape
+                                                3 argb32_mark
+                                                  3 argb32_mark_constshape
+                                                    3 sseCGSFill8by1
+                                                      3 sseCGSFill8by1
+                                    1 CGContextSaveGState
+                                      1 CGGStackSave
+                                        1 CGGStateCreateCopy
+                                          1 calloc
+                                            1 malloc_zone_calloc
+                                              1 malloc_zone_calloc
+                              1 -[NSThemeFrame _regionForOpaqueDescendants:forMove:]
+                                1 -[NSView _regionForOpaqueDescendants:forMove:]
+                                  1 -[NSView _regionForOpaqueDescendants:forMove:]
+                        2 -[NSThemeFrame _regionForOpaqueDescendants:forMove:]
+                          2 -[NSView _regionForOpaqueDescendants:forMove:]
+                            1 NSIntersectionRect
+                              1 NSIntersectionRect
+                            1 objc_msgSend_stret
+                              1 objc_msgSend_stret
+                      2 -[NSView unlockFocus]
+                        2 -[NSFocusStack popTopView]
+                          1 -[NSFocusStack popTopView]
+                          1 PSgrestore
+                            1 -[NSObject retain]
+                              1 __spin_lock
+                                1 __spin_lock
+                      1 -[NSView lockFocusIfCanDraw]
+                        1 -[NSFocusState flush]
+                          1 CGContextResetTopGState
+                            1 CGGStateResetClip
+                              1 CGClipStackCreateMutable
+                                1 calloc
+                                  1 malloc_zone_calloc
+                                    1 malloc_zone_calloc
+                    4 -[NSUIHeartBeat lockFocusForView:inRect:needsTranslation:]
+                      4 -[NSView lockFocus]
+                        4 -[NSView lockFocusIfCanDraw]
+                          2 -[NSFocusState flush]
+                            1 -[NSFrameView adjustHalftonePhase]
+                              1 -[NSThemeFrame contentFill]
+                                1 -[NSWindow _isDarkWindow]
+                                  1 _NSUseLeopardWindowValues
+                                    1 _NSUseLeopardWindowValues
+                            1 -[NSWindow _windowDeviceRound]
+                              1 CGContextResetClip
+                                1 CGContextResetClip
+                          2 -[NSView _focusFromView:withContext:]
+                            1 -[NSView _focusFromView:withContext:]
+                            1 -[NSView _gatherFocusStateInto:upTo:withContext:]
+                              1 -[NSView _gatherFocusStateInto:upTo:withContext:]
+                                1 -[NSView _gatherFocusStateInto:upTo:withContext:]
+                                  1 -[NSView _focusInto:withClip:]
+                                    1 -[NSFocusState addSpecialGStateView:]
+                                      1 __CFArrayInit
+                                        1 _CFRuntimeCreateInstance
+                                          1 CFAllocatorAllocate
+                                            1 CFAllocatorAllocate
+                    2 -[NSCFArray removeLastObject]
+                      2 -[NSCFArray removeObjectAtIndex:]
+                        2 _CFArrayReplaceValues
+                          2 __CFArrayReleaseValues
+                            2 CFRelease
+                              2 -[_NSDisplayOperation dealloc]
+                                1 -[NSConcreteMapTable dealloc]
+                                  1 dealloc
+                                    1 szone_free
+                                      1 szone_free
+                                1 -[NSObject release]
+                                  1 __CFDoExternRefOperation
+                                    1 __CFDoExternRefOperation
+                    2 -[NSObject release]
+                      2 __CFDoExternRefOperation
+                        2 CFBagContainsValue
+                          2 __CFBagFindBuckets1a
+                            2 __CFBagFindBuckets1a
+                    2 -[NSUIHeartBeat unlockFocusInRect:]
+                      2 -[NSView unlockFocus]
+                        2 -[NSFocusStack popTopView]
+                          2 PSgrestore
+                            1 -[NSObject release]
+                              1 __CFDoExternRefOperation
+                                1 CFBagContainsValue
+                                  1 __CFBagFindBuckets1a
+                                    1 __CFBagFindBuckets1a
+                            1 CGContextRestoreGState
+                              1 CGGStackRestore
+                                1 CGGStateRelease
+                                  1 strokeStateRelease
+                                    1 free
+                                      1 szone_free
+                                        1 szone_free
+                    2 objc_msgSend
+                      2 objc_msgSend
+                    1 -[NSButton _focusRingBleedRegion]
+                      1 -[NSCFString isEqualToString:]
+                        1 -[NSCFString isEqualToString:]
+                    1 -[NSView convertRect:fromView:]
+                      1 -[NSView _convertRect:fromAncestor:]
+                        1 -[NSView _convertRectFromSuperview:test:]
+                          1 -[NSButton isFlipped]
+                            1 -[NSButton isFlipped]
+                    1 -[NSView convertRect:toView:]
+                      1 -[NSView _convertRect:toAncestor:]
+                        1 -[NSButton isFlipped]
+                          1 -[NSButton isFlipped]
+                    1 -[_NSDisplayOperationStack enterDisplayOperationForWindow:windowRegion:]
+                      1 -[NSCFArray addObject:]
+                        1 -[NSCFArray insertObject:atIndex:]
+                          1 _CFArrayReplaceValues
+                            1 _CFArrayReplaceValues
+                6 -[NSSet makeObjectsPerformSelector:]
+                  6 -[NSWindow flushWindow]
+                    5 CGContextFlush
+                      5 ripc_Operation
+                        5 CGSDeviceSynchronize
+                          5 _CGSFlushRegionInline
+                            5 mach_msg
+                              5 mach_msg_trap
+                                5 mach_msg_trap
+                    1 -[NSWindow isFlushWindowDisabled]
+                      1 -[NSWindow _threadContext]
+                        1 -[NSWindow _threadContext]
+                2 NSPopAutoreleasePool
+                  1 -[NSConcreteAttributedString dealloc]
+                    1 -[NSRLEArray dealloc]
+                      1 malloc_zone_from_ptr
+                        1 malloc_zone_from_ptr
+                  1 objc_msgSend
+                    1 objc_msgSend
+                1 -[NSApplication _keyWindowForHeartBeat]
+                  1 _NSAppKitLock
+                    1 _NSAddExceptionHandlerForLock
+                      1 _CFDoExceptionOperation
+                        1 _CFDoExceptionOperation
+                1 CFAbsoluteTimeGetCurrent
+                  1 CFAbsoluteTimeGetCurrent
+
+Total number in stack (recursive counted multiple, when >=5):
+        11       objc_msgSend
+        5       malloc_zone_calloc
+
+Sort by top of stack, same collapsed (when >= 5):
+        __semwait_signal        5891
+        argb32_image_mark        35
+        argb32_sample_argb32        17
+        objc_msgSend        13
+        argb32_mark_pixelshape        7
+        argb32_image_mark_RGB32        5
+        mach_msg_trap        5
+Sample analysis of process 34486 written to file /dev/stdout
