@@ -1,6 +1,6 @@
 #import "Preferences.h"
 
-const NSString *PrefOnlineUserName   = @"OnlineUserName";
-const NSString *PrefOnlineUserUUID   = @"OnlineUserUUID";
-const NSString *PrefElvinURL         = @"ElvinURL";
-const NSString *PrefDefaultSendGroup = @"DefaultSendGroup";
+NSString *PrefOnlineUserName   = @"OnlineUserName";
+NSString *PrefOnlineUserUUID   = @"OnlineUserUUID";
+NSString *PrefElvinURL         = @"ElvinURL";
+NSString *PrefDefaultSendGroup = @"DefaultSendGroup";
