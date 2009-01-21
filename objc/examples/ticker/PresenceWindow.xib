@@ -301,22 +301,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentArray: appController.presence.entities</string>
-						<reference key="source" ref="903847307"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="903847307"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">contentArray: appController.presence.entities</string>
-							<string key="NSBinding">contentArray</string>
-							<string key="NSKeyPath">appController.presence.entities</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">18</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: arrangedObjects.name</string>
 						<reference key="source" ref="788381307"/>
 						<reference key="destination" ref="903847307"/>
@@ -346,6 +330,22 @@
 						</object>
 					</object>
 					<int key="connectionID">29</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentSet: appController.presence.entities</string>
+						<reference key="source" ref="903847307"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="903847307"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">contentSet: appController.presence.entities</string>
+							<string key="NSBinding">contentSet</string>
+							<string key="NSKeyPath">appController.presence.entities</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">33</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -540,7 +540,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">29</int>
+			<int key="maxID">33</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
