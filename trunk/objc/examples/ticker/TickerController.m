@@ -167,12 +167,16 @@ static NSAttributedString *attributedString (NSString *string,
 
 #pragma mark -
 
+- (void) awakeFromNib
+{
+  [tickerMessagesTextView setString: @""];
+  self.canSend = [appController.elvin isConnected];
+}
+
 - (void) windowDidLoad
 {
   replyButton.rolloverImage = [NSImage imageNamed: @"Reply_Rollover"];
-  
-  self.canSend = [appController.elvin isConnected];
-  
+    
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   
   self.attachedURL = nil;
