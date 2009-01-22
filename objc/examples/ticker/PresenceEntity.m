@@ -24,6 +24,7 @@
     return nil;
     
   presenceId = [newId retain];
+  status = OFFLINE;
   
   return self;
 }

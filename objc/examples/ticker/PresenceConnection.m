@@ -21,7 +21,7 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
   - (void) handlePresenceNotification: (NSDictionary *) notification;
   - (NSString *) presenceSubscription;
   - (void) requestPresenceInfo;
-  - (PresenceEntity *) findOrCreateUser: (NSString *) presenceId;
+  - (PresenceEntity *) findUserWithId: (NSString *) presenceId;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
 @end
@@ -66,13 +66,24 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
 
 - (void) handlePresenceNotification: (NSDictionary *) notification
 {
+  BOOL createdUser;
   NSString *clientId = [notification valueForKey: @"Client-Id"];
   NSString *userName = [notification valueForKey: @"User"];
   NSString *status = stringValueForAttribute (notification, @"Status");
   NSString *statusText = stringValueForAttribute (notification, @"Status-Text");
   
-  PresenceEntity *user = [self findOrCreateUser: clientId];
+  PresenceEntity *user = [self findUserWithId: clientId];
   
+  if (user == nil)
+  {
+    user = [[PresenceEntity alloc] initWithId: clientId];
+    
+    createdUser = YES;
+  } else
+  {
+    createdUser = NO;
+  }
+
   [user setName: userName];
   
   if (status)
@@ -82,6 +93,22 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
     [user setStatusText: statusText];
   
   [user setLastUpdatedAt: [NSDate date]];
+  
+  if (createdUser)
+  {
+    NSSet *addedObjects = [NSSet setWithObject: user];
+    
+    [self willChangeValueForKey: @"entities" 
+                withSetMutation: NSKeyValueUnionSetMutation
+                   usingObjects: addedObjects];
+    
+    [entities addObject: user];
+
+    [self didChangeValueForKey: @"entities" 
+               withSetMutation: NSKeyValueUnionSetMutation
+                  usingObjects: addedObjects];
+    
+  }
 }
 
 - (void) handleElvinOpen: (void *) unused
@@ -108,37 +135,15 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
           prefString (PrefOnlineUserName)];
 }
 
-- (PresenceEntity *) findOrCreateUser: (NSString *) presenceId
+- (PresenceEntity *) findUserWithId: (NSString *) presenceId
 {  
-  PresenceEntity *entity = nil;
-  
   for (PresenceEntity *e in entities)
   {
     if ([[e presenceId] isEqual: presenceId])
-    {
-      entity = e;
-      break;
-    }
+      return e;
   }
   
-  if (!entity)
-  {
-    entity = [[PresenceEntity alloc] initWithId: presenceId];
-
-    NSSet *addedEntities = [NSSet setWithObject: entity];
-    
-    [self willChangeValueForKey: @"entities" 
-                withSetMutation: NSKeyValueUnionSetMutation
-                   usingObjects: addedEntities];
-          
-    [entities addObject: entity];
-    
-    [self didChangeValueForKey: @"entities" 
-               withSetMutation: NSKeyValueUnionSetMutation
-                  usingObjects: addedEntities];
-  }
-  
-  return entity;
+  return nil;
 }
 
 - (void) requestPresenceInfo
