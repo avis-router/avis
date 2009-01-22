@@ -80,6 +80,8 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
   
   if (statusText)
     [user setStatusText: statusText];
+  
+  [user setLastUpdatedAt: [NSDate date]];
 }
 
 - (void) handleElvinOpen: (void *) unused
