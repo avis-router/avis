@@ -20,6 +20,16 @@ Server 1.3
 * router src distro needs ec/ep
 * add log filter option to show notifs rather than trace. would need
   custom log filter levels.
+* Bug (DSTO Avis): the elvin gateway seems to be having problems with
+  "secure" messages.  it doesn't set the "world" tag on incoming
+  messages that are secure and Leanne doesn't see messages I reply to
+  in my group, even if I manually set "world". it appears to work as
+  advertised if I initiate the conversation in Leanne's group even
+  using "secure" also works if she initiates it, as long as she does
+  NOT use secure.  if she does, I see her question, but she never gets
+  the reply. so non-secure works fine, secure basically erases
+  "world"?  yes, but even manually adding "world" doesn't solve it for
+  my answers in my group
 
 Server 1.2
 
