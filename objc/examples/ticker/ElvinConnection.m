@@ -278,9 +278,9 @@ void notification_listener (Subscription *sub,
 {
   Attributes *message = attributes_create ();
   
+  attributes_set_int32  (message, "Presence-Protocol", 1000);  
   attributes_set_string (message, "Presence-Request",  [userID UTF8String]);
   attributes_set_string (message, "Requestor",         [requestor UTF8String]);
-  attributes_set_int32  (message, "Presence-Protocol", 1000);
   attributes_set_string (message, "Groups",            [groups UTF8String]);
   attributes_set_string (message, "Users",             [users UTF8String]);
   
@@ -354,10 +354,10 @@ void send_message (Elvin *elvin, Attributes *message)
    
     elvin_add_close_listener (&elvin, (CloseListener)close_listener, self);
  
-    return TRUE;
+    return YES;
   } else
   {           
-    return FALSE;
+    return NO;
   }
 }
 
