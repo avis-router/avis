@@ -50,7 +50,7 @@ NSString *PreferencesContext = @"PreferencesContext";
   if (self)
   {
     elvin = 
-      [[[ElvinConnection alloc] initWithUrl: prefString (@"ElvinURL")] 
+      [[[ElvinConnection alloc] initWithUrl: prefString (PrefElvinURL)] 
         retain];
     
     presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
@@ -64,12 +64,11 @@ NSString *PreferencesContext = @"PreferencesContext";
   [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver: self];
   [[NSUserDefaultsController sharedUserDefaultsController] removeObserver: self];
   
-  NSLog (@"Delloc");
-  
   [elvin disconnect];
-  [elvin release];
-  elvin = nil;
   
+  [presence release];
+  [elvin release];
+
   [super dealloc];
 }
 
@@ -122,7 +121,7 @@ NSString *PreferencesContext = @"PreferencesContext";
 - (IBAction) showTickerWindow: (id) sender
 {
   if (!tickerController)
-    tickerController = [[TickerController alloc] initWithAppController: self];
+    tickerController = [[TickerController alloc] initWithElvin: elvin];
   
   [tickerController showWindow: self];
 }

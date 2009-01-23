@@ -1,6 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
-@class AppController;
+@class ElvinConnection;
 @class RolloverButton;
 
 @interface TickerController : NSWindowController
@@ -16,10 +16,10 @@
   
   IBOutlet RolloverButton *replyButton;
   
-  AppController * appController;
-  NSString *      inReplyTo;
-  BOOL            allowPublic;
-  BOOL            canSend;
+  ElvinConnection * elvin;
+  NSString *        inReplyTo;
+  BOOL              allowPublic;
+  BOOL              canSend;
 }
 
 @property (readwrite, retain) IBOutlet NSURL *    attachedURL;
@@ -27,7 +27,7 @@
 @property (readwrite, assign) IBOutlet BOOL       allowPublic;
 @property (readwrite, assign) IBOutlet BOOL       canSend;
 
-- (id) initWithAppController: (AppController *) appController;
+- (id) initWithElvin: (ElvinConnection *) theElvinConnection;
 
 - (IBAction) sendMessage: (id) sender;
 

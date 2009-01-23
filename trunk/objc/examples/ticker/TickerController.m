@@ -2,14 +2,12 @@
 
 #import "TickerController.h"
 #import "RolloverButton.h"
-
-#import "AppController.h"
 #import "ElvinConnection.h"
-
 #import "Preferences.h"
 
 #define TICKER_SUBSCRIPTION \
-  @"string (Message) && string (Group) && string (From) && ! Group == 'lawley-rcvstore'"
+  @"string (Message) && string (Group) && string (From) && ! \
+    Group == 'lawley-rcvstore'"
 
 #define MAX_GROWL_MESSAGE_LENGTH 200
 
@@ -133,15 +131,15 @@ static NSAttributedString *attributedString (NSString *string,
 
 @implementation TickerController
 
-- (id) initWithAppController: (AppController *) theAppController
+- (id) initWithElvin: (ElvinConnection *) theElvinConnection
 {
   self = [super initWithWindowNibName: @"TickerWindow"];
   
   if (self)
   {
-    appController = theAppController;
+    elvin = theElvinConnection;
       
-    [appController.elvin
+    [elvin
       subscribe: TICKER_SUBSCRIPTION 
       withDelegate: self usingSelector: @selector (handleNotify:)];    
     
@@ -170,7 +168,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) awakeFromNib
 {
   [tickerMessagesTextView setString: @""];
-  self.canSend = [appController.elvin isConnected];
+  self.canSend = [elvin isConnected];
 }
 
 - (void) windowDidLoad
@@ -376,7 +374,7 @@ static NSAttributedString *attributedString (NSString *string,
 {
   NSString *message = 
     [NSString stringWithFormat: @"Elvin %@ (%@)", 
-      status, [appController.elvin elvinUrl]];
+      status, [elvin elvinUrl]];
   
   [GrowlApplicationBridge
     notifyWithTitle: @"Elvin Connection"
@@ -466,8 +464,7 @@ static NSAttributedString *attributedString (NSString *string,
     return;
   }
   
-  [appController.elvin 
-    sendTickerMessage: message 
+  [elvin sendTickerMessage: message 
     fromSender: prefString (@"OnlineUserName")
     toGroup: [messageGroup stringValue] 
     inReplyTo: self.inReplyTo 

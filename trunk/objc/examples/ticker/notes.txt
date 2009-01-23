@@ -65,6 +65,8 @@
 
 Crash: pre presence
 
+Also seen: 2009-01-23 15:32:33.496 ticker[35730:10b] *** -[NSBigMutableString substringWithRange:]: Range or index out of bounds
+
 Process:         ticker [97314]
 Path:            /Users/matt/Development/avis/objc/examples/ticker/build/Release/ticker.app/Contents/MacOS/ticker
 Identifier:      name.mattp.ticker
