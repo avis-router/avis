@@ -33,6 +33,8 @@ static void send_message (Elvin *elvin, Attributes *message);
   SEL            selector;
 }
 
+- (void) deliverNotification: (NSDictionary *) notification;
+  
 @end
 
 @implementation SubscriptionContext
@@ -58,6 +60,13 @@ static void send_message (Elvin *elvin, Attributes *message);
   [subscriptionExpr release];
   
   [super dealloc];
+}
+
+- (void) deliverNotification: (NSDictionary *) notification
+{
+  [delegate performSelector: selector withObject: notification];
+  
+  [notification release];
 }
 
 @end
@@ -147,6 +156,7 @@ static void send_message (Elvin *elvin, Attributes *message);
     elvin_invoke_close (&elvin);    
   }
   
+  // TODO: this should not be potentially infinite
   while (![eventLoopThread isFinished])
     usleep (100000);
   
@@ -191,7 +201,7 @@ void notification_listener (Subscription *sub,
                             Attributes *attributes, 
                             bool secure, SubscriptionContext *context)
 {
-  NSMutableDictionary *message = [NSMutableDictionary dictionary];
+  NSMutableDictionary *message = [[NSMutableDictionary dictionary] retain];
   
   AttributesIter i;
 
@@ -229,9 +239,9 @@ void notification_listener (Subscription *sub,
     attributes_iter_next (&i);
   }
   
-  [context->delegate performSelectorOnMainThread: context->selector
-                                      withObject: message 
-                                   waitUntilDone: YES];
+  [context
+    performSelectorOnMainThread: @selector (deliverNotification:)
+                     withObject: message waitUntilDone: NO];
 }
 
 - (void) sendTickerMessage: (NSString *) messageText 
