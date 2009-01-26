@@ -15,7 +15,10 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
     return nil;
 }
 
-static NSString *listToString (NSArray *list)
+/**
+ * Turn a string list into the format: "|item1|item2|".
+ */
+static NSString *listToBarDelimitedString (NSArray *list)
 {
   if ([list count] == 0)
     return @"";
@@ -25,11 +28,30 @@ static NSString *listToString (NSArray *list)
   for (NSString *item in list)
   {
     [string appendString: @"|"];
+    // TODO escape item
     [string appendString: [item lowercaseString]];
   }
   
   [string appendString: @"|"];
   
+  return string;
+}
+
+/**
+ * Turn a string list into the format: "|item1|", "|item2|", ...
+ */
+static NSString *listToParameterString (NSArray *list)
+{
+  NSMutableString *string = [NSMutableString string];
+  
+  for (NSString *item in list)
+  {
+    [string appendString: @", \"|"];
+    // TODO escape item
+    [string appendString: [item lowercaseString]];
+    [string appendString: @"|\""];
+  }
+    
   return string;
 }
 
@@ -47,7 +69,7 @@ static NSString *listToString (NSArray *list)
   - (PresenceEntity *) findUserWithId: (NSString *) presenceId;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
-  - (void) clearPresenceEntities;
+  - (void) clearEntities;
 @end
 
 @implementation PresenceConnection
@@ -69,13 +91,7 @@ static NSString *listToString (NSArray *list)
   // subscribe to requests
   [elvin subscribe: [self presenceRequestSubscription] withDelegate: self 
      usingSelector: @selector (handlePresenceRequest:)];
-  
-  if ([elvin isConnected])
-  {
-    [self emitPresenceInfo];
-    [self requestPresenceInfo];
-  }
-  
+    
   // listen for elvin open/close
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
@@ -85,6 +101,12 @@ static NSString *listToString (NSArray *list)
   [notifications addObserver: self selector: @selector (handleElvinClose:)
                         name: ElvinConnectionWillCloseNotification object: nil]; 
   
+  if ([elvin isConnected])
+  {
+    [self emitPresenceInfo];
+    [self requestPresenceInfo];
+  }
+
   return self;
 }
 
@@ -118,7 +140,7 @@ static NSString *listToString (NSArray *list)
 {
   if ([[NSThread currentThread] isMainThread])
   {
-    [self clearPresenceEntities];
+    [self clearEntities];
     [self requestPresenceInfo];
     [self emitPresenceInfo];
   } else
@@ -132,7 +154,7 @@ static NSString *listToString (NSArray *list)
 {
   if ([[NSThread currentThread] isMainThread])
   {
-    [self clearPresenceEntities];
+    [self clearEntities];
     [self setPresenceStatus: [PresenceStatus offlineStatus]];
   } else
   {
@@ -156,67 +178,43 @@ static NSString *listToString (NSArray *list)
   
   NSArray *groups = prefArray (PrefPresenceGroups);
   
-  if ([groups count] >  0)
+  if ([groups count] > 0)
   {
     [expr appendString: 
-      [NSString stringWithFormat: @" || contains (fold-case (Groups), \"%@\")", 
-                listToString (prefArray (PrefPresenceGroups))]];
+      [NSString stringWithFormat: @" || contains (fold-case (Groups) %@)", 
+                listToParameterString (groups)]];
   }
   
   [expr appendString: @")"];
   
-  NSLog (@"request sub: %@", expr);
-  
   return expr;
-}
-
-- (void) requestPresenceInfo
-{
-  // TODO support users, groups and distribution
-  [elvin sendPresenceRequestMessage: prefString (PrefOnlineUserUUID) 
-                      fromRequestor: prefString (PrefOnlineUserName) 
-                           toGroups: listToString (prefArray (PrefPresenceGroups)) 
-                           andUsers: listToString (prefArray (PrefPresenceBuddies)) 
-                         sendPublic: YES];
-}
-
-- (void) emitPresenceInfo
-{
-  [self emitPresenceInfo: @"initial" includingFields: FieldsAll];
-}
-
-- (void) emitPresenceInfo: (NSString *) inReplyTo 
-         includingFields: (PresenceFields) fields
-{
-  NSString *buddies = 
-    (fields & FieldBuddies) ? 
-      listToString (prefArray (PrefPresenceBuddies)) : nil;
-
-  [elvin sendPresenceInfoMessage: prefString (PrefOnlineUserUUID) 
-                         forUser: prefString (PrefOnlineUserName) 
-                       inReplyTo: inReplyTo
-                      withStatus: presenceStatus
-                        toGroups: listToString (prefArray (PrefPresenceGroups)) 
-                      andBuddies: buddies
-                   fromUserAgent: @"Blue Sticker"
-                 includingFields: fields
-                      sendPublic: YES];
-}
-
-- (NSString *) presenceInfoSubscription
-{
-  // TODO escape user name
-  // TODO restrict subscription
-  return [NSString stringWithFormat: 
-          @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
-          string (Client-Id) && User != \"%@\"", 
-          prefString (PrefOnlineUserName)];
 }
 
 - (void) handlePresenceRequest: (NSDictionary *) notification
 {
   [self emitPresenceInfo: [notification objectForKey: @"Presence-Request"]
          includingFields: FieldsAll];
+}
+
+- (NSString *) presenceInfoSubscription
+{
+  // TODO escape user name
+  NSMutableString *expr = [NSMutableString stringWithFormat: 
+    @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
+      string (Client-Id) && User != \"%@\" ", prefString (PrefOnlineUserName)];
+  
+  NSArray *groups = prefArray (PrefPresenceGroups);
+  
+  if ([groups count] > 0)
+  {
+    [expr appendString: 
+      [NSString stringWithFormat: @" && contains (fold-case (Groups) %@)", 
+                listToParameterString (groups)]];
+  }
+  
+  NSLog (@"info sub = %@", expr);
+  
+  return expr;
 }
 
 - (void) handlePresenceInfo: (NSDictionary *) notification
@@ -267,11 +265,44 @@ static NSString *listToString (NSArray *list)
   }
 }
 
+- (void) requestPresenceInfo
+{
+  // TODO support users, groups and distribution
+  [elvin sendPresenceRequestMessage: prefString (PrefOnlineUserUUID) 
+                      fromRequestor: prefString (PrefOnlineUserName) 
+                           toGroups: listToBarDelimitedString (prefArray (PrefPresenceGroups)) 
+                           andUsers: listToBarDelimitedString (prefArray (PrefPresenceBuddies)) 
+                         sendPublic: YES];
+}
+
+- (void) emitPresenceInfo
+{
+  [self emitPresenceInfo: @"initial" includingFields: FieldsAll];
+}
+
+- (void) emitPresenceInfo: (NSString *) inReplyTo 
+         includingFields: (PresenceFields) fields
+{
+  NSString *buddies = 
+    (fields & FieldBuddies) ? 
+      listToBarDelimitedString (prefArray (PrefPresenceBuddies)) : nil;
+
+  [elvin sendPresenceInfoMessage: prefString (PrefOnlineUserUUID) 
+                         forUser: prefString (PrefOnlineUserName) 
+                       inReplyTo: inReplyTo
+                      withStatus: presenceStatus
+                        toGroups: listToBarDelimitedString (prefArray (PrefPresenceGroups)) 
+                      andBuddies: buddies
+                   fromUserAgent: @"Blue Sticker"
+                 includingFields: fields
+                      sendPublic: YES];
+}
+
 #pragma mark -
 
 @synthesize entities;
 
-- (void) clearPresenceEntities
+- (void) clearEntities
 {
   NSMutableSet *newEntities = [NSMutableSet set];
   
