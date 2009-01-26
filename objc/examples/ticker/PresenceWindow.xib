@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1" id="9"/>
+			<integer value="7"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -165,7 +165,7 @@
 													<bool key="NSIsResizeable">YES</bool>
 													<reference key="NSTableView" ref="994675986"/>
 													<object class="NSSortDescriptor" key="NSSortDescriptorPrototype">
-														<string key="NSKey">statusText</string>
+														<string key="NSKey">status.statusText</string>
 														<bool key="NSAscending">YES</bool>
 														<string key="NSSelector">caseInsensitiveCompare:</string>
 													</object>
@@ -188,11 +188,6 @@
 											<string key="NSAutosaveName">Presence</string>
 											<object class="NSArray" key="NSSortDescriptors">
 												<bool key="EncodedWithXMLCoder">YES</bool>
-												<object class="NSSortDescriptor">
-													<string key="NSKey">statusText</string>
-													<bool key="NSAscending">NO</bool>
-													<string key="NSSelector">caseInsensitiveCompare:</string>
-												</object>
 												<object class="NSSortDescriptor">
 													<string key="NSKey">name</string>
 													<bool key="NSAscending">YES</bool>
@@ -272,6 +267,8 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>name</string>
 					<string>statusText</string>
+					<string>status.text</string>
+					<string>status.statusText</string>
 				</object>
 				<string key="NSObjectClassName">PresenceEntity</string>
 				<bool key="NSAutomaticallyPreparesContent">YES</bool>
@@ -318,22 +315,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: arrangedObjects.statusText</string>
-						<reference key="source" ref="1039878535"/>
-						<reference key="destination" ref="903847307"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1039878535"/>
-							<reference key="NSDestination" ref="903847307"/>
-							<string key="NSLabel">value: arrangedObjects.statusText</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">arrangedObjects.statusText</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">29</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">contentSet: appController.presence.entities</string>
 						<reference key="source" ref="903847307"/>
 						<reference key="destination" ref="1001"/>
@@ -347,6 +328,26 @@
 						</object>
 					</object>
 					<int key="connectionID">33</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: arrangedObjects.status.statusText</string>
+						<reference key="source" ref="1039878535"/>
+						<reference key="destination" ref="903847307"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1039878535"/>
+							<reference key="NSDestination" ref="903847307"/>
+							<string key="NSLabel">value: arrangedObjects.status.statusText</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">arrangedObjects.status.statusText</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSConditionallySetsEditable</string>
+								<integer value="1" key="NS.object.0" id="9"/>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">35</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -503,9 +504,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilderKit</string>
 					<string>com.apple.InterfaceBuilderKit</string>
-					<string>{{652, 496}, {419, 316}}</string>
+					<string>{{503, 496}, {419, 316}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{652, 496}, {419, 316}}</string>
+					<string>{{503, 496}, {419, 316}}</string>
 					<reference ref="9"/>
 					<string>{196, 240}</string>
 					<string>{{202, 428}, {480, 270}}</string>
@@ -541,7 +542,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">33</int>
+			<int key="maxID">35</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

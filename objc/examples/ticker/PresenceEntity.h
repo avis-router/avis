@@ -1,27 +1,22 @@
 #import <Foundation/Foundation.h>
 
-typedef enum 
-{ONLINE, MAYBE_UNAVAILABLE, UNAVAILABLE, COFFEE, OFFLINE} OnlineStatus; 
+#import "PresenceStatus.h"
 
 @interface PresenceEntity : NSObject
 {
-  NSString *   presenceId;
-  NSString *   name;
-  OnlineStatus status;
-  NSString *   statusText;
-  NSDate *     lastUpdatedAt;
+  NSString *       presenceId;
+  NSString *       name;
+  PresenceStatus * status;
+  NSDate *         lastUpdatedAt;
 }
-
-+ (OnlineStatus) statusFromString: (NSString *) string;
-
-- (id) initWithId: (NSString *) newId;
 
 + entityWithName: (NSString *) name;
 
-@property (readonly, retain)           NSString *   presenceId;
-@property (readwrite, retain) IBOutlet NSString *   name;
-@property (readwrite, assign) IBOutlet OnlineStatus status;
-@property (readwrite, retain) IBOutlet NSString *   statusText;
-@property (readwrite, retain) IBOutlet NSDate *     lastUpdatedAt;
+- (id) initWithId: (NSString *) newId;
+
+@property (readonly, retain)           NSString *       presenceId;
+@property (readwrite, retain) IBOutlet NSString *       name;
+@property (readwrite, assign) IBOutlet PresenceStatus * status;
+@property (readwrite, retain) IBOutlet NSDate *         lastUpdatedAt;
 
 @end

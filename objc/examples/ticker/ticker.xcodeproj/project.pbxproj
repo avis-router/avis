@@ -26,6 +26,8 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		C9013C9B0F2BCBF500154085 /* hang_20080125.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9013C9A0F2BCBF500154085 /* hang_20080125.txt */; };
+		C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C9013D3A0F2D5FF300154085 /* PresenceStatus.m */; };
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
@@ -88,6 +90,9 @@
 		32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ticker_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9013C9A0F2BCBF500154085 /* hang_20080125.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hang_20080125.txt; sourceTree = "<group>"; };
+		C9013D390F2D5FF300154085 /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceStatus.h; sourceTree = "<group>"; };
+		C9013D3A0F2D5FF300154085 /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceStatus.m; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = "Growl Registration Ticket.growlRegDict"; sourceTree = "<group>"; };
 		C94B47A70F1731C900BADAE8 /* Ticker.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Ticker.icns; path = Icon/Ticker.icns; sourceTree = "<group>"; };
@@ -155,6 +160,8 @@
 				C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */,
 				C94B49860F22AC7B00BADAE8 /* PresenceEntity.h */,
 				C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */,
+				C9013D390F2D5FF300154085 /* PresenceStatus.h */,
+				C9013D3A0F2D5FF300154085 /* PresenceStatus.m */,
 				C9AEA1610F15ADE300C70410 /* TickerMessagesTextView.h */,
 				C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
@@ -201,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				C9F55FA20EFF1DF0005D9245 /* notes.txt */,
+				C9013C9A0F2BCBF500154085 /* hang_20080125.txt */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -304,6 +312,7 @@
 				C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */,
 				C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */,
 				C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */,
+				C9013C9B0F2BCBF500154085 /* hang_20080125.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,6 +355,7 @@
 				C94B499D0F22B0F400BADAE8 /* PresenceConnection.m in Sources */,
 				C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */,
 				C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */,
+				C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -39,7 +39,10 @@ NSString *PreferencesContext = @"PreferencesContext";
   [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
   [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];
   [defaults setObject: defaultUserName forKey: PrefOnlineUserName];
-    
+  [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
+            forKey: PrefPresenceGroups];
+  [defaults setObject: [NSArray array] forKey: PrefPresenceBuddies];
+
   [preferences registerDefaults: defaults];
 }
 
@@ -152,9 +155,9 @@ NSString *PreferencesContext = @"PreferencesContext";
 {
   if (context == PreferencesContext)
   {
-		NSLog (@"Elvin URL changed: %@", prefString (@"ElvinURL"));
+    elvin.elvinUrl = prefString (PrefElvinURL);
     
-    elvin.elvinUrl = prefString (@"ElvinURL");
+    NSLog (@"Elvin URL changed: %@", elvin.elvinUrl);
 	} else 
   {
 		[super observeValueForKeyPath: keyPath ofObject: object change: change 
