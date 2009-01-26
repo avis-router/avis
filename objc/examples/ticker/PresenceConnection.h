@@ -13,6 +13,7 @@
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection;
 
-@property (readonly, assign) IBOutlet NSSet * entities;
+@property (readonly, assign) IBOutlet  NSSet * entities;
+@property (readwrite, retain) IBOutlet PresenceStatus * presenceStatus;
 
 @end

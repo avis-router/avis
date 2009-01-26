@@ -27,6 +27,17 @@
   return status;
 }
 
++ (PresenceStatus *) offlineStatus
+{
+  PresenceStatus *status = [[PresenceStatus new] autorelease];
+  
+  status.statusCode = OFFLINE;
+  status.statusText = @"Logged off";
+  status.changedAt = [[NSDate date] retain];
+  
+  return status;
+}
+
 - (void) dealloc
 {
   [changedAt release];

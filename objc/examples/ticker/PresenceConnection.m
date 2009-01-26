@@ -83,7 +83,7 @@ static NSString *listToString (NSArray *list)
                         name: ElvinConnectionOpenedNotification object: nil]; 
   
   [notifications addObserver: self selector: @selector (handleElvinClose:)
-                        name: ElvinConnectionClosedNotification object: nil]; 
+                        name: ElvinConnectionWillCloseNotification object: nil]; 
   
   return self;
 }
@@ -93,7 +93,52 @@ static NSString *listToString (NSArray *list)
   [entities release];
   [presenceStatus release];
   
+  [[NSNotificationCenter defaultCenter] removeObserver: self];
+  
   [super dealloc];
+}
+
+- (PresenceStatus *) presenceStatus
+{
+  return presenceStatus;
+}
+
+- (void) setPresenceStatus: (PresenceStatus *) newStatus
+{
+  [presenceStatus release];
+  
+  presenceStatus = [newStatus retain];
+  
+  [self emitPresenceInfo: @"update" includingFields: FieldStatus];
+}
+
+#pragma mark -
+
+- (void) handleElvinOpen: (void *) unused
+{
+  if ([[NSThread currentThread] isMainThread])
+  {
+    [self clearPresenceEntities];
+    [self requestPresenceInfo];
+    [self emitPresenceInfo];
+  } else
+  {
+    [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
+          withObject: nil waitUntilDone: NO];
+  }
+}
+
+- (void) handleElvinClose: (void *) unused
+{
+  if ([[NSThread currentThread] isMainThread])
+  {
+    [self clearPresenceEntities];
+    [self setPresenceStatus: [PresenceStatus offlineStatus]];
+  } else
+  {
+    [self performSelectorOnMainThread: @selector (handleElvinClose:) 
+          withObject: nil waitUntilDone: NO];
+  }
 }
 
 #pragma mark -
@@ -216,25 +261,6 @@ static NSString *listToString (NSArray *list)
                withSetMutation: NSKeyValueUnionSetMutation
                   usingObjects: addedObjects];
   }
-}
-
-- (void) handleElvinOpen: (void *) unused
-{
-  if ([[NSThread currentThread] isMainThread])
-  {
-    [self clearPresenceEntities];
-    [self requestPresenceInfo];
-    [self emitPresenceInfo];
-  } else
-  {
-    [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
-          withObject: nil waitUntilDone: NO];
-  }
-}
-
-- (void) handleElvinClose: (void *) unused
-{
-  // TODO
 }
 
 #pragma mark -
