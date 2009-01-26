@@ -10,6 +10,7 @@ typedef enum {FieldStatus = 0x01, FieldBuddies = 0x02, FieldUserAgent = 0x04,
 
 extern NSString *ElvinConnectionOpenedNotification;
 extern NSString *ElvinConnectionClosedNotification;
+extern NSString *ElvinConnectionWillCloseNotification;
 
 @interface ElvinConnection : NSObject 
 {

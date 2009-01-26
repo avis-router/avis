@@ -4,6 +4,7 @@
 
 NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
 NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
+NSString *ElvinConnectionWillCloseNotification = @"ElvinConnectionWillClose";
 
 #pragma mark -
 
@@ -155,6 +156,9 @@ static void send_message (Elvin *elvin, Attributes *message);
   {
     NSLog (@"Disconnect from Elvin");
     
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: ElvinConnectionWillCloseNotification object: self];
+      
     elvin_invoke_close (&elvin);    
     
     // TODO: this should not be potentially infinite
