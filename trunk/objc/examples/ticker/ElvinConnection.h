@@ -48,7 +48,7 @@ extern NSString *ElvinConnectionWillCloseNotification;
                        inReplyTo: (NSString *) inReplyTo
                       withStatus: (PresenceStatus *) status
                         toGroups: (NSString *) groups
-                        andUsers: (NSString *) users
+                      andBuddies: (NSString *) buddies
                    fromUserAgent: (NSString * ) userAgent
                  includingFields: (PresenceFields) fields
                       sendPublic: (BOOL) isPublic;

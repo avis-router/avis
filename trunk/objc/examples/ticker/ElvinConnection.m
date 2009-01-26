@@ -309,13 +309,12 @@ void notification_listener (Subscription *sub,
   elvin_invoke (&elvin, (InvokeHandler)send_message, message);
 }
 
-// TODO rename users to buddies
 - (void) sendPresenceInfoMessage: (NSString *) userID
                          forUser: (NSString *) userName
                        inReplyTo: (NSString *) inReplyTo
                       withStatus: (PresenceStatus *) status
                         toGroups: (NSString *) groups
-                        andUsers: (NSString *) users
+                      andBuddies: (NSString *) buddies
                    fromUserAgent: (NSString * ) userAgent
                  includingFields: (PresenceFields) fields
                       sendPublic: (BOOL) isPublic
@@ -339,7 +338,7 @@ void notification_listener (Subscription *sub,
   }
   
   if (fields & FieldBuddies)
-    attributes_set_string (message, "Buddies", [users UTF8String]);
+    attributes_set_string (message, "Buddies", [buddies UTF8String]);
     
   if (fields & FieldUserAgent)
   {

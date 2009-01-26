@@ -188,12 +188,16 @@ static NSString *listToString (NSArray *list)
 - (void) emitPresenceInfo: (NSString *) inReplyTo 
          includingFields: (PresenceFields) fields
 {
+  NSString *buddies = 
+    (fields & FieldBuddies) ? 
+      listToString (prefArray (PrefPresenceBuddies)) : nil;
+
   [elvin sendPresenceInfoMessage: prefString (PrefOnlineUserUUID) 
                          forUser: prefString (PrefOnlineUserName) 
                        inReplyTo: inReplyTo
                       withStatus: presenceStatus
                         toGroups: listToString (prefArray (PrefPresenceGroups)) 
-                        andUsers: listToString (prefArray (PrefPresenceBuddies)) 
+                      andBuddies: buddies
                    fromUserAgent: @"Blue Sticker"
                  includingFields: fields
                       sendPublic: YES];
