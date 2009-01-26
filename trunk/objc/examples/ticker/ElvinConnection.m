@@ -39,7 +39,7 @@ static void send_message (Elvin *elvin, Attributes *message);
 
 @implementation SubscriptionContext
 
-+ (id) context: (NSString *) newSubscriptionExpr 
++ (id) contextFor: (NSString *) newSubscriptionExpr 
       delegate: (id) newDelegate selector: (SEL) newSelector
 {
   SubscriptionContext *context = [[SubscriptionContext new] retain];
@@ -137,10 +137,12 @@ static void send_message (Elvin *elvin, Attributes *message);
 
 - (void) connect
 {
+  NSAssert (eventLoopThread == nil, @"Attempt to close when still connected");
+  
   eventLoopThread = 
-    [[NSThread alloc] 
+    [[[NSThread alloc] 
        initWithTarget: self selector: @selector (elvinEventLoopThread) 
-       object: nil];
+       object: nil] retain];
                              
   [eventLoopThread start];
 }
@@ -154,15 +156,18 @@ static void send_message (Elvin *elvin, Attributes *message);
     NSLog (@"Disconnect from Elvin");
     
     elvin_invoke_close (&elvin);    
+    
+    // TODO: this should not be potentially infinite
+    while (![eventLoopThread isFinished])
+      usleep (100000);
+    
+    // nuke defunct Elvin subscription pointers
+    for (SubscriptionContext *context in subscriptions)
+      context->subscription = nil;
   }
   
-  // TODO: this should not be potentially infinite
-  while (![eventLoopThread isFinished])
-    usleep (100000);
-  
-  // nuke defunct Elvin subscription pointers
-  for (SubscriptionContext *context in subscriptions)
-    context->subscription = nil;
+  [eventLoopThread release];
+  eventLoopThread = nil;
 }
 
 #pragma Elvin publish/subscribe
@@ -171,7 +176,7 @@ static void send_message (Elvin *elvin, Attributes *message);
         withDelegate: (id) delegate usingSelector: (SEL) selector
 {
   SubscriptionContext *context = 
-    [SubscriptionContext context: subscriptionExpr 
+    [SubscriptionContext contextFor: subscriptionExpr 
                          delegate: delegate selector: selector];
   
   [subscriptions addObject: context];
@@ -294,6 +299,52 @@ void notification_listener (Subscription *sub,
   attributes_set_string (message, "Groups",            [groups UTF8String]);
   attributes_set_string (message, "Users",             [users UTF8String]);
   
+  if (isPublic)
+    attributes_set_string (message, "Distribution", "world");
+  
+  elvin_invoke (&elvin, (InvokeHandler)send_message, message);
+}
+
+// TODO rename users to buddies
+- (void) sendPresenceInfoMessage: (NSString *) userID
+                         forUser: (NSString *) userName
+                       inReplyTo: (NSString *) inReplyTo
+                      withStatus: (PresenceStatus *) status
+                        toGroups: (NSString *) groups
+                        andUsers: (NSString *) users
+                   fromUserAgent: (NSString * ) userAgent
+                 includingFields: (PresenceFields) fields
+                      sendPublic: (BOOL) isPublic
+{
+  Attributes *message = attributes_create ();
+  
+  attributes_set_int32  (message, "Presence-Protocol", 1000);  
+  attributes_set_string (message, "Presence-Info",     [inReplyTo UTF8String]);
+  attributes_set_string (message, "Client-Id",         [userID UTF8String]);
+  attributes_set_string (message, "User",              [userName UTF8String]);
+  attributes_set_string (message, "Groups",            [groups UTF8String]);
+  
+  if (fields & FieldStatus)
+  {
+    attributes_set_string (message, "Status",         
+      [[status statusCodeAsString] UTF8String]);
+    attributes_set_string (message, "Status-Text", 
+      [[status statusText] UTF8String]);
+    attributes_set_int32 (message, "Status-Duration", 
+      [status statusDurationAsSecondsElapsed]);
+  }
+  
+  if (fields & FieldBuddies)
+    attributes_set_string (message, "Buddies", [users UTF8String]);
+    
+  if (fields & FieldUserAgent)
+  {
+    const char *agent = [userAgent UTF8String];
+    
+    attributes_set_string (message, "User-Agent", agent);
+    attributes_set_string (message, "Ticker-Client", agent);
+  }
+
   if (isPublic)
     attributes_set_string (message, "Distribution", "world");
   

@@ -423,8 +423,6 @@ static NSAttributedString *attributedString (NSString *string,
 
 #pragma mark -
 
-@dynamic canSend;
-
 - (BOOL) canSend
 {
   return canSend;
@@ -435,7 +433,6 @@ static NSAttributedString *attributedString (NSString *string,
   canSend = newValue;
   
   [sendButton setEnabled: canSend];
-  
   [sendButton setToolTip: 
     canSend ? nil : @"Cannot send: currently disconnected"];
 }
@@ -465,7 +462,7 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   [elvin sendTickerMessage: message 
-    fromSender: prefString (@"OnlineUserName")
+    fromSender: prefString (PrefOnlineUserName)
     toGroup: [messageGroup stringValue] 
     inReplyTo: self.inReplyTo 
     attachedURL: self.attachedURL
@@ -514,8 +511,6 @@ static NSAttributedString *attributedString (NSString *string,
 {
   self.attachedURL = nil;
 }
-
-@dynamic attachedURL;
 
 - (void) setAttachedURL: (NSURL *) url
 {
