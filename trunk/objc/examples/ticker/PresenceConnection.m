@@ -167,14 +167,16 @@ static NSString *listToParameterString (NSArray *list)
 
 - (NSString *) presenceRequestSubscription
 {
+  NSString *userName = prefString (PrefOnlineUserName);
+  
   // TODO escape user name
   NSMutableString *expr = 
-    [NSMutableString stringWithString: 
-     @"Presence-Protocol < 2000 && string (Presence-Request) && "];
+    [NSMutableString stringWithFormat: 
+     @"Presence-Protocol < 2000 && string (Presence-Request) && Requestor != \"%@\" && ",
+     userName];
      
-  [expr appendString: 
-    [NSString stringWithFormat: @"(contains (fold-case (Users), \"|%@|\")", 
-              [prefString (PrefOnlineUserName) lowercaseString]]];
+  [expr appendFormat: @"(contains (fold-case (Users), \"|%@|\")", 
+    [userName lowercaseString]];
   
   NSArray *groups = prefArray (PrefPresenceGroups);
   
@@ -211,8 +213,6 @@ static NSString *listToParameterString (NSArray *list)
       [NSString stringWithFormat: @" && contains (fold-case (Groups) %@)", 
                 listToParameterString (groups)]];
   }
-  
-  NSLog (@"info sub = %@", expr);
   
   return expr;
 }
