@@ -76,7 +76,7 @@
 
 - (uint32_t) statusDurationAsSecondsElapsed
 {
-  return (uint32_t)[changedAt timeIntervalSinceNow];
+  return (uint32_t)[[NSDate date] timeIntervalSinceDate: changedAt];
 }
 
 @synthesize statusCode;

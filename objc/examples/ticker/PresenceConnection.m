@@ -166,7 +166,8 @@ static NSString *listToString (NSArray *list)
 
 - (void) handlePresenceRequest: (NSDictionary *) notification
 {
-  
+  [self emitPresenceInfo: [notification objectForKey: @"Presence-Request"]
+         includingFields: FieldsAll];
 }
 
 - (void) handlePresenceInfo: (NSDictionary *) notification

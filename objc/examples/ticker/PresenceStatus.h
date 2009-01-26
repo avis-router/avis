@@ -14,8 +14,6 @@ typedef enum
 
 + (PresenceStatus *) onlineStatus;
 
-- (NSString *) statusCodeAsString;
-
 @property (readwrite, assign) OnlineStatus statusCode;
 @property (readonly)          NSString *   statusCodeAsString;
 @property (readonly)          NSString *   statusCodeAsUIString;
