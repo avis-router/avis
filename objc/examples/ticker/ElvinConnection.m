@@ -131,49 +131,6 @@ static void send_message (Elvin *elvin, Attributes *message);
   }
 }
 
-- (BOOL) isConnected
-{
-  return elvin_is_open (&elvin);
-}
-
-- (void) connect
-{
-  NSAssert (eventLoopThread == nil, @"Attempt to close when still connected");
-  
-  eventLoopThread = 
-    [[[NSThread alloc] 
-       initWithTarget: self selector: @selector (elvinEventLoopThread) 
-       object: nil] retain];
-                             
-  [eventLoopThread start];
-}
-
-- (void) disconnect
-{
-  [eventLoopThread cancel];
-  
-  if (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
-  {
-    NSLog (@"Disconnect from Elvin");
-    
-    [[NSNotificationCenter defaultCenter] 
-      postNotificationName: ElvinConnectionWillCloseNotification object: self];
-      
-    elvin_invoke_close (&elvin);    
-    
-    // TODO: this should not be potentially infinite
-    while (![eventLoopThread isFinished])
-      usleep (100000);
-    
-    // nuke defunct Elvin subscription pointers
-    for (SubscriptionContext *context in subscriptions)
-      context->subscription = nil;
-  }
-  
-  [eventLoopThread release];
-  eventLoopThread = nil;
-}
-
 #pragma Elvin publish/subscribe
 
 - (void) subscribe: (NSString *) subscriptionExpr
@@ -368,6 +325,49 @@ void send_message (Elvin *elvin, Attributes *message)
 }
 
 #pragma mark Event loop
+
+- (BOOL) isConnected
+{
+  return elvin_is_open (&elvin);
+}
+
+- (void) connect
+{
+  NSAssert (eventLoopThread == nil, @"Attempt to close when still connected");
+  
+  eventLoopThread = 
+    [[[NSThread alloc] 
+       initWithTarget: self selector: @selector (elvinEventLoopThread) 
+       object: nil] retain];
+                             
+  [eventLoopThread start];
+}
+
+- (void) disconnect
+{
+  [eventLoopThread cancel];
+  
+  if (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
+  {
+    NSLog (@"Disconnect from Elvin");
+    
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: ElvinConnectionWillCloseNotification object: self];
+      
+    elvin_invoke_close (&elvin);    
+    
+    // TODO: this should not be potentially infinite
+    while (![eventLoopThread isFinished])
+      usleep (100000);
+    
+    // nuke defunct Elvin subscription pointers
+    for (SubscriptionContext *context in subscriptions)
+      context->subscription = nil;
+  }
+  
+  [eventLoopThread release];
+  eventLoopThread = nil;
+}
 
 - (void) elvinEventLoopThread
 {

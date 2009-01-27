@@ -9,6 +9,6 @@
 
 - (id) initWithAppController: (AppController *) theAppController;
 
-@property (readonly, assign) IBOutlet AppController * appController;
+@property (readonly) IBOutlet AppController * appController;
 
 @end
