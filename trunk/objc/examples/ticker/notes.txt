@@ -54,7 +54,12 @@
   * click on growl to show message
   * DONE: elvin connect/disconnect
 + presence
-  * presence history
+  * DONE: liveness
+  * icon status display + status duration
+  * change presence status
+  * prefs for presence groups
+  * handle name, groups, buddies change
+  * presence history: show person's history
 + multiple windows
   * move growl notif to app controller
 + filtering

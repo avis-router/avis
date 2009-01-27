@@ -4,6 +4,9 @@
 #import "PresenceEntity.h"
 #import "Preferences.h"
 
+// Time (in seconds) before a user is considered stale and in need of refresh
+#define STALE_USER_AGE (5 * 60)
+
 static NSString *stringValueForAttribute (NSDictionary *notification, 
                                           NSString *attribute)
 {
@@ -64,12 +67,14 @@ static NSString *listToParameterString (NSArray *list)
   - (NSString *) presenceRequestSubscription;
   - (void) requestPresenceInfo;
   - (void) emitPresenceInfo;
+  - (void) emitPresenceInfoAsLivenessUpdate;
   - (void) emitPresenceInfo: (NSString *) inReplyTo 
            includingFields: (PresenceFields) fields;
-  - (PresenceEntity *) findUserWithId: (NSString *) presenceId;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
   - (void) clearEntities;
+  - (PresenceEntity *) findUserWithId: (NSString *) presenceId;
+  - (void) resetLivenessTimer;
 @end
 
 @implementation PresenceConnection
@@ -100,7 +105,10 @@ static NSString *listToParameterString (NSArray *list)
   
   [notifications addObserver: self selector: @selector (handleElvinClose:)
                         name: ElvinConnectionWillCloseNotification object: nil]; 
-  
+
+  [notifications addObserver: self selector: @selector (handleElvinClose:)
+                        name: ElvinConnectionClosedNotification object: nil]; 
+                          
   if ([elvin isConnected])
   {
     [self emitPresenceInfo];
@@ -127,11 +135,13 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) setPresenceStatus: (PresenceStatus *) newStatus
 {
+  // TODO check if we're already in this status
   [presenceStatus release];
   
   presenceStatus = [newStatus retain];
   
-  [self emitPresenceInfo: @"update" includingFields: FieldStatus];
+  if ([elvin isConnected])
+    [self emitPresenceInfo: @"update" includingFields: FieldStatus];
 }
 
 #pragma mark -
@@ -172,8 +182,8 @@ static NSString *listToParameterString (NSArray *list)
   // TODO escape user name
   NSMutableString *expr = 
     [NSMutableString stringWithFormat: 
-     @"Presence-Protocol < 2000 && string (Presence-Request) && Requestor != \"%@\" && ",
-     userName];
+     @"Presence-Protocol < 2000 && string (Presence-Request) && \
+     Requestor != \"%@\" && ", userName];
      
   [expr appendFormat: @"(contains (fold-case (Users), \"|%@|\")", 
     [userName lowercaseString]];
@@ -182,9 +192,8 @@ static NSString *listToParameterString (NSArray *list)
   
   if ([groups count] > 0)
   {
-    [expr appendString: 
-      [NSString stringWithFormat: @" || contains (fold-case (Groups) %@)", 
-                listToParameterString (groups)]];
+    [expr appendFormat: @" || contains (fold-case (Groups) %@)", 
+      listToParameterString (groups)];
   }
   
   [expr appendString: @")"];
@@ -209,9 +218,8 @@ static NSString *listToParameterString (NSArray *list)
   
   if ([groups count] > 0)
   {
-    [expr appendString: 
-      [NSString stringWithFormat: @" && contains (fold-case (Groups) %@)", 
-                listToParameterString (groups)]];
+    [expr appendFormat: @" && contains (fold-case (Groups) %@)", 
+      listToParameterString (groups)];
   }
   
   return expr;
@@ -267,12 +275,33 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) requestPresenceInfo
 {
-  // TODO support users, groups and distribution
+  // TODO support users, groups and distribution prefs
+  NSString *groups = listToBarDelimitedString (prefArray (PrefPresenceGroups));
+  NSString *buddies = 
+    listToBarDelimitedString (prefArray (PrefPresenceBuddies));
+  
   [elvin sendPresenceRequestMessage: prefString (PrefOnlineUserUUID) 
                       fromRequestor: prefString (PrefOnlineUserName) 
-                           toGroups: listToBarDelimitedString (prefArray (PrefPresenceGroups)) 
-                           andUsers: listToBarDelimitedString (prefArray (PrefPresenceBuddies)) 
+                           toGroups: groups
+                           andUsers: buddies
                          sendPublic: YES];
+}
+
+/**
+ * Clear and re-start (if online) the liveness timer that sends out updates
+ * when more than STALE_USER_AGE seconds are about to pass with no global
+ * presence info being sent.
+ */
+- (void) resetLivenessTimer
+{
+  [NSObject cancelPreviousPerformRequestsWithTarget: self];
+  
+  if (presenceStatus.statusCode != OFFLINE)
+  {
+    [self performSelector: 
+      @selector (emitPresenceInfoAsLivenessUpdate) withObject: nil 
+      afterDelay: STALE_USER_AGE - 5];
+  }
 }
 
 - (void) emitPresenceInfo
@@ -280,9 +309,15 @@ static NSString *listToParameterString (NSArray *list)
   [self emitPresenceInfo: @"initial" includingFields: FieldsAll];
 }
 
+- (void) emitPresenceInfoAsLivenessUpdate
+{
+  [self emitPresenceInfo: @"update" includingFields: FieldStatus];
+}
+
 - (void) emitPresenceInfo: (NSString *) inReplyTo 
          includingFields: (PresenceFields) fields
 {
+  NSString *groups = listToBarDelimitedString (prefArray (PrefPresenceGroups));
   NSString *buddies = 
     (fields & FieldBuddies) ? 
       listToBarDelimitedString (prefArray (PrefPresenceBuddies)) : nil;
@@ -291,11 +326,14 @@ static NSString *listToParameterString (NSArray *list)
                          forUser: prefString (PrefOnlineUserName) 
                        inReplyTo: inReplyTo
                       withStatus: presenceStatus
-                        toGroups: listToBarDelimitedString (prefArray (PrefPresenceGroups)) 
+                        toGroups: groups 
                       andBuddies: buddies
                    fromUserAgent: @"Blue Sticker"
                  includingFields: fields
                       sendPublic: YES];
+
+  if ([inReplyTo isEqual: @"initial"] || [inReplyTo isEqual: @"update"])
+    [self resetLivenessTimer];
 }
 
 #pragma mark -
