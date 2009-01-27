@@ -7,6 +7,7 @@
   * see if we can avoid updating tracking areas during live scroll
   * move tooltip gen to ticker controller
   * animate reply/public button
+  * cursor flips to hand briefly before text on entrance to ticker
   * DONE: icon
   * DONE: allow delete from ticker list
   * DONE: remove public button -> replace with icon
@@ -21,9 +22,9 @@
   * start with perf tool -> send button never enabled
   * bogus URL failure
   * send failure not detected
-  * use shutdown () or no select wakeup for BSD (?)
   * elvin connection needs to be made thread safe: synchronized
   * 60 second pause to detect fail via firewall (see below)
+  * DONE: use shutdown () or no select wakeup for BSD (?)
   * DONE: handle router shutdown/protocol error after open
 + attached URL's
   * why doesn't cursor change until clicked?
@@ -54,12 +55,14 @@
   * click on growl to show message
   * DONE: elvin connect/disconnect
 + presence
-  * DONE: liveness
+  * auto away status
+  * set sort order to be by status
   * icon status display + status duration
   * change presence status
   * prefs for presence groups
   * handle name, groups, buddies change
   * presence history: show person's history
+  * DONE: liveness
 + multiple windows
   * move growl notif to app controller
 + filtering
