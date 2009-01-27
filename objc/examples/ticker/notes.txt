@@ -56,6 +56,7 @@
   * DONE: elvin connect/disconnect
 + presence
   * auto away status
+  * auto typing status
   * set sort order to be by status
   * icon status display + status duration
   * change presence status
