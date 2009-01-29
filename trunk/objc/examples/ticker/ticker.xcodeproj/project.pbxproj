@@ -27,6 +27,7 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C9013D3A0F2D5FF300154085 /* PresenceStatus.m */; };
+		C93D56360F305C6B0005EE00 /* crash_20090128.txt in Resources */ = {isa = PBXBuildFile; fileRef = C93D56350F305C6B0005EE00 /* crash_20090128.txt */; };
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
@@ -91,6 +92,7 @@
 		8D1107320486CEB800E47090 /* ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9013D390F2D5FF300154085 /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceStatus.h; sourceTree = "<group>"; };
 		C9013D3A0F2D5FF300154085 /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceStatus.m; sourceTree = "<group>"; };
+		C93D56350F305C6B0005EE00 /* crash_20090128.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090128.txt; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = "Growl Registration Ticket.growlRegDict"; sourceTree = "<group>"; };
 		C94B47A70F1731C900BADAE8 /* Ticker.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Ticker.icns; path = Icon/Ticker.icns; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 		29B97314FDCFA39411CA2CEA /* ticker */ = {
 			isa = PBXGroup;
 			children = (
+				C93D56350F305C6B0005EE00 /* crash_20090128.txt */,
 				C9F55FA20EFF1DF0005D9245 /* notes.txt */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -309,6 +312,7 @@
 				C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */,
 				C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */,
 				C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */,
+				C93D56360F305C6B0005EE00 /* crash_20090128.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
