@@ -31,24 +31,26 @@ usage ()
      -c file          : Load config from file$NL\
      -daemon          : Run as daemon$NL\
      -pidfile file    : Output process ID to file$NL\
-     -logfile file    : Log output to file (only with -daemon)$NL"
+     -logfile file    : Log output to file (only with -daemon)$NL
+     -jvmopts opts    : Set JVM command line options$NL"
  
   echo "$help" >&2
 }
 
 while [ $# -gt 0 ]; do
   case $1 in
-    -pidfile) pidfile=$2; shift 2;;
-    -daemon)  daemon=1; shift;;
-    -logfile) logfile=$2; shift 2;;
-    -v|-vv)   avis_opts="$avis_opts $1"; shift;;
-    -p|-c)    avis_opts="$avis_opts $1 $2"; shift;
-  	      if [ ! -z $1 ]; then shift; fi;;
-    *)        usage; exit 1;;
+    -pidfile)       pidfile=$2; shift 2;;
+    -daemon)        daemon=1; shift;;
+    -logfile)       logfile=$2; shift 2;;
+    -v|-vv)         avis_opts="$avis_opts $1"; shift;;
+    -jvmopts)       jvm_opts="$2"; shift 2;;
+    -p|-c)          avis_opts="$avis_opts $1 $2"; shift;
+  	            if [ ! -z $1 ]; then shift; fi;;
+    *)              usage; exit 1;;
   esac
 done
 
-java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC"
+java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC $jvm_opts"
 
 command="java $java_options -jar $avisd_jar $avis_opts"
 
