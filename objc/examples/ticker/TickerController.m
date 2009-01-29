@@ -362,6 +362,9 @@ static NSAttributedString *attributedString (NSString *string,
   // scroll to end if that's how it was when we started
   if (wasScrolledToEnd)
   {
+    // TODO: bug: very rarely, this segfaults. perhaps something to do with
+    // insertion point?
+    [tickerMessagesTextView displayIfNeeded];
     [tickerMessagesTextView scrollRangeToVisible: 
       NSMakeRange ([[tickerMessagesTextView textStorage] length], 0)];
   }
