@@ -20,3 +20,9 @@ NSString *uuidString ()
   
   return [NSString stringWithCString: uuid];
 }
+
+NSString *trim (NSString *string)
+{
+  return [string stringByTrimmingCharactersInSet: 
+    [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}

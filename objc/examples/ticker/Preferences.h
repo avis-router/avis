@@ -6,6 +6,7 @@ extern NSString *PrefElvinURL;
 extern NSString *PrefDefaultSendGroup;
 extern NSString *PrefPresenceGroups;
 extern NSString *PrefPresenceBuddies;
+extern NSString *PrefTickerSubscription;
 
 static inline NSString *prefString (const NSString *name)
 {
