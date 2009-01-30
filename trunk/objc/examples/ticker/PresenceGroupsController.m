@@ -10,7 +10,7 @@
     [NSArray arrayWithObject: 
       [[NSSortDescriptor alloc] 
          initWithKey: @"" ascending: YES 
-         selector: @selector (caseInsensitiveCompare:)]]];
+         selector: @selector (localizedCaseInsensitiveCompare:)]]];
   
   [self setAutomaticallyRearrangesObjects: YES];
 }
@@ -19,7 +19,7 @@
 {
   for (NSString *g in [self arrangedObjects])
   {
-    if ([g caseInsensitiveCompare: group] == 0)
+    if ([g localizedCaseInsensitiveCompare: group] == NSOrderedSame)
       return YES;
   }
   
