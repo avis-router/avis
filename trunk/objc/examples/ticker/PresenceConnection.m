@@ -1,5 +1,7 @@
 #import "PresenceConnection.h"
 
+#import "utils.h"
+
 #import "ElvinConnection.h"
 #import "PresenceEntity.h"
 #import "Preferences.h"
@@ -198,6 +200,8 @@ static NSString *listToParameterString (NSArray *list)
   
   [expr appendString: @")"];
   
+  TRACE (@"Presence request subscription is: %@", expr);
+  
   return expr;
 }
 
@@ -221,6 +225,8 @@ static NSString *listToParameterString (NSArray *list)
     [expr appendFormat: @" && contains (fold-case (Groups) %@)", 
       listToParameterString (groups)];
   }
+  
+  TRACE (@"Presence info subscription is: %@", expr);
   
   return expr;
 }

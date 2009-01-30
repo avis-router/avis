@@ -10,17 +10,38 @@
     return nil;
 }
 
-- (void)didEndSheet: (NSWindow *) sheet returnCode: (int) returnCode 
-        contextInfo: (void *) contextInfo
+//- (void) windowDidLoad
+//{
+//  [presenceGroupsController setSortDescriptors: 
+//    [NSArray arrayWithObject: 
+//     [[NSSortDescriptor alloc] 
+//        initWithKey: @"" ascending: YES 
+//           selector: @selector (caseInsensitiveCompare:)]]];
+//  
+//  [presenceGroupsController setAutomaticallyRearrangesObjects: YES];  
+//}
+
+- (void) didEndSheet: (NSWindow *) sheet returnCode: (int) returnCode 
+         contextInfo: (void *) contextInfo
 {
-  NSLog (@"Code = %u", returnCode);
-  
-  //if (returnCode == NSOKButton)
+//  NSString *group = 
+//    [[addPresenceGroupTextField stringValue] 
+//      stringByTrimmingCharactersInSet: 
+//        [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+//  
+//  if (returnCode == NSOKButton && [group length] > 0 &&
+//      ![[presenceGroupsController arrangedObjects] containsObject: group])
 //  {
-//    NSArray *
+//    [presenceGroupsController addObject: group];
 //  }
+//  
+//  [sheet orderOut: self];
+  
+  if (returnCode == NSOKButton)
+    [presenceGroupsController addObject: [addPresenceGroupTextField stringValue]];
   
   [sheet orderOut: self];
+  
 }
 
 - (IBAction) closeAddPresenceGroupSheet: (id) sender

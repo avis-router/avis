@@ -47,6 +47,7 @@
 		C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF62D30EE0BF5F00A76D46 /* AppController.m */; };
 		C9DA04290F327946004A663D /* crash_20090129.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9DA04280F327946004A663D /* crash_20090129.txt */; };
 		C9DA04370F3295DF004A663D /* Preferences_AddPresenceGroup.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9DA04360F3295DF004A663D /* Preferences_AddPresenceGroup.xib */; };
+		C9DA04E30F32ABEE004A663D /* PresenceGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DA04E20F32ABEE004A663D /* PresenceGroupsController.m */; };
 		C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DDD3B40F26B4090082AF4C /* Preferences.m */; };
 		C9DFB1C00F12CF9700365453 /* Reply_Normal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */; };
 		C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */; };
@@ -121,6 +122,8 @@
 		C9CF62D30EE0BF5F00A76D46 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		C9DA04280F327946004A663D /* crash_20090129.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090129.txt; sourceTree = "<group>"; };
 		C9DA04360F3295DF004A663D /* Preferences_AddPresenceGroup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences_AddPresenceGroup.xib; sourceTree = "<group>"; };
+		C9DA04E10F32ABEE004A663D /* PresenceGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceGroupsController.h; sourceTree = "<group>"; };
+		C9DA04E20F32ABEE004A663D /* PresenceGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceGroupsController.m; sourceTree = "<group>"; };
 		C9DDD3B30F26B4090082AF4C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
 		C9DDD3B40F26B4090082AF4C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preferences.m; sourceTree = "<group>"; };
 		C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reply_Normal.tiff; sourceTree = "<group>"; };
@@ -172,6 +175,8 @@
 				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
 				C9DDD3B30F26B4090082AF4C /* Preferences.h */,
 				C9DDD3B40F26B4090082AF4C /* Preferences.m */,
+				C9DA04E10F32ABEE004A663D /* PresenceGroupsController.h */,
+				C9DA04E20F32ABEE004A663D /* PresenceGroupsController.m */,
 				C9521BAB0F08CE4100BA83EC /* DragTarget.h */,
 				C9521BAC0F08CE4100BA83EC /* DragTarget.m */,
 				C9DFB2A90F12FF2300365453 /* TextViewWithLinks.h */,
@@ -364,6 +369,7 @@
 				C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */,
 				C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */,
 				C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */,
+				C9DA04E30F32ABEE004A663D /* PresenceGroupsController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,6 +460,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = LOG_TRACE;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
