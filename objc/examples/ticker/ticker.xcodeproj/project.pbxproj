@@ -46,6 +46,7 @@
 		C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */; };
 		C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF62D30EE0BF5F00A76D46 /* AppController.m */; };
 		C9DA04290F327946004A663D /* crash_20090129.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9DA04280F327946004A663D /* crash_20090129.txt */; };
+		C9DA04370F3295DF004A663D /* Preferences_AddPresenceGroup.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9DA04360F3295DF004A663D /* Preferences_AddPresenceGroup.xib */; };
 		C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DDD3B40F26B4090082AF4C /* Preferences.m */; };
 		C9DFB1C00F12CF9700365453 /* Reply_Normal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */; };
 		C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */; };
@@ -119,6 +120,7 @@
 		C9CF62D20EE0BF5F00A76D46 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		C9CF62D30EE0BF5F00A76D46 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		C9DA04280F327946004A663D /* crash_20090129.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090129.txt; sourceTree = "<group>"; };
+		C9DA04360F3295DF004A663D /* Preferences_AddPresenceGroup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences_AddPresenceGroup.xib; sourceTree = "<group>"; };
 		C9DDD3B30F26B4090082AF4C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
 		C9DDD3B40F26B4090082AF4C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preferences.m; sourceTree = "<group>"; };
 		C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reply_Normal.tiff; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */,
 				C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */,
 				C9F561BE0F00B247005D9245 /* Preferences.xib */,
+				C9DA04360F3295DF004A663D /* Preferences_AddPresenceGroup.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */,
@@ -317,6 +320,7 @@
 				C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */,
 				C93D56360F305C6B0005EE00 /* crash_20090128.txt in Resources */,
 				C9DA04290F327946004A663D /* crash_20090129.txt in Resources */,
+				C9DA04370F3295DF004A663D /* Preferences_AddPresenceGroup.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
