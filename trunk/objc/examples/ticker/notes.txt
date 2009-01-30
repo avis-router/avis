@@ -5,7 +5,7 @@
   * change dock icon when disconnected
   * BUG?: cursor update failed on restart + receive one new ext message
   * rename to "Ticker"
-  * set sub - single window
+  * DONE: set sub - single window
   * see if we can avoid updating tracking areas during live scroll
   * move tooltip gen to ticker controller
   * animate reply/public button
@@ -62,7 +62,7 @@
   * set sort order to be by status
   * icon status display + status duration
   * change presence status, incl invisible
-  * prefs for presence groups
+  * DONE: prefs for presence groups
   * handle name, groups, buddies change
   * presence history: show person's history
   * cull non responsive entities. use on reconnect rather than clear/refresh
