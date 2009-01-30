@@ -2,12 +2,12 @@
 
 @interface PreferencesController : NSWindowController
 {
-  IBOutlet id addPresenceGroupSheet;
+  IBOutlet id presenceGroupAddSheet;
   IBOutlet id addPresenceGroupTextField;
   IBOutlet NSArrayController *presenceGroupsController;
 }
 
 - (IBAction) addPresenceGroup: (id) sender;
-- (IBAction) closeAddPresenceGroupSheet: (id) sender;
+- (IBAction) closePresenceGroupAddSheet: (id) sender;
 
 @end

@@ -49,14 +49,10 @@ static NSString *listToParameterString (NSArray *list)
 {
   NSMutableString *string = [NSMutableString string];
   
+  // TODO escape item
   for (NSString *item in list)
-  {
-    [string appendString: @", \"|"];
-    // TODO escape item
-    [string appendString: [item lowercaseString]];
-    [string appendString: @"|\""];
-  }
-    
+    [string appendFormat: @", \"|%@|\"", [item lowercaseString]];
+
   return string;
 }
 
@@ -69,7 +65,7 @@ static NSString *listToParameterString (NSArray *list)
   - (NSString *) presenceRequestSubscription;
   - (void) requestPresenceInfo;
   - (void) emitPresenceInfo;
-  - (void) emitPresenceInfoAsLivenessUpdate;
+  - (void) emitPresenceInfoAsStatusUpdate;
   - (void) emitPresenceInfo: (NSString *) inReplyTo 
            includingFields: (PresenceFields) fields;
   - (void) handleElvinOpen: (void *) unused;
@@ -90,8 +86,9 @@ static NSString *listToParameterString (NSArray *list)
   entities = [[NSMutableSet setWithCapacity: 5] retain];
   presenceStatus = [[PresenceStatus onlineStatus] retain];
   
-  // suscribe to incoming presence info
-  // TODO resub on user name change
+  // subscribe to incoming presence info
+  // TODO resub on user name/groups change
+  // TODO re-emit presence on groups change
   [elvin subscribe: [self presenceInfoSubscription] withDelegate: self 
      usingSelector: @selector (handlePresenceInfo:)];
 
@@ -137,13 +134,12 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) setPresenceStatus: (PresenceStatus *) newStatus
 {
-  // TODO check if we're already in this status
-  [presenceStatus release];
+  if (![newStatus isEqual: presenceStatus])
+  {
+    [presenceStatus release];
   
-  presenceStatus = [newStatus retain];
-  
-  if ([elvin isConnected])
-    [self emitPresenceInfo: @"update" includingFields: FieldStatus];
+    presenceStatus = [newStatus retain];
+  }
 }
 
 #pragma mark -
@@ -152,6 +148,7 @@ static NSString *listToParameterString (NSArray *list)
 {
   if ([[NSThread currentThread] isMainThread])
   {
+    [self setPresenceStatus: [PresenceStatus onlineStatus]];
     [self clearEntities];
     [self requestPresenceInfo];
     [self emitPresenceInfo];
@@ -168,6 +165,7 @@ static NSString *listToParameterString (NSArray *list)
   {
     [self clearEntities];
     [self setPresenceStatus: [PresenceStatus offlineStatus]];
+    [self emitPresenceInfoAsStatusUpdate];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
@@ -305,7 +303,7 @@ static NSString *listToParameterString (NSArray *list)
   if (presenceStatus.statusCode != OFFLINE)
   {
     [self performSelector: 
-      @selector (emitPresenceInfoAsLivenessUpdate) withObject: nil 
+      @selector (emitPresenceInfoAsStatusUpdate) withObject: nil 
       afterDelay: STALE_USER_AGE - 5];
   }
 }
@@ -315,7 +313,7 @@ static NSString *listToParameterString (NSArray *list)
   [self emitPresenceInfo: @"initial" includingFields: FieldsAll];
 }
 
-- (void) emitPresenceInfoAsLivenessUpdate
+- (void) emitPresenceInfoAsStatusUpdate
 {
   [self emitPresenceInfo: @"update" includingFields: FieldStatus];
 }
@@ -323,6 +321,9 @@ static NSString *listToParameterString (NSArray *list)
 - (void) emitPresenceInfo: (NSString *) inReplyTo 
          includingFields: (PresenceFields) fields
 {
+  if (![elvin isConnected])
+    return;
+
   NSString *groups = listToBarDelimitedString (prefArray (PrefPresenceGroups));
   NSString *buddies = 
     (fields & FieldBuddies) ? 
