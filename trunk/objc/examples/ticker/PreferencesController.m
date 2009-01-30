@@ -12,7 +12,7 @@
 
 - (void) addPresenceGroupSheetDidEnd: (NSWindow *) sheet 
                           returnCode: (int) returnCode 
-                        contextInfo: (void *) contextInfo
+                         contextInfo: (void *) contextInfo
 {
   if (returnCode == NSOKButton)
   {
@@ -21,14 +21,11 @@
   }
   
   [sheet orderOut: self];
-  
 }
 
 - (IBAction) closeAddPresenceGroupSheet: (id) sender
 {
-  [NSApp endSheet: addPresenceGroupSheet
-       returnCode: (sender == addPresenceGroupAddButton ? 
-                      NSOKButton : NSCancelButton)];
+  [NSApp endSheet: addPresenceGroupSheet returnCode: [sender tag]];
 }
 
 - (IBAction) addPresenceGroup: (id) sender
