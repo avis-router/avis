@@ -1,13 +1,14 @@
 #import "Growl/GrowlApplicationBridge.h"
 
+#import "utils.h"
+
 #import "TickerController.h"
 #import "RolloverButton.h"
 #import "ElvinConnection.h"
 #import "Preferences.h"
 
 #define TICKER_SUBSCRIPTION \
-  @"string (Message) && string (Group) && string (From) && ! \
-    Group == 'lawley-rcvstore'"
+  @"string (Message) && string (Group) && string (From)"
 
 #define MAX_GROWL_MESSAGE_LENGTH 200
 
@@ -116,6 +117,7 @@ static NSAttributedString *attributedString (NSString *string,
 #pragma mark -
 
 @interface TickerController (PRIVATE)
+  - (NSString *) fullTickerSubscription;
   - (void) handleNotify: (NSDictionary *) message;
   - (void) notifyGrowlOnTickerMessage: (TickerMessage *) message;
   - (void) notifyGrowlOnElvinStatusChange: (NSString *) status;
@@ -131,17 +133,15 @@ static NSAttributedString *attributedString (NSString *string,
 
 @implementation TickerController
 
-- (id) initWithElvin: (ElvinConnection *) theElvinConnection
+- (id) initWithElvin: (ElvinConnection *) theElvinConnection 
+        subscription: (NSString *) theSubscription
 {
   self = [super initWithWindowNibName: @"TickerWindow"];
   
   if (self)
   {
     elvin = theElvinConnection;
-      
-    [elvin
-      subscribe: TICKER_SUBSCRIPTION 
-      withDelegate: self usingSelector: @selector (handleNotify:)];    
+    self.subscription = theSubscription;
     
     // listen for elvin open/close
     NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
@@ -150,7 +150,7 @@ static NSAttributedString *attributedString (NSString *string,
                           name: ElvinConnectionOpenedNotification object: nil]; 
     
     [notifications addObserver: self selector: @selector (handleElvinClose:)
-                          name: ElvinConnectionClosedNotification object: nil]; 
+                          name: ElvinConnectionClosedNotification object: nil];     
   }
   
   return self;
@@ -168,6 +168,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) awakeFromNib
 {
   [tickerMessagesTextView setString: @""];
+  
   self.canSend = [elvin isConnected];
 }
 
@@ -426,6 +427,43 @@ static NSAttributedString *attributedString (NSString *string,
 
 #pragma mark -
 
+- (NSString *) subscription
+{
+  return subscription;
+}
+
+- (void) setSubscription: (NSString *) newSubscription
+{
+  if (![newSubscription isEqual: subscription])
+  {
+    TRACE (@"Change ticker subscription: %@", newSubscription);
+    
+    [subscription release];
+    
+    subscription = [newSubscription retain];
+    
+    if (subscriptionContext)
+    {
+      [elvin resubscribe: subscriptionContext 
+       usingSubscription: subscription];
+    } else
+    {
+      subscriptionContext = 
+      [elvin subscribe: subscription withDelegate: self 
+         usingSelector: @selector (handleNotify:)];
+    }
+  }
+}
+
+- (NSString *) fullTickerSubscription
+{
+  if ([subscription length] == 0)
+    return TICKER_SUBSCRIPTION;
+  else
+    return [NSString stringWithFormat: @"%@ && (%@)", 
+            TICKER_SUBSCRIPTION, subscription];
+}
+
 - (BOOL) canSend
 {
   return canSend;
@@ -448,9 +486,7 @@ static NSAttributedString *attributedString (NSString *string,
   NSString *message = [messageText string];
 
   // check for empty text
-  if (sender != self && 
-      [[message stringByTrimmingCharactersInSet: 
-        [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
+  if (sender != self && [trim (message) length] == 0)
   {
     // make self the delegate to put sheet under text editor
     // [[messageText window] setDelegate: self];

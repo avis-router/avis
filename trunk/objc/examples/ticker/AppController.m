@@ -10,8 +10,6 @@
 
 #import "utils.h"
 
-NSString *PreferencesContext = @"PreferencesContext";
-
 #pragma mark Declare Private Methods
 
 @implementation AppController
@@ -42,7 +40,9 @@ NSString *PreferencesContext = @"PreferencesContext";
   [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
             forKey: PrefPresenceGroups];
   [defaults setObject: [NSArray array] forKey: PrefPresenceBuddies];
-
+  [defaults setObject: @"Group != 'lawley-rcvstore'" 
+               forKey: PrefTickerSubscription];
+  
   [preferences registerDefaults: defaults];
 }
 
@@ -99,7 +99,9 @@ NSString *PreferencesContext = @"PreferencesContext";
     [NSUserDefaultsController sharedUserDefaultsController];
 		
   [userPreferences addObserver: self forKeyPath: @"values.ElvinURL" 
-                   options: 0 context: PreferencesContext];
+                   options: 0 context: self];
+  [userPreferences addObserver: self forKeyPath: @"values.TickerSubscription" 
+                       options: 0 context: self];
                    
   [elvin connect];
 }
@@ -124,7 +126,11 @@ NSString *PreferencesContext = @"PreferencesContext";
 - (IBAction) showTickerWindow: (id) sender
 {
   if (!tickerController)
-    tickerController = [[TickerController alloc] initWithElvin: elvin];
+  {
+    tickerController = 
+      [[TickerController alloc] initWithElvin: elvin 
+        subscription: trim (prefString (PrefTickerSubscription))];
+  }
   
   [tickerController showWindow: self];
 }
@@ -153,16 +159,18 @@ NSString *PreferencesContext = @"PreferencesContext";
 - (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
          change: (NSDictionary *) change context: (void *) context
 {
-  if (context == PreferencesContext)
+  if (context == self)
   {
-    elvin.elvinUrl = prefString (PrefElvinURL);
-    
-    NSLog (@"Elvin URL changed: %@", elvin.elvinUrl);
-	} else 
+    if ([keyPath hasSuffix: PrefElvinURL])
+      elvin.elvinUrl = prefString (PrefElvinURL);
+    else if ([keyPath hasSuffix: PrefTickerSubscription])
+      tickerController.subscription = prefString (PrefTickerSubscription);
+
+  } else 
   {
-		[super observeValueForKeyPath: keyPath ofObject: object change: change 
+    [super observeValueForKeyPath: keyPath ofObject: object change: change 
            context: context];
-	}
+  }
 }
 
 - (void) handleSleep: (void *) unused

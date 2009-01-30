@@ -53,7 +53,10 @@ extern NSString *ElvinConnectionWillCloseNotification;
                  includingFields: (PresenceFields) fields
                       sendPublic: (BOOL) isPublic;
 
-- (void) subscribe: (NSString *) subscriptionExpr withDelegate: (id) delegate 
-         usingSelector: (SEL) handler;
+- (id) subscribe: (NSString *) subscriptionExpr withDelegate: (id) delegate 
+       usingSelector: (SEL) handler;
+
+- (void) resubscribe: (id) subscriptionContext 
+         usingSubscription: (NSString *) newSubscription;
 
 @end

@@ -11,3 +11,5 @@
 void createUUID (char *uuid);
 
 NSString *uuidString ();
+
+NSString *trim (NSString *string);

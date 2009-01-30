@@ -1,5 +1,7 @@
 #import "PresenceGroupsController.h"
 
+#import "utils.h"
+
 @implementation PresenceGroupsController
 
 - (void) awakeFromNib
@@ -26,9 +28,7 @@
 
 - (void) addObject: (id) object
 {
-  NSString *group = 
-    [object stringByTrimmingCharactersInSet: 
-      [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+  NSString *group = trim (object);
   
   if ([group length] > 0 && ![self containsGroup: group])
     [super addObject: group];

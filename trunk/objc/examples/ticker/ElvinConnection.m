@@ -12,6 +12,8 @@ NSString *ElvinConnectionWillCloseNotification = @"ElvinConnectionWillClose";
 
 static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
+static void resubscribe (Elvin *elvin, SubscriptionContext *context);
+
 static void close_listener (Elvin *elvin, CloseReason reason,
                             const char *message,
                             ElvinConnection *self);
@@ -133,7 +135,7 @@ static void send_message (Elvin *elvin, Attributes *message);
 
 #pragma Elvin publish/subscribe
 
-- (void) subscribe: (NSString *) subscriptionExpr
+- (id) subscribe: (NSString *) subscriptionExpr
         withDelegate: (id) delegate usingSelector: (SEL) selector
 {
   SubscriptionContext *context = 
@@ -144,6 +146,32 @@ static void send_message (Elvin *elvin, Attributes *message);
   
   if (elvin_is_open (&elvin))
     elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
+  
+  return context;
+}
+
+- (void) resubscribe: (id) subscriptionContext 
+         usingSubscription: (NSString *) newSubscription
+{
+  SubscriptionContext *context = subscriptionContext;
+  
+  [context->subscriptionExpr release];
+  context->subscriptionExpr = [newSubscription retain];
+  
+  if (elvin_is_open (&elvin))
+    elvin_invoke (&elvin, (InvokeHandler)resubscribe, context);
+}
+
+void resubscribe (Elvin *elvin, SubscriptionContext *context)
+{
+  elvin_subscription_set_expr 
+    (context->subscription, [context->subscriptionExpr UTF8String]);
+
+  if (!elvin_error_ok (&elvin->error))
+  {
+    NSLog (@"Error while trying to resubscribe: %s (%i)", 
+           elvin->error.message, elvin->error.code);
+  }
 }
 
 void subscribe (Elvin *elvin, SubscriptionContext *context)
