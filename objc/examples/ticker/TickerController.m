@@ -436,32 +436,35 @@ static NSAttributedString *attributedString (NSString *string,
 {
   if (![newSubscription isEqual: subscription])
   {
-    TRACE (@"Change ticker subscription: %@", newSubscription);
-    
     [subscription release];
     
     subscription = [newSubscription retain];
     
+    NSString *fullSubscription;
+
+    if ([subscription length] == 0)
+    {
+      fullSubscription = TICKER_SUBSCRIPTION;
+    } else
+    {
+      fullSubscription = 
+        [NSString stringWithFormat: @"%@ && (%@)", 
+          TICKER_SUBSCRIPTION, subscription];
+    }
+    
+    TRACE (@"Full ticker subscription: %@", fullSubscription);
+    
     if (subscriptionContext)
     {
       [elvin resubscribe: subscriptionContext 
-       usingSubscription: subscription];
+        usingSubscription: fullSubscription];
     } else
     {
       subscriptionContext = 
-      [elvin subscribe: subscription withDelegate: self 
-         usingSelector: @selector (handleNotify:)];
+        [elvin subscribe: fullSubscription withDelegate: self 
+          usingSelector: @selector (handleNotify:)];
     }
   }
-}
-
-- (NSString *) fullTickerSubscription
-{
-  if ([subscription length] == 0)
-    return TICKER_SUBSCRIPTION;
-  else
-    return [NSString stringWithFormat: @"%@ && (%@)", 
-            TICKER_SUBSCRIPTION, subscription];
 }
 
 - (BOOL) canSend
