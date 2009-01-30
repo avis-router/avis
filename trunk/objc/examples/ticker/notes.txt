@@ -1,6 +1,7 @@
 + general/cleanup
   * v1.0 fields on send and receive: support aquatik (TICKERTAPE, TICKERTEXT, 
     USER)
+  * elvin disconnected when changing elvins shows new value
   * lighten icon, look at shadow centre
   * change dock icon when disconnected
   * BUG?: cursor update failed on restart + receive one new ext message
@@ -73,6 +74,15 @@
 + filtering
   * reduce subscription to optimize filtering
 
+
+---
+
+Start ticker, select presence, just exits
+
+30/01/09 7:08:15 AM Start connect to Elvin ticker[3068] 
+30/01/09 7:08:15 AM Disconnect from Elvin ticker[3068] 
+30/01/09 7:08:16 AM Connected to Elvin at: elvin://public.elvin.org ticker[3068] 
+30/01/09 7:08:16 AM Elvin thread is terminating ticker[3068] 
 
 ---
 

@@ -45,6 +45,21 @@
   [super dealloc];
 }
 
+- (BOOL) isEqual: (id) object
+{
+  if ([object isKindOfClass: [PresenceStatus class]])
+  {
+    PresenceStatus *status = object;
+    
+    return status->statusCode == statusCode && 
+           [status->changedAt isEqual: changedAt] &&
+           [status->statusText isEqual: statusText];
+  } else
+  {
+    return NO;
+  }
+}
+
 - (NSString *) statusCodeAsString
 {
   switch (statusCode)

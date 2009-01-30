@@ -23,17 +23,17 @@
   [sheet orderOut: self];
 }
 
-- (IBAction) closeAddPresenceGroupSheet: (id) sender
+- (IBAction) closePresenceGroupAddSheet: (id) sender
 {
-  [NSApp endSheet: addPresenceGroupSheet returnCode: [sender tag]];
+  [NSApp endSheet: presenceGroupAddSheet returnCode: [sender tag]];
 }
 
 - (IBAction) addPresenceGroup: (id) sender
 {
-  if (!addPresenceGroupSheet)
+  if (!presenceGroupAddSheet)
     [NSBundle loadNibNamed: @"Preferences_AddPresenceGroup" owner: self];
 
-  [NSApp beginSheet: addPresenceGroupSheet
+  [NSApp beginSheet: presenceGroupAddSheet
      modalForWindow: [self window]
       modalDelegate: self
      didEndSelector: @selector (addPresenceGroupSheetDidEnd:returnCode:contextInfo:)
