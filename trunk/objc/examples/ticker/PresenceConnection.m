@@ -249,7 +249,7 @@ static NSString *listToParameterString (NSArray *list)
     createdUser = NO;
   }
 
-  [user setName: userName];
+  user.name = userName;
   
   if (status)
     user.status.statusCode = [PresenceStatus statusCodeFromString: status];
