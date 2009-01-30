@@ -6,6 +6,7 @@
   
   IBOutlet id addPresenceGroupTextField;
   IBOutlet id addPresenceGroupAddButton;
+  IBOutlet NSArrayController *presenceGroupsController;
 }
 
 - (IBAction) addPresenceGroup: (id) sender;
