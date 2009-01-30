@@ -159,7 +159,7 @@
 - (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
          change: (NSDictionary *) change context: (void *) context
 {
-  // TODO ticker controller should handle pref change
+  // TODO ticker controller should handle pref change OR bind prefs to properties
   if (context == self)
   {
     if ([keyPath hasSuffix: PrefElvinURL])
