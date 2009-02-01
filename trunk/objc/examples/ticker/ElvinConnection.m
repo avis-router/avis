@@ -300,7 +300,7 @@ void notification_listener (Subscription *sub,
                       withStatus: (PresenceStatus *) status
                         toGroups: (NSString *) groups
                       andBuddies: (NSString *) buddies
-                   fromUserAgent: (NSString * ) userAgent
+                   fromUserAgent: (NSString *) userAgent
                  includingFields: (PresenceFields) fields
                       sendPublic: (BOOL) isPublic
 {

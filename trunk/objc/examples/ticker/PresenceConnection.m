@@ -216,6 +216,7 @@ static NSString *listToParameterString (NSArray *list)
     @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
       string (Client-Id) && User != \"%@\" ", prefString (PrefOnlineUserName)];
   
+  // TODO this subs to all groups when array is empty
   NSArray *groups = prefArray (PrefPresenceGroups);
   
   if ([groups count] > 0)
