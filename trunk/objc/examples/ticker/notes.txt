@@ -5,10 +5,10 @@
   * lighten icon, look at shadow centre
   * change dock icon when disconnected
   * BUG?: cursor update failed on restart + receive one new ext message
-  * rename to "Ticker"
+  * DONE: rename to "Ticker"
   * DONE: set sub - single window
   * see if we can avoid updating tracking areas during live scroll
-  * move tooltip gen to ticker controller
+  * DONE: move tooltip gen to ticker controller
   * animate reply/public button
   * cursor flips to hand briefly before text on entrance to ticker
   * DONE: icon
