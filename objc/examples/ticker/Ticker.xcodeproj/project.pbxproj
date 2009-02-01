@@ -93,7 +93,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ticker_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* Ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9013D390F2D5FF300154085 /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceStatus.h; sourceTree = "<group>"; };
 		C9013D3A0F2D5FF300154085 /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceStatus.m; sourceTree = "<group>"; };
 		C93D56350F305C6B0005EE00 /* crash_20090128.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090128.txt; sourceTree = "<group>"; };
@@ -210,7 +210,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D1107320486CEB800E47090 /* ticker.app */,
+				8D1107320486CEB800E47090 /* Ticker.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -274,9 +274,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D1107260486CEB800E47090 /* ticker */ = {
+		8D1107260486CEB800E47090 /* Ticker */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "ticker" */;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Ticker" */;
 			buildPhases = (
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
@@ -287,10 +287,10 @@
 			);
 			dependencies = (
 			);
-			name = ticker;
+			name = Ticker;
 			productInstallPath = "$(HOME)/Applications";
 			productName = ticker;
-			productReference = 8D1107320486CEB800E47090 /* ticker.app */;
+			productReference = 8D1107320486CEB800E47090 /* Ticker.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -298,14 +298,14 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "ticker" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Ticker" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* ticker */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D1107260486CEB800E47090 /* ticker */,
+				8D1107260486CEB800E47090 /* Ticker */,
 				C9DFB3A30F132DCB00365453 /* Disk Image */,
 			);
 		};
@@ -382,7 +382,7 @@
 /* Begin PBXTargetDependency section */
 		C9DFB3AA0F132E2F00365453 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8D1107260486CEB800E47090 /* ticker */;
+			target = 8D1107260486CEB800E47090 /* Ticker */;
 			targetProxy = C9DFB3A90F132E2F00365453 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -429,11 +429,11 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ticker_Prefix.pch;
+				GCC_PREFIX_HEADER = Ticker_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = /Users/matt/Development/avis/c/platforms/macosx/build/Release;
-				PRODUCT_NAME = ticker;
+				PRODUCT_NAME = Ticker;
 			};
 			name = Debug;
 		};
@@ -448,12 +448,12 @@
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ticker_Prefix.pch;
+				GCC_PREFIX_HEADER = Ticker_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = NS_BLOCK_ASSERTIONS;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = /Users/matt/Development/avis/c/platforms/macosx/build/Release;
-				PRODUCT_NAME = ticker;
+				PRODUCT_NAME = Ticker;
 			};
 			name = Release;
 		};
@@ -510,7 +510,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "ticker" */ = {
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Ticker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
@@ -519,7 +519,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "ticker" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Ticker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,

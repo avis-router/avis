@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="520"/>
+			<integer value="57"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1840,11 +1840,11 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{696, 713}, {197, 123}}</string>
+					<string>{{613, 665}, {197, 123}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{525, 802}, {197, 73}}</string>
-					<string>{{457, 836}, {371, 20}}</string>
+					<string>{{374, 788}, {371, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{74, 862}</string>
@@ -1879,7 +1879,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{469, 714}, {186, 183}}</string>
+					<string>{{386, 605}, {186, 183}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{23, 794}, {245, 183}}</string>
@@ -2048,6 +2048,8 @@
 							<string>publicCheckbox</string>
 							<string>replyButton</string>
 							<string>sendButton</string>
+							<string>subscription</string>
+							<string>subscriptionContext</string>
 							<string>tickerMessagesTextView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -2062,6 +2064,8 @@
 							<string>id</string>
 							<string>RolloverButton</string>
 							<string>id</string>
+							<string>NSString</string>
+							<string>id</string>
 							<string>id</string>
 						</object>
 					</object>
@@ -2073,7 +2077,7 @@
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.LastKnownRelativeProjectPath">../ticker.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../Ticker.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 	</data>
 </archive>
