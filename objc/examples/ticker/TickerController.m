@@ -100,18 +100,6 @@ static NSAttributedString *attributedString (NSString *string,
   [super dealloc];
 }
 
-/**
- * TODO: this is for tooltip display. Should make this an interface or 
- * somesuch.
- */
-- (NSString *) description
-{
-  return [NSString stringWithFormat: 
-           @"Public: %@\nClient: %@", 
-           public ? @"yes" : @"no", 
-           userAgent ? userAgent : @"Unknown"];
-}
-
 @end
 
 #pragma mark -
@@ -679,6 +667,25 @@ static NSAttributedString *attributedString (NSString *string,
   } else
   {
     return NO;
+  }
+}
+
+/**
+ * Generate tooltips for links in the ticker text display. Delegated from 
+ * TextViewWithLinks.
+ */
+- (NSString *) toolTipForLink: (id) link view: (NSTextView *) view
+{
+  if ([link isKindOfClass: [TickerMessage class]])
+  {
+    TickerMessage *message = link;
+    
+    return [NSString stringWithFormat: @"Public: %@\nClient: %@", 
+              message->public ? @"yes" : @"no", 
+              message->userAgent ? message->userAgent : @"Unknown"];
+  } else
+  {
+    return [link description];
   }
 }
 

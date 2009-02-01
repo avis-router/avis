@@ -138,10 +138,18 @@
   return result;
 }
 
+- (NSString *) toolTipForLink: (id) link view: (NSTextView *) view
+{
+  return [link description];
+}
+
 - (NSString *) view: (NSView *) view stringForToolTip: (NSToolTipTag) tag 
               point: (NSPoint) point userData: (void *) userData
 {
-  return [(id)userData description];
+  if ([[self delegate] respondsToSelector: @selector (toolTipForLink:view:)])
+    return [[self delegate] toolTipForLink: (id) userData view: self];
+  else
+    return [self toolTipForLink: (id) userData view: self];
 }
 
 - (void) cursorUpdate: (NSEvent *) event
