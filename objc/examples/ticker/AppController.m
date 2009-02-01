@@ -10,6 +10,18 @@
 
 #import "utils.h"
 
+static NSString *computerName ()
+{
+  NSDictionary *systemPrefs = 
+    [NSDictionary dictionaryWithContentsOfFile: 
+      @"/Library/Preferences/SystemConfiguration/preferences.plist"];
+      
+  NSString *computerName = 
+    [systemPrefs valueForKeyPath: @"System.System.ComputerName"];
+    
+  return computerName ? computerName : @"sticker";
+}
+
 #pragma mark Declare Private Methods
 
 @implementation AppController
@@ -29,14 +41,15 @@
   if (![preferences objectForKey: PrefOnlineUserUUID])
     [preferences setObject: uuidString () forKey: PrefOnlineUserUUID];
 
-  // TODO NSHost:name sometimes blocks for 60 seconds ... why?
-  NSString *defaultUserName = 
-    [NSString stringWithFormat: @"%@@%@", 
-     NSFullUserName (), [[NSHost currentHost] name]];
-     
+  if (![preferences objectForKey: PrefOnlineUserName])
+  {
+    [defaults setObject: [NSString stringWithFormat: @"%@@%@", 
+                          NSFullUserName (), computerName ()] 
+      forKey: PrefOnlineUserName];
+  }
+  
   [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
-  [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];
-  [defaults setObject: defaultUserName forKey: PrefOnlineUserName];
+  [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];  
   [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
             forKey: PrefPresenceGroups];
   [defaults setObject: [NSArray array] forKey: PrefPresenceBuddies];
