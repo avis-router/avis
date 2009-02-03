@@ -6,6 +6,8 @@ import java.util.Queue;
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 
+import static org.avis.util.Text.shortException;
+
 /**
  * A set of command line options. Subclasses implement
  * {@link #handleArg(Queue)} and {@link #checkOptions()}.
@@ -95,7 +97,8 @@ public abstract class CommandLineOptions
       System.exit (1);
     } else
     {
-      System.err.println (appName + ": error on startup: " + ex.getMessage ());
+      System.err.println (appName + ": error on startup: " + 
+                          shortException (ex));
       System.err.println ();
       
       System.exit (2);
