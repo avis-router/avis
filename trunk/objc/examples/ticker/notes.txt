@@ -41,6 +41,7 @@
   * handle personal reply: copy thread ID <- reply to is ref to message
   * reply-to icon in text
   * highlight parents
+  * right click on message: who's listening (via presence)
   * DONE: Growl pause on send
   * DONE: send menu item disabled when disconnected
   * DONE: change group -> reset reply ID
@@ -58,7 +59,10 @@
   * click on growl to show message
   * DONE: elvin connect/disconnect
 + presence
+  * add a mute button - no growl. or use "Do not disturb" presence?
   * auto away status
+  * highlight (& fade changes to status)
+  * growl status changes
   * auto typing status
   * set sort order to be by status
   * icon status display + status duration
