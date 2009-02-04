@@ -408,7 +408,7 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   [GrowlApplicationBridge
-    notifyWithTitle: @"Message received"
+    notifyWithTitle: type
     description: description notificationName: type
     iconData: nil priority: priority isSticky: sticky clickContext: nil];
 }
