@@ -1,5 +1,8 @@
 + general/cleanup
-  * v1.0 fields on send and receive: support aquatik (TICKERTAPE, TICKERTEXT, 
+  * security: allow secure messaging (private key)
+  * encryption?
+  * DONE: (fixed aquatik)
+    v1.0 fields on send and receive: support aquatik (TICKERTAPE, TICKERTEXT, 
     USER)
   * elvin disconnected when changing elvins shows new value
   * lighten icon, look at shadow centre
