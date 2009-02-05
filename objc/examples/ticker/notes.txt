@@ -1,5 +1,6 @@
 + general/cleanup
   * security: allow secure messaging (private key)
+  * spaces support
   * encryption?
   * DONE: (fixed aquatik)
     v1.0 fields on send and receive: support aquatik (TICKERTAPE, TICKERTEXT, 
@@ -33,6 +34,7 @@
   * DONE: use shutdown () or no select wakeup for BSD (?)
   * DONE: handle router shutdown/protocol error after open
 + attached URL's
+  * allow paste of link in clipboard
   * why doesn't cursor change until clicked?
   * handle .webloc
   * handle v3.0 MIME encoding
