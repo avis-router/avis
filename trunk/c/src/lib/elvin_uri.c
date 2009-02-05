@@ -235,7 +235,7 @@ bool parse_protocol (ElvinURI *uri, const char *index1, ElvinError *error)
     items [1] = estrdup ("none");
     items [2] = estrdup ("ssl");
   } else
-  {
+  {             
     items [0] = substring (index1, index2);
 
     index1 = index2 + 1;
