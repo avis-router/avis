@@ -87,7 +87,7 @@ public abstract class ToolOptions extends CommandLineOptions
       System.err.println ("Failed to connect to Elvin: connection refused");
     else
       System.err.println ("Error connecting to Elvin: " + ex.getMessage ());
-    
+
     System.exit (3);
   }
   
