@@ -164,6 +164,11 @@ static NSString *computerName ()
   [preferencesController showWindow: self];
 }
 
+- (IBAction) refreshPresence: (id) sender
+{
+  [presence refresh];
+}
+
 #pragma mark -
 
 /*

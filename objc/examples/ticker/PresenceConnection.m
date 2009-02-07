@@ -344,6 +344,12 @@ static NSString *listToParameterString (NSArray *list)
     [self resetLivenessTimer];
 }
 
+- (void) refresh
+{
+  [self clearEntities];
+  [self requestPresenceInfo];
+}
+
 #pragma mark -
 
 @synthesize entities;

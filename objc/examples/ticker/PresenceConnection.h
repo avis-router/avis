@@ -1,4 +1,4 @@
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 #import "PresenceStatus.h"
 
@@ -12,6 +12,8 @@
 }
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection;
+
+- (void) refresh;
 
 @property (readonly, assign) IBOutlet  NSSet * entities;
 @property (readwrite, retain) IBOutlet PresenceStatus * presenceStatus;
