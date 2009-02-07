@@ -25,4 +25,6 @@
 
 - (IBAction) showPresenceWindow: (id) sender;
 
+- (IBAction) refreshPresence: (id) sender;
+
 @end

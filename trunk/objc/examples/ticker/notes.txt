@@ -1,20 +1,21 @@
 + general/cleanup
+  * groups registry service?
   * security: allow secure messaging (private key)
-  * spaces support
+  * decide on how to handle prefs change: bindings or explicit?
+  * spaces support?
   * encryption?
   * DONE: (fixed aquatik)
     v1.0 fields on send and receive: support aquatik (TICKERTAPE, TICKERTEXT, 
     USER)
-  * elvin disconnected when changing elvins shows new value
   * lighten icon, look at shadow centre
+  * see if we can avoid updating tracking areas during live scroll
+  * animate reply/public button
+  * cursor flips to hand briefly before text on entrance to ticker
   * change dock icon when disconnected
   * BUG?: cursor update failed on restart + receive one new ext message
   * DONE: rename to "Ticker"
   * DONE: set sub - single window
-  * see if we can avoid updating tracking areas during live scroll
   * DONE: move tooltip gen to ticker controller
-  * animate reply/public button
-  * cursor flips to hand briefly before text on entrance to ticker
   * DONE: icon
   * DONE: allow delete from ticker list
   * DONE: remove public button -> replace with icon
@@ -42,7 +43,7 @@
   * DONE fix drag second link
   * DONE truncation in middle
   * DONE animate appearance
-+ replying
++ messaging
   * handle personal reply: copy thread ID <- reply to is ref to message
   * reply-to icon in text
   * highlight parents
@@ -62,24 +63,27 @@
   * DONE: links across group/from
 + growl
   * click on growl to show message
+  * elvin disconnected when changing elvins shows new value
   * DONE: elvin connect/disconnect
 + presence
-  * add a mute button - no growl. or use "Do not disturb" presence?
-  * auto away status
-  * highlight (& fade changes to status)
-  * growl status changes
-  * auto typing status
+  * full refresh
+  * update. cull non responsive entities. use on reconnect rather than clear/refresh
   * set sort order to be by status
   * icon status display + status duration
-  * change presence status, incl invisible
-  * DONE: prefs for presence groups
-  * handle name, groups, buddies change
   * presence history: show person's history
-  * cull non responsive entities. use on reconnect rather than clear/refresh
   * filter multiple users with differing presence: pick most online (or just show all)
+  * change presence status, incl invisible
+  * add a mute button - no growl. or use "Do not disturb" presence?
+  * auto typing status
+  * auto away status
+  * highlight (& fade changes to status) animation: see bookmark
+  * handle name, groups, buddies change
+  * growl status changes
+  * how to publish groups I'm listening to?
+  * DONE: prefs for presence groups
   * DONE: liveness
 + multiple windows
-  * move growl notif to app controller
+  * HOLD: move growl notif to app controller
 + filtering
   * reduce subscription to optimize filtering
 
