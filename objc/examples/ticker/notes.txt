@@ -75,7 +75,8 @@
   * change presence status, incl invisible
   * add a mute button - no growl. or use "Do not disturb" presence?
   * auto typing status
-  * auto away status
+  * auto away status. http://www.cocoadev.com/index.pl?InstallEventLoopIdleTimer
+    http://developer.apple.com/documentation/Carbon/Conceptual/Carbon_Event_Manager/Tasks/chapter_3_section_11.html
   * highlight (& fade changes to status) animation: see bookmark
   * handle name, groups, buddies change
   * growl status changes
