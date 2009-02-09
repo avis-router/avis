@@ -681,7 +681,7 @@ static NSAttributedString *attributedString (NSString *string,
     TickerMessage *message = link;
     
     return [NSString stringWithFormat: @"Public: %@\nClient: %@", 
-              message->public ? @"yes" : @"no", 
+              message->public ? @"Yes" : @"No", 
               message->userAgent ? message->userAgent : @"Unknown"];
   } else
   {
