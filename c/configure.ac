@@ -84,6 +84,9 @@ case $host in
   sparc-sun-solaris*)
     AVIS_LDFLAGS="$AVIS_LDFLAGS -lm -lsocket"
     ;;
+  *-*-freebsd*|*-*-openbsd*|*-*-netbsd*)
+    AVIS_LDFLAGS="$AVIS_LDFLAGS -lm"
+    ;;
 esac
 
 AC_SUBST(AVIS_STD_C89)
