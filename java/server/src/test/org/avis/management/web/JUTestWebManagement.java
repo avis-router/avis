@@ -59,7 +59,7 @@ public class JUTestWebManagement
     autoClose.add (router);
     
     WebManagementManager manager = 
-      new WebManagementManager (router, options);
+      new WebManagementManager (router.ioManager (), options);
     
     autoClose.add (manager);
     
