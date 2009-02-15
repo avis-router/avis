@@ -50,6 +50,9 @@
 		C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */; };
 		C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B4A200F22BAEF00BADAE8 /* utils.m */; };
 		C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C9521BAC0F08CE4100BA83EC /* DragTarget.m */; };
+		C95BF85A0F4804BD00A1CD0E /* RHSystemIdleTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */; };
+		C95BF9350F48059000A1CD0E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C95BF9340F48059000A1CD0E /* IOKit.framework */; };
+		C962B8CC0F3FE5A700CD0764 /* PresenceEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C962B8CB0F3FE5A700CD0764 /* PresenceEntityCell.m */; };
 		C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */; };
 		C9AEA1630F15ADE300C70410 /* TickerMessagesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */; };
 		C9B038390E48282400B59216 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B038380E48282400B59216 /* TickerController.m */; };
@@ -138,6 +141,11 @@
 		C94B4A200F22BAEF00BADAE8 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		C9521BAB0F08CE4100BA83EC /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragTarget.h; sourceTree = "<group>"; };
 		C9521BAC0F08CE4100BA83EC /* DragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragTarget.m; sourceTree = "<group>"; };
+		C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHSystemIdleTimer.m; sourceTree = "<group>"; };
+		C95BF8590F4804BD00A1CD0E /* RHSystemIdleTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHSystemIdleTimer.h; sourceTree = "<group>"; };
+		C95BF9340F48059000A1CD0E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		C962B8CA0F3FE5A700CD0764 /* PresenceEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceEntityCell.h; sourceTree = "<group>"; };
+		C962B8CB0F3FE5A700CD0764 /* PresenceEntityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceEntityCell.m; sourceTree = "<group>"; };
 		C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElvinConnection.h; sourceTree = "<group>"; };
 		C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElvinConnection.m; sourceTree = "<group>"; };
 		C9AEA1610F15ADE300C70410 /* TickerMessagesTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerMessagesTextView.h; sourceTree = "<group>"; };
@@ -174,6 +182,7 @@
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */,
 				C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */,
+				C95BF9350F48059000A1CD0E /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +211,8 @@
 				C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */,
 				C94B49930F22AF8D00BADAE8 /* PresenceController.h */,
 				C94B49940F22AF8D00BADAE8 /* PresenceController.m */,
+				C962B8CA0F3FE5A700CD0764 /* PresenceEntityCell.h */,
+				C962B8CB0F3FE5A700CD0764 /* PresenceEntityCell.m */,
 				C94B499B0F22B0F400BADAE8 /* PresenceConnection.h */,
 				C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */,
 				C94B49860F22AC7B00BADAE8 /* PresenceEntity.h */,
@@ -220,6 +231,8 @@
 				C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */,
 				C9DFB2110F12DA9900365453 /* RolloverButton.h */,
 				C9DFB2120F12DA9900365453 /* RolloverButton.m */,
+				C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */,
+				C95BF8590F4804BD00A1CD0E /* RHSystemIdleTimer.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -235,6 +248,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C95BF9340F48059000A1CD0E /* IOKit.framework */,
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
 				13E42FB307B3F0F600E4EEF1 /* CoreData.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
@@ -450,6 +464,8 @@
 				C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */,
 				C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */,
 				C9DA04E30F32ABEE004A663D /* PresenceGroupsController.m in Sources */,
+				C962B8CC0F3FE5A700CD0764 /* PresenceEntityCell.m in Sources */,
+				C95BF85A0F4804BD00A1CD0E /* RHSystemIdleTimer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

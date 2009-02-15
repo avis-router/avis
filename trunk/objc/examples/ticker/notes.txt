@@ -1,4 +1,5 @@
 + general/cleanup
+  * use mutableArrayValueForKey: to wrap array for binding
   * groups registry service?
   * security: allow secure messaging (private key)
   * decide on how to handle prefs change: bindings or explicit?
