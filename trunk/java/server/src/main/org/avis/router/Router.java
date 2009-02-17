@@ -224,7 +224,7 @@ public class Router implements IoHandler, Closeable
       closing = true; 
     }
     
-    // TODO suspend reading *before* shutting down
+    // TODO suspend reading and new connections *before* shutting down
     
     closeListeners.fire (this);
     closeListeners = null;
