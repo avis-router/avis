@@ -186,6 +186,20 @@
     </jarx>    
   </target>
 
+  <!-- Build the dos-attack.jar utility -->
+  <target name="jar-dosattack">
+       
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+             classpath="${common}/lib/jarx.jar" />
+
+    <mkdir dir="bin" />
+        
+    <jarx archive="bin/dos-attack.jar"
+          classpathref="classpath" 
+          mainclass="org.avis.tools.DosAttack">
+    </jarx>    
+  </target>
+
   <target name="dist-source" depends="jar-server"
           description="Build the source distro">
     
