@@ -8,7 +8,7 @@ package org.avis.util;
 public interface Filter<T>
 {
   /**
-   * Matches anything.
+   * Matches nothing.
    */
   public static final Filter<?> MATCH_NONE = new Filter<Object> ()
   {
@@ -19,7 +19,7 @@ public interface Filter<T>
   };
   
   /**
-   * Matches nothing.
+   * Matches everything.
    */
   public static final Filter<?> MATCH_ALL = new Filter<Object> ()
   {
