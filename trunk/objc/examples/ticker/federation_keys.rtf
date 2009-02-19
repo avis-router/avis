@@ -1,0 +1,48 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;\red102\green102\blue102;\red48\green80\blue10;\red86\green56\blue12;
+\red0\green64\blue128;\red0\green0\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12580\viewh13200\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs22 \cf2 18/02/09 1:40:39 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 I think the most useful thing to test is whether or not notifications are being forwarded between the routers.  Can you set up a subscription on your end with the key we used yesterday?\cf2 \
+18/02/09 1:45:08 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 I have Sticker subscribed to the TestFoo group with that key\cf2 \
+18/02/09 1:45:23 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 Ok, firing up tcpdump...\cf2 \
+18/02/09 1:45:32 PM: \cf3 TestFoo\cf2 : \cf4 phelps@mantara\cf2 : \cf5 thusly\cf2 \
+18/02/09 1:46:02 PM: \cf3 TestFoo\cf2 : \cf4 matthew@dsto\cf2 : \cf5 I see "thusly" as an insecure ntfn\cf2 \
+18/02/09 1:46:03 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 Ok, a notification went from laika to digger1.\cf2 \
+18/02/09 1:46:33 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 I saw "thusly" as an insecure ntfn\cf2 \
+18/02/09 1:46:40 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 Let me try one with deliver-insecure disabled.\cf2 \
+18/02/09 1:46:52 PM: \cf3 TestFoo\cf2 : \cf4 phelps@mantara\cf2 : \cf5 smoop\cf2 \
+18/02/09 1:47:10 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 saw "smoop" insecure\cf2 \
+18/02/09 1:47:55 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 Yeah, sorry, I forgot to fiddle the flag.  :-)  Did you see 'spoon'?\cf2 \
+18/02/09 1:48:16 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 didn't see "spoon"\cf2 \
+18/02/09 1:48:37 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 It was forwarded to digger1.\cf2 \
+18/02/09 1:49:02 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 OK, then I need to see what Avis thinks it was doing\cf2 \
+18/02/09 1:50:08 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 It looks like the hashed key made it through intact.\cf2 \
+18/02/09 1:50:33 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 DO you want to try in the other direction?\cf2 \
+18/02/09 1:50:52 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 good idea. will send a secure message back\cf2 \
+18/02/09 1:51:20 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 did you see "froody"?\cf2 \
+18/02/09 1:52:39 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 Froody went from digger1 to laika but didn't make it to my client.  It looks like your router is forwarding the raw key rather than the hashed one.\cf2 \
+18/02/09 1:53:19 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 aaaah\cf2 \
+18/02/09 1:53:25 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 :-)\cf2 \
+18/02/09 1:54:47 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 I just forward the keys attached to the ntfn via the FedNotify. You're saying that's Not Right?\cf2 \
+18/02/09 1:55:29 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 I'd have to check the spec.\cf2 \
+18/02/09 1:56:34 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 But, alas, the spec is a bit vague on this point.\cf2 \
+18/02/09 1:58:05 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 Yes, it has nothing at all to say on the subject of keys ;)\cf2 \
+18/02/09 1:58:20 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 Except that there could be some :)\cf2 \
+18/02/09 1:58:49 PM: \cf3 elvin-sse\cf2 : \cf4 bill@mantara\cf2 : \cf5 I thought that was true for federation - that is was a trusted router model\cf2 \
+18/02/09 2:00:25 PM: \cf3 elvin-sse\cf2 : \cf4 ilister@mantara\cf2 : \cf5 Yes, it's a trusted router model. No, that doesn't mean the routers aren't supposed to hash before propagating.\cf2 \
+18/02/09 2:00:56 PM: \cf3 elvin-sse\cf2 : \cf4 ilister@mantara\cf2 : \cf5 That's my recollection. The first router hashes the keys and from there on they're always hashed.\cf2 \
+18/02/09 2:01:01 PM: \cf3 elvin-sse\cf2 : \cf4 bill@mantara\cf2 : \cf5 so we trust our upstream router not our downstream one?\cf2 \
+18/02/09 2:01:17 PM: \cf3 elvin-sse\cf2 : \cf4 ilister@mantara\cf2 : \cf5 Saves the other routers doing unnecessary work, and saves unnecessary exposure of raw keys.\cf2 \
+18/02/09 2:01:39 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 Upstream and downstream are arbitrary in this context.  All federation peers are, well, peers.\cf2 \
+18/02/09 2:02:06 PM: \cf3 elvin-sse\cf2 : \cf4 ilister@mantara\cf2 : \cf5 We trust all other routers with the notification content. We don't trust them with the raw keys. Mostly because there's no need.\cf2 \
+18/02/09 2:02:14 PM: \cf3 elvin-sse\cf2 : \cf4 bill@mantara\cf2 : \cf5 upstream meaning closer to source, downstream closed to sink\cf2 \
+18/02/09 2:02:41 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 I have thought before that perhaps Avis could just hash raw keys as they come in and store them that way for speed. That would also fix this issue I think\cf2 \
+18/02/09 2:03:03 PM: \cf3 elvin-sse\cf2 : \cf4 ilister@mantara\cf2 : \cf5 That's what the Elvin router does.\cf2 \
+18/02/09 2:03:56 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 OK. That gives me something to work on\cf2 \
+18/02/09 2:04:38 PM: \cf3 elvin-sse\cf2 : \cf4 phelps@mantara\cf2 : \cf5 Excellent!  Let us know how you go.\cf2 \
+18/02/09 2:04:46 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 I wonder if we can prevail on David to put a paragraph about that in the spec?\cf2  ({\field{\*\fldinst{HYPERLINK "http://elvin.org/specs/draft-elvin-federation-10-00.txt"}}{\fldrslt \cf6 http://elvin.org/specs/draft-elvin-federation-10-00.txt}})\
+18/02/09 2:05:16 PM: \cf3 elvin-sse\cf2 : \cf4 matthew@dsto\cf2 : \cf5 Will do\
+}
