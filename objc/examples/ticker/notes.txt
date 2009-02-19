@@ -1,4 +1,5 @@
 + general/cleanup
+  * BUG: perf drop on large number of messages: setFont
   * use mutableArrayValueForKey: to wrap array for binding
   * groups registry service?
   * security: allow secure messaging (private key)

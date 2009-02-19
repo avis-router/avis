@@ -156,7 +156,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) awakeFromNib
 {
   [tickerMessagesTextView setString: @""];
-  
+
   self.canSend = [elvin isConnected];
 }
 
@@ -223,7 +223,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) handleNotify: (NSDictionary *) ntfn
 {
   TickerMessage *message = [TickerMessage messageForNotification: ntfn];
-  
+
   // decide on whether we're scrolled to the end of the messages
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
   NSRect visibleRect = NSOffsetRect ([tickerMessagesTextView visibleRect], 
@@ -257,6 +257,11 @@ static NSAttributedString *attributedString (NSString *string,
     [NSDictionary dictionaryWithObject: color (0, 64, 128) 
       forKey: NSForegroundColorAttributeName];
 
+  NSDictionary *fontAttrs = 
+    [NSDictionary dictionaryWithObject: 
+       [NSFont fontWithName: @"Lucida Grande" size: 11] 
+                     forKey: NSFontAttributeName];
+  
   NSRange range;
   
   range.location = [[tickerMessagesTextView textStorage] length];
@@ -339,14 +344,15 @@ static NSAttributedString *attributedString (NSString *string,
       appendAttributedString: attributedString (@")", lowlightAttrs)];
   }
   
+  // set font
+  [displayedMessage addAttributes: fontAttrs 
+                            range: NSMakeRange (0, [displayedMessage length])];
+  
   // append text
   [[tickerMessagesTextView textStorage] 
     replaceCharactersInRange: 
       NSMakeRange ([[tickerMessagesTextView textStorage] length], 0) 
     withAttributedString: displayedMessage];
-
-  [tickerMessagesTextView 
-    setFont: [NSFont fontWithName: @"Lucida Grande" size: 11]];
   
   // scroll to end if that's how it was when we started
   if (wasScrolledToEnd)

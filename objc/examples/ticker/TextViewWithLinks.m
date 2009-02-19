@@ -45,6 +45,8 @@
     [self updateTrackingAreas];
 }
 
+/* TODO [NSLayoutManager glyphRangeForBoundingRect:inTextContainer:] is very
+   expensive. Avoid calling this method a lot. */
 - (void) updateTrackingAreas
 {
   [self setUnderlinedRange: nil];
