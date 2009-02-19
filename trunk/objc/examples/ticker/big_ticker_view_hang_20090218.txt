@@ -1,0 +1,668 @@
+Call graph:
+    778 Thread_5d03
+      778 start
+        778 NSApplicationMain
+          778 -[NSApplication run]
+            778 -[NSApplication nextEventMatchingMask:untilDate:inMode:dequeue:]
+              778 _DPSNextEvent
+                778 BlockUntilNextEventMatchingListInMode
+                  778 ReceiveNextEventCommon
+                    778 RunCurrentEventLoopInMode
+                      778 CFRunLoopRunInMode
+                        778 CFRunLoopRunSpecific
+                          773 __NSThreadPerformPerform
+                            772 -[SubscriptionContext deliverNotification:]
+                              772 -[TickerController handleNotify:]
+                                770 -[NSTextView setFont:]
+                                  770 -[NSTextView(NSPrivate) _addToTypingAttributes:value:]
+                                    770 -[NSTextView(NSSharing) setTypingAttributes:]
+                                      770 -[NSNotificationCenter postNotificationName:object:userInfo:]
+                                        770 _CFXNotificationPostNotification
+                                          770 __CFXNotificationPost
+                                            770 _nsnote_callback
+                                              770 -[TextViewWithLinks updateTrackingAreas]
+                                                770 -[NSLayoutManager glyphRangeForBoundingRect:inTextContainer:]
+                                                  770 -[NSLayoutManager(NSPrivate) _glyphRangeForBoundingRect:inTextContainer:fast:okToFillHoles:]
+                                                    770 -[NSLayoutManager(NSPrivate) _firstPassGlyphRangeForBoundingRect:inTextContainer:okToFillHoles:]
+                                                      770 _NSFastFillAllLayoutHolesForGlyphRange
+                                                        768 -[NSLayoutManager(NSPrivate) _fillLayoutHoleForCharacterRange:desiredNumberOfLines:isSoft:]
+                                                          667 -[NSLayoutManager invalidateDisplayForCharacterRange:]
+                                                            652 -[NSLayoutManager(NSPrivate) _primitiveGlyphRangeForCharacterRange:]
+                                                              652 -[NSLayoutManager glyphIndexForCharacterAtIndex:]
+                                                                652 _NSFastFillAllGlyphHolesForCharacterRange
+                                                                  651 -[NSLayoutManager(NSPrivate) _fillGlyphHoleForCharacterRange:startGlyphIndex:desiredNumberOfCharacters:]
+                                                                    650 -[NSGlyphGenerator(NSGlyphGenPrivate) generateGlyphsForLayoutManager:range:desiredNumberOfCharacters:startingAtGlyphIndex:completedRange:nextGlyphIndex:]
+                                                                      635 -[NSConcreteGlyphGenerator generateGlyphsForGlyphStorage:desiredNumberOfCharacters:glyphIndex:characterIndex:]
+                                                                        236 CTFontGetGlyphsForCharacters
+                                                                          225 TBaseFont::GetGlyphsForCharacters(unsigned short const*, unsigned short*, long) const
+                                                                            202 TcmapTable::Map(unsigned short const*, unsigned short*, long&) const
+                                                                              202 TFormat4UTF16cmapTable::Map(unsigned short const*, unsigned short*, long&) const
+                                                                                202 TFormat4UTF16cmapTable::Map(unsigned short const*, unsigned short*, long&) const
+                                                                            17 TcmapTable::TcmapTable[not-in-charge](TBaseFont const&)
+                                                                              10 TBaseFont::CopyTable(unsigned) const
+                                                                                6 TTableCache::CopyTable(TBaseFont const&, unsigned) const
+                                                                                  2 0xffff0088
+                                                                                    2 0xffff0088
+                                                                                  2 TTableCache::CopyTable(TBaseFont const&, unsigned) const
+                                                                                  1 OSAtomicCompareAndSwapInt
+                                                                                    1 OSAtomicCompareAndSwapInt
+                                                                                  1 TTableCacheImp::FindTable(TBaseFont const&, unsigned)
+                                                                                    1 TTableCacheImp::FindTable(TBaseFont const&, unsigned)
+                                                                                2 TTableCache::TTableCache[not-in-charge]()
+                                                                                  2 TTableCache::TTableCache[not-in-charge]()
+                                                                                1 TBaseFont::CopyTable(unsigned) const
+                                                                                1 _CFRetain
+                                                                                  1 _CFRetain
+                                                                              2 CFDataGetBytePtr
+                                                                                2 CFDataGetBytePtr
+                                                                              2 TcmapTable::TcmapTable[not-in-charge](TBaseFont const&)
+                                                                              1 TBaseFont::GetUnicodeEncoding() const
+                                                                                1 TBaseFont::GetUnicodeEncoding() const
+                                                                              1 TTableCache::TTableCache[in-charge]()
+                                                                                1 TTableCache::TTableCache[in-charge]()
+                                                                              1 TTableCache::TTableCache[not-in-charge]()
+                                                                                1 TTableCache::TTableCache[not-in-charge]()
+                                                                            2 TBaseFont::GetGlyphsForCharacters(unsigned short const*, unsigned short*, long) const
+                                                                            1 0xffff0084
+                                                                              1 0xffff0084
+                                                                            1 0xffff0088
+                                                                              1 0xffff0088
+                                                                            1 OSAtomicCompareAndSwapInt
+                                                                              1 OSAtomicCompareAndSwapInt
+                                                                            1 _CFRelease
+                                                                              1 _CFRelease
+                                                                          4 CTFontGetGlyphsForCharacters
+                                                                          2 _CTFontEnsureFontRef
+                                                                            2 _CTFontEnsureFontRef
+                                                                          2 objc_msgSend
+                                                                            2 objc_msgSend
+                                                                          1 CFRelease
+                                                                            1 CFRelease
+                                                                          1 TcmapTable::TcmapTable[not-in-charge](TBaseFont const&)
+                                                                            1 TcmapTable::TcmapTable[not-in-charge](TBaseFont const&)
+                                                                          1 TcmapTable::~TcmapTable [in-charge]()
+                                                                            1 TcmapTable::~TcmapTable [in-charge]()
+                                                                        145 -[NSConcreteGlyphGenerator generateGlyphsForGlyphStorage:desiredNumberOfCharacters:glyphIndex:characterIndex:]
+                                                                        94 -[NSLayoutManager insertGlyphs:length:forStartingGlyphAtIndex:characterIndex:]
+                                                                          94 _NSGlyphTreeInsertGlyphs
+                                                                            72 _NSGlyphTreeInsertGlyphs
+                                                                            15 _NSGlyphTreeMoveToCharacterIndex
+                                                                              15 _NSGlyphTreeMoveToCharacterIndex
+                                                                            5 _NSGlyphNodeSetCapacity
+                                                                              5 realloc
+                                                                                5 malloc_zone_realloc
+                                                                                  5 szone_realloc
+                                                                                    2 szone_free
+                                                                                      1 szone_free
+                                                                                      1 tiny_free_list_add_ptr
+                                                                                        1 tiny_free_list_add_ptr
+                                                                                    1 0xffff026d
+                                                                                      1 0xffff026d
+                                                                                    1 0xffff08a0
+                                                                                      1 0xffff08a0
+                                                                                    1 0xffff08bc
+                                                                                      1 0xffff08bc
+                                                                            2 _NSGlyphNodeSetGlyphs
+                                                                              2 _NSGlyphNodeSetGlyphs
+                                                                        72 -[NSConcreteTextStorage attributesAtIndex:longestEffectiveRange:inRange:]
+                                                                          27 objc_msgSend
+                                                                            27 objc_msgSend
+                                                                          26 -[NSAttributedString attributesAtIndex:longestEffectiveRange:inRange:]
+                                                                            11 -[NSAttributedString attributesAtIndex:longestEffectiveRange:inRange:]
+                                                                            10 -[NSRLEArray objectAtIndex:effectiveRange:]
+                                                                              7 blockForLocation
+                                                                                7 blockForLocation
+                                                                              3 -[NSRLEArray objectAtIndex:effectiveRange:]
+                                                                            5 -[NSAttributeDictionary isEqualToDictionary:]
+                                                                              5 -[NSAttributeDictionary isEqualToDictionary:]
+                                                                          9 -[NSTextStorage ensureAttributesAreFixedInRange:]
+                                                                            8 -[NSMutableAttributedString(NSMutableAttributedStringKitAdditions) fixAttributesInRange:]
+                                                                              4 -[NSMutableAttributedString(NSMutableAttributedStringKitAdditions) fixGlyphInfoAttributeInRange:]
+                                                                                4 -[NSConcreteTextStorage attribute:atIndex:longestEffectiveRange:inRange:]
+                                                                                  4 -[NSConcreteMutableAttributedString attribute:atIndex:longestEffectiveRange:inRange:]
+                                                                                    3 -[NSAttributeDictionary objectForKey:]
+                                                                                      2 -[NSAttributeDictionary objectForKey:]
+                                                                                      1 __CFStringHash
+                                                                                        1 __CFStringHash
+                                                                                    1 objc_msgSend
+                                                                                      1 objc_msgSend
+                                                                              3 -[NSMutableAttributedString(NSMutableAttributedStringKitAdditions) fixFontAttributeInRange:]
+                                                                                3 -[NSMutableAttributedString(NSMutableAttributedStringKitAdditions) fixFontAttributeInRange:]
+                                                                              1 objc_msgSend
+                                                                                1 objc_msgSend
+                                                                            1 -[NSTextStorage ensureAttributesAreFixedInRange:]
+                                                                          4 -[NSConcreteTextStorage attributesAtIndex:longestEffectiveRange:inRange:]
+                                                                          2 -[NSConcreteMutableAttributedString attributesAtIndex:effectiveRange:]
+                                                                            2 -[NSConcreteMutableAttributedString attributesAtIndex:effectiveRange:]
+                                                                          2 NSIntersectionRange
+                                                                            2 NSIntersectionRange
+                                                                          1 -[NSAttributeDictionary isEqualToDictionary:]
+                                                                            1 -[NSAttributeDictionary isEqualToDictionary:]
+                                                                          1 -[NSConcreteMutableAttributedString length]
+                                                                            1 -[NSConcreteMutableAttributedString length]
+                                                                        21 CFStringGetCharacters
+                                                                          19 -[NSBigMutableString getCharacters:range:]
+                                                                            16 CFStorageGetValues
+                                                                              11 CFStorageGetValues
+                                                                              1 0xffff07c4
+                                                                                1 0xffff07c4
+                                                                              1 0xffff08a0
+                                                                                1 0xffff08a0
+                                                                              1 0xffff09f5
+                                                                                1 0xffff09f5
+                                                                              1 0xffff09fa
+                                                                                1 0xffff09fa
+                                                                              1 0xffff0ab7
+                                                                                1 0xffff0ab7
+                                                                            1 0xffff07e3
+                                                                              1 0xffff07e3
+                                                                            1 __CFStorageFindByte
+                                                                              1 __CFStorageFindByte
+                                                                            1 memmove
+                                                                              1 memmove
+                                                                          2 CFStringGetCharacters
+                                                                        17 -[NSAttributeDictionary objectForKey:]
+                                                                          10 -[NSAttributeDictionary objectForKey:]
+                                                                          7 __CFStringHash
+                                                                            7 __CFStringHash
+                                                                        15 objc_msgSend
+                                                                          15 objc_msgSend
+                                                                        14 -[NSLayoutManager setIntAttribute:value:forGlyphAtIndex:]
+                                                                          12 _NSGlyphTreeSetIntAttributeForGlyphAtIndex
+                                                                            7 _NSGlyphTreeMoveToGlyphIndex
+                                                                              7 _NSGlyphTreeMoveToGlyphIndex
+                                                                            5 _NSGlyphTreeSetIntAttributeForGlyphAtIndex
+                                                                          2 _NSGlyphTreeMoveToGlyphIndex
+                                                                            2 _NSGlyphTreeMoveToGlyphIndex
+                                                                        11 -[__NSFontTypefaceInfo _isDefaultFace]
+                                                                          4 0xffff026d
+                                                                            4 0xffff026d
+                                                                          2 -[__NSFontTypefaceInfo _postscriptName]
+                                                                            2 -[__NSFontTypefaceInfo _postscriptName]
+                                                                          2 0xa0a0331d
+                                                                            2 0xa0a0331d
+                                                                          1 -[__NSFontTypefaceInfo _isDefaultFace]
+                                                                          1 0xa0a03318
+                                                                            1 0xa0a03318
+                                                                          1 0xffff0269
+                                                                            1 0xffff0269
+                                                                        2 -[NSConcreteMutableAttributedString length]
+                                                                          2 -[NSConcreteMutableAttributedString length]
+                                                                        2 TBaseFont::GetGlyphsForCharacters(unsigned short const*, unsigned short*, long) const
+                                                                          2 TBaseFont::GetGlyphsForCharacters(unsigned short const*, unsigned short*, long) const
+                                                                        1 -[NSBigMutableString getCharacters:range:]
+                                                                          1 -[NSBigMutableString getCharacters:range:]
+                                                                        1 -[NSCFString hash]
+                                                                          1 -[NSCFString hash]
+                                                                        1 -[NSTextStorage ensureAttributesAreFixedInRange:]
+                                                                          1 -[NSTextStorage ensureAttributesAreFixedInRange:]
+                                                                        1 -[__NSFontTypefaceInfo _postscriptName]
+                                                                          1 -[__NSFontTypefaceInfo _postscriptName]
+                                                                        1 0xa0a4c88d
+                                                                          1 0xa0a4c88d
+                                                                        1 TFont::GetGlyphsForCharacters(unsigned short const*, unsigned short*, long) const
+                                                                          1 TFont::GetGlyphsForCharacters(unsigned short const*, unsigned short*, long) const
+                                                                      8 objc_msgSend
+                                                                        8 objc_msgSend
+                                                                      3 -[NSAttributeDictionary objectForKey:]
+                                                                        3 -[NSAttributeDictionary objectForKey:]
+                                                                      1 -[NSGlyphGenerator(NSGlyphGenPrivate) generateGlyphsForLayoutManager:range:desiredNumberOfCharacters:startingAtGlyphIndex:completedRange:nextGlyphIndex:]
+                                                                      1 -[NSObject methodForSelector:]
+                                                                        1 -[NSObject methodForSelector:]
+                                                                      1 0xa0a03d9a
+                                                                        1 0xa0a03d9a
+                                                                      1 CTFontGetGlyphsForCharacters
+                                                                        1 CTFontGetGlyphsForCharacters
+                                                                    1 -[NSConcreteTextStorage _lockForReading]
+                                                                      1 -[NSViewHierarchyLock lockForReading]
+                                                                        1 objc_msgSend
+                                                                          1 objc_msgSend
+                                                                  1 _NSGlyphTreeGetFirstHoleAfterCharacterIndex
+                                                                    1 _NSGlyphTreeMoveToCharacterIndex
+                                                                      1 _NSGlyphTreeMoveToCharacterIndex
+                                                            12 -[NSLayoutManager _primitiveInvalidateDisplayForGlyphRange:]
+                                                              7 -[NSLayoutManager(NSPrivate) _boundingRectForGlyphRange:inTextContainer:fast:fullLineRectsOnly:]
+                                                                6 -[NSLayoutManager(NSPrivate) _rectArrayForRange:withinSelectionRange:rangeIsCharRange:singleRectOnly:fullLineRectsOnly:inTextContainer:rectCount:rangeWithinContainer:glyphsDrawOutsideLines:]
+                                                                  2 _NSFastFillAllLayoutHolesForGlyphRange
+                                                                    1 0xa0a4ce14
+                                                                      1 0xa0a4ce14
+                                                                    1 _NSLayoutTreeGetFirstHoleAfterGlyphIndexWithLength
+                                                                      1 _NSLayoutTreeGetFirstHoleAfterGlyphIndexWithLength
+                                                                  2 _NSLayoutTreeLineFragmentRectForGlyphAtIndex
+                                                                    2 _NSLayoutTreeMoveToGlyphIndex
+                                                                      2 _NSLayoutTreeMoveToGlyphIndex
+                                                                  1 -[NSBigMutableString characterAtIndex:]
+                                                                    1 CFStorageGetValueAtIndex
+                                                                      1 CFStorageGetValueAtIndex
+                                                                  1 -[NSLayoutManager(NSPrivate) _rectArrayForRange:withinSelectionRange:rangeIsCharRange:singleRectOnly:fullLineRectsOnly:inTextContainer:rectCount:rangeWithinContainer:glyphsDrawOutsideLines:]
+                                                                1 _NSLayoutTreeGetExtraLineFragmentRect
+                                                                  1 _NSLayoutTreeMoveToGlyphIndex
+                                                                    1 _NSLayoutTreeMoveToGlyphIndex
+                                                              5 -[NSTextView setNeedsDisplayInRect:avoidAdditionalLayout:]
+                                                                2 -[NSView needsDisplay]
+                                                                  2 -[NSView(NSInternal) _needsDisplayInRect:]
+                                                                    1 -[NSView convertRect:toView:]
+                                                                      1 -[NSView _convertRect:toAncestor:]
+                                                                        1 objc_msgSend_stret
+                                                                          1 objc_msgSend_stret
+                                                                    1 -[NSView(NSInternal) _needsDisplayInRect:]
+                                                                1 -[NSLayoutManager(NSPrivate) _canDoLayout]
+                                                                  1 -[NSLayoutManager(NSPrivate) _canDoLayout]
+                                                                1 -[NSTextView setNeedsDisplayInRect:avoidAdditionalLayout:]
+                                                                1 -[NSView setNeedsDisplayInRect:]
+                                                                  1 -[NSView setNeedsDisplayInRect:]
+                                                            1 -[NSLayoutManager(NSPrivate) _blockRowRangeForCharRange:]
+                                                              1 -[NSLayoutManager(NSPrivate) _blockRowRangeForCharRange:completeRows:]
+                                                                1 objc_msgSend
+                                                                  1 objc_msgSend
+                                                            1 NSUnionRange
+                                                              1 NSUnionRange
+                                                            1 objc_msgSend
+                                                              1 objc_msgSend
+                                                          98 -[NSATSTypesetter layoutCharactersInRange:forLayoutManager:maximumNumberOfLineFragments:]
+                                                            98 -[NSTypesetter layoutCharactersInRange:forLayoutManager:maximumNumberOfLineFragments:]
+                                                              97 -[NSTypesetter _layoutGlyphsInLayoutManager:startingAtGlyphIndex:maxNumberOfLineFragments:maxCharacterIndex:nextGlyphIndex:nextCharacterIndex:]
+                                                                86 -[NSATSTypesetter layoutParagraphAtPoint:]
+                                                                  73 -[NSATSTypesetter _layoutLineFragmentStartingWithGlyphAtIndex:characterIndex:atPoint:renderingContext:]
+                                                                    59 -[NSATSLineFragment layoutForStartingGlyphAtIndex:characterIndex:minPosition:maxPosition:lineFragmentRect:]
+                                                                      46 -[NSATSTypesetter _ctTypesetter]
+                                                                        35 -[NSATSGlyphStorage createCTTypesetter]
+                                                                          20 CTTypesetterCreateWithRunArray
+                                                                            19 TTypesetterRunArray::TTypesetterRunArray[not-in-charge](__CFArray const*, __CFString const*, void const* (*)(__CTRun const*, __CFString const*, void*), void*)
+                                                                              12 TShapingEngine::ShapeGlyphs(TLine&, TCharStream const&)
+                                                                                8 TAATMorphTable::ShapeGlyphs(bool&)
+                                                                                  7 TAATMorphSubtable::ProcessTable(bool, TAATMorphActionResult&)
+                                                                                    2 TAATMorphSubtable::ProcessTableDescending(TAATMorphActionResult&)
+                                                                                      2 TAATMorphSubtableMorx::DoContextualSubtable(CFRange, bool, long, bool, TAATMorphSubtable::GlyphState&, TAATMorphActionResult&)
+                                                                                        2 TAATMorphSubtableMorx::DoContextualSubtable(CFRange, bool, long, bool, TAATMorphSubtable::GlyphState&, TAATMorphActionResult&)
+                                                                                    2 TAATMorphSubtableMorx::DoContextualSubtable(CFRange, bool, long, bool, TAATMorphSubtable::GlyphState&, TAATMorphActionResult&)
+                                                                                      2 TAATMorphSubtableMorx::DoContextualSubtable(CFRange, bool, long, bool, TAATMorphSubtable::GlyphState&, TAATMorphActionResult&)
+                                                                                    2 TAATMorphSubtableMorx::DoLigatureSubtable(CFRange, bool, long, bool, TAATMorphSubtable::GlyphState&, TAATMorphActionResult&)
+                                                                                      1 TAATMorphSubtableMorx::DoLigatureAction(unsigned short, TAATMorphSubtableMorx::MorxLigatureState*, TAATMorphActionResult&)
+                                                                                        1 void TAATMorphSubtable::SetGlyphIDT<(bool)0>(long, unsigned short)
+                                                                                          1 TStorageRange::UpdateAdvance(long, __CTFont const*)
+                                                                                            1 -[NSATSGlyphStorage setAdvance:forIndex:]
+                                                                                              1 -[NSATSGlyphStorage setAdvance:forIndex:]
+                                                                                      1 TAATMorphSubtableMorx::DoLigatureSubtable(CFRange, bool, long, bool, TAATMorphSubtable::GlyphState&, TAATMorphActionResult&)
+                                                                                    1 TAATMorphSubtable::ProcessTable(bool, TAATMorphActionResult&)
+                                                                                  1 TAATMorphTable::ShapeGlyphs(bool&)
+                                                                                4 TLine::DeleteGlyphs(long, long, long const*)
+                                                                                  4 TRun::DeleteGlyphs(long, long const*, long)
+                                                                                    4 long TRun::SetAttachmentsLeftToRight<(bool)1>(long, long const*, long)
+                                                                                      4 TObjCGlyphStorage::SetAttachmentCount(long, long)
+                                                                                        4 -[NSATSGlyphStorage setAbsorbedCount:forIndex:]
+                                                                                          3 -[NSATSGlyphStorage setAbsorbedCount:forIndex:]
+                                                                                          1 malloc_zone_calloc
+                                                                                            1 large_and_huge_malloc
+                                                                                              1 __mmap
+                                                                                                1 __mmap
+                                                                              3 CFStringCreateCopy
+                                                                                3 -[NSObject copy]
+                                                                                  3 -[NSPlaceholderString initWithString:]
+                                                                                    1 -[NSObject zone]
+                                                                                      1 malloc_zone_from_ptr
+                                                                                        1 szone_size
+                                                                                          1 szone_size
+                                                                                    1 -[NSString getCharacters:]
+                                                                                      1 -[NSString getCharacters:]
+                                                                                    1 CFStringCreateWithCharactersNoCopy
+                                                                                      1 __CFStringCreateImmutableFunnel3
+                                                                                        1 __CFStringCreateImmutableFunnel3
+                                                                              2 TLine::SetRunArray(__CFArray const*)
+                                                                                2 CFArrayGetCount
+                                                                                  2 CFArrayGetCount
+                                                                              1 TAATMorphTableMorx::~TAATMorphTableMorx [not-in-charge]()
+                                                                                1 TAATMorphTableMorx::~TAATMorphTableMorx [not-in-charge]()
+                                                                              1 TLine::UpdateCachedMetricsForRun(TRun const&)
+                                                                                1 TLine::UpdateCachedMetricsForRun(TRun const&)
+                                                                            1 TCFBase<TTypesetter>::operator new(unsigned long)
+                                                                              1 _CFRuntimeCreateInstance
+                                                                                1 malloc_zone_malloc
+                                                                                  1 0xffff026d
+                                                                                    1 0xffff026d
+                                                                          10 CTRunCreateMutableRunsWithStorageAndOptions
+                                                                            10 TRunEncoder::Encode(TCFBase<TGlyphStorage>*, CFRange, unsigned, __CFDictionary const*)
+                                                                              10 TRun::TRun[not-in-charge](TCFBase<TGlyphStorage>*, CFRange, __CFDictionary const*)
+                                                                                10 TAttributes::TAttributes[not-in-charge](__CFDictionary const*)
+                                                                                  9 TAttributes::ParseAttributes(__CFDictionary const*, void const*&)
+                                                                                    9 CFDictionaryApplyFunction
+                                                                                      8 -[NSDictionary _apply:context:]
+                                                                                        3 -[NSDictionary countByEnumeratingWithState:objects:count:]
+                                                                                          3 -[NSAttributeDictionary keyEnumerator]
+                                                                                            1 +[NSObject allocWithZone:]
+                                                                                              1 +[NSObject allocWithZone:]
+                                                                                            1 __CFSetLastAllocationEventName
+                                                                                              1 __CFSetLastAllocationEventName
+                                                                                            1 objc_msgSendSuper
+                                                                                              1 objc_msgSendSuper
+                                                                                        3 TAttributes::ApplyAttributeHandlers(void const*, void const*, void*)
+                                                                                          3 CFDictionaryGetValue
+                                                                                            2 __CFDictionaryFindBuckets1b
+                                                                                              1 CFEqual
+                                                                                                1 __CFStringEqual
+                                                                                                  1 __CFStringEqual
+                                                                                              1 __CFDictionaryFindBuckets1b
+                                                                                            1 CFDictionaryGetValue
+                                                                                        1 0xa0a35547
+                                                                                          1 0xa0a35547
+                                                                                        1 TAttributes::HandleFontAttribute(void const*, TAttributes::AttributeHandlerContext*)
+                                                                                          1 TAttributes::HandleFontAttribute(void const*, TAttributes::AttributeHandlerContext*)
+                                                                                      1 -[NSDictionary countByEnumeratingWithState:objects:count:]
+                                                                                        1 -[NSDictionary countByEnumeratingWithState:objects:count:]
+                                                                                  1 TAttributes::TAttributes[not-in-charge](__CFDictionary const*)
+                                                                          3 _CFArrayReplaceValues
+                                                                            1 0xffff07d2
+                                                                              1 0xffff07d2
+                                                                            1 CFAllocatorAllocate
+                                                                              1 CFAllocatorAllocate
+                                                                            1 malloc_zone_malloc
+                                                                              1 szone_malloc
+                                                                                1 tiny_malloc_from_free_list
+                                                                                  1 tiny_free_list_add_ptr
+                                                                                    1 tiny_free_list_add_ptr
+                                                                          1 -[NSATSGlyphStorage createCTTypesetter]
+                                                                          1 -[__NSATSStringSegment _setOriginalString:range:]
+                                                                            1 CFRetain
+                                                                              1 -[NSObject retain]
+                                                                                1 spin_lock
+                                                                                  1 spin_lock
+                                                                        10 -[NSATSGlyphStorage setGlyphRange:characterRange:]
+                                                                          3 -[NSATSGlyphStorage setGlyphRange:characterRange:]
+                                                                          1 -[NSFont _ascenderDeltaForBehavior:]
+                                                                            1 objc_msgSend
+                                                                              1 objc_msgSend
+                                                                          1 -[NSFont renderingMode]
+                                                                            1 -[NSFont renderingMode]
+                                                                          1 -[NSObject zone]
+                                                                            1 malloc_zone_from_ptr
+                                                                              1 szone_size
+                                                                                1 szone_size
+                                                                          1 _NSGlyphTreeGetGlyphsInRange
+                                                                            1 _NSGlyphTreeGetGlyphsInRange
+                                                                          1 munmap$UNIX2003
+                                                                            1 munmap$UNIX2003
+                                                                          1 objc_msgSend
+                                                                            1 objc_msgSend
+                                                                          1 objc_msgSend_fpret
+                                                                            1 objc_msgSend_fpret
+                                                                        1 objc_msgSend
+                                                                          1 objc_msgSend
+                                                                      3 -[NSATSLineFragment _charIndexToBreakLineByWordWrappingAtIndex:lineFragmentWidth:hyphenate:]
+                                                                        3 -[NSAttributedString(NSAttributedStringKitAdditions) lineBreakBeforeIndex:withinRange:]
+                                                                          1 -[NSAttributedString(NSAttributedStringKitAdditions) lineBreakBeforeIndex:withinRange:]
+                                                                          1 UCFindTextBreak
+                                                                            1 icu::RuleBasedBreakIterator::preceding(int)
+                                                                              1 icu::RuleBasedBreakIterator::previous()
+                                                                                1 icu::RuleBasedBreakIterator::handlePrevious(icu::RBBIStateTable const*)
+                                                                                  1 icu::RuleBasedBreakIterator::handlePrevious(icu::RBBIStateTable const*)
+                                                                          1 objc_msgSend
+                                                                            1 objc_msgSend
+                                                                      3 CTTypesetterCreateLine
+                                                                        3 TTypesetter::FillLine(TLine&, CFRange, double) const
+                                                                          3 TLine::CopyStringRange(TLine const&, CFRange)
+                                                                            3 TLine::AppendPartialRun(CTRun const*, CFRange)
+                                                                              3 CTGlyphRun::CloneRange(CTRun const*, CFRange, bool)
+                                                                                2 TCFBase<TRun>::operator new(unsigned long)
+                                                                                  1 TCFBase<TRun>::operator new(unsigned long)
+                                                                                  1 _CFRuntimeCreateInstance
+                                                                                    1 malloc_size
+                                                                                      1 szone_size
+                                                                                        1 szone_size
+                                                                                1 TRun::TRun[not-in-charge](TRun const&, CFRange, bool)
+                                                                                  1 TAttributes::operator=(TAttributes const&)
+                                                                                    1 void TCFAssign<__CFDictionary>(__CFDictionary const*&, __CFDictionary const*)
+                                                                                      1 void TCFAssign<__CFDictionary>(__CFDictionary const*&, __CFDictionary const*)
+                                                                      3 CTTypesetterSuggestClusterBreak
+                                                                        3 TTypesetter::SuggestClusterBreak(long, double, double) const
+                                                                          3 TTypesetter::FindGraphicalBreak(long, double, double, CFRange*, double*) const
+                                                                            2 TLine::FindWidthOverflow(long, double, long*, double*) const
+                                                                              2 TRun::FindBreak(long, double, long*, double*) const
+                                                                                1 TRun::GetGlyphIndexForCharIndex(long) const
+                                                                                  1 TRun::GetGlyphIndexForCharIndex(long) const
+                                                                                1 TRun::NextGlyph(long, long*) const
+                                                                                  1 TObjCGlyphStorage::GetStringIndices() const
+                                                                                    1 TObjCGlyphStorage::GetStringIndices() const
+                                                                            1 TTypesetter::FindGraphicalBreakWithTabs(TLine const&, CFRange, double, double, unsigned char, long*, double*) const
+                                                                              1 TLine::CopyStringRange(TLine const&, CFRange)
+                                                                                1 TLine::AppendPartialRun(CTRun const*, CFRange)
+                                                                                  1 TRun::TRun[not-in-charge](TRun const&, CFRange, bool)
+                                                                                    1 TRun::TRun[not-in-charge](TRun const&, CFRange, bool)
+                                                                      2 -[NSATSGlyphStorage _resolvePositionalStakeGlyphsForLineFragment:lineFragmentRect:minPosition:maxPosition:maxLineFragmentWidth:breakHint:]
+                                                                        1 -[NSATSGlyphStorage _resolvePositionalStakeGlyphsForLineFragment:lineFragmentRect:minPosition:maxPosition:maxLineFragmentWidth:breakHint:]
+                                                                        1 -[NSTextTab alignment]
+                                                                          1 -[NSTextTab alignment]
+                                                                      1 -[NSATSGlyphStorage _collectElasticRangeSurroundingCharacterAtIndex:minimumCharacterIndex:]
+                                                                        1 -[NSATSGlyphStorage _collectElasticRangeSurroundingCharacterAtIndex:minimumCharacterIndex:]
+                                                                      1 -[NSATSGlyphStorage _widthForStringRange:]
+                                                                        1 -[NSATSGlyphStorage _widthForStringRange:]
+                                                                    3 -[NSATSLineFragment saveMorphedGlyphs:]
+                                                                      2 -[NSTypesetter substituteGlyphsInRange:withGlyphs:]
+                                                                        2 -[NSLayoutManager replaceGlyphAtIndex:withGlyph:]
+                                                                          2 _NSGlyphTreeReplaceGlyphAtIndex
+                                                                            2 _NSGlyphNodeSetGlyphFormat
+                                                                              2 _NSGlyphNodeSetGlyphFormat
+                                                                      1 -[NSATSLineFragment saveMorphedGlyphs:]
+                                                                    3 -[NSLayoutManager setLineFragmentRect:forGlyphRange:usedRect:]
+                                                                      2 _NSLayoutTreeSetLineFragmentRectForGlyphRange
+                                                                        2 _NSLayoutNodeAppendLineFragment
+                                                                          2 _NSLayoutNodeAppendLineFragment
+                                                                      1 -[NSLayoutManager(NSPrivate) _updateUsageForTextContainer:addingUsedRect:]
+                                                                        1 -[NSLayoutManager(NSPrivate) _resizeTextViewForTextContainer:]
+                                                                          1 -[NSLayoutManager(NSPrivate) _resizeTextViewForTextContainer:]
+                                                                    2 -[NSATSLineFragment saveWithGlyphOrigin:]
+                                                                      1 -[NSATSLineFragment saveWithGlyphOrigin:]
+                                                                      1 _NSLayoutTreeSetLocationForGlyphRange
+                                                                        1 _NSLayoutTreeSetLocationForGlyphRange
+                                                                    2 -[NSATSTypesetter _layoutLineFragmentStartingWithGlyphAtIndex:characterIndex:atPoint:renderingContext:]
+                                                                    1 -[NSFont _ascenderDeltaForBehavior:]
+                                                                      1 -[NSFont __isSystemFont]
+                                                                        1 -[__NSFontTypefaceInfo _isLucidaGrande]
+                                                                          1 -[__NSFontTypefaceInfo _familyName]
+                                                                            1 -[__NSFontTypefaceInfo _familyName]
+                                                                    1 -[NSLayoutManager setLocation:forStartOfGlyphRange:]
+                                                                      1 -[NSLayoutManager setLocation:forStartOfGlyphRange:]
+                                                                    1 -[NSTypesetter setLocation:withAdvancements:forStartOfGlyphRange:]
+                                                                      1 -[NSTypesetter setLocation:withAdvancements:forStartOfGlyphRange:]
+                                                                    1 objc_msgSend
+                                                                      1 objc_msgSend
+                                                                  7 -[NSATSTypesetter endParagraph]
+                                                                    5 -[NSATSLineFragment _invalidate]
+                                                                      5 _CFRelease
+                                                                        4 TLine::~TLine [not-in-charge]()
+                                                                          4 _CFRelease
+                                                                            2 __CFArrayReleaseValues
+                                                                              2 _CFRelease
+                                                                                1 TRun::~TRun [not-in-charge]()
+                                                                                  1 _CFRelease
+                                                                                    1 _CFRelease
+                                                                                1 szone_free
+                                                                                  1 szone_free
+                                                                            1 __CFStrContentsDeallocatorPtr
+                                                                              1 __CFStrContentsDeallocatorPtr
+                                                                            1 __CFStringDeallocate
+                                                                              1 free
+                                                                                1 szone_free
+                                                                                  1 szone_free
+                                                                        1 free
+                                                                          1 free
+                                                                    1 -[NSATSGlyphStorage _invalidate]
+                                                                      1 CFArrayRemoveAllValues
+                                                                        1 __CFArrayReleaseValues
+                                                                          1 _CFRelease
+                                                                            1 0xffff026d
+                                                                              1 0xffff026d
+                                                                    1 CFAllocatorDeallocate
+                                                                      1 CFAllocatorDeallocate
+                                                                  2 -[NSATSTypesetter beginParagraph]
+                                                                    2 -[NSTypesetter beginParagraph]
+                                                                      2 objc_msgSend
+                                                                        2 objc_msgSend
+                                                                  2 objc_msgSend_fpret
+                                                                    2 objc_msgSend_fpret
+                                                                  1 -[NSLayoutManager setLineFragmentRect:forGlyphRange:usedRect:]
+                                                                    1 -[NSLayoutManager(NSPrivate) _updateUsageForTextContainer:addingUsedRect:]
+                                                                      1 objc_msgSend_stret
+                                                                        1 objc_msgSend_stret
+                                                                  1 CFRelease
+                                                                    1 CFRelease
+                                                                4 -[NSTypesetter setParagraphGlyphRange:separatorGlyphRange:]
+                                                                  4 -[NSTypesetter characterRangeForGlyphRange:actualGlyphRange:]
+                                                                    4 -[NSLayoutManager characterRangeForGlyphRange:actualGlyphRange:]
+                                                                      2 _NSFastFillAllGlyphHolesForGlyphRange
+                                                                        1 _NSFastFillAllGlyphHolesForGlyphRange
+                                                                        1 _NSGlyphTreeGetFirstHoleAfterGlyphIndex
+                                                                          1 _NSGlyphTreeMoveToCharacterIndex
+                                                                            1 _NSGlyphTreeMoveToCharacterIndex
+                                                                      1 -[NSLayoutManager characterRangeForGlyphRange:actualGlyphRange:]
+                                                                      1 _NSGlyphTreeCharacterRangeForGlyphRange
+                                                                        1 _NSGlyphTreeCharacterRangeForGlyphRange
+                                                                2 -[NSTypesetter _getRemainingNominalParagraphRange:andParagraphSeparatorRange:charactarIndex:layoutManager:string:]
+                                                                  2 -[NSTypesetter _getRemainingNominalParagraphRange:andParagraphSeparatorRange:charactarIndex:layoutManager:string:]
+                                                                2 objc_msgSend
+                                                                  2 objc_msgSend
+                                                                1 -[NSLayoutManager characterIndexForGlyphAtIndex:]
+                                                                  1 _NSFastFillAllGlyphHolesForGlyphRange
+                                                                    1 _NSGlyphTreeGetFirstHoleAfterGlyphIndex
+                                                                      1 _NSGlyphTreeMoveToCharacterIndex
+                                                                        1 _NSGlyphTreeMoveToCharacterIndex
+                                                                1 -[NSLayoutManager(NSPrivate) _isInUILayoutMode]
+                                                                  1 -[NSTextView(NSSharing) isFieldEditor]
+                                                                    1 -[NSTextView(NSSharing) isFieldEditor]
+                                                                1 -[NSTypesetter _layoutGlyphsInLayoutManager:startingAtGlyphIndex:maxNumberOfLineFragments:maxCharacterIndex:nextGlyphIndex:nextCharacterIndex:]
+                                                              1 -[NSLayoutManager glyphIndexForCharacterAtIndex:]
+                                                                1 _NSFastFillAllGlyphHolesForCharacterRange
+                                                                  1 _NSGlyphTreeGetFirstHoleAfterCharacterIndex
+                                                                    1 _NSGlyphTreeMoveToCharacterIndex
+                                                                      1 _NSGlyphTreeMoveToCharacterIndex
+                                                          1 -[NSLayoutManager(NSPrivate) _invalidateInsertionPoint]
+                                                            1 -[NSLayoutManager firstUnlaidCharacterIndex]
+                                                              1 -[NSLayoutManager firstUnlaidCharacterIndex]
+                                                          1 -[NSRunStorage removeElementsInRange:coalesceRuns:]
+                                                            1 -[NSRunStorage removeElementsInRange:coalesceRuns:]
+                                                          1 objc_msgSend
+                                                            1 objc_msgSend
+                                                        1 -[NSConcreteTextStorage _lockForReading]
+                                                          1 -[NSViewHierarchyLock lockForReading]
+                                                            1 -[NSViewHierarchyLock lockForReadingWithExceptionHandler:]
+                                                              1 -[NSViewHierarchyLock lockForReadingWithExceptionHandler:]
+                                                        1 -[NSLayoutManager(NSPrivate) _resizeTextViewForTextContainer:]
+                                                          1 _NXPureConvertSize
+                                                            1 _NXPureConvertSize
+                                1 -[NSTextView scrollRangeToVisible:]
+                                  1 -[NSTextView(NSPrivate) _scrollRangeToVisible:forceCenter:]
+                                    1 -[NSTextView(NSPrivate) _centeredScrollRectToVisible:forceCenter:]
+                                      1 -[NSView scrollRectToVisible:]
+                                        1 -[NSClipView _scrollRectToVisible:fromView:]
+                                          1 -[NSClipView _scrollTo:]
+                                            1 -[NSClipView _scrollTo:animate:]
+                                              1 -[NSScrollView scrollClipView:toPoint:]
+                                                1 -[NSClipView scrollToPoint:]
+                                                  1 -[NSClipView _immediateScrollToPoint:]
+                                                    1 -[NSView displayIfNeeded]
+                                                      1 -[NSView _displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:]
+                                                        1 -[NSView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]
+                                                          1 -[NSView _drawRect:clip:]
+                                                            1 -[NSClipView drawRect:]
+                                                              1 NSRectFill
+                                                                1 CGContextFillRect
+                                                                  1 CGContextFillRects
+                                                                    1 ripc_DrawRects
+                                                                      1 ripc_Render
+                                                                        1 ripl_BltShape
+                                                                          1 ripd_Lock
+                                                                            1 CGSDeviceLock
+                                                                              1 _CGSLockWindow
+                                                                                1 _CGSSynchronizeWindowBackingStore
+                                                                                  1 mach_msg_trap
+                                                                                    1 mach_msg_trap
+                                1 -[NSView displayIfNeeded]
+                                  1 -[NSView _displayRectIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:]
+                                    1 -[NSView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]
+                                      1 -[NSView _recursiveDisplayAllDirtyWithLockFocus:visRect:]
+                                        1 -[NSView _recursiveDisplayAllDirtyWithLockFocus:visRect:]
+                                          1 -[NSTextView _drawRect:clip:]
+                                            1 -[NSTextView drawRect:]
+                                              1 -[NSLayoutManager(NSTextViewSupport) drawGlyphsForGlyphRange:atPoint:]
+                                                1 -[NSLayoutManager(NSPrivate) _drawGlyphsForGlyphRange:atPoint:parameters:]
+                                                  1 -[NSLayoutManager(NSTextViewSupport) showPackedGlyphs:length:glyphRange:atPoint:font:color:printingAdjustment:]
+                                                    1 CGContextShowGlyphsWithAdvances
+                                                      1 draw_glyphs
+                                                        1 ripc_DrawGlyphs
+                                                          1 ripl_BltGlyph
+                                                            1 argb32_mark
+                                                              1 CGSColorMaskCopyARGB8888
+                                                                1 CGSColorMaskCopyARGB8888
+                            1 0xa0a4cdf6
+                              1 0xa0a4cdf6
+                          3 mach_msg_trap
+                            3 mach_msg_trap
+                          1 __CFMachPortPerform
+                            1 PullEventsFromWindowServerOnConnection(unsigned, unsigned char)
+                              1 ConvertPlatformEventRecordAndPostWithOptions(__CGEvent*, _CGSEventRecord const*, short, unsigned char, unsigned char)
+                                1 CreateEventWithCGEvent
+                                  1 _CFXNotificationSetSuspended
+                                    1 __CFXNotificationSendToServer
+                                      1 __CFBinaryPlistWriteToStream
+                                        1 __CFSetGrow
+                                          1 __CFSetGrow
+                          1 __CFRunLoopDoObservers
+                            1 _handleInvalidCursorRectsNote
+                              1 -[NSView(NSInternal) _updateTrackingAreas]
+                                1 CFArrayApplyFunction
+                                  1 -[NSView(NSInternal) _updateTrackingAreas]
+                                    1 CFArrayApplyFunction
+                                      1 -[NSView(NSInternal) _updateTrackingAreas]
+                                        1 CFArrayApplyFunction
+                                          1 -[NSView(NSInternal) _updateTrackingAreas]
+                                            1 CFArrayApplyFunction
+                                              1 -[NSView(NSInternal) _updateTrackingAreas]
+                                                1 -[NSView(NSInternal) _installTrackingArea:]
+                                                  1 -[NSView(NSInternal) _disableTrackingArea:]
+                                                    1 -[NSView(NSInternal) _disableTrackingArea:]
+    778 Thread_5e03
+      778 thread_start
+        778 _pthread_start
+          778 __NSThread__main__
+            778 -[NSThread main]
+              778 -[ElvinConnection elvinEventLoopThread]
+                778 -[ElvinConnection runElvinEventLoop]
+                  778 0x19138
+                    778 select$DARWIN_EXTSN
+                      778 select$DARWIN_EXTSN
+    778 Thread_5f03
+      778 thread_start
+        778 _pthread_start
+          778 __NSThread__main__
+            778 -[NSThread main]
+              778 -[NSUIHeartBeat _heartBeatThread:]
+                778 -[NSConditionLock lockWhenCondition:]
+                  778 -[NSConditionLock lockWhenCondition:beforeDate:]
+                    778 -[NSCondition waitUntilDate:]
+                      778 pthread_cond_timedwait_relative_np
+                        778 semaphore_timedwait_signal_trap
+                          778 semaphore_timedwait_signal_trap
+
+Total number in stack (recursive counted multiple, when >=5):
+        17       objc_msgSend
+        6       _CFRelease
+        5       -[NSView(NSInternal) _updateTrackingAreas]
+        5       _NSGlyphTreeMoveToCharacterIndex
+
+Sort by top of stack, same collapsed (when >= 5):
+        select$DARWIN_EXTSN        778
+        semaphore_timedwait_signal_trap        778
+        TFormat4UTF16cmapTable::Map(unsigned short const*, unsigned short*, long&) const        202
+        -[NSConcreteGlyphGenerator generateGlyphsForGlyphStorage:desiredNumberOfCharacters:glyphIndex:characterIndex:]        145
+        _NSGlyphTreeInsertGlyphs        72
+        objc_msgSend        67
+        _NSGlyphTreeMoveToCharacterIndex        19
+        -[NSAttributeDictionary objectForKey:]        15
+        -[NSAttributedString attributesAtIndex:longestEffectiveRange:inRange:]        11
+        CFStorageGetValues        11
+        _NSGlyphTreeMoveToGlyphIndex        9
+        __CFStringHash        8
+        0xffff026d        7
+        blockForLocation        7
+        -[NSAttributeDictionary isEqualToDictionary:]        6
+        CTFontGetGlyphsForCharacters        5
+        _NSGlyphTreeSetIntAttributeForGlyphAtIndex        5
