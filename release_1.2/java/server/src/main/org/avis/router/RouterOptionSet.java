@@ -22,7 +22,7 @@ public class RouterOptionSet extends OptionSet
     add ("Port", 1, DEFAULT_PORT, 65535);
     add ("Listen", "elvin://0.0.0.0");
     add ("IO.Idle-Connection-Timeout", 1, 15, Integer.MAX_VALUE);
-    add ("IO.Use-Direct-Buffers", true);
+    add ("IO.Use-Direct-Buffers", false);
     add ("TLS.Keystore", new OptionTypeURI (), uri (""));
     add ("TLS.Keystore-Passphrase", "");
     add ("Require-Authenticated", 
