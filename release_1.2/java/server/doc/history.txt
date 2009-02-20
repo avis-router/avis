@@ -1,3 +1,12 @@
+Release 1.2.2 (???, 2009)
+----------------------------------------------------------------------
+
+ * Fixed bug that stopped secure messages being federated between Avis
+   and Mantara elvind routers. Note that this fix means that Avis
+   1.2.2 will not federate secure messages with previous Avis router
+   releases.
+
+
 Release 1.2.1 (March 9, 2008)
 ----------------------------------------------------------------------
 
