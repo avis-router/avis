@@ -1,4 +1,4 @@
-package org.avis.tools;
+package org.avis.router;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +9,6 @@ import org.apache.mina.common.ByteBuffer;
 
 import org.avis.common.ElvinURI;
 import org.avis.io.messages.NotifyEmit;
-import org.avis.router.SimpleClient;
 
 import static java.lang.System.currentTimeMillis;
 
