@@ -8,6 +8,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.avis.config.Options;
 import org.avis.security.Keys;
 
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
+
 /**
  * Stores the state needed for a client's connection to the router.
  * Thread access is managed via a single writer/multiple reader lock.
@@ -64,6 +67,9 @@ class Connection
     this.notificationKeys = notificationKeys;
     this.options = new ClientConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
+    
+    subscriptionKeys.hashPrivateKeysForRole (CONSUMER);
+    notificationKeys.hashPrivateKeysForRole (PRODUCER);
   }
 
   /**

@@ -177,7 +177,7 @@ public abstract class KeyScheme
   {
     for (Key privateKey : privateKeys)
     {
-      if (publicKeys.contains (publicKeyFor (privateKey)))
+      if (publicKeys.contains (privateKey))
         return true;
     }
     

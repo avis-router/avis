@@ -98,6 +98,8 @@ import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
 import static org.avis.util.Text.formatNotification;
@@ -157,7 +159,7 @@ public class Router implements IoHandler, Closeable
    * @throws IllegalConfigOptionException If an option in the configuratiion
    *                 options is invalid.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings ("unchecked")
   public Router (RouterOptions options)
     throws IOException, IllegalConfigOptionException
   {
@@ -672,12 +674,18 @@ public class Router implements IoHandler, Closeable
     
     try
     {
+      message.addNtfnKeys.hashPrivateKeysForRole (PRODUCER);
+      message.delNtfnKeys.hashPrivateKeysForRole (PRODUCER);
+      
+      message.addSubKeys.hashPrivateKeysForRole (CONSUMER);
+      message.delSubKeys.hashPrivateKeysForRole (CONSUMER);
+      
       Keys newNtfnKeys = connection.notificationKeys.delta
         (message.addNtfnKeys, message.delNtfnKeys);
   
       Keys newSubKeys = connection.subscriptionKeys.delta
         (message.addSubKeys, message.delSubKeys);
-  
+
       if (connection.connectionKeysFull (newNtfnKeys, newSubKeys))
       {
         nackLimit (session, message, "Too many keys");
@@ -755,7 +763,11 @@ public class Router implements IoHandler, Closeable
       Subscription subscription =
         connection.subscriptionFor (message.subscriptionId);
       
-      Keys newKeys = subscription.keys.delta (message.addKeys, message.delKeys);
+      message.addKeys.hashPrivateKeysForRole (CONSUMER);
+      message.delKeys.hashPrivateKeysForRole (CONSUMER);
+      
+      Keys newKeys = 
+        subscription.keys.delta (message.addKeys, message.delKeys);
 
       if (connection.subscriptionKeysFull (newKeys))
       {
@@ -809,6 +821,8 @@ public class Router implements IoHandler, Closeable
     if (shouldLog (TRACE))
       logNotification (session, message);
     
+    message.keys.hashPrivateKeysForRole (PRODUCER);
+    
     deliverNotification (message, connectionFor (session).notificationKeys);
   }
 
@@ -816,6 +830,8 @@ public class Router implements IoHandler, Closeable
   {
     if (shouldLog (TRACE))
       logNotification (null, message);
+    
+    message.keys.hashPrivateKeysForRole (PRODUCER);
     
     deliverNotification (message, EMPTY_KEYS);
   }
