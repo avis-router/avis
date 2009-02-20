@@ -1,5 +1,7 @@
 package org.avis.security;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -8,8 +10,12 @@ import java.util.Map.Entry;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import org.avis.security.DualKeyScheme.Subset;
+
 import static org.avis.io.XdrCoding.getBytes;
 import static org.avis.io.XdrCoding.putBytes;
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 import static org.avis.security.KeyScheme.schemeFor;
 import static org.avis.security.Keys.Delta.EMPTY_DELTA;
 
@@ -399,8 +405,51 @@ public class Keys
   }
   
   /**
+   * Turn all private keys for a given role into their public versions
+   * by hashing them in place. Clients should never need to use this.
+   * 
+   * @param role PRODUCER (producer keys are hashed) or CONSUMER
+   *          (consumer keys are hashed).
+   */
+  public void hashPrivateKeysForRole (Subset role)
+  {
+    if (isEmpty ())
+      return;
+    
+    for (Map.Entry<KeyScheme, KeySet> entry : keySets.entrySet ())
+    {
+      KeyScheme scheme = entry.getKey ();
+      
+      if (scheme.isDual ())
+      {
+        hashKeys (scheme, 
+                  ((DualKeySet)entry.getValue ()).keysFor (role));
+      } else if (scheme.consumer && role == CONSUMER ||
+                 scheme.producer && role == PRODUCER)
+      {
+        hashKeys (scheme, (SingleKeySet)entry.getValue ());
+      }
+    }
+  }
+  
+  private void hashKeys (KeyScheme scheme, Set<Key> keys)
+  {    
+    if (!keys.isEmpty ())
+    {
+      Collection<Key> publicKeys = new ArrayList<Key> (keys.size ());
+      
+      for (Key key : keys)
+        publicKeys.add (key.publicKeyFor (scheme));
+      
+      keys.clear ();
+      keys.addAll (publicKeys);
+    }
+  }
+  
+  /**
    * Test whether a given key collection matches this one for the
-   * purpose of notification delivery.
+   * purpose of notification delivery. Clients should never need to use
+   * this. The keys are all assumed to be public (prime) keys.
    * 
    * @param producerKeys The producer keys to match against this
    *          (consumer) key collection.
