@@ -65,7 +65,9 @@ public class DosAttack
           {
             sendClient.send (new NotifyEmit (ntfn));
             
-            if (count++ / 100 == 0)
+            count++;
+
+            if (count % 20 == 0)
               info (count + " messages sent", this);
           }
         } catch (Exception ex)
@@ -91,7 +93,9 @@ public class DosAttack
             for (SimpleClient receiveClient : receiveClients)
               receiveClient.receive ();
             
-            if (count++ / 100 == 0)
+            count++;
+            
+            if (count % 20 == 0)
               info (count + " messages received", this);
           }
         } catch (Exception ex)
