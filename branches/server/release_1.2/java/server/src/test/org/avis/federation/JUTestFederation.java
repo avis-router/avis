@@ -16,10 +16,6 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.apache.mina.transport.socket.nio.SocketConnectorConfig;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -37,7 +33,15 @@ import org.avis.security.Keys;
 import org.avis.subscription.ast.nodes.Const;
 import org.avis.util.LogFailTester;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import static java.lang.Thread.sleep;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import static org.avis.federation.Federation.DEFAULT_EWAF_PORT;
 import static org.avis.federation.Federation.VERSION_MAJOR;
@@ -47,12 +51,12 @@ import static org.avis.federation.TestUtils.waitForConnect;
 import static org.avis.logging.Log.INFO;
 import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.shouldLog;
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
+import static org.avis.security.KeyScheme.SHA1_DUAL;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Collections.set;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 public class JUTestFederation
 {
@@ -486,12 +490,14 @@ public class JUTestFederation
     
     EwafURI ewafURI = new EwafURI ("ewaf:1.0//localhost:" + (PORT1 + 1));
 
+    // run elvind
     Process elvind = null;
     
     if (runElvind)
       elvind = runMantaraElvind (ewafURI, 
                                  "require (federated)", "require (federated)");
     
+    // start Avis on PORT2
     Router server = new Router (PORT2);
 
     Options options = new Options (FederationOptionSet.OPTION_SET);
@@ -500,11 +506,11 @@ public class JUTestFederation
       new FederationClass ("require (federated)", "require (federated)");
     
     Connector connector = 
-      new Connector (server, "avis", ewafURI, 
-                               fedClass, options);
+      new Connector (server, "avis", ewafURI, fedClass, options);
     
     waitForConnect (connector);
     
+    // connect two clients, one to elvind, one to Avis
     SimpleClient client1 = new SimpleClient ("client1", "localhost", PORT1);
     SimpleClient client2 = new SimpleClient ("client2", "localhost", PORT2);
     
@@ -515,6 +521,36 @@ public class JUTestFederation
     client2.subscribe ("require (federated) && from == 'client1'");
 
     testTwoWayClientSendReceive (client1, client2);
+    
+    // secure messaging: set up dual key scheme for two-way comms
+    Key client1Private = new Key ("client1 private");
+    Key client2Private = new Key ("client2 private");
+    Key client1Public = client1Private.publicKeyFor (SHA1_PRODUCER);
+    Key client2Public = client2Private.publicKeyFor (SHA1_PRODUCER);
+    
+    Keys client1NtfnKeys = new Keys ();
+    client1NtfnKeys.add (SHA1_DUAL, PRODUCER, client1Private);
+    client1NtfnKeys.add (SHA1_DUAL, CONSUMER, client2Public);
+    
+    Keys client1SubKeys = new Keys ();
+    client1SubKeys.add (SHA1_DUAL, PRODUCER, client2Public);
+    client1SubKeys.add (SHA1_DUAL, CONSUMER, client1Private);
+
+    Keys client2NtfnKeys = new Keys ();
+    client2NtfnKeys.add (SHA1_DUAL, PRODUCER, client2Private);
+    client2NtfnKeys.add (SHA1_DUAL, CONSUMER, client1Public);
+
+    Keys client2SubKeys = new Keys ();
+    client2SubKeys.add (SHA1_DUAL, PRODUCER, client1Public);
+    client2SubKeys.add (SHA1_DUAL, CONSUMER, client2Private);
+    
+    client1.sendAndReceive
+      (new SecRqst (client1NtfnKeys, EMPTY_KEYS, client1SubKeys, EMPTY_KEYS));
+    
+    client2.sendAndReceive
+      (new SecRqst (client2NtfnKeys, EMPTY_KEYS, client2SubKeys, EMPTY_KEYS));
+    
+    testTwoWayClientSendReceive (client1, client2, true);
     
     client1.close ();
     client2.close ();
@@ -618,11 +654,19 @@ public class JUTestFederation
     return elvind;
   }
   
+  private static void testTwoWayClientSendReceive (SimpleClient client1,
+                                                   SimpleClient client2)
+    throws Exception
+  {
+    testTwoWayClientSendReceive (client1, client2, false);
+  }
+  
   /**
    * Test client1 can see message from client2 and vice-versa.
    */
   private static void testTwoWayClientSendReceive (SimpleClient client1,
-                                                   SimpleClient client2)
+                                                   SimpleClient client2,
+                                                   boolean secure)
     throws Exception
   {
     // client 1 -> client 2
@@ -630,7 +674,17 @@ public class JUTestFederation
       (map ("federated", "server1", "from", "client1"));
     
     NotifyDeliver notification = (NotifyDeliver)client2.receive ();
-    
+
+    if (secure)
+    {
+      assertEquals (1, notification.secureMatches.length);
+      assertEquals (0, notification.insecureMatches.length);
+    } else
+    {
+      assertEquals (0, notification.secureMatches.length);
+      assertEquals (1, notification.insecureMatches.length);
+    }
+
     assertEquals ("client1", notification.attributes.get ("from"));
     
     // client 2 - > client 1
@@ -639,8 +693,16 @@ public class JUTestFederation
     
     notification = (NotifyDeliver)client1.receive ();
     
-    assertEquals (0, notification.secureMatches.length);
-    assertEquals (1, notification.insecureMatches.length);
+    if (secure)
+    {
+      assertEquals (1, notification.secureMatches.length);
+      assertEquals (0, notification.insecureMatches.length);
+    } else
+    {
+      assertEquals (0, notification.secureMatches.length);
+      assertEquals (1, notification.insecureMatches.length);
+    }
+    
     assertEquals ("client2", notification.attributes.get ("from"));
   }
 
