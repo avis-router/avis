@@ -1,12 +1,15 @@
 package org.avis.router;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-
 import org.avis.config.Options;
 import org.avis.security.Keys;
+
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
+import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 
 /**
  * Stores the state needed for a client's connection to the router.
@@ -64,6 +67,9 @@ class Connection
     this.notificationKeys = notificationKeys;
     this.options = new ClientConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
+    
+    subscriptionKeys.hashPrivateKeysForRole (CONSUMER);
+    notificationKeys.hashPrivateKeysForRole (PRODUCER);
   }
 
   /**

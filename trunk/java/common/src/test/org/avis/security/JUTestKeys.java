@@ -1,7 +1,12 @@
 package org.avis.security;
 
 import org.apache.mina.core.buffer.IoBuffer;
+
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
 import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
@@ -9,9 +14,6 @@ import static org.avis.security.KeyScheme.SHA1_CONSUMER;
 import static org.avis.security.KeyScheme.SHA1_DUAL;
 import static org.avis.security.KeyScheme.SHA1_PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class JUTestKeys
 {
@@ -349,6 +351,9 @@ public class JUTestKeys
     eveSubKeys.add (SHA1_PRODUCER,
                     new Key ("Not alice's key").publicKeyFor (SHA1_PRODUCER));
     
+    // turn alice's private keys into public (prime)
+    aliceNtfnKeys.hashPrivateKeysForRole (PRODUCER);
+    
     assertTrue (bobSubKeys.match (aliceNtfnKeys));
     assertFalse (eveSubKeys.match (aliceNtfnKeys));
   }
@@ -367,6 +372,10 @@ public class JUTestKeys
     
     Keys eveSubKeys = new Keys ();
     eveSubKeys.add (SHA1_CONSUMER, new Key ("Not bob's key"));
+    
+   // turn bob and eve's private keys into public (prime)
+    bobSubKeys.hashPrivateKeysForRole (CONSUMER);
+    eveSubKeys.hashPrivateKeysForRole (CONSUMER);
     
     assertTrue (bobSubKeys.match (aliceNtfnKeys));
     assertFalse (eveSubKeys.match (aliceNtfnKeys));
@@ -393,8 +402,14 @@ public class JUTestKeys
     eveSubKeys.add (SHA1_DUAL, CONSUMER, randomPrivate);
     eveSubKeys.add (SHA1_DUAL, PRODUCER, randomPrivate.publicKeyFor (SHA1_DUAL));
     
+    // turn private keys into public (prime)
+    bobSubKeys.hashPrivateKeysForRole (CONSUMER);
+    eveSubKeys.hashPrivateKeysForRole (CONSUMER);
+    
+    aliceNtfnKeys.hashPrivateKeysForRole (PRODUCER);
+    
     assertTrue (bobSubKeys.match (aliceNtfnKeys));
-    assertFalse (aliceNtfnKeys.match (bobSubKeys));
+    assertTrue (aliceNtfnKeys.match (bobSubKeys));
     assertFalse (eveSubKeys.match (aliceNtfnKeys));
   }
 }

@@ -8,8 +8,10 @@ import org.apache.mina.core.session.IoSession;
 
 import org.avis.io.messages.Message;
 
-import static org.avis.util.Text.className;
 import static org.junit.Assert.fail;
+
+import static org.avis.logging.Log.alarm;
+import static org.avis.util.Text.className;
 
 /**
  * IO handler that allows a test client to wait for an incoming
@@ -80,5 +82,12 @@ public class TestingIoHandler
     throws Exception
   {
     notifyAll ();
+  }
+  
+  @Override
+  public void exceptionCaught (IoSession session, Throwable cause)
+    throws Exception
+  {
+    alarm ("MINA IO exception", this, cause);
   }
 }

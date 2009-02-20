@@ -10,6 +10,7 @@ import org.avis.subscription.ast.Node;
 import org.avis.subscription.parser.ParseException;
 import org.avis.subscription.parser.SubscriptionParser;
 
+import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
 import static org.avis.subscription.ast.Node.TRUE;
 
 /**
@@ -36,6 +37,8 @@ class Subscription
     this.acceptInsecure = acceptInsecure;
     this.ast = parse (expr);
     this.id = idCounter.incrementAndGet ();
+    
+    keys.hashPrivateKeysForRole (CONSUMER);
   }
 
   public void updateExpression (String subscriptionExpr)
