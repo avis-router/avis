@@ -20,7 +20,7 @@ Server 1.3
 * router src distro needs ec/ep
 * add log filter option to show notifs rather than trace. would need
   custom log filter levels.
-* Bug (DSTO Avis): the elvin gateway seems to be having problems with
+* DONE: Bug (DSTO Avis): the elvin gateway seems to be having problems with
   "secure" messages.  it doesn't set the "world" tag on incoming
   messages that are secure and Leanne doesn't see messages I reply to
   in my group, even if I manually set "world". it appears to work as
