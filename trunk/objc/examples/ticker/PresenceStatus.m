@@ -38,6 +38,17 @@
   return status;
 }
 
++ (PresenceStatus *) inactiveStatus
+{
+  PresenceStatus *status = [[PresenceStatus new] autorelease];
+  
+  status.statusCode = MAYBE_UNAVAILABLE;
+  status.statusText = @"Inactive";
+  status.changedAt = [[NSDate date] retain];
+  
+  return status;
+}
+
 - (void) dealloc
 {
   [changedAt release];
