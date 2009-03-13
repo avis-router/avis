@@ -3,12 +3,14 @@
 #import "PresenceStatus.h"
 
 @class ElvinConnection;
+@class RHSystemIdleTimer;
 
 @interface PresenceConnection : NSObject
 {
   ElvinConnection * elvin;
   NSMutableSet *    entities;
   PresenceStatus *  presenceStatus;
+  RHSystemIdleTimer *idleTimer;
 }
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection;

@@ -10,11 +10,10 @@ typedef enum
   NSDate *     changedAt;
 }
 
-+ (OnlineStatus) statusCodeFromString: (NSString *) string;
-
++ (OnlineStatus)     statusCodeFromString: (NSString *) string;
 + (PresenceStatus *) onlineStatus;
-
 + (PresenceStatus *) offlineStatus;
++ (PresenceStatus *) inactiveStatus;
 
 @property (readwrite, assign) OnlineStatus statusCode;
 @property (readonly)          NSString *   statusCodeAsString;

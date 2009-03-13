@@ -6,8 +6,13 @@
 #import "PresenceEntity.h"
 #import "Preferences.h"
 
+#import "RHSystemIdleTimer.h"
+
 // Time (in seconds) before a user is considered stale and in need of refresh
 #define STALE_USER_AGE (5 * 60)
+
+// Time (in seconds) after idle mode starts before the user is considered away
+#define AUTO_IDLE_TIME (5 * 60)
 
 static NSString *stringValueForAttribute (NSDictionary *notification, 
                                           NSString *attribute)
@@ -73,6 +78,8 @@ static NSString *listToParameterString (NSArray *list)
   - (void) clearEntities;
   - (PresenceEntity *) findUserWithId: (NSString *) presenceId;
   - (void) resetLivenessTimer;
+  - (void) startAutoAwayTimer;
+  - (void) stopAutoAwayTimer;
 @end
 
 @implementation PresenceConnection
@@ -114,11 +121,15 @@ static NSString *listToParameterString (NSArray *list)
     [self requestPresenceInfo];
   }
 
+  [self startAutoAwayTimer];
+  
   return self;
 }
 
 - (void) dealloc
 {
+  [self stopAutoAwayTimer];
+  
   [entities release];
   [presenceStatus release];
   
@@ -132,7 +143,7 @@ static NSString *listToParameterString (NSArray *list)
   return presenceStatus;
 }
 
-- (void) setPresenceStatus: (PresenceStatus *) newStatus
+- (void) setPresenceStatusSilently: (PresenceStatus *) newStatus
 {
   if (![newStatus isEqual: presenceStatus])
   {
@@ -142,13 +153,24 @@ static NSString *listToParameterString (NSArray *list)
   }
 }
 
+- (void) setPresenceStatus: (PresenceStatus *) newStatus
+{
+  if (![newStatus isEqual: presenceStatus])
+  {
+    [self setPresenceStatusSilently: newStatus];
+    
+    if ([elvin isConnected])
+      [self emitPresenceInfoAsStatusUpdate];
+  }
+}
+
 #pragma mark -
 
 - (void) handleElvinOpen: (void *) unused
 {
   if ([[NSThread currentThread] isMainThread])
   {
-    [self setPresenceStatus: [PresenceStatus onlineStatus]];
+    [self setPresenceStatusSilently: [PresenceStatus onlineStatus]];
     [self clearEntities];
     [self requestPresenceInfo];
     [self emitPresenceInfo];
@@ -165,7 +187,6 @@ static NSString *listToParameterString (NSArray *list)
   {
     [self clearEntities];
     [self setPresenceStatus: [PresenceStatus offlineStatus]];
-    [self emitPresenceInfoAsStatusUpdate];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
@@ -308,6 +329,49 @@ static NSString *listToParameterString (NSArray *list)
       afterDelay: STALE_USER_AGE - 5];
   }
 }
+
+#pragma mark Auto away idle timer methods
+
+- (void) timerBeginsIdling: (id) sender
+{
+  // zip
+}
+
+- (void) timerContinuesIdling: (id) sender
+{
+  if ([presenceStatus statusCode] == ONLINE)
+  {
+    NSLog (@"User is idle");
+      
+    [self setPresenceStatus: [PresenceStatus inactiveStatus]]; 
+  }
+}
+
+- (void) timerFinishedIdling: (id) sender
+{
+  if ([presenceStatus statusCode] == MAYBE_UNAVAILABLE)
+  {
+    NSLog (@"User is active");
+    
+    [self setPresenceStatus: [PresenceStatus onlineStatus]]; 
+  }
+}
+
+- (void) startAutoAwayTimer
+{
+  idleTimer =
+    [[[RHSystemIdleTimer alloc] 
+      initSystemIdleTimerWithTimeInterval: AUTO_IDLE_TIME] retain];
+  [idleTimer setDelegate: self];
+}
+
+- (void) stopAutoAwayTimer
+{
+  [idleTimer invalidate];
+  [idleTimer release];
+}
+
+#pragma mark Presence info messaging
 
 - (void) emitPresenceInfo
 {
