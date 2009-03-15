@@ -11,6 +11,8 @@
   IBOutlet NSArrayController *presenceGroupsController;
 }
 
++ (void) registerUserDefaults;
+
 - (IBAction) addPresenceGroup: (id) sender;
 - (IBAction) closePresenceGroupAddSheet: (id) sender;
 
