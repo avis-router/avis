@@ -4,6 +4,10 @@
 {
   IBOutlet id presenceGroupAddSheet;
   IBOutlet id addPresenceGroupTextField;
+  IBOutlet id generalPanel;
+  IBOutlet id tickerPanel;
+  IBOutlet id presencePanel;
+  IBOutlet id addPresenceGroupSheet;
   IBOutlet NSArrayController *presenceGroupsController;
 }
 

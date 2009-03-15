@@ -332,11 +332,6 @@ static NSString *listToParameterString (NSArray *list)
 
 #pragma mark Auto away idle timer methods
 
-- (void) timerBeginsIdling: (id) sender
-{
-  // zip
-}
-
 - (void) timerContinuesIdling: (id) sender
 {
   if ([presenceStatus statusCode] == ONLINE)

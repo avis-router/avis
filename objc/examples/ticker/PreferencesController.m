@@ -1,6 +1,14 @@
 #import "PreferencesController.h"
 
+@interface PreferencesController (PRIVATE)
+  - (void) setPrefView: (id) sender;
+@end
+
 @implementation PreferencesController
+
+#define TOOLBAR_GENERAL     @"TOOLBAR_GENERAL"
+#define TOOLBAR_TICKER      @"TOOLBAR_TICKER"
+#define TOOLBAR_PRESENCE    @"TOOLBAR_PRESENCE"
 
 - (id) init
 {
@@ -9,6 +17,127 @@
   else
     return nil;
 }
+
+- (void) awakeFromNib
+{
+  NSToolbar *toolbar = 
+    [[[NSToolbar alloc] initWithIdentifier: @"Preferences Toolbar"] autorelease];
+    
+  [toolbar setDelegate: self];
+  [toolbar setAllowsUserCustomization: NO];
+  [toolbar setDisplayMode: NSToolbarDisplayModeIconAndLabel];
+  [toolbar setSizeMode: NSToolbarSizeModeRegular];
+  [[self window] setToolbar: toolbar];
+
+  [toolbar setSelectedItemIdentifier: TOOLBAR_GENERAL];
+  [self setPrefView: nil];
+}
+
+- (NSToolbarItem *) toolbar: (NSToolbar *) toolbar 
+                    itemForItemIdentifier: (NSString *) ident
+                    willBeInsertedIntoToolbar: (BOOL) flag
+{
+  NSToolbarItem *item;
+  item = [[[NSToolbarItem alloc] initWithItemIdentifier: ident] autorelease];
+
+  if ([ident isEqualToString: TOOLBAR_GENERAL])
+  {
+    [item setLabel: @"General"];
+    [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
+    [item setTarget: self];
+    [item setAction: @selector (setPrefView:)];
+    [item setAutovalidates: NO];
+  } else if ([ident isEqualToString: TOOLBAR_TICKER])
+  {
+    [item setLabel: @"Ticker"];
+    //[item setImage: [NSImage imageNamed: @"preferences-ticker"]];
+    [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
+    [item setTarget: self];
+    [item setAction: @selector (setPrefView:)];
+    [item setAutovalidates: NO];
+  } else if ([ident isEqualToString: TOOLBAR_PRESENCE])
+  {
+    [item setLabel: @"Presence"];
+    //[item setImage: [NSImage imageNamed: @"preferences-presence"]];
+    [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
+    [item setTarget: self];
+    [item setAction: @selector (setPrefView:)];
+    [item setAutovalidates: NO];
+  } else
+  {
+    return nil;
+  }
+
+  return item;
+}
+
+- (NSArray *) toolbarSelectableItemIdentifiers: (NSToolbar *) toolbar
+{
+  return [self toolbarDefaultItemIdentifiers: toolbar];
+}
+
+- (NSArray *) toolbarDefaultItemIdentifiers: (NSToolbar *) toolbar
+{
+  return [self toolbarAllowedItemIdentifiers: toolbar];
+}
+
+- (NSArray *) toolbarAllowedItemIdentifiers: (NSToolbar *) toolbar
+{
+  return [NSArray arrayWithObjects: TOOLBAR_GENERAL, TOOLBAR_TICKER,
+                                    TOOLBAR_PRESENCE, nil];
+}
+
+- (void) setPrefView: (id) sender
+{
+  NSView *view;  
+  NSString *identifier = [sender itemIdentifier];
+  
+  if ([identifier isEqualToString: TOOLBAR_TICKER])
+    view = tickerPanel;
+  else if ([identifier isEqualToString: TOOLBAR_PRESENCE])
+    view = presencePanel;
+  else
+    view = generalPanel;
+
+  NSWindow *window = [self window];
+  
+  if ([window contentView] == view)
+    return;
+
+  NSRect windowRect = [window frame];
+  CGFloat difference = 
+    ([view frame].size.height - [[window contentView] frame].size.height) * 
+      [window userSpaceScaleFactor];
+      
+  windowRect.origin.y -= difference;
+  windowRect.size.height += difference;
+
+  [view setHidden: YES];
+  [window setContentView: view];
+  [window setFrame: windowRect display: YES animate: YES];
+  [view setHidden: NO];
+
+  // set title label
+  if (sender)
+  {
+    [window setTitle: [sender label]];
+  } else
+  {
+    NSToolbar * toolbar = [window toolbar];
+    NSString * itemIdentifier = [toolbar selectedItemIdentifier];
+    
+    for (NSToolbarItem * item in [toolbar items])
+    {
+      if ([[item itemIdentifier] isEqualToString: itemIdentifier])
+      {
+        [window setTitle: [item label]];
+        break;
+      }
+    }
+  }
+}
+
+#pragma mark Add presence group stuff
 
 - (void) addPresenceGroupSheetDidEnd: (NSWindow *) sheet 
                           returnCode: (int) returnCode 
@@ -30,9 +159,6 @@
 
 - (IBAction) addPresenceGroup: (id) sender
 {
-  if (!presenceGroupAddSheet)
-    [NSBundle loadNibNamed: @"Preferences_AddPresenceGroup" owner: self];
-
   [NSApp beginSheet: presenceGroupAddSheet
      modalForWindow: [self window]
       modalDelegate: self
