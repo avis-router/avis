@@ -229,8 +229,8 @@
 				C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */,
 				C9DFB2110F12DA9900365453 /* RolloverButton.h */,
 				C9DFB2120F12DA9900365453 /* RolloverButton.m */,
-				C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */,
 				C95BF8590F4804BD00A1CD0E /* RHSystemIdleTimer.h */,
+				C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";

@@ -49,6 +49,7 @@
   * DONE truncation in middle
   * DONE animate appearance
 + messaging
+  * keys
   * handle personal reply: copy thread ID <- reply to is ref to message
   * reply-to icon in text
   * highlight parents
@@ -71,13 +72,14 @@
   * elvin disconnected when changing elvins shows new value
   * DONE: elvin connect/disconnect
 + presence
-  * full refresh
+  * DONE: full refresh
+  * add presence group: could add row + edit, no dialog
   * update. cull non responsive entities. use on reconnect rather than clear/refresh
   * set sort order to be by status
   * icon status display + status duration
   * presence history: show person's history
   * filter multiple users with differing presence: pick most online (or just show all)
-  * change presence status, incl invisible
+  * change own presence status, incl invisible
   * add a mute button - no growl. or use "Do not disturb" presence?
   * auto typing status -- do with notifications
   * DONE: auto away status. http://www.cocoadev.com/index.pl?InstallEventLoopIdleTimer
