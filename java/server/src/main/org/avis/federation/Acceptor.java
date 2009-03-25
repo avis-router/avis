@@ -180,13 +180,13 @@ public class Acceptor implements IoHandler, Closeable
         break;
       case ErrorMessage.ID:
         logError ((ErrorMessage)message, this);
-        session.close ();
+        session.close (true);
         break;
       default:
         warn ("Unexpected handshake message from connecting remote " +
               "federator at " + hostIdFor (session) + 
               " (disconnecting): " + message.name (), this);
-        session.close ();
+        session.close (true);
     }
   }
 
@@ -320,7 +320,7 @@ public class Acceptor implements IoHandler, Closeable
     throws Exception
   {
     if (closing)
-      session.close ();
+      session.close (true);
     else
       logSessionOpened (session, "incoming", this);
   }
@@ -387,7 +387,7 @@ public class Acceptor implements IoHandler, Closeable
             hostIdFor (session) + 
             " due to failure to send connect request", this);
       
-      session.close ();
+      session.close (true);
     }
   }
 }

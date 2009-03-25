@@ -9,7 +9,6 @@ import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.filterchain.IoFilterChain;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.core.session.TrafficMask;
 import org.apache.mina.core.write.WriteRequest;
 import org.apache.mina.filter.ssl.SslFilter;
 
@@ -83,15 +82,6 @@ public class SecurityFilter implements IoFilter
     // zip
   }
   
-  public void filterSetTrafficMask (NextFilter nextFilter,
-                                    IoSession session,
-                                    TrafficMask trafficMask)
-    throws Exception
-  {
-    sslFilterFor (session).filterSetTrafficMask 
-      (nextFilter, session, trafficMask);
-  }
-
   public void sessionCreated (NextFilter nextFilter, IoSession session)
     throws Exception
   {

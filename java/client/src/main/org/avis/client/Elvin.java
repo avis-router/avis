@@ -641,7 +641,7 @@ public final class Elvin implements Closeable
             }
           }
           
-          connection.close ();
+          connection.close (false);
         }
         
         connection = null;

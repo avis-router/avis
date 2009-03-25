@@ -332,7 +332,7 @@ public class SimpleClient implements IoHandler, Closeable
 
     try
     {
-      if (!clientSession.close ().await (RECEIVE_TIMEOUT))
+      if (!clientSession.close (false).await (RECEIVE_TIMEOUT))
         throw new RuntimeIoException ("Failed to close client session");
     } finally
     {
@@ -348,7 +348,7 @@ public class SimpleClient implements IoHandler, Closeable
   public synchronized void closeImmediately ()
   {
     connected = false;
-    clientSession.close ();
+    clientSession.close (true);
     clientSession = null;
     connector.dispose ();
   }

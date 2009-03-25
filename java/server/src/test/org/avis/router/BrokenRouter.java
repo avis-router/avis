@@ -112,7 +112,7 @@ public class BrokenRouter
       }
     } catch (ProtocolCodecException ex)
     {
-      session.close ();
+      session.close (true);
     }
   }
   

@@ -161,7 +161,7 @@ public class Link implements NotifyListener
 
       // just close session for internal codes
       if (reason < 0)
-        session.close ();
+        session.close (true);
       else
         send (new Disconn (reason, message)).addListener (CLOSE);
     }

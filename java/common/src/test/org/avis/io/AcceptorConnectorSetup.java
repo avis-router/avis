@@ -61,7 +61,7 @@ public class AcceptorConnectorSetup implements Closeable
     
   public void close ()
   {
-    connectorSession.close ();
+    connectorSession.close (false);
     acceptor.dispose ();
     connector.dispose ();
   }

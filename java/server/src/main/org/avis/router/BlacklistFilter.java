@@ -38,7 +38,7 @@ public class BlacklistFilter extends IoFilterAdapter implements IoFilter
         ("Refusing non-TLS connection from host " + address + 
          " due to it matching the hosts requiring authentication", this);
       
-      session.close ();
+      session.close (true);
     } else
     {
       nextFilter.sessionOpened (session);

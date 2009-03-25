@@ -216,7 +216,7 @@ public class JUTestFederation
     
     assertEquals (Nack.PROT_INCOMPAT, nack.error);
     
-    connectSession.close ();
+    connectSession.close (true);
     
     // bad server domain (same as acceptor's)
     listener = new TestingIoHandler ();
@@ -234,7 +234,7 @@ public class JUTestFederation
         
     assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
     
-    connectSession.close ();
+    connectSession.close (true);
     
     // no federation class mapped
     
@@ -255,7 +255,7 @@ public class JUTestFederation
         
     assertEquals (Acceptor.INVALID_DOMAIN, nack.error);
     
-    connectSession.close ();
+    connectSession.close (true);
     connectSession.getService ().dispose ();
     
     classes.map ("localhost", fedClass2);
