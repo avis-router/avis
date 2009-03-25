@@ -5,6 +5,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-simple.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry exported="true" kind="lib" path="lib/mina-core-2.0.0-M3.jar" sourcepath="/Users/matt/Development/mina-2.0.0-M3/mina-core-2.0.0-M3-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mina-core-2.0.0-M4.jar" sourcepath="/Users/matt/Development/mina-2.0.0-M4/src/mina-core/src/main/java"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

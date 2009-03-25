@@ -979,7 +979,7 @@ public class Router implements IoHandler, Closeable
         ("Client " + idFor (session) +
          " waited too long to connect: closing session", this);
       
-      session.close ();
+      session.close (false);
     }
   }
 

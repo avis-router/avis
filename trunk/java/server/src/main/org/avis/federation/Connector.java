@@ -242,7 +242,7 @@ public class Connector implements IoHandler, Closeable
           if (link != null)
             link.close ();  // closes session after disconn
           else
-            session.close ();
+            session.close (false);
         } else
         {
           if (link != null && !link.initiatedSessionClose ())

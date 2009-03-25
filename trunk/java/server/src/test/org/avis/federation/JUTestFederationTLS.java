@@ -92,7 +92,7 @@ public class JUTestFederationTLS
     
     acceptor.close ();
 
-    session.close ();
+    session.close (true);
     
     router.close ();
   }

@@ -40,7 +40,7 @@ public class JUTestSessionClose
       public void sessionOpened (IoSession session)
         throws Exception
       {
-        session.close ();
+        session.close (true);
       }
     });
     
