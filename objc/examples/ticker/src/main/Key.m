@@ -4,10 +4,10 @@
 
 @implementation Key
 
-BOOL readNameValue (NSString *line, 
-                    NSString **returnName, 
-                    NSString **returnValue, 
-                    NSError **error);
+static BOOL readNameValue (NSString *line, 
+                           NSString **returnName, 
+                           NSString **returnValue, 
+                           NSError **error);
 
 - (id) initWithFile: (NSString *) file error: (NSError **) error
 {
