@@ -28,6 +28,8 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C9013D3A0F2D5FF300154085 /* PresenceStatus.m */; };
 		C90C275D0F6A1BE5003DE2BE /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90C275C0F6A1BE5003DE2BE /* IOKit.framework */; };
+		C923917F0F7F03030083FC13 /* TestKeyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */; };
+		C92391AE0F7F4C4C0083FC13 /* Key.m in Sources */ = {isa = PBXBuildFile; fileRef = C92391AD0F7F4C4C0083FC13 /* Key.m */; };
 		C92FE9310F3D06260037FA15 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C92FE9320F3D06260037FA15 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C92FE9360F3D06260037FA15 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
@@ -73,6 +75,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C92391620F7F020B0083FC13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = Ticker;
+		};
 		C9DFB3A90F132E2F00365453 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -120,6 +129,12 @@
 		C9013D390F2D5FF300154085 /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceStatus.h; sourceTree = "<group>"; };
 		C9013D3A0F2D5FF300154085 /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceStatus.m; sourceTree = "<group>"; };
 		C90C275C0F6A1BE5003DE2BE /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		C923915D0F7F01D40083FC13 /* Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C923915E0F7F01D40083FC13 /* Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Unit Tests-Info.plist"; sourceTree = "<group>"; };
+		C923917C0F7F02E60083FC13 /* TestKeyRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestKeyRegistry.h; path = src/tests/TestKeyRegistry.h; sourceTree = "<group>"; };
+		C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestKeyRegistry.m; path = src/tests/TestKeyRegistry.m; sourceTree = "<group>"; };
+		C92391AC0F7F4C4C0083FC13 /* Key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Key.h; path = src/main/Key.h; sourceTree = "<group>"; };
+		C92391AD0F7F4C4C0083FC13 /* Key.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Key.m; path = src/main/Key.m; sourceTree = "<group>"; };
 		C92FE93A0F3D06270037FA15 /* Ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C92FE96B0F3D072C0037FA15 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PresenceTester/Info.plist; sourceTree = "<group>"; };
 		C92FE9850F3D08D70037FA15 /* PresenceTester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceTester.xib; path = PresenceTester/PresenceTester.xib; sourceTree = "<group>"; };
@@ -184,6 +199,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C923915A0F7F01D40083FC13 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C92FE9300F3D06260037FA15 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -217,6 +239,8 @@
 				C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */,
 				C9013D390F2D5FF300154085 /* PresenceStatus.h */,
 				C9013D3A0F2D5FF300154085 /* PresenceStatus.m */,
+				C92391AC0F7F4C4C0083FC13 /* Key.h */,
+				C92391AD0F7F4C4C0083FC13 /* Key.m */,
 				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
 				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
 				C9DDD3B30F26B4090082AF4C /* Preferences.h */,
@@ -259,6 +283,7 @@
 			children = (
 				8D1107320486CEB800E47090 /* Ticker.app */,
 				C92FE93A0F3D06270037FA15 /* Ticker.app */,
+				C923915D0F7F01D40083FC13 /* Unit Tests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -271,11 +296,13 @@
 				C93D56350F305C6B0005EE00 /* crash_20090128.txt */,
 				C93D56890F355B600005EE00 /* crash_20090131.txt */,
 				080E96DDFE201D6D7F000001 /* Classes */,
+				C92391570F7F01380083FC13 /* Tests */,
 				C92FE90E0F3D05AB0037FA15 /* Presence Tester */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				C923915E0F7F01D40083FC13 /* Unit Tests-Info.plist */,
 			);
 			name = ticker;
 			sourceTree = "<group>";
@@ -319,6 +346,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C92391570F7F01380083FC13 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				C923917C0F7F02E60083FC13 /* TestKeyRegistry.h */,
+				C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 		C92FE90E0F3D05AB0037FA15 /* Presence Tester */ = {
 			isa = PBXGroup;
 			children = (
@@ -351,6 +387,25 @@
 			productName = ticker;
 			productReference = 8D1107320486CEB800E47090 /* Ticker.app */;
 			productType = "com.apple.product-type.application";
+		};
+		C923915C0F7F01D40083FC13 /* Unit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C92391610F7F01D50083FC13 /* Build configuration list for PBXNativeTarget "Unit Tests" */;
+			buildPhases = (
+				C92391580F7F01D40083FC13 /* Resources */,
+				C92391590F7F01D40083FC13 /* Sources */,
+				C923915A0F7F01D40083FC13 /* Frameworks */,
+				C923915B0F7F01D40083FC13 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C92391630F7F020B0083FC13 /* PBXTargetDependency */,
+			);
+			name = "Unit Tests";
+			productName = "Unit Tests";
+			productReference = C923915D0F7F01D40083FC13 /* Unit Tests.octest */;
+			productType = "com.apple.product-type.bundle";
 		};
 		C92FE90F0F3D06260037FA15 /* Presence Tester */ = {
 			isa = PBXNativeTarget;
@@ -386,6 +441,7 @@
 				8D1107260486CEB800E47090 /* Ticker */,
 				C9DFB3A30F132DCB00365453 /* Disk Image */,
 				C92FE90F0F3D06260037FA15 /* Presence Tester */,
+				C923915C0F7F01D40083FC13 /* Unit Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -411,6 +467,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C92391580F7F01D40083FC13 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C92FE9100F3D06260037FA15 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -422,6 +485,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		C923915B0F7F01D40083FC13 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
 		C9DFB3A20F132DCB00365453 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -462,6 +538,15 @@
 				C9DA04E30F32ABEE004A663D /* PresenceGroupsController.m in Sources */,
 				C962B8CC0F3FE5A700CD0764 /* PresenceEntityCell.m in Sources */,
 				C95BF85A0F4804BD00A1CD0E /* RHSystemIdleTimer.m in Sources */,
+				C92391AE0F7F4C4C0083FC13 /* Key.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C92391590F7F01D40083FC13 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C923917F0F7F03030083FC13 /* TestKeyRegistry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +567,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C92391630F7F020B0083FC13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* Ticker */;
+			targetProxy = C92391620F7F020B0083FC13 /* PBXContainerItemProxy */;
+		};
 		C9DFB3AA0F132E2F00365453 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8D1107260486CEB800E47090 /* Ticker */;
@@ -588,6 +678,64 @@
 			};
 			name = Release;
 		};
+		C923915F0F7F01D50083FC13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Ticker.app/Contents/MacOS/Ticker";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				INFOPLIST_FILE = "Unit Tests-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+					"-framework",
+					SenTestingKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "Unit Tests";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ticker.app/Contents/MacOS/Ticker";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		C92391600F7F01D50083FC13 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Ticker.app/Contents/MacOS/Ticker";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				INFOPLIST_FILE = "Unit Tests-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+					"-framework",
+					SenTestingKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "Unit Tests";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ticker.app/Contents/MacOS/Ticker";
+				WRAPPER_EXTENSION = octest;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C92FE9380F3D06260037FA15 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -668,6 +816,15 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C92391610F7F01D50083FC13 /* Build configuration list for PBXNativeTarget "Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C923915F0F7F01D50083FC13 /* Debug */,
+				C92391600F7F01D50083FC13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
