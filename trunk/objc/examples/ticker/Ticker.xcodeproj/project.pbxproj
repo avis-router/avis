@@ -22,23 +22,38 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
-		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C9013D3A0F2D5FF300154085 /* PresenceStatus.m */; };
 		C90C275D0F6A1BE5003DE2BE /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90C275C0F6A1BE5003DE2BE /* IOKit.framework */; };
 		C923917F0F7F03030083FC13 /* TestKeyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */; };
 		C92391AE0F7F4C4C0083FC13 /* Key.m in Sources */ = {isa = PBXBuildFile; fileRef = C92391AD0F7F4C4C0083FC13 /* Key.m */; };
+		C92392470F7F7BC30083FC13 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392230F7F7BC30083FC13 /* AppController.m */; };
+		C92392480F7F7BC30083FC13 /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392250F7F7BC30083FC13 /* DragTarget.m */; };
+		C92392490F7F7BC30083FC13 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392270F7F7BC30083FC13 /* ElvinConnection.m */; };
+		C923924A0F7F7BC30083FC13 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392280F7F7BC30083FC13 /* main.m */; };
+		C923924B0F7F7BC30083FC13 /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = C923922A0F7F7BC30083FC13 /* Preferences.m */; };
+		C923924C0F7F7BC30083FC13 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = C923922B0F7F7BC30083FC13 /* Preferences.xib */; };
+		C923924D0F7F7BC30083FC13 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = C923922D0F7F7BC30083FC13 /* PreferencesController.m */; };
+		C923924E0F7F7BC30083FC13 /* PresenceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C923922F0F7F7BC30083FC13 /* PresenceConnection.m */; };
+		C923924F0F7F7BC30083FC13 /* PresenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392310F7F7BC30083FC13 /* PresenceController.m */; };
+		C92392500F7F7BC30083FC13 /* PresenceEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392330F7F7BC30083FC13 /* PresenceEntity.m */; };
+		C92392510F7F7BC30083FC13 /* PresenceEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392350F7F7BC30083FC13 /* PresenceEntityCell.m */; };
+		C92392520F7F7BC30083FC13 /* PresenceGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392370F7F7BC30083FC13 /* PresenceGroupsController.m */; };
+		C92392530F7F7BC30083FC13 /* PresenceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392390F7F7BC30083FC13 /* PresenceStatus.m */; };
+		C92392540F7F7BC30083FC13 /* PresenceWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */; };
+		C92392550F7F7BC30083FC13 /* RHSystemIdleTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = C923923C0F7F7BC30083FC13 /* RHSystemIdleTimer.m */; };
+		C92392560F7F7BC30083FC13 /* RolloverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C923923E0F7F7BC30083FC13 /* RolloverButton.m */; };
+		C92392570F7F7BC30083FC13 /* TextViewWithLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392400F7F7BC30083FC13 /* TextViewWithLinks.m */; };
+		C92392580F7F7BC30083FC13 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392420F7F7BC30083FC13 /* TickerController.m */; };
+		C92392590F7F7BC30083FC13 /* TickerMessagesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */; };
+		C923925A0F7F7BC30083FC13 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392460F7F7BC30083FC13 /* utils.m */; };
+		C923925D0F7F7C310083FC13 /* Reply_Normal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */; };
+		C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */; };
+		C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392780F7F7D080083FC13 /* MainMenu.xib */; };
+		C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392790F7F7D080083FC13 /* TickerWindow.xib */; };
 		C92FE9310F3D06260037FA15 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C92FE9320F3D06260037FA15 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C92FE9360F3D06260037FA15 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
-		C92FE9790F3D08390037FA15 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
-		C92FE97B0F3D085E0037FA15 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */; };
-		C92FE97D0F3D085E0037FA15 /* PresenceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */; };
-		C92FE97F0F3D085E0037FA15 /* PresenceEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */; };
-		C92FE9810F3D085E0037FA15 /* PresenceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C9013D3A0F2D5FF300154085 /* PresenceStatus.m */; };
-		C92FE9830F3D085E0037FA15 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B4A200F22BAEF00BADAE8 /* utils.m */; };
 		C92FE9860F3D08D70037FA15 /* PresenceTester.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92FE9850F3D08D70037FA15 /* PresenceTester.xib */; };
 		C92FE9AE0F3D09740037FA15 /* PresenceTesterAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */; };
 		C93D56360F305C6B0005EE00 /* crash_20090128.txt in Resources */ = {isa = PBXBuildFile; fileRef = C93D56350F305C6B0005EE00 /* crash_20090128.txt */; };
@@ -47,31 +62,10 @@
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
 		C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */ = {isa = PBXBuildFile; fileRef = C94B47A70F1731C900BADAE8 /* Ticker.icns */; };
-		C94B49880F22AC7B00BADAE8 /* PresenceEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */; };
-		C94B49950F22AF8D00BADAE8 /* PresenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B49940F22AF8D00BADAE8 /* PresenceController.m */; };
-		C94B499D0F22B0F400BADAE8 /* PresenceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */; };
-		C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */; };
-		C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B4A200F22BAEF00BADAE8 /* utils.m */; };
-		C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C9521BAC0F08CE4100BA83EC /* DragTarget.m */; };
-		C95BF85A0F4804BD00A1CD0E /* RHSystemIdleTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */; };
-		C962B8CC0F3FE5A700CD0764 /* PresenceEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C962B8CB0F3FE5A700CD0764 /* PresenceEntityCell.m */; };
-		C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */; };
-		C9AEA1630F15ADE300C70410 /* TickerMessagesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */; };
-		C9B038390E48282400B59216 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B038380E48282400B59216 /* TickerController.m */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
-		C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */; };
-		C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CF62D30EE0BF5F00A76D46 /* AppController.m */; };
 		C9DA04290F327946004A663D /* crash_20090129.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9DA04280F327946004A663D /* crash_20090129.txt */; };
-		C9DA04E30F32ABEE004A663D /* PresenceGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DA04E20F32ABEE004A663D /* PresenceGroupsController.m */; };
-		C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DDD3B40F26B4090082AF4C /* Preferences.m */; };
-		C9DFB1C00F12CF9700365453 /* Reply_Normal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */; };
-		C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */; };
-		C9DFB2130F12DA9900365453 /* RolloverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DFB2120F12DA9900365453 /* RolloverButton.m */; };
-		C9DFB2AB0F12FF2300365453 /* TextViewWithLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */; };
 		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
-		C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F561BA0F00B1A2005D9245 /* PreferencesController.m */; };
-		C9F561BF0F00B247005D9245 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9F561BE0F00B247005D9245 /* Preferences.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,15 +113,11 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
-		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ticker_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9013D390F2D5FF300154085 /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceStatus.h; sourceTree = "<group>"; };
-		C9013D3A0F2D5FF300154085 /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceStatus.m; sourceTree = "<group>"; };
 		C90C275C0F6A1BE5003DE2BE /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		C923915D0F7F01D40083FC13 /* Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C923915E0F7F01D40083FC13 /* Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Unit Tests-Info.plist"; sourceTree = "<group>"; };
@@ -135,6 +125,47 @@
 		C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestKeyRegistry.m; path = src/tests/TestKeyRegistry.m; sourceTree = "<group>"; };
 		C92391AC0F7F4C4C0083FC13 /* Key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Key.h; path = src/main/Key.h; sourceTree = "<group>"; };
 		C92391AD0F7F4C4C0083FC13 /* Key.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Key.m; path = src/main/Key.m; sourceTree = "<group>"; };
+		C92392220F7F7BC30083FC13 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = src/main/AppController.h; sourceTree = "<group>"; };
+		C92392230F7F7BC30083FC13 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = src/main/AppController.m; sourceTree = "<group>"; };
+		C92392240F7F7BC30083FC13 /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DragTarget.h; path = src/main/DragTarget.h; sourceTree = "<group>"; };
+		C92392250F7F7BC30083FC13 /* DragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DragTarget.m; path = src/main/DragTarget.m; sourceTree = "<group>"; };
+		C92392260F7F7BC30083FC13 /* ElvinConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElvinConnection.h; path = src/main/ElvinConnection.h; sourceTree = "<group>"; };
+		C92392270F7F7BC30083FC13 /* ElvinConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ElvinConnection.m; path = src/main/ElvinConnection.m; sourceTree = "<group>"; };
+		C92392280F7F7BC30083FC13 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main/main.m; sourceTree = "<group>"; };
+		C92392290F7F7BC30083FC13 /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = src/main/Preferences.h; sourceTree = "<group>"; };
+		C923922A0F7F7BC30083FC13 /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = src/main/Preferences.m; sourceTree = "<group>"; };
+		C923922B0F7F7BC30083FC13 /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Preferences.xib; path = src/main/Preferences.xib; sourceTree = "<group>"; };
+		C923922C0F7F7BC30083FC13 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = src/main/PreferencesController.h; sourceTree = "<group>"; };
+		C923922D0F7F7BC30083FC13 /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = src/main/PreferencesController.m; sourceTree = "<group>"; };
+		C923922E0F7F7BC30083FC13 /* PresenceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceConnection.h; path = src/main/PresenceConnection.h; sourceTree = "<group>"; };
+		C923922F0F7F7BC30083FC13 /* PresenceConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceConnection.m; path = src/main/PresenceConnection.m; sourceTree = "<group>"; };
+		C92392300F7F7BC30083FC13 /* PresenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceController.h; path = src/main/PresenceController.h; sourceTree = "<group>"; };
+		C92392310F7F7BC30083FC13 /* PresenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceController.m; path = src/main/PresenceController.m; sourceTree = "<group>"; };
+		C92392320F7F7BC30083FC13 /* PresenceEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceEntity.h; path = src/main/PresenceEntity.h; sourceTree = "<group>"; };
+		C92392330F7F7BC30083FC13 /* PresenceEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceEntity.m; path = src/main/PresenceEntity.m; sourceTree = "<group>"; };
+		C92392340F7F7BC30083FC13 /* PresenceEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceEntityCell.h; path = src/main/PresenceEntityCell.h; sourceTree = "<group>"; };
+		C92392350F7F7BC30083FC13 /* PresenceEntityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceEntityCell.m; path = src/main/PresenceEntityCell.m; sourceTree = "<group>"; };
+		C92392360F7F7BC30083FC13 /* PresenceGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceGroupsController.h; path = src/main/PresenceGroupsController.h; sourceTree = "<group>"; };
+		C92392370F7F7BC30083FC13 /* PresenceGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceGroupsController.m; path = src/main/PresenceGroupsController.m; sourceTree = "<group>"; };
+		C92392380F7F7BC30083FC13 /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceStatus.h; path = src/main/PresenceStatus.h; sourceTree = "<group>"; };
+		C92392390F7F7BC30083FC13 /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceStatus.m; path = src/main/PresenceStatus.m; sourceTree = "<group>"; };
+		C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceWindow.xib; path = src/main/PresenceWindow.xib; sourceTree = "<group>"; };
+		C923923B0F7F7BC30083FC13 /* RHSystemIdleTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHSystemIdleTimer.h; path = src/main/RHSystemIdleTimer.h; sourceTree = "<group>"; };
+		C923923C0F7F7BC30083FC13 /* RHSystemIdleTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RHSystemIdleTimer.m; path = src/main/RHSystemIdleTimer.m; sourceTree = "<group>"; };
+		C923923D0F7F7BC30083FC13 /* RolloverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RolloverButton.h; path = src/main/RolloverButton.h; sourceTree = "<group>"; };
+		C923923E0F7F7BC30083FC13 /* RolloverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RolloverButton.m; path = src/main/RolloverButton.m; sourceTree = "<group>"; };
+		C923923F0F7F7BC30083FC13 /* TextViewWithLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextViewWithLinks.h; path = src/main/TextViewWithLinks.h; sourceTree = "<group>"; };
+		C92392400F7F7BC30083FC13 /* TextViewWithLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextViewWithLinks.m; path = src/main/TextViewWithLinks.m; sourceTree = "<group>"; };
+		C92392410F7F7BC30083FC13 /* TickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TickerController.h; path = src/main/TickerController.h; sourceTree = "<group>"; };
+		C92392420F7F7BC30083FC13 /* TickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TickerController.m; path = src/main/TickerController.m; sourceTree = "<group>"; };
+		C92392430F7F7BC30083FC13 /* TickerMessagesTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TickerMessagesTextView.h; path = src/main/TickerMessagesTextView.h; sourceTree = "<group>"; };
+		C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TickerMessagesTextView.m; path = src/main/TickerMessagesTextView.m; sourceTree = "<group>"; };
+		C92392450F7F7BC30083FC13 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = src/main/utils.h; sourceTree = "<group>"; };
+		C92392460F7F7BC30083FC13 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = utils.m; path = src/main/utils.m; sourceTree = "<group>"; };
+		C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Normal.tiff; path = resources/Reply_Normal.tiff; sourceTree = "<group>"; };
+		C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Rollover.tiff; path = resources/Reply_Rollover.tiff; sourceTree = "<group>"; };
+		C92392780F7F7D080083FC13 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = resources/MainMenu.xib; sourceTree = "<group>"; };
+		C92392790F7F7D080083FC13 /* TickerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TickerWindow.xib; path = resources/TickerWindow.xib; sourceTree = "<group>"; };
 		C92FE93A0F3D06270037FA15 /* Ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C92FE96B0F3D072C0037FA15 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PresenceTester/Info.plist; sourceTree = "<group>"; };
 		C92FE9850F3D08D70037FA15 /* PresenceTester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceTester.xib; path = PresenceTester/PresenceTester.xib; sourceTree = "<group>"; };
@@ -145,46 +176,9 @@
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = "Growl Registration Ticket.growlRegDict"; sourceTree = "<group>"; };
 		C94B47A70F1731C900BADAE8 /* Ticker.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Ticker.icns; path = Icon/Ticker.icns; sourceTree = "<group>"; };
-		C94B49860F22AC7B00BADAE8 /* PresenceEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceEntity.h; sourceTree = "<group>"; };
-		C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceEntity.m; sourceTree = "<group>"; };
-		C94B49930F22AF8D00BADAE8 /* PresenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceController.h; sourceTree = "<group>"; };
-		C94B49940F22AF8D00BADAE8 /* PresenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceController.m; sourceTree = "<group>"; };
-		C94B499B0F22B0F400BADAE8 /* PresenceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceConnection.h; sourceTree = "<group>"; };
-		C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceConnection.m; sourceTree = "<group>"; };
-		C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PresenceWindow.xib; sourceTree = "<group>"; };
-		C94B4A1F0F22BAEF00BADAE8 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
-		C94B4A200F22BAEF00BADAE8 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
-		C9521BAB0F08CE4100BA83EC /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragTarget.h; sourceTree = "<group>"; };
-		C9521BAC0F08CE4100BA83EC /* DragTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragTarget.m; sourceTree = "<group>"; };
-		C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RHSystemIdleTimer.m; sourceTree = "<group>"; };
-		C95BF8590F4804BD00A1CD0E /* RHSystemIdleTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RHSystemIdleTimer.h; sourceTree = "<group>"; };
-		C962B8CA0F3FE5A700CD0764 /* PresenceEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceEntityCell.h; sourceTree = "<group>"; };
-		C962B8CB0F3FE5A700CD0764 /* PresenceEntityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceEntityCell.m; sourceTree = "<group>"; };
-		C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElvinConnection.h; sourceTree = "<group>"; };
-		C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ElvinConnection.m; sourceTree = "<group>"; };
-		C9AEA1610F15ADE300C70410 /* TickerMessagesTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerMessagesTextView.h; sourceTree = "<group>"; };
-		C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TickerMessagesTextView.m; sourceTree = "<group>"; };
-		C9B038370E48282400B59216 /* TickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickerController.h; sourceTree = "<group>"; };
-		C9B038380E48282400B59216 /* TickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TickerController.m; sourceTree = "<group>"; };
 		C9B03B590E493EDF00B59216 /* avis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = avis.framework; path = Frameworks/avis.framework; sourceTree = "<group>"; };
-		C9CF60F60EDFA44A00A76D46 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/TickerWindow.xib; sourceTree = "<group>"; };
-		C9CF62D20EE0BF5F00A76D46 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
-		C9CF62D30EE0BF5F00A76D46 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		C9DA04280F327946004A663D /* crash_20090129.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090129.txt; sourceTree = "<group>"; };
-		C9DA04E10F32ABEE004A663D /* PresenceGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceGroupsController.h; sourceTree = "<group>"; };
-		C9DA04E20F32ABEE004A663D /* PresenceGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceGroupsController.m; sourceTree = "<group>"; };
-		C9DDD3B30F26B4090082AF4C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
-		C9DDD3B40F26B4090082AF4C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preferences.m; sourceTree = "<group>"; };
-		C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reply_Normal.tiff; sourceTree = "<group>"; };
-		C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reply_Rollover.tiff; sourceTree = "<group>"; };
-		C9DFB2110F12DA9900365453 /* RolloverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RolloverButton.h; sourceTree = "<group>"; };
-		C9DFB2120F12DA9900365453 /* RolloverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RolloverButton.m; sourceTree = "<group>"; };
-		C9DFB2A90F12FF2300365453 /* TextViewWithLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextViewWithLinks.h; sourceTree = "<group>"; };
-		C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextViewWithLinks.m; sourceTree = "<group>"; };
 		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
-		C9F561B90F00B1A2005D9245 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesController.h; sourceTree = "<group>"; };
-		C9F561BA0F00B1A2005D9245 /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesController.m; sourceTree = "<group>"; };
-		C9F561BE0F00B247005D9245 /* Preferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,40 +215,40 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				C9CF62D20EE0BF5F00A76D46 /* AppController.h */,
-				C9CF62D30EE0BF5F00A76D46 /* AppController.m */,
-				C9AAB9C70EF4A6E000387335 /* ElvinConnection.h */,
-				C9AAB9C80EF4A6E000387335 /* ElvinConnection.m */,
-				C9B038370E48282400B59216 /* TickerController.h */,
-				C9B038380E48282400B59216 /* TickerController.m */,
-				C9AEA1610F15ADE300C70410 /* TickerMessagesTextView.h */,
-				C9AEA1620F15ADE300C70410 /* TickerMessagesTextView.m */,
-				C94B49930F22AF8D00BADAE8 /* PresenceController.h */,
-				C94B49940F22AF8D00BADAE8 /* PresenceController.m */,
-				C962B8CA0F3FE5A700CD0764 /* PresenceEntityCell.h */,
-				C962B8CB0F3FE5A700CD0764 /* PresenceEntityCell.m */,
-				C94B499B0F22B0F400BADAE8 /* PresenceConnection.h */,
-				C94B499C0F22B0F400BADAE8 /* PresenceConnection.m */,
-				C94B49860F22AC7B00BADAE8 /* PresenceEntity.h */,
-				C94B49870F22AC7B00BADAE8 /* PresenceEntity.m */,
-				C9013D390F2D5FF300154085 /* PresenceStatus.h */,
-				C9013D3A0F2D5FF300154085 /* PresenceStatus.m */,
+				C92392220F7F7BC30083FC13 /* AppController.h */,
+				C92392230F7F7BC30083FC13 /* AppController.m */,
+				C92392240F7F7BC30083FC13 /* DragTarget.h */,
+				C92392250F7F7BC30083FC13 /* DragTarget.m */,
+				C92392260F7F7BC30083FC13 /* ElvinConnection.h */,
+				C92392270F7F7BC30083FC13 /* ElvinConnection.m */,
+				C92392290F7F7BC30083FC13 /* Preferences.h */,
+				C923922A0F7F7BC30083FC13 /* Preferences.m */,
+				C923922C0F7F7BC30083FC13 /* PreferencesController.h */,
+				C923922D0F7F7BC30083FC13 /* PreferencesController.m */,
+				C923922E0F7F7BC30083FC13 /* PresenceConnection.h */,
+				C923922F0F7F7BC30083FC13 /* PresenceConnection.m */,
+				C92392300F7F7BC30083FC13 /* PresenceController.h */,
+				C92392310F7F7BC30083FC13 /* PresenceController.m */,
+				C92392320F7F7BC30083FC13 /* PresenceEntity.h */,
+				C92392330F7F7BC30083FC13 /* PresenceEntity.m */,
+				C92392340F7F7BC30083FC13 /* PresenceEntityCell.h */,
+				C92392350F7F7BC30083FC13 /* PresenceEntityCell.m */,
+				C92392360F7F7BC30083FC13 /* PresenceGroupsController.h */,
+				C92392370F7F7BC30083FC13 /* PresenceGroupsController.m */,
+				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
+				C92392390F7F7BC30083FC13 /* PresenceStatus.m */,
+				C923923B0F7F7BC30083FC13 /* RHSystemIdleTimer.h */,
+				C923923C0F7F7BC30083FC13 /* RHSystemIdleTimer.m */,
+				C923923D0F7F7BC30083FC13 /* RolloverButton.h */,
+				C923923E0F7F7BC30083FC13 /* RolloverButton.m */,
+				C923923F0F7F7BC30083FC13 /* TextViewWithLinks.h */,
+				C92392400F7F7BC30083FC13 /* TextViewWithLinks.m */,
+				C92392410F7F7BC30083FC13 /* TickerController.h */,
+				C92392420F7F7BC30083FC13 /* TickerController.m */,
+				C92392430F7F7BC30083FC13 /* TickerMessagesTextView.h */,
+				C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */,
 				C92391AC0F7F4C4C0083FC13 /* Key.h */,
 				C92391AD0F7F4C4C0083FC13 /* Key.m */,
-				C9F561B90F00B1A2005D9245 /* PreferencesController.h */,
-				C9F561BA0F00B1A2005D9245 /* PreferencesController.m */,
-				C9DDD3B30F26B4090082AF4C /* Preferences.h */,
-				C9DDD3B40F26B4090082AF4C /* Preferences.m */,
-				C9DA04E10F32ABEE004A663D /* PresenceGroupsController.h */,
-				C9DA04E20F32ABEE004A663D /* PresenceGroupsController.m */,
-				C9521BAB0F08CE4100BA83EC /* DragTarget.h */,
-				C9521BAC0F08CE4100BA83EC /* DragTarget.m */,
-				C9DFB2A90F12FF2300365453 /* TextViewWithLinks.h */,
-				C9DFB2AA0F12FF2300365453 /* TextViewWithLinks.m */,
-				C9DFB2110F12DA9900365453 /* RolloverButton.h */,
-				C9DFB2120F12DA9900365453 /* RolloverButton.m */,
-				C95BF8590F4804BD00A1CD0E /* RHSystemIdleTimer.h */,
-				C95BF8580F4804BD00A1CD0E /* RHSystemIdleTimer.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -310,10 +304,10 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				C92392280F7F7BC30083FC13 /* main.m */,
 				32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */,
-				C94B4A1F0F22BAEF00BADAE8 /* utils.h */,
-				C94B4A200F22BAEF00BADAE8 /* utils.m */,
-				29B97316FDCFA39411CA2CEA /* main.m */,
+				C92392450F7F7BC30083FC13 /* utils.h */,
+				C92392460F7F7BC30083FC13 /* utils.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -321,15 +315,15 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C92392780F7F7D080083FC13 /* MainMenu.xib */,
+				C92392790F7F7D080083FC13 /* TickerWindow.xib */,
+				C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */,
+				C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */,
 				C94B47A70F1731C900BADAE8 /* Ticker.icns */,
-				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
-				C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */,
-				C94B49A50F22B2D700BADAE8 /* PresenceWindow.xib */,
-				C9F561BE0F00B247005D9245 /* Preferences.xib */,
+				C923922B0F7F7BC30083FC13 /* Preferences.xib */,
+				C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				C9DFB1BD0F12CF9700365453 /* Reply_Normal.tiff */,
-				C9DFB1BF0F12CF9700365453 /* Reply_Rollover.tiff */,
 				C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */,
 			);
 			name = Resources;
@@ -453,17 +447,17 @@
 			files = (
 				C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
-				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
-				C9CF60F70EDFA44A00A76D46 /* TickerWindow.xib in Resources */,
 				C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */,
-				C9F561BF0F00B247005D9245 /* Preferences.xib in Resources */,
-				C9DFB1C00F12CF9700365453 /* Reply_Normal.tiff in Resources */,
-				C9DFB1C20F12CF9800365453 /* Reply_Rollover.tiff in Resources */,
 				C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */,
-				C94B49A60F22B2D700BADAE8 /* PresenceWindow.xib in Resources */,
 				C93D56360F305C6B0005EE00 /* crash_20090128.txt in Resources */,
 				C9DA04290F327946004A663D /* crash_20090129.txt in Resources */,
 				C93D568A0F355B600005EE00 /* crash_20090131.txt in Resources */,
+				C923924C0F7F7BC30083FC13 /* Preferences.xib in Resources */,
+				C92392540F7F7BC30083FC13 /* PresenceWindow.xib in Resources */,
+				C923925D0F7F7C310083FC13 /* Reply_Normal.tiff in Resources */,
+				C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */,
+				C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */,
+				C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,25 +514,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				C9B038390E48282400B59216 /* TickerController.m in Sources */,
-				C9CF62D40EE0BF5F00A76D46 /* AppController.m in Sources */,
-				C9AAB9C90EF4A6E000387335 /* ElvinConnection.m in Sources */,
-				C9F561BB0F00B1A2005D9245 /* PreferencesController.m in Sources */,
-				C9521BAD0F08CE4100BA83EC /* DragTarget.m in Sources */,
-				C9DFB2130F12DA9900365453 /* RolloverButton.m in Sources */,
-				C9DFB2AB0F12FF2300365453 /* TextViewWithLinks.m in Sources */,
-				C9AEA1630F15ADE300C70410 /* TickerMessagesTextView.m in Sources */,
-				C94B49880F22AC7B00BADAE8 /* PresenceEntity.m in Sources */,
-				C94B49950F22AF8D00BADAE8 /* PresenceController.m in Sources */,
-				C94B499D0F22B0F400BADAE8 /* PresenceConnection.m in Sources */,
-				C94B4A210F22BAEF00BADAE8 /* utils.m in Sources */,
-				C9DDD3B50F26B4090082AF4C /* Preferences.m in Sources */,
-				C9013D3B0F2D5FF300154085 /* PresenceStatus.m in Sources */,
-				C9DA04E30F32ABEE004A663D /* PresenceGroupsController.m in Sources */,
-				C962B8CC0F3FE5A700CD0764 /* PresenceEntityCell.m in Sources */,
-				C95BF85A0F4804BD00A1CD0E /* RHSystemIdleTimer.m in Sources */,
 				C92391AE0F7F4C4C0083FC13 /* Key.m in Sources */,
+				C92392470F7F7BC30083FC13 /* AppController.m in Sources */,
+				C92392480F7F7BC30083FC13 /* DragTarget.m in Sources */,
+				C92392490F7F7BC30083FC13 /* ElvinConnection.m in Sources */,
+				C923924A0F7F7BC30083FC13 /* main.m in Sources */,
+				C923924B0F7F7BC30083FC13 /* Preferences.m in Sources */,
+				C923924D0F7F7BC30083FC13 /* PreferencesController.m in Sources */,
+				C923924E0F7F7BC30083FC13 /* PresenceConnection.m in Sources */,
+				C923924F0F7F7BC30083FC13 /* PresenceController.m in Sources */,
+				C92392500F7F7BC30083FC13 /* PresenceEntity.m in Sources */,
+				C92392510F7F7BC30083FC13 /* PresenceEntityCell.m in Sources */,
+				C92392520F7F7BC30083FC13 /* PresenceGroupsController.m in Sources */,
+				C92392530F7F7BC30083FC13 /* PresenceStatus.m in Sources */,
+				C92392550F7F7BC30083FC13 /* RHSystemIdleTimer.m in Sources */,
+				C92392560F7F7BC30083FC13 /* RolloverButton.m in Sources */,
+				C92392570F7F7BC30083FC13 /* TextViewWithLinks.m in Sources */,
+				C92392580F7F7BC30083FC13 /* TickerController.m in Sources */,
+				C92392590F7F7BC30083FC13 /* TickerMessagesTextView.m in Sources */,
+				C923925A0F7F7BC30083FC13 /* utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,12 +548,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C92FE9810F3D085E0037FA15 /* PresenceStatus.m in Sources */,
-				C92FE97B0F3D085E0037FA15 /* ElvinConnection.m in Sources */,
-				C92FE97D0F3D085E0037FA15 /* PresenceConnection.m in Sources */,
-				C92FE97F0F3D085E0037FA15 /* PresenceEntity.m in Sources */,
-				C92FE9830F3D085E0037FA15 /* utils.m in Sources */,
-				C92FE9790F3D08390037FA15 /* main.m in Sources */,
 				C92FE9AE0F3D09740037FA15 /* PresenceTesterAppController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -586,22 +574,6 @@
 				089C165DFE840E0CC02AAC07 /* English */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		1DDD58140DA1D0A300B32029 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1DDD58150DA1D0A300B32029 /* English */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		C9CF60F50EDFA44A00A76D46 /* TickerWindow.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C9CF60F60EDFA44A00A76D46 /* English */,
-			);
-			name = TickerWindow.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
