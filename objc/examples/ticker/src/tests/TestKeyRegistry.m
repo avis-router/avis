@@ -13,13 +13,7 @@
   NSError *error;
   Key *key = [[Key alloc] initWithFile: @"test_keys/key1.key" error: &error];
 
-  if (!key)
-  {
-    NSLog (@"Failed to read key: %@", 
-           [error localizedFailureReason]);
-  }
-  
-  STAssertNotNil (error, @"Error reading key");
+  STAssertNotNil (key, @"Error reading key: %@", [error localizedDescription]);
 }
 
 @end
