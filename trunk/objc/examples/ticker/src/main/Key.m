@@ -41,6 +41,8 @@ BOOL readNameValue (NSString *line,
 
     if (readNameValue (line, &name, &value, error))
       break;
+      
+    NSLog (@"name = %@, value = %@", name, value);
   }
   
   return *error ? nil : self;
@@ -86,9 +88,11 @@ BOOL readNameValue (NSString *line,
     *returnValue = trim (value);    
   } else
   {
-    *error = [NSError errorWithDomain: @"ticker.key" code: 1 
-               userInfo: [NSDictionary dictionaryWithObject: @"Key is missing a value" 
-                  forKey: NSLocalizedFailureReasonErrorKey]];
+    *error =
+      [NSError errorWithDomain: @"ticker.key" code: 1 
+               userInfo: 
+                 [NSDictionary dictionaryWithObject: @"Key is missing a value" 
+                   forKey: localizedDescription]];
    
     *returnName = *returnValue = nil;
   }
