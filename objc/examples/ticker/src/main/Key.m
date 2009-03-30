@@ -9,6 +9,16 @@ static BOOL readNameValue (NSString *line,
                            NSString **returnValue, 
                            NSError **error);
 
+static NSError *makeError (NSInteger code, NSString *message, ...);
+
+static NSData *unhexify (NSString *text, NSError **error);
+
+@synthesize type;
+
+@synthesize name;
+
+@synthesize data;
+
 - (id) initWithFile: (NSString *) file error: (NSError **) error
 {
   NSString *contents = 
@@ -25,14 +35,12 @@ static BOOL readNameValue (NSString *line,
 {
   if (!(self = [super init]))
     return nil;
-
+  
   NSArray *lines = 
     [text componentsSeparatedByCharactersInSet: 
       [NSCharacterSet newlineCharacterSet]];
   
-  NSLog (@"# lines = %u", [lines count]);
-  
-  NSString *name, *value;
+  NSString *field, *value;
   
   for (NSString *line in lines)
   {
@@ -41,10 +49,39 @@ static BOOL readNameValue (NSString *line,
     if ([line length] == 0)
       continue;
 
-    if (readNameValue (line, &name, &value, error))
+    if (readNameValue (line, &field, &value, error))
       break;
       
-    NSLog (@"name = \"%@\", value = \"%@\"", name, value);
+    if ([field isEqual: @"Version"])
+    {
+      if (![value hasPrefix: @"1."])
+      {
+        *error = makeError (KEY_IO_VERSION, 
+                            @"Unknown key format version: \"%@\"", value);
+      }
+    } else if ([field isEqual: @"Name"])
+    {
+      self.name = value;
+    } else if ([field isEqual: @"Access"])
+    {
+      if ([value isEqual: @"Shared"])
+        self.type = KEY_TYPE_PUBLIC;
+      else if ([value isEqual: @"Private"])
+        self.type = KEY_TYPE_PRIVATE;
+      else
+        *error = makeError (KEY_IO_ACCESS, 
+                            @"Unknown key access type: \"%@\"", value);
+    } else if ([field isEqual: @"Key"])
+    {
+      self.data = unhexify (value, error);
+    } else 
+    {
+      *error = 
+        makeError (KEY_IO_UNKNOWN_FIELD, @"Unknown field: \"%@\"", field);
+    }
+    
+    if (*error)
+      break;
   }
   
   return *error ? nil : self;
@@ -55,9 +92,9 @@ BOOL readNameValue (NSString *line,
                     NSString **returnValue, 
                     NSError **error)
 {
-  NSMutableString *name = [[NSMutableString alloc] initWithCapacity: 20];
+  NSMutableString *field = [[NSMutableString alloc] initWithCapacity: 20];
   NSMutableString *value = [[NSMutableString alloc] initWithCapacity: 80];
-  NSMutableString *target = name;
+  NSMutableString *target = field;
   
   for (NSUInteger i = 0; i < [line length]; i++)
   {
@@ -72,7 +109,7 @@ BOOL readNameValue (NSString *line,
           [target appendFormat: @"%C", [line characterAtIndex: i]];
         break;
       case ':':
-        if (target == name)
+        if (target == field)
           target = value;
         else
           [target appendFormat: @"%C", c];
@@ -86,23 +123,62 @@ BOOL readNameValue (NSString *line,
   if (target == value)
   {
     *error = nil;
-    *returnName = trim (name);
+    *returnName = trim (field);
     *returnValue = trim (value);    
   } else
   {
-    *error =
-      [NSError errorWithDomain: @"ticker.key" code: 1 
-               userInfo: 
-                 [NSDictionary dictionaryWithObject: @"Key is missing a value" 
-                   forKey: NSLocalizedDescriptionKey]];
+    *error = makeError (KEY_IO_MISSING_VALUE, 
+                        @"Key \"%@\" is missing a value", field);
    
     *returnName = *returnValue = nil;
   }
   
-  [name release];
+  [field release];
   [value release];
   
   return *error != nil;
 }
 
+NSData *unhexify (NSString *text, NSError **error)
+{
+  NSMutableData *data = [NSMutableData dataWithCapacity: 80];
+  
+  for (NSUInteger i = 0; i < [text length] && !*error; i++)
+  {
+    unichar c = [text characterAtIndex: i];
+    unsigned char b;
+    
+    if (c >= '0' && c <= '9')
+      b = c - '0';
+    else if (c >= 'a' && c <= 'f')
+      b = c - 'a' + 10;
+    else if (c >= 'A' && c <= 'F')
+      b = c - 'A' + 10;
+    else
+      *error = makeError (KEY_IO_BAD_HEX_DIGIT, 
+                          @"Invalid hex digit: %C", c);
+    
+    [data appendBytes: &b length: 1];
+  }
+  
+  return *error ? nil : data;
+}
+
+NSError *makeError (NSInteger code, NSString *message, ...)
+{
+  va_list args;
+  va_start (args, message);
+  
+  NSString *description = 
+    [[NSString alloc] initWithFormat: message arguments: args];
+  
+  va_end (args);
+  
+  return [NSError 
+           errorWithDomain: @"ticker.key" code: code 
+           userInfo: 
+             [NSDictionary dictionaryWithObject: description
+                forKey: NSLocalizedDescriptionKey]];
+}      
+                    
 @end
