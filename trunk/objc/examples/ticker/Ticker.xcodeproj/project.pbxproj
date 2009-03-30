@@ -56,15 +56,12 @@
 		C92FE9360F3D06260037FA15 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C92FE9860F3D08D70037FA15 /* PresenceTester.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92FE9850F3D08D70037FA15 /* PresenceTester.xib */; };
 		C92FE9AE0F3D09740037FA15 /* PresenceTesterAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */; };
-		C93D56360F305C6B0005EE00 /* crash_20090128.txt in Resources */ = {isa = PBXBuildFile; fileRef = C93D56350F305C6B0005EE00 /* crash_20090128.txt */; };
-		C93D568A0F355B600005EE00 /* crash_20090131.txt in Resources */ = {isa = PBXBuildFile; fileRef = C93D56890F355B600005EE00 /* crash_20090131.txt */; };
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
 		C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */ = {isa = PBXBuildFile; fileRef = C94B47A70F1731C900BADAE8 /* Ticker.icns */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
-		C9DA04290F327946004A663D /* crash_20090129.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9DA04280F327946004A663D /* crash_20090129.txt */; };
 		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
 /* End PBXBuildFile section */
 
@@ -449,9 +446,6 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */,
 				C94B47A80F1731C900BADAE8 /* Ticker.icns in Resources */,
-				C93D56360F305C6B0005EE00 /* crash_20090128.txt in Resources */,
-				C9DA04290F327946004A663D /* crash_20090129.txt in Resources */,
-				C93D568A0F355B600005EE00 /* crash_20090131.txt in Resources */,
 				C923924C0F7F7BC30083FC13 /* Preferences.xib in Resources */,
 				C92392540F7F7BC30083FC13 /* PresenceWindow.xib in Resources */,
 				C923925D0F7F7C310083FC13 /* Reply_Normal.tiff in Resources */,
@@ -490,7 +484,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+			shellScript = "# Run the unit tests in this test bundle.\nexport TEST_RESOURCES_DIR=${PROJECT_DIR}/src/tests/resources\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 		C9DFB3A20F132DCB00365453 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
