@@ -30,6 +30,8 @@ static BOOL readNameValue (NSString *line,
     [text componentsSeparatedByCharactersInSet: 
       [NSCharacterSet newlineCharacterSet]];
   
+  NSLog (@"# lines = %u", [lines count]);
+  
   NSString *name, *value;
   
   for (NSString *line in lines)
@@ -42,7 +44,7 @@ static BOOL readNameValue (NSString *line,
     if (readNameValue (line, &name, &value, error))
       break;
       
-    NSLog (@"name = %@, value = %@", name, value);
+    NSLog (@"name = \"%@\", value = \"%@\"", name, value);
   }
   
   return *error ? nil : self;
@@ -92,7 +94,7 @@ BOOL readNameValue (NSString *line,
       [NSError errorWithDomain: @"ticker.key" code: 1 
                userInfo: 
                  [NSDictionary dictionaryWithObject: @"Key is missing a value" 
-                   forKey: localizedDescription]];
+                   forKey: NSLocalizedDescriptionKey]];
    
     *returnName = *returnValue = nil;
   }
