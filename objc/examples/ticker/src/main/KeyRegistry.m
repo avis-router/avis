@@ -51,6 +51,13 @@
   return self;
 }
 
+- (void) dealloc
+{
+  [keys release];
+  
+  [super dealloc];
+}
+
 - (NSUInteger) count
 {
   return [keys count];
