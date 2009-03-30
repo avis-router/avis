@@ -2,8 +2,8 @@
 
 #import "utils.h"
 
-#define keyError(code, message, args...) \
-  makeError (@"ticker.key", code, message, args)
+#define keyError(code, message, ...) \
+  makeError (@"ticker.key", code, message, ##__VA_ARGS__)
 
 @implementation Key
 
@@ -37,6 +37,11 @@ static NSData *unhexify (NSString *text, NSError **error);
   if (!(self = [super init]))
     return nil;
   
+  type = -1;
+  name = nil;
+  data = nil;
+  BOOL versionSeen = NO;
+  
   NSArray *lines = 
     [text componentsSeparatedByCharactersInSet: 
       [NSCharacterSet newlineCharacterSet]];
@@ -55,11 +60,11 @@ static NSData *unhexify (NSString *text, NSError **error);
       
     if ([field isEqual: @"Version"])
     {
-      if (![value hasPrefix: @"1."])
-      {
+      if ([value hasPrefix: @"1."])
+        versionSeen = YES;
+      else
         *error = keyError (KEY_IO_VERSION, 
                             @"Unknown key format version: \"%@\"", value);
-      }
     } else if ([field isEqual: @"Name"])
     {
       self.name = value;
@@ -85,6 +90,19 @@ static NSData *unhexify (NSString *text, NSError **error);
       break;
   }
   
+  if (type == -1)
+    *error = 
+      keyError (KEY_IO_MISSING_FIELD, @"Missing access type");
+  else if (name == nil)
+    *error = 
+      keyError (KEY_IO_MISSING_FIELD, @"Missing name");
+  else if (data == nil)
+    *error = 
+      keyError (KEY_IO_MISSING_FIELD, @"Missing data");
+  else if (versionSeen == NO)
+    *error = 
+      keyError (KEY_IO_MISSING_FIELD, @"Missing version");
+        
   return *error ? nil : self;
 }
 

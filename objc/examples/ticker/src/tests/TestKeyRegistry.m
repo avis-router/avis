@@ -75,6 +75,18 @@
   STAssertNotNil (key5, @"Error reading key: %@", [error localizedDescription]);
   STAssertEqualObjects (@"test key #2", key5.name, @"Names not equal");
   STAssertEquals (KEY_TYPE_PRIVATE, key5.type, @"Types not equal");
+  
+  error = nil;
+  
+  Key *key6 = 
+    [[[Key alloc] 
+        initWithFile: 
+          [NSString stringWithFormat: @"%@/test_keys/key_error_missing_field.key", resourceDir] 
+          error: &error] autorelease];
+  
+  STAssertNil (key6, @"Key must be nil");
+  STAssertNotNil (error, @"Error must be set");
+  STAssertEquals (KEY_IO_MISSING_FIELD, [error code], @"Wrong error code");
 }
 
 - (void) testKeyRegistry
