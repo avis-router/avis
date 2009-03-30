@@ -128,7 +128,7 @@ BOOL readNameValue (NSString *line,
   } else
   {
     *error = makeError (KEY_IO_MISSING_VALUE, 
-                        @"Key \"%@\" is missing a value", field);
+                        @"Key field \"%@\" is missing a value", field);
    
     *returnName = *returnValue = nil;
   }
@@ -141,7 +141,7 @@ BOOL readNameValue (NSString *line,
 
 NSData *unhexify (NSString *text, NSError **error)
 {
-  NSMutableData *data = [NSMutableData dataWithCapacity: 80];
+  NSMutableData *data = [NSMutableData dataWithCapacity: [text length]];
   
   for (NSUInteger i = 0; i < [text length] && !*error; i++)
   {
