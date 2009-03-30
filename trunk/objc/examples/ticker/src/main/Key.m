@@ -2,14 +2,15 @@
 
 #import "utils.h"
 
+#define keyError(code, message, args...) \
+  makeError (@"ticker.key", code, message, args)
+
 @implementation Key
 
 static BOOL readNameValue (NSString *line, 
                            NSString **returnName, 
                            NSString **returnValue, 
                            NSError **error);
-
-static NSError *makeError (NSInteger code, NSString *message, ...);
 
 static NSData *unhexify (NSString *text, NSError **error);
 
@@ -56,7 +57,7 @@ static NSData *unhexify (NSString *text, NSError **error);
     {
       if (![value hasPrefix: @"1."])
       {
-        *error = makeError (KEY_IO_VERSION, 
+        *error = keyError (KEY_IO_VERSION, 
                             @"Unknown key format version: \"%@\"", value);
       }
     } else if ([field isEqual: @"Name"])
@@ -69,7 +70,7 @@ static NSData *unhexify (NSString *text, NSError **error);
       else if ([value isEqual: @"Private"])
         self.type = KEY_TYPE_PRIVATE;
       else
-        *error = makeError (KEY_IO_ACCESS, 
+        *error = keyError (KEY_IO_ACCESS, 
                             @"Unknown key access type: \"%@\"", value);
     } else if ([field isEqual: @"Key"])
     {
@@ -77,7 +78,7 @@ static NSData *unhexify (NSString *text, NSError **error);
     } else 
     {
       *error = 
-        makeError (KEY_IO_UNKNOWN_FIELD, @"Unknown field: \"%@\"", field);
+        keyError (KEY_IO_UNKNOWN_FIELD, @"Unknown field: \"%@\"", field);
     }
     
     if (*error)
@@ -127,7 +128,7 @@ BOOL readNameValue (NSString *line,
     *returnValue = trim (value);    
   } else
   {
-    *error = makeError (KEY_IO_MISSING_VALUE, 
+    *error = keyError (KEY_IO_MISSING_VALUE, 
                         @"Key field \"%@\" is missing a value", field);
    
     *returnName = *returnValue = nil;
@@ -155,7 +156,7 @@ NSData *unhexify (NSString *text, NSError **error)
     else if (c >= 'A' && c <= 'F')
       b = c - 'A' + 10;
     else
-      *error = makeError (KEY_IO_BAD_HEX_DIGIT, 
+      *error = keyError (KEY_IO_BAD_HEX_DIGIT, 
                           @"Invalid hex digit: %C", c);
     
     [data appendBytes: &b length: 1];
@@ -163,22 +164,5 @@ NSData *unhexify (NSString *text, NSError **error)
   
   return *error ? nil : data;
 }
-
-NSError *makeError (NSInteger code, NSString *message, ...)
-{
-  va_list args;
-  va_start (args, message);
-  
-  NSString *description = 
-    [[NSString alloc] initWithFormat: message arguments: args];
-  
-  va_end (args);
-  
-  return [NSError 
-           errorWithDomain: @"ticker.key" code: code 
-           userInfo: 
-             [NSDictionary dictionaryWithObject: description
-                forKey: NSLocalizedDescriptionKey]];
-}      
                     
 @end
