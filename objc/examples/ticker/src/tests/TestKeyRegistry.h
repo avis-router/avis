@@ -6,4 +6,6 @@
 
 - (void) testReadKey;
 
+- (void) testKeyRegistry;
+
 @end

@@ -26,3 +26,20 @@ NSString *trim (NSString *string)
   return [string stringByTrimmingCharactersInSet: 
     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
+
+NSError *makeError (NSString *domain, NSInteger code, NSString *message, ...)
+{
+  va_list args;
+  va_start (args, message);
+  
+  NSString *description = 
+    [[NSString alloc] initWithFormat: message arguments: args];
+  
+  va_end (args);
+  
+  return [NSError 
+           errorWithDomain: domain code: code 
+           userInfo: 
+             [NSDictionary dictionaryWithObject: description
+                forKey: NSLocalizedDescriptionKey]];
+}

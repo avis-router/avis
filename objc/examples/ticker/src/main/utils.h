@@ -13,3 +13,5 @@ void createUUID (char *uuid);
 NSString *uuidString ();
 
 NSString *trim (NSString *string);
+
+NSError *makeError (NSString *domain, NSInteger code, NSString *message, ...);

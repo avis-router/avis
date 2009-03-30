@@ -51,6 +51,7 @@
 		C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */; };
 		C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392780F7F7D080083FC13 /* MainMenu.xib */; };
 		C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392790F7F7D080083FC13 /* TickerWindow.xib */; };
+		C923939B0F80A7C30083FC13 /* KeyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = C92393990F80A7C30083FC13 /* KeyRegistry.m */; };
 		C92FE9310F3D06260037FA15 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C92FE9320F3D06260037FA15 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C92FE9360F3D06260037FA15 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
@@ -163,6 +164,8 @@
 		C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Rollover.tiff; path = resources/Reply_Rollover.tiff; sourceTree = "<group>"; };
 		C92392780F7F7D080083FC13 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = resources/MainMenu.xib; sourceTree = "<group>"; };
 		C92392790F7F7D080083FC13 /* TickerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TickerWindow.xib; path = resources/TickerWindow.xib; sourceTree = "<group>"; };
+		C92393990F80A7C30083FC13 /* KeyRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyRegistry.m; path = src/main/KeyRegistry.m; sourceTree = "<group>"; };
+		C923939A0F80A7C30083FC13 /* KeyRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyRegistry.h; path = src/main/KeyRegistry.h; sourceTree = "<group>"; };
 		C92FE93A0F3D06270037FA15 /* Ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C92FE96B0F3D072C0037FA15 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PresenceTester/Info.plist; sourceTree = "<group>"; };
 		C92FE9850F3D08D70037FA15 /* PresenceTester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceTester.xib; path = PresenceTester/PresenceTester.xib; sourceTree = "<group>"; };
@@ -244,6 +247,8 @@
 				C92392420F7F7BC30083FC13 /* TickerController.m */,
 				C92392430F7F7BC30083FC13 /* TickerMessagesTextView.h */,
 				C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */,
+				C92393990F80A7C30083FC13 /* KeyRegistry.m */,
+				C923939A0F80A7C30083FC13 /* KeyRegistry.h */,
 				C92391AC0F7F4C4C0083FC13 /* Key.h */,
 				C92391AD0F7F4C4C0083FC13 /* Key.m */,
 			);
@@ -527,6 +532,7 @@
 				C92392580F7F7BC30083FC13 /* TickerController.m in Sources */,
 				C92392590F7F7BC30083FC13 /* TickerMessagesTextView.m in Sources */,
 				C923925A0F7F7BC30083FC13 /* utils.m in Sources */,
+				C923939B0F80A7C30083FC13 /* KeyRegistry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

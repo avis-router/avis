@@ -1,6 +1,7 @@
 #import "TestKeyRegistry.h"
 
 #import "Key.h"
+#import "KeyRegistry.h"
 
 @implementation TestKeyRegistry
 
@@ -9,10 +10,6 @@
   NSString *resourceDir = 
     [NSString stringWithCString: getenv ("TEST_RESOURCES_DIR") 
                        encoding: NSASCIIStringEncoding];
-
-  //STFail (@"Failed!");
-  //KeyRegistry *registry = [KeyRegistry registryWithKeysInDir: @"test_keys"];
-  //KeyRegistry *registry = [[KeyRegistry alloc] init];
   
   NSError *error = nil;
   Key *key1 = 
@@ -78,6 +75,24 @@
   STAssertNotNil (key5, @"Error reading key: %@", [error localizedDescription]);
   STAssertEqualObjects (@"test key #2", key5.name, @"Names not equal");
   STAssertEquals (KEY_TYPE_PRIVATE, key5.type, @"Types not equal");
+}
+
+- (void) testKeyRegistry
+{
+  NSString *resourceDir = 
+    [NSString stringWithCString: getenv ("TEST_RESOURCES_DIR") 
+                       encoding: NSASCIIStringEncoding];
+
+  NSError *error = nil;
+  KeyRegistry *registry =  
+    [[[KeyRegistry alloc] initWithKeysInDir: 
+      [NSString stringWithFormat: @"%@/test_keys", resourceDir] error: &error] 
+        autorelease];
+  
+  STAssertNotNil (registry, @"Error reading registry: %@", 
+                   [error localizedDescription]);
+
+  STAssertEquals ((NSUInteger)2, [registry count], @"Wrong key count");                  
 }
 
 @end
