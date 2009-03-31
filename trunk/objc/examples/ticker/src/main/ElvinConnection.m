@@ -1,5 +1,8 @@
 #import "ElvinConnection.h"
 
+#import "ElvinKey.h"
+#import "KeyRegistry.h"
+
 #import "utils.h"
 
 NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
@@ -131,6 +134,20 @@ static void send_message (Elvin *elvin, Attributes *message);
     if (wasConnected)
       [self connect];
   }
+}
+
+- (KeyRegistry *) keys
+{
+  return keys;
+}
+
+- (void) setKeys: (KeyRegistry *) newKeys
+{
+  [keys release];
+  
+  keys = [newKeys retain];
+  
+  // TODO change connection keys
 }
 
 #pragma Elvin publish/subscribe
@@ -433,14 +450,50 @@ void send_message (Elvin *elvin, Attributes *message)
   NSLog (@"Elvin thread is terminating");
 }
 
-- (BOOL) openConnection
+Keys *subscriptionKeysFor (KeyRegistry *keys)
 {
-  if (elvin_open (&elvin, [elvinUrl UTF8String]))
-  {    
+  Keys *elvinKeys = elvin_keys_create ();
+  
+  for (ElvinKey *key in [keys keys])
+  {
+    if (key.type == KEY_TYPE_PRIVATE)
+    {
+      NSLog (@"data length = %u", [key.data length]);
+      
+      Key privateKey = 
+        elvin_key_create_from_data ([key.data bytes], [key.data length]);
+      
+      elvin_keys_add_dual_consumer 
+        (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
+      
+      elvin_keys_add_dual_producer 
+        (elvinKeys, KEY_SCHEME_SHA1_DUAL, 
+          elvin_key_create_public (privateKey, KEY_SCHEME_SHA1_DUAL));
+    } else
+    {
+    }
+  }
+  
+  return elvinKeys;
+}
+
+- (BOOL) openConnection
+{  
+  ElvinURI uri;
+  ElvinError error = ELVIN_EMPTY_ERROR;
+  elvin_uri_from_string (&uri, [elvinUrl UTF8String], &error);
+  
+  if (elvin_error_occurred (&error))
+    return NO;
+  
+  Keys *subscriptionKeys = subscriptionKeysFor (keys);
+  
+  if (elvin_open_with_keys (&elvin, &uri, EMPTY_KEYS, subscriptionKeys))
+  {
     // renew any existing subscriptions
     for (SubscriptionContext *context in subscriptions)
       subscribe (&elvin, context);
-        
+
     [[NSNotificationCenter defaultCenter] 
       postNotificationName: ElvinConnectionOpenedNotification object: self];
    
@@ -448,7 +501,9 @@ void send_message (Elvin *elvin, Attributes *message)
  
     return YES;
   } else
-  {           
+  {
+    elvin_keys_destroy (subscriptionKeys);
+    
     return NO;
   }
 }

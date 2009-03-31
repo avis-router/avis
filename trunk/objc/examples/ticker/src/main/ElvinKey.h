@@ -3,10 +3,10 @@
 typedef enum {KEY_TYPE_PUBLIC, KEY_TYPE_PRIVATE} KeyAccessType;
 
 typedef enum {KEY_IO_VERSION, KEY_IO_ACCESS, KEY_IO_UNKNOWN_FIELD, 
-              KEY_IO_MISSING_VALUE, KEY_IO_BAD_HEX_DIGIT, 
+              KEY_IO_MISSING_VALUE, KEY_IO_BAD_HEX_DATA, 
               KEY_IO_MISSING_FIELD} KeyIOError;
 
-@interface Key : NSObject 
+@interface ElvinKey : NSObject 
 {
   KeyAccessType type;
   NSString *name;

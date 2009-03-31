@@ -1,6 +1,6 @@
 #import "TestKeyRegistry.h"
 
-#import "Key.h"
+#import "ElvinKey.h"
 #import "KeyRegistry.h"
 
 @implementation TestKeyRegistry
@@ -12,26 +12,26 @@
                        encoding: NSASCIIStringEncoding];
   
   NSError *error = nil;
-  Key *key1 = 
-    [[[Key alloc] 
+  ElvinKey *key1 = 
+    [[[ElvinKey alloc] 
        initWithFile: 
          [NSString stringWithFormat: @"%@/test_keys/key1.key", resourceDir] 
        error: &error] autorelease];
 
-  unsigned char key_data [16] = 
-    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  unsigned char key_data [18] = 
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 26, 255};
   
   STAssertNotNil (key1, @"Error reading key: %@", [error localizedDescription]);
   STAssertEqualObjects (key1.name, @"test key #1", @"Names not equal");
   STAssertEquals (key1.type, KEY_TYPE_PUBLIC, @"Types not equal");
   STAssertEqualObjects 
-    ([NSData dataWithBytes: key_data length: sizeof (key_data)], key1.data, 
+    (key1.data, [NSData dataWithBytes: key_data length: sizeof (key_data)], 
      @"Data not equal");
   
   error = nil;
   
-  Key *key2 = 
-    [[[Key alloc] 
+  ElvinKey *key2 = 
+    [[[ElvinKey alloc] 
       initWithFile: 
       [NSString stringWithFormat: @"%@/test_keys/key_error_version.key", resourceDir] 
         error: &error] autorelease];
@@ -42,20 +42,20 @@
   
   error = nil;
   
-  Key *key3 = 
-    [[[Key alloc] 
+  ElvinKey *key3 = 
+    [[[ElvinKey alloc] 
       initWithFile: 
         [NSString stringWithFormat: @"%@/test_keys/key_error_hexdata.key", resourceDir] 
         error: &error] autorelease];
   
   STAssertNil (key3, @"Key must be nil");
   STAssertNotNil (error, @"Error must be set");
-  STAssertEquals ([error code], KEY_IO_BAD_HEX_DIGIT, @"Wrong error code");
+  STAssertEquals ([error code], KEY_IO_BAD_HEX_DATA, @"Wrong error code");
   
   error = nil;
   
-  Key *key4 = 
-  [[[Key alloc] 
+  ElvinKey *key4 = 
+  [[[ElvinKey alloc] 
     initWithFile: 
     [NSString stringWithFormat: @"%@/test_keys/key_error_version.key", resourceDir] 
     error: &error] autorelease];
@@ -66,8 +66,8 @@
   
   error = nil;
   
-  Key *key5 = 
-    [[[Key alloc] 
+  ElvinKey *key5 = 
+    [[[ElvinKey alloc] 
       initWithFile: 
       [NSString stringWithFormat: @"%@/test_keys/key2.key", resourceDir] 
       error: &error] autorelease];
@@ -78,8 +78,8 @@
   
   error = nil;
   
-  Key *key6 = 
-    [[[Key alloc] 
+  ElvinKey *key6 = 
+    [[[ElvinKey alloc] 
         initWithFile: 
           [NSString stringWithFormat: @"%@/test_keys/key_error_missing_field.key", resourceDir] 
           error: &error] autorelease];

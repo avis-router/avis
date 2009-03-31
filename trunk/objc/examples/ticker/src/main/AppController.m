@@ -7,6 +7,7 @@
 #import "PresenceController.h"
 #import "PreferencesController.h"
 #import "Preferences.h"
+#import "KeyRegistry.h"
 
 #import "utils.h"
 
@@ -36,6 +37,8 @@
         retain];
     
     presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
+    
+    elvin.keys = self.keys;
   }
   
   return self;
@@ -54,6 +57,35 @@
   [super dealloc];
 }
 
+- (KeyRegistry *) keys
+{
+  if (!keys)
+  {
+    NSString *appSupport = 
+      [NSSearchPathForDirectoriesInDomains 
+         (NSApplicationSupportDirectory, NSUserDomainMask, YES) 
+         objectAtIndex: 0];
+    NSString *keysDir = 
+      [appSupport stringByAppendingPathComponent: @"Ticker/Keys"];
+    
+    NSError *error = nil;
+    
+    keys = [[KeyRegistry alloc] initWithKeysInDir: keysDir error: &error];
+    
+    if (!keys)
+    {
+      NSLog (@"Failed to load keys from %@: %@", keysDir, 
+             [error localizedDescription]);
+      
+      keys = [[KeyRegistry alloc] initWithKeysInDir: @"/tmp" error: &error];
+    }
+    
+    NSLog (@"Loaded %u keys", [keys count]);
+  }
+  
+  return keys;
+}
+    
 #pragma mark -
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
