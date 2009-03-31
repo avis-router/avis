@@ -27,6 +27,8 @@ static void notification_listener (Subscription *sub,
 
 static void send_message (Elvin *elvin, Attributes *message);
 
+static Keys *subscriptionKeysFor (KeyRegistry *keys);
+
 #pragma mark -
 
 @interface SubscriptionContext : NSObject
@@ -450,33 +452,6 @@ void send_message (Elvin *elvin, Attributes *message)
   NSLog (@"Elvin thread is terminating");
 }
 
-Keys *subscriptionKeysFor (KeyRegistry *keys)
-{
-  Keys *elvinKeys = elvin_keys_create ();
-  
-  for (ElvinKey *key in [keys keys])
-  {
-    if (key.type == KEY_TYPE_PRIVATE)
-    {
-      NSLog (@"data length = %u", [key.data length]);
-      
-      Key privateKey = 
-        elvin_key_create_from_data ([key.data bytes], [key.data length]);
-      
-      elvin_keys_add_dual_consumer 
-        (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
-      
-      elvin_keys_add_dual_producer 
-        (elvinKeys, KEY_SCHEME_SHA1_DUAL, 
-          elvin_key_create_public (privateKey, KEY_SCHEME_SHA1_DUAL));
-    } else
-    {
-    }
-  }
-  
-  return elvinKeys;
-}
-
 - (BOOL) openConnection
 {  
   ElvinURI uri;
@@ -528,6 +503,31 @@ void close_listener (Elvin *elvin, CloseReason reason,
 {
   [[NSNotificationCenter defaultCenter] 
      postNotificationName: ElvinConnectionClosedNotification object: self];
+}
+
+Keys *subscriptionKeysFor (KeyRegistry *keys)
+{
+  Keys *elvinKeys = elvin_keys_create ();
+  
+  for (ElvinKey *key in [keys keys])
+  {
+    if (key.type == KEY_TYPE_PRIVATE)
+    {
+      Key privateKey = 
+        elvin_key_create_from_data ([key.data bytes], [key.data length]);
+      
+      elvin_keys_add_dual_consumer 
+        (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
+      
+      elvin_keys_add_dual_producer 
+        (elvinKeys, KEY_SCHEME_SHA1_DUAL, 
+           elvin_key_create_public (privateKey, KEY_SCHEME_SHA1_DUAL));
+    } else
+    {
+    }
+  }
+  
+  return elvinKeys;
 }
 
 @end
