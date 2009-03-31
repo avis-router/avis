@@ -52,6 +52,11 @@
 		C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392780F7F7D080083FC13 /* MainMenu.xib */; };
 		C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392790F7F7D080083FC13 /* TickerWindow.xib */; };
 		C923939B0F80A7C30083FC13 /* KeyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = C92393990F80A7C30083FC13 /* KeyRegistry.m */; };
+		C92394050F82BEEA0083FC13 /* key_error_version.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394000F82BEEA0083FC13 /* key_error_version.key */; };
+		C92394060F82BEEA0083FC13 /* key_error_missing_field.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394010F82BEEA0083FC13 /* key_error_missing_field.key */; };
+		C92394070F82BEEA0083FC13 /* key_error_hexdata.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394020F82BEEA0083FC13 /* key_error_hexdata.key */; };
+		C92394080F82BEEA0083FC13 /* key2.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394030F82BEEA0083FC13 /* key2.key */; };
+		C92394090F82BEEA0083FC13 /* key1.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394040F82BEEA0083FC13 /* key1.key */; };
 		C92FE9310F3D06260037FA15 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C92FE9320F3D06260037FA15 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C92FE9360F3D06260037FA15 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
@@ -166,6 +171,11 @@
 		C92392790F7F7D080083FC13 /* TickerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TickerWindow.xib; path = resources/TickerWindow.xib; sourceTree = "<group>"; };
 		C92393990F80A7C30083FC13 /* KeyRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyRegistry.m; path = src/main/KeyRegistry.m; sourceTree = "<group>"; };
 		C923939A0F80A7C30083FC13 /* KeyRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyRegistry.h; path = src/main/KeyRegistry.h; sourceTree = "<group>"; };
+		C92394000F82BEEA0083FC13 /* key_error_version.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_version.key; path = src/tests/resources/test_keys/key_error_version.key; sourceTree = "<group>"; };
+		C92394010F82BEEA0083FC13 /* key_error_missing_field.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_missing_field.key; path = src/tests/resources/test_keys/key_error_missing_field.key; sourceTree = "<group>"; };
+		C92394020F82BEEA0083FC13 /* key_error_hexdata.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_hexdata.key; path = src/tests/resources/test_keys/key_error_hexdata.key; sourceTree = "<group>"; };
+		C92394030F82BEEA0083FC13 /* key2.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key2.key; path = src/tests/resources/test_keys/key2.key; sourceTree = "<group>"; };
+		C92394040F82BEEA0083FC13 /* key1.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key1.key; path = src/tests/resources/test_keys/key1.key; sourceTree = "<group>"; };
 		C92FE93A0F3D06270037FA15 /* Ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C92FE96B0F3D072C0037FA15 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PresenceTester/Info.plist; sourceTree = "<group>"; };
 		C92FE9850F3D08D70037FA15 /* PresenceTester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceTester.xib; path = PresenceTester/PresenceTester.xib; sourceTree = "<group>"; };
@@ -345,10 +355,23 @@
 		C92391570F7F01380083FC13 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C92393FF0F82BECF0083FC13 /* Resources */,
 				C923917C0F7F02E60083FC13 /* TestKeyRegistry.h */,
 				C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */,
 			);
 			name = Tests;
+			sourceTree = "<group>";
+		};
+		C92393FF0F82BECF0083FC13 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C92394000F82BEEA0083FC13 /* key_error_version.key */,
+				C92394010F82BEEA0083FC13 /* key_error_missing_field.key */,
+				C92394020F82BEEA0083FC13 /* key_error_hexdata.key */,
+				C92394030F82BEEA0083FC13 /* key2.key */,
+				C92394040F82BEEA0083FC13 /* key1.key */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		C92FE90E0F3D05AB0037FA15 /* Presence Tester */ = {
@@ -464,6 +487,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C92394050F82BEEA0083FC13 /* key_error_version.key in Resources */,
+				C92394060F82BEEA0083FC13 /* key_error_missing_field.key in Resources */,
+				C92394070F82BEEA0083FC13 /* key_error_hexdata.key in Resources */,
+				C92394080F82BEEA0083FC13 /* key2.key in Resources */,
+				C92394090F82BEEA0083FC13 /* key1.key in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

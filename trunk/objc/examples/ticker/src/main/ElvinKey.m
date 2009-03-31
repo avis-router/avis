@@ -14,6 +14,8 @@ static BOOL readNameValue (NSString *line,
 
 static NSData *unhexify (NSString *text, NSError **error);
 
+static unsigned char hexToDec (unichar digit, NSError **error);
+
 @synthesize type;
 
 @synthesize name;
@@ -161,26 +163,8 @@ BOOL readNameValue (NSString *line,
   return *error != nil;
 }
 
-unsigned char hexToDec (unichar digit, NSError **error)
-{
-  if (digit >= '0' && digit <= '9')
-    return digit - '0';
-  else if (digit >= 'a' && digit <= 'f')
-    return digit - 'a' + 10;
-  else if (digit >= 'A' && digit <= 'F')
-    return digit - 'A' + 10;
-  else
-  {
-    *error = keyError (KEY_IO_BAD_HEX_DATA, 
-                       @"Invalid hex digit: %C", digit);  
-    return 0;
-  }
-}
-
 NSData *unhexify (NSString *text, NSError **error)
 {
-  NSLog (@"Unhex %@", text);
-  
   if ([text length] % 2 != 0)
   {
     *error = keyError (KEY_IO_BAD_HEX_DATA, 
@@ -198,12 +182,26 @@ NSData *unhexify (NSString *text, NSError **error)
     
     unsigned char b = (hexToDec (c1, error) << 4) + hexToDec (c2, error);
     
-    NSLog (@"%c %c byte = %u", (char)c1, (char)c2, (unsigned)b);
-    
     [data appendBytes: &b length: 1];
   }
   
   return *error ? nil : data;
+}
+
+unsigned char hexToDec (unichar digit, NSError **error)
+{
+  if (digit >= '0' && digit <= '9')
+    return digit - '0';
+  else if (digit >= 'a' && digit <= 'f')
+    return digit - 'a' + 10;
+  else if (digit >= 'A' && digit <= 'F')
+    return digit - 'A' + 10;
+  else
+  {
+    *error = keyError (KEY_IO_BAD_HEX_DATA, 
+                       @"Invalid hex digit: %C", digit);  
+    return 0;
+  }
 }
                     
 @end

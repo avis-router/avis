@@ -64,7 +64,7 @@
     NSString *appSupport = 
       [NSSearchPathForDirectoriesInDomains 
          (NSApplicationSupportDirectory, NSUserDomainMask, YES) 
-         objectAtIndex: 0];
+           objectAtIndex: 0];
     NSString *keysDir = 
       [appSupport stringByAppendingPathComponent: @"Ticker/Keys"];
     
@@ -79,8 +79,6 @@
       
       keys = [[KeyRegistry alloc] initWithKeysInDir: @"/tmp" error: &error];
     }
-    
-    NSLog (@"Loaded %u keys", [keys count]);
   }
   
   return keys;
