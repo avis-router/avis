@@ -90,19 +90,22 @@ static NSData *unhexify (NSString *text, NSError **error);
       break;
   }
   
-  if (type == -1)
-    *error = 
-      keyError (KEY_IO_MISSING_FIELD, @"Missing access type");
-  else if (name == nil)
-    *error = 
-      keyError (KEY_IO_MISSING_FIELD, @"Missing name");
-  else if (data == nil)
-    *error = 
-      keyError (KEY_IO_MISSING_FIELD, @"Missing data");
-  else if (versionSeen == NO)
-    *error = 
-      keyError (KEY_IO_MISSING_FIELD, @"Missing version");
-        
+  if (!*error)
+  {
+    if (type == -1)
+      *error = 
+        keyError (KEY_IO_MISSING_FIELD, @"Missing access type");
+    else if (name == nil)
+      *error = 
+        keyError (KEY_IO_MISSING_FIELD, @"Missing name");
+    else if (data == nil)
+      *error = 
+        keyError (KEY_IO_MISSING_FIELD, @"Missing data");
+    else if (versionSeen == NO)
+      *error = 
+        keyError (KEY_IO_MISSING_FIELD, @"Missing version");
+  }
+     
   return *error ? nil : self;
 }
 

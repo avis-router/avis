@@ -22,8 +22,8 @@
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   
   STAssertNotNil (key1, @"Error reading key: %@", [error localizedDescription]);
-  STAssertEqualObjects (@"test key #1", key1.name, @"Names not equal");
-  STAssertEquals (KEY_TYPE_PUBLIC, key1.type, @"Types not equal");
+  STAssertEqualObjects (key1.name, @"test key #1", @"Names not equal");
+  STAssertEquals (key1.type, KEY_TYPE_PUBLIC, @"Types not equal");
   STAssertEqualObjects 
     ([NSData dataWithBytes: key_data length: sizeof (key_data)], key1.data, 
      @"Data not equal");
@@ -38,7 +38,7 @@
   
   STAssertNil (key2, @"Key must be nil");
   STAssertNotNil (error, @"Error must be set");
-  STAssertEquals (KEY_IO_VERSION, [error code], @"Wrong error code");
+  STAssertEquals ([error code], KEY_IO_VERSION, @"Wrong error code");
   
   error = nil;
   
@@ -50,7 +50,7 @@
   
   STAssertNil (key3, @"Key must be nil");
   STAssertNotNil (error, @"Error must be set");
-  STAssertEquals (KEY_IO_BAD_HEX_DIGIT, [error code], @"Wrong error code");
+  STAssertEquals ([error code], KEY_IO_BAD_HEX_DIGIT, @"Wrong error code");
   
   error = nil;
   
@@ -62,7 +62,7 @@
   
   STAssertNil (key4, @"Key must be nil");
   STAssertNotNil (error, @"Error must be set");
-  STAssertEquals (KEY_IO_VERSION, [error code], @"Wrong error code");
+  STAssertEquals ([error code], KEY_IO_VERSION, @"Wrong error code");
   
   error = nil;
   
@@ -73,8 +73,8 @@
       error: &error] autorelease];
   
   STAssertNotNil (key5, @"Error reading key: %@", [error localizedDescription]);
-  STAssertEqualObjects (@"test key #2", key5.name, @"Names not equal");
-  STAssertEquals (KEY_TYPE_PRIVATE, key5.type, @"Types not equal");
+  STAssertEqualObjects (key5.name, @"test key #2", @"Names not equal");
+  STAssertEquals (key5.type, KEY_TYPE_PRIVATE, @"Types not equal");
   
   error = nil;
   
@@ -86,7 +86,7 @@
   
   STAssertNil (key6, @"Key must be nil");
   STAssertNotNil (error, @"Error must be set");
-  STAssertEquals (KEY_IO_MISSING_FIELD, [error code], @"Wrong error code");
+  STAssertEquals ([error code], KEY_IO_MISSING_FIELD, @"Wrong error code");
 }
 
 - (void) testKeyRegistry
@@ -104,7 +104,7 @@
   STAssertNotNil (registry, @"Error reading registry: %@", 
                    [error localizedDescription]);
 
-  STAssertEquals ((NSUInteger)2, [registry count], @"Wrong key count");                  
+  STAssertEquals ([registry count], (NSUInteger)2, @"Wrong key count");                  
 }
 
 @end
