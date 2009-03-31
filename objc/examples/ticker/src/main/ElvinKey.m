@@ -1,11 +1,11 @@
-#import "Key.h"
+#import "ElvinKey.h"
 
 #import "utils.h"
 
 #define keyError(code, message, ...) \
   makeError (@"ticker.key", code, message, ##__VA_ARGS__)
 
-@implementation Key
+@implementation ElvinKey
 
 static BOOL readNameValue (NSString *line, 
                            NSString **returnName, 
@@ -161,24 +161,44 @@ BOOL readNameValue (NSString *line,
   return *error != nil;
 }
 
+unsigned char hexToDec (unichar digit, NSError **error)
+{
+  if (digit >= '0' && digit <= '9')
+    return digit - '0';
+  else if (digit >= 'a' && digit <= 'f')
+    return digit - 'a' + 10;
+  else if (digit >= 'A' && digit <= 'F')
+    return digit - 'A' + 10;
+  else
+  {
+    *error = keyError (KEY_IO_BAD_HEX_DATA, 
+                       @"Invalid hex digit: %C", digit);  
+    return 0;
+  }
+}
+
 NSData *unhexify (NSString *text, NSError **error)
 {
-  NSMutableData *data = [NSMutableData dataWithCapacity: [text length]];
+  NSLog (@"Unhex %@", text);
   
-  for (NSUInteger i = 0; i < [text length] && !*error; i++)
+  if ([text length] % 2 != 0)
   {
-    unichar c = [text characterAtIndex: i];
-    unsigned char b;
+    *error = keyError (KEY_IO_BAD_HEX_DATA, 
+                       @"Hex data must have an even number of digits");
     
-    if (c >= '0' && c <= '9')
-      b = c - '0';
-    else if (c >= 'a' && c <= 'f')
-      b = c - 'a' + 10;
-    else if (c >= 'A' && c <= 'F')
-      b = c - 'A' + 10;
-    else
-      *error = keyError (KEY_IO_BAD_HEX_DIGIT, 
-                          @"Invalid hex digit: %C", c);
+    return nil;
+  }
+
+  NSMutableData *data = [NSMutableData dataWithCapacity: [text length] / 2];
+  
+  for (NSUInteger i = 0; i < [text length] && !*error; i += 2)
+  {
+    unichar c1 = [text characterAtIndex: i];
+    unichar c2 = [text characterAtIndex: i + 1];
+    
+    unsigned char b = (hexToDec (c1, error) << 4) + hexToDec (c2, error);
+    
+    NSLog (@"%c %c byte = %u", (char)c1, (char)c2, (unsigned)b);
     
     [data appendBytes: &b length: 1];
   }

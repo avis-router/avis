@@ -2,7 +2,7 @@
 
 typedef enum {REG_ERROR_MISSING_DIR} RegError;
 
-@class Key;
+@class ElvinKey;
 
 @interface KeyRegistry : NSObject
 {
@@ -11,6 +11,8 @@ typedef enum {REG_ERROR_MISSING_DIR} RegError;
 
 - (id) initWithKeysInDir: (NSString *) dir error: (NSError **) error;
 
-- (NSUInteger) count;
+@property (readonly) NSUInteger count;
+
+@property (readonly) NSArray *keys;
 
 @end

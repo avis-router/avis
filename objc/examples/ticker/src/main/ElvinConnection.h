@@ -4,6 +4,8 @@
 
 #include <avis/elvin.h>
 
+@class KeyRegistry;
+
 typedef enum {FieldStatus = 0x01, FieldBuddies = 0x02, FieldUserAgent = 0x04,
               FieldsAll = FieldStatus | FieldBuddies | FieldUserAgent} 
               PresenceFields;
@@ -18,9 +20,12 @@ extern NSString *ElvinConnectionWillCloseNotification;
   NSString *       elvinUrl;
   NSMutableArray * subscriptions;
   NSThread *       eventLoopThread;
+  KeyRegistry *    keys;
 }
 
 @property (readwrite, retain) NSString *elvinUrl;
+
+@property (readwrite, retain) KeyRegistry *keys;
 
 - (id) initWithUrl: (NSString *) url;
 

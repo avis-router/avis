@@ -1,5 +1,5 @@
 #import "KeyRegistry.h"
-#import "Key.h"
+#import "ElvinKey.h"
 #import "utils.h"
 
 #define regError(code, message, ...) \
@@ -34,8 +34,8 @@
       NSError *keyError;
       NSString *fullPath = [dir stringByAppendingPathComponent: file];
       
-      Key *key = 
-        [[Key alloc] initWithFile: fullPath error: &keyError];
+      ElvinKey *key = 
+        [[ElvinKey alloc] initWithFile: fullPath error: &keyError];
 
       if (key)
       {
@@ -62,5 +62,7 @@
 {
   return [keys count];
 }
+
+@synthesize keys;
 
 @end
