@@ -2,8 +2,8 @@
 #import "Key.h"
 #import "utils.h"
 
-#define regError(code, message, args...) \
-  makeError (@"ticker.key_registry", code, message, args)
+#define regError(code, message, ...) \
+  makeError (@"ticker.key_registry", code, message, ##__VA_ARGS__)
 
 @implementation KeyRegistry
 
