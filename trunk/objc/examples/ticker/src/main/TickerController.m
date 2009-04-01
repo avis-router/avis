@@ -61,6 +61,7 @@ static NSAttributedString *attributedString (NSString *string,
   NSString * userAgent;
   NSURL    * url;
   BOOL       public;
+  BOOL       secure;
   NSDate   * receivedAt;
 }
 
@@ -83,6 +84,7 @@ static NSAttributedString *attributedString (NSString *string,
   message->userAgent = [[notification valueForKey: @"User-Agent"] retain];
   message->url = [extractAttachedLink (notification) retain];
   message->receivedAt = [[NSDate date] retain];
+  message->secure = [ElvinConnection wasReceivedSecure: notification];
   
   return message;
 }
@@ -681,6 +683,7 @@ static NSAttributedString *attributedString (NSString *string,
     
     self.inReplyTo = message->messageId;
     self.allowPublic = message->public;
+    self.allowInsecure = !message->secure;
     
     [[messageText window] makeFirstResponder: messageText];
 
@@ -701,8 +704,9 @@ static NSAttributedString *attributedString (NSString *string,
   {
     TickerMessage *message = link;
     
-    return [NSString stringWithFormat: @"Public: %@\nClient: %@", 
-              message->public ? @"Yes" : @"No", 
+    return [NSString stringWithFormat: @"Public: %@\nSecure: %@\nClient: %@", 
+              message->public ? @"Yes" : @"No",
+              message->secure ? @"Yes" : @"No",
               message->userAgent ? message->userAgent : @"Unknown"];
   } else
   {

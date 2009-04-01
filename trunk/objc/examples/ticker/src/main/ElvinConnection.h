@@ -65,4 +65,6 @@ extern NSString *ElvinConnectionWillCloseNotification;
 - (void) resubscribe: (id) subscriptionContext 
          usingSubscription: (NSString *) newSubscription;
 
++ (BOOL) wasReceivedSecure: (NSDictionary *) message;
+
 @end
