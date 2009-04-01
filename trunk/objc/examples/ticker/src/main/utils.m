@@ -21,6 +21,20 @@ NSString *uuidString ()
   return [NSString stringWithCString: uuid];
 }
 
+void randomiseBytes (unsigned char *bytes, NSUInteger length)
+{
+  static BOOL seeded = NO;
+  
+  if (!seeded)
+  {
+    srandomdev ();
+    seeded = YES;
+  }  
+  
+  for (NSUInteger i = 0; i < length; i++)
+    bytes [i] = (unsigned char)(random () % 256);
+}
+
 NSString *trim (NSString *string)
 {
   return [string stringByTrimmingCharactersInSet: 
