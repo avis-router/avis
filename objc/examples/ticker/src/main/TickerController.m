@@ -157,6 +157,7 @@ static NSAttributedString *attributedString (NSString *string,
 {
   [tickerMessagesTextView setString: @""];
 
+  self.allowInsecure = YES;
   self.canSend = [elvin isConnected];
 }
 
@@ -186,6 +187,11 @@ static NSAttributedString *attributedString (NSString *string,
   else if (action == @selector (togglePublic:)) 
   {
     [item setState: allowPublic ? NSOnState : NSOffState];
+    
+    return YES; 
+  } else if (action == @selector (toggleSecure:)) 
+  {
+    [item setState: allowInsecure ? NSOffState : NSOnState];
     
     return YES; 
   } else
@@ -502,11 +508,13 @@ static NSAttributedString *attributedString (NSString *string,
     toGroup: [messageGroup stringValue] 
     inReplyTo: self.inReplyTo 
     attachedURL: self.attachedURL
-    sendPublic: self.allowPublic];
+    sendPublic: self.allowPublic
+    sendInsecure: self.allowInsecure];
 
   self.attachedURL = nil;
   self.inReplyTo = nil;
   self.allowPublic = NO;
+  self.allowInsecure = YES;
   
   [messageText setString: @""];
 }
@@ -599,9 +607,16 @@ static NSAttributedString *attributedString (NSString *string,
   self.allowPublic = !self.allowPublic;
 }
 
+- (IBAction) toggleSecure: (id) sender
+{
+  self.allowInsecure = !self.allowInsecure;
+}
+
 @synthesize inReplyTo;
 
 @synthesize allowPublic;
+
+@synthesize allowInsecure;
 
 #pragma mark -
 

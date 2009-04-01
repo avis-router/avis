@@ -21,6 +21,7 @@
   id                subscriptionContext;
   NSString *        inReplyTo;
   BOOL              allowPublic;
+  BOOL              allowInsecure;
   BOOL              canSend;
 }
 
@@ -28,6 +29,7 @@
 @property (readwrite, retain) IBOutlet NSURL *    attachedURL;
 @property (readwrite, retain) IBOutlet NSString * inReplyTo;
 @property (readwrite, assign) IBOutlet BOOL       allowPublic;
+@property (readwrite, assign) IBOutlet BOOL       allowInsecure;
 @property (readwrite, assign) IBOutlet BOOL       canSend;
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection 
@@ -40,5 +42,7 @@
 - (IBAction) clearReply: (id) sender;
 
 - (IBAction) togglePublic: (id) sender;
+
+- (IBAction) toggleSecure: (id) sender;
 
 @end

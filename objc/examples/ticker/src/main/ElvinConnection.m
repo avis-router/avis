@@ -11,6 +11,12 @@ NSString *ElvinConnectionWillCloseNotification = @"ElvinConnectionWillClose";
 
 #pragma mark -
 
+typedef struct 
+{
+  Attributes * message;
+  Keys *       keys;
+} SendMessageContext;
+
 @class SubscriptionContext;
 
 static void subscribe (Elvin *elvin, SubscriptionContext *context);
@@ -27,8 +33,12 @@ static void notification_listener (Subscription *sub,
 
 static void send_message (Elvin *elvin, Attributes *message);
 
+void send_message_with_keys (Elvin *elvin, SendMessageContext *context);
+
 static Keys *subscriptionKeysFor (KeyRegistry *keys);
 
+static Keys *notificationKeysFor (KeyRegistry *keys);
+  
 #pragma mark -
 
 @interface SubscriptionContext : NSObject
@@ -263,6 +273,7 @@ void notification_listener (Subscription *sub,
                  inReplyTo: (NSString *) replyToId 
                attachedURL: (NSURL *) url
                 sendPublic: (BOOL) isPublic
+              sendInsecure: (BOOL) isInsecure
 {
   char messageID [UUID_STRING_LENGTH];
   
@@ -289,8 +300,19 @@ void notification_listener (Subscription *sub,
     attributes_set_string (message, "MIME_ARGS", 
                            [[url absoluteString] UTF8String]);
   }
-  
-  elvin_invoke (&elvin, (InvokeHandler)send_message, message);
+
+  if (isInsecure || [keys count] == 0)
+  {
+    elvin_invoke (&elvin, (InvokeHandler)send_message, message);
+  } else
+  {
+    SendMessageContext *context = malloc (sizeof (SendMessageContext));
+    
+    context->message = message;
+    context->keys = notificationKeysFor (keys);
+    
+    elvin_invoke (&elvin, (InvokeHandler)send_message_with_keys, context);
+  }
 }
 
 - (void) sendPresenceRequestMessage: (NSString *) userID 
@@ -369,6 +391,21 @@ void send_message (Elvin *elvin, Attributes *message)
   }
   
   attributes_destroy (message);
+}
+
+void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
+{
+  elvin_send_with_keys
+    (elvin, context->message, context->keys, REQUIRE_SECURE_DELIVERY);
+  
+  if (elvin_error_occurred (&elvin->error))
+  {
+    NSLog (@"Error while trying to send message: %s (%i)", 
+           elvin->error.message, elvin->error.code);
+  }
+  
+  attributes_destroy (context->message);
+  free (context);
 }
 
 #pragma mark Event loop
@@ -520,6 +557,32 @@ Keys *subscriptionKeysFor (KeyRegistry *keys)
         (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
       
       elvin_keys_add_dual_producer 
+        (elvinKeys, KEY_SCHEME_SHA1_DUAL, 
+           elvin_key_create_public (privateKey, KEY_SCHEME_SHA1_DUAL));
+    } else
+    {
+      // TODO
+    }
+  }
+  
+  return elvinKeys;
+}
+
+Keys *notificationKeysFor (KeyRegistry *keys)
+{
+  Keys *elvinKeys = elvin_keys_create ();
+  
+  for (ElvinKey *key in [keys keys])
+  {
+    if (key.type == KEY_TYPE_PRIVATE)
+    {
+      Key privateKey = 
+        elvin_key_create_from_data ([key.data bytes], [key.data length]);
+      
+      elvin_keys_add_dual_producer 
+        (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
+      
+      elvin_keys_add_dual_consumer 
         (elvinKeys, KEY_SCHEME_SHA1_DUAL, 
            elvin_key_create_public (privateKey, KEY_SCHEME_SHA1_DUAL));
     } else
