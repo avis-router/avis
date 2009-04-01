@@ -2,6 +2,7 @@
 
 @interface KeysArrayController : NSArrayController 
 {
+  IBOutlet NSView *mainPanel;
 }
 
 - (IBAction) importFromFile: (id) sender;
