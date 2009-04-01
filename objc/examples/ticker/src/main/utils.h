@@ -12,6 +12,8 @@ void createUUID (char *uuid);
 
 NSString *uuidString ();
 
+void randomiseBytes (unsigned char *bytes, NSUInteger length);
+
 NSString *trim (NSString *string);
 
 NSError *makeError (NSString *domain, NSInteger code, NSString *message, ...);
