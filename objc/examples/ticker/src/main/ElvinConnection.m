@@ -9,6 +9,8 @@ NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
 NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
 NSString *ElvinConnectionWillCloseNotification = @"ElvinConnectionWillClose";
 
+NSString *KEY_RECEIVED_SECURE = @"_ElvinConnection::SECURE";
+
 #pragma mark -
 
 typedef struct 
@@ -99,7 +101,12 @@ static Keys *notificationKeysFor (KeyRegistry *keys);
 
 @implementation ElvinConnection
 
-@dynamic elvinUrl;
++ (BOOL) wasReceivedSecure: (NSDictionary *) message
+{
+  NSNumber *value = [message objectForKey: KEY_RECEIVED_SECURE];
+  
+  return [value boolValue];
+}
 
 - (id) initWithUrl: (NSString *) url
 {
@@ -261,6 +268,9 @@ void notification_listener (Subscription *sub,
     
     attributes_iter_next (&i);
   }
+  
+  [message setObject: [NSNumber numberWithBool: secure] 
+              forKey: KEY_RECEIVED_SECURE];
   
   [context
     performSelectorOnMainThread: @selector (deliverNotification:)
