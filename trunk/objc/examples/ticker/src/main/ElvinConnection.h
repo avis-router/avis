@@ -40,7 +40,8 @@ extern NSString *ElvinConnectionWillCloseNotification;
                    toGroup: (NSString *) group
                  inReplyTo: (NSString *) replyToId 
                attachedURL: (NSURL *) url
-                sendPublic: (BOOL) isPublic;
+                sendPublic: (BOOL) isPublic
+              sendInsecure: (BOOL) allowInsecure;
 
 - (void) sendPresenceRequestMessage: (NSString *) userID 
                       fromRequestor: (NSString *) requestor
