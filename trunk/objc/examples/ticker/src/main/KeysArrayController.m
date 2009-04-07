@@ -6,6 +6,11 @@
 
 #define KEY_LENGTH 20
 
+@interface KeysArrayController (PRIVATE)
+  - (void) importKey: (NSString *) contents;
+  - (void) presentKeyImportError: (NSError *) error;
+@end
+
 @implementation KeysArrayController
 
 - (void) add: (id) sender
@@ -23,6 +28,19 @@
   [self addObject: newKey];
 }
 
+- (IBAction) importFromClipboard: (id) sender
+{
+  NSString *contents = 
+  [[NSPasteboard generalPasteboard] stringForType: NSStringPboardType];
+  
+  if (contents)
+    [self importKey: contents];
+}
+
+- (IBAction) exportToClipboard: (id) sender
+{
+}
+
 - (IBAction) importFromFile: (id) sender
 {
   NSOpenPanel *panel = [NSOpenPanel openPanel];
@@ -30,22 +48,11 @@
   [panel setCanChooseDirectories: NO];
   [panel setCanChooseFiles: YES];
   [panel setAllowsMultipleSelection: YES];
-  
-  [panel setTitle: @"Select key files to import"];
-  [panel setPrompt: @"Select"];
-  
+    
   [panel beginSheetForDirectory: nil file: nil 
     types: nil modalForWindow: [mainPanel window] modalDelegate: self 
     didEndSelector: @selector (importFromFileDidEnd:returnCode:contextInfo:) 
     contextInfo: nil];
-}
-
-- (IBAction) importFromClipboard: (id) sender
-{
-}
-
-- (IBAction) exportToClipboard: (id) sender
-{
 }
 
 - (void) importFromFileDidEnd: (NSOpenPanel *) panel 
@@ -59,29 +66,41 @@
   for (NSString *file in [panel filenames])
   {
     NSError *error;
-    NSDictionary *key = [ElvinKeyIO keyFromFile: file error: &error];
-   
-    if (key)
-      [self addObject: key];
+    NSString *contents = 
+      [NSString stringWithContentsOfFile: file 
+        encoding: NSUTF8StringEncoding error: &error];
+    
+    if (contents)
+      [self importKey: contents];
     else
-    {
-      // NSAlert *alert = [NSAlert alertWithError: error];
-      [[mainPanel window] presentError: error
-             modalForWindow: [mainPanel window]
-                   delegate: self
-         didPresentSelector: @selector (didPresentErrorWithRecovery:contextInfo:)
-                contextInfo: nil];
-    }
+      [self presentKeyImportError: error];
   }
+}
+
+- (void) importKey: (NSString *) contents
+{
+  NSError *error;
+  NSDictionary *key = [ElvinKeyIO keyFromString: contents error: &error];
+  
+  if (key)
+    [self addObject: key];
+  else
+    [self presentKeyImportError: error];
+}
+
+- (void) presentKeyImportError: (NSError *) error
+{
+  [[mainPanel window] presentError: error
+                    modalForWindow: [mainPanel window]
+                          delegate: self
+                didPresentSelector: @selector (didPresentErrorWithRecovery:contextInfo:)
+                       contextInfo: nil];  
 }
 
 - (void) didPresentErrorWithRecovery: (BOOL) recover
                          contextInfo: (void *)info
 {
   // zip
-//  if (recover == NO)
-//  {
-//  }
 }
 
 @end

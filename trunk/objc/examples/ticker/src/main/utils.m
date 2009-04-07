@@ -41,19 +41,22 @@ NSString *trim (NSString *string)
     [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
-NSError *makeError (NSString *domain, NSInteger code, NSString *message, ...)
+NSError *makeError (NSString *domain, NSInteger code, NSString *message, 
+                    NSString *recovery, ...)
 {
   va_list args;
-  va_start (args, message);
+  va_start (args, recovery);
   
-  NSString *description = 
-    [[NSString alloc] initWithFormat: message arguments: args];
+  NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+  
+  [dictionary setObject: 
+   [[NSString alloc] initWithFormat: message arguments: args] 
+                             forKey: NSLocalizedDescriptionKey];
   
   va_end (args);
   
-  return [NSError 
-           errorWithDomain: domain code: code 
-           userInfo: 
-             [NSDictionary dictionaryWithObject: description
-                forKey: NSLocalizedDescriptionKey]];
+  if (recovery)
+    [dictionary setObject: recovery forKey: NSLocalizedRecoverySuggestionErrorKey]; 
+   
+  return [NSError errorWithDomain: domain code: code userInfo: dictionary];
 }
