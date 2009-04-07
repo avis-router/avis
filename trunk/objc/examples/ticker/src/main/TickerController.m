@@ -602,6 +602,7 @@ static NSAttributedString *attributedString (NSString *string,
 {
   self.inReplyTo = nil;
   self.allowPublic = NO;
+  self.allowInsecure = YES;
 }
 
 - (IBAction) togglePublic: (id) sender

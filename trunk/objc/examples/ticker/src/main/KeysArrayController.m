@@ -1,5 +1,7 @@
 #import "KeysArrayController.h"
 
+#import "ElvinKeyIO.h"
+
 #import "utils.h"
 
 #define KEY_LENGTH 20
@@ -47,8 +49,39 @@
 }
 
 - (void) importFromFileDidEnd: (NSOpenPanel *) panel 
-           returnCode: (int) returnCode contextInfo:(void  *)contextInfo
+           returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
+  if (returnCode != NSOKButton)
+    return;
+  
+  [panel orderOut: self];
+  
+  for (NSString *file in [panel filenames])
+  {
+    NSError *error;
+    NSDictionary *key = [ElvinKeyIO keyFromFile: file error: &error];
+   
+    if (key)
+      [self addObject: key];
+    else
+    {
+      // NSAlert *alert = [NSAlert alertWithError: error];
+      [[mainPanel window] presentError: error
+             modalForWindow: [mainPanel window]
+                   delegate: self
+         didPresentSelector: @selector (didPresentErrorWithRecovery:contextInfo:)
+                contextInfo: nil];
+    }
+  }
+}
+
+- (void) didPresentErrorWithRecovery: (BOOL) recover
+                         contextInfo: (void *)info
+{
+  // zip
+//  if (recover == NO)
+//  {
+//  }
 }
 
 @end

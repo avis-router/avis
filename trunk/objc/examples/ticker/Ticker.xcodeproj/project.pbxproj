@@ -69,6 +69,7 @@
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2D260F83266D009FC112 /* KeysArrayController.m */; };
+		C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */; };
 		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
 /* End PBXBuildFile section */
 
@@ -190,6 +191,8 @@
 		C9B03B590E493EDF00B59216 /* avis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = avis.framework; path = Frameworks/avis.framework; sourceTree = "<group>"; };
 		C9CC2D250F83266D009FC112 /* KeysArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeysArrayController.h; path = src/main/KeysArrayController.h; sourceTree = "<group>"; };
 		C9CC2D260F83266D009FC112 /* KeysArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeysArrayController.m; path = src/main/KeysArrayController.m; sourceTree = "<group>"; };
+		C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElvinKeyIO.h; path = src/main/ElvinKeyIO.h; sourceTree = "<group>"; };
+		C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ElvinKeyIO.m; path = src/main/ElvinKeyIO.m; sourceTree = "<group>"; };
 		C9DA04280F327946004A663D /* crash_20090129.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090129.txt; sourceTree = "<group>"; };
 		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -252,6 +255,8 @@
 				C92392370F7F7BC30083FC13 /* PresenceGroupsController.m */,
 				C9CC2D250F83266D009FC112 /* KeysArrayController.h */,
 				C9CC2D260F83266D009FC112 /* KeysArrayController.m */,
+				C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */,
+				C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */,
 				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
 				C92392390F7F7BC30083FC13 /* PresenceStatus.m */,
 				C923939A0F80A7C30083FC13 /* KeyRegistry.h */,
@@ -567,6 +572,7 @@
 				C923925A0F7F7BC30083FC13 /* utils.m in Sources */,
 				C923939B0F80A7C30083FC13 /* KeyRegistry.m in Sources */,
 				C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */,
+				C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
