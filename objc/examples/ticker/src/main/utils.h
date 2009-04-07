@@ -16,4 +16,5 @@ void randomiseBytes (unsigned char *bytes, NSUInteger length);
 
 NSString *trim (NSString *string);
 
-NSError *makeError (NSString *domain, NSInteger code, NSString *message, ...);
+NSError *makeError (NSString *domain, NSInteger code, NSString *message, 
+                    NSString *recovery, ...);

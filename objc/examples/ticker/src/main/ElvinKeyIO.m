@@ -5,6 +5,7 @@
 #define keyError(code, message, ...) \
   makeError (@"ticker.key", code, \
     [NSString stringWithFormat: @"Error in key format: %@", message], \
+    @"The data may not be an Elvin key, or it may have been exported from an incompatible application.", \
     ##__VA_ARGS__)
 
 static BOOL readNameValue (NSString *line, 

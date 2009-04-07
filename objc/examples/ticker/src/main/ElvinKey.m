@@ -3,7 +3,7 @@
 #import "utils.h"
 
 #define keyError(code, message, ...) \
-  makeError (@"ticker.key", code, message, ##__VA_ARGS__)
+  makeError (@"ticker.key", code, message, nil, ##__VA_ARGS__)
 
 @implementation ElvinKey
 
