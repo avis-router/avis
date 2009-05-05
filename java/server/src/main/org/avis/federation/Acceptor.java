@@ -30,6 +30,7 @@ import org.avis.util.Filter;
 
 import static org.apache.mina.core.future.IoFutureListener.CLOSE;
 import static org.apache.mina.core.session.IdleStatus.READER_IDLE;
+
 import static org.avis.federation.Federation.VERSION_MAJOR;
 import static org.avis.federation.Federation.VERSION_MINOR;
 import static org.avis.federation.Federation.logError;
@@ -37,14 +38,10 @@ import static org.avis.federation.Federation.logMessageReceived;
 import static org.avis.federation.Federation.logMinaException;
 import static org.avis.federation.Federation.logSessionOpened;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
-import static org.avis.io.Net.addressesFor;
 import static org.avis.io.Net.hostIdFor;
 import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.io.messages.Nack.PROT_INCOMPAT;
-import static org.avis.logging.Log.DIAGNOSTIC;
-import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.info;
-import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
 
 /**
@@ -107,16 +104,7 @@ public class Acceptor implements IoHandler, Closeable
 
     router.ioManager ().bind 
       (uris, this, filters, 
-       (Filter<InetAddress>)options.get ("Federation.Require-Authenticated"));
-    
-    if (shouldLog (DIAGNOSTIC))
-    {
-      for (EwafURI uri : uris)
-      {
-        diagnostic ("Federator listening on " + uri + " " + 
-                    addressesFor (uri), this);
-      }
-    }
+       (Filter<InetAddress>)options.get ("Federation.Require-Authenticated"));    
   }
 
   public void close ()
