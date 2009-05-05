@@ -152,6 +152,10 @@ public class Connector implements IoHandler, Closeable
     
     cancelAsyncConnect ();
     
+    diagnostic ("Attempting federation connection: target = " + uri + 
+                ", federation class = \"" + federationClass.name + "\"" + 
+                ", server domain = \"" + serverDomain + "\"", this);
+
     connector.connect 
       (remoteAddress, this, connectorConfig).addListener 
         (new IoFutureListener ()
@@ -173,20 +177,16 @@ public class Connector implements IoHandler, Closeable
     
     try
     {
-      if (!future.isReady ())
-      {
-        diagnostic ("Connection attempt to federator at " + uri + 
-                    " timed out, retrying", this);
-        
-        asyncConnect ();
-      } else
-      {
-        open (future.getSession ());
-      }
+      open (future.getSession ());
     } catch (RuntimeIOException ex)
     {
-      diagnostic ("Failed to connect to federator at " + uri + ", retrying: " + 
-                  shortException (ex.getCause ()), this, ex);
+      Throwable rootEx = ex;
+      
+      while (rootEx.getCause () != null)
+        rootEx = rootEx.getCause ();
+      
+      warn ("Failed to connect to federator at " + uri + ", retrying: " + 
+            shortException (rootEx), this);
       
       asyncConnect ();
     }
