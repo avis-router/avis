@@ -129,6 +129,10 @@ public class Connector implements IoHandler, Closeable
     Filter<InetAddress> authRequired = 
       (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
     
+    diagnostic ("Attempting federation connection: target = " + uri + 
+                ", federation class = \"" + federationClass.name + "\"" + 
+                ", server domain = \"" + serverDomain + "\"", this);
+    
     router.ioManager ().connect 
       (uri, this, filters, authRequired, requestTimeout).addListener 
       (new IoFutureListener<IoFuture> ()
@@ -150,21 +154,17 @@ public class Connector implements IoHandler, Closeable
     
     try
     {
-      if (future.isDone ())
-      {
-        open (future.getSession ());
-      } else
-      {
-        diagnostic ("Connection attempt to federator at " + uri + 
-                    " timed out, retrying", this);
-        
-        asyncConnect ();
-      }
+      open (future.getSession ());
     } catch (RuntimeIoException ex)
     {
-      diagnostic ("Failed to connect to federator at " + uri + ", retrying: " + 
-                  shortException (ex.getCause ()), this, ex);
+      Throwable rootEx = ex;
       
+      while (rootEx.getCause () != null)
+        rootEx = rootEx.getCause ();
+      
+      warn ("Failed to connect to federator at " + uri + ", retrying: " + 
+            shortException (rootEx), this);
+     
       asyncConnect ();
     }
   }
