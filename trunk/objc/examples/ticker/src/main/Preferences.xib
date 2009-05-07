@@ -9,10 +9,10 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="73"/>
-			<integer value="68"/>
+			<integer value="132"/>
 			<integer value="1" id="9"/>
-			<integer value="67"/>
 			<integer value="66"/>
+			<integer value="68"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -506,7 +506,7 @@
 									<reference ref="293733124"/>
 									<object class="NSMenuItem" id="390361115">
 										<reference key="NSMenu" ref="92675815"/>
-										<string key="NSTitle">Import From File...</string>
+										<string key="NSTitle">Import Key From File...</string>
 										<string key="NSKeyEquiv"/>
 										<int key="NSMnemonicLoc">2147483647</int>
 										<reference key="NSOnImage" ref="844803135"/>
@@ -516,7 +516,7 @@
 									</object>
 									<object class="NSMenuItem" id="743483417">
 										<reference key="NSMenu" ref="92675815"/>
-										<string key="NSTitle">Import From Clipboard...</string>
+										<string key="NSTitle">Import Key From Clipboard</string>
 										<string key="NSKeyEquiv"/>
 										<int key="NSMnemonicLoc">2147483647</int>
 										<reference key="NSOnImage" ref="844803135"/>
@@ -538,7 +538,7 @@
 									</object>
 									<object class="NSMenuItem" id="838098859">
 										<reference key="NSMenu" ref="92675815"/>
-										<string key="NSTitle">Export To Clipboard</string>
+										<string key="NSTitle">Export Key To Clipboard</string>
 										<string key="NSKeyEquiv"/>
 										<int key="NSMnemonicLoc">2147483647</int>
 										<reference key="NSOnImage" ref="844803135"/>
@@ -548,7 +548,7 @@
 									</object>
 								</object>
 							</object>
-							<int key="NSSelectedIndex">-1</int>
+							<int key="NSSelectedIndex">4</int>
 							<bool key="NSPullDown">YES</bool>
 							<int key="NSPreferredEdge">1</int>
 							<bool key="NSUsesItemFromMenu">YES</bool>
@@ -829,11 +829,6 @@
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
 			</object>
 			<object class="NSUserDefaultsController" id="139261505">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>keys</string>
-					<string>Keys</string>
-				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 			<object class="NSArrayController" id="767509668">
@@ -1113,7 +1108,7 @@
 							<string key="NSKeyPath">arrangedObjects.Name</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSConditionallySetsEditable</string>
-								<integer value="1" key="NS.object.0"/>
+								<reference key="NS.object.0" ref="9"/>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
@@ -1655,8 +1650,10 @@
 					<string>100.IBPluginDependency</string>
 					<string>101.IBPluginDependency</string>
 					<string>102.IBPluginDependency</string>
+					<string>124.IBAttributePlaceholdersKey</string>
 					<string>124.IBPluginDependency</string>
 					<string>125.IBPluginDependency</string>
+					<string>126.IBEditorWindowLastContentRect</string>
 					<string>126.IBPluginDependency</string>
 					<string>127.IBPluginDependency</string>
 					<string>128.IBPluginDependency</string>
@@ -1739,8 +1736,17 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableDictionary">
+						<string key="NS.key.0">ToolTip</string>
+						<object class="IBToolTipAttribute" key="NS.object.0">
+							<string key="name">ToolTip</string>
+							<reference key="object" ref="281762651"/>
+							<string type="base64-UTF8" key="toolTip">QWN0aW9ucyBmb3IgaW1wb3J0aW5nICYgZXhwb3J0aW5nIGtleXM</string>
+						</object>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{800, 516}, {208, 81}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1820,7 +1826,7 @@
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="954988372"/>
-							<string key="toolTip">Add a presence group</string>
+							<string key="toolTip">Create a new key</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1829,7 +1835,7 @@
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="820961159"/>
-							<string key="toolTip">Remove the selected group</string>
+							<string key="toolTip">Remove the selected key</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
