@@ -524,8 +524,6 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
     return YES;
   } else
   {
-    elvin_keys_destroy (subscriptionKeys);
-    
     return NO;
   }
 }
