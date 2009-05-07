@@ -62,6 +62,7 @@
 		C92FE9360F3D06260037FA15 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C92FE9860F3D08D70037FA15 /* PresenceTester.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92FE9850F3D08D70037FA15 /* PresenceTester.xib */; };
 		C92FE9AE0F3D09740037FA15 /* PresenceTesterAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */; };
+		C930AB900FB27F3300B6E043 /* crash_20090504.txt in Resources */ = {isa = PBXBuildFile; fileRef = C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */; };
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
@@ -183,6 +184,7 @@
 		C92FE9850F3D08D70037FA15 /* PresenceTester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceTester.xib; path = PresenceTester/PresenceTester.xib; sourceTree = "<group>"; };
 		C92FE9AC0F3D09740037FA15 /* PresenceTesterAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceTesterAppController.h; path = PresenceTester/PresenceTesterAppController.h; sourceTree = "<group>"; };
 		C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceTesterAppController.m; path = PresenceTester/PresenceTesterAppController.m; sourceTree = "<group>"; };
+		C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090504.txt; sourceTree = "<group>"; };
 		C93D56350F305C6B0005EE00 /* crash_20090128.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090128.txt; sourceTree = "<group>"; };
 		C93D56890F355B600005EE00 /* crash_20090131.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090131.txt; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
@@ -309,6 +311,7 @@
 			children = (
 				C9F55FA20EFF1DF0005D9245 /* notes.txt */,
 				C9DA04280F327946004A663D /* crash_20090129.txt */,
+				C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */,
 				C93D56350F305C6B0005EE00 /* crash_20090128.txt */,
 				C93D56890F355B600005EE00 /* crash_20090131.txt */,
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -490,6 +493,7 @@
 				C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */,
 				C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */,
 				C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */,
+				C930AB900FB27F3300B6E043 /* crash_20090504.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
