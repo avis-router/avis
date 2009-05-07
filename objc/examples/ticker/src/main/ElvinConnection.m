@@ -1,7 +1,5 @@
 #import "ElvinConnection.h"
-
 #import "ElvinKey.h"
-#import "KeyRegistry.h"
 
 #import "utils.h"
 
@@ -37,9 +35,9 @@ static void send_message (Elvin *elvin, Attributes *message);
 
 void send_message_with_keys (Elvin *elvin, SendMessageContext *context);
 
-static Keys *subscriptionKeysFor (KeyRegistry *keys);
+static Keys *subscriptionKeysFor (NSArray *keys);
 
-static Keys *notificationKeysFor (KeyRegistry *keys);
+static Keys *notificationKeysFor (NSArray *keys);
   
 #pragma mark -
 
@@ -155,12 +153,12 @@ static Keys *notificationKeysFor (KeyRegistry *keys);
   }
 }
 
-- (KeyRegistry *) keys
+- (NSArray *) keys
 {
   return keys;
 }
 
-- (void) setKeys: (KeyRegistry *) newKeys
+- (void) setKeys: (NSArray *) newKeys
 {
   [keys release];
   
@@ -550,16 +548,18 @@ void close_listener (Elvin *elvin, CloseReason reason,
      postNotificationName: ElvinConnectionClosedNotification object: self];
 }
 
-Keys *subscriptionKeysFor (KeyRegistry *keys)
+Keys *subscriptionKeysFor (NSArray *keys)
 {
   Keys *elvinKeys = elvin_keys_create ();
   
-  for (ElvinKey *key in [keys keys])
+  for (NSDictionary *key in keys)
   {
-    if (key.type == KEY_TYPE_PRIVATE)
+    if ([[key valueForKey: @"Private"] isEqual: [NSNumber numberWithBool: YES]])
     {
+      NSData *data = [key valueForKey: @"Data"];
+      
       Key privateKey = 
-        elvin_key_create_from_data ([key.data bytes], [key.data length]);
+        elvin_key_create_from_data ([data bytes], [data length]);
       
       elvin_keys_add_dual_consumer 
         (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
@@ -576,16 +576,18 @@ Keys *subscriptionKeysFor (KeyRegistry *keys)
   return elvinKeys;
 }
 
-Keys *notificationKeysFor (KeyRegistry *keys)
+Keys *notificationKeysFor (NSArray *keys)
 {
   Keys *elvinKeys = elvin_keys_create ();
   
-  for (ElvinKey *key in [keys keys])
+  for (NSDictionary *key in keys)
   {
-    if (key.type == KEY_TYPE_PRIVATE)
+    if ([[key valueForKey: @"Private"] isEqual: [NSNumber numberWithBool: YES]])
     {
+      NSData *data = [key valueForKey: @"Data"];
+      
       Key privateKey = 
-        elvin_key_create_from_data ([key.data bytes], [key.data length]);
+        elvin_key_create_from_data ([data bytes], [data length]);
       
       elvin_keys_add_dual_producer 
         (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
@@ -595,6 +597,7 @@ Keys *notificationKeysFor (KeyRegistry *keys)
            elvin_key_create_public (privateKey, KEY_SCHEME_SHA1_DUAL));
     } else
     {
+      // TODO
     }
   }
   
