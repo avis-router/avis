@@ -1,5 +1,6 @@
 + general/cleanup 
 
+  * BUG (see crash 20090504): sometimes crash when router goes not responding
   * BUG: change presence (+hxi) did not see kelvin until restart
     (refresh no effect)
   * DONE: BUG: perf drop on large number of messages: setFont
