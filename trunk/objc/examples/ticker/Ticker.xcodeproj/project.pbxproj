@@ -51,7 +51,6 @@
 		C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */; };
 		C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392780F7F7D080083FC13 /* MainMenu.xib */; };
 		C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392790F7F7D080083FC13 /* TickerWindow.xib */; };
-		C923939B0F80A7C30083FC13 /* KeyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = C92393990F80A7C30083FC13 /* KeyRegistry.m */; };
 		C92394050F82BEEA0083FC13 /* key_error_version.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394000F82BEEA0083FC13 /* key_error_version.key */; };
 		C92394060F82BEEA0083FC13 /* key_error_missing_field.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394010F82BEEA0083FC13 /* key_error_missing_field.key */; };
 		C92394070F82BEEA0083FC13 /* key_error_hexdata.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394020F82BEEA0083FC13 /* key_error_hexdata.key */; };
@@ -172,8 +171,6 @@
 		C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Rollover.tiff; path = resources/Reply_Rollover.tiff; sourceTree = "<group>"; };
 		C92392780F7F7D080083FC13 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = resources/MainMenu.xib; sourceTree = "<group>"; };
 		C92392790F7F7D080083FC13 /* TickerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TickerWindow.xib; path = resources/TickerWindow.xib; sourceTree = "<group>"; };
-		C92393990F80A7C30083FC13 /* KeyRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyRegistry.m; path = src/main/KeyRegistry.m; sourceTree = "<group>"; };
-		C923939A0F80A7C30083FC13 /* KeyRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyRegistry.h; path = src/main/KeyRegistry.h; sourceTree = "<group>"; };
 		C92394000F82BEEA0083FC13 /* key_error_version.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_version.key; path = src/tests/resources/test_keys/key_error_version.key; sourceTree = "<group>"; };
 		C92394010F82BEEA0083FC13 /* key_error_missing_field.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_missing_field.key; path = src/tests/resources/test_keys/key_error_missing_field.key; sourceTree = "<group>"; };
 		C92394020F82BEEA0083FC13 /* key_error_hexdata.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_hexdata.key; path = src/tests/resources/test_keys/key_error_hexdata.key; sourceTree = "<group>"; };
@@ -261,8 +258,6 @@
 				C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */,
 				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
 				C92392390F7F7BC30083FC13 /* PresenceStatus.m */,
-				C923939A0F80A7C30083FC13 /* KeyRegistry.h */,
-				C92393990F80A7C30083FC13 /* KeyRegistry.m */,
 				C92391AC0F7F4C4C0083FC13 /* ElvinKey.h */,
 				C92391AD0F7F4C4C0083FC13 /* ElvinKey.m */,
 				C92392240F7F7BC30083FC13 /* DragTarget.h */,
@@ -574,7 +569,6 @@
 				C92392580F7F7BC30083FC13 /* TickerController.m in Sources */,
 				C92392590F7F7BC30083FC13 /* TickerMessagesTextView.m in Sources */,
 				C923925A0F7F7BC30083FC13 /* utils.m in Sources */,
-				C923939B0F80A7C30083FC13 /* KeyRegistry.m in Sources */,
 				C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */,
 				C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */,
 			);
