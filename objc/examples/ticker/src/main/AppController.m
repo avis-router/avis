@@ -42,8 +42,7 @@
     NSString *userAgent = 
       [NSString stringWithFormat: @"%@ (%@)",
         [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleName"],
-        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"],
-        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleVersion"]];
+        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"]];
     
     elvin.userAgent = userAgent;
   }
