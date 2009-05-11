@@ -13,6 +13,21 @@
 
 @implementation KeysArrayController
 
+/**
+ * For some reason, setting "select new objects" in the controller has no
+ * effect, so we're doing it manually.
+ */
+- (void) add: (id)sender
+{
+  id object = [self newObject];
+  
+  [self addObject: object];
+  
+  [self setSelectedObjects: [NSArray arrayWithObject: object]];
+  
+  [[keysTableView superview] becomeFirstResponder];
+}
+
 - (id) newObject
 {
   unsigned char randomBytes [KEY_LENGTH];
@@ -20,10 +35,10 @@
   randomiseBytes (randomBytes, KEY_LENGTH);
   
   return
-    [[[NSMutableDictionary alloc] initWithObjectsAndKeys: 
+    [[NSMutableDictionary alloc] initWithObjectsAndKeys: 
        @"New Key", @"Name", 
        [NSData dataWithBytes: randomBytes length: KEY_LENGTH], @"Data", 
-       [NSNumber numberWithBool: YES], @"Private", nil] retain];
+       [NSNumber numberWithBool: YES], @"Private", nil];
 }
 
 - (IBAction) importFromClipboard: (id) sender
