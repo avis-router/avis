@@ -395,7 +395,6 @@ static NSString *listToParameterString (NSArray *list)
                       withStatus: presenceStatus
                         toGroups: groups 
                       andBuddies: buddies
-                   fromUserAgent: @"Blue Sticker"
                  includingFields: fields
                       sendPublic: YES];
 

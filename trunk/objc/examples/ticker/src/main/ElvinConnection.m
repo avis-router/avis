@@ -130,6 +130,8 @@ static Keys *notificationKeysFor (NSArray *keys);
   [super dealloc];
 }
 
+@synthesize userAgent;
+
 - (NSString *) elvinUrl
 {
   return elvinUrl;
@@ -292,7 +294,7 @@ void notification_listener (Subscription *sub,
   attributes_set_string (message, "Message", [messageText UTF8String]);
   attributes_set_string (message, "From", [from UTF8String]);
   attributes_set_string (message, "Message-Id", messageID);
-  attributes_set_string (message, "User-Agent", "Blue Sticker");
+  attributes_set_string (message, "User-Agent", [userAgent UTF8String]);
   attributes_set_int32  (message, "org.tickertape.message", 3001);
   
   if (replyToId != nil)
@@ -348,7 +350,6 @@ void notification_listener (Subscription *sub,
                       withStatus: (PresenceStatus *) status
                         toGroups: (NSString *) groups
                       andBuddies: (NSString *) buddies
-                   fromUserAgent: (NSString *) userAgent
                  includingFields: (PresenceFields) fields
                       sendPublic: (BOOL) isPublic
 {
