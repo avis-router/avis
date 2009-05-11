@@ -19,7 +19,7 @@
 
 @property (readonly) PresenceConnection * presence;
 
-- (IBAction) showTickerWindow: (id) sender;
+- (IBAction) showTickerWindow: (id) userAgent;
 
 - (IBAction) showPreferencesWindow: (id) sender;
 

@@ -19,11 +19,14 @@ extern NSString *ElvinConnectionWillCloseNotification;
   NSMutableArray * subscriptions;
   NSThread *       eventLoopThread;
   NSArray *        keys;
+  NSString *       userAgent;
 }
 
 @property (readwrite, retain) NSString *elvinUrl;
 
 @property (readwrite, retain) NSArray *keys;
+
+@property (readwrite, copy) NSString *userAgent;
 
 - (id) initWithUrl: (NSString *) url;
 
@@ -53,7 +56,6 @@ extern NSString *ElvinConnectionWillCloseNotification;
                       withStatus: (PresenceStatus *) status
                         toGroups: (NSString *) groups
                       andBuddies: (NSString *) buddies
-                   fromUserAgent: (NSString * ) userAgent
                  includingFields: (PresenceFields) fields
                       sendPublic: (BOOL) isPublic;
 

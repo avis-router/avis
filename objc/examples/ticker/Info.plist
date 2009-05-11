@@ -18,6 +18,8 @@
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleShortVersionString</key>
+	<string>Alpha Release 3</string>
 	<key>CFBundleVersion</key>
 	<string>0.3</string>
 	<key>NSMainNibFile</key>

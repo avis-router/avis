@@ -38,8 +38,16 @@
     presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
     
     elvin.keys = prefArray (@"Keys");
+    
+    NSString *userAgent = 
+      [NSString stringWithFormat: @"%@ (%@)",
+        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleName"],
+        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"],
+        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleVersion"]];
+    
+    elvin.userAgent = userAgent;
   }
-  
+
   return self;
 }
 
