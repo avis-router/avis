@@ -1,5 +1,4 @@
 #import "ElvinConnection.h"
-#import "ElvinKey.h"
 
 #import "utils.h"
 
