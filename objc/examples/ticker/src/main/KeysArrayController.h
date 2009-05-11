@@ -3,6 +3,7 @@
 @interface KeysArrayController : NSArrayController 
 {
   IBOutlet NSView *mainPanel;
+  IBOutlet NSView *keysTableView;
 }
 
 - (IBAction) importFromFile: (id) sender;
