@@ -15,6 +15,8 @@ static BOOL readNameValue (NSString *line,
 
 static NSData *unhexify (NSString *text, NSError **error);
 
+static NSString *hexify (NSData *data);
+
 static unsigned char hexToDec (unichar digit, NSError **error);
 
 typedef enum {KEY_TYPE_PUBLIC, KEY_TYPE_PRIVATE} KeyAccessType;
@@ -119,6 +121,16 @@ NSString *KeyFieldData = @"Data";
               data, KeyFieldData, nil];
 }
 
++ (NSString *) stringFromKey: (NSDictionary *) key;
+{
+  return 
+    [NSString stringWithFormat: @"Version: 1.0\nName: %@\nAccess: %@\nKey: %@",
+     [key valueForKey: @"Name"], 
+     [[key valueForKey: @"Private"] intValue] == 1 ? @"Private" : @"Shared",
+     hexify ([key valueForKey: @"Data"])];
+  
+}
+
 BOOL readNameValue (NSString *line, 
                     NSString **returnName, 
                     NSString **returnValue, 
@@ -194,6 +206,24 @@ NSData *unhexify (NSString *text, NSError **error)
   }
   
   return *error ? nil : data;
+}
+
+NSString *hexify (NSData *data)
+{
+  NSMutableString *string = 
+    [NSMutableString stringWithCapacity: [data length] * 2];
+  
+  for (NSUInteger i = 0; i < [data length]; i++)
+  {
+    unsigned char byte;
+    
+    [data getBytes: &byte range: NSMakeRange (i, 1)];
+    
+    [string appendFormat: @"%x", (byte >> 4)];
+    [string appendFormat: @"%x", (byte & 0x0F)];
+  }
+  
+  return string;
 }
 
 unsigned char hexToDec (unichar digit, NSError **error)

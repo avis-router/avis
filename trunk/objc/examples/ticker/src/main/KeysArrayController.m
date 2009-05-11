@@ -50,7 +50,14 @@
 
 - (IBAction) exportToClipboard: (id) sender
 {
-  // TODO
+  NSDictionary *key = [[self selectedObjects] objectAtIndex: 0];
+  NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+  
+  [pasteBoard declareTypes: [NSArray arrayWithObject: NSStringPboardType] 
+                     owner: self];
+  
+  [pasteBoard 
+    setString: [ElvinKeyIO stringFromKey: key] forType: NSStringPboardType];
 }
 
 - (IBAction) importFromFile: (id) sender
@@ -108,6 +115,8 @@
            @"You may have previously imported the same key under a "
            "different name.", 
            [key valueForKey: @"Name"], [existingKey valueForKey: @"Name"]);
+      
+      break;
     }
   }
       

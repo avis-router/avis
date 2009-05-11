@@ -16,4 +16,6 @@ typedef enum {KEY_IO_VERSION, KEY_IO_ACCESS, KEY_IO_UNKNOWN_FIELD,
 
 + (NSDictionary *) keyFromString: (NSString *) contents error: (NSError **) error;
 
++ (NSString *) stringFromKey: (NSDictionary *) key;
+
 @end
