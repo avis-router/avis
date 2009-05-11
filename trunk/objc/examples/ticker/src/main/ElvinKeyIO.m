@@ -68,7 +68,7 @@ NSString *KeyFieldData = @"Data";
         versionSeen = YES;
       else
         *error = keyError (KEY_IO_VERSION, 
-                           @"Unknown key format version: \"%@\"", value);
+                           @"Unknown key format version: “%@”", value);
     } else if ([field isEqual: @"Name"])
     {
       name = value;
@@ -81,7 +81,7 @@ NSString *KeyFieldData = @"Data";
       else
         *error = keyError 
           (KEY_IO_ACCESS, 
-           @"Unknown key type: \"%@\". Should be either \"Private\" or \"Shared\"", 
+           @"Unknown key type: “%@”. Should be either “Private” or “Shared”", 
            value);
     } else if ([field isEqual: @"Key"])
     {
@@ -89,7 +89,7 @@ NSString *KeyFieldData = @"Data";
     } else 
     {
       *error = 
-        keyError (KEY_IO_UNKNOWN_FIELD, @"Unknown field: \"%@\"", field);
+        keyError (KEY_IO_UNKNOWN_FIELD, @"Unknown field: “%@”", field);
     }
     
     if (*error)
@@ -100,16 +100,16 @@ NSString *KeyFieldData = @"Data";
   {
     if (type == -1)
       *error = 
-        keyError (KEY_IO_MISSING_FIELD, @"Missing \"Access\" field");
+        keyError (KEY_IO_MISSING_FIELD, @"Missing “Access” field");
     else if (name == nil)
       *error = 
-         keyError (KEY_IO_MISSING_FIELD, @"Missing \"Name\" field");
+         keyError (KEY_IO_MISSING_FIELD, @"Missing “Name” field");
     else if (data == nil)
       *error = 
-        keyError (KEY_IO_MISSING_FIELD, @"Missing \"Key\" field");
+        keyError (KEY_IO_MISSING_FIELD, @"Missing “Key” field");
     else if (versionSeen == NO)
       *error = 
-        keyError (KEY_IO_MISSING_FIELD, @"Missing \"Version\" field");
+        keyError (KEY_IO_MISSING_FIELD, @"Missing “Version” field");
   }
   
   if (*error)
@@ -172,7 +172,7 @@ BOOL readNameValue (NSString *line,
   } else
   {
     *error = keyError (KEY_IO_MISSING_VALUE, 
-                       @"Do not know how to parse line \"%@\"", field);
+                       @"Do not know how to parse line “%@”", field);
     
     *returnName = *returnValue = nil;
   }
