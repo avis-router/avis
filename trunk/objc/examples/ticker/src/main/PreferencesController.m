@@ -92,16 +92,14 @@ static NSString *computerName ()
   } else if ([ident isEqualToString: TOOLBAR_TICKER])
   {
     [item setLabel: @"Ticker"];
-    //[item setImage: [NSImage imageNamed: @"preferences-ticker"]];
-    [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
+    [item setImage: [NSImage imageNamed: @"Ticker_512"]];
     [item setTarget: self];
     [item setAction: @selector (setPrefView:)];
     [item setAutovalidates: NO];
   } else if ([ident isEqualToString: TOOLBAR_PRESENCE])
   {
     [item setLabel: @"Presence"];
-    //[item setImage: [NSImage imageNamed: @"preferences-presence"]];
-    [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
+    [item setImage: [NSImage imageNamed: @"NSUserGroup"]];
     [item setTarget: self];
     [item setAction: @selector (setPrefView:)];
     [item setAutovalidates: NO];

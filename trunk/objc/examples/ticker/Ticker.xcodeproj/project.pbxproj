@@ -61,6 +61,7 @@
 		C92FE9860F3D08D70037FA15 /* PresenceTester.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92FE9850F3D08D70037FA15 /* PresenceTester.xib */; };
 		C92FE9AE0F3D09740037FA15 /* PresenceTesterAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */; };
 		C930AB900FB27F3300B6E043 /* crash_20090504.txt in Resources */ = {isa = PBXBuildFile; fileRef = C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */; };
+		C930AD4B0FB7F23A00B6E043 /* Ticker_512.png in Resources */ = {isa = PBXBuildFile; fileRef = C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */; };
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
@@ -179,6 +180,7 @@
 		C92FE9AC0F3D09740037FA15 /* PresenceTesterAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceTesterAppController.h; path = PresenceTester/PresenceTesterAppController.h; sourceTree = "<group>"; };
 		C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceTesterAppController.m; path = PresenceTester/PresenceTesterAppController.m; sourceTree = "<group>"; };
 		C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090504.txt; sourceTree = "<group>"; };
+		C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Ticker_512.png; path = Icon/Ticker_512.png; sourceTree = "<group>"; };
 		C93D56350F305C6B0005EE00 /* crash_20090128.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090128.txt; sourceTree = "<group>"; };
 		C93D56890F355B600005EE00 /* crash_20090131.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090131.txt; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */,
 				C92392780F7F7D080083FC13 /* MainMenu.xib */,
 				C92392790F7F7D080083FC13 /* TickerWindow.xib */,
 				C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */,
@@ -484,6 +487,7 @@
 				C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */,
 				C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */,
 				C930AB900FB27F3300B6E043 /* crash_20090504.txt in Resources */,
+				C930AD4B0FB7F23A00B6E043 /* Ticker_512.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
