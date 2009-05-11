@@ -110,8 +110,8 @@
       error = 
         makeError 
           (@"ticker.key", KEY_IO_DUPLICATE_KEY, 
-           @"The key \"%@\" was not imported. " 
-           "This key already exists in your key set as \"%@\".", 
+           @"The key “%@” was not imported. " 
+           "This key already exists in your key set as “%@”.", 
            @"You may have previously imported the same key under a "
            "different name.", 
            [key valueForKey: @"Name"], [existingKey valueForKey: @"Name"]);
