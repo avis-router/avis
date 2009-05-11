@@ -5,7 +5,8 @@
 #define keyError(code, message, ...) \
   makeError (@"ticker.key", code, \
     [NSString stringWithFormat: @"Error in key format: %@", message], \
-    @"The data may not be an Elvin key, or it may have been exported from an incompatible application.", \
+    @"The data may not be an Elvin key, or it may have been exported from " \
+    "an incompatible application.", \
     ##__VA_ARGS__)
 
 static BOOL readNameValue (NSString *line, 
@@ -117,8 +118,8 @@ NSString *KeyFieldData = @"Data";
   else
     return [NSMutableDictionary dictionaryWithObjectsAndKeys: 
               name, KeyFieldName,
-              [NSNumber numberWithBool: type == KEY_TYPE_PRIVATE], KeyFieldIsPrivate,
-              data, KeyFieldData, nil];
+              [NSNumber numberWithBool: type == KEY_TYPE_PRIVATE], 
+              KeyFieldIsPrivate, data, KeyFieldData, nil];
 }
 
 + (NSString *) stringFromKey: (NSDictionary *) key;
