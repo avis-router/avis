@@ -113,7 +113,7 @@ NSString *KeyFieldData = @"Data";
   if (*error)
     return nil;
   else
-    return [NSDictionary dictionaryWithObjectsAndKeys: 
+    return [NSMutableDictionary dictionaryWithObjectsAndKeys: 
               name, KeyFieldName,
               [NSNumber numberWithBool: type == KEY_TYPE_PRIVATE], KeyFieldIsPrivate,
               data, KeyFieldData, nil];

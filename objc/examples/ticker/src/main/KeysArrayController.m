@@ -13,25 +13,23 @@
 
 @implementation KeysArrayController
 
-- (void) add: (id) sender
+- (id) newObject
 {
   unsigned char randomBytes [KEY_LENGTH];
   
   randomiseBytes (randomBytes, KEY_LENGTH);
   
-  NSDictionary *newKey = 
-    [NSDictionary dictionaryWithObjectsAndKeys: 
+  return
+    [[[NSMutableDictionary alloc] initWithObjectsAndKeys: 
        @"New Key", @"Name", 
        [NSData dataWithBytes: randomBytes length: KEY_LENGTH], @"Data", 
-       [NSNumber numberWithBool: YES], @"Private", nil];
-  
-  [self addObject: newKey];
+       [NSNumber numberWithBool: YES], @"Private", nil] retain];
 }
 
 - (IBAction) importFromClipboard: (id) sender
 {
   NSString *contents = 
-  [[NSPasteboard generalPasteboard] stringForType: NSStringPboardType];
+    [[NSPasteboard generalPasteboard] stringForType: NSStringPboardType];
   
   if (contents)
     [self importKey: contents];
@@ -39,6 +37,7 @@
 
 - (IBAction) exportToClipboard: (id) sender
 {
+  // TODO
 }
 
 - (IBAction) importFromFile: (id) sender
