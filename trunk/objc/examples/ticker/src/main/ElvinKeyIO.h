@@ -6,7 +6,7 @@ extern NSString *KeyFieldData;
 
 typedef enum {KEY_IO_VERSION, KEY_IO_ACCESS, KEY_IO_UNKNOWN_FIELD, 
               KEY_IO_MISSING_VALUE, KEY_IO_BAD_HEX_DATA, 
-              KEY_IO_MISSING_FIELD} KeyIOError;
+              KEY_IO_MISSING_FIELD, KEY_IO_DUPLICATE_KEY} KeyIOError;
 
 @interface ElvinKeyIO : NSObject
 {

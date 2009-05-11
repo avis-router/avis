@@ -26,7 +26,6 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C90C275D0F6A1BE5003DE2BE /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90C275C0F6A1BE5003DE2BE /* IOKit.framework */; };
 		C923917F0F7F03030083FC13 /* TestKeyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */; };
-		C92391AE0F7F4C4C0083FC13 /* ElvinKey.m in Sources */ = {isa = PBXBuildFile; fileRef = C92391AD0F7F4C4C0083FC13 /* ElvinKey.m */; };
 		C92392470F7F7BC30083FC13 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392230F7F7BC30083FC13 /* AppController.m */; };
 		C92392480F7F7BC30083FC13 /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392250F7F7BC30083FC13 /* DragTarget.m */; };
 		C92392490F7F7BC30083FC13 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392270F7F7BC30083FC13 /* ElvinConnection.m */; };
@@ -128,8 +127,6 @@
 		C923915E0F7F01D40083FC13 /* Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Unit Tests-Info.plist"; sourceTree = "<group>"; };
 		C923917C0F7F02E60083FC13 /* TestKeyRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestKeyRegistry.h; path = src/tests/TestKeyRegistry.h; sourceTree = "<group>"; };
 		C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestKeyRegistry.m; path = src/tests/TestKeyRegistry.m; sourceTree = "<group>"; };
-		C92391AC0F7F4C4C0083FC13 /* ElvinKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElvinKey.h; path = src/main/ElvinKey.h; sourceTree = "<group>"; };
-		C92391AD0F7F4C4C0083FC13 /* ElvinKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ElvinKey.m; path = src/main/ElvinKey.m; sourceTree = "<group>"; };
 		C92392220F7F7BC30083FC13 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = src/main/AppController.h; sourceTree = "<group>"; };
 		C92392230F7F7BC30083FC13 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = src/main/AppController.m; sourceTree = "<group>"; };
 		C92392240F7F7BC30083FC13 /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DragTarget.h; path = src/main/DragTarget.h; sourceTree = "<group>"; };
@@ -258,8 +255,6 @@
 				C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */,
 				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
 				C92392390F7F7BC30083FC13 /* PresenceStatus.m */,
-				C92391AC0F7F4C4C0083FC13 /* ElvinKey.h */,
-				C92391AD0F7F4C4C0083FC13 /* ElvinKey.m */,
 				C92392240F7F7BC30083FC13 /* DragTarget.h */,
 				C92392250F7F7BC30083FC13 /* DragTarget.m */,
 				C923923D0F7F7BC30083FC13 /* RolloverButton.h */,
@@ -550,7 +545,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C92391AE0F7F4C4C0083FC13 /* ElvinKey.m in Sources */,
 				C92392470F7F7BC30083FC13 /* AppController.m in Sources */,
 				C92392480F7F7BC30083FC13 /* DragTarget.m in Sources */,
 				C92392490F7F7BC30083FC13 /* ElvinConnection.m in Sources */,
