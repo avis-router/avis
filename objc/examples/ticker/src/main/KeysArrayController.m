@@ -17,13 +17,11 @@
  * For some reason, setting "select new objects" in the controller has no
  * effect, so we're doing it manually.
  */
-- (void) add: (id)sender
+- (void) addObject: (id) newObject
 {
-  id object = [self newObject];
+  [super addObject: newObject];
   
-  [self addObject: object];
-  
-  [self setSelectedObjects: [NSArray arrayWithObject: object]];
+  [self setSelectedObjects: [NSArray arrayWithObject: newObject]];
   
   [[keysTableView superview] becomeFirstResponder];
 }
@@ -35,10 +33,10 @@
   randomiseBytes (randomBytes, KEY_LENGTH);
   
   return
-    [[NSMutableDictionary alloc] initWithObjectsAndKeys: 
+    [[[NSMutableDictionary alloc] initWithObjectsAndKeys: 
        @"New Key", @"Name", 
        [NSData dataWithBytes: randomBytes length: KEY_LENGTH], @"Data", 
-       [NSNumber numberWithBool: YES], @"Private", nil];
+       [NSNumber numberWithBool: YES], @"Private", nil] retain];
 }
 
 - (IBAction) importFromClipboard: (id) sender
@@ -95,8 +93,25 @@
 {
   NSError *error;
   NSDictionary *key = [ElvinKeyIO keyFromString: contents error: &error];
+  NSData *keyData = [key valueForKey: @"Data"];
+  NSArray *keys = [self content];
   
-  if (key)
+  for (NSDictionary *existingKey in keys)
+  {
+    if ([[existingKey valueForKey: @"Data"] isEqual: keyData])
+    {
+      error = 
+        makeError 
+          (@"ticker.key", KEY_IO_DUPLICATE_KEY, 
+           @"The key \"%@\" was not imported. " 
+           "This key already exists in your key set as \"%@\".", 
+           @"You may have previously imported the same key under a "
+           "different name.", 
+           [key valueForKey: @"Name"], [existingKey valueForKey: @"Name"]);
+    }
+  }
+      
+  if (!error)
     [self addObject: key];
   else
     [self presentKeyImportError: error];
