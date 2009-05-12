@@ -628,7 +628,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<object class="NSButton" id="181069474">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">257</int>
-							<string key="NSFrame">{{576, 50}, {24, 16}}</string>
+							<string key="NSFrame">{{578, 49}, {15, 20}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="139553521">
@@ -637,11 +637,11 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="1025890261"/>
 								<reference key="NSControlView" ref="181069474"/>
-								<int key="NSButtonFlags">913588479</int>
+								<int key="NSButtonFlags">914112767</int>
 								<int key="NSButtonFlags2">130</int>
 								<object class="NSCustomResource" key="NSNormalImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">NSNetwork</string>
+									<string key="NSResourceName">Message_Public</string>
 								</object>
 								<string key="NSAlternateContents"/>
 								<string key="NSKeyEquivalent"/>
@@ -649,18 +649,18 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 								<int key="NSPeriodicInterval">25</int>
 							</object>
 						</object>
-						<object class="NSButton" id="369534801">
+						<object class="NSButton" id="157058093">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">257</int>
-							<string key="NSFrame">{{595, 50}, {24, 16}}</string>
+							<string key="NSFrame">{{596, 50}, {20, 22}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
-							<object class="NSButtonCell" key="NSCell" id="502788379">
+							<object class="NSButtonCell" key="NSCell" id="1048291106">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">134217728</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="1025890261"/>
-								<reference key="NSControlView" ref="369534801"/>
+								<reference key="NSControlView" ref="157058093"/>
 								<int key="NSButtonFlags">913588479</int>
 								<int key="NSButtonFlags2">130</int>
 								<object class="NSCustomResource" key="NSNormalImage">
@@ -877,7 +877,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<object class="NSButton" id="490774791">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">-2147483359</int>
-							<string key="NSFrame">{{556, 48}, {24, 21}}</string>
+							<string key="NSFrame">{{556, 52}, {16, 16}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="753462623">
@@ -1201,10 +1201,10 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: allowInsecure</string>
-						<reference key="source" ref="369534801"/>
+						<reference key="source" ref="157058093"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="369534801"/>
+							<reference key="NSSource" ref="157058093"/>
 							<reference key="NSDestination" ref="1001"/>
 							<string key="NSLabel">hidden: allowInsecure</string>
 							<string key="NSBinding">hidden</string>
@@ -1218,7 +1218,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleSecure:</string>
 						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="369534801"/>
+						<reference key="destination" ref="157058093"/>
 					</object>
 					<int key="connectionID">156</int>
 				</object>
@@ -1270,11 +1270,11 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 							<reference ref="962884292"/>
 							<reference ref="683708684"/>
 							<reference ref="903812012"/>
-							<reference ref="181069474"/>
 							<reference ref="498777286"/>
-							<reference ref="490774791"/>
 							<reference ref="674616255"/>
-							<reference ref="369534801"/>
+							<reference ref="490774791"/>
+							<reference ref="181069474"/>
+							<reference ref="157058093"/>
 						</object>
 						<reference key="parent" ref="280171350"/>
 					</object>
@@ -1455,17 +1455,17 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">150</int>
-						<reference key="object" ref="369534801"/>
+						<reference key="object" ref="157058093"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="502788379"/>
+							<reference ref="1048291106"/>
 						</object>
 						<reference key="parent" ref="228325107"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">151</int>
-						<reference key="object" ref="502788379"/>
-						<reference key="parent" ref="369534801"/>
+						<reference key="object" ref="1048291106"/>
+						<reference key="parent" ref="157058093"/>
 					</object>
 				</object>
 			</object>
@@ -1564,7 +1564,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
-							<reference key="object" ref="369534801"/>
+							<reference key="object" ref="157058093"/>
 							<string key="toolTip">Secure. Only people with matching security keys will receive it (click to cancel)</string>
 						</object>
 					</object>
