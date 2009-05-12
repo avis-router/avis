@@ -165,8 +165,6 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) windowDidLoad
 {
-  replyButton.rolloverImage = [NSImage imageNamed: @"Reply_Rollover"];
-    
   [tickerMessagesTextView setLinkTextAttributes: [NSDictionary dictionary]];
   
   self.attachedURL = nil;
