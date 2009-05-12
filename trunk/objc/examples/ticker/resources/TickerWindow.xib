@@ -628,7 +628,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<object class="NSButton" id="181069474">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">257</int>
-							<string key="NSFrame">{{578, 49}, {15, 20}}</string>
+							<string key="NSFrame">{{578, 52}, {14, 16}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="139553521">
@@ -652,7 +652,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<object class="NSButton" id="157058093">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">257</int>
-							<string key="NSFrame">{{596, 50}, {20, 22}}</string>
+							<string key="NSFrame">{{595, 50}, {20, 22}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="1048291106">
@@ -877,7 +877,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<object class="NSButton" id="490774791">
 							<reference key="NSNextResponder" ref="228325107"/>
 							<int key="NSvFlags">-2147483359</int>
-							<string key="NSFrame">{{556, 52}, {16, 16}}</string>
+							<string key="NSFrame">{{556, 50}, {16, 20}}</string>
 							<reference key="NSSuperview" ref="228325107"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="753462623">
@@ -1513,6 +1513,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					<string>3.windowTemplate.minSize</string>
 					<string>4.CustomClassName</string>
 					<string>4.IBPluginDependency</string>
+					<string>4.IBUserGuides</string>
 					<string>42.CustomClassName</string>
 					<string>42.IBAttributePlaceholdersKey</string>
 					<string>42.IBPluginDependency</string>
@@ -1594,6 +1595,9 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					<string>{500, 200}</string>
 					<string>DragTarget</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSMutableArray">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+					</object>
 					<string>RolloverButton</string>
 					<object class="NSMutableDictionary">
 						<string key="NS.key.0">ToolTip</string>
