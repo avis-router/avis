@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="67"/>
 			<integer value="74"/>
-			<integer value="1" id="9"/>
+			<integer value="67"/>
+			<integer value="2"/>
 			<integer value="68"/>
 			<integer value="66"/>
 		</object>
@@ -33,7 +33,7 @@
 			<object class="NSWindowTemplate" id="723233295">
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{458, 198}, {501, 327}}</string>
+				<string key="NSWindowRect">{{458, 267}, {445, 258}}</string>
 				<int key="NSWTFlags">603980800</int>
 				<string key="NSWindowTitle">Ticker Preferences</string>
 				<string key="NSWindowClass">NSPanel</string>
@@ -42,7 +42,7 @@
 				<object class="NSView" key="NSWindowView" id="620545317">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
-					<string key="NSFrameSize">{501, 327}</string>
+					<string key="NSFrameSize">{445, 258}</string>
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
@@ -952,7 +952,7 @@
 							<string key="NSKeyPath">values.PresenceGroups</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSDeletesObjectsOnRemove</string>
-								<reference key="NS.object.0" ref="9"/>
+								<integer value="1" key="NS.object.0" id="9"/>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
@@ -1807,9 +1807,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilderKit</string>
 					<string>com.apple.InterfaceBuilderKit</string>
-					<string>{{680, 535}, {501, 327}}</string>
+					<string>{{199, 393}, {445, 258}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{680, 535}, {501, 327}}</string>
+					<string>{{199, 393}, {445, 258}}</string>
 					<reference ref="8"/>
 					<string>{3.40282e+38, 3.40282e+38}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1875,7 +1875,7 @@
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{140, 662}, {377, 120}}</string>
+					<string>{{150, 692}, {377, 120}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{534, 378}, {445, 259}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
