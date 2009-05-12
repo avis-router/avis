@@ -332,16 +332,16 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */,
+				8D1107310486CEB800E47090 /* Info.plist */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				C92392780F7F7D080083FC13 /* MainMenu.xib */,
 				C92392790F7F7D080083FC13 /* TickerWindow.xib */,
+				C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */,
+				C923922B0F7F7BC30083FC13 /* Preferences.xib */,
+				C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */,
 				C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */,
 				C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */,
 				C94B47A70F1731C900BADAE8 /* Ticker.icns */,
-				C923922B0F7F7BC30083FC13 /* Preferences.xib */,
-				C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */,
-				8D1107310486CEB800E47090 /* Info.plist */,
-				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */,
 			);
 			name = Resources;
