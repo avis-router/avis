@@ -2,8 +2,6 @@
 
 @implementation RolloverButton
 
-@synthesize rolloverImage;
-
 - (void) updateTrackingAreas
 {
   [self setRollover: NO];
@@ -29,7 +27,7 @@
 
 - (void) setRollover: (BOOL) rolledOver
 {
-  if (rolloverImage == nil)
+  if ([self alternateImage] == nil)
     return;
   
   if (rolledOver)
@@ -38,7 +36,7 @@
     {
       originalImage = [[self image] retain];
     
-      [self setImage: rolloverImage];    
+      [self setImage: [self alternateImage]];    
     }
   } else
   {
