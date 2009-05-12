@@ -1,11 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
-@class KeyRegistry;
-
 @interface PreferencesController : NSWindowController
 {
-  KeyRegistry *keys;
-  
   IBOutlet id presenceGroupAddSheet;
   IBOutlet id addPresenceGroupTextField;
   IBOutlet id generalPanel;
