@@ -40,6 +40,18 @@ static NSURL *extractAttachedLink (NSDictionary *message)
   }
 }
 
+static NSURL *urlFromClipboard ()
+{
+  NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+  
+  NSURL *url = [NSURL URLFromPasteboard: pasteboard];
+  
+  if (!url)
+    url = [NSURL URLWithString: [pasteboard stringForType: NSStringPboardType]];
+  
+  return url;
+}
+
 static NSAttributedString *attributedString (NSString *string, 
                                              NSDictionary *attrs)
 {
@@ -193,7 +205,10 @@ static NSAttributedString *attributedString (NSString *string,
   {
     [item setState: allowInsecure ? NSOffState : NSOnState];
     
-    return YES; 
+    return YES;
+  } else if (action == @selector (pasteURL:))
+  {
+    return urlFromClipboard () != nil;
   } else
     return YES;
 }
@@ -554,6 +569,14 @@ static NSAttributedString *attributedString (NSString *string,
 - (IBAction) clearAttachedURL: (id) sender
 {
   self.attachedURL = nil;
+}
+
+- (IBAction) pasteURL: (id) sender
+{
+  NSURL *url = urlFromClipboard ();
+  
+  if (url)
+    self.attachedURL = url;
 }
 
 - (void) setAttachedURL: (NSURL *) url
