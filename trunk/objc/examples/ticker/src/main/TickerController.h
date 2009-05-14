@@ -39,6 +39,8 @@
 
 - (IBAction) clearAttachedURL: (id) sender;
 
+- (IBAction) pasteURL: (id) sender;
+
 - (IBAction) clearReply: (id) sender;
 
 - (IBAction) togglePublic: (id) sender;

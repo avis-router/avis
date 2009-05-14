@@ -32,7 +32,7 @@ static void notification_listener (Subscription *sub,
 
 static void send_message (Elvin *elvin, Attributes *message);
 
-void send_message_with_keys (Elvin *elvin, SendMessageContext *context);
+static void send_message_with_keys (Elvin *elvin, SendMessageContext *context);
 
 static Keys *subscriptionKeysFor (NSArray *keys);
 
