@@ -5,6 +5,8 @@
 @interface PresenceController : NSWindowController 
 {
   AppController * appController;
+  
+  IBOutlet NSTableView * presenceTable;
 }
 
 - (id) initWithAppController: (AppController *) theAppController;

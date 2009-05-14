@@ -10,12 +10,22 @@
   
   if (self)
   {
-    appController = theAppController;
+    appController = theAppController;    
   }
   
   return self;
 }
 
+- (void) awakeFromNib
+{
+  [presenceTable setDoubleAction: @selector (doubleClickHandler:)];
+}
+
 @synthesize appController;
+
+- (void) doubleClickHandler: (id) sender
+{
+  NSLog (@"Clicked %i", [presenceTable clickedRow]);
+}
 
 @end
