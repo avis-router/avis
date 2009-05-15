@@ -5,6 +5,8 @@
 #import "TickerController.h"
 #import "RolloverButton.h"
 #import "ElvinConnection.h"
+#import "PresenceController.h"
+#import "PresenceEntity.h"
 #import "Preferences.h"
 
 #define TICKER_SUBSCRIPTION \
@@ -152,7 +154,10 @@ static NSAttributedString *attributedString (NSString *string,
                           name: ElvinConnectionOpenedNotification object: nil]; 
     
     [notifications addObserver: self selector: @selector (handleElvinClose:)
-                          name: ElvinConnectionClosedNotification object: nil];     
+                          name: ElvinConnectionClosedNotification object: nil]; 
+    
+    [notifications addObserver: self selector: @selector (handlePresenceUserDoubleClick:)
+                          name: PresenceUserWasDoubleClicked object: nil];
   }
   
   return self;
@@ -211,6 +216,13 @@ static NSAttributedString *attributedString (NSString *string,
     return urlFromClipboard () != nil;
   } else
     return YES;
+}
+
+- (void) handlePresenceUserDoubleClick: (NSNotification *) notification
+{
+  PresenceEntity *user = [[notification userInfo] valueForKey: @"user"];
+  
+  [messageGroup setStringValue: user.name];
 }
 
 - (void) handleElvinOpen: (void *) unused
