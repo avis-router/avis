@@ -223,7 +223,7 @@
 					<object class="NSTextField" id="361376993">
 						<reference key="NSNextResponder" ref="923103643"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 50}, {90, 17}}</string>
+						<string key="NSFrame">{{17, 47}, {90, 17}}</string>
 						<reference key="NSSuperview" ref="923103643"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="1053509876">
@@ -1281,10 +1281,10 @@
 						<reference key="object" ref="923103643"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="685721004"/>
 							<reference ref="553691117"/>
 							<reference ref="786444673"/>
 							<reference ref="361376993"/>
+							<reference ref="685721004"/>
 						</object>
 						<reference key="parent" ref="1002"/>
 						<string key="objectName">General</string>
