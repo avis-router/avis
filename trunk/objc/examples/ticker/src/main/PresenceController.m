@@ -3,8 +3,7 @@
 #import "PresenceEntity.h"
 #import "AppController.h"
 
-NSString *PresenceUserWasDoubleClicked = 
-  @"PresenceUserWasDoubleClicked";
+NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
 
 @implementation PresenceController
 
@@ -31,20 +30,13 @@ NSString *PresenceUserWasDoubleClicked =
 {
   NSInteger row = [presenceTable clickedRow];
   
-  NSLog (@"Clicked %i", row);
+  PresenceEntity *clickedUser = (row == -1) ? 
+    nil : [[presenceTableController arrangedObjects] objectAtIndex: row];
   
-  PresenceEntity *clickedUser;
-  
-  if (row == -1)
-    clickedUser = nil;
-  else
-    clickedUser = [[presenceTableController arrangedObjects] objectAtIndex: row];
-  
-  NSLog (@"User %@", clickedUser.name);
-        
   [[NSNotificationCenter defaultCenter] 
-   postNotificationName: PresenceUserWasDoubleClicked object: self 
-   userInfo: [NSDictionary dictionaryWithObject: clickedUser forKey: @"user"]];
+     postNotificationName: PresenceUserWasDoubleClicked object: self 
+     userInfo: 
+       [NSDictionary dictionaryWithObject: clickedUser forKey: @"user"]];
 }
 
 @end
