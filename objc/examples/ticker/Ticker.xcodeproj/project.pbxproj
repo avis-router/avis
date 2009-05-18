@@ -25,7 +25,6 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C90C275D0F6A1BE5003DE2BE /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90C275C0F6A1BE5003DE2BE /* IOKit.framework */; };
-		C923917F0F7F03030083FC13 /* TestKeyRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */; };
 		C92392470F7F7BC30083FC13 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392230F7F7BC30083FC13 /* AppController.m */; };
 		C92392480F7F7BC30083FC13 /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392250F7F7BC30083FC13 /* DragTarget.m */; };
 		C92392490F7F7BC30083FC13 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392270F7F7BC30083FC13 /* ElvinConnection.m */; };
@@ -63,6 +62,8 @@
 		C930AB900FB27F3300B6E043 /* crash_20090504.txt in Resources */ = {isa = PBXBuildFile; fileRef = C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */; };
 		C930AD4B0FB7F23A00B6E043 /* Ticker_512.png in Resources */ = {isa = PBXBuildFile; fileRef = C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */; };
 		C934A7310FB937EC003C2B41 /* Message_Public.png in Resources */ = {isa = PBXBuildFile; fileRef = C934A7300FB937EC003C2B41 /* Message_Public.png */; };
+		C934A8290FC11E61003C2B41 /* TestRelativeDateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C934A8270FC11E61003C2B41 /* TestRelativeDateFormatter.m */; };
+		C934A82C0FC11E79003C2B41 /* RelativeDateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C934A82A0FC11E79003C2B41 /* RelativeDateFormatter.m */; };
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
@@ -127,8 +128,6 @@
 		C90C275C0F6A1BE5003DE2BE /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		C923915D0F7F01D40083FC13 /* Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C923915E0F7F01D40083FC13 /* Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Unit Tests-Info.plist"; sourceTree = "<group>"; };
-		C923917C0F7F02E60083FC13 /* TestKeyRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestKeyRegistry.h; path = src/tests/TestKeyRegistry.h; sourceTree = "<group>"; };
-		C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestKeyRegistry.m; path = src/tests/TestKeyRegistry.m; sourceTree = "<group>"; };
 		C92392220F7F7BC30083FC13 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = src/main/AppController.h; sourceTree = "<group>"; };
 		C92392230F7F7BC30083FC13 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppController.m; path = src/main/AppController.m; sourceTree = "<group>"; };
 		C92392240F7F7BC30083FC13 /* DragTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DragTarget.h; path = src/main/DragTarget.h; sourceTree = "<group>"; };
@@ -183,6 +182,10 @@
 		C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090504.txt; sourceTree = "<group>"; };
 		C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Ticker_512.png; path = Icon/Ticker_512.png; sourceTree = "<group>"; };
 		C934A7300FB937EC003C2B41 /* Message_Public.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Message_Public.png; path = resources/Message_Public.png; sourceTree = "<group>"; };
+		C934A8270FC11E61003C2B41 /* TestRelativeDateFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestRelativeDateFormatter.m; path = src/tests/TestRelativeDateFormatter.m; sourceTree = "<group>"; };
+		C934A8280FC11E61003C2B41 /* TestRelativeDateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestRelativeDateFormatter.h; path = src/tests/TestRelativeDateFormatter.h; sourceTree = "<group>"; };
+		C934A82A0FC11E79003C2B41 /* RelativeDateFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RelativeDateFormatter.m; path = src/main/RelativeDateFormatter.m; sourceTree = "<group>"; };
+		C934A82B0FC11E79003C2B41 /* RelativeDateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RelativeDateFormatter.h; path = src/main/RelativeDateFormatter.h; sourceTree = "<group>"; };
 		C93D56350F305C6B0005EE00 /* crash_20090128.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090128.txt; sourceTree = "<group>"; };
 		C93D56890F355B600005EE00 /* crash_20090131.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090131.txt; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
@@ -259,6 +262,8 @@
 				C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */,
 				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
 				C92392390F7F7BC30083FC13 /* PresenceStatus.m */,
+				C934A82B0FC11E79003C2B41 /* RelativeDateFormatter.h */,
+				C934A82A0FC11E79003C2B41 /* RelativeDateFormatter.m */,
 				C92392240F7F7BC30083FC13 /* DragTarget.h */,
 				C92392250F7F7BC30083FC13 /* DragTarget.m */,
 				C923923D0F7F7BC30083FC13 /* RolloverButton.h */,
@@ -364,9 +369,9 @@
 		C92391570F7F01380083FC13 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C934A8280FC11E61003C2B41 /* TestRelativeDateFormatter.h */,
+				C934A8270FC11E61003C2B41 /* TestRelativeDateFormatter.m */,
 				C92393FF0F82BECF0083FC13 /* Resources */,
-				C923917C0F7F02E60083FC13 /* TestKeyRegistry.h */,
-				C923917D0F7F02E60083FC13 /* TestKeyRegistry.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -468,8 +473,8 @@
 			targets = (
 				8D1107260486CEB800E47090 /* Ticker */,
 				C9DFB3A30F132DCB00365453 /* Disk Image */,
-				C92FE90F0F3D06260037FA15 /* Presence Tester */,
 				C923915C0F7F01D40083FC13 /* Unit Tests */,
+				C92FE90F0F3D06260037FA15 /* Presence Tester */,
 			);
 		};
 /* End PBXProject section */
@@ -573,6 +578,7 @@
 				C923925A0F7F7BC30083FC13 /* utils.m in Sources */,
 				C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */,
 				C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */,
+				C934A82C0FC11E79003C2B41 /* RelativeDateFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,7 +586,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C923917F0F7F03030083FC13 /* TestKeyRegistry.m in Sources */,
+				C934A8290FC11E61003C2B41 /* TestRelativeDateFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
