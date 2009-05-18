@@ -56,6 +56,17 @@
   [super dealloc];
 }
 
+- (id) copyWithZone: (NSZone *) zone
+{
+  PresenceStatus *copy = [[self class] allocWithZone: zone];
+  
+  copy.statusCode = statusCode;
+  copy.statusText = [statusText copyWithZone: zone];
+  copy.changedAt = [changedAt copyWithZone: zone];
+  
+  return copy;
+}
+
 - (BOOL) isEqual: (id) object
 {
   if ([object isKindOfClass: [PresenceStatus class]])

@@ -64,6 +64,8 @@
 		C934A7310FB937EC003C2B41 /* Message_Public.png in Resources */ = {isa = PBXBuildFile; fileRef = C934A7300FB937EC003C2B41 /* Message_Public.png */; };
 		C934A8290FC11E61003C2B41 /* TestRelativeDateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C934A8270FC11E61003C2B41 /* TestRelativeDateFormatter.m */; };
 		C934A82C0FC11E79003C2B41 /* RelativeDateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C934A82A0FC11E79003C2B41 /* RelativeDateFormatter.m */; };
+		C934A8A60FC1289D003C2B41 /* PresenceEntityFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C934A8A50FC1289D003C2B41 /* PresenceEntityFormatter.m */; };
+		C934A8BD0FC12DFE003C2B41 /* PresenceTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C934A8BC0FC12DFE003C2B41 /* PresenceTableViewController.m */; };
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
@@ -186,6 +188,10 @@
 		C934A8280FC11E61003C2B41 /* TestRelativeDateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestRelativeDateFormatter.h; path = src/tests/TestRelativeDateFormatter.h; sourceTree = "<group>"; };
 		C934A82A0FC11E79003C2B41 /* RelativeDateFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RelativeDateFormatter.m; path = src/main/RelativeDateFormatter.m; sourceTree = "<group>"; };
 		C934A82B0FC11E79003C2B41 /* RelativeDateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RelativeDateFormatter.h; path = src/main/RelativeDateFormatter.h; sourceTree = "<group>"; };
+		C934A8A40FC1289D003C2B41 /* PresenceEntityFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceEntityFormatter.h; path = src/main/PresenceEntityFormatter.h; sourceTree = "<group>"; };
+		C934A8A50FC1289D003C2B41 /* PresenceEntityFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceEntityFormatter.m; path = src/main/PresenceEntityFormatter.m; sourceTree = "<group>"; };
+		C934A8BB0FC12DFE003C2B41 /* PresenceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceTableViewController.h; path = src/main/PresenceTableViewController.h; sourceTree = "<group>"; };
+		C934A8BC0FC12DFE003C2B41 /* PresenceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceTableViewController.m; path = src/main/PresenceTableViewController.m; sourceTree = "<group>"; };
 		C93D56350F305C6B0005EE00 /* crash_20090128.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090128.txt; sourceTree = "<group>"; };
 		C93D56890F355B600005EE00 /* crash_20090131.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090131.txt; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
@@ -242,6 +248,10 @@
 				C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */,
 				C92392300F7F7BC30083FC13 /* PresenceController.h */,
 				C92392310F7F7BC30083FC13 /* PresenceController.m */,
+				C934A8BB0FC12DFE003C2B41 /* PresenceTableViewController.h */,
+				C934A8BC0FC12DFE003C2B41 /* PresenceTableViewController.m */,
+				C934A8A40FC1289D003C2B41 /* PresenceEntityFormatter.h */,
+				C934A8A50FC1289D003C2B41 /* PresenceEntityFormatter.m */,
 				C923922E0F7F7BC30083FC13 /* PresenceConnection.h */,
 				C923922F0F7F7BC30083FC13 /* PresenceConnection.m */,
 				C92392320F7F7BC30083FC13 /* PresenceEntity.h */,
@@ -579,6 +589,8 @@
 				C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */,
 				C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */,
 				C934A82C0FC11E79003C2B41 /* RelativeDateFormatter.m in Sources */,
+				C934A8A60FC1289D003C2B41 /* PresenceEntityFormatter.m in Sources */,
+				C934A8BD0FC12DFE003C2B41 /* PresenceTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

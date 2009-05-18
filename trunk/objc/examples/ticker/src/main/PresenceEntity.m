@@ -21,21 +21,29 @@
     
   presenceId = [newId retain];
   status = [[PresenceStatus onlineStatus] retain];
+  lastChangedAt = [[NSDate date] retain];
   
   return self;
 }
 
-// TODO
-//- (id) copyWithZone: (NSZone *) zone
-//{
-//  PresenceEntity *copy = [[self class] allocWithZone: zone];
-//  
-//  copy->presenceId = [presenceId copyWithZone: zone];
-//  copy->name = [name copyWithZone: zone];
-//  copy->status = [PresenceStatus onlineStatus];
-//  
-//  return copy;
-//}
+- (void) dealloc
+{
+  // TODO
+  [super dealloc];
+}
+
+- (id) copyWithZone: (NSZone *) zone
+{
+  PresenceEntity *copy = [[self class] allocWithZone: zone];
+  
+  copy->presenceId = [presenceId copyWithZone: zone];
+  copy->name = [name copyWithZone: zone];
+  // TODO
+  copy->status = [status copyWithZone: zone];
+  copy->lastChangedAt = [lastChangedAt copyWithZone: zone];
+  
+  return copy;
+}
 
 @synthesize presenceId;
 @synthesize name;
