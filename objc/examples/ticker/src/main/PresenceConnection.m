@@ -278,8 +278,14 @@ static NSString *listToParameterString (NSArray *list)
   
   if (statusText)
     user.status.statusText = statusText;
+  
+  if ([notification valueForKey: @"Status-Duration"])
+  {
+    NSInteger duration = 
+      [[notification valueForKey: @"Status-Duration"] integerValue];
     
-  // TODO set duration
+    user.lastChangedAt = [[NSDate date] addTimeInterval: -duration];
+  }
   
   user.lastUpdatedAt = [NSDate date];
   

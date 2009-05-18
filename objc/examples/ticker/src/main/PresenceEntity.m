@@ -40,6 +40,7 @@
 @synthesize presenceId;
 @synthesize name;
 @synthesize status;
+@synthesize lastChangedAt;
 @synthesize lastUpdatedAt;
 
 @end
