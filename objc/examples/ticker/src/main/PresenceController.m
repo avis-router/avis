@@ -29,14 +29,17 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
 - (void) doubleClickHandler: (id) sender
 {
   NSInteger row = [presenceTable clickedRow];
-  
-  PresenceEntity *clickedUser = (row == -1) ? 
-    nil : [[presenceTableController arrangedObjects] objectAtIndex: row];
-  
-  [[NSNotificationCenter defaultCenter] 
-     postNotificationName: PresenceUserWasDoubleClicked object: self 
-     userInfo: 
-       [NSDictionary dictionaryWithObject: clickedUser forKey: @"user"]];
+    
+  if (row != -1)
+  {
+    PresenceEntity *clickedUser = 
+      [[presenceTableController arrangedObjects] objectAtIndex: row];
+
+    [[NSNotificationCenter defaultCenter] 
+       postNotificationName: PresenceUserWasDoubleClicked object: self 
+       userInfo: 
+         [NSDictionary dictionaryWithObject: clickedUser forKey: @"user"]];
+  }
 }
 
 @end

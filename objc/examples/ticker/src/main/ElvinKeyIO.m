@@ -86,7 +86,11 @@ NSString *KeyFieldData = @"Data";
            value);
     } else if ([field isEqual: @"Key"])
     {
-      data = unhexify (value, error);
+      if ([value length] > 0)
+        data = unhexify (value, error);
+      else
+        *error = 
+          keyError (KEY_IO_BAD_HEX_DATA, @"Key data is empty", field);
     } else 
     {
       *error = 
