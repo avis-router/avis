@@ -267,7 +267,7 @@ static NSAttributedString *attributedString (NSString *string,
     bottomY (visibleRect) == bottomY (tickerMessagesRect);
 
   NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
-  [dateFormatter setDateStyle: NSDateFormatterShortStyle];
+  [dateFormatter setDateStyle: NSDateFormatterLongStyle];
   [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
 
   // define display attributes
