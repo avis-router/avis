@@ -47,15 +47,27 @@ static NSAttributedString *attributedString (NSString *string,
 - (NSAttributedString *) attributedStringForObjectValue: (id) value
                                   withDefaultAttributes: (NSDictionary *) defaultAttrs
 {
-  PresenceStatus *status = value;
+  PresenceStatus *status = value; 
+  NSDictionary *statusAttrs;
   
-//  NSDictionary *unavailableAttrs = 
-//    [NSDictionary dictionaryWithObject: color (102, 102, 102) 
-//                                forKey: NSForegroundColorAttributeName];
-  
-  NSDictionary *availableAttrs = 
-    [NSDictionary dictionaryWithObject: color (0, 128, 64) 
-                                forKey: NSForegroundColorAttributeName];
+  if (status.statusCode == ONLINE)
+  {
+    statusAttrs = 
+      [NSDictionary dictionaryWithObject: color (0, 128, 64) 
+                                  forKey: NSForegroundColorAttributeName];
+  } else if (status.statusCode == MAYBE_UNAVAILABLE || 
+             status.statusCode == COFFEE)
+  {
+    statusAttrs = 
+      [NSDictionary dictionaryWithObject: color (217, 153, 0) 
+                                  forKey: NSForegroundColorAttributeName];
+  } else
+  {
+    statusAttrs = 
+      [NSDictionary dictionaryWithObject: color (102, 102, 102) 
+                                  forKey: NSForegroundColorAttributeName];
+    
+  }
   
   NSDictionary *durationAttrs = 
     [NSDictionary dictionaryWithObject: color (153, 153, 153) 
@@ -64,7 +76,7 @@ static NSAttributedString *attributedString (NSString *string,
   NSMutableAttributedString *string = 
     [[NSMutableAttributedString new] autorelease]; 
   
-  [string appendAttributedString: attributedString (status.statusText, availableAttrs)];
+  [string appendAttributedString: attributedString (status.statusText, statusAttrs)];
   [string appendAttributedString: attributedString (@" (", durationAttrs)];
   [string appendAttributedString: 
     attributedString ([durationFormatter stringForObjectValue: status.changedAt], durationAttrs)];
