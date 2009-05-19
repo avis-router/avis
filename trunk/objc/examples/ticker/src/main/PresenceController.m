@@ -52,8 +52,8 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
   if ([[column identifier] isEqual: @"status"])
   {
     NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
-    [dateFormatter setDateStyle: NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle: NSDateFormatterMediumStyle]; 
+    [dateFormatter setDateStyle: NSDateFormatterLongStyle];
+    [dateFormatter setTimeStyle: NSDateFormatterShortStyle]; 
     
     return [NSString stringWithFormat: @"%@ since %@",
              entity.status.statusText,
