@@ -42,4 +42,27 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
   }
 }
 
+- (NSString *) tableView: (NSTableView *) view toolTipForCell: (NSCell *) cell 
+    rect: (NSRectPointer) rect tableColumn: (NSTableColumn *) column 
+    row: (NSInteger) row mouseLocation: (NSPoint) mouseLocation
+{
+  PresenceEntity *entity = 
+    [[presenceTableController arrangedObjects] objectAtIndex: row];
+  
+  if ([[column identifier] isEqual: @"status"])
+  {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
+    [dateFormatter setDateStyle: NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle: NSDateFormatterMediumStyle]; 
+    
+    return [NSString stringWithFormat: @"%@ since %@",
+             entity.status.statusText,
+             [dateFormatter stringFromDate: entity.status.changedAt]];
+  } else
+  {
+    // TODO return user info
+    return nil;
+  }
+}
+
 @end
