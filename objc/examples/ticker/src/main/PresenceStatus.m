@@ -22,7 +22,7 @@
   
   status.statusCode = ONLINE;
   status.statusText = @"Online";
-  status.changedAt = [[NSDate date] retain];
+  status.changedAt = [NSDate date];
   
   return status;
 }
@@ -33,7 +33,7 @@
   
   status.statusCode = OFFLINE;
   status.statusText = @"Logged off";
-  status.changedAt = [[NSDate date] retain];
+  status.changedAt = [NSDate date];
   
   return status;
 }
@@ -44,7 +44,7 @@
   
   status.statusCode = MAYBE_UNAVAILABLE;
   status.statusText = @"Inactive";
-  status.changedAt = [[NSDate date] retain];
+  status.changedAt = [NSDate date];
   
   return status;
 }
@@ -52,18 +52,19 @@
 - (void) dealloc
 {
   [changedAt release];
+  [statusText release];
   
   [super dealloc];
 }
 
 - (id) copyWithZone: (NSZone *) zone
 {
-  PresenceStatus *copy = [[self class] allocWithZone: zone];
+  PresenceStatus *copy = [[[self class] allocWithZone: zone] init];
   
-  copy.statusCode = statusCode;
-  copy.statusText = [statusText copyWithZone: zone];
-  copy.changedAt = [changedAt copyWithZone: zone];
-  
+  copy->statusCode = statusCode;
+  copy->statusText = [statusText copyWithZone: zone];
+  copy->changedAt = [changedAt copyWithZone: zone];
+   
   return copy;
 }
 
