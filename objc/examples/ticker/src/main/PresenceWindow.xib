@@ -132,7 +132,7 @@
 													</object>
 												</object>
 												<object class="NSTableColumn" id="873674564">
-													<string key="NSIdentifier">statusCode</string>
+													<string key="NSIdentifier">status</string>
 													<double key="NSWidth">2.070000e+02</double>
 													<double key="NSMinWidth">1.000000e+01</double>
 													<double key="NSMaxWidth">3.402823e+38</double>
