@@ -420,21 +420,7 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) clearEntities
 {
-    // this is the only way I could find that didn't leak
-  //NSMutableSet *oldEntities = [NSMutableSet setWithSet: entities];
-//  
-//  [self willChangeValueForKey: @"entities" 
-//              withSetMutation: NSKeyValueMinusSetMutation
-//                 usingObjects: oldEntities];
-//  
-//  [entities removeAllObjects];
-//  
-//  [self didChangeValueForKey: @"entities" 
-//             withSetMutation: NSKeyValueMinusSetMutation
-//                usingObjects: oldEntities];
-  
   [self.entities removeAllObjects];
-//  [oldEntities release];
 }
 
 - (PresenceEntity *) findUserWithId: (NSString *) presenceId
