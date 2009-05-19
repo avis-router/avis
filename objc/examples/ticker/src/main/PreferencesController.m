@@ -49,6 +49,16 @@ static NSString *computerName ()
   [defaults setObject: @"Group != 'lawley-rcvstore'" 
                forKey: PrefTickerSubscription];
   
+  // presence column sorting
+  NSSortDescriptor *statusDescriptor = 
+    [[[NSSortDescriptor alloc] 
+      initWithKey: @"status.statusCode" ascending: YES] autorelease];
+  
+  [defaults setObject: 
+    [NSArchiver archivedDataWithRootObject:
+      [NSArray arrayWithObject: statusDescriptor]] 
+    forKey: PrefPresenceColumnSorting]; 
+  
   [preferences registerDefaults: defaults];
 }
 
