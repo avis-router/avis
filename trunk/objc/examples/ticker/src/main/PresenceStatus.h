@@ -18,11 +18,12 @@ typedef enum
 - (id) copyWithZone: (NSZone *) zone;
 
 @property (readwrite, assign) OnlineStatus statusCode;
+@property (readwrite, retain) NSString *   statusText;
+@property (readwrite, retain) NSDate *     changedAt;
+
 @property (readonly)          NSString *   statusCodeAsString;
 @property (readonly)          NSString *   statusCodeAsUIString;
 @property (readonly)          NSString *   statusDurationAsUIString;
 @property (readonly)          uint32_t     statusDurationAsSecondsElapsed;
-@property (readwrite, retain) NSString *   statusText;
-@property (readwrite, retain) NSDate *     changedAt;
 
 @end

@@ -21,34 +21,50 @@
     
   presenceId = [newId retain];
   status = [[PresenceStatus onlineStatus] retain];
-  lastChangedAt = [[NSDate date] retain];
   
   return self;
 }
 
 - (void) dealloc
 {
-  // TODO
+  [presenceId release];
+  [name release];
+  [status release];
+  [lastUpdatedAt release];
+  
   [super dealloc];
 }
 
 - (id) copyWithZone: (NSZone *) zone
 {
-  PresenceEntity *copy = [[self class] allocWithZone: zone];
+  PresenceEntity *copy = [[[self class] allocWithZone: zone] retain];
   
-  copy->presenceId = [presenceId copyWithZone: zone];
-  copy->name = [name copyWithZone: zone];
-  // TODO
-  copy->status = [status copyWithZone: zone];
-  copy->lastChangedAt = [lastChangedAt copyWithZone: zone];
+  copy->presenceId = [[presenceId copyWithZone: zone] retain];
+  copy->name = [[name copyWithZone: zone] retain];
+  copy->status = [[status copyWithZone: zone] retain];
+  copy->lastUpdatedAt = [[lastUpdatedAt copyWithZone: zone] retain];
   
   return copy;
+}
+
+// TODO
+
+- (BOOL) isEqual: (id) object
+{
+  if ([object isKindOfClass: [PresenceEntity class]])
+  {
+    PresenceEntity *entity = object;
+    
+    return [entity->presenceId isEqual: presenceId];
+  } else
+  {
+    return NO;
+  }
 }
 
 @synthesize presenceId;
 @synthesize name;
 @synthesize status;
-@synthesize lastChangedAt;
 @synthesize lastUpdatedAt;
 
 @end

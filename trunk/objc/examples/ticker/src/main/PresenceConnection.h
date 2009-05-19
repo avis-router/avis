@@ -17,7 +17,7 @@
 
 - (void) refresh;
 
-@property (readonly, assign) IBOutlet  NSSet * entities;
+@property (readonly, assign) IBOutlet  NSMutableSet * entities;
 @property (readwrite, retain) IBOutlet PresenceStatus * presenceStatus;
 
 @end

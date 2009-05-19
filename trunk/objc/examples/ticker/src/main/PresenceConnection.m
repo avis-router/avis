@@ -256,7 +256,7 @@ static NSString *listToParameterString (NSArray *list)
   BOOL createdUser;
   NSString *clientId = [notification valueForKey: @"Client-Id"];
   NSString *userName = [notification valueForKey: @"User"];
-  NSString *status = stringValueForAttribute (notification, @"Status");
+  NSString *statusCode = stringValueForAttribute (notification, @"Status");
   NSString *statusText = stringValueForAttribute (notification, @"Status-Text");
   
   PresenceEntity *user = [self findUserWithId: clientId];
@@ -273,8 +273,8 @@ static NSString *listToParameterString (NSArray *list)
 
   user.name = userName;
   
-  if (status)
-    user.status.statusCode = [PresenceStatus statusCodeFromString: status];
+  if (statusCode)
+    user.status.statusCode = [PresenceStatus statusCodeFromString: statusCode];
   
   if (statusText)
     user.status.statusText = statusText;
@@ -284,7 +284,7 @@ static NSString *listToParameterString (NSArray *list)
     NSInteger duration = 
       [[notification valueForKey: @"Status-Duration"] integerValue];
     
-    user.lastChangedAt = [[NSDate date] addTimeInterval: -duration];
+    user.status.changedAt = [[NSDate date] addTimeInterval: -duration];
   }
   
   user.lastUpdatedAt = [NSDate date];
@@ -302,6 +302,7 @@ static NSString *listToParameterString (NSArray *list)
     [self didChangeValueForKey: @"entities" 
                withSetMutation: NSKeyValueUnionSetMutation
                   usingObjects: addedObjects];
+//    [self.entities addObject: user];
   }
 }
 
