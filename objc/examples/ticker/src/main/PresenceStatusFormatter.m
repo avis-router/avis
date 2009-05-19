@@ -49,9 +49,9 @@ static NSAttributedString *attributedString (NSString *string,
 {
   PresenceStatus *status = value;
   
-  NSDictionary *unavailableAttrs = 
-    [NSDictionary dictionaryWithObject: color (102, 102, 102) 
-                                forKey: NSForegroundColorAttributeName];
+//  NSDictionary *unavailableAttrs = 
+//    [NSDictionary dictionaryWithObject: color (102, 102, 102) 
+//                                forKey: NSForegroundColorAttributeName];
   
   NSDictionary *availableAttrs = 
     [NSDictionary dictionaryWithObject: color (0, 128, 64) 
@@ -69,6 +69,17 @@ static NSAttributedString *attributedString (NSString *string,
   [string appendAttributedString: 
     attributedString ([durationFormatter stringForObjectValue: status.changedAt], durationAttrs)];
   [string appendAttributedString: attributedString (@")", durationAttrs)];
+  
+  NSMutableParagraphStyle *paraStyle = 
+    [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
+  
+  [paraStyle setLineBreakMode: NSLineBreakByTruncatingTail];
+  
+  NSDictionary *paraAttrs = 
+    [NSDictionary dictionaryWithObject: 
+      paraStyle forKey: NSParagraphStyleAttributeName];
+  
+  [string addAttributes: paraAttrs range: NSMakeRange (0, [string length])];
   
   return string;
 }
