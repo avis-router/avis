@@ -33,10 +33,10 @@
   randomiseBytes (randomBytes, KEY_LENGTH);
   
   return
-    [[[NSMutableDictionary alloc] initWithObjectsAndKeys: 
+    [[NSMutableDictionary alloc] initWithObjectsAndKeys: 
        @"New Key", @"Name", 
        [NSData dataWithBytes: randomBytes length: KEY_LENGTH], @"Data", 
-       [NSNumber numberWithBool: YES], @"Private", nil] retain];
+       [NSNumber numberWithBool: YES], @"Private", nil];
 }
 
 - (IBAction) importFromClipboard: (id) sender
