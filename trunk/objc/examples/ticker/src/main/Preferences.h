@@ -7,6 +7,7 @@ extern NSString *PrefDefaultSendGroup;
 extern NSString *PrefPresenceGroups;
 extern NSString *PrefPresenceBuddies;
 extern NSString *PrefTickerSubscription;
+extern NSString *PrefPresenceColumnSorting;
 
 static inline NSString *prefString (const NSString *name)
 {
