@@ -45,7 +45,7 @@ static NSAttributedString *attributedString (NSString *string,
 }
 
 - (NSAttributedString *) attributedStringForObjectValue: (id) value
-                                  withDefaultAttributes: (NSDictionary *) defaultAttrs
+    withDefaultAttributes: (NSDictionary *) defaultAttrs
 {
   PresenceStatus *status = value; 
   NSDictionary *statusAttrs;
