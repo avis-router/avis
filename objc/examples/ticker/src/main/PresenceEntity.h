@@ -7,7 +7,6 @@
   NSString *       presenceId;
   NSString *       name;
   PresenceStatus * status;
-  NSDate *         lastChangedAt;
   NSDate *         lastUpdatedAt;
 }
 
@@ -15,10 +14,9 @@
 
 - (id) initWithId: (NSString *) newId;
 
-@property (readonly, retain)           NSString *       presenceId;
-@property (readwrite, retain) IBOutlet NSString *       name;
-@property (readwrite, assign) IBOutlet PresenceStatus * status;
-@property (readwrite, retain) IBOutlet NSDate *         lastChangedAt;
-@property (readwrite, retain) IBOutlet NSDate *         lastUpdatedAt;
+@property (readonly, retain)  NSString *       presenceId;
+@property (readwrite, retain) NSString *       name;
+@property (readwrite, retain) PresenceStatus * status;
+@property (readwrite, retain) NSDate *         lastUpdatedAt;
 
 @end

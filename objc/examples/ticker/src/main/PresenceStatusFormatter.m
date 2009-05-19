@@ -1,4 +1,4 @@
-#import "PresenceEntityFormatter.h"
+#import "PresenceStatusFormatter.h"
 
 #import "RelativeDateFormatter.h"
 #import "PresenceEntity.h"
@@ -17,7 +17,7 @@ static NSAttributedString *attributedString (NSString *string,
    autorelease];
 }
 
-@implementation PresenceEntityFormatter
+@implementation PresenceStatusFormatter
 
 - (id) init
 {
@@ -47,7 +47,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (NSAttributedString *) attributedStringForObjectValue: (id) value
                                   withDefaultAttributes: (NSDictionary *) defaultAttrs
 {
-  PresenceEntity *entity = value;
+  PresenceStatus *status = value;
   
   NSDictionary *unavailableAttrs = 
     [NSDictionary dictionaryWithObject: color (102, 102, 102) 
@@ -64,12 +64,10 @@ static NSAttributedString *attributedString (NSString *string,
   NSMutableAttributedString *string = 
     [[NSMutableAttributedString new] autorelease]; 
   
-  [string appendAttributedString: attributedString (entity.name, defaultAttrs)];
-  [string appendAttributedString: attributedString (@"\n", defaultAttrs)];
-  [string appendAttributedString: attributedString (entity.status.statusText, availableAttrs)];
+  [string appendAttributedString: attributedString (status.statusText, availableAttrs)];
   [string appendAttributedString: attributedString (@" (", durationAttrs)];
   [string appendAttributedString: 
-    attributedString ([durationFormatter stringForObjectValue: entity.lastChangedAt], durationAttrs)];
+    attributedString ([durationFormatter stringForObjectValue: status.changedAt], durationAttrs)];
   [string appendAttributedString: attributedString (@")", durationAttrs)];
   
   return string;

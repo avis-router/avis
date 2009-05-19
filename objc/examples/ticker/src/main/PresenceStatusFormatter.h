@@ -2,7 +2,7 @@
 
 @class RelativeDateFormatter;
 
-@interface PresenceEntityFormatter : NSFormatter
+@interface PresenceStatusFormatter : NSFormatter
 {
   RelativeDateFormatter *durationFormatter;
 }
