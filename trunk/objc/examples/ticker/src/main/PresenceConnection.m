@@ -263,7 +263,7 @@ static NSString *listToParameterString (NSArray *list)
   
   if (user == nil)
   {
-    user = [[PresenceEntity alloc] initWithId: clientId];
+    user = [[[PresenceEntity alloc] initWithId: clientId] autorelease];
     
     createdUser = YES;
   } else
@@ -302,7 +302,6 @@ static NSString *listToParameterString (NSArray *list)
     [self didChangeValueForKey: @"entities" 
                withSetMutation: NSKeyValueUnionSetMutation
                   usingObjects: addedObjects];
-//    [self.entities addObject: user];
   }
 }
 
@@ -421,17 +420,21 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) clearEntities
 {
-  NSMutableSet *newEntities = [NSMutableSet set];
+    // this is the only way I could find that didn't leak
+  //NSMutableSet *oldEntities = [NSMutableSet setWithSet: entities];
+//  
+//  [self willChangeValueForKey: @"entities" 
+//              withSetMutation: NSKeyValueMinusSetMutation
+//                 usingObjects: oldEntities];
+//  
+//  [entities removeAllObjects];
+//  
+//  [self didChangeValueForKey: @"entities" 
+//             withSetMutation: NSKeyValueMinusSetMutation
+//                usingObjects: oldEntities];
   
-  [self willChangeValueForKey: @"entities" 
-              withSetMutation: NSKeyValueSetSetMutation
-                 usingObjects: newEntities];
-  
-  [entities removeAllObjects];
-
-  [self didChangeValueForKey: @"entities" 
-             withSetMutation: NSKeyValueSetSetMutation
-                usingObjects: newEntities];
+  [self.entities removeAllObjects];
+//  [oldEntities release];
 }
 
 - (PresenceEntity *) findUserWithId: (NSString *) presenceId
