@@ -37,12 +37,12 @@
 
 - (id) copyWithZone: (NSZone *) zone
 {
-  PresenceEntity *copy = [[[self class] allocWithZone: zone] retain];
+  PresenceEntity *copy = [[[self class] allocWithZone: zone] init];
   
-  copy->presenceId = [[presenceId copyWithZone: zone] retain];
-  copy->name = [[name copyWithZone: zone] retain];
-  copy->status = [[status copyWithZone: zone] retain];
-  copy->lastUpdatedAt = [[lastUpdatedAt copyWithZone: zone] retain];
+  copy->presenceId = [presenceId copyWithZone: zone];
+  copy->name = [name copyWithZone: zone];
+  copy->status = [status copyWithZone: zone];
+  copy->lastUpdatedAt = [lastUpdatedAt copyWithZone: zone];
   
   return copy;
 }
