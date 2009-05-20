@@ -87,6 +87,8 @@ static NSString *listToParameterString (NSArray *list)
 
 @implementation PresenceConnection
 
+@synthesize entities;
+
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection
 {
   if (!(self = [super init]))
@@ -426,19 +428,17 @@ static NSString *listToParameterString (NSArray *list)
     [self resetLivenessTimer];
 }
 
-- (void) refresh
-{
-  [self clearEntities];
-  [self requestPresenceInfo];
-}
-
 #pragma mark -
-
-@synthesize entities;
 
 - (void) clearEntities
 {
   [self.entities removeAllObjects];
+}
+
+- (void) refresh
+{
+  [self clearEntities];
+  [self requestPresenceInfo];
 }
 
 - (PresenceEntity *) findUserWithId: (NSString *) presenceId

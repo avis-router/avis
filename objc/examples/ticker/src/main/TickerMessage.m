@@ -30,7 +30,7 @@ static NSURL *extractAttachedLink (NSDictionary *message)
   message->message = [[notification valueForKey: @"Message"] retain];
   message->group = [[notification valueForKey: @"Group"] retain];
   message->public = 
-  distribution != nil && [distribution caseInsensitiveCompare: @"world"] == 0;
+    distribution != nil && [distribution caseInsensitiveCompare: @"world"] == 0;
   message->userAgent = [[notification valueForKey: @"User-Agent"] retain];
   message->url = [extractAttachedLink (notification) retain];
   message->receivedAt = [[NSDate date] retain];
