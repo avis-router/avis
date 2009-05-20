@@ -315,7 +315,7 @@ static NSString *listToParameterString (NSArray *list)
   }
   
   if (user.status.statusCode != oldStatusCode ||
-      [user.status.statusText isEqual: oldStatusText])
+      ![user.status.statusText isEqual: oldStatusText])
   {
     [[NSNotificationCenter defaultCenter] 
       postNotificationName: PresenceStatusChangedNotification object: self
