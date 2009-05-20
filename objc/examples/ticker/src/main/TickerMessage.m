@@ -2,15 +2,18 @@
 
 #import "ElvinConnection.h"
 
+#define MIME_URI_PREFIX @"MIME-Version: 1.0\r\nContent-Type: text/uri-list\r\n\r\n"
+
 static NSURL *extractAttachedLink (NSDictionary *message)
 {
-  if ([[message objectForKey: @"MIME_TYPE"] isEqual: @"x-elvin/url"])
+  if ([[message objectForKey: @"Attachment"] hasPrefix: MIME_URI_PREFIX])
+  {
+    return [NSURL URLWithString: 
+     [[message objectForKey: @"Attachment"] 
+       substringFromIndex: [MIME_URI_PREFIX length]]];
+  } else if ([[message objectForKey: @"MIME_TYPE"] isEqual: @"x-elvin/url"])
   {
     return [NSURL URLWithString: [message objectForKey: @"MIME_ARGS"]];
-  } else if ([message objectForKey: @"Attachment"])
-  {
-    // TODO
-    return nil;
   } else
   {
     return nil;
