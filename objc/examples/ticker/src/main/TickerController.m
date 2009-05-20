@@ -319,8 +319,6 @@ static NSAttributedString *attributedString (NSString *string,
       NSMakeRange ([[tickerMessagesTextView textStorage] length], 0)];
   }
   
-  // Growl can sometimes pause - do last
-//  [self notifyGrowlOnTickerMessage: message];
   [[NSNotificationCenter defaultCenter] 
      postNotificationName: TickerMessageReceivedNotification object: self
      userInfo: [NSDictionary dictionaryWithObject: message forKey: @"message"]];

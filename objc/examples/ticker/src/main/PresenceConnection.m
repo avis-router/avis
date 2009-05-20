@@ -14,6 +14,9 @@
 // Time (in seconds) after idle mode starts before the user is considered away
 #define AUTO_IDLE_TIME (5 * 60)
 
+NSString *PresenceStatusChangedNotification = 
+  @"PresenceStatusChangedNotification";
+
 static NSString *stringValueForAttribute (NSDictionary *notification, 
                                           NSString *attribute)
 {
@@ -235,7 +238,7 @@ static NSString *listToParameterString (NSArray *list)
   // TODO escape user name
   NSMutableString *expr = [NSMutableString stringWithFormat: 
     @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
-      string (Client-Id) && User != \"%@\" ", prefString (PrefOnlineUserName)];
+      string (Client-Id) && Client-Id != \"%@\" ", prefString (PrefOnlineUserUUID)];
   
   // TODO this subs to all groups when array is empty
   NSArray *groups = prefArray (PrefPresenceGroups);
@@ -271,6 +274,8 @@ static NSString *listToParameterString (NSArray *list)
     createdUser = NO;
   }
 
+  OnlineStatus oldStatusCode = user.status.statusCode;
+  
   user.name = userName;
   
   if (statusCode)
@@ -302,6 +307,13 @@ static NSString *listToParameterString (NSArray *list)
     [self didChangeValueForKey: @"entities" 
                withSetMutation: NSKeyValueUnionSetMutation
                   usingObjects: addedObjects];
+  }
+  
+  if (user.status.statusCode != oldStatusCode)
+  {
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: PresenceStatusChangedNotification object: self
+      userInfo: [NSDictionary dictionaryWithObject: user forKey: @"user"]];
   }
 }
 

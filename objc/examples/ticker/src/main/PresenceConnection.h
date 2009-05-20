@@ -2,6 +2,8 @@
 
 #import "PresenceStatus.h"
 
+extern NSString *PresenceStatusChangedNotification;
+
 @class ElvinConnection;
 @class RHSystemIdleTimer;
 
