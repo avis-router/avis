@@ -7,6 +7,7 @@
   NSString *       presenceId;
   NSString *       name;
   PresenceStatus * status;
+  NSString *       userAgent;
   NSDate *         lastUpdatedAt;
 }
 
@@ -17,6 +18,7 @@
 @property (readonly, retain)  NSString *       presenceId;
 @property (readwrite, retain) NSString *       name;
 @property (readwrite, retain) PresenceStatus * status;
+@property (readwrite, retain) NSString *       userAgent;
 @property (readwrite, retain) NSDate *         lastUpdatedAt;
 
 @end
