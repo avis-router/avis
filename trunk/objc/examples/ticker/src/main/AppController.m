@@ -176,25 +176,6 @@
   [presence refresh];
 }
 
-- (void) registerForPresenceChangesAfterDelay
-{
-  [NSObject cancelPreviousPerformRequestsWithTarget: self 
-    selector: @selector (registerForPresenceChanges) object: nil];
-  
-  [[NSNotificationCenter defaultCenter] removeObserver: self 
-    name: PresenceStatusChangedNotification object: nil];
-  
-  [self performSelector: @selector (registerForPresenceChanges) 
-    withObject: nil afterDelay: 10];
-}
-
-- (void) registerForPresenceChanges
-{
-  [[NSNotificationCenter defaultCenter] addObserver: self 
-    selector: @selector (handlePresenceChange:) 
-    name: PresenceStatusChangedNotification object: nil];
-}
-
 #pragma mark -
 
 /*
@@ -330,6 +311,25 @@
     description: description notificationName: @"Presence Status"
     iconData: [[NSImage imageNamed: @"NSUser"] TIFFRepresentation] 
     priority: 0 isSticky: NO clickContext: nil];
+}
+
+- (void) registerForPresenceChangesAfterDelay
+{
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+                                           selector: @selector (registerForPresenceChanges) object: nil];
+  
+  [[NSNotificationCenter defaultCenter] removeObserver: self 
+                                                  name: PresenceStatusChangedNotification object: nil];
+  
+  [self performSelector: @selector (registerForPresenceChanges) 
+             withObject: nil afterDelay: 10];
+}
+
+- (void) registerForPresenceChanges
+{
+  [[NSNotificationCenter defaultCenter] addObserver: self 
+                                           selector: @selector (handlePresenceChange:) 
+                                               name: PresenceStatusChangedNotification object: nil];
 }
 
 @end

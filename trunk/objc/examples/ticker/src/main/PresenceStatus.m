@@ -2,6 +2,10 @@
 
 @implementation PresenceStatus
 
+@synthesize statusCode;
+@synthesize statusText;
+@synthesize changedAt;
+
 + (OnlineStatus) statusCodeFromString: (NSString *) string
 {
   if ([string isEqual: @"online"])
@@ -127,9 +131,5 @@
 {
   return (uint32_t)[[NSDate date] timeIntervalSinceDate: changedAt];
 }
-
-@synthesize statusCode;
-@synthesize statusText;
-@synthesize changedAt;
 
 @end

@@ -4,6 +4,8 @@
 
 @implementation PresenceEntity
 
+@synthesize presenceId, name, status, lastUpdatedAt, userAgent;
+
 + entityWithName: (NSString *) name
 {
   PresenceEntity *entity = 
@@ -47,8 +49,6 @@
   return copy;
 }
 
-// TODO
-
 - (BOOL) isEqual: (id) object
 {
   if ([object isKindOfClass: [PresenceEntity class]])
@@ -61,7 +61,5 @@
     return NO;
   }
 }
-
-@synthesize presenceId, name, status, lastUpdatedAt, userAgent;
 
 @end
