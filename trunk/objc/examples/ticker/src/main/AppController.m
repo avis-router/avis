@@ -5,6 +5,7 @@
 #import "PresenceConnection.h"
 #import "TickerController.h"
 #import "TickerMessage.h"
+#import "PresenceEntity.h"
 #import "PresenceController.h"
 #import "PreferencesController.h"
 #import "Preferences.h"
@@ -18,6 +19,8 @@
 @interface AppController (Private)
   - (void) handleElvinStatusChange: (NSString *) status;
   - (void) handleTickerMessage: (NSNotification *) notification;
+  - (void) handlePresenceChange: (NSNotification *) notification;
+  - (void) registerForPresenceChangesAfterDelay;
 @end
 
 @implementation AppController
@@ -102,6 +105,9 @@
   // listen for ticker messages
   [notifications addObserver: self selector: @selector (handleTickerMessage:)
                         name: TickerMessageReceivedNotification object: nil];
+
+  // listen for presence changes
+  [self registerForPresenceChangesAfterDelay];
   
   // listen for preference changes
   NSUserDefaultsController *userPreferences = 
@@ -120,6 +126,7 @@
   [elvin disconnect];
   
   [[NSNotificationCenter defaultCenter] removeObserver: self];
+  [NSObject cancelPreviousPerformRequestsWithTarget: self];
 }
 
 /**
@@ -164,7 +171,28 @@
 
 - (IBAction) refreshPresence: (id) sender
 {
+  [self registerForPresenceChangesAfterDelay];
+  
   [presence refresh];
+}
+
+- (void) registerForPresenceChangesAfterDelay
+{
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (registerForPresenceChanges) object: nil];
+  
+  [[NSNotificationCenter defaultCenter] removeObserver: self 
+    name: PresenceStatusChangedNotification object: nil];
+  
+  [self performSelector: @selector (registerForPresenceChanges) 
+    withObject: nil afterDelay: 10];
+}
+
+- (void) registerForPresenceChanges
+{
+  [[NSNotificationCenter defaultCenter] addObserver: self 
+    selector: @selector (handlePresenceChange:) 
+    name: PresenceStatusChangedNotification object: nil];
 }
 
 #pragma mark -
@@ -277,6 +305,30 @@
     notifyWithTitle: type
     description: description notificationName: type
     iconData: nil priority: priority isSticky: sticky clickContext: nil];
+}
+
+- (void) handlePresenceChange: (NSNotification *) notification
+{
+  PresenceEntity *user = [[notification userInfo] valueForKey: @"user"];
+  
+  NSString *statusCode = user.status.statusCodeAsUIString;
+  NSString *statusText = user.status.statusText;
+  NSString *description;
+  
+  if ([statusCode isEqual: statusText])
+  {
+    description = [NSString stringWithFormat: @"%@ is now %@", 
+                   user.name, statusText];
+  } else
+  {
+    description = [NSString stringWithFormat: @"%@ is now %@ (%@)", 
+      user.name, statusCode, statusText];
+  }
+  
+  [GrowlApplicationBridge
+    notifyWithTitle: @"Status Changed"
+    description: description notificationName: @"Presence Status"
+    iconData: nil priority: 0 isSticky: NO clickContext: nil];
 }
 
 @end

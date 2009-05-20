@@ -20,7 +20,7 @@
     return nil;
     
   presenceId = [newId retain];
-  status = [[PresenceStatus onlineStatus] retain];
+  status = [[PresenceStatus offlineStatus] retain];
   
   return self;
 }

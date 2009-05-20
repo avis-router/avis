@@ -111,7 +111,7 @@
     case MAYBE_UNAVAILABLE:
       return @"Away";
     case COFFEE:
-      return @"Coffee!";
+      return @"At Coffee Break!";
     default:
       return @"Offline";
   }
