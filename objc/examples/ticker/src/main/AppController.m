@@ -328,7 +328,8 @@
   [GrowlApplicationBridge
     notifyWithTitle: @"Status Changed"
     description: description notificationName: @"Presence Status"
-    iconData: nil priority: 0 isSticky: NO clickContext: nil];
+    iconData: [[NSImage imageNamed: @"NSUser"] TIFFRepresentation] 
+    priority: 0 isSticky: NO clickContext: nil];
 }
 
 @end
