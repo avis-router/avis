@@ -6,11 +6,25 @@
 
 static NSURL *extractAttachedLink (NSDictionary *message)
 {
-  if ([[message objectForKey: @"Attachment"] hasPrefix: MIME_URI_PREFIX])
+  if ([message objectForKey: @"Attachment"])
   {
-    return [NSURL URLWithString: 
-     [[message objectForKey: @"Attachment"] 
-       substringFromIndex: [MIME_URI_PREFIX length]]];
+    // hack to extract text/uri-list attachments
+    NSString *attachment = [message objectForKey: @"Attachment"];
+    NSRange payloadDelimiter = [attachment rangeOfString: @"\r\n\r\n"];
+    
+    if ([attachment rangeOfString: @"MIME-Version: 1.0"].length &&
+        [attachment rangeOfString: @"Content-Type: text/uri-list"].length &&
+        payloadDelimiter.length)
+    {
+      return [NSURL URLWithString: 
+              [[message objectForKey: @"Attachment"] 
+               substringFromIndex: NSMaxRange (payloadDelimiter)]];
+    } else
+    {
+      NSLog (@"Don't know how to parse ticker attachment:\n%@", attachment);
+      
+      return nil;
+    }
   } else if ([[message objectForKey: @"MIME_TYPE"] isEqual: @"x-elvin/url"])
   {
     return [NSURL URLWithString: [message objectForKey: @"MIME_ARGS"]];
