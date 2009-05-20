@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+extern NSString * TickerMessageReceivedNotification;
+
 @class ElvinConnection;
 @class RolloverButton;
 

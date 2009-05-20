@@ -90,20 +90,13 @@ static Keys *notificationKeysFor (NSArray *keys);
 
 #pragma mark -
 
-@interface ElvinConnection (PRIVATE)
+@interface ElvinConnection (Private)
   - (BOOL) openConnection;
   - (void) elvinEventLoopThread;
   - (void) runElvinEventLoop;
 @end
 
 @implementation ElvinConnection
-
-+ (BOOL) wasReceivedSecure: (NSDictionary *) message
-{
-  NSNumber *value = [message objectForKey: KEY_RECEIVED_SECURE];
-  
-  return [value boolValue];
-}
 
 - (id) initWithUrl: (NSString *) url
 {
@@ -128,6 +121,13 @@ static Keys *notificationKeysFor (NSArray *keys);
   [subscriptions release];
 
   [super dealloc];
+}
+
++ (BOOL) wasReceivedSecure: (NSDictionary *) message
+{
+  NSNumber *value = [message objectForKey: KEY_RECEIVED_SECURE];
+    
+  return [value boolValue];
 }
 
 @synthesize userAgent;

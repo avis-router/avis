@@ -72,6 +72,7 @@
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2D260F83266D009FC112 /* KeysArrayController.m */; };
 		C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */; };
+		C9D10E2E0FC3A08800BC77E7 /* TickerMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */; };
 		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
 /* End PBXBuildFile section */
 
@@ -196,6 +197,8 @@
 		C9CC2D260F83266D009FC112 /* KeysArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeysArrayController.m; path = src/main/KeysArrayController.m; sourceTree = "<group>"; };
 		C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElvinKeyIO.h; path = src/main/ElvinKeyIO.h; sourceTree = "<group>"; };
 		C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ElvinKeyIO.m; path = src/main/ElvinKeyIO.m; sourceTree = "<group>"; };
+		C9D10E2C0FC3A08800BC77E7 /* TickerMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TickerMessage.h; path = src/main/TickerMessage.h; sourceTree = "<group>"; };
+		C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TickerMessage.m; path = src/main/TickerMessage.m; sourceTree = "<group>"; };
 		C9DA04280F327946004A663D /* crash_20090129.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090129.txt; sourceTree = "<group>"; };
 		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -238,6 +241,8 @@
 				C92392230F7F7BC30083FC13 /* AppController.m */,
 				C92392410F7F7BC30083FC13 /* TickerController.h */,
 				C92392420F7F7BC30083FC13 /* TickerController.m */,
+				C9D10E2C0FC3A08800BC77E7 /* TickerMessage.h */,
+				C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */,
 				C92392430F7F7BC30083FC13 /* TickerMessagesTextView.h */,
 				C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */,
 				C92392300F7F7BC30083FC13 /* PresenceController.h */,
@@ -579,6 +584,7 @@
 				C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */,
 				C934A82C0FC11E79003C2B41 /* RelativeDateFormatter.m in Sources */,
 				C934AA320FC2489D003C2B41 /* PresenceStatusFormatter.m in Sources */,
+				C9D10E2E0FC3A08800BC77E7 /* TickerMessage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
