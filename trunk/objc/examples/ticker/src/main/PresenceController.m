@@ -56,7 +56,7 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
     [dateFormatter setTimeStyle: NSDateFormatterShortStyle]; 
     
     return [NSString stringWithFormat: @"%@ since %@",
-             entity.status.statusText,
+             entity.status.statusCodeAsUIString,
              [dateFormatter stringFromDate: entity.status.changedAt]];
   } else
   {
