@@ -261,6 +261,7 @@ static NSString *listToParameterString (NSArray *list)
   NSString *userName = [notification valueForKey: @"User"];
   NSString *statusCode = stringValueForAttribute (notification, @"Status");
   NSString *statusText = stringValueForAttribute (notification, @"Status-Text");
+  NSString *userAgent = stringValueForAttribute (notification, @"User-Agent");
   
   PresenceEntity *user = [self findUserWithId: clientId];
   
@@ -275,6 +276,7 @@ static NSString *listToParameterString (NSArray *list)
   }
 
   OnlineStatus oldStatusCode = user.status.statusCode;
+  NSString *oldStatusText = user.status.statusText;
   
   user.name = userName;
   
@@ -291,6 +293,9 @@ static NSString *listToParameterString (NSArray *list)
     
     user.status.changedAt = [[NSDate date] addTimeInterval: -duration];
   }
+  
+  if (userAgent)
+    user.userAgent = userAgent;
   
   user.lastUpdatedAt = [NSDate date];
   
@@ -309,7 +314,8 @@ static NSString *listToParameterString (NSArray *list)
                   usingObjects: addedObjects];
   }
   
-  if (user.status.statusCode != oldStatusCode)
+  if (user.status.statusCode != oldStatusCode ||
+      [user.status.statusText isEqual: oldStatusText])
   {
     [[NSNotificationCenter defaultCenter] 
       postNotificationName: PresenceStatusChangedNotification object: self

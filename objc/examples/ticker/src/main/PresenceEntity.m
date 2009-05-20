@@ -62,9 +62,6 @@
   }
 }
 
-@synthesize presenceId;
-@synthesize name;
-@synthesize status;
-@synthesize lastUpdatedAt;
+@synthesize presenceId, name, status, lastUpdatedAt, userAgent;
 
 @end

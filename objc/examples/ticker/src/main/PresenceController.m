@@ -59,7 +59,7 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
     rect: (NSRectPointer) rect tableColumn: (NSTableColumn *) column 
     row: (NSInteger) row mouseLocation: (NSPoint) mouseLocation
 {
-  PresenceEntity *entity = 
+  PresenceEntity *user = 
     [[presenceTableController arrangedObjects] objectAtIndex: row];
   
   if ([[column identifier] isEqual: @"status"])
@@ -69,12 +69,12 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
     [dateFormatter setTimeStyle: NSDateFormatterShortStyle]; 
     
     return [NSString stringWithFormat: @"%@ since %@",
-             entity.status.statusCodeAsUIString,
-             [dateFormatter stringFromDate: entity.status.changedAt]];
+             user.status.statusCodeAsUIString,
+             [dateFormatter stringFromDate: user.status.changedAt]];
   } else
   {
-    // TODO return user info
-    return nil;
+    return [NSString stringWithFormat: @"Client: %@", 
+             user.userAgent ? user.userAgent : @"Unknown"];
   }
 }
 
