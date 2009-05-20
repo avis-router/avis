@@ -1,8 +1,7 @@
-#import "Growl/GrowlApplicationBridge.h"
-
 #import "utils.h"
 
 #import "TickerController.h"
+#import "TickerMessage.h"
 #import "RolloverButton.h"
 #import "ElvinConnection.h"
 #import "PresenceController.h"
@@ -12,7 +11,8 @@
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From)"
 
-#define MAX_GROWL_MESSAGE_LENGTH 200
+NSString *TickerMessageReceivedNotification = 
+  @"TickerMessageReceivedNotification";
 
 #pragma mark -
 
@@ -25,21 +25,6 @@ static inline NSColor *color (float r, float g, float b)
 static inline float bottomY (NSRect rect) 
 {
   return rect.origin.y + rect.size.height;
-}
-
-static NSURL *extractAttachedLink (NSDictionary *message)
-{
-  if ([[message objectForKey: @"MIME_TYPE"] isEqual: @"x-elvin/url"])
-  {
-    return [NSURL URLWithString: [message objectForKey: @"MIME_ARGS"]];
-  } else if ([message objectForKey: @"Attachment"])
-  {
-    // TODO
-    return nil;
-  } else
-  {
-    return nil;
-  }
 }
 
 static NSURL *urlFromClipboard ()
@@ -64,67 +49,9 @@ static NSAttributedString *attributedString (NSString *string,
 
 #pragma mark -
 
-@interface TickerMessage : NSObject
-{
-  @public
-  
-  NSString * messageId;
-  NSString * from;
-  NSString * message;
-  NSString * group;
-  NSString * userAgent;
-  NSURL    * url;
-  BOOL       public;
-  BOOL       secure;
-  NSDate   * receivedAt;
-}
-
-@end
-
-@implementation TickerMessage
-
-+ (TickerMessage *) messageForNotification: (NSDictionary *) notification
-{
-  TickerMessage *message = [[TickerMessage new] autorelease];
-  
-  NSString *distribution = [notification valueForKey: @"Distribution"];
-  
-  message->messageId = [[notification valueForKey: @"Message-Id"] retain];
-  message->from = [[notification valueForKey: @"From"] retain];
-  message->message = [[notification valueForKey: @"Message"] retain];
-  message->group = [[notification valueForKey: @"Group"] retain];
-  message->public = 
-    distribution != nil && [distribution caseInsensitiveCompare: @"world"] == 0;
-  message->userAgent = [[notification valueForKey: @"User-Agent"] retain];
-  message->url = [extractAttachedLink (notification) retain];
-  message->receivedAt = [[NSDate date] retain];
-  message->secure = [ElvinConnection wasReceivedSecure: notification];
-  
-  return message;
-}
-
-- (void) dealloc
-{
-  [messageId release];
-  [from release];
-  [message release];
-  [group release];
-  [userAgent release];
-  [url release];
-  [receivedAt release];
-  
-  [super dealloc];
-}
-
-@end
-
-#pragma mark -
-
 @interface TickerController (PRIVATE)
   - (NSString *) fullTickerSubscription;
   - (void) handleNotify: (NSDictionary *) message;
-  - (void) notifyGrowlOnTickerMessage: (TickerMessage *) message;
-  - (void) notifyGrowlOnElvinStatusChange: (NSString *) status;
   - (void) handleElvinOpen: (void *) unused;
   - (void) handleElvinClose: (void *) unused;
   - (void) setAttachedURLPanelHidden: (BOOL) hidden;
@@ -146,18 +73,6 @@ static NSAttributedString *attributedString (NSString *string,
   {
     elvin = theElvinConnection;
     self.subscription = theSubscription;
-    
-    // listen for elvin open/close
-    NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
-    
-    [notifications addObserver: self selector: @selector (handleElvinOpen:)
-                          name: ElvinConnectionOpenedNotification object: nil]; 
-    
-    [notifications addObserver: self selector: @selector (handleElvinClose:)
-                          name: ElvinConnectionClosedNotification object: nil]; 
-    
-    [notifications addObserver: self selector: @selector (handlePresenceUserDoubleClick:)
-                          name: PresenceUserWasDoubleClicked object: nil];
   }
   
   return self;
@@ -186,6 +101,17 @@ static NSAttributedString *attributedString (NSString *string,
   
   self.attachedURL = nil;
   self.inReplyTo = nil;
+  
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+  
+  [notifications addObserver: self selector: @selector (handleElvinOpen:)
+                        name: ElvinConnectionOpenedNotification object: nil]; 
+  
+  [notifications addObserver: self selector: @selector (handleElvinClose:)
+                        name: ElvinConnectionClosedNotification object: nil]; 
+  
+  [notifications addObserver: self selector: @selector (handlePresenceUserDoubleClick:)
+                        name: PresenceUserWasDoubleClicked object: nil];
   
   [dragTarget 
     registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];  
@@ -218,24 +144,15 @@ static NSAttributedString *attributedString (NSString *string,
     return YES;
 }
 
-- (void) handlePresenceUserDoubleClick: (NSNotification *) notification
-{
-  PresenceEntity *user = [[notification userInfo] valueForKey: @"user"];
-  
-  [messageGroup setStringValue: user.name];
-}
-
 - (void) handleElvinOpen: (void *) unused
 {
   if ([[NSThread currentThread] isMainThread])
   {
     self.canSend = YES;
-
-    [self notifyGrowlOnElvinStatusChange: @"connected"];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
-          withObject: nil waitUntilDone: NO];
+                           withObject: nil waitUntilDone: NO];
   }
 }
 
@@ -244,13 +161,18 @@ static NSAttributedString *attributedString (NSString *string,
   if ([[NSThread currentThread] isMainThread])
   {
     self.canSend = NO;
-    
-    [self notifyGrowlOnElvinStatusChange: @"disconnected"];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
-          withObject: nil waitUntilDone: NO];
+                           withObject: nil waitUntilDone: NO];
   }
+}
+
+- (void) handlePresenceUserDoubleClick: (NSNotification *) notification
+{
+  PresenceEntity *user = [[notification userInfo] valueForKey: @"user"];
+  
+  [messageGroup setStringValue: user.name];
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
@@ -398,58 +320,10 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   // Growl can sometimes pause - do last
-  [self notifyGrowlOnTickerMessage: message];
-}
-
-- (void) notifyGrowlOnElvinStatusChange: (NSString *) status
-{
-  NSString *message = 
-    [NSString stringWithFormat: @"Elvin %@ (%@)", 
-      status, [elvin elvinUrl]];
-  
-  [GrowlApplicationBridge
-    notifyWithTitle: @"Elvin Connection"
-    description: message  
-    notificationName: @"Connection Status"
-    iconData: nil priority: 1 isSticky: NO clickContext: nil];
-}
-
-- (void) notifyGrowlOnTickerMessage: (TickerMessage *) message
-{
-  NSString *description =
-   [NSString stringWithFormat: @"%@: %@", message->from, message->message];
- 
-  // Growl should really handle long messages...
-  if ([description length] > MAX_GROWL_MESSAGE_LENGTH)
-  {
-    description = 
-      [NSString stringWithFormat: @"%@...", 
-        [description substringToIndex: MAX_GROWL_MESSAGE_LENGTH]];
-  }
-  
-  const NSString *userName = prefString (PrefOnlineUserName);
-  NSString *type;
-  int priority = 0;
-  BOOL sticky = NO;
-  
-  if ([message->group isEqual: userName])
-  {
-    type = @"Personal Message";
-    
-    if (![message->from isEqual: userName])
-    {
-      priority = 1;
-      sticky = YES;
-    }
-  } else
-  {
-    type = @"Ticker Message";
-  }
-  
-  [GrowlApplicationBridge
-    notifyWithTitle: type
-    description: description notificationName: type
-    iconData: nil priority: priority isSticky: sticky clickContext: nil];
+//  [self notifyGrowlOnTickerMessage: message];
+  [[NSNotificationCenter defaultCenter] 
+     postNotificationName: TickerMessageReceivedNotification object: self
+     userInfo: [NSDictionary dictionaryWithObject: message forKey: @"message"]];
 }
 
 #pragma mark -

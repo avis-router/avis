@@ -4,13 +4,21 @@
 #import "ElvinConnection.h"
 #import "PresenceConnection.h"
 #import "TickerController.h"
+#import "TickerMessage.h"
 #import "PresenceController.h"
 #import "PreferencesController.h"
 #import "Preferences.h"
 
 #import "utils.h"
 
+#define MAX_GROWL_MESSAGE_LENGTH 200
+
 #pragma mark Declare Private Methods
+
+@interface AppController (Private)
+  - (void) handleElvinStatusChange: (NSString *) status;
+  - (void) handleTickerMessage: (NSNotification *) notification;
+@end
 
 @implementation AppController
 
@@ -81,6 +89,19 @@
    
   [workspaceNotifications addObserver: self selector: @selector (handleSleep:)
     name: NSWorkspaceWillSleepNotification object: nil]; 
+
+  // listen for elvin open/close
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+  
+  [notifications addObserver: self selector: @selector (handleElvinOpen:)
+                        name: ElvinConnectionOpenedNotification object: nil]; 
+  
+  [notifications addObserver: self selector: @selector (handleElvinClose:)
+                        name: ElvinConnectionClosedNotification object: nil]; 
+  
+  // listen for ticker messages
+  [notifications addObserver: self selector: @selector (handleTickerMessage:)
+                        name: TickerMessageReceivedNotification object: nil];
   
   // listen for preference changes
   NSUserDefaultsController *userPreferences = 
@@ -97,6 +118,8 @@
 - (void) applicationWillTerminate: (NSNotification *) notification 
 {
   [elvin disconnect];
+  
+  [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
 /**
@@ -178,6 +201,82 @@
   NSLog (@"Reconnect on wake");
   
   [elvin connect];
+}
+
+- (void) handleElvinOpen: (void *) unused
+{
+  if ([[NSThread currentThread] isMainThread])
+  {
+    [self handleElvinStatusChange: @"connected"];
+  } else
+  {
+    [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
+                           withObject: nil waitUntilDone: NO];
+  }
+}
+
+- (void) handleElvinClose: (void *) unused
+{
+  if ([[NSThread currentThread] isMainThread])
+  {
+    [self handleElvinStatusChange: @"disconnected"];
+  } else
+  {
+    [self performSelectorOnMainThread: @selector (handleElvinClose:) 
+                           withObject: nil waitUntilDone: NO];
+  }
+}
+
+- (void) handleElvinStatusChange: (NSString *) status
+{
+  NSString *message = 
+    [NSString stringWithFormat: @"Elvin %@ (%@)", status, [elvin elvinUrl]];
+  
+  [GrowlApplicationBridge
+    notifyWithTitle: @"Elvin Connection"
+    description: message  
+    notificationName: @"Connection Status"
+    iconData: nil priority: 1 isSticky: NO clickContext: nil];
+}
+
+- (void) handleTickerMessage: (NSNotification *) notification
+{
+  TickerMessage *message = [[notification userInfo] valueForKey: @"message"];
+  
+  NSString *description =
+    [NSString stringWithFormat: @"%@: %@", message->from, message->message];
+  
+  // Growl should really handle long messages...
+  if ([description length] > MAX_GROWL_MESSAGE_LENGTH)
+  {
+    description = 
+      [NSString stringWithFormat: @"%@...", 
+        [description substringToIndex: MAX_GROWL_MESSAGE_LENGTH]];
+  }
+  
+  const NSString *userName = prefString (PrefOnlineUserName);
+  NSString *type;
+  int priority = 0;
+  BOOL sticky = NO;
+  
+  if ([message->group isEqual: userName])
+  {
+    type = @"Personal Message";
+    
+    if (![message->from isEqual: userName])
+    {
+      priority = 1;
+      sticky = YES;
+    }
+  } else
+  {
+    type = @"Ticker Message";
+  }
+  
+  [GrowlApplicationBridge
+    notifyWithTitle: type
+    description: description notificationName: type
+    iconData: nil priority: priority isSticky: sticky clickContext: nil];
 }
 
 @end
