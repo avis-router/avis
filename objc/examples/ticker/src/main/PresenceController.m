@@ -7,6 +7,8 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
 
 @implementation PresenceController
 
+@synthesize appController;
+
 - (id) initWithAppController: (AppController *) theAppController
 {
   self = [super initWithWindowNibName: @"PresenceWindow"];
@@ -19,12 +21,23 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
   return self;
 }
 
+- (void) dealloc
+{
+  [refreshTimer invalidate];
+  [refreshTimer release];
+  
+  [super dealloc];
+}
+
 - (void) awakeFromNib
 {
   [presenceTable setDoubleAction: @selector (doubleClickHandler:)];
+  
+  refreshTimer = 
+    [[NSTimer scheduledTimerWithTimeInterval: 10
+      target: presenceTable selector: @selector (reloadData) 
+      userInfo: nil repeats: YES] retain];
 }
-
-@synthesize appController;
 
 - (void) doubleClickHandler: (id) sender
 {
