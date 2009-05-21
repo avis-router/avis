@@ -89,17 +89,17 @@ static NSString *pluralizeWeeks (int weeks)
     int minutes = duration / MINUTE;
     int seconds = minutes % MINUTE;
 
-    if (seconds < 45)
+    if (minutes > 57)
+    {
+      return @"Nearly an hour ago";
+    } else if (seconds < 45)
     {
       return [NSString stringWithFormat: @"%i %@ ago", 
-              minutes, pluralizeMinutes (minutes)];
-    } else if (minutes > 57)
-    {
-      return @"Nearly an hour ago";    
+              minutes, pluralizeMinutes (minutes)];  
     } else
     {
       return [NSString stringWithFormat: @"Nearly %i %@ ago", 
-              minutes + 1, pluralizeMinutes (minutes)];    
+              minutes + 1, pluralizeMinutes (minutes + 1)];    
     }
   } else if (duration < 1 * DAY)
   {
