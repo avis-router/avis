@@ -87,7 +87,7 @@ static NSString *pluralizeWeeks (int weeks)
   {
     // less than an hour
     int minutes = duration / MINUTE;
-    int seconds = minutes % MINUTE;
+    int seconds = duration % MINUTE;
 
     if (minutes > 57)
     {
