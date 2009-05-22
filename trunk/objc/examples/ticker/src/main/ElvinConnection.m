@@ -500,10 +500,11 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
 - (BOOL) openConnection
 {  
   ElvinURI uri;
-  ElvinError error = ELVIN_EMPTY_ERROR;
-  elvin_uri_from_string (&uri, [elvinUrl UTF8String], &error);
+
+  elvin_error_init (&elvin.error);  
+  elvin_uri_from_string (&uri, [elvinUrl UTF8String], &elvin.error);
   
-  if (elvin_error_occurred (&error))
+  if (elvin_error_occurred (&elvin.error))
     return NO;
   
   Keys *subscriptionKeys = subscriptionKeysFor (keys);
