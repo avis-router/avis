@@ -240,7 +240,7 @@ static NSString *listToParameterString (NSArray *list)
   // TODO escape user name
   NSMutableString *expr = [NSMutableString stringWithFormat: 
     @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
-      string (Client-Id) && Client-Id != \"%@\" ", prefString (PrefOnlineUserUUID)];
+      Client-Id != \"%@\" ", prefString (PrefOnlineUserUUID)];
   
   // TODO this subs to all groups when array is empty
   NSArray *groups = prefArray (PrefPresenceGroups);
