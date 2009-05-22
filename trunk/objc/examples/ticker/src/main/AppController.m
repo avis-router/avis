@@ -21,6 +21,7 @@
   - (void) handleTickerMessage: (NSNotification *) notification;
   - (void) handlePresenceChange: (NSNotification *) notification;
   - (void) registerForPresenceChangesAfterDelay;
+  - (void) unregisterForPresenceChanges;
 @end
 
 @implementation AppController
@@ -106,9 +107,6 @@
   [notifications addObserver: self selector: @selector (handleTickerMessage:)
                         name: TickerMessageReceivedNotification object: nil];
 
-  // listen for presence changes
-  [self registerForPresenceChangesAfterDelay];
-  
   // listen for preference changes
   NSUserDefaultsController *userPreferences = 
     [NSUserDefaultsController sharedUserDefaultsController];
@@ -217,6 +215,8 @@
   if ([[NSThread currentThread] isMainThread])
   {
     [self handleElvinStatusChange: @"connected"];
+    
+    [self registerForPresenceChangesAfterDelay];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
@@ -229,6 +229,8 @@
   if ([[NSThread currentThread] isMainThread])
   {
     [self handleElvinStatusChange: @"disconnected"];
+    
+    [self unregisterForPresenceChanges];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
@@ -315,21 +317,28 @@
 
 - (void) registerForPresenceChangesAfterDelay
 {
-  [NSObject cancelPreviousPerformRequestsWithTarget: self 
-                                           selector: @selector (registerForPresenceChanges) object: nil];
-  
-  [[NSNotificationCenter defaultCenter] removeObserver: self 
-                                                  name: PresenceStatusChangedNotification object: nil];
+  [self unregisterForPresenceChanges];
   
   [self performSelector: @selector (registerForPresenceChanges) 
-             withObject: nil afterDelay: 10];
+    withObject: nil afterDelay: 10];
 }
 
 - (void) registerForPresenceChanges
 {
+  [self unregisterForPresenceChanges];
+  
   [[NSNotificationCenter defaultCenter] addObserver: self 
-                                           selector: @selector (handlePresenceChange:) 
-                                               name: PresenceStatusChangedNotification object: nil];
+    selector: @selector (handlePresenceChange:) 
+    name: PresenceStatusChangedNotification object: nil];
+}
+
+- (void) unregisterForPresenceChanges
+{
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (registerForPresenceChanges) object: nil];
+  
+  [[NSNotificationCenter defaultCenter] removeObserver: self 
+    name: PresenceStatusChangedNotification object: nil];
 }
 
 @end
