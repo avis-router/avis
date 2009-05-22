@@ -555,7 +555,7 @@ Keys *subscriptionKeysFor (NSArray *keys)
   
   for (NSDictionary *key in keys)
   {
-    if ([[key valueForKey: @"Private"] isEqual: [NSNumber numberWithBool: YES]])
+    if ([[key valueForKey: @"Private"] intValue])
     {
       NSData *data = [key valueForKey: @"Data"];
       
@@ -583,7 +583,7 @@ Keys *notificationKeysFor (NSArray *keys)
   
   for (NSDictionary *key in keys)
   {
-    if ([[key valueForKey: @"Private"] isEqual: [NSNumber numberWithBool: YES]])
+    if ([[key valueForKey: @"Private"] intValue])
     {
       NSData *data = [key valueForKey: @"Data"];
       
