@@ -53,10 +53,14 @@ static NSString *computerName ()
   NSSortDescriptor *statusDescriptor = 
     [[[NSSortDescriptor alloc] 
       initWithKey: @"status.statusCode" ascending: YES] autorelease];
+  NSSortDescriptor *nameDescriptor = 
+    [[[NSSortDescriptor alloc] 
+      initWithKey: @"name" ascending: YES 
+      selector: @selector (caseInsensitiveCompare:)] autorelease];
   
   [defaults setObject: 
     [NSArchiver archivedDataWithRootObject:
-      [NSArray arrayWithObject: statusDescriptor]] 
+      [NSArray arrayWithObjects: statusDescriptor, nameDescriptor, nil]] 
     forKey: PrefPresenceColumnSorting]; 
   
   [preferences registerDefaults: defaults];
