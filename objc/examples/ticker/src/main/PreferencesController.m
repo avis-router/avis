@@ -93,30 +93,25 @@ static NSString *computerName ()
                     itemForItemIdentifier: (NSString *) ident
                     willBeInsertedIntoToolbar: (BOOL) flag
 {
-  NSToolbarItem *item;
-  item = [[[NSToolbarItem alloc] initWithItemIdentifier: ident] autorelease];
+  NSToolbarItem *item = 
+    [[[NSToolbarItem alloc] initWithItemIdentifier: ident] autorelease];
 
+  [item setTarget: self];
+  [item setAction: @selector (setPrefView:)];
+  [item setAutovalidates: NO];
+    
   if ([ident isEqualToString: TOOLBAR_GENERAL])
   {
     [item setLabel: @"General"];
     [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
-    [item setTarget: self];
-    [item setAction: @selector (setPrefView:)];
-    [item setAutovalidates: NO];
   } else if ([ident isEqualToString: TOOLBAR_TICKER])
   {
     [item setLabel: @"Ticker"];
     [item setImage: [NSImage imageNamed: @"Ticker_512"]];
-    [item setTarget: self];
-    [item setAction: @selector (setPrefView:)];
-    [item setAutovalidates: NO];
   } else if ([ident isEqualToString: TOOLBAR_PRESENCE])
   {
     [item setLabel: @"Presence"];
     [item setImage: [NSImage imageNamed: @"NSUserGroup"]];
-    [item setTarget: self];
-    [item setAction: @selector (setPrefView:)];
-    [item setAutovalidates: NO];
   } else
   {
     return nil;
