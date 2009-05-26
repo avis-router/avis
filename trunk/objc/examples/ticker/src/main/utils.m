@@ -50,7 +50,7 @@ NSError *makeError (NSString *domain, NSInteger code, NSString *message,
   NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
   
   [dictionary setObject: 
-   [[NSString alloc] initWithFormat: message arguments: args] 
+   [[[NSString alloc] initWithFormat: message arguments: args] autorelease] 
                              forKey: NSLocalizedDescriptionKey];
   
   va_end (args);

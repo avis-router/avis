@@ -2,6 +2,8 @@
 
 #import "ElvinConnection.h"
 
+#import "utils.h"
+
 #define MIME_URI_PREFIX @"MIME-Version: 1.0\r\nContent-Type: text/uri-list\r\n\r\n"
 
 static NSURL *extractAttachedLink (NSDictionary *message)
@@ -17,8 +19,8 @@ static NSURL *extractAttachedLink (NSDictionary *message)
         payloadDelimiter.length)
     {
       return [NSURL URLWithString: 
-              [[message objectForKey: @"Attachment"] 
-               substringFromIndex: NSMaxRange (payloadDelimiter)]];
+               trim ([[message objectForKey: @"Attachment"] 
+                 substringFromIndex: NSMaxRange (payloadDelimiter)])];
     } else
     {
       NSLog (@"Don't know how to parse ticker attachment:\n%@", attachment);

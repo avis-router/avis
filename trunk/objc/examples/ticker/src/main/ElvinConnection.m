@@ -305,9 +305,12 @@ void notification_listener (Subscription *sub,
   
   if (url)
   {
-    attributes_set_string (message, "MIME_TYPE", "x-elvin/url");
-    attributes_set_string (message, "MIME_ARGS", 
-                           [[url absoluteString] UTF8String]);
+    NSString *attachment = 
+      [NSString stringWithFormat: 
+        @"MIME-Version: 1.0\r\nContent-Type: text/uri-list\r\n\r\n%@", 
+        [url absoluteString]];
+    
+    attributes_set_string (message, "Attachment", [attachment UTF8String]);
   }
 
   if (isInsecure || [keys count] == 0)
