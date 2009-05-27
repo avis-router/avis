@@ -4,6 +4,7 @@
   * BUG: change presence (+hxi) did not see kelvin until restart
     (refresh no effect)
   * DONE: BUG: perf drop on large number of messages: setFont
+  * for normal users: subscribe to groups, more visible secure messaging
   * use mutableArrayValueForKey: to wrap array for binding
   * groups registry service?
   * DONE: security: allow secure messaging (private key)
