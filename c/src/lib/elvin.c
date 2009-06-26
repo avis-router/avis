@@ -385,15 +385,15 @@ bool send_liveness (Elvin *elvin)
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
 {
   ControlMessage message;
-  int bytes_read;
+  int bytes_written;
    
   message.handler = handler;
   message.parameter = parameter;
 
-  bytes_read = 
+  bytes_written = 
     pipe_write (elvin->control_socket_write, &message, sizeof (message));
                      
-  if (bytes_read == sizeof (message))
+  if (bytes_written == sizeof (message))
     return true;
   else
     return elvin_error_from_pipe (&elvin->error);                     
