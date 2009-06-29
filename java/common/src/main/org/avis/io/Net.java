@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URI;
@@ -234,6 +235,25 @@ public final class Net
     {
       return new URI (uriString);
     } catch (URISyntaxException ex)
+    {
+      throw new InvalidURIException (ex);
+    }
+  }
+  
+  /**
+   * Create a new URL without the annoying checked exception.
+   * 
+   * @param urlString The URI string.
+   * @return A new URL.
+   * @throws InvalidURIException if uriString is invalid.
+   */
+  public static URL url (String urlString)
+    throws InvalidURIException
+  {
+    try
+    {
+      return new URL (urlString);
+    } catch (MalformedURLException ex)
     {
       throw new InvalidURIException (ex);
     }
