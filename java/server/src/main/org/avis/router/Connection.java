@@ -17,7 +17,7 @@ import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
  * 
  * @author Matthew Phillips
  */
-class Connection
+public class Connection
 {
   /**
    * Connection options established on construction (immutable).

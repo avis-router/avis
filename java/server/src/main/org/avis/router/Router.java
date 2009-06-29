@@ -1,5 +1,7 @@
 package org.avis.router;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -295,6 +297,36 @@ public class Router implements IoHandler, Closeable
   public Options options ()
   {
     return routerOptions;
+  }
+  
+  /**
+   * Return a static collection of open connections at the time of calling.
+   */
+  public Collection<Connection> connections ()
+  {
+    ArrayList<Connection> connections = 
+      new ArrayList<Connection> (sessions.size ());
+    
+    for (IoSession session : sessions)
+    {
+      Connection connection = peekConnectionFor (session);
+      
+      if (connection == null)
+        continue;
+      
+      connection.lockRead ();
+      
+      try
+      {
+        if (connection.isOpen ())
+          connections.add (connection);
+      } finally
+      {
+        connection.unlockRead ();
+      }
+    }
+    
+    return connections;
   }
   
   /**
