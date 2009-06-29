@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import java.io.Closeable;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +14,10 @@ import org.junit.Test;
 import org.avis.config.Options;
 import org.avis.router.Router;
 import org.avis.util.LogFailTester;
+
+import static java.net.HttpURLConnection.HTTP_OK;
+
+import static org.junit.Assert.assertEquals;
 
 import static org.avis.logging.Log.alarm;
 
@@ -47,12 +54,14 @@ public class JUTestWebManagement
   }
   
   @Test
-  public void basicConnect () 
+  public void runManager () 
     throws Exception
   {
     Options options = new Options (WebManagementOptionSet.OPTION_SET);
     
-    options.set ("WebManagement.Listen", "http://127.0.0.1:" + (PORT1 + 1));
+    URL webURL = new URL ("http://127.0.0.1:" + (PORT1 + 1));
+    
+    options.set ("WebManagement.Listen", webURL.toString ());
     
     Router router = new Router (PORT1);
     
@@ -61,8 +70,12 @@ public class JUTestWebManagement
     WebManagementManager manager = 
       new WebManagementManager (router.ioManager (), options);
     
-    autoClose.add (manager);
+    HttpURLConnection connection = (HttpURLConnection)webURL.openConnection ();
     
-//    Thread.sleep (Integer.MAX_VALUE);
+    assertEquals (HTTP_OK, connection.getResponseCode ());
+    
+    connection.disconnect ();
+    
+    autoClose.add (manager);
   }
 }
