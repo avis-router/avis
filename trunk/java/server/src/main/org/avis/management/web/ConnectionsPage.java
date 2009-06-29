@@ -12,7 +12,7 @@ public class ConnectionsPage extends WebPage
   }
 
   @Override
-  protected CharSequence htmlText ()
+  protected String htmlText ()
   {
     return "Hello!";
   }
