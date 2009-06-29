@@ -15,33 +15,22 @@ public abstract class WebPage implements HttpService
     throws Exception
   {
     MutableHttpResponse response = new DefaultHttpResponse ();
-
-//    StringWriter buf = new StringWriter ();
-//    PrintWriter writer = new PrintWriter (buf);
-//    writer
-//        .println ("<html><body><b>Your message of the day:</b><br/><br/>");
-//    writer.println ("<h2><i>Hello!</h2></i><br/><br/>");
-//    writeHeaders (context.getRequest (), writer);
-//    writer.println ("<br/>");
-//    writeParameters (context.getRequest (), writer);
-//    writer.println ("<br/>");
-//    writeCookies (context.getRequest (), writer);
-//    writer.flush ();
-
-    IoBuffer out = IoBuffer.allocate (1024);
-    out.setAutoExpand (true);
-    out.putString (htmlText (), Charset.forName ("UTF-8").newEncoder ());
-    out.flip ();
-    response.setContent (out);
-
     response.setHeader ("Pragma", "no-cache");
     response.setHeader ("Cache-Control", "no-cache");
     response.setStatus (HttpResponseStatus.OK);
 
+    IoBuffer out = IoBuffer.allocate (1024);
+    out.setAutoExpand (true);
+
+    out.putString (htmlText (), Charset.forName ("UTF-8").newEncoder ());
+    out.flip ();
+    
+    response.setContent (out);
+
     context.commitResponse (response);
   }
 
-  protected abstract CharSequence htmlText ();
+  protected abstract String htmlText ();
   
   public void start ()
   {
