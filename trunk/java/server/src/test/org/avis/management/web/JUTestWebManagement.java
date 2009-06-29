@@ -52,8 +52,7 @@ public class JUTestWebManagement
     
     autoClose.add (router);
     
-    WebManagementManager manager = 
-      new WebManagementManager (router.ioManager (), options);
+    WebManagementManager manager = new WebManagementManager (router, options);
     
     HttpURLConnection connection = (HttpURLConnection)webURL.openConnection ();
     
