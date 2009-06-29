@@ -30,7 +30,12 @@ public class JUTestPageGen
     
     html.append ("</table>");
     
-    // System.out.println (html.asText ());
+    assertEquals
+    ("<table class=\"client-list\" border=\"1\" cellspacing=\"0\"><tr><th>Client</th> <th>Connected</th> <th>Host</th>\n" + 
+     "    <th>Notifications</th> <th>Subscriptions</th></tr><tr><td rowspan=\"2\">12</td><td>26/6/2009 10:43 AM (12 mins)</td>\n" + 
+     "    <td>hex.dsto.defence.gov.au</td><td>2,123</td><td>4</td></tr></td></tr></table>", html.asText ());
+    
+    //System.out.println (html.asText ());
   }
   
   @Test
