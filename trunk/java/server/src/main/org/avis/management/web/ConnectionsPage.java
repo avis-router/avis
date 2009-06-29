@@ -14,6 +14,15 @@ public class ConnectionsPage extends WebPage
   @Override
   protected String htmlText ()
   {
-    return "Hello!";
+    HTML html = new HTML ();
+    
+    html.appendStandardHeader ("Connections - Avis").appendBody ();
+    
+    html.append ("<p>Number of connections: ${1}</p>", 
+                 router.connections ().size ());
+    
+    html.appendStandardClose ();
+    
+    return html.asText ();
   }
 }
