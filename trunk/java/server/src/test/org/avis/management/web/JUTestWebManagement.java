@@ -1,9 +1,5 @@
 package org.avis.management.web;
 
-import java.util.ArrayList;
-
-import java.io.Closeable;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -13,25 +9,23 @@ import org.junit.Test;
 
 import org.avis.config.Options;
 import org.avis.router.Router;
+import org.avis.util.AutoClose;
 import org.avis.util.LogFailTester;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
 import static org.junit.Assert.assertEquals;
 
-import static org.avis.logging.Log.alarm;
-
 public class JUTestWebManagement
 {
   private static final int PORT1 = 29170;
-  private ArrayList<Closeable> autoClose;
+  private AutoClose autoClose;
   private LogFailTester logTester;
 
   @Before
   public void setup ()
   {
-    autoClose = new ArrayList<Closeable> ();
-    
+    autoClose = new AutoClose ();
     logTester = new LogFailTester ();
   }
   
@@ -39,17 +33,7 @@ public class JUTestWebManagement
   public void tearDown ()
     throws Exception
   {
-    for (int i = autoClose.size () - 1; i >= 0; i--)
-    {
-      try
-      {
-        autoClose.get (i).close ();
-      } catch (Throwable ex)
-      {
-        alarm ("Failed to close", this, ex);
-      }
-    }
-
+    autoClose.close ();
     logTester.assertOkAndDispose ();
   }
   
