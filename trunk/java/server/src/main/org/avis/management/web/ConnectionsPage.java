@@ -12,16 +12,16 @@ public class ConnectionsPage extends WebPage
   }
 
   @Override
-  protected String htmlText ()
+  protected String content ()
   {
     HTML html = new HTML ();
     
-    html.appendStandardHeader ("Connections - Avis").appendBody ();
+    html.appendXHTMLHeader ("Connections - Avis").appendBody ();
     
     html.append ("<p>Number of connections: ${1}</p>", 
                  router.connections ().size ());
     
-    html.appendStandardClose ();
+    html.appendClosingTags ();
     
     return html.asText ();
   }

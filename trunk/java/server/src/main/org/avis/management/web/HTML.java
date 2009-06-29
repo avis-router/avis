@@ -18,7 +18,7 @@ public class HTML
     this.atLineStart = true;
   }
   
-  public HTML appendStandardHeader (String title)
+  public HTML appendXHTMLHeader (String title)
   {
     append 
       ("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n" + 
@@ -188,7 +188,7 @@ public class HTML
     return this;
   }
 
-  public HTML appendStandardClose ()
+  public HTML appendClosingTags ()
   {
     appendString ("\n</body>\n</html>\n");
     
