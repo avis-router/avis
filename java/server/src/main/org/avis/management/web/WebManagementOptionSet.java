@@ -5,7 +5,9 @@ import java.net.URL;
 import org.avis.config.OptionSet;
 import org.avis.config.OptionTypeSet;
 
-import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+
+import static org.avis.io.Net.url;
 
 /**
  * Configuration option set for Avis web management.
@@ -21,6 +23,8 @@ public class WebManagementOptionSet extends OptionSet
   protected WebManagementOptionSet ()
   {
     add ("WebManagement.Activated", false);
-    add ("WebManagement.Listen", new OptionTypeSet (URL.class), emptySet ());
+    add ("WebManagement.Listen",
+         new OptionTypeSet (URL.class), 
+         singleton (url ("http://0.0.0.0:" + DEFAULT_PORT)));
   }
 }

@@ -29,7 +29,7 @@ import org.apache.asyncweb.server.resolver.ExactMatchURIServiceResolver;
 import org.apache.mina.core.buffer.IoBuffer;
 
 import org.avis.config.Options;
-import org.avis.router.IoManager;
+import org.avis.router.Router;
 
 import static org.avis.io.Net.addressesFor;
 import static org.avis.management.web.WebManagementOptionSet.DEFAULT_PORT;
@@ -44,18 +44,19 @@ public class WebManagementManager implements Closeable
   private BasicServiceContainer container;
 
   @SuppressWarnings ("unchecked")
-  public WebManagementManager (IoManager ioManager, Options config) 
+  public WebManagementManager (Router router, Options config) 
     throws IOException
   {
     this.container = new BasicServiceContainer ();
     HttpServiceHandler handler = new HttpServiceHandler ();
     
     handler.addHttpService ("clientListenerExample", new HelloWorld ());
+    handler.addHttpService ("connections", new ConnectionsPage (router));
     container.addServiceFilter (handler);
 
     // Set up a resolver for the HttpServiceHandler
     ExactMatchURIServiceResolver resolver = new ExactMatchURIServiceResolver ();
-    resolver.addURIMapping ("/", "clientListenerExample");
+    resolver.addURIMapping ("/", "connections");
     handler.setServiceResolver (resolver);
 
     // Create the mina transport and enable the container with it
@@ -63,7 +64,7 @@ public class WebManagementManager implements Closeable
     
     AvisMinaTransport transport = 
       new AvisMinaTransport 
-        (addressesFor (listenUrls, DEFAULT_PORT), ioManager);
+        (addressesFor (listenUrls, DEFAULT_PORT), router.ioManager ());
 
     container.addTransport (transport);
 

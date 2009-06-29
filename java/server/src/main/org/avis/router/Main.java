@@ -160,7 +160,7 @@ public class Main
       new FederationManager (router, config);
     
     if (config.getBoolean ("WebManagement.Activated"))
-      new WebManagementManager (router.ioManager (), config);
+      new WebManagementManager (router, config);
 
     return router;
   }
