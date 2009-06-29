@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class JUTestWebManagement
 {
   private static final int PORT1 = 29170;
+  
   private AutoClose autoClose;
   private LogFailTester logTester;
 
@@ -61,5 +62,5 @@ public class JUTestWebManagement
     connection.disconnect ();
     
     autoClose.add (manager);
-  }
+  }  
 }
