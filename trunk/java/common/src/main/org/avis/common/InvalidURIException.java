@@ -1,5 +1,6 @@
 package org.avis.common;
 
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 /**
@@ -16,6 +17,11 @@ public class InvalidURIException extends RuntimeException
   }
 
   public InvalidURIException (URISyntaxException ex)
+  {
+    super (ex);
+  }
+
+  public InvalidURIException (MalformedURLException ex)
   {
     super (ex);
   }
