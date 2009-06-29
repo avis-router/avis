@@ -99,7 +99,7 @@ public class HTML
         appendString ("&amp;");
       else if (c == '"')
         appendString ("&quot;");
-      else if (c > 127)
+      else if (c < 32 || c > 126)
         appendString ("&#" + (int)c + ";");
       else
         appendChar (c);
