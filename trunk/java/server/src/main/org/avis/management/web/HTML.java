@@ -18,12 +18,29 @@ public class HTML
     this.atLineStart = true;
   }
   
-  public void append (String text)
+  public HTML appendStandardHeader (String title)
   {
-    appendString (text);
+    append 
+      ("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n" + 
+       "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" + 
+       "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" + 
+       "<head>\n" + 
+       "  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" + 
+       "  <title>${1}</title>\n" + 
+       "  <link href=\"main.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n" + 
+      "</head>\n", title);
+    
+    return this;
   }
 
-  public void append (String text, Object... args)
+  public HTML append (String text)
+  {
+    appendString (text);
+    
+    return this;
+  }
+
+  public HTML append (String text, Object... args)
   {
     int index = 0;      // current index within str
     int symStart = -1;  // start of next symbol (>= index)
@@ -83,6 +100,8 @@ public class HTML
         break;
       }
     }
+    
+    return this;
   }
 
   private void appendStringEscaped (String text)
@@ -160,5 +179,19 @@ public class HTML
       indent--;
     else
       throw new IllegalStateException ("Cannot outdent");
+  }
+
+  public HTML appendBody ()
+  {
+    appendString ("<body>\n");
+    
+    return this;
+  }
+
+  public HTML appendStandardClose ()
+  {
+    appendString ("\n</body>\n</html>\n");
+    
+    return this;
   }
 }
