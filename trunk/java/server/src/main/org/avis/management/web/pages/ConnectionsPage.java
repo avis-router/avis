@@ -30,9 +30,10 @@ public class ConnectionsPage extends Page
                  router.connections ().size ());
  
     html.append 
-      ("<table class=\"client-list\" border=\"1\" cellspacing=\"0\">\n\n" +
-       "  <tr><th>Client</th> <th>Connected</th> <th>Host</th> \n" + 
-       "      <th>Notifications<br/>(Sent / Received)</th> <th>Subscriptions</th></tr>\n");
+      ("<table class=client-list border='1' cellspacing='0'>\n\n" +
+       "  <tr><th class='numeric'>Client</th> <th>Connected</th> <th>Host</th>\n" + 
+       "      <th class='numeric'>Subscriptions</th> " +
+             "<th class='numeric'>Notifications<br/>(Sent / Received)</th></tr>\n");
     
     html.indent ();
     
@@ -48,13 +49,14 @@ public class ConnectionsPage extends Page
           continue;
         
         html.append 
-          ("<tr><td rowspan=\"2\">${1} (${2})</td><td>${3}</td>\n" + 
-           "    <td>${4}</td><td>${5} / ${6}</td><td>${7}</td></tr>",
+          ("<tr><td rowspan='2' class='numeric'>${1} (${2})</td><td>${3}</td>\n" + 
+           "    <td>${4}</td><td class='numeric'>${5}</td>" +
+               "<td class='numeric'>${6} / ${7}</td></tr>",
            connection.serial, connection.id (),
            formatConnectionTime (connection.connectedAt), 
            connection.hostname (),
-           connection.sentNotificationCount, connection.receivedNotificationCount, 
-           connection.subscriptions.size ());
+           connection.subscriptions.size (),
+           connection.sentNotificationCount, connection.receivedNotificationCount);
       
         html.append ("<tr><td colspan=\"4\">\n");
   
@@ -79,15 +81,17 @@ public class ConnectionsPage extends Page
 
   private void outputSubscriptions (HTML html, Connection connection)
   {
-    html.append ("<table>\n");
+    html.append ("<table width='100%'>\n");
 
     html.indent ();
    
     for (Subscription subscription : connection.subscriptions ())
     {
       html.append 
-        ("<tr><td>${1}</td><td class=\"sub-exp\">${2}</td><td>(${3})</td></tr>",
-         subscription.id, subscription.expr, guessSubType (subscription.expr));
+        ("<tr><td class='numeric'>${1}</td><td class=\"sub-exp\">${2}</td>" +
+             "<td>(${3})</td><td class='numeric'>${4}</td></tr>",
+         subscription.id, subscription.expr, guessSubType (subscription.expr),
+         subscription.notificationCount);
     }
     
     html.outdent ();

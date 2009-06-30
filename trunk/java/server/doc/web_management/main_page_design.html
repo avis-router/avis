@@ -11,19 +11,18 @@
 
 <table class="client-list" border="1" cellspacing="0">
 
-  <tr><th>Client</th> <th>Connected</th> <th>Host</th> 
-      <th>Notifications</th> <th>Subscriptions</th></tr>
+  <tr><th class="numeric">Client</th> <th>Connected</th> <th>Host</th> 
+      <th class="numeric">Subscriptions</th> <th class="numeric">Notifications<br />(Sent / Received)</th></tr>
 
-  <tr><td rowspan="2">12</td><td>26/6/2009 10:43 AM (12 mins)</td>
-      <td>hex.dsto.defence.gov.au</td><td>2,123</td><td>4</td></tr>
+  <tr><td rowspan="2" class="numeric">12</td><td>26/6/2009 10:43 AM (12 mins)</td>
+      <td>hex.dsto.defence.gov.au</td><td class="numeric">4</td><td class="numeric">2,123 / 93</td></tr>
 
   <tr><td colspan="4">
-    <table>
-      <tr>
-        <td>1</td><td class="sub-exp">Livespace-Protocol <= 2000 && Client-Id != '1e5sss6gdgd' && (Action == 'update' || Action == 'info')</td><td>(Livespace)</td></tr>
-        <td>2</td><td>org.tickertape.message == 3000 && string (Message) && string (Fro ... </td><td>(Tickertape)</td></tr>
-        <td>3</td><td>Presence-Protocol < 2000 && Client-Id != 'afdeg120afcd351fa' && ...</td><td>(Presence)</td></tr>
-        <td>4</td><td>require (Test)</td><td>(Unknown)</td></tr>
+    <table width="100%">
+      <tr><td>1</td><td class="sub-exp">Livespace-Protocol <= 2000 && Client-Id != '1e5sss6gdgd' && (Action == 'update' || Action == 'info')</td><td>(Livespace)</td><td class="numeric">1,827</td></tr>
+      <tr><td>2</td><td class="sub-exp">org.tickertape.message == 3000 && string (Message) && string (From)</td><td>(Tickertape)</td><td class="numeric">6</td></tr>
+      <td>3</td><td class="sub-exp">Presence-Protocol < 2000 && Client-Id != 'afdeg120afcd351fa' && User  != 'Matt'</td><td>(Presence)</td><td class="numeric">0</td></tr>
+      <tr><td>4</td><td class="sub-exp">require (Test)</td><td>(Unknown)</td><td class="numeric">3</td></tr>
     </table>
   </td></tr>
 <table>
