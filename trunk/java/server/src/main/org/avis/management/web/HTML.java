@@ -78,12 +78,11 @@ public class HTML
             ("No closing } for sym starting at " + text.substring (index));
         }
 
-        String symbol = text.substring (symStart, symEnd);
-        int argIndex = Integer.valueOf (symbol);
+        int argIndex = Integer.valueOf (text.substring (symStart, symEnd));
 
         try
         {
-          appendStringEscaped (args [argIndex - 1].toString ());
+          appendEscapedString (args [argIndex - 1].toString ());
 
           // advance to end of symbol
           index = symEnd + 1;
@@ -104,7 +103,7 @@ public class HTML
     return this;
   }
 
-  private void appendStringEscaped (String text)
+  private void appendEscapedString (String text)
   {
     for (int i = 0; i < text.length (); i++)
     {
@@ -141,20 +140,15 @@ public class HTML
 
   private void appendChar (char c)
   {
-    maybeAppendIndent ();
-   
-    atLineStart = (c == '\n');
-    
-    content.append (c);
-  }
-
-  private void maybeAppendIndent ()
-  {
-    if (atLineStart)
+    if (atLineStart && c != '\n')
     {
       for (int i = 0; i < indent; i++)
         content.append ("  ");
     }
+       
+    content.append (c);
+    
+    atLineStart = (c == '\n');
   }
 
   public String asText ()
