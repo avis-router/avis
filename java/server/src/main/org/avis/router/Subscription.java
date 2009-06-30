@@ -18,7 +18,7 @@ import static org.avis.subscription.ast.Node.TRUE;
  *  
  * @author Matthew Phillips
  */
-class Subscription
+public class Subscription
 {
   private static final AtomicLong idCounter = new AtomicLong ();
   
