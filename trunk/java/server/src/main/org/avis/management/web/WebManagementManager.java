@@ -20,12 +20,15 @@ import org.apache.asyncweb.common.DefaultHttpResponse;
 import org.apache.asyncweb.common.HttpRequest;
 import org.apache.asyncweb.common.HttpResponseStatus;
 import org.apache.asyncweb.common.MutableHttpResponse;
+import org.apache.asyncweb.fileservice.FileHttpService;
 import org.apache.asyncweb.server.BasicServiceContainer;
 import org.apache.asyncweb.server.ContainerLifecycleException;
 import org.apache.asyncweb.server.HttpService;
 import org.apache.asyncweb.server.HttpServiceContext;
 import org.apache.asyncweb.server.HttpServiceHandler;
+import org.apache.asyncweb.server.resolver.CompositeResolver;
 import org.apache.asyncweb.server.resolver.ExactMatchURIServiceResolver;
+import org.apache.asyncweb.server.resolver.PatternMatchResolver;
 import org.apache.mina.core.buffer.IoBuffer;
 
 import org.avis.config.Options;
@@ -51,14 +54,29 @@ public class WebManagementManager implements Closeable
     this.container = new BasicServiceContainer ();
     HttpServiceHandler handler = new HttpServiceHandler ();
     
-    handler.addHttpService ("clientListenerExample", new HelloWorld ());
     handler.addHttpService ("connections", new ConnectionsPage (router));
+    handler.addHttpService 
+      ("resources", 
+       new FileHttpService 
+         ("/", WebManagementManager.class.getResource ("resources").getPath ()));
+    
     container.addServiceFilter (handler);
 
-    // Set up a resolver for the HttpServiceHandler
-    ExactMatchURIServiceResolver resolver = new ExactMatchURIServiceResolver ();
-    resolver.addURIMapping ("/", "connections");
-    handler.setServiceResolver (resolver);
+    // pages
+    ExactMatchURIServiceResolver pageResolver = new ExactMatchURIServiceResolver ();
+    pageResolver.addURIMapping ("/", "connections");
+    
+    // resources
+    // TODO need to serve from URL's to support JAR'ing
+    PatternMatchResolver resourceResolver = new PatternMatchResolver();
+    resourceResolver.addPatternMapping ("/.*\\.css", "resources");
+        
+    CompositeResolver mainResolver = new CompositeResolver ();
+
+    mainResolver.addResolver (resourceResolver);
+    mainResolver.addResolver (pageResolver);
+    
+    handler.setServiceResolver (mainResolver);
 
     // Create the mina transport and enable the container with it
     Set<URL> listenUrls = (Set<URL>)config.get ("WebManagement.Listen");

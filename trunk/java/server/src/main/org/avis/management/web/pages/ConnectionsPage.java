@@ -19,8 +19,15 @@ public class ConnectionsPage extends Page
     
     html.appendXHTMLHeader ("Connections - Avis").appendBody ();
     
-    html.append ("<p>Number of connections: ${1}</p>", 
+    html.append ("<p>Number of connections: ${1}</p>\n", 
                  router.connections ().size ());
+ 
+    html.append 
+      ("<table class=\"client-list\" border=\"1\" cellspacing=\"0\">\n\n" +
+       "  <tr><th>Client</th> <th>Connected</th> <th>Host</th> \n" + 
+       "      <th>Notifications</th> <th>Subscriptions</th></tr>\n");
+    
+    html.append ("</table>");
     
     html.appendClosingTags ();
     

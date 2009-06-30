@@ -1,0 +1,31 @@
+body
+{
+#    background: #d1d1d1 url(images/body-bg.gif) top repeat-x;
+    font-family: helvetica,verdana,sans-serif;
+    font-size: 80%;
+    color: #222;
+#    margin-top: 0px;
+}
+
+table
+{ 
+  text-align: left;
+  margin: 0 0 0 0;
+}
+
+.client-list
+{
+    text-align: left;
+    border: 1;
+}
+
+.sub-exp
+{
+    font-family: consolas,monaco,courier,fixed
+}
+
+.client-list td, th
+{
+    padding: 3px 3px;
+    vertical-align: top;
+}
