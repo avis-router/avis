@@ -2,7 +2,7 @@ package org.avis.management.web;
 
 import org.avis.router.Router;
 
-public class ConnectionsPage extends WebPage
+public class ConnectionsPage extends Page
 {
   private Router router;
 
