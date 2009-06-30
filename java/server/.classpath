@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/fastutil-subset.jar"/>
 	<classpathentry kind="lib" path="lib/asyncweb-common-0.9.0-SNAPSHOT.jar" sourcepath="/Users/matt/Development/asyncweb/common/src/main/java"/>
 	<classpathentry kind="lib" path="lib/asyncweb-server-0.9.0-SNAPSHOT.jar" sourcepath="/Users/matt/Development/asyncweb/server/src/main/java"/>
+	<classpathentry kind="lib" path="lib/asyncweb-fileservice-0.9.0-SNAPSHOT.jar" sourcepath="/Users/matt/Development/asyncweb/fileservice/src/main/java"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
