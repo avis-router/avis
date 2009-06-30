@@ -214,9 +214,9 @@ public class Connection
                               subscription.keys.match (messageKeys);
 
         if (secureMatch)
-          matches.secure.add (subscription.id);
+          matches.secure.add (subscription);
         else if (deliverInsecure && subscription.acceptInsecure)
-          matches.insecure.add (subscription.id);
+          matches.insecure.add (subscription);
       }
     }
     

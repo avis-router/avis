@@ -763,7 +763,11 @@ public class Router implements IoHandler, Closeable
                                             matches.secure (),
                                             matches.insecure ()));
           
+          // update stats
           connection.receivedNotificationCount++;
+          
+          incrementNotificationCount (matches.secure);
+          incrementNotificationCount (matches.insecure);
         }
       } catch (RuntimeException ex)
       {
@@ -1097,6 +1101,12 @@ public class Router implements IoHandler, Closeable
            formatNotification (message.attributes), this);
   }
   
+  private static void incrementNotificationCount (List<Subscription> subscriptions)
+  {
+    for (Subscription subscription : subscriptions)
+      subscription.notificationCount++;
+  }
+
   /**
    * Get the connection associated with a session or null for no connection.
    */

@@ -27,6 +27,8 @@ public class Subscription
   public boolean acceptInsecure;
   public Keys keys;
 
+  public int notificationCount;
+
   private Node ast;
 
   public Subscription (String expr, Keys keys, boolean acceptInsecure)
@@ -37,6 +39,7 @@ public class Subscription
     this.acceptInsecure = acceptInsecure;
     this.ast = parse (expr);
     this.id = idCounter.incrementAndGet ();
+    this.notificationCount = 0;
     
     keys.hashPrivateKeysForRole (CONSUMER);
   }
