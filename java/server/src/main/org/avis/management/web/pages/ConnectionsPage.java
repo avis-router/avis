@@ -58,7 +58,7 @@ public class ConnectionsPage extends Page
            connection.subscriptions.size (),
            connection.sentNotificationCount, connection.receivedNotificationCount);
       
-        html.append ("<tr><td colspan=\"4\">\n");
+        html.append ("<tr><td colspan='4'>\n");
   
         html.indent ();
         outputSubscriptions (html, connection);
