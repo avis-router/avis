@@ -1,7 +1,7 @@
 package org.avis.router;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the result of matching a subscription against a message.
@@ -12,15 +12,15 @@ class SubscriptionMatch
 {
   private static final long [] EMPTY = new long [0];
   
-  /** Securely matched subscription ID's */
-  public final LongArrayList secure;
-  /** Insecurely matched subscription ID's */
-  public final LongArrayList insecure;
+  /** Securely matched subscriptions */
+  public final List<Subscription> secure;
+  /** Insecurely matched subscriptions */
+  public final List<Subscription> insecure;
   
   public SubscriptionMatch ()
   {
-    this.secure = new LongArrayList ();
-    this.insecure = new LongArrayList ();
+    this.secure = new ArrayList<Subscription> ();
+    this.insecure = new ArrayList<Subscription> ();
   }
   
   public long [] secure ()
@@ -38,11 +38,19 @@ class SubscriptionMatch
     return !insecure.isEmpty () || !secure.isEmpty ();
   }
 
-  private static long [] toArray (LongList ids)
+  private static long [] toArray (List<Subscription> subscriptions)
   {
-    if (ids.isEmpty ())
+    if (subscriptions.isEmpty ())
+    {
       return EMPTY;
-    else
-      return ids.toLongArray ();
+    } else
+    {
+      long [] ids = new long [subscriptions.size ()];
+      
+      for (int i = 0; i < ids.length; i++)
+        ids [i] = subscriptions.get (i).id;
+      
+      return ids;
+    }
   }
 }
