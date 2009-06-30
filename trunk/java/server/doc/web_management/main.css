@@ -2,7 +2,7 @@ body
 {
 #    background: #d1d1d1 url(images/body-bg.gif) top repeat-x;
     font-family: helvetica,verdana,sans-serif;
-    font-size: 100%;
+    font-size: 80%;
     color: #222;
 #    margin-top: 0px;
 }
@@ -17,6 +17,11 @@ table
 {
     text-align: left;
     border: 1;
+}
+
+.sub-exp
+{
+    font-family: consolas,monaco,courier,fixed
 }
 
 .client-list td, th

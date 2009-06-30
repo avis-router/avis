@@ -1,5 +1,6 @@
-package org.avis.management.web;
+package org.avis.management.web.pages;
 
+import org.avis.management.web.HTML;
 import org.avis.router.Router;
 
 public class ConnectionsPage extends Page
