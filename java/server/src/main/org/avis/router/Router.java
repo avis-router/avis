@@ -482,7 +482,7 @@ public class Router implements IoHandler, Closeable
       throw new ProtocolCodecException ("Already connected");
     
     Connection connection =
-      new Connection (routerOptions, message.options,
+      new Connection (session, routerOptions, message.options,
                       message.subscriptionKeys, message.notificationKeys);
     
     int maxKeys = connection.options.getInt ("Connection.Max-Keys");
@@ -696,7 +696,11 @@ public class Router implements IoHandler, Closeable
     
     message.keys.hashPrivateKeysForRole (PRODUCER);
     
-    deliverNotification (message, connectionFor (session).notificationKeys);
+    Connection connection = connectionFor (session);
+    
+    connection.sentNotificationCount++;
+    
+    deliverNotification (message, connection.notificationKeys);
   }
 
   private void handleUnotify (UNotify message)
@@ -758,6 +762,8 @@ public class Router implements IoHandler, Closeable
           send (session, new NotifyDeliver (message.attributes,
                                             matches.secure (),
                                             matches.insecure ()));
+          
+          connection.receivedNotificationCount++;
         }
       } catch (RuntimeException ex)
       {
