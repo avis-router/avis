@@ -10,7 +10,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 
 import static org.apache.asyncweb.common.HttpResponseStatus.OK;
 
-public abstract class WebPage implements HttpService
+public abstract class Page implements HttpService
 {
   public void handleRequest (HttpServiceContext context)
     throws Exception
@@ -21,7 +21,7 @@ public abstract class WebPage implements HttpService
     response.setHeader ("Content-Type", "text/html; charset=UTF-8");
     response.setStatus (OK);
 
-    IoBuffer out = IoBuffer.allocate (1024);
+    IoBuffer out = IoBuffer.allocate (4096);
     out.setAutoExpand (true);
 
     out.putString (content (), Charset.forName ("UTF-8").newEncoder ());
