@@ -2,6 +2,7 @@ package org.avis.router;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -241,5 +242,10 @@ public class Connection
   public String hostname ()
   {
     return remoteHostAddressFor (session).getCanonicalHostName ();
+  }
+
+  public Collection<Subscription> subscriptions ()
+  {
+    return subscriptions.values ();
   }
 }
