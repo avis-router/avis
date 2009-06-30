@@ -1,4 +1,4 @@
-package org.avis.management.web;
+package org.avis.management.web.pages;
 
 import java.nio.charset.Charset;
 

@@ -29,6 +29,7 @@ import org.apache.asyncweb.server.resolver.ExactMatchURIServiceResolver;
 import org.apache.mina.core.buffer.IoBuffer;
 
 import org.avis.config.Options;
+import org.avis.management.web.pages.ConnectionsPage;
 import org.avis.router.Router;
 
 import static org.avis.io.Net.addressesFor;
