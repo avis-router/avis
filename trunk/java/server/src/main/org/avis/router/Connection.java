@@ -3,13 +3,20 @@ package org.avis.router;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.apache.mina.core.session.IoSession;
 
 import org.avis.config.Options;
 import org.avis.security.Keys;
 
+import static java.lang.System.currentTimeMillis;
+
+import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
 import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
+import static org.avis.util.Text.idFor;
 
 /**
  * Stores the state needed for a client's connection to the router.
@@ -19,6 +26,8 @@ import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
  */
 public class Connection
 {
+  private static AtomicInteger serialCounter = new AtomicInteger ();
+
   /**
    * Connection options established on construction (immutable).
    */
@@ -42,10 +51,21 @@ public class Connection
    */
   public Long2ObjectOpenHashMap<Subscription> subscriptions;
 
+  public int serial;
+
+  public long connectedAt;
+
+  public int sentNotificationCount;
+  
+  public int receivedNotificationCount;
+  
   /**
    * Single writer/multiple reader lock.
    */
   private ReentrantReadWriteLock lock;
+
+  private IoSession session;
+
 
   /**
    * Create a new connection instance.
@@ -58,15 +78,21 @@ public class Connection
    * @param notificationKeys The client's initial global notification
    *                key collection.
    */
-  public Connection (Options defaultOptions,
+  public Connection (IoSession session,
+                     Options defaultOptions,
                      Map<String, Object> requestedOptions,
                      Keys subscriptionKeys, Keys notificationKeys)
   {
+    this.session = session;
     this.subscriptions = new Long2ObjectOpenHashMap<Subscription> ();
     this.subscriptionKeys = subscriptionKeys;
     this.notificationKeys = notificationKeys;
     this.options = new ClientConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
+    this.serial = serialCounter.incrementAndGet ();
+    this.connectedAt = currentTimeMillis ();
+    this.sentNotificationCount = 0;
+    this.receivedNotificationCount = 0;
     
     subscriptionKeys.hashPrivateKeysForRole (CONSUMER);
     notificationKeys.hashPrivateKeysForRole (PRODUCER);
@@ -205,5 +231,15 @@ public class Connection
       return subscription;
     else
       throw new InvalidSubscriptionException ("No subscription with ID " + id);
+  }
+
+  public String id ()
+  {
+    return idFor (session);
+  }
+  
+  public String hostname ()
+  {
+    return remoteHostAddressFor (session).getCanonicalHostName ();
   }
 }
