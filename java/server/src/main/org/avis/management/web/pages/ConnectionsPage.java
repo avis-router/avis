@@ -7,6 +7,8 @@ import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;
 
+import static org.avis.management.web.HTML.num;
+
 import static java.text.DateFormat.SHORT;
 import static java.text.DateFormat.getDateTimeInstance;
 
@@ -55,8 +57,9 @@ public class ConnectionsPage extends Page
            connection.serial, connection.id (),
            formatConnectionTime (connection.connectedAt), 
            connection.hostname (),
-           connection.subscriptions.size (),
-           connection.sentNotificationCount, connection.receivedNotificationCount);
+           num (connection.subscriptions.size ()),
+           num (connection.sentNotificationCount), 
+           num (connection.receivedNotificationCount));
       
         html.append ("<tr><td colspan='4'>\n");
   
@@ -79,7 +82,7 @@ public class ConnectionsPage extends Page
     return html.asText ();
   }
 
-  private void outputSubscriptions (HTML html, Connection connection)
+  private static void outputSubscriptions (HTML html, Connection connection)
   {
     html.append ("<table width='100%'>\n");
 
@@ -91,7 +94,7 @@ public class ConnectionsPage extends Page
         ("<tr><td class='numeric'>${}</td><td class='sub-exp'>${}</td>" +
              "<td>(${})</td><td class='numeric'>${}</td></tr>\n",
          subscription.id, subscription.expr, guessSubType (subscription.expr),
-         subscription.notificationCount);
+         num (subscription.notificationCount));
     }
     
     html.outdent ();
@@ -99,10 +102,18 @@ public class ConnectionsPage extends Page
     html.append ("</table>\n");
   }
 
-  private String guessSubType (String subExpr)
+  private static String guessSubType (String subExpr)
   {
-    // TODO implement
-    return "Unknown";
+    if (subExpr.contains ("Presence-Protocol"))
+      return "Presence";
+    else if (subExpr.contains ("org.tickertape.message"))
+      return "Tickertape";
+    else if (subExpr.contains ("Livespace-Protocol"))
+      return "Livespaces";
+    else if (subExpr.contains ("NEWSGROUPS"))
+      return "Ticker News";
+    else
+      return "Unknown";
   }
 
   private String formatConnectionTime (long time)
