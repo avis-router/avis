@@ -203,4 +203,12 @@ public class HTML
     
     return this;
   }
+
+  /**
+   * Format a number e.g. "1331" -> "1,331"
+   */
+  public static String num (int value)
+  {
+    return String.format ("%,d", value);
+  }
 }
