@@ -49,9 +49,9 @@ public class ConnectionsPage extends Page
           continue;
         
         html.append 
-          ("<tr><td rowspan='2' class='numeric'>${1} (${2})</td><td>${3}</td>\n" + 
-           "    <td>${4}</td><td class='numeric'>${5}</td>" +
-               "<td class='numeric'>${6} / ${7}</td></tr>\n",
+          ("<tr><td rowspan='2' class='numeric'>${} (${})</td><td>${}</td>\n" + 
+           "    <td>${}</td><td class='numeric'>${}</td>" +
+               "<td class='numeric'>${} / ${}</td></tr>\n",
            connection.serial, connection.id (),
            formatConnectionTime (connection.connectedAt), 
            connection.hostname (),
@@ -88,8 +88,8 @@ public class ConnectionsPage extends Page
     for (Subscription subscription : connection.subscriptions ())
     {
       html.append 
-        ("<tr><td class='numeric'>${1}</td><td class='sub-exp'>${2}</td>" +
-             "<td>(${3})</td><td class='numeric'>${4}</td></tr>\n",
+        ("<tr><td class='numeric'>${}</td><td class='sub-exp'>${}</td>" +
+             "<td>(${})</td><td class='numeric'>${}</td></tr>\n",
          subscription.id, subscription.expr, guessSubType (subscription.expr),
          subscription.notificationCount);
     }
