@@ -56,7 +56,7 @@ public class ConnectionsPage extends Page
                "<td class='numeric'>${} / ${}</td></tr>\n",
            connection.serial, connection.id (),
            formatConnectionTime (connection.connectedAt), 
-           connection.hostname (),
+           connection.remoteHost ().getCanonicalHostName (),
            num (connection.subscriptions.size ()),
            num (connection.sentNotificationCount), 
            num (connection.receivedNotificationCount));

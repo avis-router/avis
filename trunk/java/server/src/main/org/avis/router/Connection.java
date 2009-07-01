@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import java.net.InetAddress;
+
 import org.apache.mina.core.session.IoSession;
 
 import org.avis.config.Options;
@@ -239,9 +241,9 @@ public class Connection
     return idFor (session);
   }
   
-  public String hostname ()
+  public InetAddress remoteHost ()
   {
-    return remoteHostAddressFor (session).getCanonicalHostName ();
+    return remoteHostAddressFor (session);
   }
 
   public Collection<Subscription> subscriptions ()
