@@ -45,7 +45,8 @@ public class HTML
     int index = 0;      // current index within str
     int symStart = -1;  // start of next symbol (>= index)
     int symEnd = -1;    // end of next symbol (> symStart)
-
+    int nextArgIndex = 1;
+    
     for (;;)
     {
       symStart = text.indexOf ('$', index);
@@ -78,7 +79,12 @@ public class HTML
             ("No closing } for sym starting at " + text.substring (index));
         }
 
-        int argIndex = Integer.valueOf (text.substring (symStart, symEnd));
+        int argIndex;
+        
+        if (symEnd == symStart)
+          argIndex = nextArgIndex++;
+        else
+          argIndex = Integer.valueOf (text.substring (symStart, symEnd));
 
         try
         {

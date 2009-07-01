@@ -69,6 +69,17 @@ public class JUTestPageGen
   }
 
   @Test
+  public void defaultSym ()
+    throws Exception
+  {
+    HTML html = new HTML ();
+    
+    html.append ("${} ${1} ${}", 1, 2, 3);
+    
+    assertEquals ("1 1 2", html.asText ());
+  }
+  
+  @Test
   public void errors ()
     throws Exception
   {
