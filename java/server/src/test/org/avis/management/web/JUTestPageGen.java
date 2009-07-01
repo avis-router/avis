@@ -36,6 +36,13 @@ public class JUTestPageGen
      "    <td>hex.dsto.defence.gov.au</td><td>2,123</td><td>4</td></tr></td></tr></table>", html.asText ());
     
     //System.out.println (html.asText ());
+    
+    // check that ' -> " translation is not done for vars
+    html = new HTML ();
+    
+    html.append ("test '${1}'", "'hello'");
+    
+    assertEquals ("test \"'hello'\"", html.asText ());
   }
   
   @Test

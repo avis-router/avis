@@ -35,7 +35,7 @@ public class HTML
 
   public HTML append (String text)
   {
-    appendString (text);
+    appendTemplateString (text);
     
     return this;
   }
@@ -53,7 +53,7 @@ public class HTML
       if (symStart != -1)
       {      
         // append text between index and start of symbol
-        appendString (text.substring (index, symStart));
+        appendTemplateString (text.substring (index, symStart));
 
         // handle delimeter
         symStart++;
@@ -94,7 +94,7 @@ public class HTML
       } else
       {
         // no symbol start found, add remaining characters and exit
-        appendString (text.substring (index));
+        appendTemplateString (text.substring (index));
         
         break;
       }
@@ -124,18 +124,27 @@ public class HTML
     }
   }
 
-  private void appendString (String text)
+  /**
+   * Append a string part of a the HTML template, with translation of
+   * ' -> "
+   */
+  private void appendTemplateString (String text)
   {
     for (int i = 0; i < text.length (); i++)
     {      
       char c = text.charAt (i);
       
-      // allow ' in place of "
       if (c == '\'')
         c = '"';
 
       appendChar (c);
     }
+  }
+ 
+  private void appendString (String text)
+  {
+    for (int i = 0; i < text.length (); i++)
+      appendChar (text.charAt (i));
   }
 
   private void appendChar (char c)
