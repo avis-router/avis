@@ -30,7 +30,7 @@ public class ConnectionsPage extends Page
                  router.connections ().size ());
  
     html.append 
-      ("<table class=client-list border='1' cellspacing='0'>\n\n" +
+      ("<table class='client-list' border='1' cellspacing='0'>\n\n" +
        "  <tr><th class='numeric'>Client</th> <th>Connected</th> <th>Host</th>\n" + 
        "      <th class='numeric'>Subscriptions</th> " +
              "<th class='numeric'>Notifications<br/>(Sent / Received)</th></tr>\n");
@@ -51,7 +51,7 @@ public class ConnectionsPage extends Page
         html.append 
           ("<tr><td rowspan='2' class='numeric'>${1} (${2})</td><td>${3}</td>\n" + 
            "    <td>${4}</td><td class='numeric'>${5}</td>" +
-               "<td class='numeric'>${6} / ${7}</td></tr>",
+               "<td class='numeric'>${6} / ${7}</td></tr>\n",
            connection.serial, connection.id (),
            formatConnectionTime (connection.connectedAt), 
            connection.hostname (),
@@ -88,8 +88,8 @@ public class ConnectionsPage extends Page
     for (Subscription subscription : connection.subscriptions ())
     {
       html.append 
-        ("<tr><td class='numeric'>${1}</td><td class=\"sub-exp\">${2}</td>" +
-             "<td>(${3})</td><td class='numeric'>${4}</td></tr>",
+        ("<tr><td class='numeric'>${1}</td><td class='sub-exp'>${2}</td>" +
+             "<td>(${3})</td><td class='numeric'>${4}</td></tr>\n",
          subscription.id, subscription.expr, guessSubType (subscription.expr),
          subscription.notificationCount);
     }
