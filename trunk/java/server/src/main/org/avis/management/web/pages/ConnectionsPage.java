@@ -13,15 +13,19 @@ import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;
 
+import static java.lang.System.currentTimeMillis;
+
 import static org.avis.management.web.HTML.num;
 
 public class ConnectionsPage extends Page
 {
   private Router router;
+  private long startedAt;
 
   public ConnectionsPage (Router router)
   {
     this.router = router;
+    this.startedAt = currentTimeMillis ();
   }
 
   @Override
@@ -30,11 +34,17 @@ public class ConnectionsPage extends Page
     HTML html = new HTML ();
     
     html.appendXHTMLHeader ("Connections - Avis").appendBody ();
+   
+    html.append 
+      ("<p>Router running since: <span class='number'>${}</span></p>\n",
+       formatTime (startedAt));
     
-    html.append ("<p>Number of connections: <span class='number'>${}</span></p>\n", 
-                 router.connections ().size ());
+    html.append 
+       ("<p>Number of connections: <span class='number'>${}</span></p>\n", 
+        router.connections ().size ());
  
-    html.append ("<p>Total notifications sent/received: <span class='number'>${} / ${}</span></p>\n", 
+    html.append ("<p>Total notifications sent/received: " +
+    		"<span class='number'>${} / ${}</span></p>\n", 
                  num (router.sentNotificationCount), 
                  num (router.receivedNotificationCount));
     
@@ -77,7 +87,7 @@ public class ConnectionsPage extends Page
                "<td class='number'>${}</td>" +
                "<td class='number'>${} / ${}</td></tr>\n",
            connection.serial, connection.id (),
-           formatConnectionTime (connection.connectedAt), 
+           formatTime (connection.connectedAt), 
            connection.remoteHost ().getCanonicalHostName (),
            num (connection.subscriptionKeys.size ()),
            num (connection.notificationKeys.size ()),
@@ -168,7 +178,7 @@ public class ConnectionsPage extends Page
 
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSSZ");
   
-  private String formatConnectionTime (long time)
+  private String formatTime (long time)
   {
     return DATE_FORMAT.format (new Date (time));
   }
