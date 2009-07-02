@@ -1,7 +1,6 @@
 package org.avis.router;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -302,7 +301,7 @@ public class Router implements IoHandler, Closeable
   /**
    * Return a static collection of open connections at the time of calling.
    */
-  public Collection<Connection> connections ()
+  public List<Connection> connections ()
   {
     ArrayList<Connection> connections = 
       new ArrayList<Connection> (sessions.size ());

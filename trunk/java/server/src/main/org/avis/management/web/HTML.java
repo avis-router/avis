@@ -109,6 +109,15 @@ public class HTML
     return this;
   }
 
+  public void appendImage (String image, String description)
+  {
+    appendString ("<img src=\"");
+    appendEscapedString (image);
+    appendString ("\" title=\"");
+    appendEscapedString (description);
+    appendString ("\" />");
+  }
+    
   private void appendEscapedString (String text)
   {
     for (int i = 0; i < text.length (); i++)
