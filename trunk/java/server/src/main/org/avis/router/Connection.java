@@ -59,8 +59,8 @@ public class Connection
 
   public long connectedAt;
 
-  public int sentNotificationCount;
-  
+  public int sentNotificationCount;  
+
   public int receivedNotificationCount;
   
   /**
@@ -69,7 +69,6 @@ public class Connection
   private ReentrantReadWriteLock lock;
 
   private IoSession session;
-
 
   /**
    * Create a new connection instance.
