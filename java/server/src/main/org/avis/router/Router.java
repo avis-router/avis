@@ -114,6 +114,10 @@ public class Router implements IoHandler, Closeable
   private ListenerList<NotifyListener> notifyListeners;
   private ListenerList<CloseListener> closeListeners;
 
+  public int sentNotificationCount;
+
+  public int receivedNotificationCount;
+
   /**
    * Create an instance with default configuration.
    */
@@ -150,6 +154,9 @@ public class Router implements IoHandler, Closeable
   public Router (RouterOptions options)
     throws IOException, IllegalConfigOptionException
   {
+    this.sentNotificationCount = 0;
+    this.receivedNotificationCount = 0;
+
     this.notifyListeners = 
       new ListenerList<NotifyListener>
         (NotifyListener.class, "notifyReceived", Notify.class, Keys.class);
@@ -697,7 +704,7 @@ public class Router implements IoHandler, Closeable
     
     Connection connection = connectionFor (session);
     
-    connection.sentNotificationCount++;
+    connection.receivedNotificationCount++;
     
     deliverNotification (message, connection.notificationKeys);
   }
@@ -730,6 +737,8 @@ public class Router implements IoHandler, Closeable
    */
   private void deliverNotification (Notify message, Keys notificationKeys)
   {
+    receivedNotificationCount++;
+    
     for (IoSession session : sessions)
     {
       Connection connection = peekConnectionFor (session);
@@ -763,7 +772,8 @@ public class Router implements IoHandler, Closeable
                                             matches.insecure ()));
           
           // update stats
-          connection.receivedNotificationCount++;
+          sentNotificationCount++;
+          connection.sentNotificationCount++;
           
           incrementNotificationCount (matches.secure);
           incrementNotificationCount (matches.insecure);
