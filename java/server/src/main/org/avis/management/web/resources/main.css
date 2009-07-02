@@ -24,16 +24,10 @@ table
     font-family: consolas,monaco,courier,fixed;
 }
 
-.client-list td
+.client-list td, th
 {
     vertical-align: top;
     padding: 2px 3px 2px 3px; # t r b l
-}
-
-.client-list th
-{
-    vertical-align: center;
-    padding: 2px 3px 2px 3px;
 }
 
 .numeric
