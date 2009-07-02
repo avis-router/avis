@@ -69,7 +69,7 @@ public class WebManagementManager implements Closeable
     // resources
     // TODO need to serve from URL's to support JAR'ing
     PatternMatchResolver resourceResolver = new PatternMatchResolver();
-    resourceResolver.addPatternMapping ("/.*\\.css", "resources");
+    resourceResolver.addPatternMapping ("/.*\\.(css|png)", "resources");
         
     CompositeResolver mainResolver = new CompositeResolver ();
 

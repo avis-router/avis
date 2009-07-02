@@ -2,7 +2,8 @@ package org.avis.router;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -246,8 +247,8 @@ public class Connection
     return remoteHostAddressFor (session);
   }
 
-  public Collection<Subscription> subscriptions ()
+  public List<Subscription> subscriptions ()
   {
-    return subscriptions.values ();
+    return new ArrayList<Subscription> (subscriptions.values ());
   }
 }

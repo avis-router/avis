@@ -21,16 +21,38 @@ table
 
 .sub-exp
 {
-    font-family: consolas,monaco,courier,fixed
+    font-family: consolas,monaco,courier,fixed;
 }
 
-.client-list td, th
+.client-list td
 {
-    padding: 3px 3px;
     vertical-align: top;
+    padding: 2px 3px 2px 3px; # t r b l
+}
+
+.client-list th
+{
+    vertical-align: center;
+    padding: 2px 3px 2px 3px;
 }
 
 .numeric
 {
     text-align: right;
+}
+
+.sub-list
+{
+    padding: 2px 0px 2px 0px !important;
+    border-spacing: 0 0;
+}
+
+.even
+{
+    background-color: rgb(237,243,254);
+}
+
+.odd
+{
+    background-color: white;
 }

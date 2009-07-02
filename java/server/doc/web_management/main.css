@@ -21,13 +21,13 @@ table
 
 .sub-exp
 {
-    font-family: consolas,monaco,courier,fixed
+    font-family: consolas,monaco,courier,fixed;
 }
 
 .client-list td, th
 {
     padding: 3px 3px;
-    vertical-align: top;
+#    vertical-align: top;
 }
 
 .numeric
