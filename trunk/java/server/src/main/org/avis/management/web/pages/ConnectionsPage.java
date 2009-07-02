@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.avis.management.web.HTML;
@@ -176,10 +175,9 @@ public class ConnectionsPage extends Page
 //      return "Unknown";
 //  }
 
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSSZ");
-  
-  private String formatTime (long time)
+  private static String formatTime (long time)
   {
-    return DATE_FORMAT.format (new Date (time));
+    return new SimpleDateFormat 
+      ("yyyy-MM-dd HH:mm:ss.SSSZ").format (new Date (time));
   }
 }
