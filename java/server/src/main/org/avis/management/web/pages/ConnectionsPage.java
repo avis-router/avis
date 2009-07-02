@@ -48,15 +48,17 @@ public class ConnectionsPage extends Page
                  num (router.receivedNotificationCount));
     
     html.append 
-      ("<table class='client-list' border='1' cellspacing='0'>\n\n" +
-       "  <tr><th class='numeric'>Client</th>" +
-             "<th>Connected</th>" +
-             "<th>Host</th>\n" + 
-             "<th class='numeric'>Keys (Subscription&nbsp;/&nbsp;Notification)</th>\n" +
-             "<th class='numeric'>Subscriptions</th>\n" +
-             "<th class='numeric'>Notifications (Sent&nbsp;/&nbsp;Received)</th></tr>\n");
-    
+      ("<table class='client-list' border='1' cellspacing='0'>\n");
+
     html.indent ();
+
+    html.append 
+      ("<tr><th class='numeric'>Client</th>" +
+       "<th>Connected</th>" +
+       "<th>Host</th>\n" + 
+       "<th class='numeric'>Keys (Subscription&nbsp;/&nbsp;Notification)</th>\n" +
+       "<th class='numeric'>Subscriptions</th>\n" +
+       "<th class='numeric'>Notifications (Sent&nbsp;/&nbsp;Received)</th></tr>\n");
     
     List<Connection> connections = router.connections ();
     
