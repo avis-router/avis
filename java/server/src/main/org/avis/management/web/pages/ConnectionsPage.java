@@ -31,10 +31,10 @@ public class ConnectionsPage extends Page
     
     html.appendXHTMLHeader ("Connections - Avis").appendBody ();
     
-    html.append ("<p>Number of connections: ${}</p>\n", 
+    html.append ("<p>Number of connections: <span class='number'>${}</span></p>\n", 
                  router.connections ().size ());
  
-    html.append ("<p>Total notifications sent/received: ${} / ${}</p>\n", 
+    html.append ("<p>Total notifications sent/received: <span class='number'>${} / ${}</span></p>\n", 
                  num (router.sentNotificationCount), 
                  num (router.receivedNotificationCount));
     
@@ -70,12 +70,12 @@ public class ConnectionsPage extends Page
           continue;
         
         html.append 
-          ("<tr><td rowspan='2' class='numeric'>${} (${})</td>" +
+          ("<tr><td rowspan='2' class='number'>${} (${})</td>" +
                "<td>${}</td>" +
                "<td>${}</td>" +
-               "<td class='numeric'>${} / ${}</td>" +
-               "<td class='numeric'>${}</td>" +
-               "<td class='numeric'>${} / ${}</td></tr>\n",
+               "<td class='number'>${} / ${}</td>" +
+               "<td class='number'>${}</td>" +
+               "<td class='number'>${} / ${}</td></tr>\n",
            connection.serial, connection.id (),
            formatConnectionTime (connection.connectedAt), 
            connection.remoteHost ().getCanonicalHostName (),
@@ -128,7 +128,7 @@ public class ConnectionsPage extends Page
     {
       html.append (row % 2 == 0 ? "<tr class='even'>" : "<tr class='odd'>");
 
-      html.append ("<td class='numeric'>${}</td><td class='sub-exp'>", 
+      html.append ("<td class='number'>${}</td><td class='sub-exp'>", 
                    subscription.id);
 
       if (!subscription.acceptInsecure)
@@ -140,7 +140,7 @@ public class ConnectionsPage extends Page
         html.append ("(${}) ", num (subscription.keys.size ()));
       }
 
-      html.append ("${}</td><td class='numeric'>${}</td></tr>\n",
+      html.append ("${}</td><td class='number'>${}</td></tr>\n",
                    subscription.expr,
                    num (subscription.notificationCount));
       

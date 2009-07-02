@@ -41,6 +41,12 @@ table
     text-align: right;
 }
 
+.number
+{
+    text-align: right;
+    font-family: consolas,monaco,courier,fixed;
+}
+
 .sub-list
 {
     padding: 2px 0px 2px 0px !important;
