@@ -1,7 +1,5 @@
 package org.avis.management.web;
 
-import java.util.Set;
-
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -31,7 +29,6 @@ public class WebManagementManager implements Closeable
 {
   private BasicServiceContainer container;
 
-  @SuppressWarnings ("unchecked")
   public WebManagementManager (Router router, Options config) 
     throws IOException
   {
@@ -78,11 +75,12 @@ public class WebManagementManager implements Closeable
     
     handler.setServiceResolver (mainResolver);
 
-    Set<URL> listenUrls = (Set<URL>)config.get ("Management.Listen");
+    URL listenUrl = (URL)config.get ("Management.Listen");
     
     AvisMinaTransport transport = 
       new AvisMinaTransport 
-        (addressesFor (listenUrls, DEFAULT_PORT), router.ioManager ());
+        (addressesFor (listenUrl, DEFAULT_PORT), router.ioManager (), 
+         listenUrl.getProtocol ().equals ("https"));
 
     container.addTransport (transport);
 

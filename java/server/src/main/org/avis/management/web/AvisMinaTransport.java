@@ -4,6 +4,7 @@ import java.util.Set;
 
 import java.io.IOException;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.asyncweb.server.ServiceContainer;
@@ -14,6 +15,9 @@ import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.transport.socket.SocketAcceptor;
 
 import org.avis.router.IoManager;
+import org.avis.util.Filter;
+
+import static org.avis.util.Filter.MATCH_NONE;
 
 /**
  * Custom Asyncweb transport to allow web server to reuse router's IO
@@ -27,14 +31,21 @@ public class AvisMinaTransport implements Transport
   private ServiceContainer container;
   private Set<InetSocketAddress> addresses;
 
+  @SuppressWarnings ("unchecked")
   public AvisMinaTransport (Set<InetSocketAddress> addresses,
-                            IoManager ioManager)
+                            IoManager ioManager, boolean useTLS)
   {
     this.addresses = addresses;
     this.acceptor = ioManager.createAcceptor ();
     
     DefaultIoFilterChainBuilder chain = acceptor.getFilterChain ();
 
+    if (useTLS)
+    {
+      ioManager.addSecureFilters 
+        (chain, (Filter<InetAddress>)MATCH_NONE, false);
+    }
+    
     chain.addFirst ("threadPool", ioManager.createThreadPoolFilter ());
     
     // TODO make this configurable?
@@ -44,11 +55,11 @@ public class AvisMinaTransport implements Transport
   public void start ()
     throws TransportException
   {
-    DefaultHttpIoHandler ioHandler = new DefaultHttpIoHandler ();
+    DefaultHttpIoHandler httpIoHandler = new DefaultHttpIoHandler ();
 
-    ioHandler.setContainer (container);
+    httpIoHandler.setContainer (container);
     
-    acceptor.setHandler (ioHandler);
+    acceptor.setHandler (httpIoHandler);
     
     boolean success = false;
     
