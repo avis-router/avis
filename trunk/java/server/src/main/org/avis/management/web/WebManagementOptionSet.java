@@ -22,9 +22,11 @@ public class WebManagementOptionSet extends OptionSet
   
   protected WebManagementOptionSet ()
   {
-    add ("WebManagement.Activated", false);
-    add ("WebManagement.Listen",
+    add ("Management.Activated", false);
+    add ("Management.Listen",
          new OptionTypeSet (URL.class), 
          singleton (url ("http://0.0.0.0:" + DEFAULT_PORT)));
+    add ("Management.Admin-Name", "admin");
+    add ("Management.Admin-Password", "");
   }
 }

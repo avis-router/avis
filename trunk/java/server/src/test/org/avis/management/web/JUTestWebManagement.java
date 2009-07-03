@@ -46,7 +46,7 @@ public class JUTestWebManagement
     
     URL webURL = new URL ("http://127.0.0.1:" + (PORT1 + 1));
     
-    options.set ("WebManagement.Listen", webURL.toString ());
+    options.set ("Management.Listen", webURL.toString ());
     
     Router router = new Router (PORT1);
     
