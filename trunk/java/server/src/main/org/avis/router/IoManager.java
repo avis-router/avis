@@ -247,6 +247,24 @@ public class IoManager
     for (ElvinURI uri: uris)
       uriToAcceptors.remove (uri);
   }
+  
+  /**
+   * Add the filters used for TLS-secured links.
+   * 
+   * @param filters The set of filters to add to.
+   * @param authRequired The hosts for which authentication is
+   *                required.
+   * @param clientMode True if the TLS filter should be in client mode.
+   */
+  public void addSecureFilters (DefaultIoFilterChainBuilder filters, 
+                                Filter<InetAddress> authRequired, 
+                                boolean clientMode) 
+  {
+    filters.addFirst
+      ("security", 
+       new SecurityFilter (keystore, keystorePassphrase, 
+                           authRequired, clientMode));
+  }
 
   /**
    * Create the filters used for TLS-secured links.
@@ -266,14 +284,11 @@ public class IoManager
     DefaultIoFilterChainBuilder secureFilters = 
       new DefaultIoFilterChainBuilder (commonFilters);
     
-    secureFilters.addFirst
-      ("security", 
-       new SecurityFilter (keystore, keystorePassphrase, 
-                           authRequired, clientMode));
+    addSecureFilters (secureFilters, authRequired, clientMode);
     
     return secureFilters;
   }
-  
+    
   /**
    * Create the filters used for standard, non secured links.
    * 

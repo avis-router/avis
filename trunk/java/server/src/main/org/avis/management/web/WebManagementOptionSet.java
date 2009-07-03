@@ -1,11 +1,7 @@
 package org.avis.management.web;
 
-import java.net.URL;
-
 import org.avis.config.OptionSet;
-import org.avis.config.OptionTypeSet;
-
-import static java.util.Collections.singleton;
+import org.avis.config.OptionTypeHttpUrl;
 
 import static org.avis.io.Net.url;
 
@@ -24,8 +20,7 @@ public class WebManagementOptionSet extends OptionSet
   {
     add ("Management.Activated", false);
     add ("Management.Listen",
-         new OptionTypeSet (URL.class), 
-         singleton (url ("http://0.0.0.0:" + DEFAULT_PORT)));
+         new OptionTypeHttpUrl (), url ("http://0.0.0.0:" + DEFAULT_PORT));
     add ("Management.Admin-Name", "admin");
     add ("Management.Admin-Password", "");
   }
