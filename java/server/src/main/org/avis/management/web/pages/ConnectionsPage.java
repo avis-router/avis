@@ -1,5 +1,6 @@
 package org.avis.management.web.pages;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,6 +19,24 @@ import static org.avis.management.web.HTML.num;
 
 public class ConnectionsPage extends Page
 {
+  private static final Comparator<Connection> CONNECTION_COMPARATOR = 
+    new Comparator<Connection> ()
+    {
+      public int compare (Connection c1, Connection c2)
+      {
+        return c1.serial - c2.serial;
+      }
+    };
+
+  private static final Comparator<Subscription> SUBSCRIPTION_COMPARATOR = 
+    new Comparator<Subscription> ()
+    {
+      public int compare (Subscription s1, Subscription s2)
+      {
+        return s1.id > s2.id ? 1 : 0;
+      }
+    };
+    
   private Router router;
   private long startedAt;
 
@@ -60,17 +79,8 @@ public class ConnectionsPage extends Page
        "<th class='numeric'>Subscriptions</th>\n" +
        "<th class='numeric'>Notifications (Sent&nbsp;/&nbsp;Received)</th></tr>\n");
     
-    List<Connection> connections = router.connections ();
-    
-    Collections.sort (connections, new Comparator<Connection> ()
-    {
-      public int compare (Connection c1, Connection c2)
-      {
-        return c1.serial - c2.serial;
-      }
-    });
-    
-    for (Connection connection : connections)
+    for (Connection connection : 
+         sort (router.connections (), CONNECTION_COMPARATOR))
     {
       // TODO add relative connection time
       connection.lockRead ();
@@ -115,7 +125,7 @@ public class ConnectionsPage extends Page
     html.appendClosingTags ();
     
     return html.asText ();
-  }
+  }  
 
   private static void outputSubscriptions (HTML html, Connection connection)
   {
@@ -123,19 +133,10 @@ public class ConnectionsPage extends Page
 
     html.indent ();
    
-    List<Subscription> subscriptions = connection.subscriptions ();
-    
-    Collections.sort (subscriptions, new Comparator<Subscription> ()
-    {
-      public int compare (Subscription s1, Subscription s2)
-      {
-        return s1.id > s2.id ? 1 : 0;
-      }
-    });
-    
     int row = 0;
     
-    for (Subscription subscription : subscriptions)
+    for (Subscription subscription : 
+         sort (connection.subscriptions (), SUBSCRIPTION_COMPARATOR))
     {
       html.append (row % 2 == 0 ? "<tr class='even'>" : "<tr class='odd'>");
 
@@ -181,5 +182,13 @@ public class ConnectionsPage extends Page
   {
     return new SimpleDateFormat 
       ("yyyy-MM-dd HH:mm:ss.SSSZ").format (new Date (time));
+  }
+  
+  private static <T> Collection<T> sort (List<T> items, 
+                                         Comparator<? super T> comparator)
+  {
+    Collections.sort (items, comparator);
+    
+    return items;
   }
 }
