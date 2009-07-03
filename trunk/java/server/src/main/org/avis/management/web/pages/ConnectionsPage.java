@@ -82,7 +82,7 @@ public class ConnectionsPage extends Page
         
         html.append 
           ("<tr><td rowspan='2' class='number'>${} (${})</td>" +
-               "<td>${}</td>" +
+               "<td class='date'>${}</td>" +
                "<td>${}</td>" +
                "<td class='number'>${} / ${}</td>" +
                "<td class='number'>${}</td>" +
