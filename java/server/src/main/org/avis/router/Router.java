@@ -320,16 +320,7 @@ public class Router implements IoHandler, Closeable
       if (connection == null)
         continue;
       
-      connection.lockRead ();
-      
-      try
-      {
-        if (connection.isOpen ())
-          connections.add (connection);
-      } finally
-      {
-        connection.unlockRead ();
-      }
+      connections.add (connection);
     }
     
     return connections;
