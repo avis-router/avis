@@ -74,6 +74,34 @@ public final class Net
     
     return addresses;
   }
+
+  /**
+   * Generate a set of socket addresses for a URL. This method allows
+   * interface names to be used rather than host names by prefixing
+   * the host name with "!".
+   * 
+   * @param url The URL to turn into addresses.
+   * @param defaultPort The default port to use if none specified.
+   * 
+   * @return The corresponding set of InetSocketAddress's for the
+   *         URL's.
+   * 
+   * @throws IOException
+   * @throws SocketException
+   * @throws UnknownHostException
+   */
+  public static Set<InetSocketAddress> addressesFor (URL url, 
+                                                     int defaultPort) 
+    throws IOException, SocketException, UnknownHostException
+  {
+    Set<InetSocketAddress> addresses = new HashSet<InetSocketAddress> ();
+    
+    addAddressFor 
+      (addresses, url.getHost (), 
+       url.getPort () == -1 ? defaultPort : url.getPort ());
+    
+    return addresses;
+  }
   
   /**
    * Generate a set of socket addresses for a given set of URL's. This
