@@ -16,6 +16,7 @@ import org.avis.management.web.WebManagementManager;
 import org.avis.management.web.WebManagementOptionSet;
 import org.avis.util.IllegalCommandLineOption;
 import org.avis.util.IllegalConfigOptionException;
+import org.avis.util.Text;
 
 import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.io.Net.addressesFor;
@@ -32,6 +33,7 @@ import static org.avis.util.CommandLine.stringArg;
 import static org.avis.util.Streams.fileStream;
 import static org.avis.util.Streams.propertiesFrom;
 import static org.avis.util.Streams.resourceStream;
+import static org.avis.util.Text.shortException;
 
 /**
  * Invokes the Avis router from the command line.
@@ -95,7 +97,7 @@ public class Main
         exit (1);
       } else
       {
-        alarm ("Error starting router: " + ex.getMessage (), Main.class);
+        alarm ("Error starting router: " + shortException (ex), Main.class);
         
         if (shouldLog (DIAGNOSTIC))
           ex.printStackTrace ();
@@ -159,7 +161,7 @@ public class Main
     if (config.getBoolean ("Federation.Activated"))
       new FederationManager (router, config);
     
-    if (config.getBoolean ("WebManagement.Activated"))
+    if (config.getBoolean ("Management.Activated"))
       new WebManagementManager (router, config);
 
     return router;
