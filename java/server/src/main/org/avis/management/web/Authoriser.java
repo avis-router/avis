@@ -40,7 +40,7 @@ public class Authoriser implements ServiceResolver, HttpService
     
     if (authorisation != null && authorisation.startsWith ("Basic "))
     {
-      String auth = decode (authorisation.substring (6));
+      String auth = base64Decode (authorisation.substring (6));
       int sep = auth.indexOf (':');
       
       String authName = "";
@@ -98,12 +98,12 @@ public class Authoriser implements ServiceResolver, HttpService
     // zip
   }
   
-  private static String decode (String authorisation)
+  private static String base64Decode (String base64Chars)
   {
     try
     {
       return new String 
-        (new Base64 ().decode (authorisation.getBytes ("US-ASCII")), "US-ASCII");
+        (new Base64 ().decode (base64Chars.getBytes ("US-ASCII")), "US-ASCII");
     } catch (UnsupportedEncodingException ex)
     {
       return "";
