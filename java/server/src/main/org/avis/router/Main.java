@@ -16,7 +16,6 @@ import org.avis.management.web.WebManagementManager;
 import org.avis.management.web.WebManagementOptionSet;
 import org.avis.util.IllegalCommandLineOption;
 import org.avis.util.IllegalConfigOptionException;
-import org.avis.util.Text;
 
 import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.io.Net.addressesFor;
