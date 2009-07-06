@@ -37,8 +37,6 @@ import static org.avis.logging.Log.diagnostic;
 public class UrlHttpService implements HttpService
 {
   private static final int MAX_CACHE_AGE = 60 * 60 * 24 * 1000;
-  
-  private URL baseUrl;
 
   private static final ThreadLocal<SimpleDateFormat> HTTP_DATE_FORMAT = 
     new ThreadLocal<SimpleDateFormat> ()
@@ -53,6 +51,8 @@ public class UrlHttpService implements HttpService
       return format;
     }
   };
+  
+  private URL baseUrl;
   
   public UrlHttpService (URL baseUrl)
   {
@@ -106,9 +106,7 @@ public class UrlHttpService implements HttpService
       
       try
       {
-        IoBuffer urlContent = loadUrl (connection);
-        
-        response.setContent (urlContent);
+        response.setContent (contentsOf (connection));
         response.setStatus (OK);
       } catch (FileNotFoundException ex)
       {
@@ -163,7 +161,7 @@ public class UrlHttpService implements HttpService
     return type;
   }
 
-  private static IoBuffer loadUrl (URLConnection connection) 
+  private static IoBuffer contentsOf (URLConnection connection) 
     throws IOException
   {
     InputStream in = connection.getInputStream ();
