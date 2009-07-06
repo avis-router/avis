@@ -3,9 +3,9 @@ package org.avis.management.web;
 import java.io.Closeable;
 import java.io.IOException;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.asyncweb.fileservice.FileHttpService;
 import org.apache.asyncweb.server.BasicServiceContainer;
 import org.apache.asyncweb.server.ContainerLifecycleException;
 import org.apache.asyncweb.server.HttpServiceHandler;
@@ -45,14 +45,14 @@ public class WebManagementManager implements Closeable
     
     Authoriser authoriser = 
       new Authoriser (config.getString ("Management.Admin-Name"),
-                                config.getString ("Management.Admin-Password"));
+                      config.getString ("Management.Admin-Password"));
     
     handler.addHttpService (Authoriser.SERVICE_NAME, authoriser);
     handler.addHttpService ("connections", new ConnectionsPage (router));
     handler.addHttpService 
       ("resources", 
-       new FileHttpService 
-         ("/", getClass ().getResource ("resources").getPath ()));
+       new UrlHttpService 
+         (parentUrl (getClass ().getResource ("resources/main.css"))));
     
     container.addServiceFilter (handler);
 
@@ -64,7 +64,7 @@ public class WebManagementManager implements Closeable
     // resources
     // TODO need to serve from URL's to support JAR'ing
     PatternMatchResolver resourceResolver = new PatternMatchResolver();
-    resourceResolver.addPatternMapping ("/.*\\.(css|png)", "resources");
+    resourceResolver.addPatternMapping ("/.*\\.(css|png|ico)", "resources");
         
     CompositeResolver mainResolver = new CompositeResolver ();
 
@@ -98,6 +98,24 @@ public class WebManagementManager implements Closeable
     }
   }
   
+  private URL parentUrl (URL baseUrl)
+  {
+    String path = baseUrl.getPath ();
+    
+    int slash = path.lastIndexOf ('/');
+    
+    if (slash != -1)
+      path = path.substring (0, slash + 1);
+    
+    try
+    {
+      return new URL (baseUrl.getProtocol (), baseUrl.getHost (), baseUrl.getPort (), path);
+    } catch (MalformedURLException ex)
+    {
+      throw new IllegalArgumentException ("Invalid URL " + path);
+    }
+  }
+
   public void close () 
     throws IOException
   {

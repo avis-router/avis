@@ -71,8 +71,8 @@
     <copy file="avis-server.properties" tofile="classes/main/avis.properties"
           overwrite="yes" filtering="yes" />
     
-    <copy todir="classes/main" overwrite="yes">
-      <fileset dir="src/main" includes="org/avis/management/resources/*" />
+    <copy todir="classes/main">
+      <fileset dir="src/main" includes="org/avis/management/web/resources/*" />
     </copy>
       
   </target>
@@ -156,6 +156,7 @@
       <include name="avis.properties" />
       <include name="org/avis/management/web/resources/*.png" />
       <include name="org/avis/management/web/resources/*.css" />
+      <include name="org/apache/asyncweb/server/errorReporting/strings.properties" />
     </jarx>
     
     <mkdir dir="lib" />
