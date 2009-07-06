@@ -84,7 +84,7 @@ public class ConnectionsPage extends Page
        "<th>Host</th>\n" + 
        "<th class='numeric'>Keys (Subscription&nbsp;/&nbsp;Notification)</th>\n" +
        "<th class='numeric'>Subscriptions</th>\n" +
-       "<th class='numeric'>Notifications (Sent&nbsp;/&nbsp;Received)</th></tr>\n");
+       "<th class='numeric'>Notifications (Received&nbsp;/&nbsp;Sent)</th></tr>\n");
     
     for (Connection connection : 
          sort (router.connections (), CONNECTION_COMPARATOR))
@@ -110,8 +110,8 @@ public class ConnectionsPage extends Page
            num (connection.subscriptionKeys.size ()),
            num (connection.notificationKeys.size ()),
            num (connection.subscriptions.size ()),
-           num (connection.sentNotificationCount), 
-           num (connection.receivedNotificationCount));
+           num (connection.receivedNotificationCount), 
+           num (connection.sentNotificationCount));
       
         html.append ("<tr><td colspan='5' class='sub-list'>\n");
   
