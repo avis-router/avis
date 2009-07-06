@@ -20,6 +20,8 @@ import org.apache.asyncweb.server.HttpService;
 import org.apache.asyncweb.server.HttpServiceContext;
 import org.apache.mina.core.buffer.IoBuffer;
 
+import static java.lang.Math.min;
+
 import static java.lang.System.currentTimeMillis;
 import static java.util.TimeZone.getTimeZone;
 
@@ -170,7 +172,7 @@ public class UrlHttpService implements HttpService
     {
       IoBuffer buffer = IoBuffer.allocate (connection.getContentLength ());
       
-      byte [] bytes = new byte [8192];
+      byte [] bytes = new byte [min (connection.getContentLength (), 8192)];
       int bytesRead;
       
       while ((bytesRead = in.read (bytes)) != -1)
