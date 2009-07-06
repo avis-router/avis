@@ -39,22 +39,29 @@ public class UrlHttpService implements HttpService
   private static final int MAX_CACHE_AGE = 60 * 60 * 24 * 1000;
   
   private URL baseUrl;
-  private SimpleDateFormat httpDateFormatter;
 
+  private static final ThreadLocal<SimpleDateFormat> HTTP_DATE_FORMAT = 
+    new ThreadLocal<SimpleDateFormat> ()
+  {
+    protected SimpleDateFormat initialValue ()
+    {
+      SimpleDateFormat format = 
+        new SimpleDateFormat ("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
+      
+      format.setTimeZone (getTimeZone ("GMT"));
+      
+      return format;
+    }
+  };
+  
   public UrlHttpService (URL baseUrl)
   {
     this.baseUrl = baseUrl;
-    // TODO this should be thread-local
-    this.httpDateFormatter = 
-      new SimpleDateFormat ("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
-    httpDateFormatter.setTimeZone (getTimeZone ("GMT"));
   }
 
   public void handleRequest (HttpServiceContext context)
     throws Exception
   {
-    System.out.println ("URL = " + context.getRequest ().getRequestUri ());
-    
     MutableHttpResponse response = new DefaultHttpResponse ();
     
     String path = 
@@ -65,9 +72,6 @@ public class UrlHttpService implements HttpService
       new URL (baseUrl.getProtocol (), baseUrl.getHost (), baseUrl.getPort (), 
                baseUrl.getPath () + path);
     
-    System.out.println ("base URL = " + baseUrl);
-    System.out.println ("resolved URL = " + url);
-
     // bounce any requests that resolve outside of base URL 
     if (!url.getPath ().startsWith (baseUrl.getPath ()))
     {
@@ -90,13 +94,9 @@ public class UrlHttpService implements HttpService
     {
       if (lastModified != 0)
       {
+        response.setHeader ("Last-Modified", formatDate (lastModified));
         response.setHeader 
-          ("Last-Modified", 
-           httpDateFormatter.format (new Date (lastModified)));
-        response.setHeader 
-          ("Expires", 
-           httpDateFormatter.format 
-             (new Date (currentTimeMillis () + MAX_CACHE_AGE)));
+          ("Expires", formatDate (currentTimeMillis () + MAX_CACHE_AGE));
       }
   
       String contentType = guessContentType (path);
@@ -104,8 +104,6 @@ public class UrlHttpService implements HttpService
       if (contentType != null)
         response.setHeader ("Content-Type", contentType);
       
-      System.out.println ("content type = " + contentType);
-        
       try
       {
         IoBuffer urlContent = loadUrl (connection);
@@ -121,7 +119,7 @@ public class UrlHttpService implements HttpService
     context.commitResponse (response);
   }
 
-  private Date getIfModifiedDate (HttpRequest request)
+  private static Date getIfModifiedDate (HttpRequest request)
   {
     String ifModifiedSince = request.getHeader ("If-Modified-Since");
     
@@ -129,14 +127,25 @@ public class UrlHttpService implements HttpService
     {
       try
       {
-        return httpDateFormatter.parse (ifModifiedSince);
+        return parseDate (ifModifiedSince);
       } catch (ParseException ex)
       {
-        diagnostic ("Invalid HTTP date from client", this, ex);
+        diagnostic ("Invalid HTTP date from client", UrlHttpService.class, ex);
       }      
     }
     
     return null;
+  }
+  
+  private static String formatDate (long date)
+  {
+    return HTTP_DATE_FORMAT.get ().format (new Date (date));
+  }
+
+  private static Date parseDate (String date) 
+    throws ParseException
+  {
+    return HTTP_DATE_FORMAT.get ().parse (date);
   }
 
   private static String guessContentType (String path)
@@ -154,12 +163,10 @@ public class UrlHttpService implements HttpService
     return type;
   }
 
-  private IoBuffer loadUrl (URLConnection connection) 
+  private static IoBuffer loadUrl (URLConnection connection) 
     throws IOException
   {
     InputStream in = connection.getInputStream ();
-    
-    System.out.println ("last modified = " + connection.getLastModified ());
     
     try
     {
