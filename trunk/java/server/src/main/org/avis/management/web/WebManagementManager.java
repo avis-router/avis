@@ -41,8 +41,10 @@ public class WebManagementManager implements Closeable, CloseListener
   {
     this.config = config;
     
-    if (config.getString ("Management.Admin-Name").length () == 0 ||
-        config.getString ("Management.Admin-Password").length () == 0)
+    String adminName = config.getString ("Management.Admin-Name");
+    String adminPassword = config.getString ("Management.Admin-Password");
+    
+    if (adminName.length () == 0 || adminPassword.length () == 0)
     {
       throw new IllegalArgumentException 
         ("Management.Admin-Name and Management.Admin-Password options must " +
@@ -52,9 +54,7 @@ public class WebManagementManager implements Closeable, CloseListener
     this.container = new BasicServiceContainer ();
     HttpServiceHandler handler = new HttpServiceHandler ();
     
-    Authoriser authoriser = 
-      new Authoriser (config.getString ("Management.Admin-Name"),
-                      config.getString ("Management.Admin-Password"));
+    Authoriser authoriser = new Authoriser (adminName, adminPassword);
     
     handler.addHttpService (Authoriser.SERVICE_NAME, authoriser);
     handler.addHttpService ("connections", new ConnectionsPage (router));
@@ -65,13 +65,13 @@ public class WebManagementManager implements Closeable, CloseListener
     
     container.addServiceFilter (handler);
 
-    // pages
+    // resolve pages
     ExactMatchURIServiceResolver pageResolver = 
       new ExactMatchURIServiceResolver ();
     pageResolver.addURIMapping ("/", "connections");
     
-    // resources
-    PatternMatchResolver resourceResolver = new PatternMatchResolver();
+    // resolve resources
+    PatternMatchResolver resourceResolver = new PatternMatchResolver ();
     resourceResolver.addPatternMapping ("/.*\\.(css|png|ico)", "resources");
         
     CompositeResolver mainResolver = new CompositeResolver ();
@@ -108,29 +108,10 @@ public class WebManagementManager implements Closeable, CloseListener
     }
   }
   
-  private URL parentUrl (URL baseUrl)
-  {
-    String path = baseUrl.getPath ();
-    
-    int slash = path.lastIndexOf ('/');
-    
-    if (slash != -1)
-      path = path.substring (0, slash + 1);
-    
-    try
-    {
-      return new URL (baseUrl.getProtocol (), baseUrl.getHost (), baseUrl.getPort (), path);
-    } catch (MalformedURLException ex)
-    {
-      throw new IllegalArgumentException ("Invalid URL " + path);
-    }
-  }
-  
   public void routerClosing (Router router)
   {
     try
     {
-      System.out.println ("web management closing");
       close ();
     } catch (IOException ex)
     {
@@ -144,6 +125,11 @@ public class WebManagementManager implements Closeable, CloseListener
     container.stop ();
   }
   
+  public Collection<URL> listenURLs ()
+  {
+    return singleton ((URL)config.get ("Management.Listen"));
+  }
+
   /**
    * Find the web management manager for a router.
    * 
@@ -163,8 +149,23 @@ public class WebManagementManager implements Closeable, CloseListener
     throw new IllegalArgumentException ("No web management manager");
   }
 
-  public Collection<URL> listenURLs ()
+
+  private static URL parentUrl (URL baseUrl)
   {
-    return singleton ((URL)config.get ("Management.Listen"));
+    String path = baseUrl.getPath ();
+    
+    int slash = path.lastIndexOf ('/');
+    
+    if (slash != -1)
+      path = path.substring (0, slash + 1);
+    
+    try
+    {
+      return new URL (baseUrl.getProtocol (), baseUrl.getHost (), 
+                      baseUrl.getPort (), path);
+    } catch (MalformedURLException ex)
+    {
+      throw new IllegalArgumentException ("Invalid URL " + path);
+    }
   }
 }
