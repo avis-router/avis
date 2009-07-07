@@ -73,7 +73,7 @@ The C client library package contains programming examples in
 `src/examples`, including the traditional "Hello World":
 
   * [hello_world.c](client-library/c/examples/hello_world.c.html). A
-    single applicatinon creates two Elvin client connections, one
+    single application creates two Elvin client connections, one
     sending the traditional "Hello World" message as a greeting, the
     other one listening for greetings and printing them to the
     console.
