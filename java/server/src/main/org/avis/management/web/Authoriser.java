@@ -41,11 +41,12 @@ public class Authoriser implements ServiceResolver, HttpService
     if (authorisation != null && authorisation.startsWith ("Basic "))
     {
       String auth = base64Decode (authorisation.substring (6));
-      int sep = auth.indexOf (':');
       
       String authName = "";
       String authPassword = "";
       
+      int sep = auth.indexOf (':');
+
       if (sep != -1)
       {
         authName = auth.substring (0, sep);
