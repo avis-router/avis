@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.net.InetSocketAddress;
+import java.net.URL;
 
 import org.avis.common.ElvinURI;
 import org.avis.federation.EwafURI;
@@ -27,6 +28,7 @@ import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
+import static org.avis.management.web.WebManagementManager.webManagementManagerFor;
 import static org.avis.util.CommandLine.intArg;
 import static org.avis.util.CommandLine.stringArg;
 import static org.avis.util.Streams.fileStream;
@@ -125,6 +127,19 @@ public class Main
         for (InetSocketAddress address : addressesFor (uri))
         {
           info ("Federator listening on " + address + " (" + uri + ")", 
+                Main.class);
+        }
+      }
+    }
+    
+    if (router.options ().getBoolean ("Management.Activated"))
+    {
+      for (URL url : webManagementManagerFor (router).listenURLs ())
+      {
+        for (InetSocketAddress address : 
+             addressesFor (url, WebManagementOptionSet.DEFAULT_PORT))
+        {
+          info ("Web management listening on " + address + " (" + url + ")", 
                 Main.class);
         }
       }
