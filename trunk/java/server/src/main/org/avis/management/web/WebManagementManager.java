@@ -1,5 +1,7 @@
 package org.avis.management.web;
 
+import java.util.Collection;
+
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -18,6 +20,8 @@ import org.avis.management.web.pages.ConnectionsPage;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 
+import static java.util.Collections.singleton;
+
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.warn;
 import static org.avis.management.web.WebManagementOptionSet.DEFAULT_PORT;
@@ -29,11 +33,14 @@ import static org.avis.management.web.WebManagementOptionSet.DEFAULT_PORT;
  */
 public class WebManagementManager implements Closeable, CloseListener
 {
+  private Options config;
   private BasicServiceContainer container;
 
   public WebManagementManager (Router router, Options config) 
     throws IOException
   {
+    this.config = config;
+    
     if (config.getString ("Management.Admin-Name").length () == 0 ||
         config.getString ("Management.Admin-Password").length () == 0)
     {
@@ -135,5 +142,29 @@ public class WebManagementManager implements Closeable, CloseListener
     throws IOException
   {
     container.stop ();
+  }
+  
+  /**
+   * Find the web management manager for a router.
+   * 
+   * @param router The router.
+   * @return The last manager created for the router.
+   * 
+   * @throws IllegalArgumentException if no manager found.
+   */
+  public static WebManagementManager webManagementManagerFor (Router router)
+  {
+    for (Object listener : router.closeListeners ())
+    {
+      if (listener instanceof WebManagementManager)
+        return (WebManagementManager)listener;
+    }
+    
+    throw new IllegalArgumentException ("No web management manager");
+  }
+
+  public Collection<URL> listenURLs ()
+  {
+    return singleton ((URL)config.get ("Management.Listen"));
   }
 }
