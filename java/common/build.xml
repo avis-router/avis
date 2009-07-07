@@ -34,7 +34,7 @@
   </target>
 
   <target name="jar-common" depends="compile"
-          description="Build avis-common.jar" unless="avis-common-uptodate">
+          description="Build avis-common.jar">
     
     <mkdir dir="build" />
     
