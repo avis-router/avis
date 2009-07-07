@@ -25,6 +25,8 @@ public final class Log
   public static final int ALARM = 4;
   public static final int INTERNAL_ERROR = 5;
 
+  public static final int MAX_LEVEL = 5;
+
   private static final String [] TYPE_NAMES =
     new String [] {"Trace", "Diagnostic", "Info",
                    "Warning", "Alarm", "Internal Error"};
@@ -167,13 +169,13 @@ public final class Log
     log (INTERNAL_ERROR, message, source, ex);
   }
   
-  private static void log (int type, String message, Object source)
+  public static void log (int type, String message, Object source)
   {
     log (type, message, source, null);
   }
   
-  private static void log (int type, String message, Object source,
-                           Throwable exception)
+  public static void log (int type, String message, Object source,
+                          Throwable exception)
   {
     if (shouldLog (type))
     {

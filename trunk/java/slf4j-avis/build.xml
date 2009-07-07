@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="avis.slf4j" default="jar">
+  
+  <description>Avis slf4j logging</description>
+  
+  <property name="avis-root" value="${basedir}/../.." />
+  <property name="common" value="${basedir}/../common" />
+	
+  <path id="classpath">
+    <fileset dir="lib">
+      <include name="*.jar" />
+    </fileset>
+    <pathelement path="classes/main" />
+    <pathelement path="${common}/classes/main" />
+  </path>
+  
+  <target name="compile" description="Compile source">
+    <ant antfile="${common}/build-common.xml" 
+         target="compile-main" inheritrefs="true" />
+  </target>
+
+  <target name="clean" description="Clean built artifacts">
+    <ant antfile="${common}/build-common.xml" target="clean" />
+  </target>
+
+  <target name="jar" depends="compile" description="Build avis-slf4j.jar">
+    
+    <mkdir dir="build" />
+
+    <taskdef name="jarx" classname="dsto.dfc.tools.JarXTask"
+                 classpath="${common}/lib/jarx.jar" />    
+
+    <jarx archive="build/slf4j-avis.jar" classpathref="classpath">
+       
+      <include name="org/slf4j/impl/*" />
+      <exclude name="org/avis/*" />
+    </jarx>
+
+  </target>
+
+</project>
