@@ -220,6 +220,7 @@ public class IoManager
           acceptor.setFilterChainBuilder (filters);
         }
 
+        acceptor.setCloseOnDeactivation (false);
         acceptor.setHandler (handler);
         acceptor.bind (address);
 

@@ -235,11 +235,12 @@ public class Router implements IoHandler, Closeable
       closing = true; 
     }
     
-    // TODO suspend reading and new connections *before* shutting down
-    
     closeListeners.fire (this);
-    closeListeners = null;
     
+    // stop accepting new connections    
+    ioManager.unbind (routerOptions.listenURIs ());
+
+    // shut down existing connections
     Disconn disconnMessage = 
       new Disconn (REASON_SHUTDOWN, "Router is shutting down");
     
