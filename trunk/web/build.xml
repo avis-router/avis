@@ -30,9 +30,7 @@
   <property name="support" value="${avis-root}/support" />
 
   <property name="sourceforge-web"
-            value="sourceforge:/home/groups/a/av/avis/htdocs" />
-<!--   <property name="sourceforge-web" -->
-<!--             value="phillipsm@web.sourceforge.net:/home/groups/a/av/avis/htdocs" /> -->
+            value="phillipsm,avis@web.sourceforge.net:htdocs" />
 
   <!-- Markdown 1.0.1: needed to build web page -->
   <property name="markdown" 
