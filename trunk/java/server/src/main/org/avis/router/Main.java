@@ -193,11 +193,12 @@ public class Main
       {
         if (arg.equals ("-v"))
         {
+          enableLogging (TRACE, false);
           enableLogging (DIAGNOSTIC, true);
         } else if (arg.equals ("-vv"))
         {
-          enableLogging (DIAGNOSTIC, true);
           enableLogging (TRACE, true);
+          enableLogging (DIAGNOSTIC, true);
         } else if (arg.equals ("-p"))
         {
           config.set ("Port", intArg (args, ++i));
