@@ -16,8 +16,13 @@ public class AvisLogger extends MarkerIgnoringBase
   
   static
   {
+    // map everything to trace: MINA is very chatty
     for (int i = 0; i < LEVEL_MAP.length; i++)
       LEVEL_MAP [i] = Log.TRACE;
+    
+    // allow errors and warnings through by default
+    LEVEL_MAP [Log.ALARM] = Log.ALARM;
+    LEVEL_MAP [Log.WARNING] = Log.WARNING;
   }
   
   AvisLogger (String name)
@@ -27,7 +32,7 @@ public class AvisLogger extends MarkerIgnoringBase
   
   public boolean isTraceEnabled ()
   {
-    return Log.shouldLog (Log.TRACE);
+    return Log.shouldLog (LEVEL_MAP [Log.TRACE]);
   }
 
   public void trace (String msg)
@@ -57,7 +62,7 @@ public class AvisLogger extends MarkerIgnoringBase
 
   public boolean isDebugEnabled ()
   {
-    return Log.shouldLog (Log.DIAGNOSTIC);
+    return Log.shouldLog (LEVEL_MAP [Log.DIAGNOSTIC]);
   }
 
   public void debug (String msg)
@@ -87,7 +92,7 @@ public class AvisLogger extends MarkerIgnoringBase
   
   public boolean isInfoEnabled ()
   {
-    return Log.shouldLog (Log.INFO);
+    return Log.shouldLog (LEVEL_MAP [Log.INFO]);
   }
 
   public void info (String msg)
@@ -117,7 +122,7 @@ public class AvisLogger extends MarkerIgnoringBase
 
   public boolean isWarnEnabled ()
   {
-    return Log.shouldLog (Log.WARNING);
+    return Log.shouldLog (LEVEL_MAP [Log.WARNING]);
   }
 
   public void warn (String msg)
@@ -147,7 +152,7 @@ public class AvisLogger extends MarkerIgnoringBase
 
   public boolean isErrorEnabled ()
   {
-    return Log.shouldLog (Log.ALARM);
+    return Log.shouldLog (LEVEL_MAP [Log.ALARM]);
   }
 
   public void error (String msg)
@@ -177,19 +182,28 @@ public class AvisLogger extends MarkerIgnoringBase
 
   private static void formatAndLog (int level, String format, Object arg1)
   {
-    log (level, format (format, arg1));
+    int actualLevel = LEVEL_MAP [level];
+    
+    if (Log.shouldLog (actualLevel))
+      log (level, format (format, arg1));
   }
 
   private static void formatAndLog (int level, String format,
                                     Object arg1, Object arg2)
   {
-    log (level, format (format, arg1, arg2));
+    int actualLevel = LEVEL_MAP [level];
+    
+    if (Log.shouldLog (actualLevel))
+      log (level, format (format, arg1, arg2));
   }
 
   private static void formatAndLog (int level, String format,
                                     Object [] argArray)
   {
-    log (level, arrayFormat (format, argArray));
+    int actualLevel = LEVEL_MAP [level];
+    
+    if (Log.shouldLog (actualLevel))
+      log (level, arrayFormat (format, argArray));
   }
 
   private static void log (int level, String msg)
