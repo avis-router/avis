@@ -15,9 +15,11 @@ import org.apache.asyncweb.server.resolver.PatternMatchResolver;
 
 import org.avis.config.Options;
 import org.avis.management.web.pages.ConnectionsPage;
+import org.avis.router.CloseListener;
 import org.avis.router.Router;
 
 import static org.avis.io.Net.addressesFor;
+import static org.avis.logging.Log.warn;
 import static org.avis.management.web.WebManagementOptionSet.DEFAULT_PORT;
 
 /**
@@ -25,7 +27,7 @@ import static org.avis.management.web.WebManagementOptionSet.DEFAULT_PORT;
  * 
  * @author Matthew Phillips
  */
-public class WebManagementManager implements Closeable
+public class WebManagementManager implements Closeable, CloseListener
 {
   private BasicServiceContainer container;
 
@@ -62,7 +64,6 @@ public class WebManagementManager implements Closeable
     pageResolver.addURIMapping ("/", "connections");
     
     // resources
-    // TODO need to serve from URL's to support JAR'ing
     PatternMatchResolver resourceResolver = new PatternMatchResolver();
     resourceResolver.addPatternMapping ("/.*\\.(css|png|ico)", "resources");
         
@@ -84,6 +85,8 @@ public class WebManagementManager implements Closeable
 
     container.addTransport (transport);
 
+    router.addCloseListener (this);
+    
     try
     {
       container.start ();
@@ -113,6 +116,18 @@ public class WebManagementManager implements Closeable
     } catch (MalformedURLException ex)
     {
       throw new IllegalArgumentException ("Invalid URL " + path);
+    }
+  }
+  
+  public void routerClosing (Router router)
+  {
+    try
+    {
+      System.out.println ("web management closing");
+      close ();
+    } catch (IOException ex)
+    {
+      warn ("Error while shutting down web management", this, ex);
     }
   }
 
