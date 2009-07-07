@@ -60,10 +60,11 @@ public class JUTestPageGen
     // check special character conversion
     
     html = new HTML ();
-    html.append ("<input name='${1}'>", "<\"quoted'>, this is an Ž character");
+    html.append ("<input name='${1}'>", 
+                 "<\"quoted'>, this is an Ž character\r");
     
-    assertEquals ("<input name=\"&lt;&quot;quoted'&gt;, this is an &#233; " +
-    		  "character\">", html.asText ());
+    assertEquals ("<input name=\"&lt;&quot;quoted'&gt;, this is an Ž " +
+    		  "character&#13;\">", html.asText ());
     
     // System.out.println (html.asText ());
   }
