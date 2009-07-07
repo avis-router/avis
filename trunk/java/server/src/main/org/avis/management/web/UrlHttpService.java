@@ -38,7 +38,7 @@ import static org.avis.logging.Log.diagnostic;
  */
 public class UrlHttpService implements HttpService
 {
-  private static final int MAX_CACHE_AGE = 60 * 60 * 24 * 1000;
+  private static final int MAX_CACHE_AGE = 6 * 60 * 60 * 1000;
 
   private static final ThreadLocal<SimpleDateFormat> HTTP_DATE_FORMAT = 
     new ThreadLocal<SimpleDateFormat> ()
@@ -87,9 +87,8 @@ public class UrlHttpService implements HttpService
 
     long lastModified = connection.getLastModified ();
     
-    Date ifModifedSince = getIfModifiedDate (context.getRequest ());
-
-    if (ifModifedSince != null && lastModified <= ifModifedSince.getTime ())
+    if (lastModified != 0 && 
+        lastModified <= ifModifiedSince (context.getRequest ()))
     {
       response.setStatus (NOT_MODIFIED);
     } else
@@ -119,7 +118,7 @@ public class UrlHttpService implements HttpService
     context.commitResponse (response);
   }
 
-  private static Date getIfModifiedDate (HttpRequest request)
+  private static long ifModifiedSince (HttpRequest request)
   {
     String ifModifiedSince = request.getHeader ("If-Modified-Since");
     
@@ -127,14 +126,14 @@ public class UrlHttpService implements HttpService
     {
       try
       {
-        return parseDate (ifModifiedSince);
+        return parseDate (ifModifiedSince).getTime ();
       } catch (ParseException ex)
       {
         diagnostic ("Invalid HTTP date from client", UrlHttpService.class, ex);
       }      
     }
     
-    return null;
+    return 0;
   }
   
   private static String formatDate (long date)
