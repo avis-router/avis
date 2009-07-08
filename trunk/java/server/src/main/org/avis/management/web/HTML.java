@@ -1,5 +1,9 @@
 package org.avis.management.web;
 
+import java.util.Date;
+
+import java.text.SimpleDateFormat;
+
 /**
  * Basic HTML page generation template system.
  *  
@@ -215,6 +219,12 @@ public class HTML
     appendString ("\n</body>\n</html>\n");
     
     return this;
+  }
+
+  public static String formatTime (long time)
+  {
+    return new SimpleDateFormat 
+      ("yyyy-MM-dd HH:mm:ss.SSSZ").format (new Date (time));
   }
 
   /**
