@@ -186,17 +186,21 @@ public class HTML
     return asText ();
   }
 
-  public void indent ()
+  public HTML indent ()
   {
     indent++;
+    
+    return this;
   }
 
-  public void outdent ()
+  public HTML outdent ()
   {
     if (indent > 0)
       indent--;
     else
       throw new IllegalStateException ("Cannot outdent");
+    
+    return this;
   }
 
   public HTML appendBody ()
