@@ -1,12 +1,7 @@
 package org.avis.management.web.pages;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
-import java.text.SimpleDateFormat;
 
 import org.avis.management.web.HTML;
 import org.avis.router.Connection;
@@ -15,7 +10,9 @@ import org.avis.router.Subscription;
 
 import static java.lang.System.currentTimeMillis;
 
+import static org.avis.management.web.HTML.formatTime;
 import static org.avis.management.web.HTML.num;
+import static org.avis.util.Collections.sort;
 
 public class ClientsView implements HtmlView
 {
@@ -160,33 +157,5 @@ public class ClientsView implements HtmlView
     html.outdent ();
     
     html.append ("</table>\n");
-  }
-
-//  private static String guessSubType (String subExpr)
-//  {
-//    if (subExpr.contains ("Presence-Protocol"))
-//      return "Presence";
-//    else if (subExpr.contains ("org.tickertape.message"))
-//      return "Tickertape";
-//    else if (subExpr.contains ("Livespace-Protocol"))
-//      return "Livespaces";
-//    else if (subExpr.contains ("NEWSGROUPS"))
-//      return "Ticker News";
-//    else
-//      return "Unknown";
-//  }
-
-  private static String formatTime (long time)
-  {
-    return new SimpleDateFormat 
-      ("yyyy-MM-dd HH:mm:ss.SSSZ").format (new Date (time));
-  }
-  
-  private static <T> Collection<T> sort (List<T> items, 
-                                         Comparator<? super T> comparator)
-  {
-    Collections.sort (items, comparator);
-    
-    return items;
-  }
+  }  
 }

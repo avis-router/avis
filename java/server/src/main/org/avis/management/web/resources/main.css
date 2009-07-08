@@ -37,7 +37,7 @@ table
     font-family: consolas,monaco,courier,fixed;
 }
 
-.client-list td, th
+table td, th
 {
     vertical-align: top;
     padding: 2px 3px 2px 3px; # t r b l
