@@ -2,6 +2,7 @@ package org.avis.federation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -87,6 +88,24 @@ public class FederationManager implements CloseListener
   public Collection<Connector> connectors ()
   {
     return connectors;
+  }
+  
+  public List<Link> links ()
+  {
+    ArrayList<Link> links = new ArrayList<Link> ();
+    
+    if (acceptor != null)
+      links.addAll (acceptor.links ());
+    
+    for (Connector connector : connectors)
+    {
+      Link link = connector.link ();
+      
+      if (link != null)
+        links.add (link);
+    }
+    
+    return links;
   }
 
   public Set<EwafURI> listenURIs ()

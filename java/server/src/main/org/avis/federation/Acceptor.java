@@ -1,5 +1,6 @@
 package org.avis.federation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -232,7 +233,7 @@ public class Acceptor implements IoHandler, Closeable
               fedClass.name + "\"", this);
         
         createLink
-          (session, message.serverDomain, hostName, fedClass);
+          (session, message.serverDomain, remoteHost, fedClass);
       }
     }
   }
@@ -255,7 +256,7 @@ public class Acceptor implements IoHandler, Closeable
 
   private synchronized void createLink (IoSession session,
                                         String remoteServerDomain,
-                                        String remoteHost, 
+                                        InetAddress remoteHost, 
                                         FederationClass federationClass)
   {
     Link link =
@@ -265,6 +266,11 @@ public class Acceptor implements IoHandler, Closeable
     session.setAttribute ("federationLink", link);
     
     links.add (link);
+  }
+  
+  public synchronized Collection<Link> links ()
+  {
+    return new ArrayList<Link> (links);
   }
 
   private synchronized void removeLink (Link link)

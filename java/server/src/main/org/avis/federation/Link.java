@@ -1,6 +1,9 @@
 package org.avis.federation;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import java.net.InetAddress;
 
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
@@ -21,6 +24,8 @@ import org.avis.router.NotifyListener;
 import org.avis.router.Router;
 import org.avis.security.Keys;
 import org.avis.subscription.ast.Node;
+
+import static java.lang.System.currentTimeMillis;
 
 import static java.lang.System.arraycopy;
 import static java.util.Arrays.asList;
@@ -67,31 +72,39 @@ public class Link implements NotifyListener
 
   private static final String [] EMPTY_ROUTING = new String [0];
   
-  private Router router;
-  private IoSession session;
-  private FederationClass federationClass;
-  private String serverDomain;
-  private String remoteServerDomain;
-  private String remoteHostName;
-  private Node remotePullFilter;
+  private static AtomicInteger serialCounter = new AtomicInteger ();
+  
+  public Router router;
+  public IoSession session;
+  public FederationClass federationClass;
+  public String serverDomain;
+  public String remoteServerDomain;
+  public InetAddress remoteHostAddress;
+  public Node remotePullFilter;
+  
   private boolean subscribed;
   private volatile boolean closed;
+  
+  public int serial;
+  public long createdAt;
 
   public Link (Router router,
                IoSession session, 
                FederationClass federationClass, 
                String serverDomain, 
                String remoteServerDomain,
-               String remoteHostName)
+               InetAddress remoteHostAddress)
   {
     this.session = session;
     this.router = router;
     this.federationClass = federationClass;
     this.serverDomain = serverDomain;
     this.remoteServerDomain = remoteServerDomain;
-    this.remoteHostName = remoteHostName;
+    this.remoteHostAddress = remoteHostAddress;
     this.remotePullFilter = CONST_FALSE;
     this.subscribed = false;
+    this.createdAt = currentTimeMillis ();
+    this.serial = serialCounter.incrementAndGet ();
     
     subscribe ();
     
@@ -258,7 +271,7 @@ public class Link implements NotifyListener
     if (request.getClass () == FedSubReplace.class)
     {
       warn ("Federation subscription request to remote federator at " + 
-            remoteHostName + " timed out: retrying", this);
+            remoteHostAddress + " timed out: retrying", this);
       
       subscribe ();
     } else
@@ -271,7 +284,7 @@ public class Link implements NotifyListener
 
   private void handleLivenessFailure ()
   {
-    warn ("Remote federator at " + remoteHostName + 
+    warn ("Remote federator at " + remoteHostAddress + 
           " has stopped responding", this);
     
     close (REASON_FEDERATOR_NOT_RESPONDING);
@@ -292,7 +305,7 @@ public class Link implements NotifyListener
 
   private void handleNack (Nack nack)
   {
-    warn ("Disconnecting from remote federator at " + remoteHostName + " " + 
+    warn ("Disconnecting from remote federator at " + remoteHostAddress + " " + 
           "after it rejected a " + nack.request.name (), this);
     
     close (REASON_REQUEST_REJECTED);
@@ -340,7 +353,7 @@ public class Link implements NotifyListener
   
   private void handleProtocolViolation (String message)
   {
-    warn ("Disconnecting remote federator at " + remoteHostName + " " + 
+    warn ("Disconnecting remote federator at " + remoteHostAddress + " " + 
           "due to protocol violation: " + message, this);
     
     close (REASON_PROTOCOL_VIOLATION, message);
