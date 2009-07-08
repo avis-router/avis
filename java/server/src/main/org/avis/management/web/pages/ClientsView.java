@@ -17,7 +17,7 @@ import static java.lang.System.currentTimeMillis;
 
 import static org.avis.management.web.HTML.num;
 
-public class ConnectionsPage extends Page
+public class ClientsView implements HtmlView
 {
   private static final Comparator<Connection> CONNECTION_COMPARATOR = 
     new Comparator<Connection> ()
@@ -47,19 +47,14 @@ public class ConnectionsPage extends Page
   private Router router;
   private long startedAt;
 
-  public ConnectionsPage (Router router)
+  public ClientsView (Router router)
   {
     this.router = router;
     this.startedAt = currentTimeMillis ();
   }
 
-  @Override
-  protected String content ()
+  public void render (HTML html)
   {
-    HTML html = new HTML ();
-    
-    html.appendXHTMLHeader ("Connections - Avis").appendBody ();
-   
     html.append 
       ("<p>Router running since: <span class='number'>${}</span></p>\n",
        formatTime (startedAt));
@@ -128,10 +123,6 @@ public class ConnectionsPage extends Page
 
     html.outdent ();
     html.append ("</table>");
-    
-    html.appendClosingTags ();
-    
-    return html.asText ();
   }  
 
   private static void outputSubscriptions (HTML html, Connection connection)
