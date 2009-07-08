@@ -261,11 +261,17 @@ public class Router implements IoHandler, Closeable
             send (session, disconnMessage).addListener (CLOSE);
 
             connection.close ();
+          } else
+          {
+            session.close (false);
           }
         } finally
         {
           connection.unlockWrite ();
         }
+      } else
+      {
+        session.close (false);
       }
     }
     
