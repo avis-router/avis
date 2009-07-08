@@ -16,7 +16,8 @@ import org.apache.asyncweb.server.resolver.ExactMatchURIServiceResolver;
 import org.apache.asyncweb.server.resolver.PatternMatchResolver;
 
 import org.avis.config.Options;
-import org.avis.management.web.pages.ConnectionsPage;
+import org.avis.management.web.pages.ClientsView;
+import org.avis.management.web.pages.StandardPage;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 
@@ -57,7 +58,8 @@ public class WebManagementManager implements Closeable, CloseListener
     Authoriser authoriser = new Authoriser (adminName, adminPassword);
     
     handler.addHttpService (Authoriser.SERVICE_NAME, authoriser);
-    handler.addHttpService ("connections", new ConnectionsPage (router));
+    handler.addHttpService 
+      ("clients", new StandardPage ("Clients", new ClientsView (router)));
     handler.addHttpService 
       ("resources", 
        new UrlHttpService 
@@ -68,7 +70,8 @@ public class WebManagementManager implements Closeable, CloseListener
     // resolve pages
     ExactMatchURIServiceResolver pageResolver = 
       new ExactMatchURIServiceResolver ();
-    pageResolver.addURIMapping ("/", "connections");
+    pageResolver.addURIMapping ("/", "clients");
+    pageResolver.addURIMapping ("/clients", "clients");
     
     // resolve resources
     PatternMatchResolver resourceResolver = new PatternMatchResolver ();
