@@ -1,5 +1,7 @@
 package org.avis.util;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,5 +121,21 @@ public final class Collections
       
       return union;
     }
+  }
+  
+  /**
+   * Sort a collection in place and return it.
+   * 
+   * @param items The items to sort.
+   * @param comparator the comparator to sort by.
+   * 
+   * @return items.
+   */
+  public static <T> Collection<T> sort (List<T> items, 
+                                        Comparator<? super T> comparator)
+  {
+    java.util.Collections.sort (items, comparator);
+    
+    return items;
   }
 }
