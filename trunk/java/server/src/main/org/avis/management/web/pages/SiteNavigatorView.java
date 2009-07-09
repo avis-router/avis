@@ -1,6 +1,7 @@
 package org.avis.management.web.pages;
 
 import org.avis.management.web.HTML;
+import org.avis.management.web.HtmlView;
 
 public class SiteNavigatorView implements HtmlView
 {

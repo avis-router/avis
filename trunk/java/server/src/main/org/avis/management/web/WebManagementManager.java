@@ -18,7 +18,6 @@ import org.apache.asyncweb.server.resolver.PatternMatchResolver;
 import org.avis.config.Options;
 import org.avis.management.web.pages.ClientsView;
 import org.avis.management.web.pages.FederationView;
-import org.avis.management.web.pages.StandardPage;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 

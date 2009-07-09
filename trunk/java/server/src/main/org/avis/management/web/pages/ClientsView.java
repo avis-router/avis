@@ -3,6 +3,7 @@ package org.avis.management.web.pages;
 import java.util.Comparator;
 
 import org.avis.management.web.HTML;
+import org.avis.management.web.HtmlView;
 import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;

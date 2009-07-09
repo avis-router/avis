@@ -1,6 +1,6 @@
-package org.avis.management.web.pages;
+package org.avis.management.web;
 
-import org.avis.management.web.HTML;
+import org.avis.management.web.pages.SiteNavigatorView;
 
 public class StandardPage extends Page
 {
