@@ -53,7 +53,7 @@ public class FederationView implements HtmlView
     
     html.append ("<h2>Connections</h2>\n");
     
-    html.append ("<table class='fed-list' border='1' cellspacing='0'>\n");
+    html.append ("<table class='client-list' border='1' cellspacing='0'>\n");
     html.indent ();
     
     html.append ("<tr><th class='numeric title'>Federator</th>" +
