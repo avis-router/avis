@@ -2,7 +2,6 @@ package org.avis.management.web.pages;
 
 import java.util.Comparator;
 
-
 import org.avis.management.web.HTML;
 import org.avis.router.Connection;
 import org.avis.router.Router;
@@ -11,6 +10,7 @@ import org.avis.router.Subscription;
 import static java.lang.System.currentTimeMillis;
 
 import static org.avis.management.web.HTML.formatTime;
+import static org.avis.management.web.HTML.host;
 import static org.avis.management.web.HTML.num;
 import static org.avis.util.Collections.sort;
 
@@ -72,11 +72,11 @@ public class ClientsView implements HtmlView
 
     html.append 
       ("<tr><th class='numeric'>Client</th>" +
-       "<th>Connected</th>" +
        "<th>Host</th>\n" + 
-       "<th class='numeric'>Keys (Subscription&nbsp;/&nbsp;Notification)</th>\n" +
+       "<th>Connected</th>" +
+       "<th class='numeric'>Keys (Sub&nbsp;/&nbsp;Notify)</th>\n" +
        "<th class='numeric'>Subscriptions</th>\n" +
-       "<th class='numeric'>Notifications (Received&nbsp;/&nbsp;Sent)</th></tr>\n");
+       "<th class='numeric'>Notifications (In&nbsp;/&nbsp;Out)</th></tr>\n");
     
     for (Connection connection : 
          sort (router.connections (), CONNECTION_COMPARATOR))
@@ -91,14 +91,14 @@ public class ClientsView implements HtmlView
         
         html.append 
           ("<tr><td rowspan='2' class='number'>${} (${})</td>" +
-               "<td class='date'>${}</td>" +
                "<td>${}</td>" +
+               "<td class='date'>${}</td>" +
                "<td class='number'>${} / ${}</td>" +
                "<td class='number'>${}</td>" +
                "<td class='number'>${} / ${}</td></tr>\n",
            connection.serial, connection.id (),
+           host (connection.remoteHost ()),
            formatTime (connection.connectedAt), 
-           connection.remoteHost ().getCanonicalHostName (),
            num (connection.subscriptionKeys.size ()),
            num (connection.notificationKeys.size ()),
            num (connection.subscriptions.size ()),
@@ -120,7 +120,7 @@ public class ClientsView implements HtmlView
 
     html.outdent ();
     html.append ("</table>");
-  }  
+  }
 
   private static void outputSubscriptions (HTML html, Connection connection)
   {
