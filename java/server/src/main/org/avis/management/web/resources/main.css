@@ -35,7 +35,7 @@ table
 .client-list
 {
     text-align: left;
-    border: 1;
+    border: 1px solid LightGrey;
 }
 
 .sub-exp
@@ -76,6 +76,11 @@ table td, th
     border-spacing: 0 0;
 }
 
+.prop-list
+{
+    border: none;
+}
+
 .prop-list tr > td:first-child
 {
     font-weight: bold;
@@ -86,8 +91,7 @@ table td, th
     overflow-y: auto;
     height: 10em;
     width: 40em;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid LightGrey;
 }
 
 .odd
