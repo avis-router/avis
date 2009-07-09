@@ -23,6 +23,7 @@ import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.future.IoFuture;
 import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.service.SimpleIoProcessorPool;
 import org.apache.mina.core.session.IoEvent;
 import org.apache.mina.core.session.IoSession;
@@ -386,6 +387,35 @@ public class IoManager
     }
     
     return sessions;
+  }
+  
+  /**
+   * Find the URI associated with a given IoService (an acceptor or
+   * connector). This will only work with services created by @
+   * #bind(Set, IoHandler, DefaultIoFilterChainBuilder, Filter)} or
+   * {@link #connect(ElvinURI, IoHandler, DefaultIoFilterChainBuilder, Filter, long)}
+   * .
+   * @param service The service to lookup.
+   * 
+   * @return The URI for the service, or null.
+   */
+  public ElvinURI elvinUriFor (IoService service)
+  {
+    for (Map.Entry<ElvinURI, NioSocketConnector> e : 
+         uriToConnectors.entrySet ())
+    {
+      if (e.getValue () == service)
+        return e.getKey ();
+    }
+     
+    for (Map.Entry<ElvinURI, Collection<NioSocketAcceptor>> e : 
+         uriToAcceptors.entrySet ())
+    {
+      if (e.getValue ().contains (service))
+        return e.getKey ();
+    }
+    
+    return null;
   }
 
   public NioSocketConnector createConnector ()
