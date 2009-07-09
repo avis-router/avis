@@ -59,8 +59,9 @@ import static org.avis.util.Text.shortException;
  */
 public class Connector implements IoHandler, Closeable
 {
-  private EwafURI uri;
-  private Options options;
+  public EwafURI uri;
+  public Options options;
+  
   private Router router;
   private IoSession session;
   private String serverDomain;

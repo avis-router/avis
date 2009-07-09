@@ -2,6 +2,7 @@ package org.avis.federation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,6 +115,16 @@ public class FederationManager implements CloseListener
       return emptySet ();
     else
       return acceptor.listenURIs ();
+  }
+  
+  public Set<EwafURI> connectURIs ()
+  {
+    HashSet<EwafURI> uris = new HashSet<EwafURI> ();
+    
+    for (Connector connector : connectors)
+      uris.add (connector.uri);
+    
+    return uris;
   }
 
   public void routerClosing (Router theRouter)

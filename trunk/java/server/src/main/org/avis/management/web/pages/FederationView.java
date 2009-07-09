@@ -46,6 +46,23 @@ public class FederationView implements HtmlView
       
       return;
     }
+
+    html.append ("<table>\n").indent ();
+    html.append ("<tr><th>Listening On</th><th>Connecting On</th></tr>\n");
+    
+    html.append ("<tr><td>\n");
+
+    for (ElvinURI uri : manager.listenURIs ())
+      html.append ("${}<br/>\n", uri);
+    
+    html.append ("</td><td>\n");
+
+    for (ElvinURI uri : manager.connectURIs ())
+      html.append ("${}<br/>\n", uri);
+    
+    html.append ("</td></tr>\n");
+    
+    html.outdent ().append ("</table>");
     
     html.append ("<h2>Configuration</h2>\n");
     
