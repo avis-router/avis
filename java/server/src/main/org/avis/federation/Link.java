@@ -81,6 +81,8 @@ public class Link implements NotifyListener
   public String remoteServerDomain;
   public InetAddress remoteHostAddress;
   public Node remotePullFilter;
+  public int sentNotificationCount;
+  public int receivedNotificationCount;
   
   private boolean subscribed;
   private volatile boolean closed;
@@ -105,6 +107,8 @@ public class Link implements NotifyListener
     this.subscribed = false;
     this.createdAt = currentTimeMillis ();
     this.serial = serialCounter.incrementAndGet ();
+    this.receivedNotificationCount = 0;
+    this.sentNotificationCount = 0;
     
     subscribe ();
     
@@ -197,6 +201,8 @@ public class Link implements NotifyListener
     
     if (shouldPush (routing, attributes))
     {
+      sentNotificationCount++;
+      
       send (new FedNotify (message, attributes, 
                            keys.addedTo (message.keys), 
                            serverDomainAddedTo (routing)));
@@ -334,6 +340,8 @@ public class Link implements NotifyListener
       if (shouldPull (message))
       {
         router.injectNotify (message);
+        
+        receivedNotificationCount++;
       } else
       {
         if (shouldLog (TRACE))

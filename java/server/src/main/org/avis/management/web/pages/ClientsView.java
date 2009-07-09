@@ -10,8 +10,8 @@ import org.avis.router.Subscription;
 import static java.lang.System.currentTimeMillis;
 
 import static org.avis.management.web.HTML.formatTime;
-import static org.avis.management.web.HTML.host;
-import static org.avis.management.web.HTML.num;
+import static org.avis.management.web.HTML.formatHost;
+import static org.avis.management.web.HTML.formatNum;
 import static org.avis.util.Collections.sort;
 
 public class ClientsView implements HtmlView
@@ -62,8 +62,8 @@ public class ClientsView implements HtmlView
  
     html.append ("<p>Total notifications sent/received: " +
     		"<span class='number'>${} / ${}</span></p>\n", 
-                 num (router.sentNotificationCount), 
-                 num (router.receivedNotificationCount));
+                 formatNum (router.sentNotificationCount), 
+                 formatNum (router.receivedNotificationCount));
     
     html.append 
       ("<table class='client-list' border='1' cellspacing='0'>\n");
@@ -97,13 +97,13 @@ public class ClientsView implements HtmlView
                "<td class='number'>${}</td>" +
                "<td class='number'>${} / ${}</td></tr>\n",
            connection.serial, connection.id (),
-           host (connection.remoteHost ()),
+           formatHost (connection.remoteHost ()),
            formatTime (connection.connectedAt), 
-           num (connection.subscriptionKeys.size ()),
-           num (connection.notificationKeys.size ()),
-           num (connection.subscriptions.size ()),
-           num (connection.receivedNotificationCount), 
-           num (connection.sentNotificationCount));
+           formatNum (connection.subscriptionKeys.size ()),
+           formatNum (connection.notificationKeys.size ()),
+           formatNum (connection.subscriptions.size ()),
+           formatNum (connection.receivedNotificationCount), 
+           formatNum (connection.sentNotificationCount));
       
         html.append ("<tr><td colspan='5' class='sub-list'>\n");
   
@@ -144,12 +144,12 @@ public class ClientsView implements HtmlView
       if (!subscription.keys.isEmpty ())
       {
         html.appendImage ("key.png", "Security keys attached");
-        html.append ("(${}) ", num (subscription.keys.size ()));
+        html.append ("(${}) ", formatNum (subscription.keys.size ()));
       }
 
       html.append ("${}</td><td class='number'>${}</td></tr>\n",
                    subscription.expr,
-                   num (subscription.notificationCount));
+                   formatNum (subscription.notificationCount));
       
       row++;
     }
