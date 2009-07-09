@@ -10,7 +10,8 @@ import org.avis.router.Router;
 import static org.avis.federation.FederationClass.unparse;
 import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.management.web.HTML.formatTime;
-import static org.avis.management.web.HTML.host;
+import static org.avis.management.web.HTML.formatHost;
+import static org.avis.management.web.HTML.formatNum;
 import static org.avis.util.Collections.sort;
 
 public class FederationView implements HtmlView
@@ -58,11 +59,12 @@ public class FederationView implements HtmlView
       		       "<td>${}</td>" +
       		       "<td>${}</td>" +
       		       "<td class='date'>${}</td>" +
-      		       "<td class='number'>${}</td></tr>\n",
-      		   link.serial, host (link.remoteHostAddress), 
+      		       "<td class='number'>${} / ${}</td></tr>\n",
+      		   link.serial, formatHost (link.remoteHostAddress), 
       		   link.federationClass.name,
       		   formatTime (link.createdAt),
-      		   "?? / ??");
+      		   formatNum (link.receivedNotificationCount), 
+      		   formatNum (link.sentNotificationCount));
       
       html.append ("<tr><td colspan='4'>\n");
       

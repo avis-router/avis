@@ -232,12 +232,12 @@ public class HTML
   /**
    * Format a number e.g. "1331" -> "1,331"
    */
-  public static String num (int value)
+  public static String formatNum (int value)
   {
     return String.format ("%,d", value);
   }
   
-  public static String host (InetAddress address)
+  public static String formatHost (InetAddress address)
   {
     return address.getCanonicalHostName () + " / " + address.getHostAddress (); 
   }
