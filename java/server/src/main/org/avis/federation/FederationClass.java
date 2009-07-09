@@ -3,6 +3,7 @@ package org.avis.federation;
 import java.util.Map;
 
 import org.avis.subscription.ast.Node;
+import org.avis.subscription.ast.Nodes;
 import org.avis.subscription.parser.ParseException;
 import org.avis.subscription.parser.SubscriptionParserBase;
 
@@ -62,6 +63,8 @@ public class FederationClass
   /**
    * Parse a subscription expression, allowing TRUE and FALSE to stand for
    * CONST_TRUE and CONST_FALSE.
+   * 
+   * @see #unparse(Node)
    */
   public static Node parse (String subExpr)
     throws ParseException
@@ -78,5 +81,21 @@ public class FederationClass
     {
       return SubscriptionParserBase.parse (subExpr); 
     }
+  }
+  
+  /**
+   * Unparse a subscription expression, allowing TRUE and FALSE to
+   * stand for CONST_TRUE and CONST_FALSE.
+   * 
+   * @see #parse(String)
+   */
+  public static String unparse (Node node)
+  {
+    if (node == CONST_TRUE)
+      return "TRUE";
+    else if (node == CONST_FALSE)
+      return "FALSE";
+    else
+      return Nodes.unparse (node); // TODO
   }
 }
