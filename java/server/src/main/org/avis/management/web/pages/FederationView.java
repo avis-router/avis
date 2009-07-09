@@ -47,6 +47,12 @@ public class FederationView implements HtmlView
       return;
     }
     
+    html.append ("<h2>Configuration</h2>\n");
+    
+    new OptionsView (router.options (), "Federation\\..*").render (html);
+    
+    html.append ("<h2>Connections</h2>\n");
+    
     html.append ("<table class='fed-list' border='1' cellspacing='0'>\n");
     html.indent ();
     
@@ -72,6 +78,7 @@ public class FederationView implements HtmlView
       
       html.append ("<tr><td colspan='4'>\n");
       
+      // detail
       html.append ("<table class='prop-list' border='0' cellspacing='0'>\n");
       html.indent ();
       
@@ -94,7 +101,7 @@ public class FederationView implements HtmlView
 
   private static void addPropListRow (HTML html, String title, Object value)
   {
-    html.append ("<tr><td class='title'>${}</td><td>${}</td></tr>\n", 
+    html.append ("<tr><td>${}</td><td>${}</td></tr>\n", 
                  title, value);
   }
 

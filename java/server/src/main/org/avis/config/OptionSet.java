@@ -3,14 +3,15 @@ package org.avis.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.avis.util.IllegalConfigOptionException;
 import org.avis.util.Pair;
 
-import static org.avis.config.OptionTypeParam.splitOptionParam;
-
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
+
+import static org.avis.config.OptionTypeParam.splitOptionParam;
 
 /**
  * Defines the set of valid options for an {@link Options} instance.
@@ -53,6 +54,24 @@ public class OptionSet
   public void inheritFrom (OptionSet optionSet)
   {
     inherited.add (optionSet);
+  }
+  
+  public SortedMap<String, OptionType> all ()
+  {
+    TreeMap<String, OptionType> all = 
+      new TreeMap<String, OptionType> (CASE_INSENSITIVE_ORDER);
+    
+    addAll (all);
+    
+    return all;
+  }
+
+  private void addAll (TreeMap<String, OptionType> all)
+  {
+    all.putAll (optionTypes);
+    
+    for (OptionSet set : inherited)
+      set.addAll (all);
   }
   
   /**
