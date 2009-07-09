@@ -7,8 +7,10 @@ import org.avis.federation.Link;
 import org.avis.management.web.HTML;
 import org.avis.router.Router;
 
+import static org.avis.federation.FederationClass.unparse;
 import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.management.web.HTML.formatTime;
+import static org.avis.management.web.HTML.host;
 import static org.avis.util.Collections.sort;
 
 public class FederationView implements HtmlView
@@ -48,22 +50,41 @@ public class FederationView implements HtmlView
     		     "<th class='title'>Class</th>" +
     		     "<th class='title'>Connected</th>" +
     		     "<th class='numeric title'>Notifications " +
-    		       "(Sent&nbsp;/&nbsp;Received)</th></tr>\n");
+    		       "(In&nbsp;/&nbsp;Out)</th></tr>\n");
     
     for (Link link : sort (manager.links (), LINK_COMPARATOR))
     {
-      html.append ("<tr><td class='number'>${}</td>" +
+      html.append ("<tr><td class='number' rowspan='2'>${}</td>" +
       		       "<td>${}</td>" +
       		       "<td>${}</td>" +
       		       "<td class='date'>${}</td>" +
       		       "<td class='number'>${}</td></tr>\n",
-      		   link.serial, link.remoteHostAddress, 
+      		   link.serial, host (link.remoteHostAddress), 
       		   link.federationClass.name,
       		   formatTime (link.createdAt),
       		   "?? / ??");
+      
+      html.append ("<tr><td colspan='4'>\n");
+      
+      html.append ("<table class='prop-list' border='0' cellspacing='0'>\n");
+      html.indent ();
+      
+      addPropListRow (html, "Initiated by:", "??");
+      addPropListRow (html, "Remote domain:", link.remoteServerDomain);
+      addPropListRow (html, "Remote filter:", unparse (link.remotePullFilter));
+      
+      html.outdent ().append ("</table>\n");
+      
+      html.append ("</td></tr>\n");
     }
     
     html.outdent ().append ("</table>");
+  }
+
+  private static void addPropListRow (HTML html, String title, Object value)
+  {
+    html.append ("<tr><td class='title'>${}</td><td>${}</td></tr>\n", 
+                 title, value);
   }
 
   private static FederationManager managerFor (Router router)
