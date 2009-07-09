@@ -15,7 +15,7 @@ public class SiteNavigatorView implements HtmlView
 
   public void render (HTML html)
   {
-    html.append ("<div class='nav'>\n").indent ();
+    html.append ("<p class='nav'>\n").indent ();
     
     for (int index = 0; index < pages.length; index++)
     {
@@ -32,6 +32,6 @@ public class SiteNavigatorView implements HtmlView
                    cssClass, href, page);
     }
     
-    html.outdent ().append ("\n</div>\n");
+    html.outdent ().append ("\n</p>\n");
   }
 }
