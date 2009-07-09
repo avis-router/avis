@@ -31,15 +31,12 @@ public class FederationView implements HtmlView
 
   public void render (HTML html)
   {
-    FederationManager manager;
+    FederationManager manager = managerFor (router);
     
-    try
-    {
-      manager = federationManagerFor (router);
-    } catch (IllegalArgumentException ex)
+    if (manager == null)
     {
       html.append ("<p>Federation is not activated</p>");
-     
+      
       return;
     }
     
@@ -67,5 +64,16 @@ public class FederationView implements HtmlView
     }
     
     html.outdent ().append ("</table>");
+  }
+
+  private static FederationManager managerFor (Router router)
+  {
+    try
+    {
+      return federationManagerFor (router);
+    } catch (IllegalArgumentException ex)
+    {
+      return null;
+    }
   }
 }
