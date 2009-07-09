@@ -2,6 +2,10 @@ package org.avis.management.web.pages;
 
 import java.util.Comparator;
 
+import org.apache.mina.core.service.AbstractIoAcceptor;
+import org.apache.mina.core.service.IoService;
+
+import org.avis.common.ElvinURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.Link;
 import org.avis.management.web.HTML;
@@ -71,7 +75,12 @@ public class FederationView implements HtmlView
       html.append ("<table class='prop-list' border='0' cellspacing='0'>\n");
       html.indent ();
       
-      addPropListRow (html, "Initiated by:", "??");
+      IoService service = link.session.getService ();
+      ElvinURI uri = router.ioManager ().elvinUriFor (service);
+      
+      addPropListRow (html, "Initiated by:", 
+                      (service instanceof AbstractIoAcceptor ? 
+                        "Listener on " : "Connector to ") + uri);
       addPropListRow (html, "Remote domain:", link.remoteServerDomain);
       addPropListRow (html, "Remote filter:", unparse (link.remotePullFilter));
       
