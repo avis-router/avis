@@ -9,6 +9,7 @@ import org.avis.common.ElvinURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.Link;
 import org.avis.management.web.HTML;
+import org.avis.management.web.HtmlView;
 import org.avis.router.Router;
 
 import static org.avis.federation.FederationClass.unparse;
@@ -30,10 +31,12 @@ public class FederationView implements HtmlView
     };
 
   private Router router;
+  private OptionsView optionsView;
 
   public FederationView (Router router)
   {
     this.router = router;
+    this.optionsView = new OptionsView (router.options (), "Federation\\..*");
   }
 
   public void render (HTML html)
@@ -64,8 +67,8 @@ public class FederationView implements HtmlView
     // config
     
     html.append ("<h2>Configuration</h2>\n");
-    
-    new OptionsView (router.options (), "Federation\\..*").render (html);
+
+    optionsView.render (html);
     
     // connections
     
