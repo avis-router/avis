@@ -47,26 +47,27 @@ public class FederationView implements HtmlView
       return;
     }
 
-    html.append ("<table>\n").indent ();
-    html.append ("<tr><th>Listening On</th><th>Connecting On</th></tr>\n");
+    // endpoints
     
-    html.append ("<tr><td>\n");
-
+    html.append ("<h2>Endpoints</h2>\n");
+    
+    html.append ("<ul>\n").indent ();
+    
     for (ElvinURI uri : manager.listenURIs ())
-      html.append ("${}<br/>\n", uri);
+      html.append ("<li>${} (listen)</li>\n", uri);
     
-    html.append ("</td><td>\n");
-
     for (ElvinURI uri : manager.connectURIs ())
-      html.append ("${}<br/>\n", uri);
+      html.append ("<li>${} (connect)</li>\n", uri);
+
+    html.outdent ().append ("</ul>\n");
     
-    html.append ("</td></tr>\n");
-    
-    html.outdent ().append ("</table>");
+    // config
     
     html.append ("<h2>Configuration</h2>\n");
     
     new OptionsView (router.options (), "Federation\\..*").render (html);
+    
+    // connections
     
     html.append ("<h2>Connections</h2>\n");
     
@@ -96,6 +97,7 @@ public class FederationView implements HtmlView
       html.append ("<tr><td colspan='4'>\n");
       
       // detail
+      
       html.append ("<table class='prop-list' border='0' cellspacing='0'>\n");
       html.indent ();
       
