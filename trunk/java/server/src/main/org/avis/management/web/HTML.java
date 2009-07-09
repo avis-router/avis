@@ -2,6 +2,8 @@ package org.avis.management.web;
 
 import java.util.Date;
 
+import java.net.InetAddress;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -233,5 +235,10 @@ public class HTML
   public static String num (int value)
   {
     return String.format ("%,d", value);
+  }
+  
+  public static String host (InetAddress address)
+  {
+    return address.getCanonicalHostName () + " / " + address.getHostAddress (); 
   }
 }
