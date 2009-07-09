@@ -56,11 +56,14 @@ public class OptionSet
     inherited.add (optionSet);
   }
   
+  /**
+   * Return all the options in this set and all its inherited sets as
+   * a sorted map from name to OptionType.
+   */
   public SortedMap<String, OptionType> all ()
   {
-    TreeMap<String, OptionType> all = 
-      new TreeMap<String, OptionType> (CASE_INSENSITIVE_ORDER);
-    
+    TreeMap<String, OptionType> all = new TreeMap<String, OptionType> ();
+
     addAll (all);
     
     return all;
