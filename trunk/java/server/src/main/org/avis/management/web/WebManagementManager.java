@@ -12,7 +12,6 @@ import org.apache.asyncweb.server.BasicServiceContainer;
 import org.apache.asyncweb.server.ContainerLifecycleException;
 import org.apache.asyncweb.server.HttpServiceHandler;
 import org.apache.asyncweb.server.resolver.CompositeResolver;
-import org.apache.asyncweb.server.resolver.ExactMatchURIServiceResolver;
 import org.apache.asyncweb.server.resolver.PatternMatchResolver;
 
 import org.avis.config.Options;
@@ -80,15 +79,6 @@ public class WebManagementManager implements Closeable, CloseListener
     
     container.addServiceFilter (handler);
 
-    // resolve pages
-    ExactMatchURIServiceResolver pageResolver = 
-      new ExactMatchURIServiceResolver ();
-    pageResolver.addURIMapping ("/", "clients");
-    pageResolver.addURIMapping ("/overview", "overview");
-    pageResolver.addURIMapping ("/clients", "clients");
-    pageResolver.addURIMapping ("/federation", "federation");
-    pageResolver.addURIMapping ("/configuration", "configuration");
-    
     // resolve resources
     PatternMatchResolver resourceResolver = new PatternMatchResolver ();
     resourceResolver.addPatternMapping ("/.*\\.(css|png|ico)", "resources");
@@ -98,7 +88,7 @@ public class WebManagementManager implements Closeable, CloseListener
     // allow authorisation resolver first crack at everything
     mainResolver.addResolver (authoriser);
     mainResolver.addResolver (resourceResolver);
-    mainResolver.addResolver (pageResolver);
+    mainResolver.addResolver (new PageResolver ());
     
     handler.setServiceResolver (mainResolver);
 
