@@ -28,4 +28,10 @@ public class InetAddressFilter implements Filter<InetAddress>
            filter.matches (address.getHostAddress ()) ||
            filter.matches (address.getCanonicalHostName ());
   }
+  
+  @Override
+  public String toString ()
+  {
+    return filter.toString ();
+  }
 }

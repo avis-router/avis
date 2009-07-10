@@ -16,6 +16,12 @@ public interface Filter<T>
     {
       return false;
     }
+    
+    @Override
+    public String toString ()
+    {
+      return "<match none>";
+    }
   };
   
   /**
@@ -26,6 +32,12 @@ public interface Filter<T>
     public boolean matches (Object value)
     {
       return true;
+    }
+    
+    @Override
+    public String toString ()
+    {
+      return "<match all>";
     }
   };
 

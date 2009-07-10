@@ -9,6 +9,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
+import static org.avis.util.Text.join;
 import static org.avis.util.Wildcard.toPattern;
 
 /**
@@ -18,6 +19,7 @@ import static org.avis.util.Wildcard.toPattern;
  */
 public class WildcardFilter implements Filter<String>
 {
+  private Collection<String> wildcards;
   private List<Pattern> patterns;
   
   public WildcardFilter (String wildcardPattern)
@@ -32,6 +34,7 @@ public class WildcardFilter implements Filter<String>
   
   public WildcardFilter (Collection<String> wildcardPatterns)
   {
+    this.wildcards = wildcardPatterns;
     this.patterns = new ArrayList<Pattern> (wildcardPatterns.size ());
     
     for (String wildcardExpr : wildcardPatterns)
@@ -52,5 +55,19 @@ public class WildcardFilter implements Filter<String>
     }
     
     return false;
+  }
+  
+  @Override
+  public String toString ()
+  {
+    StringBuilder str = new StringBuilder ();
+
+    str.append ('[');
+    
+    join (str, wildcards, ", ");
+    
+    str.append (']');
+    
+    return str.toString ();
   }
 }
