@@ -30,8 +30,7 @@ public class OptionsView implements HtmlView
 
   public void render (HTML html)
   {
-    html.append ("<table>\n");
-    html.indent ();
+    html.append ("<table>\n").indent ();
     
     for (Map.Entry<String, OptionType> e : 
          options.optionSet ().all ().entrySet ())
@@ -49,8 +48,7 @@ public class OptionsView implements HtmlView
       }
     }
     
-    html.outdent ();
-    html.append ("</table>\n");
+    html.outdent ().append ("</table>\n");
   }
 
   public void renderOptionValue (HTML html, String option, Object value)
