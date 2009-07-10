@@ -1,29 +1,33 @@
 package org.avis.management.web.pages;
 
+import java.util.List;
+
 import org.avis.management.web.HTML;
 import org.avis.management.web.HtmlView;
 
 public class SiteNavigatorView implements HtmlView
 {
   private String currentPage;
-  private String [] pages;
+  private List<String> pages;
+  private List<String> uris;
 
-  public SiteNavigatorView (String currentPage, String [] pages)
+  public SiteNavigatorView (String currentPage, List<String> pages, List<String> uris)
   {
     this.currentPage = currentPage;
     this.pages = pages;
+    this.uris = uris;
   }
 
   public void render (HTML html)
   {
     html.append ("<p class='nav'>\n").indent ();
     
-    for (int index = 0; index < pages.length; index++)
+    for (int index = 0; index < pages.size (); index++)
     {
-      String page = pages [index];
-      String href = page.toLowerCase ();
+      String page = pages.get (index);
+      String href = uris.get (index);
       String cssClass = 
-        href.equals (currentPage.toLowerCase ()) ? 
+        href.equals (uriFor (currentPage)) ? 
           "nav-item nav-current" : "nav-item";
       
       if (index > 0)
@@ -34,5 +38,16 @@ public class SiteNavigatorView implements HtmlView
     }
     
     html.outdent ().append ("\n</p>\n");
+  }
+
+  private String uriFor (String page)
+  {
+    for (int index = 0; index < pages.size (); index++)
+    {
+      if (pages.get (index).equals (page))
+        return uris.get (index);
+    }
+    
+    return null;
   }
 }
