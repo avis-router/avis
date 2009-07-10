@@ -10,7 +10,7 @@
 
   <!-- latest client and server release streams -->
   <property name="java-client-release" value="1.1" />
-  <property name="c-client-release" value="0.1" />
+  <property name="c-client-release" value="1.1" />
   <property name="server-release" value="1.2" />
 
   <property name="avis-root" value="${basedir}/.." />
