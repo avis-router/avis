@@ -67,8 +67,10 @@ public class FederationView implements HtmlView
     // config
     
     html.append ("<h2>Configuration</h2>\n");
-
+    
+    html.append ("<p><div class='prop-list small-scrolling'>\n");
     optionsView.render (html);
+    html.append ("</div></p>\n");
     
     // connections
     
