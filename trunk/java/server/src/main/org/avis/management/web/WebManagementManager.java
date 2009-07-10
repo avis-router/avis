@@ -19,6 +19,7 @@ import org.avis.config.Options;
 import org.avis.management.web.pages.ClientsView;
 import org.avis.management.web.pages.ConfigurationView;
 import org.avis.management.web.pages.FederationView;
+import org.avis.management.web.pages.OverviewView;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 
@@ -60,6 +61,9 @@ public class WebManagementManager implements Closeable, CloseListener
     
     handler.addHttpService (Authoriser.SERVICE_NAME, authoriser);
     handler.addHttpService 
+      ("overview", 
+       new StandardPage ("Overview", new OverviewView (router)));
+    handler.addHttpService 
       ("clients", 
        new StandardPage ("Clients", new ClientsView (router)));
     handler.addHttpService 
@@ -80,6 +84,7 @@ public class WebManagementManager implements Closeable, CloseListener
     ExactMatchURIServiceResolver pageResolver = 
       new ExactMatchURIServiceResolver ();
     pageResolver.addURIMapping ("/", "clients");
+    pageResolver.addURIMapping ("/overview", "overview");
     pageResolver.addURIMapping ("/clients", "clients");
     pageResolver.addURIMapping ("/federation", "federation");
     pageResolver.addURIMapping ("/configuration", "configuration");

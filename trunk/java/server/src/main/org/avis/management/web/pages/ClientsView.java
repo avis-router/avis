@@ -2,17 +2,16 @@ package org.avis.management.web.pages;
 
 import java.util.Comparator;
 
+import org.avis.common.ElvinURI;
 import org.avis.management.web.HTML;
 import org.avis.management.web.HtmlView;
 import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;
 
-import static java.lang.System.currentTimeMillis;
-
-import static org.avis.management.web.HTML.formatTime;
 import static org.avis.management.web.HTML.formatHost;
 import static org.avis.management.web.HTML.formatNum;
+import static org.avis.management.web.HTML.formatTime;
 import static org.avis.util.Collections.sort;
 
 public class ClientsView implements HtmlView
@@ -43,28 +42,27 @@ public class ClientsView implements HtmlView
     };
     
   private Router router;
-  private long startedAt;
 
   public ClientsView (Router router)
   {
     this.router = router;
-    this.startedAt = currentTimeMillis ();
   }
 
   public void render (HTML html)
   {
-    html.append 
-      ("<p>Router running since: <span class='number'>${}</span></p>\n",
-       formatTime (startedAt));
+    // endpoints
     
-    html.append 
-       ("<p>Number of connections: <span class='number'>${}</span></p>\n", 
-        router.connections ().size ());
- 
-    html.append ("<p>Total notifications in&nbsp;/&nbsp;out: " +
-    		"<span class='number'>${}&nbsp;/&nbsp;${}</span></p>\n", 
-                 formatNum (router.receivedNotificationCount), 
-                 formatNum (router.sentNotificationCount));
+    html.append ("<h2>Endpoints</h2>\n");
+    
+    html.append ("<ul>\n").indent ();
+    
+    for (ElvinURI uri : router.listenURIs ())
+      html.append ("<li>${}</li>\n", uri);
+
+    html.outdent ().append ("</ul>\n");
+    
+    // clients
+    html.append ("<h2>Clients</h2>\n");
     
     html.append 
       ("<table class='client-list' border='1' cellspacing='0'>\n");

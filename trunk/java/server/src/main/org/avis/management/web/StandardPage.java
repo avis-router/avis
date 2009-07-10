@@ -5,7 +5,7 @@ import org.avis.management.web.pages.SiteNavigatorView;
 public class StandardPage extends Page
 {
   private static final String [] PAGES = 
-    {"Clients", "Federation", "Configuration"};
+    {"Overview", "Clients", "Federation", "Configuration"};
   
   private String title;
   private HtmlView navigator;
