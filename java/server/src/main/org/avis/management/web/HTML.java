@@ -239,6 +239,12 @@ public class HTML
   
   public static String formatHost (InetAddress address)
   {
-    return address.getCanonicalHostName () + " / " + address.getHostAddress (); 
+    String name = address.getCanonicalHostName ();
+    String ip = address.getHostAddress ();
+    
+    if (name.equals (ip))
+      return ip;
+    else
+      return name + " / " + ip; 
   }
 }
