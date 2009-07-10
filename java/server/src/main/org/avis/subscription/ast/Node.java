@@ -65,12 +65,12 @@ public abstract class Node
   public abstract String expr ();
 
   /**
-   * Returns {@link #name()}. Subclasses may override.
+   * Returns {@link Nodes#unparse(Node)}. Subclasses may override.
    */
   @Override
   public String toString ()
   {
-    return name ();
+    return Nodes.unparse (this);
   }
 
   /**
