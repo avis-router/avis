@@ -35,15 +35,17 @@ public class OptionsView implements HtmlView
     for (Map.Entry<String, OptionType> e : 
          options.optionSet ().all ().entrySet ())
     {
-      if (filter == null || filter.matcher (e.getKey ()).matches ())
+      String option = e.getKey ();
+      
+      if (filter == null || filter.matcher (option).matches ())
       {
         if (e.getValue () instanceof OptionTypeParam)
         {
-          renderParamOption (html, e.getKey (), 
-                             getParamOption (options, e.getKey ()));
+          renderParamOption (html, option, 
+                             getParamOption (options, option));
         } else
         {
-          renderOptionValue (html, e.getKey (), options.get (e.getKey ()));
+          renderOptionValue (html, option, options.get (option));
         }
       }
     }
