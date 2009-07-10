@@ -24,7 +24,7 @@ public class OverviewView implements HtmlView
 
   public void render (HTML html)
   {
-    html.append ("<p>Router version: ${}${} (built on ${})</p>",
+    html.append ("<p>Router version: ${}${} (built on ${})</p>\n",
                  getProperty ("avis.router.version", "(unknown)"),
                  getProperty ("avis.release", ""),
                  getProperty ("avis.build-date", "(unknown)"));
