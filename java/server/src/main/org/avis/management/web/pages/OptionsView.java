@@ -68,11 +68,12 @@ public class OptionsView implements HtmlView
     for (Map.Entry<String, Object> e : paramValues.entrySet ())
     {
       String name = baseName + '[' + e.getKey () + ']';
+      Object value = e.getValue ();
       
-      if (e.getValue () instanceof Map)
-        renderParamOption (html, name, (Map<String, Object>)e.getValue ());
+      if (value instanceof Map)
+        renderParamOption (html, name, (Map<String, Object>)value);
       else
-        renderOptionValue (html, name, e.getValue ());
+        renderOptionValue (html, name, value);
     }
   }
   
