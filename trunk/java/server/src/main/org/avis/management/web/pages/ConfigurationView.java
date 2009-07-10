@@ -17,7 +17,7 @@ public class ConfigurationView implements HtmlView
   {
     html.append ("<h2>Configuration</h2>\n");
 
-    html.append ("<div class='prop-list'>\n").indent ();
+    html.append ("<div class='option-list'>\n").indent ();
     optionsView.render (html);
     html.outdent ().append ("</div>\n");
   }

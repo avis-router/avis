@@ -53,7 +53,10 @@ public class OptionsView implements HtmlView
 
   public void renderOptionValue (HTML html, String option, Object value)
   {
-    html.append ("<tr><td>${}:</td><td>${}</td></tr>\n", option, value);
+    html.append ("<tr class='${}'><td>${}:</td><td>${}</td></tr>\n", 
+                 options.isDefaultValue (stripParams (option)) ? 
+                   "option-default" : "option-set",
+                 option, value);
   }
 
   @SuppressWarnings ("unchecked")
@@ -69,5 +72,12 @@ public class OptionsView implements HtmlView
       else
         renderOptionValue (html, name, e.getValue ());
     }
+  }
+  
+  private static String stripParams (String option)
+  {
+    int bracket = option.indexOf ('[');
+    
+    return bracket == -1 ? option : option.substring (0, bracket);
   }
 }
