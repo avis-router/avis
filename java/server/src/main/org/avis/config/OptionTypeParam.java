@@ -85,8 +85,8 @@ public class OptionTypeParam extends OptionType
   }
 
   @SuppressWarnings("unchecked")
-  public static Map<String, ? extends Object> getParamOption (Options options, 
-                                                              String option)
+  public static Map<String, Object> getParamOption (Options options, 
+                                                    String option)
   {
     OptionType type = options.optionSet ().optionTypeFor (option);
     
