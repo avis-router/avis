@@ -1,6 +1,5 @@
 package org.avis.util;
 
-import java.util.List;
 import java.util.Map;
 
 import java.nio.charset.CharacterCodingException;
@@ -518,10 +517,25 @@ public final class Text
    * 
    * @return The stringified list.
    */
-  public static String join (List<?> items, String separator)
+  public static String join (Iterable<?> items, String separator)
   {
     StringBuilder str = new StringBuilder ();
     
+    join (str, items, separator);
+    
+    return str.toString ();
+  }
+
+  /**
+   * Join a list of objects into a string.
+   * 
+   * @param str The builder to add to.
+   * @param items The items to stringify.
+   * @param separator The separator between items.
+   */
+  public static void join (StringBuilder str, 
+                           Iterable<?> items, String separator)
+  {
     boolean first = true;
     
     for (Object item : items)
@@ -533,8 +547,6 @@ public final class Text
 
       str.append (item);
     }
-    
-    return str.toString ();
   }
   
   /**
