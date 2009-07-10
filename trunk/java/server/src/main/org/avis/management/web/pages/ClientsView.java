@@ -61,10 +61,10 @@ public class ClientsView implements HtmlView
        ("<p>Number of connections: <span class='number'>${}</span></p>\n", 
         router.connections ().size ());
  
-    html.append ("<p>Total notifications sent/received: " +
-    		"<span class='number'>${} / ${}</span></p>\n", 
-                 formatNum (router.sentNotificationCount), 
-                 formatNum (router.receivedNotificationCount));
+    html.append ("<p>Total notifications in&nbsp;/&nbsp;out: " +
+    		"<span class='number'>${}&nbsp;/&nbsp;${}</span></p>\n", 
+                 formatNum (router.receivedNotificationCount), 
+                 formatNum (router.sentNotificationCount));
     
     html.append 
       ("<table class='client-list' border='1' cellspacing='0'>\n");
@@ -77,7 +77,7 @@ public class ClientsView implements HtmlView
        "<th>Connected</th>" +
        "<th class='numeric'>Keys (Sub&nbsp;/&nbsp;Notify)</th>\n" +
        "<th class='numeric'>Subscriptions</th>\n" +
-       "<th class='numeric'>Notifications (In&nbsp;/&nbsp;Out)</th></tr>\n");
+       "<th class='numeric'>Notifications (Out&nbsp;/&nbsp;In)</th></tr>\n");
     
     for (Connection connection : 
          sort (router.connections (), CONNECTION_COMPARATOR))
