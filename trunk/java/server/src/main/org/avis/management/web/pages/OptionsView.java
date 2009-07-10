@@ -4,9 +4,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.avis.config.OptionType;
+import org.avis.config.OptionTypeParam;
 import org.avis.config.Options;
 import org.avis.management.web.HTML;
 import org.avis.management.web.HtmlView;
+
+import static org.avis.config.OptionTypeParam.getParamOption;
 
 public class OptionsView implements HtmlView
 {
@@ -27,7 +30,7 @@ public class OptionsView implements HtmlView
 
   public void render (HTML html)
   {
-    html.append ("<p><div class='prop-list small-scrolling'><table>\n");
+    html.append ("<table>\n");
     html.indent ();
     
     for (Map.Entry<String, OptionType> e : 
@@ -35,12 +38,38 @@ public class OptionsView implements HtmlView
     {
       if (filter == null || filter.matcher (e.getKey ()).matches ())
       {
-        html.append ("<tr><td>${}:</td><td>${}</td></tr>\n",
-                     e.getKey (), options.get (e.getKey ()));
+        if (e.getValue () instanceof OptionTypeParam)
+        {
+          renderParamOption (html, e.getKey (), 
+                             getParamOption (options, e.getKey ()));
+        } else
+        {
+          renderOptionValue (html, e.getKey (), options.get (e.getKey ()));
+        }
       }
     }
     
     html.outdent ();
-    html.append ("</table></div></p>\n");
+    html.append ("</table>\n");
+  }
+
+  public void renderOptionValue (HTML html, String option, Object value)
+  {
+    html.append ("<tr><td>${}:</td><td>${}</td></tr>\n", option, value);
+  }
+
+  @SuppressWarnings ("unchecked")
+  private void renderParamOption (HTML html, String baseName,
+                                  Map<String, Object> paramValues)
+  {
+    for (Map.Entry<String, Object> e : paramValues.entrySet ())
+    {
+      String name = baseName + '[' + e.getKey () + ']';
+      
+      if (e.getValue () instanceof Map)
+        renderParamOption (html, name, (Map<String, Object>)e.getValue ());
+      else
+        renderOptionValue (html, name, e.getValue ());
+    }
   }
 }
