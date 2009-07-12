@@ -2,11 +2,19 @@ package org.avis.management.web;
 
 import java.util.List;
 
+import org.apache.asyncweb.common.HttpRequest;
+import org.apache.asyncweb.server.resolver.ServiceResolver;
+
 import org.avis.management.web.pages.SiteNavigatorView;
 
 import static java.util.Arrays.asList;
 
-public class StandardPage extends Page
+/**
+ * A standard web management page with a navigator and main content area.
+ * 
+ * @author Matthew Phillips
+ */
+public class StandardPage extends HtmlPage
 {
   public static final List<String> PAGES = 
     asList (new String [] 
@@ -15,7 +23,23 @@ public class StandardPage extends Page
   public static final List<String> URIs = 
     asList (new String [] 
       {"overview", "clients", "federation", "configuration"});
-  
+
+  /**
+   * Resolves any known standard pages.
+   */
+  public static final ServiceResolver RESOLVER = new ServiceResolver ()
+  {
+    public String resolveService (HttpRequest request)
+    {
+      String service = request.getRequestUri ().getPath ().substring (1);
+      
+      if (URIs.contains (service))
+        return service;
+      else     
+        return null;
+    }
+  };
+
   private String title;
   private HtmlView navigator;
   private HtmlView main;
@@ -41,5 +65,5 @@ public class StandardPage extends Page
     html.appendClosingTags ();
     
     return html.asText ();
-  }
+  }  
 }

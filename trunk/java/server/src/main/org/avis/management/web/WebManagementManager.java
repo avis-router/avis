@@ -57,10 +57,10 @@ public class WebManagementManager implements Closeable, CloseListener
     HttpServiceHandler handler = new HttpServiceHandler ();
     
     Authoriser authoriser = new Authoriser (adminName, adminPassword);
-    RedirectDefault redirectDefault = new RedirectDefault ("overview");
+    RedirectRootToDefault redirectDefault = new RedirectRootToDefault ("overview");
     
     handler.addHttpService (Authoriser.SERVICE_NAME, authoriser);
-    handler.addHttpService (RedirectDefault.SERVICE_NAME, redirectDefault);
+    handler.addHttpService (RedirectRootToDefault.SERVICE_NAME, redirectDefault);
     
     handler.addHttpService 
       ("overview", 
@@ -77,7 +77,7 @@ public class WebManagementManager implements Closeable, CloseListener
                          new ConfigurationView (router.options ())));
     handler.addHttpService 
       ("resources", 
-       new UrlHttpService 
+       new ResourceHttpService 
          (parentUrl (getClass ().getResource ("resources/main.css"))));
     
     container.addServiceFilter (handler);
@@ -90,7 +90,7 @@ public class WebManagementManager implements Closeable, CloseListener
 
     // allow authorisation resolver first crack at everything
     mainResolver.addResolver (authoriser);
-    mainResolver.addResolver (new PageResolver ());
+    mainResolver.addResolver (StandardPage.RESOLVER);
     mainResolver.addResolver (resourceResolver);
     mainResolver.addResolver (redirectDefault);
     
