@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -21,7 +22,6 @@ import org.apache.asyncweb.server.HttpServiceContext;
 import org.apache.mina.core.buffer.IoBuffer;
 
 import static java.lang.Math.min;
-
 import static java.lang.System.currentTimeMillis;
 import static java.util.TimeZone.getTimeZone;
 
@@ -40,10 +40,10 @@ public class UrlHttpService implements HttpService
 {
   private static final int MAX_CACHE_AGE = 6 * 60 * 60 * 1000;
 
-  private static final ThreadLocal<SimpleDateFormat> HTTP_DATE_FORMAT = 
-    new ThreadLocal<SimpleDateFormat> ()
+  private static final ThreadLocal<DateFormat> HTTP_DATE_FORMAT = 
+    new ThreadLocal<DateFormat> ()
   {
-    protected SimpleDateFormat initialValue ()
+    protected DateFormat initialValue ()
     {
       SimpleDateFormat format = 
         new SimpleDateFormat ("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
