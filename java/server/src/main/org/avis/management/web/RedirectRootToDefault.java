@@ -9,13 +9,13 @@ import org.apache.asyncweb.server.resolver.ServiceResolver;
 
 import static org.apache.asyncweb.common.HttpResponseStatus.TEMPORARY_REDIRECT;
 
-public class RedirectDefault implements ServiceResolver, HttpService
+public class RedirectRootToDefault implements ServiceResolver, HttpService
 {
   public static final String SERVICE_NAME = "redirect-default";
   
   private String defaultService;
 
-  public RedirectDefault (String defaultService)
+  public RedirectRootToDefault (String defaultService)
   {
     this.defaultService = defaultService;
   }

@@ -1,7 +1,7 @@
 package org.avis.management.web;
 
 /**
- * An HTML view component.
+ * An component that generates an HTML-rendered view of some kind.
  * 
  * @author Matthew Phillips
  */

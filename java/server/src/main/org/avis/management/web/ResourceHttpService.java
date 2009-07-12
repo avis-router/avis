@@ -36,7 +36,7 @@ import static org.avis.logging.Log.diagnostic;
  * 
  * @author Matthew Phillips
  */
-public class UrlHttpService implements HttpService
+public class ResourceHttpService implements HttpService
 {
   private static final int MAX_CACHE_AGE = 6 * 60 * 60 * 1000;
 
@@ -56,7 +56,7 @@ public class UrlHttpService implements HttpService
   
   private URL baseUrl;
   
-  public UrlHttpService (URL baseUrl)
+  public ResourceHttpService (URL baseUrl)
   {
     this.baseUrl = baseUrl;
   }
@@ -129,7 +129,7 @@ public class UrlHttpService implements HttpService
         return parseDate (ifModifiedSince).getTime ();
       } catch (ParseException ex)
       {
-        diagnostic ("Invalid HTTP date from client", UrlHttpService.class, ex);
+        diagnostic ("Invalid HTTP date from client", ResourceHttpService.class, ex);
       }      
     }
     

@@ -10,7 +10,12 @@ import org.apache.mina.core.buffer.IoBuffer;
 
 import static org.apache.asyncweb.common.HttpResponseStatus.OK;
 
-public abstract class Page implements HttpService
+/**
+ * Base class for dynamically generated HTML pages.
+ * 
+ * @author Matthew Phillips
+ */
+public abstract class HtmlPage implements HttpService
 {
   public void handleRequest (HttpServiceContext context)
     throws Exception
@@ -32,6 +37,9 @@ public abstract class Page implements HttpService
     context.commitResponse (response);
   }
 
+  /**
+   * Generate the HTML content for the page.
+   */
   protected abstract String content ();
   
   public void start ()
