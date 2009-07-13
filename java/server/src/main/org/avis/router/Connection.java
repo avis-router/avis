@@ -14,8 +14,6 @@ import org.apache.mina.core.session.IoSession;
 import org.avis.config.Options;
 import org.avis.security.Keys;
 
-import static java.lang.System.currentTimeMillis;
-
 import static org.avis.io.Net.idFor;
 import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
@@ -51,18 +49,17 @@ public class Connection
    */
   public Long2ObjectOpenHashMap<Subscription> subscriptions;
 
-  public long connectedAt;
-
   public int sentNotificationCount;  
 
   public int receivedNotificationCount;
   
+  public IoSession session;
+
   /**
    * Single writer/multiple reader lock.
    */
   private ReentrantReadWriteLock lock;
 
-  private IoSession session;
 
   /**
    * Create a new connection instance.
@@ -86,7 +83,6 @@ public class Connection
     this.notificationKeys = notificationKeys;
     this.options = new ClientConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
-    this.connectedAt = currentTimeMillis ();
     this.sentNotificationCount = 0;
     this.receivedNotificationCount = 0;
     
