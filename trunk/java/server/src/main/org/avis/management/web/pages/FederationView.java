@@ -14,6 +14,8 @@ import org.avis.router.Router;
 
 import static org.avis.federation.FederationClass.unparse;
 import static org.avis.federation.FederationManager.federationManagerFor;
+import static org.avis.management.web.HTML.formatBandwidth;
+import static org.avis.management.web.HTML.formatBytes;
 import static org.avis.management.web.HTML.formatTime;
 import static org.avis.management.web.HTML.formatHost;
 import static org.avis.management.web.HTML.formatNum;
@@ -84,6 +86,8 @@ public class FederationView implements HtmlView
     		     "<th class='title'>Remote Host</th>" +
     		     "<th class='title'>Class</th>" +
     		     "<th class='title'>Connected</th>" +
+    		     "<th class='numeric'>Bytes (In&nbsp;/&nbsp;Out)</th>\n" +
+    		     "<th class='numeric'>Bandwidth (In&nbsp;/&nbsp;Out&nbsp;B/s)</th>\n" +
     		     "<th class='numeric title'>Notifications " +
     		       "(In&nbsp;/&nbsp;Out)</th></tr>\n");
     
@@ -93,15 +97,21 @@ public class FederationView implements HtmlView
       		       "<td>${}</td>" +
       		       "<td>${}</td>" +
       		       "<td class='date'>${}</td>" +
+      		       "<td class='number'>${} /&nbsp;${}</td>" +
+      		       "<td class='number'>${} /&nbsp;${}</td>" +
       		       "<td class='number'>${} / ${}</td></tr>\n",
       		   link.session.getId (), 
       		   formatHost (link.remoteHostAddress), 
       		   link.federationClass.name,
       		   formatTime (link.createdAt),
+                   formatBytes (link.session.getReadBytes ()),
+                   formatBytes (link.session.getWrittenBytes ()),
+                   formatBandwidth (link.session.getReadBytesThroughput ()),
+                   formatBandwidth (link.session.getWrittenBytesThroughput ()),
       		   formatNum (link.receivedNotificationCount), 
       		   formatNum (link.sentNotificationCount));
       
-      html.append ("<tr><td colspan='4'>\n");
+      html.append ("<tr><td colspan='6'>\n");
       
       // detail
       

@@ -252,4 +252,15 @@ public class HTML
   {
     return Net.hostIdFor (address);
   }
+  
+  public static String formatBytes (long bytes)
+  {
+    // could think about KB, B, etc conversion here
+    return String.format ("%,d", bytes);
+  }
+  
+  public static String formatBandwidth (double bytesPerSecond)
+  {
+    return String.format ("%,.2f", bytesPerSecond);
+  }
 }
