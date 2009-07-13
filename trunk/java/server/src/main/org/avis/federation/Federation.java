@@ -9,12 +9,12 @@ import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.router.Router;
 
+import static org.avis.io.Net.idFor;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
-import static org.avis.util.Text.idFor;
 
 /**
  * General federation definitions and methods.

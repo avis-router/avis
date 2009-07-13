@@ -25,13 +25,14 @@ import org.avis.router.Router;
 import org.avis.security.Keys;
 import org.avis.subscription.ast.Node;
 
-import static java.lang.System.currentTimeMillis;
-
 import static java.lang.System.arraycopy;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 
 import static org.apache.mina.core.future.IoFutureListener.CLOSE;
+
 import static org.avis.federation.Federation.logError;
+import static org.avis.io.Net.idFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.logging.Log.TRACE;
@@ -42,7 +43,6 @@ import static org.avis.logging.Log.warn;
 import static org.avis.subscription.ast.nodes.Const.CONST_FALSE;
 import static org.avis.util.Collections.union;
 import static org.avis.util.Text.className;
-import static org.avis.util.Text.idFor;
 
 /**
  * A bi-directional federation link between two endpoints, typically

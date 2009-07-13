@@ -67,6 +67,7 @@ import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.LegacyConnectionOptions.setWithLegacy;
 import static org.avis.io.Net.enableTcpNoDelay;
+import static org.avis.io.Net.idFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -90,7 +91,6 @@ import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.subscription.parser.SubscriptionParserBase.expectedTokensFor;
 import static org.avis.util.Text.className;
 import static org.avis.util.Text.formatNotification;
-import static org.avis.util.Text.idFor;
 import static org.avis.util.Text.shortException;
 
 public class Router implements IoHandler, Closeable
