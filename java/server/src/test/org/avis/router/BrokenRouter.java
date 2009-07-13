@@ -23,12 +23,12 @@ import org.avis.util.Filter;
 
 import static java.util.Collections.singleton;
 
+import static org.avis.io.Net.idFor;
 import static org.avis.logging.Log.TRACE;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
-import static org.avis.util.Text.idFor;
 
 /**
  * A deliberately broken router for testing clients.

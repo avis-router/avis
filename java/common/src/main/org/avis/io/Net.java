@@ -22,6 +22,8 @@ import org.apache.mina.transport.socket.SocketSessionConfig;
 
 import org.avis.common.ElvinURI;
 import org.avis.common.InvalidURIException;
+import org.avis.io.messages.Message;
+import org.avis.util.Text;
 
 import static java.util.Arrays.asList;
 
@@ -223,9 +225,37 @@ public final class Net
    */
   public static String hostIdFor (IoSession session)
   {
-    InetAddress address = remoteHostAddressFor (session);
+    return hostIdFor (remoteHostAddressFor (session));
+  }
+
+  /**
+   * Generate a standard host ID for a session using host name and IP.
+   */
+  public static String hostIdFor (InetAddress address)
+  {
+    String name = address.getCanonicalHostName ();
+    String ip = address.getHostAddress ();
     
-    return address.getCanonicalHostName () + '/' + address.getHostAddress ();
+    if (name.equals (ip))
+      return ip;
+    else
+      return name + " / " + ip; 
+  }
+  
+  /**
+   * Generate a human-readable ID for a session.
+   */
+  public static String idFor (IoSession session)
+  {
+    return Long.toString (session.getId ());
+  }
+  
+  /**
+   * Generate a human-readable ID for a message.
+   */
+  public static String idFor (Message message)
+  {
+    return Text.idFor (message);
   }
 
   /**

@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import org.avis.io.Net;
+
 /**
  * Basic HTML page generation template system.
  *  
@@ -248,12 +250,6 @@ public class HTML
   
   public static String formatHost (InetAddress address)
   {
-    String name = address.getCanonicalHostName ();
-    String ip = address.getHostAddress ();
-    
-    if (name.equals (ip))
-      return ip;
-    else
-      return name + " / " + ip; 
+    return Net.hostIdFor (address);
   }
 }

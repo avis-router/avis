@@ -21,7 +21,7 @@ public class ClientsView implements HtmlView
     {
       public int compare (Connection c1, Connection c2)
       {
-        return c1.serial - c2.serial;
+        return compareLongs (c1.connectedAt, c2.connectedAt);
       }
     };
 
@@ -30,14 +30,7 @@ public class ClientsView implements HtmlView
     {
       public int compare (Subscription s1, Subscription s2)
       {
-        long diff = s1.id - s2.id;
-        
-        if (diff < 0)
-          return -1;
-        else if (diff > 0)
-          return 1;
-        else
-          return 0;
+        return compareLongs (s1.id, s2.id);
       }
     };
     
@@ -89,13 +82,13 @@ public class ClientsView implements HtmlView
           continue;
         
         html.append 
-          ("<tr><td rowspan='2' class='number'>${} (${})</td>" +
+          ("<tr><td rowspan='2' class='number'>${}</td>" +
                "<td>${}</td>" +
                "<td class='date'>${}</td>" +
                "<td class='number'>${} / ${}</td>" +
                "<td class='number'>${}</td>" +
                "<td class='number'>${} / ${}</td></tr>\n",
-           connection.serial, connection.id (),
+           connection.id (),
            formatHost (connection.remoteHost ()),
            formatTime (connection.connectedAt), 
            formatNum (connection.subscriptionKeys.size ()),
@@ -156,5 +149,17 @@ public class ClientsView implements HtmlView
     html.outdent ();
     
     html.append ("</table>\n");
-  }  
+  }
+  
+  protected static int compareLongs (long l1, long l2)
+  {
+    long diff = l1 - l2;
+        
+    if (diff < 0)
+      return -1;
+    else if (diff > 0)
+      return 1;
+    else
+      return 0;
+  }
 }

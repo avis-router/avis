@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import java.net.InetAddress;
@@ -17,11 +16,10 @@ import org.avis.security.Keys;
 
 import static java.lang.System.currentTimeMillis;
 
+import static org.avis.io.Net.idFor;
 import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
 import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
-import static org.avis.util.Text.idFor;
-
 /**
  * Stores the state needed for a client's connection to the router.
  * Thread access is managed via a single writer/multiple reader lock.
@@ -30,8 +28,6 @@ import static org.avis.util.Text.idFor;
  */
 public class Connection
 {
-  private static AtomicInteger serialCounter = new AtomicInteger ();
-
   /**
    * Connection options established on construction (immutable).
    */
@@ -54,8 +50,6 @@ public class Connection
    * Subscription instance.
    */
   public Long2ObjectOpenHashMap<Subscription> subscriptions;
-
-  public int serial;
 
   public long connectedAt;
 
@@ -92,7 +86,6 @@ public class Connection
     this.notificationKeys = notificationKeys;
     this.options = new ClientConnectionOptions (defaultOptions, requestedOptions);
     this.lock = new ReentrantReadWriteLock (true);
-    this.serial = serialCounter.incrementAndGet ();
     this.connectedAt = currentTimeMillis ();
     this.sentNotificationCount = 0;
     this.receivedNotificationCount = 0;
