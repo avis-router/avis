@@ -9,6 +9,8 @@ import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;
 
+import static org.avis.management.web.HTML.formatBandwidth;
+import static org.avis.management.web.HTML.formatBytes;
 import static org.avis.management.web.HTML.formatHost;
 import static org.avis.management.web.HTML.formatNum;
 import static org.avis.management.web.HTML.formatTime;
@@ -69,6 +71,8 @@ public class ClientsView implements HtmlView
        "<th>Connected</th>" +
        "<th class='numeric'>Keys (Sub&nbsp;/&nbsp;Notify)</th>\n" +
        "<th class='numeric'>Subscriptions</th>\n" +
+       "<th class='numeric'>Bytes (Out&nbsp;/&nbsp;In)</th>\n" +
+       "<th class='numeric'>Bandwidth (Out&nbsp;/&nbsp;In&nbsp;B/s)</th>\n" +
        "<th class='numeric'>Notifications (Out&nbsp;/&nbsp;In)</th></tr>\n");
     
     for (Connection connection : 
@@ -86,19 +90,25 @@ public class ClientsView implements HtmlView
           ("<tr><td rowspan='2' class='number'>${}</td>" +
                "<td>${}</td>" +
                "<td class='date'>${}</td>" +
-               "<td class='number'>${} / ${}</td>" +
+               "<td class='number'>${} /&nbsp;${}</td>" +
                "<td class='number'>${}</td>" +
-               "<td class='number'>${} / ${}</td></tr>\n",
+               "<td class='number'>${} /&nbsp;${}</td>" +
+               "<td class='number'>${} /&nbsp;${}</td>" +
+               "<td class='number'>${} /&nbsp;${}</td></tr>\n",
            connection.id (),
            formatHost (connection.remoteHost ()),
            formatTime (connection.session.getCreationTime ()), 
            formatNum (connection.subscriptionKeys.size ()),
            formatNum (connection.notificationKeys.size ()),
            formatNum (connection.subscriptions.size ()),
+           formatBytes (connection.session.getReadBytes ()),
+           formatBytes (connection.session.getWrittenBytes ()),
+           formatBandwidth (connection.session.getReadBytesThroughput ()),
+           formatBandwidth (connection.session.getWrittenBytesThroughput ()),
            formatNum (connection.receivedNotificationCount), 
            formatNum (connection.sentNotificationCount));
       
-        html.append ("<tr><td colspan='5' class='sub-list'>\n");
+        html.append ("<tr><td colspan='7' class='sub-list'>\n");
   
         html.indent ();
         outputSubscriptions (html, connection);
