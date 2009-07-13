@@ -26,7 +26,8 @@ public class FederationView implements HtmlView
     {
       public int compare (Link link1, Link link2)
       {
-        return link1.serial - link2.serial;
+        return compareLongs (link1.session.getCreationTime (), 
+                             link2.session.getCreationTime ());
       }
     };
 
@@ -93,7 +94,8 @@ public class FederationView implements HtmlView
       		       "<td>${}</td>" +
       		       "<td class='date'>${}</td>" +
       		       "<td class='number'>${} / ${}</td></tr>\n",
-      		   link.serial, formatHost (link.remoteHostAddress), 
+      		   link.session.getId (), 
+      		   formatHost (link.remoteHostAddress), 
       		   link.federationClass.name,
       		   formatTime (link.createdAt),
       		   formatNum (link.receivedNotificationCount), 
@@ -138,5 +140,17 @@ public class FederationView implements HtmlView
     {
       return null;
     }
+  }
+  
+  protected static int compareLongs (long l1, long l2)
+  {
+    long diff = l1 - l2;
+        
+    if (diff < 0)
+      return -1;
+    else if (diff > 0)
+      return 1;
+    else
+      return 0;
   }
 }

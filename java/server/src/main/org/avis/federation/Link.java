@@ -1,7 +1,6 @@
 package org.avis.federation;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import java.net.InetAddress;
 
@@ -72,8 +71,6 @@ public class Link implements NotifyListener
 
   private static final String [] EMPTY_ROUTING = new String [0];
   
-  private static AtomicInteger serialCounter = new AtomicInteger ();
-  
   public Router router;
   public IoSession session;
   public FederationClass federationClass;
@@ -87,7 +84,6 @@ public class Link implements NotifyListener
   private boolean subscribed;
   private volatile boolean closed;
   
-  public int serial;
   public long createdAt;
 
   public Link (Router router,
@@ -106,7 +102,6 @@ public class Link implements NotifyListener
     this.remotePullFilter = CONST_FALSE;
     this.subscribed = false;
     this.createdAt = currentTimeMillis ();
-    this.serial = serialCounter.incrementAndGet ();
     this.receivedNotificationCount = 0;
     this.sentNotificationCount = 0;
     
