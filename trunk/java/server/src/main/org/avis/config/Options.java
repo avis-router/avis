@@ -358,6 +358,14 @@ public class Options implements Iterable<Map.Entry<String, Object>>
   }
 
   /**
+   * Test if this option set has an explicit value for an option.
+   */
+  public boolean isDefaultValue (String option)
+  {
+    return !values.containsKey (option);
+  }
+
+  /**
    * Return an unmodifiable, live set of the options just for this
    * instance (not including defaults).
    */
@@ -373,13 +381,5 @@ public class Options implements Iterable<Map.Entry<String, Object>>
   public Map<String, Object> asMap ()
   {
     return unmodifiableMap (values);
-  }
-
-  /**
-   * Test if this option set has an explicit value for an option.
-   */
-  public boolean isDefaultValue (String option)
-  {
-    return !values.containsKey (option);
   }
 }
