@@ -21,7 +21,8 @@ public class ClientsView implements HtmlView
     {
       public int compare (Connection c1, Connection c2)
       {
-        return compareLongs (c1.connectedAt, c2.connectedAt);
+        return compareLongs (c1.session.getCreationTime (), 
+                             c2.session.getCreationTime ());
       }
     };
 
@@ -90,7 +91,7 @@ public class ClientsView implements HtmlView
                "<td class='number'>${} / ${}</td></tr>\n",
            connection.id (),
            formatHost (connection.remoteHost ()),
-           formatTime (connection.connectedAt), 
+           formatTime (connection.session.getCreationTime ()), 
            formatNum (connection.subscriptionKeys.size ()),
            formatNum (connection.notificationKeys.size ()),
            formatNum (connection.subscriptions.size ()),
