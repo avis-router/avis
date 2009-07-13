@@ -4,6 +4,7 @@ import java.util.Date;
 
 import java.net.InetAddress;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
@@ -17,6 +18,15 @@ public class HTML
   private int indent;
   private boolean atLineStart;
 
+  private static final ThreadLocal<DateFormat> DATE_FORMAT = 
+    new ThreadLocal<DateFormat> ()
+  {
+    protected DateFormat initialValue ()
+    {
+      return new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSSZ");
+    }
+  };
+  
   public HTML ()
   {
     this.content = new StringBuilder (4096);
@@ -225,8 +235,7 @@ public class HTML
 
   public static String formatTime (long time)
   {
-    return new SimpleDateFormat 
-      ("yyyy-MM-dd HH:mm:ss.SSSZ").format (new Date (time));
+    return DATE_FORMAT.get ().format (new Date (time));
   }
 
   /**
