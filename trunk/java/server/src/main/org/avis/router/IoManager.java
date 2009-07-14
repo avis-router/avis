@@ -21,7 +21,6 @@ import java.security.KeyStore;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
-import org.apache.mina.core.future.IoFuture;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.service.SimpleIoProcessorPool;
@@ -49,6 +48,7 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.apache.mina.core.buffer.IoBuffer.setUseDirectBuffer;
+
 import static org.avis.io.TLS.toPassphrase;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.warn;
@@ -369,7 +369,22 @@ public class IoManager
     
     return addresses;
   }
-
+  
+  public Collection<IoService> acceptorsFor (Set<? extends ElvinURI> uris)
+  {
+    ArrayList<IoService> acceptors = new ArrayList<IoService> ();
+    
+    for (ElvinURI uri : uris)
+    {
+      Collection<NioSocketAcceptor> uriAcceptors = uriToAcceptors.get (uri); 
+      
+      if (uriAcceptors != null)
+        acceptors.addAll (uriAcceptors);
+    }
+    
+    return acceptors;
+  }
+  
   /**
    * Get the sessions for all URI's bound with bind ().
    */
@@ -393,7 +408,7 @@ public class IoManager
    * Find the URI associated with a given IoService (an acceptor or
    * connector). This will only work with services created by @
    * #bind(Set, IoHandler, DefaultIoFilterChainBuilder, Filter)} or
-   * {@link #connect(ElvinURI, IoHandler, DefaultIoFilterChainBuilder, Filter, long)}
+   * {@link #createConnector(ElvinURI, IoHandler, DefaultIoFilterChainBuilder, Filter, long)}
    * .
    * @param service The service to lookup.
    * 
@@ -424,7 +439,7 @@ public class IoManager
   }
 
   /**
-   * Connect to URI.
+   * Create a MINA I/O connector for a URI.
    * 
    * @param uri The URI.
    * @param handler The IO handler.
@@ -433,12 +448,14 @@ public class IoManager
    *          authentication is required. For standard link these
    *          hosts are denied connection.
    * @param timeout Connect timeout (in seconds).
-   * @return The connect future.
+   * 
+   * @return The connector.
    */
-  public IoFuture connect (ElvinURI uri, IoHandler handler,
-                           DefaultIoFilterChainBuilder filters,
-                           Filter<InetAddress> authenticationRequiredHosts, 
-                           long timeout)
+  public NioSocketConnector createConnector 
+    (ElvinURI uri, IoHandler handler,
+     DefaultIoFilterChainBuilder filters,
+     Filter<InetAddress> authenticationRequiredHosts, 
+     long timeout)
   {
     NioSocketConnector connector = new NioSocketConnector (processorPool);
     
@@ -453,7 +470,7 @@ public class IoManager
     connector.setHandler (handler);
     connector.setConnectTimeoutMillis (timeout);
     
-    return connector.connect (new InetSocketAddress (uri.host, uri.port));
+    return connector;
   }
 
   public void disconnect (ElvinURI uri)
