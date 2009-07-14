@@ -1,7 +1,6 @@
 package org.avis.management.web.pages;
 
 import org.apache.mina.core.service.IoService;
-import org.apache.mina.core.service.IoServiceStatistics;
 
 import org.avis.federation.Connector;
 import org.avis.federation.FederationManager;
@@ -94,10 +93,8 @@ public class OverviewView implements HtmlView
 
       for (Connector connector : manager.connectors ())
       {
-        IoServiceStatistics stats = connector.ioConnector ().getStatistics ();
-        
-        in += stats.getReadBytes ();
-        out += stats.getWrittenBytes ();
+        in += connector.ioConnector ().getStatistics ().getReadBytes ();
+        out += connector.ioConnector ().getStatistics ().getWrittenBytes ();
       }
     }
     
