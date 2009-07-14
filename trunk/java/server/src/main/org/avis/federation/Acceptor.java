@@ -14,6 +14,7 @@ import java.net.InetSocketAddress;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 
@@ -135,6 +136,14 @@ public class Acceptor implements IoHandler, Closeable
   public Collection<InetSocketAddress> listenAddresses ()
   {
     return router.ioManager ().addressesFor (listenUris);
+  }
+  
+  /**
+   * The MINA I/O acceptors that this acceptor is listening on.
+   */
+  public Collection<IoService> ioAcceptors ()
+  {
+    return router.ioManager ().acceptorsFor (listenUris);
   }
 
   /**
