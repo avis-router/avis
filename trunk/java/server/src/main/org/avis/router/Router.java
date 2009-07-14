@@ -1,6 +1,7 @@
 package org.avis.router;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.net.URI;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecException;
@@ -221,6 +223,14 @@ public class Router implements IoHandler, Closeable
   }
   
   /**
+   * The set of MINA I/O acceptors accepting client connections.
+   */
+  public Collection<IoService> ioAcceptors ()
+  {
+    return ioManager.acceptorsFor (routerOptions.listenURIs ());
+  }
+  
+  /**
    * Close all connections synchronously. Close listeners are notified
    * before shutdown commences. May be called more than once with no
    * effect.
@@ -332,7 +342,7 @@ public class Router implements IoHandler, Closeable
     
     return connections;
   }
-  
+
   /**
    * Used for testing to simulate server hanging: server stops
    * responding to messages but keeps connection open.
