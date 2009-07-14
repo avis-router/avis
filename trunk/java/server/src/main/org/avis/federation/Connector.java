@@ -14,8 +14,11 @@ import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.IoFuture;
 import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.IoService;
+import org.apache.mina.core.service.IoServiceStatistics;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.config.Options;
 import org.avis.federation.io.FederationFrameCodec;
@@ -40,6 +43,7 @@ import static org.avis.federation.Federation.logMinaException;
 import static org.avis.federation.Federation.logSessionOpened;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.Net.hostIdFor;
+import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.internalError;
@@ -63,6 +67,7 @@ public class Connector implements IoHandler, Closeable
   public Options options;
   
   private Router router;
+  private NioSocketConnector connector;
   private IoSession session;
   private String serverDomain;
   private FederationClass federationClass;
@@ -84,6 +89,15 @@ public class Connector implements IoHandler, Closeable
     connect ();
   }
   
+  /**
+   * The MINA I/O connector that this connector is using to establish
+   * sessions.
+   */
+  public IoService ioConnector ()
+  {
+    return connector;
+  }
+
   public Link link ()
   {
     return link;
@@ -103,16 +117,19 @@ public class Connector implements IoHandler, Closeable
     return link != null && link.isLive ();
   }
   
-  /**
-   * Kick off a connection attempt.
-   */
-  @SuppressWarnings("unchecked")
-  synchronized void connect () 
+  @SuppressWarnings ("unchecked")
+  public void createConnector ()
   {
-    closing = false;
+    IoServiceStatistics oldStats = null;
     
-    cancelAsyncConnect ();
+    if (connector != null)
+    {
+      oldStats = connector.getStatistics ();
+      
+      connector.dispose ();
+    }
     
+    // create connector
     long requestTimeout = options.getInt ("Federation.Request-Timeout") * 1000;
     long keepaliveInterval = 
       options.getInt ("Federation.Keepalive-Interval") * 1000;
@@ -130,12 +147,37 @@ public class Connector implements IoHandler, Closeable
     Filter<InetAddress> authRequired = 
       (Filter<InetAddress>)options.get ("Federation.Require-Authenticated");
     
+    this.connector = 
+      router.ioManager ().createConnector 
+        (uri, this, filters, authRequired, requestTimeout);
+    
+    if (oldStats != null)
+    {
+      connector.getStatistics ().increaseReadBytes 
+        (oldStats.getReadBytes (), oldStats.getLastReadTime ());
+      
+      // TODO bug in MINA API uses int rather than long, fix when fixed
+      connector.getStatistics ().increaseWrittenBytes 
+        ((int)oldStats.getWrittenBytes (), oldStats.getLastWriteTime ());
+    }
+  }
+  
+  /**
+   * Kick off a connection attempt.
+   */
+  synchronized void connect () 
+  {
+    closing = false;
+    
+    cancelAsyncConnect ();
+    
+    createConnector ();
+    
     diagnostic ("Attempting federation connection: target = " + uri + 
                 ", federation class = \"" + federationClass.name + "\"" + 
                 ", server domain = \"" + serverDomain + "\"", this);
     
-    router.ioManager ().connect 
-      (uri, this, filters, authRequired, requestTimeout).addListener 
+    connector.connect (new InetSocketAddress (uri.host, uri.port)).addListener 
       (new IoFutureListener<IoFuture> ()
       {
         public void operationComplete (IoFuture future)
@@ -163,8 +205,8 @@ public class Connector implements IoHandler, Closeable
       while (rootEx.getCause () != null)
         rootEx = rootEx.getCause ();
       
-      warn ("Failed to connect to federator at " + uri + ", retrying: " + 
-            shortException (rootEx), this);
+      diagnostic ("Failed to connect to federator at " + uri + ", retrying: " + 
+                  shortException (rootEx), this);
      
       asyncConnect ();
     }
@@ -190,8 +232,14 @@ public class Connector implements IoHandler, Closeable
       {
         synchronized (Connector.this)
         {
-          if (!closing)
-            connect ();
+          try
+          {
+            if (!closing)
+              connect ();
+          } catch (Throwable ex)
+          {
+            alarm ("Error in federation connector", Connector.this, ex);
+          }
         }
       }
     };
