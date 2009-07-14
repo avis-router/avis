@@ -14,6 +14,7 @@ import org.avis.router.Router;
 
 import static org.avis.federation.FederationClass.unparse;
 import static org.avis.federation.FederationManager.federationManagerFor;
+import static org.avis.federation.FederationManager.isFederationActivated;
 import static org.avis.management.web.HTML.formatBandwidth;
 import static org.avis.management.web.HTML.formatBytes;
 import static org.avis.management.web.HTML.formatTime;
@@ -43,15 +44,15 @@ public class FederationView implements HtmlView
   }
 
   public void render (HTML html)
-  {
-    FederationManager manager = managerFor (router);
-    
-    if (manager == null)
+  {    
+    if (!isFederationActivated (router))
     {
       html.append ("<p>Federation is not activated</p>");
       
       return;
     }
+    
+    FederationManager manager = federationManagerFor (router);
 
     // endpoints
     
@@ -141,17 +142,6 @@ public class FederationView implements HtmlView
                  title, value);
   }
 
-  private static FederationManager managerFor (Router router)
-  {
-    try
-    {
-      return federationManagerFor (router);
-    } catch (IllegalArgumentException ex)
-    {
-      return null;
-    }
-  }
-  
   protected static int compareLongs (long l1, long l2)
   {
     long diff = l1 - l2;
