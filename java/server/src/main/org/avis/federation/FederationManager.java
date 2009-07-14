@@ -62,6 +62,10 @@ public class FederationManager implements CloseListener
     router.addCloseListener (this);
   }
   
+  public static boolean isFederationActivated (Router router)
+  {
+    return router.options ().getBoolean ("Federation.Activated");
+  }
   /**
    * Find the federation manager for a router.
    * 
