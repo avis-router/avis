@@ -248,6 +248,11 @@ public class HTML
     return String.format ("%,d", value);
   }
   
+  public static String formatNum (long value)
+  {
+    return String.format ("%,d", value);
+  }
+  
   public static String formatHost (InetAddress address)
   {
     return Net.hostIdFor (address);
