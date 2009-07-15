@@ -196,17 +196,14 @@ public final class Log
       }
       
       output.flush ();
-    }
-    
-    // TODO code that uses shouldLog () to short-circuit will also dodge this
-    synchronized (listeners)
-    {
+      
+      // TODO listeners should have their own filter
       if (listeners.hasListeners ())
       {
         listeners.fire (new LogEvent (source, new Date (),
                                       type, message, exception));
       }
-    }
+    }    
   }
   
   private static void printMessage (StringBuilder str,
