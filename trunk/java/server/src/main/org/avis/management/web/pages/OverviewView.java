@@ -34,7 +34,7 @@ public class OverviewView implements HtmlView
     html.append ("<table>\n").indent ();
     
     html.append ("<tr><td>Router version:</td>" +
-    		"<td class='number'>Avis ${}${} (built on ${})</td></tr>\n",
+    		 "<td class='number'>Avis ${}${} (built on ${})</td></tr>\n",
                  getProperty ("avis.router.version", "(unknown)"),
                  getProperty ("avis.release", ""),
                  getProperty ("avis.build-date", "(unknown)"));
@@ -53,14 +53,14 @@ public class OverviewView implements HtmlView
        router.connections ().size ());
   
     html.append ("<tr><td>Total notifications in&nbsp;/&nbsp;out:</td>" +
-                "<td class='number'>${}&nbsp;/&nbsp;${}</td></tr>\n", 
+                 "<td class='number'>${}&nbsp;/&nbsp;${}</td></tr>\n", 
                  formatNum (router.receivedNotificationCount), 
                  formatNum (router.sentNotificationCount));
     
     long [] bytesInOut = calcBytesInOut ();
     
     html.append ("<tr><td>Total bytes in&nbsp;/&nbsp;out:</td>" +
-                "<td class='number'>${}&nbsp;/&nbsp;${}</td></tr>\n", 
+                 "<td class='number'>${}&nbsp;/&nbsp;${}</td></tr>\n", 
                  formatNum (bytesInOut [0]), 
                  formatNum (bytesInOut [1]));
     
