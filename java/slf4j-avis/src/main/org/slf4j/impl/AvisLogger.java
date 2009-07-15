@@ -16,13 +16,12 @@ public class AvisLogger extends MarkerIgnoringBase
   
   static
   {
-    // map everything to trace: MINA is very chatty
+    // default is map everything to trace: MINA is very chatty
     for (int i = 0; i < LEVEL_MAP.length; i++)
       LEVEL_MAP [i] = Log.TRACE;
     
-    // allow errors and warnings through by default
     LEVEL_MAP [Log.ALARM] = Log.ALARM;
-    LEVEL_MAP [Log.WARNING] = Log.WARNING;
+    LEVEL_MAP [Log.WARNING] = Log.DIAGNOSTIC;
   }
   
   AvisLogger (String name)
