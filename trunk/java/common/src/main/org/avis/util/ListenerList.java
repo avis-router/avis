@@ -13,6 +13,10 @@ import static java.util.Collections.unmodifiableList;
  * A generic event listener list. The list is not thread safe w.r.t
  * add and remove: corruption of the list is guaranteed not to happen,
  * but add's in race mode may result in one add being ignored.
+ * <p>
+ * The list *is* thread safe and non-blocking w.r.t. traversal (i.e.
+ * event firing): the fire () methods may be called safely with no
+ * synchronisation.
  * 
  * @author Matthew Phillips
  */
