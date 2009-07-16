@@ -206,6 +206,11 @@ public class HTML
     return this;
   }
 
+  public static String formatTime (Date date)
+  {
+    return formatTime (date.getTime ());
+  }
+  
   public static String formatTime (long time)
   {
     return DATE_FORMAT.get ().format (new Date (time));
