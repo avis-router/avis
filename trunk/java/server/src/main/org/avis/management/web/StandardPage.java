@@ -56,7 +56,7 @@ public class StandardPage extends HtmlPage
   {
     HTML html = new HTML ();
     
-    html.appendXHTMLHeader (title + " - Avis").appendBody ();
+    html.appendXHTMLHeader (title + " - Avis Router").appendBody ();
     
     navigator.render (html);
     
