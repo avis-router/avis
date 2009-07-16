@@ -28,6 +28,13 @@ p
     margin-bottom: 1em;
 }
 
+a 
+{
+    color: #283758;
+    text-decoration: none;
+    border-bottom: 1px dotted #c0c0c0;
+}
+
 ul 
 {
     margin-left: 1em;
@@ -50,13 +57,52 @@ h2
 table
 { 
   text-align: left;
-  margin: 0 0 0 0;
+  margin: none;
+  padding: none;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+
+tr
+{
+  margin: none;
+  padding: none;
+  border: none;
 }
 
 table td, th
 {
     vertical-align: top;
-    padding: 2px 3px 2px 3px; # t r b l
+    padding: 3px 4px 3px 4px; # t r b l
+}
+
+table.client-list th, td
+{
+    border: 1px solid #c0c0c0;
+}
+
+table th
+{
+    background: #eee;
+}
+
+.sub-list
+{
+    padding: 2px 0px 2px 0px !important;
+    border-spacing: 0 0;
+    border: 0px;
+}
+
+.sub-table
+{
+    padding: 0px;
+    border: 0px;
+}
+
+/* table-in-a-table td */
+.sub-table td
+{
+    border: 0px;
 }
 
 .nav
@@ -102,12 +148,6 @@ table td, th
 .date
 {
     font-family: consolas,monaco,courier,fixed;    
-}
-
-.sub-list
-{
-    padding: 2px 0px 2px 0px !important;
-    border-spacing: 0 0;
 }
 
 .prop-list
