@@ -17,13 +17,13 @@ Supported Platforms
 ----------------------------------------------------------------------
 
 Avis will run on platforms with a Java 5 Standard Edition runtime. It
-has been tested on Mac OS X (10.4 and 10.5), Windows XP and Windows
-Server 2003, Fedora (Core 2 through 8) and Debian Sarge (3.1).
+has been tested on Mac OS X (10.4 and 10.5), Windows XP/Server 2003, 
+Fedora (Core 2 through 11), Debian (3.1) and Solaris.
 
 Although Avis is platform-independent, the "avisd" script and example
 command lines appearing later are for Unix environments with a Bourne
-shell.  Windows users can either translate as needed or run under
-cygwin (http://www.cygwin.com).
+shell. Windows users can either translate as needed or run under
+cygwin (http://www.cygwin.com/).
 
 
 Requirements
@@ -40,24 +40,24 @@ wish to compile Avis you will need a Java Development Kit. If you
 don't need to build Avis, you can skip to the next section.
 
 Unless you plan to build Avis from Eclipse, you will also need Apache
-Ant 1.6.0 or later (http://ant.apache.org).
+Ant 1.7.0 or later (http://ant.apache.org/).
 
 Optional:
 
-  * Eclipse 3.2 or later. Project files for Eclipse are included with
+  * Eclipse 3.3 or later. Project files for Eclipse are included with
     the distribution, import them using File -> Import -> Existing
     Projects Into Workspace. The version of Ant bundled with Eclipse
     is sufficient to build Avis. Eclipse is available from
-    http://www.eclipse.org/downloads.
+    http://www.eclipse.org/downloads/.
 
   * JavaCC 4.0 or later. Only required if you wish to change the
-    subscription parser. http://javacc.dev.java.net.
+    subscription parser. http://javacc.dev.java.net/.
 
 To build the router with Ant, change to the "server" sub-directory of
 where you extracted Avis and simply run Ant with the default build
 target:
 
-  > cd avis-1.2/server
+  > cd avis-1.3/server
   > ant
 
 This will build the file "lib/avis-router.jar", which is the Avis
@@ -65,7 +65,7 @@ event router executable.
 
 To see all build targets run:
 
-  > ant -projecthelp
+  > ant -p
 
 
 Usage
@@ -73,7 +73,7 @@ Usage
 
 To run the Avis event router service using the bash helper script:
 
-  > cd avis-1.2/server
+  > cd avis-1.3/server
   > ./bin/avisd
 
 To see command line options:

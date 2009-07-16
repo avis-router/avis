@@ -1,12 +1,12 @@
 License for Avis Event Router
 -----------------------------------------------------------------------------
 
-Avis is Copyright (C) 2008 Matthew Phillips <avis@mattp.name>.
+Avis is Copyright (C) 2009 Matthew Phillips <avis@mattp.name>.
 
 The avis.server component of this software is licensed under the GPL
 version 3. The avis.common component of this software is dual-licensed
-under both the LGPL (when distributed as part of the Avis client
-library) and the GPL (when distributed as part of the Avis event
+under both the LGPLv3 (when distributed as part of the Avis client
+library) and the GPLv3 (when distributed as part of the Avis event
 router).
 
 The Avis router (avis.server) portion of this software can be used
