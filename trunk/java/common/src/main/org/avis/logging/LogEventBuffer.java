@@ -14,18 +14,18 @@ import static java.lang.Math.min;
  * 
  * @version $Revision: 1.17 $
  */
-public class LogMessageBuffer implements LogListener, Iterable<LogEvent>
+public class LogEventBuffer implements LogListener, Iterable<LogEvent>
 {
   protected int maxEvents;
   protected AtomicInteger eventCount;
   protected ConcurrentLinkedQueue<LogEvent> events;
 
-  public LogMessageBuffer ()
+  public LogEventBuffer ()
   {
     this (1000);
   }
   
-  public LogMessageBuffer (int maxEvents)
+  public LogEventBuffer (int maxEvents)
   {
     this.maxEvents = maxEvents;
     this.eventCount = new AtomicInteger (0);
