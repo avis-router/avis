@@ -83,14 +83,14 @@ public class FederationView implements HtmlView
     html.append ("<table class='client-list'>\n");
     html.indent ();
     
-    html.append ("<tr><th class='numeric title'>Federator</th>" +
+    html.append ("<thead><tr><th class='numeric title'>Federator</th>" +
     		     "<th class='title'>Remote Host</th>" +
     		     "<th class='title'>Class</th>" +
     		     "<th class='title'>Connected</th>" +
     		     "<th class='numeric'>Bytes (In&nbsp;/&nbsp;Out)</th>\n" +
     		     "<th class='numeric'>Bandwidth (In&nbsp;/&nbsp;Out&nbsp;B/s)</th>\n" +
     		     "<th class='numeric title'>Notifications " +
-    		       "(In&nbsp;/&nbsp;Out)</th></tr>\n");
+    		       "(In&nbsp;/&nbsp;Out)</th></tr></thead>\n");
     
     for (Link link : sort (manager.links (), LINK_COMPARATOR))
     {
