@@ -7,9 +7,8 @@ import org.junit.Test;
 
 import static java.lang.Thread.sleep;
 
-import static java.lang.Math.random;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JUTestLogMessageBuffer
 {
@@ -70,18 +69,10 @@ public class JUTestLogMessageBuffer
         @Override
         public void run ()
         {
-          try
+          while (!interrupted ())
           {
-            while (!interrupted ())
-            {
-              sleep ((long)random () * 100);
-              
-              buffer.add (logEvent ());
-              assertTrue (buffer.eventCount () <= 10);              
-            }
-          } catch (InterruptedException ex)
-          {
-            interrupt ();
+            buffer.add (logEvent ());
+            assertTrue (buffer.eventCount () <= 10);              
           }
         }
       });
@@ -93,7 +84,10 @@ public class JUTestLogMessageBuffer
     sleep (5000);
     
     for (Thread thread : threads)
+    {
       thread.interrupt ();
+      thread.join ();
+    }
     
     assertEquals (10, buffer.eventCount ());
     assertEquals (10, buffer.events.size ());
