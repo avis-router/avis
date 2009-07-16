@@ -73,11 +73,7 @@ tr
 table td, th
 {
     vertical-align: top;
-    padding: 3px 4px 3px 4px; # t r b l
-}
-
-table.client-list th, td
-{
+    padding: 3px 4px 3px 4px; /* t r b l */
     border: 1px solid #c0c0c0;
 }
 
@@ -124,9 +120,14 @@ table th
     border: 1px solid LightGrey;
 }
 
+table.log
+{
+    width: 100%;
+}
+
 .sub-exp
 {
-    font-family: consolas,monaco,courier,fixed;
+    font-family: Consolas, Monaco, Courier, fixed;
 }
 
 .title
@@ -175,6 +176,15 @@ table th
     height: 10em;
     width: 40em;
     border: 1px solid LightGrey;
+}
+
+pre.exception-trace
+{
+    font-family: Consolas, Monaco, Courier, fixed;
+    margin-left: 10px;
+    margin-top: 2px;
+    overflow-x: auto;
+    max-width: 40em;
 }
 
 .odd

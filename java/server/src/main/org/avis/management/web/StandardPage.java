@@ -18,11 +18,11 @@ public class StandardPage extends HtmlPage
 {
   public static final List<String> PAGES = 
     asList (new String [] 
-      {"Overview", "Clients", "Federation", "Configuration"});
+      {"Overview", "Clients", "Federation", "Configuration", "Log"});
   
   public static final List<String> URIs = 
     asList (new String [] 
-      {"overview", "clients", "federation", "configuration"});
+      {"overview", "clients", "federation", "configuration", "log"});
 
   /**
    * Resolves any known standard pages.

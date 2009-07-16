@@ -19,7 +19,7 @@ public class JUTestLogMessageBuffer
   public void expiry ()
     throws Exception
   {
-    LogMessageBuffer buffer = new LogMessageBuffer (10);
+    LogEventBuffer buffer = new LogEventBuffer (10);
     assertEquals (0, buffer.eventCount ());
     
     buffer.add (logEvent ());
@@ -60,7 +60,7 @@ public class JUTestLogMessageBuffer
   public void threads ()
     throws Exception
   {
-    final LogMessageBuffer buffer = new LogMessageBuffer (10);
+    final LogEventBuffer buffer = new LogEventBuffer (10);
     ArrayList<Thread> threads = new ArrayList<Thread> ();
     
     for (int i = 0; i < 10; i++)
@@ -99,12 +99,12 @@ public class JUTestLogMessageBuffer
     assertEquals (10, buffer.events.size ());
   }
 
-  private static void assertHead (int serial, LogMessageBuffer buffer)
+  private static void assertHead (int serial, LogEventBuffer buffer)
   {
     assertEquals (serial, Integer.valueOf (buffer.head ().message));
   }
   
-  private static void assertTail (int serial, LogMessageBuffer buffer)
+  private static void assertTail (int serial, LogEventBuffer buffer)
   {
     assertEquals (serial, Integer.valueOf (buffer.tail ().message));
   }

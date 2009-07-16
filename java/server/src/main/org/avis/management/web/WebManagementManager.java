@@ -18,6 +18,7 @@ import org.avis.config.Options;
 import org.avis.management.web.pages.ClientsView;
 import org.avis.management.web.pages.ConfigurationView;
 import org.avis.management.web.pages.FederationView;
+import org.avis.management.web.pages.LogView;
 import org.avis.management.web.pages.OverviewView;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
@@ -75,6 +76,9 @@ public class WebManagementManager implements Closeable, CloseListener
       ("configuration", 
        new StandardPage ("Configuration", 
                          new ConfigurationView (router.options ())));
+    handler.addHttpService 
+      ("log", new StandardPage ("Log", new LogView ()));
+
     handler.addHttpService 
       ("resources", 
        new ResourceHttpService 
