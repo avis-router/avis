@@ -19,6 +19,11 @@ body
     color: black;
 }
 
+p.nav
+{
+    visibility: hidden;
+}
+
 a 
 {
     text-decoration: none;
@@ -32,3 +37,4 @@ a
     width: inherit;
     border: none;
 }
+
