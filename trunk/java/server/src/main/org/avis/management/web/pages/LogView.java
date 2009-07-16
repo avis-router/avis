@@ -19,13 +19,11 @@ public class LogView implements HtmlView
   public LogView ()
   {
     this.events = new LogEventBuffer (1000);
-    
-    Log.addLogListener (events);
   }
   
   public void dispose ()
   {
-    Log.removeLogListener (events);
+    events.dispose ();
   }
   
   public void render (HTML html)
