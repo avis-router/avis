@@ -30,7 +30,7 @@ public class LogView implements HtmlView
   {
     html.append ("<h2>Log</h2>\n");
     
-    html.append ("<table class='log' width='100%'>\n").indent ();
+    html.append ("<table class='log''>\n").indent ();
 
     html.append 
       ("<thead><tr>" +

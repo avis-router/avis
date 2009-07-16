@@ -125,11 +125,6 @@ table.log
     width: 100%;
 }
 
-.sub-exp
-{
-    font-family: Consolas, Monaco, Courier, fixed;
-}
-
 .title
 {
     font-weight: bold;
@@ -146,7 +141,7 @@ table.log
     font-family: Consolas, Monaco, Courier, fixed;
 }
 
-.date
+.date, .net-address, .sub-exp
 {
     font-family: consolas,monaco,courier,fixed;    
 }
