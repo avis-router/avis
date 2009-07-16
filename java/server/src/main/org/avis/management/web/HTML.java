@@ -208,12 +208,12 @@ public class HTML
 
   public static String formatTime (Date date)
   {
-    return formatTime (date.getTime ());
+    return DATE_FORMAT.get ().format (date);
   }
   
   public static String formatTime (long time)
   {
-    return DATE_FORMAT.get ().format (new Date (time));
+    return formatTime (new Date (time));
   }
 
   /**
