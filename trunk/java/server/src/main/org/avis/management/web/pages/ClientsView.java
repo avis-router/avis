@@ -65,14 +65,14 @@ public class ClientsView implements HtmlView
     html.indent ();
 
     html.append 
-      ("<tr><th class='numeric'>Client</th>" +
+      ("<thead><tr><th class='numeric'>Client</th>" +
        "<th>Host</th>\n" + 
        "<th>Connected</th>" +
        "<th class='numeric'>Keys (Sub&nbsp;/&nbsp;Notify)</th>\n" +
        "<th class='numeric'>Subscriptions</th>\n" +
        "<th class='numeric'>Bytes (Out&nbsp;/&nbsp;In)</th>\n" +
        "<th class='numeric'>Bandwidth (Out&nbsp;/&nbsp;In&nbsp;B/s)</th>\n" +
-       "<th class='numeric'>Notifications (Out&nbsp;/&nbsp;In)</th></tr>\n");
+       "<th class='numeric'>Notifications (Out&nbsp;/&nbsp;In)</th></tr></thead>\n");
     
     for (Connection connection : 
          sort (router.connections (), CONNECTION_COMPARATOR))
