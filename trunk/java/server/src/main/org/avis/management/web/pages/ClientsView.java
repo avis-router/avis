@@ -60,8 +60,7 @@ public class ClientsView implements HtmlView
     // clients
     html.append ("<h2>Clients</h2>\n");
     
-    html.append 
-      ("<table class='client-list' border='1' cellspacing='0'>\n");
+    html.append ("<table class='client-list'>\n");
 
     html.indent ();
 
@@ -108,7 +107,7 @@ public class ClientsView implements HtmlView
            formatNum (connection.receivedNotificationCount), 
            formatNum (connection.sentNotificationCount));
       
-        html.append ("<tr><td colspan='7' class='sub-list'>\n");
+        html.append ("<tr><td class='sub-table' colspan='7'>\n");
   
         html.indent ();
         outputSubscriptions (html, connection);
