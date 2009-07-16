@@ -78,7 +78,7 @@ public class WebManagementManager implements Closeable, CloseListener
     handler.addHttpService 
       ("resources", 
        new ResourceHttpService 
-         (parentUrl (getClass ().getResource ("resources/main.css"))));
+         (parentUrl (getClass ().getResource ("resources/screen.css"))));
     
     container.addServiceFilter (handler);
 
