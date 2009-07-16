@@ -114,6 +114,14 @@ public final class Log
     return applicationName;
   }
   
+  /**
+   * Turn an event type (INFO, WARN, etc) into the string equivalent.
+   */
+  public static String eventTypeToString (int type)
+  {
+    return TYPE_NAMES [type];
+  }
+  
   public static void trace (String message, Object source)
   {
     log (TRACE, message, source);
@@ -206,26 +214,26 @@ public final class Log
     }    
   }
   
-  private static void printMessage (StringBuilder str,
-                                    int type,
-                                    Date time,
-                                    String messageStr,
-                                    Throwable exception)
+  public static void printMessage (StringBuilder str,
+                                   int type,
+                                   Date time,
+                                   String messageStr,
+                                   Throwable exception)
   {
     str.append (dateFormat.get ().format (time));
 
     if (applicationName != null)
       str.append (": ").append (applicationName);
 
-    str.append (": ").append (TYPE_NAMES [type]);
+    str.append (": ").append (eventTypeToString (type));
     str.append (": ").append (messageStr);
     
     if (exception != null && exception.getMessage () != null)
       str.append (": " + exception.getMessage ());
   }
 
-  private static void printExceptionTrace (PrintWriter str,
-                                           Throwable exception)
+  public static void printExceptionTrace (PrintWriter str,
+                                          Throwable exception)
   {
     exception.printStackTrace (str);
     
