@@ -1,0 +1,34 @@
+@import "main.css";
+
+*
+{
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+
+html
+{
+    background-color: white;
+}
+
+body
+{
+    margin: 10px;
+    border: 0px;
+    color: black;
+}
+
+a 
+{
+    text-decoration: none;
+    border: none;
+}
+
+.small-scrolling
+{
+    overflow-y: inherit;
+    height: inherit;
+    width: inherit;
+    border: none;
+}
