@@ -45,7 +45,8 @@ public class HTML
        "<head>\n" + 
        "  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" + 
        "  <title>${1}</title>\n" + 
-       "  <link href=\"main.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n" + 
+       "  <link href=\"screen.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n" + 
+       "  <link href=\"print.css\" media=\"print\" rel=\"stylesheet\" type=\"text/css\" />\n" + 
       "</head>\n", title);
     
     return this;
