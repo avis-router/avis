@@ -61,10 +61,12 @@ public class FederationView implements HtmlView
     html.append ("<ul>\n").indent ();
     
     for (ElvinURI uri : manager.listenURIs ())
-      html.append ("<li>${} (listen)</li>\n", uri);
+      html.append ("<li><span  class='net-address'>${}</span> (listen)</li>\n", 
+                   uri);
     
     for (ElvinURI uri : manager.connectURIs ())
-      html.append ("<li>${} (connect)</li>\n", uri);
+      html.append ("<li><span class='net-address'>${}</span> (connect)</li>\n", 
+                   uri);
 
     html.outdent ().append ("</ul>\n");
     
@@ -83,24 +85,25 @@ public class FederationView implements HtmlView
     html.append ("<table class='client-list'>\n");
     html.indent ();
     
-    html.append ("<thead><tr><th class='numeric title'>Federator</th>" +
-    		     "<th class='title'>Remote Host</th>" +
-    		     "<th class='title'>Class</th>" +
-    		     "<th class='title'>Connected</th>" +
-    		     "<th class='numeric'>Bytes (In&nbsp;/&nbsp;Out)</th>\n" +
-    		     "<th class='numeric'>Bandwidth (In&nbsp;/&nbsp;Out&nbsp;B/s)</th>\n" +
-    		     "<th class='numeric title'>Notifications " +
-    		       "(In&nbsp;/&nbsp;Out)</th></tr></thead>\n");
+    html.append ("<thead><tr>" +
+    		"<th class='numeric'>Federator</th>" +
+    		"<th>Remote Host</th>" +
+    		"<th>Class</th>" +
+    		"<th>Connected</th>" +
+    		"<th class='numeric'>Bytes (In&nbsp;/&nbsp;Out)</th>\n" +
+    		"<th class='numeric'>Bandwidth (In&nbsp;/&nbsp;Out&nbsp;B/s)</th>\n" +
+    		"<th class='numeric title'>Notifications " +
+                  "(In&nbsp;/&nbsp;Out)</th></tr></thead>\n");
     
     for (Link link : sort (manager.links (), LINK_COMPARATOR))
     {
       html.append ("<tr><td class='number' rowspan='2'>${}</td>" +
-      		       "<td>${}</td>" +
-      		       "<td>${}</td>" +
-      		       "<td class='date'>${}</td>" +
-      		       "<td class='number'>${} /&nbsp;${}</td>" +
-      		       "<td class='number'>${} /&nbsp;${}</td>" +
-      		       "<td class='number'>${} / ${}</td></tr>\n",
+                   "<td class='net-address'>${}</td>" +
+                   "<td>${}</td>" +
+                   "<td class='date'>${}</td>" +
+                   "<td class='number'>${} /&nbsp;${}</td>" +
+                   "<td class='number'>${} /&nbsp;${}</td>" +
+                   "<td class='number'>${} / ${}</td></tr>\n",
       		   link.session.getId (), 
       		   formatHost (link.remoteHostAddress), 
       		   link.federationClass.name,
@@ -122,9 +125,13 @@ public class FederationView implements HtmlView
       IoService service = link.session.getService ();
       ElvinURI uri = router.ioManager ().elvinUriFor (service);
       
-      addPropListRow (html, "Initiated by:", 
-                      (service instanceof AbstractIoAcceptor ? 
-                        "Listener on " : "Connector to ") + uri);
+      html.append 
+        ("<tr><td>${}</td>" +
+         "<td>${} <span class='net-address'>${}</span></td></tr>\n", 
+         "Initiated by:", service instanceof AbstractIoAcceptor ? 
+           "Listener on " : "Connector to ", 
+         uri);
+      
       addPropListRow (html, "Remote domain:", link.remoteServerDomain);
       addPropListRow (html, "Remote filter:", unparse (link.remotePullFilter));
       

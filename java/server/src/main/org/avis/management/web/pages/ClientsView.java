@@ -53,7 +53,7 @@ public class ClientsView implements HtmlView
     html.append ("<ul>\n").indent ();
     
     for (ElvinURI uri : router.listenURIs ())
-      html.append ("<li>${}</li>\n", uri);
+      html.append ("<li class='net-address'>${}</li>\n", uri);
 
     html.outdent ().append ("</ul>\n");
     
@@ -87,7 +87,7 @@ public class ClientsView implements HtmlView
         
         html.append 
           ("<tr><td rowspan='2' class='number'>${}</td>" +
-               "<td>${}</td>" +
+               "<td class='net-address'>${}</td>" +
                "<td class='date'>${}</td>" +
                "<td class='number'>${} /&nbsp;${}</td>" +
                "<td class='number'>${}</td>" +

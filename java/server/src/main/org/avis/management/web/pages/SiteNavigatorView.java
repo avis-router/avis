@@ -11,7 +11,8 @@ public class SiteNavigatorView implements HtmlView
   private List<String> pages;
   private List<String> uris;
 
-  public SiteNavigatorView (String currentPage, List<String> pages, List<String> uris)
+  public SiteNavigatorView (String currentPage, 
+                            List<String> pages, List<String> uris)
   {
     this.currentPage = currentPage;
     this.pages = pages;
@@ -22,15 +23,15 @@ public class SiteNavigatorView implements HtmlView
   {
     html.append ("<p class='nav'>\n").indent ();
     
-    for (int index = 0; index < pages.size (); index++)
+    for (int i = 0; i < pages.size (); i++)
     {
-      String page = pages.get (index);
-      String href = uris.get (index);
+      String page = pages.get (i);
+      String href = uris.get (i);
       String cssClass = 
         href.equals (uriFor (currentPage)) ? 
           "nav-item nav-current" : "nav-item";
       
-      if (index > 0)
+      if (i > 0)
         html.append ("&nbsp;| \n");
       
       html.append ("<span class='${}'><a href='${}'>${}</a></span>",
@@ -42,10 +43,10 @@ public class SiteNavigatorView implements HtmlView
 
   private String uriFor (String page)
   {
-    for (int index = 0; index < pages.size (); index++)
+    for (int i = 0; i < pages.size (); i++)
     {
-      if (pages.get (index).equals (page))
-        return uris.get (index);
+      if (pages.get (i).equals (page))
+        return uris.get (i);
     }
     
     return null;
