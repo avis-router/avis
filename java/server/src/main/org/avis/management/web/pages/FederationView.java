@@ -129,7 +129,7 @@ public class FederationView implements HtmlView
         ("<tr><td>${}</td>" +
          "<td>${} <span class='net-address'>${}</span></td></tr>\n", 
          "Initiated by:", service instanceof AbstractIoAcceptor ? 
-           "Listener on " : "Connector to ", 
+           "Listener on" : "Connector to", 
          uri);
       
       addPropListRow (html, "Remote domain:", link.remoteServerDomain);
