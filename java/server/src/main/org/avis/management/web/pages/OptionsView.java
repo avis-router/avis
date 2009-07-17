@@ -15,29 +15,43 @@ public class OptionsView implements HtmlView
 {
   private Options options;
   private Pattern filter;
+  private boolean showDefaults;
 
   public OptionsView (Options options)
   {
+    this (options, true);
+  }
+  
+  public OptionsView (Options options, boolean showDefaults)
+  {
     this.options = options;
     this.filter = null;
+    this.showDefaults = showDefaults;
   }
   
   public OptionsView (Options options, String filterRegex)
   {
+    this (options, filterRegex, true);
+  }
+  
+  public OptionsView (Options options, String filterRegex, boolean showDefaults)
+  {
     this.options = options;
+    this.showDefaults = showDefaults;
     this.filter = Pattern.compile (filterRegex);
   }
 
   public void render (HTML html)
   {
-    html.append ("<table>\n").indent ();
+    html.append ("<table class='option-list'>\n").indent ();
     
     for (Map.Entry<String, OptionType> e : 
          options.optionSet ().all ().entrySet ())
     {
       String option = e.getKey ();
-      
-      if (filter == null || filter.matcher (option).matches ())
+     
+      if ((showDefaults || !options.isDefaultValue (option)) &&
+          (filter == null || filter.matcher (option).matches ()))
       {
         if (e.getValue () instanceof OptionTypeParam)
         {

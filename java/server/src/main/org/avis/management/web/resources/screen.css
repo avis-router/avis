@@ -54,6 +54,13 @@ h2
     margin-bottom: 0.5em;
 }
 
+.sub-table h2
+{
+    margin: 2px 4px 2px 4px;
+    margin-bottom: 2px;
+    margin-bottom: 2px;
+}
+
 table
 { 
   text-align: left;
