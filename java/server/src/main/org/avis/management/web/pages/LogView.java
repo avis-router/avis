@@ -50,19 +50,23 @@ public class LogView implements HtmlView
 
     html.append 
       ("<thead><tr>" +
-       "<th width='0*'>Date</th>" +
+       "<th width='1*'>Date</th>" +
        "<th width='0*'>Type</th>\n" + 
-       "<th width='1*'>Message</th>" +
+       "<th width='2*'>Message</th>" +
        "</tr></thead>\n");
+    
+    int row = 0;
     
     for (LogEvent event : events)
     {
+      String rowClass = row++ % 2 == 0 ? "even" : "odd";
       html.append 
-        ("<tr>" +
+        ("<tr class='${}'>" +
          "<td class='date'>${}</td>" +
          "<td class='${}'>${}</td>" +
          "<td>${}</td>" +
          "</tr>\n", 
+         rowClass,
          dateFormat.get ().format (event.time),
          EVENT_TYPE_CSS_CLASS [event.type],
          eventTypeToString (event.type),
@@ -71,11 +75,11 @@ public class LogView implements HtmlView
       if (event.exception != null)
       {
         html.append 
-        ("<tr>" +
+        ("<tr class='${}'>" +
          "<td colspan='3'>" +
          "<div class='exception'>Exception trace:" +
            "<pre class='exception-trace'>${}</pre></div></td>" +
-         "</tr>\n", formatException (event.exception));
+         "</tr>\n", rowClass, formatException (event.exception));
       }
     }
     

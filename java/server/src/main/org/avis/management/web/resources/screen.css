@@ -172,6 +172,16 @@ table .number
     border: 1px solid LightGrey;
 }
 
+table.log
+{
+    border: 1px solid LightGrey;
+}
+
+table.log td
+{
+    border: none;
+}
+
 table .exception
 {
     margin-left: 10px;
