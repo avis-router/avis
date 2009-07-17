@@ -69,11 +69,15 @@ public class ClientsView implements HtmlView
        "<th>Remote Host</th>\n" + 
        "<th>Local Endpoint</th>\n" + 
        "<th>Date</th>" +
-       "<th class='numeric'>Keys (Sub&nbsp;/&nbsp;Notify)</th>\n" +
+       "<th class='numeric'>Keys<br/>" +
+         "<span class='sub-title'>(Sub&nbsp;/&nbsp;Notify)</span></th>\n" +
        "<th class='numeric'>Subs</th>\n" +
-       "<th class='numeric'>Bytes (Out&nbsp;/&nbsp;In)</th>\n" +
-       "<th class='numeric'>Bandwidth (Out&nbsp;/&nbsp;In&nbsp;B/s)</th>\n" +
-       "<th class='numeric'>Notifications (Out&nbsp;/&nbsp;In)</th></tr></thead>\n");
+       "<th class='numeric'>Bytes<br/>" +
+         "<span class='sub-title'>(Out&nbsp;/&nbsp;In)</span></th>\n" +
+       "<th class='numeric'>Bandwidth<br/>" +
+         "<span class='sub-title'>(Out&nbsp;/&nbsp;In&nbsp;B/s)</span></th>\n" +
+       "<th class='numeric'>Notifications<br/>" +
+         "<span class='sub-title'>(Out&nbsp;/&nbsp;In)</span></th></tr></thead>\n");
     
     for (Connection connection : 
          sort (router.connections (), CONNECTION_COMPARATOR))

@@ -142,6 +142,12 @@ table.log
     font-weight: bold;
 }
 
+.sub-title
+{
+    font-weight: normal;
+    font-size: 8pt;
+}
+
 .numeric
 {
     text-align: right;
