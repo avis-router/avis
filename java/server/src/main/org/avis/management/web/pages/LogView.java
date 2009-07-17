@@ -60,6 +60,7 @@ public class LogView implements HtmlView
     for (LogEvent event : events)
     {
       String rowClass = row++ % 2 == 0 ? "even" : "odd";
+      
       html.append 
         ("<tr class='${}'>" +
          "<td class='date'>${}</td>" +
