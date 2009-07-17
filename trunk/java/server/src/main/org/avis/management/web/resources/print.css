@@ -38,3 +38,9 @@ a
     border: none;
 }
 
+pre.exception-trace
+{
+    overflow-x: hidden;
+    max-width: inherit;
+}
+
