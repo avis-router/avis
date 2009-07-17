@@ -14,6 +14,8 @@ import org.avis.management.web.HTML;
 import org.avis.management.web.HtmlView;
 import org.avis.router.Router;
 
+import static java.lang.Runtime.getRuntime;
+
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
 
@@ -49,24 +51,32 @@ public class OverviewView implements HtmlView
     
     html.append ("<table>\n").indent ();
     
-    html.append ("<tr><td>Router version:</td>" +
+    html.append ("<tr><td>Version:</td>" +
     		 "<td class='fixed'>Avis ${}${} (built on ${})</td></tr>\n",
                  getProperty ("avis.router.version", "(unknown)"),
                  getProperty ("avis.release", ""),
                  getProperty ("avis.build-date", "(unknown)"));
     
     html.append 
-      ("<tr><td>Router running since:</td><td class='date'>${}</td></tr>\n",
+      ("<tr><td>Running since:</td><td class='date'>${}</td></tr>\n",
        formatTime (startedAt));
     
     TimeZone timezone = TimeZone.getDefault ();
     Date now = new Date ();
     
-    html.append ("<tr><td>Router timezone:</td>" +
+    html.append ("<tr><td>Timezone:</td>" +
     		     "<td><span class='number'>${}</span> ${}</td></tr>\n", 
                  offsetFormat.get ().format (now),
                  timezone.getDisplayName (timezone.inDaylightTime (now), 
                                           TimeZone.LONG));
+    html.append ("<tr><td>Memory:</td>" +
+                 "<td><span class='number'>${}</span> free / " +
+                 "<span class='number'>${}</span> total / " +
+                 "<span class='number'>${}</span> max</td></tr>\n", 
+                 formatNum (getRuntime ().freeMemory ()),
+                 formatNum (getRuntime ().totalMemory ()),
+                 formatNum (getRuntime ().maxMemory ()));
+    
     html.outdent ().append ("</table>\n");
     
     html.append ("<h2>Statistics</h2>\n");
