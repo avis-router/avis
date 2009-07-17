@@ -1,5 +1,11 @@
 package org.avis.management.web.pages;
 
+import java.util.Date;
+import java.util.TimeZone;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.apache.mina.core.service.IoService;
 
 import org.avis.federation.Connector;
@@ -18,6 +24,16 @@ import static org.avis.management.web.HTML.formatTime;
 
 public class OverviewView implements HtmlView
 {
+  private static final ThreadLocal<DateFormat> offsetFormat =
+    new ThreadLocal<DateFormat> ()
+  {
+    @Override
+    protected DateFormat initialValue ()
+    {
+      return new SimpleDateFormat ("Z");
+    }
+  };
+  
   private Router router;
   private long startedAt;
 
@@ -34,7 +50,7 @@ public class OverviewView implements HtmlView
     html.append ("<table>\n").indent ();
     
     html.append ("<tr><td>Router version:</td>" +
-    		 "<td class='number'>Avis ${}${} (built on ${})</td></tr>\n",
+    		 "<td class='fixed'>Avis ${}${} (built on ${})</td></tr>\n",
                  getProperty ("avis.router.version", "(unknown)"),
                  getProperty ("avis.release", ""),
                  getProperty ("avis.build-date", "(unknown)"));
@@ -43,6 +59,14 @@ public class OverviewView implements HtmlView
       ("<tr><td>Router running since:</td><td class='date'>${}</td></tr>\n",
        formatTime (startedAt));
     
+    TimeZone timezone = TimeZone.getDefault ();
+    Date now = new Date ();
+    
+    html.append ("<tr><td>Router timezone:</td>" +
+    		     "<td><span class='number'>${}</span> ${}</td></tr>\n", 
+                 offsetFormat.get ().format (now),
+                 timezone.getDisplayName (timezone.inDaylightTime (now), 
+                                          TimeZone.LONG));
     html.outdent ().append ("</table>\n");
     
     html.append ("<h2>Statistics</h2>\n");

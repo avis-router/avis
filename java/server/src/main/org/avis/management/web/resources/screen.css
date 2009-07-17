@@ -135,15 +135,14 @@ table.log
     text-align: right;
 }
 
-.number
-{
-    text-align: right;
-    font-family: Consolas, Monaco, Courier, fixed;
-}
-
-.date, .net-address, .sub-exp
+.number, .date, .net-address, .sub-exp, .fixed
 {
     font-family: consolas,monaco,courier,fixed;    
+}
+
+table .number
+{
+    text-align: right;
 }
 
 .prop-list
