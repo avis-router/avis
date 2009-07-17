@@ -25,6 +25,10 @@ public class LogView implements HtmlView
       return new SimpleDateFormat ("MMM dd HH:mm:ss.SSS");
     }
   };
+
+  private static final String [] EVENT_TYPE_CSS_CLASS = 
+    {"log-trace", "log-diagnostic", "log-info",
+     "log-warning", "log-alarm", "log-internalerror"};
   
   private LogEventBuffer events;
 
@@ -56,10 +60,11 @@ public class LogView implements HtmlView
       html.append 
         ("<tr>" +
          "<td class='date'>${}</td>" +
-         "<td>${}</td>" +
+         "<td class='${}'>${}</td>" +
          "<td>${}</td>" +
          "</tr>\n", 
          dateFormat.get ().format (event.time),
+         EVENT_TYPE_CSS_CLASS [event.type],
          eventTypeToString (event.type),
          event.message);
       

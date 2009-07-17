@@ -190,3 +190,23 @@ pre.exception-trace
 {
     background-color: white;
 }
+
+.log-info
+{
+    color: green;
+}
+
+.log-trace, .log-diagnostic
+{
+    color: rgb(128,128,128);
+}
+
+.log-warning
+{
+    color: orange;
+}
+
+.log-alarm, .log-internalerror
+{
+    color: red;
+}
