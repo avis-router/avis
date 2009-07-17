@@ -20,12 +20,12 @@ public class HTML
   private int indent;
   private boolean atLineStart;
 
-  private static final ThreadLocal<DateFormat> DATE_FORMAT = 
+  private static final ThreadLocal<DateFormat> dateFormat = 
     new ThreadLocal<DateFormat> ()
   {
     protected DateFormat initialValue ()
     {
-      return new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSSZ");
+      return new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSS");
     }
   };
   
@@ -208,7 +208,7 @@ public class HTML
 
   public static String formatTime (Date date)
   {
-    return DATE_FORMAT.get ().format (date);
+    return dateFormat.get ().format (date);
   }
   
   public static String formatTime (long time)

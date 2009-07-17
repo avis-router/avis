@@ -3,6 +3,9 @@ package org.avis.management.web.pages;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.avis.logging.Log;
 import org.avis.logging.LogEvent;
 import org.avis.logging.LogEventBuffer;
@@ -10,10 +13,19 @@ import org.avis.management.web.HTML;
 import org.avis.management.web.HtmlView;
 
 import static org.avis.logging.Log.eventTypeToString;
-import static org.avis.management.web.HTML.formatTime;
 
 public class LogView implements HtmlView
 {
+  private static final ThreadLocal<DateFormat> dateFormat =
+    new ThreadLocal<DateFormat> ()
+  {
+    @Override
+    protected DateFormat initialValue ()
+    {
+      return new SimpleDateFormat ("MMM dd HH:mm:ss.SSS");
+    }
+  };
+  
   private LogEventBuffer events;
 
   public LogView ()
@@ -47,7 +59,7 @@ public class LogView implements HtmlView
          "<td>${}</td>" +
          "<td>${}</td>" +
          "</tr>\n", 
-         formatTime (event.time),
+         dateFormat.get ().format (event.time),
          eventTypeToString (event.type),
          event.message);
       

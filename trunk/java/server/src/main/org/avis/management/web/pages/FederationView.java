@@ -61,7 +61,7 @@ public class FederationView implements HtmlView
     html.append ("<ul>\n").indent ();
     
     for (ElvinURI uri : manager.listenURIs ())
-      html.append ("<li><span  class='net-address'>${}</span> (listen)</li>\n", 
+      html.append ("<li><span class='net-address'>${}</span> (listen)</li>\n", 
                    uri);
     
     for (ElvinURI uri : manager.connectURIs ())
