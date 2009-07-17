@@ -52,7 +52,7 @@ public class LogView implements HtmlView
       ("<thead><tr>" +
        "<th width='1*'>Date</th>" +
        "<th width='0*'>Type</th>\n" + 
-       "<th width='2*'>Message</th>" +
+       "<th width='3*'>Message</th>" +
        "</tr></thead>\n");
     
     int row = 0;
@@ -60,18 +60,23 @@ public class LogView implements HtmlView
     for (LogEvent event : events)
     {
       String rowClass = row++ % 2 == 0 ? "even" : "odd";
-      
+      String from = 
+        event.source instanceof Class<?> ? 
+          ((Class<?>)event.source).getName () : 
+            event.source.getClass ().getName ();
+          
       html.append 
         ("<tr class='${}'>" +
          "<td class='date'>${}</td>" +
          "<td class='${}'>${}</td>" +
-         "<td>${}</td>" +
+         "<td>${} (<span class='fixed'>${}</span>)</td>" +
          "</tr>\n", 
          rowClass,
          dateFormat.get ().format (event.time),
          EVENT_TYPE_CSS_CLASS [event.type],
          eventTypeToString (event.type),
-         event.message);
+         event.message,
+         from);
       
       if (event.exception != null)
       {
