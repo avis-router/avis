@@ -72,9 +72,9 @@ public class LogView implements HtmlView
       {
         html.append 
         ("<tr>" +
-         "<td />" +
-         "<td colspan='2'>Exception trace:" +
-           "<pre class='exception-trace'>${}</pre></td>" +
+         "<td colspan='3'>" +
+         "<div class='exception'>Exception trace:" +
+           "<pre class='exception-trace'>${}</pre></div></td>" +
          "</tr>\n", formatException (event.exception));
       }
     }
