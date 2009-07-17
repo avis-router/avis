@@ -109,9 +109,17 @@ public class ClientsView implements HtmlView
            formatBandwidth (connection.session.getWrittenBytesThroughput ()),
            formatNum (connection.receivedNotificationCount), 
            formatNum (connection.sentNotificationCount));
-      
-        html.append ("<tr><td class='sub-table' colspan='7'>\n");
-  
+
+        html.append ("<tr><td class='sub-table' colspan='8'>\n");
+        
+        if (!connection.options.options ().isEmpty ())
+        {
+          html.append ("<h2>Options</h2>");
+          html.indent ();
+          new OptionsView (connection.options, false).render (html);
+          html.outdent ();
+        }
+        
         html.indent ();
         outputSubscriptions (html, connection);
         html.outdent ();
@@ -129,6 +137,7 @@ public class ClientsView implements HtmlView
 
   private static void outputSubscriptions (HTML html, Connection connection)
   {
+    html.append ("<h2>Subscriptions</h2>");
     html.append ("<table class='sub-list'>\n");
 
     html.indent ();
