@@ -127,6 +127,11 @@ table th
     border: 1px solid LightGrey;
 }
 
+.option-list td, tr
+{
+    border: none;
+}
+
 table.log
 {
     width: 100%;
@@ -205,12 +210,12 @@ pre.exception-trace
 
 .odd
 {
-    background-color: rgb(237,243,254);
+    background-color: rgb(237,237,237);
 }
 
 .even
 {
-    background-color: white;
+    background-color: inherit;
 }
 
 .log-info
