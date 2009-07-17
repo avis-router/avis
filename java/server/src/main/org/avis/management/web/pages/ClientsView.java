@@ -66,10 +66,11 @@ public class ClientsView implements HtmlView
 
     html.append 
       ("<thead><tr><th class='numeric'>Client</th>" +
-       "<th>Host</th>\n" + 
-       "<th>Connected</th>" +
+       "<th>Remote Host</th>\n" + 
+       "<th>Local Endpoint</th>\n" + 
+       "<th>Date</th>" +
        "<th class='numeric'>Keys (Sub&nbsp;/&nbsp;Notify)</th>\n" +
-       "<th class='numeric'>Subscriptions</th>\n" +
+       "<th class='numeric'>Subs</th>\n" +
        "<th class='numeric'>Bytes (Out&nbsp;/&nbsp;In)</th>\n" +
        "<th class='numeric'>Bandwidth (Out&nbsp;/&nbsp;In&nbsp;B/s)</th>\n" +
        "<th class='numeric'>Notifications (Out&nbsp;/&nbsp;In)</th></tr></thead>\n");
@@ -88,6 +89,7 @@ public class ClientsView implements HtmlView
         html.append 
           ("<tr><td rowspan='2' class='number'>${}</td>" +
                "<td class='net-address'>${}</td>" +
+               "<td class='net-address'>${}</td>" +
                "<td class='date'>${}</td>" +
                "<td class='number'>${} /&nbsp;${}</td>" +
                "<td class='number'>${}</td>" +
@@ -96,6 +98,7 @@ public class ClientsView implements HtmlView
                "<td class='number'>${} /&nbsp;${}</td></tr>\n",
            connection.id (),
            formatHost (connection.remoteHost ()),
+           router.ioManager ().elvinUriFor (connection.session.getService ()),
            formatTime (connection.session.getCreationTime ()), 
            formatNum (connection.subscriptionKeys.size ()),
            formatNum (connection.notificationKeys.size ()),
