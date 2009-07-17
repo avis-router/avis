@@ -45,6 +45,8 @@ public class OptionsView implements HtmlView
   {
     html.append ("<table class='option-list'>\n").indent ();
     
+    int row = 0;
+    
     for (Map.Entry<String, OptionType> e : 
          options.optionSet ().all ().entrySet ())
     {
@@ -55,11 +57,11 @@ public class OptionsView implements HtmlView
       {
         if (e.getValue () instanceof OptionTypeParam)
         {
-          renderParamOption (html, option, 
-                             getParamOption (options, option));
+          row = renderParamOption (html, option, 
+                                   getParamOption (options, option), row);
         } else
         {
-          renderOptionValue (html, option, options.get (option));
+          renderOptionValue (html, option, options.get (option), row++);
         }
       }
     }
@@ -67,17 +69,20 @@ public class OptionsView implements HtmlView
     html.outdent ().append ("</table>\n");
   }
 
-  public void renderOptionValue (HTML html, String option, Object value)
+  public void renderOptionValue (HTML html, String option, Object value, 
+                                 int row)
   {
-    html.append ("<tr class='${}'><td>${}:</td><td>${}</td></tr>\n", 
+    html.append ("<tr class='${} ${}'><td>${}:</td><td>${}</td></tr>\n", 
                  options.isDefaultValue (stripParams (option)) ? 
-                   "option-default" : "option-set",
+                   "option-default" : "option-set", 
+                 row % 2 == 0 ? "even" : "odd",
                  option, value);
   }
 
   @SuppressWarnings ("unchecked")
-  private void renderParamOption (HTML html, String baseName,
-                                  Map<String, Object> paramValues)
+  private int renderParamOption (HTML html, String baseName,
+                                  Map<String, Object> paramValues,
+                                  int row)
   {
     for (Map.Entry<String, Object> e : paramValues.entrySet ())
     {
@@ -85,10 +90,12 @@ public class OptionsView implements HtmlView
       Object value = e.getValue ();
       
       if (value instanceof Map)
-        renderParamOption (html, name, (Map<String, Object>)value);
+        row = renderParamOption (html, name, (Map<String, Object>)value, row);
       else
-        renderOptionValue (html, name, value);
+        renderOptionValue (html, name, value, row++);
     }
+    
+    return row;
   }
   
   private static String stripParams (String option)

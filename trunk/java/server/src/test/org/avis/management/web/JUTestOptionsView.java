@@ -60,7 +60,7 @@ public class JUTestOptionsView
     HTML html = new HTML ();
     OptionsView view = new OptionsView (options);
     
-    view.renderOptionValue (html, option, value);
+    view.renderOptionValue (html, option, value, 0);
     
     // System.out.println (html.asText ());
     
