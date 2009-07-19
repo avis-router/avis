@@ -77,7 +77,7 @@ public class Authoriser implements ServiceResolver, HttpService
        "<head>\n" + 
        "  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" + 
        "  <title>Authorisation Required</title>\n" + 
-       "  <link href=\"main.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n" + 
+       "  <link href=\"screen.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n" + 
        "</head>\n" +
        "<body><p>Please enter the administrator password</p>" +
        "</body></html>", Charset.forName ("UTF-8").newEncoder ());
