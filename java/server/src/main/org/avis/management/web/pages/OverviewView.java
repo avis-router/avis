@@ -132,6 +132,6 @@ public class OverviewView implements HtmlView
       }
     }
     
-    return new long [] {in ,out};
+    return new long [] {in, out};
   }
 }
