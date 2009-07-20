@@ -1,4 +1,4 @@
-package org.avis.management.web.pages;
+package org.avis.management.pages;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 import org.avis.config.OptionType;
 import org.avis.config.OptionTypeParam;
 import org.avis.config.Options;
-import org.avis.management.web.HTML;
-import org.avis.management.web.HtmlView;
+import org.avis.management.HTML;
+import org.avis.management.HtmlView;
 
 import static org.avis.config.OptionTypeParam.getParamOption;
 

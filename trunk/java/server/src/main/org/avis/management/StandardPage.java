@@ -1,11 +1,11 @@
-package org.avis.management.web;
+package org.avis.management;
 
 import java.util.List;
 
 import org.apache.asyncweb.common.HttpRequest;
 import org.apache.asyncweb.server.resolver.ServiceResolver;
 
-import org.avis.management.web.pages.SiteNavigatorView;
+import org.avis.management.pages.SiteNavigatorView;
 
 import static java.util.Arrays.asList;
 

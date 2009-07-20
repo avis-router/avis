@@ -1,4 +1,4 @@
-package org.avis.management.web.pages;
+package org.avis.management.pages;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -10,8 +10,8 @@ import org.apache.mina.core.service.IoService;
 
 import org.avis.federation.Connector;
 import org.avis.federation.FederationManager;
-import org.avis.management.web.HTML;
-import org.avis.management.web.HtmlView;
+import org.avis.management.HTML;
+import org.avis.management.HtmlView;
 import org.avis.router.Router;
 
 import static java.lang.Runtime.getRuntime;
@@ -21,8 +21,8 @@ import static java.lang.System.getProperty;
 
 import static org.avis.federation.FederationManager.federationManagerFor;
 import static org.avis.federation.FederationManager.isFederationActivated;
-import static org.avis.management.web.HTML.formatNum;
-import static org.avis.management.web.HTML.formatTime;
+import static org.avis.management.HTML.formatNum;
+import static org.avis.management.HTML.formatTime;
 
 public class OverviewView implements HtmlView
 {

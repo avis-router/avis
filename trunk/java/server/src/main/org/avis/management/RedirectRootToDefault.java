@@ -1,4 +1,4 @@
-package org.avis.management.web;
+package org.avis.management;
 
 import org.apache.asyncweb.common.DefaultHttpResponse;
 import org.apache.asyncweb.common.HttpRequest;
