@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.avis.config.Options;
 import org.avis.federation.FederationOptionSet;
 import org.avis.management.HTML;
-import org.avis.management.WebManagementOptionSet;
+import org.avis.management.ManagementOptionSet;
 import org.avis.management.pages.OptionsView;
 import org.avis.router.RouterOptionSet;
 
@@ -22,7 +22,7 @@ public class JUTestOptionsView
     RouterOptionSet routerOptionSet = new RouterOptionSet ();
     
     routerOptionSet.inheritFrom (FederationOptionSet.OPTION_SET);
-    routerOptionSet.inheritFrom (WebManagementOptionSet.OPTION_SET);
+    routerOptionSet.inheritFrom (ManagementOptionSet.OPTION_SET);
     
     options = new Options (routerOptionSet);
     

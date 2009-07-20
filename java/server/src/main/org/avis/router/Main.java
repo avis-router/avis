@@ -13,8 +13,8 @@ import org.avis.federation.EwafURI;
 import org.avis.federation.FederationManager;
 import org.avis.federation.FederationOptionSet;
 import org.avis.logging.Log;
-import org.avis.management.WebManagementManager;
-import org.avis.management.WebManagementOptionSet;
+import org.avis.management.ManagementManager;
+import org.avis.management.ManagementOptionSet;
 import org.avis.util.IllegalCommandLineOption;
 import org.avis.util.IllegalConfigOptionException;
 
@@ -28,7 +28,7 @@ import static org.avis.logging.Log.enableLogging;
 import static org.avis.logging.Log.info;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
-import static org.avis.management.WebManagementManager.webManagementManagerFor;
+import static org.avis.management.ManagementManager.webManagementManagerFor;
 import static org.avis.util.CommandLine.intArg;
 import static org.avis.util.CommandLine.stringArg;
 import static org.avis.util.Streams.fileStream;
@@ -137,7 +137,7 @@ public class Main
       for (URL url : webManagementManagerFor (router).listenURLs ())
       {
         for (InetSocketAddress address : 
-             addressesFor (url, WebManagementOptionSet.DEFAULT_PORT))
+             addressesFor (url, ManagementOptionSet.DEFAULT_PORT))
         {
           info ("Web management listening on " + address + " (" + url + ")", 
                 Main.class);
@@ -164,7 +164,7 @@ public class Main
     
     // add federation/web management options to router's option set
     routerOptionSet.inheritFrom (FederationOptionSet.OPTION_SET);
-    routerOptionSet.inheritFrom (WebManagementOptionSet.OPTION_SET);
+    routerOptionSet.inheritFrom (ManagementOptionSet.OPTION_SET);
     
     RouterOptions config = new RouterOptions (routerOptionSet);
     
@@ -176,7 +176,7 @@ public class Main
       new FederationManager (router, config);
     
     if (config.getBoolean ("Management.Activated"))
-      new WebManagementManager (router, config);
+      new ManagementManager (router, config);
 
     return router;
   }
