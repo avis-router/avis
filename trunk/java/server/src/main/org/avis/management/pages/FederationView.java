@@ -92,11 +92,11 @@ public class FederationView implements HtmlView
        "<th>Class</th>" +
        "<th>Connected</th>" +
        "<th class='numeric'>Bytes<br/>" +
-         "<span class='sub-title'>(In&nbsp;/&nbsp;Out)</span></th>\n" +
-       "<th class='numeric'>Bandwidth<br/>" +
-         "<span class='sub-title'>(In&nbsp;/&nbsp;Out&nbsp;B/s)</span></th>\n" +
+         "<span class='sub-title'>In&nbsp;/&nbsp;Out</span></th>\n" +
+       "<th class='numeric'>Bytes/Sec<br/>" +
+         "<span class='sub-title'>In&nbsp;/&nbsp;Out</span></th>\n" +
        "<th class='numeric title'>Notifications<br/>" +
-         "<span class='sub-title'>(In&nbsp;/&nbsp;Out)</span></th></tr></thead>\n");
+         "<span class='sub-title'>In&nbsp;/&nbsp;Out</span></th></tr></thead>\n");
     
     for (Link link : sort (manager.links (), LINK_COMPARATOR))
     {
