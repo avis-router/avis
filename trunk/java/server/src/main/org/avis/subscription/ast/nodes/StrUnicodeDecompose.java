@@ -97,9 +97,9 @@ public class StrUnicodeDecompose extends Node
   @Override
   public Object evaluate (Map<String, Object> attrs)
   {
-    String result = (String)stringExpr.evaluate (attrs);
+    Object result = stringExpr.evaluate (attrs);
     
-    if (result == null)
+    if (!(result instanceof String))
       return BOTTOM;
     
     try

@@ -25,9 +25,9 @@ public class StrFoldCase extends Node
   @Override
   public Object evaluate (Map<String, Object> attrs)
   {
-    String result = (String)stringExpr.evaluate (attrs);
+    Object result = stringExpr.evaluate (attrs);
     
-    return result == null ? null : result.toLowerCase ();
+    return result instanceof String ? ((String)result).toLowerCase () : null;
   }
 
   @Override

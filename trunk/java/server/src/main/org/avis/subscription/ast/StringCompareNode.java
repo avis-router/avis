@@ -60,12 +60,12 @@ public abstract class StringCompareNode extends Node
   @Override
   public Object evaluate (Map<String, Object> attrs)
   {
-    String exprValue = (String)stringExpr.evaluate (attrs);
+    Object exprValue = stringExpr.evaluate (attrs);
     
-    if (exprValue == null)
-      return BOTTOM;
+    if (exprValue instanceof String)
+      return evaluate ((String)exprValue, string);
     else
-      return evaluate (exprValue, string);
+      return BOTTOM;
   }
   
   protected abstract boolean evaluate (String string1, String string2);

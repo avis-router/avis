@@ -48,6 +48,10 @@ import org.avis.subscription.parser.SubscriptionParser;
 
 import static java.lang.Double.NaN;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import static org.avis.subscription.ast.Node.BOTTOM;
 import static org.avis.subscription.ast.Node.EMPTY_NOTIFICATION;
 import static org.avis.subscription.ast.Node.FALSE;
@@ -55,9 +59,6 @@ import static org.avis.subscription.ast.Node.TRUE;
 import static org.avis.subscription.ast.Nodes.unparse;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.Mode.DECOMPOSE;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.Mode.DECOMPOSE_COMPAT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test the evaluation of AST's.
@@ -376,6 +377,7 @@ public class JUTestEvaluation
    */
   @Test
   public void compareMultitype ()
+    throws Exception
   {
     Map<String, Object> ntfn = new HashMap<String, Object> ();
     ntfn.put ("name", "foobar");
@@ -389,6 +391,36 @@ public class JUTestEvaluation
     assertEquals (TRUE, node.evaluate (ntfn));
     
     ntfn.put ("name", new byte [] {1, 2, 3});
+    assertEquals (BOTTOM, node.evaluate (ntfn));
+  }
+  
+  @Test
+  public void stringOpsWithNonString ()
+    throws Exception
+  {
+    Node node = parse ("equals (fold-case (name), 'hello', 'world')");
+    
+    Map<String, Object> ntfn = new HashMap<String, Object> ();
+    ntfn.put ("name", 1);
+    
+    assertEquals (BOTTOM, node.evaluate (ntfn));
+    
+    node = parse ("ends-with (name, 'h')");
+    assertEquals (BOTTOM, node.evaluate (ntfn));
+    
+    node = parse ("begins-with (name, 'h')");
+    assertEquals (BOTTOM, node.evaluate (ntfn));
+    
+    node = parse ("contains (name, 'h')");
+    assertEquals (BOTTOM, node.evaluate (ntfn));
+    
+    node = parse ("regex (name, 'h*')");
+    assertEquals (BOTTOM, node.evaluate (ntfn));
+    
+    node = parse ("wildcard (name, 'h?')");
+    assertEquals (BOTTOM, node.evaluate (ntfn));
+    
+    node = parse ("decompose (name) == 'h'");
     assertEquals (BOTTOM, node.evaluate (ntfn));
   }
   
