@@ -71,13 +71,13 @@ public class Authoriser implements ServiceResolver, HttpService
     out.setAutoExpand (true);
 
     out.putString 
-      ("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n" + 
-       "        \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" + 
-       "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" + 
+      ("<!DOCTYPE html>\n" + 
        "<head>\n" + 
-       "  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\n" + 
+       "  <meta http-equiv=\"content-type\" " +
+           "content=\"text/html; charset=UTF-8\" />\n" + 
        "  <title>Authorisation Required</title>\n" + 
-       "  <link href=\"screen.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n" + 
+       "  <link href=\"screen.css\" media=\"screen\" " +
+           "rel=\"stylesheet\" type=\"text/css\" />\n" + 
        "</head>\n" +
        "<body><p>Please enter the administrator password</p>" +
        "</body></html>", Charset.forName ("UTF-8").newEncoder ());
