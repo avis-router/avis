@@ -1,12 +1,5 @@
 @import "screen.css";
 
-*
-{
-    border: 0px;
-    margin: 0px;
-    padding: 0px;
-}
-
 html
 {
     background-color: white;
@@ -43,4 +36,3 @@ pre.exception-trace
     overflow-x: hidden;
     max-width: inherit;
 }
-
