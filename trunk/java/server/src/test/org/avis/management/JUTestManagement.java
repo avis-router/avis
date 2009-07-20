@@ -8,13 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.config.Options;
-import org.avis.management.ManagementManager;
-import org.avis.management.ManagementOptionSet;
 import org.avis.router.Router;
 import org.avis.util.AutoClose;
 import org.avis.util.LogFailTester;
 
-import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,6 +47,8 @@ public class JUTestManagement
     URL webURL = new URL ("http://127.0.0.1:" + (PORT1 + 1));
     
     options.set ("Management.Listen", webURL.toString ());
+    options.set ("Management.Admin-Name", "admin");
+    options.set ("Management.Admin-Password", "admin");
     
     Router router = new Router (PORT1);
     
@@ -56,9 +56,10 @@ public class JUTestManagement
     
     ManagementManager manager = new ManagementManager (router, options);
     
-    HttpURLConnection connection = (HttpURLConnection)webURL.openConnection ();
+    HttpURLConnection connection = 
+      (HttpURLConnection)new URL (webURL, "overview").openConnection ();
     
-    assertEquals (HTTP_OK, connection.getResponseCode ());
+    assertEquals (HTTP_UNAUTHORIZED, connection.getResponseCode ());
     
     connection.disconnect ();
     
