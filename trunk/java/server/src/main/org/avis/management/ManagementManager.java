@@ -27,19 +27,19 @@ import static java.util.Collections.singleton;
 
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.warn;
-import static org.avis.management.WebManagementOptionSet.DEFAULT_PORT;
+import static org.avis.management.ManagementOptionSet.DEFAULT_PORT;
 
 /**
  * Creates the Avis web management web server.
  * 
  * @author Matthew Phillips
  */
-public class WebManagementManager implements Closeable, CloseListener
+public class ManagementManager implements Closeable, CloseListener
 {
   private Options config;
   private BasicServiceContainer container;
 
-  public WebManagementManager (Router router, Options config) 
+  public ManagementManager (Router router, Options config) 
     throws IOException
   {
     this.config = config;
@@ -155,12 +155,12 @@ public class WebManagementManager implements Closeable, CloseListener
    * 
    * @throws IllegalArgumentException if no manager found.
    */
-  public static WebManagementManager webManagementManagerFor (Router router)
+  public static ManagementManager webManagementManagerFor (Router router)
   {
     for (Object listener : router.closeListeners ())
     {
-      if (listener instanceof WebManagementManager)
-        return (WebManagementManager)listener;
+      if (listener instanceof ManagementManager)
+        return (ManagementManager)listener;
     }
     
     throw new IllegalArgumentException ("No web management manager");

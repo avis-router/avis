@@ -10,13 +10,13 @@ import static org.avis.io.Net.url;
  * 
  * @author Matthew Phillips
  */
-public class WebManagementOptionSet extends OptionSet
+public class ManagementOptionSet extends OptionSet
 {
   public static final int DEFAULT_PORT = 8017;
 
-  public static final OptionSet OPTION_SET = new WebManagementOptionSet ();
+  public static final OptionSet OPTION_SET = new ManagementOptionSet ();
   
-  protected WebManagementOptionSet ()
+  protected ManagementOptionSet ()
   {
     add ("Management.Activated", false);
     add ("Management.Listen",

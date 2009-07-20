@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.config.Options;
-import org.avis.management.WebManagementManager;
-import org.avis.management.WebManagementOptionSet;
+import org.avis.management.ManagementManager;
+import org.avis.management.ManagementOptionSet;
 import org.avis.router.Router;
 import org.avis.util.AutoClose;
 import org.avis.util.LogFailTester;
@@ -18,7 +18,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 
 import static org.junit.Assert.assertEquals;
 
-public class JUTestWebManagement
+public class JUTestManagement
 {
   private static final int PORT1 = 29170;
   
@@ -44,7 +44,7 @@ public class JUTestWebManagement
   public void runManager () 
     throws Exception
   {
-    Options options = new Options (WebManagementOptionSet.OPTION_SET);
+    Options options = new Options (ManagementOptionSet.OPTION_SET);
     
     URL webURL = new URL ("http://127.0.0.1:" + (PORT1 + 1));
     
@@ -54,7 +54,7 @@ public class JUTestWebManagement
     
     autoClose.add (router);
     
-    WebManagementManager manager = new WebManagementManager (router, options);
+    ManagementManager manager = new ManagementManager (router, options);
     
     HttpURLConnection connection = (HttpURLConnection)webURL.openConnection ();
     
