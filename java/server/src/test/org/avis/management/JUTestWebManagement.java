@@ -1,4 +1,4 @@
-package org.avis.management.web;
+package org.avis.management;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.config.Options;
+import org.avis.management.WebManagementManager;
+import org.avis.management.WebManagementOptionSet;
 import org.avis.router.Router;
 import org.avis.util.AutoClose;
 import org.avis.util.LogFailTester;

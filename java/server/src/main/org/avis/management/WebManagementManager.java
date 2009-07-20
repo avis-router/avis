@@ -1,4 +1,4 @@
-package org.avis.management.web;
+package org.avis.management;
 
 import java.util.Collection;
 
@@ -15,11 +15,11 @@ import org.apache.asyncweb.server.resolver.CompositeResolver;
 import org.apache.asyncweb.server.resolver.PatternMatchResolver;
 
 import org.avis.config.Options;
-import org.avis.management.web.pages.ClientsView;
-import org.avis.management.web.pages.ConfigurationView;
-import org.avis.management.web.pages.FederationView;
-import org.avis.management.web.pages.LogView;
-import org.avis.management.web.pages.OverviewView;
+import org.avis.management.pages.ClientsView;
+import org.avis.management.pages.ConfigurationView;
+import org.avis.management.pages.FederationView;
+import org.avis.management.pages.LogView;
+import org.avis.management.pages.OverviewView;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 
@@ -27,7 +27,7 @@ import static java.util.Collections.singleton;
 
 import static org.avis.io.Net.addressesFor;
 import static org.avis.logging.Log.warn;
-import static org.avis.management.web.WebManagementOptionSet.DEFAULT_PORT;
+import static org.avis.management.WebManagementOptionSet.DEFAULT_PORT;
 
 /**
  * Creates the Avis web management web server.

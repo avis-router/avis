@@ -1,6 +1,8 @@
-package org.avis.management.web;
+package org.avis.management;
 
 import org.junit.Test;
+
+import org.avis.management.HTML;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

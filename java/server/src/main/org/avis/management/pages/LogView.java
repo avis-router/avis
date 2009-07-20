@@ -1,4 +1,4 @@
-package org.avis.management.web.pages;
+package org.avis.management.pages;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -9,8 +9,8 @@ import java.text.SimpleDateFormat;
 import org.avis.logging.Log;
 import org.avis.logging.LogEvent;
 import org.avis.logging.LogEventBuffer;
-import org.avis.management.web.HTML;
-import org.avis.management.web.HtmlView;
+import org.avis.management.HTML;
+import org.avis.management.HtmlView;
 
 import static org.avis.logging.Log.eventTypeToString;
 

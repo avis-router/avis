@@ -1,4 +1,4 @@
-package org.avis.management.web;
+package org.avis.management;
 
 /**
  * An component that generates an HTML-rendered view of some kind.

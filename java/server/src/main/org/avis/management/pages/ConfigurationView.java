@@ -1,8 +1,8 @@
-package org.avis.management.web.pages;
+package org.avis.management.pages;
 
 import org.avis.config.Options;
-import org.avis.management.web.HTML;
-import org.avis.management.web.HtmlView;
+import org.avis.management.HTML;
+import org.avis.management.HtmlView;
 
 public class ConfigurationView implements HtmlView
 {

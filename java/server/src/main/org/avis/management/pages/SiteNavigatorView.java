@@ -1,9 +1,9 @@
-package org.avis.management.web.pages;
+package org.avis.management.pages;
 
 import java.util.List;
 
-import org.avis.management.web.HTML;
-import org.avis.management.web.HtmlView;
+import org.avis.management.HTML;
+import org.avis.management.HtmlView;
 
 public class SiteNavigatorView implements HtmlView
 {

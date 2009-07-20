@@ -1,4 +1,4 @@
-package org.avis.management.web;
+package org.avis.management;
 
 import org.avis.config.OptionSet;
 import org.avis.config.OptionTypeHttpUrl;

@@ -1,11 +1,13 @@
-package org.avis.management.web;
+package org.avis.management;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.config.Options;
 import org.avis.federation.FederationOptionSet;
-import org.avis.management.web.pages.OptionsView;
+import org.avis.management.HTML;
+import org.avis.management.WebManagementOptionSet;
+import org.avis.management.pages.OptionsView;
 import org.avis.router.RouterOptionSet;
 
 import static org.junit.Assert.assertTrue;

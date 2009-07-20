@@ -1,19 +1,19 @@
-package org.avis.management.web.pages;
+package org.avis.management.pages;
 
 import java.util.Comparator;
 
 import org.avis.common.ElvinURI;
-import org.avis.management.web.HTML;
-import org.avis.management.web.HtmlView;
+import org.avis.management.HTML;
+import org.avis.management.HtmlView;
 import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;
 
-import static org.avis.management.web.HTML.formatBandwidth;
-import static org.avis.management.web.HTML.formatBytes;
-import static org.avis.management.web.HTML.formatHost;
-import static org.avis.management.web.HTML.formatNum;
-import static org.avis.management.web.HTML.formatTime;
+import static org.avis.management.HTML.formatBandwidth;
+import static org.avis.management.HTML.formatBytes;
+import static org.avis.management.HTML.formatHost;
+import static org.avis.management.HTML.formatNum;
+import static org.avis.management.HTML.formatTime;
 import static org.avis.util.Collections.sort;
 
 public class ClientsView implements HtmlView
