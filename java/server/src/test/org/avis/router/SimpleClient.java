@@ -99,6 +99,11 @@ public class SimpleClient implements IoHandler, Closeable
     this ("client", address, filters);
   }
   
+  public SimpleClient (String clientName, InetSocketAddress address)
+  {
+    this (clientName, address, defaultFilters ());
+  }
+  
   public SimpleClient (String clientName,
                        InetSocketAddress address, 
                        DefaultIoFilterChainBuilder filters)
