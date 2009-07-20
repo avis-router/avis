@@ -75,7 +75,7 @@ public class StandardPage extends HtmlPage
       ("<!DOCTYPE html>\n" + 
        "<head>\n" + 
        "  <meta http-equiv=\"content-type\" " +
-             "content=\"text/html; charset=utf-8\" />\n" + 
+             "content=\"text/html; charset=UTF-8\" />\n" + 
        "  <title>${1}</title>\n" + 
        "  <link href=\"screen.css\" media=\"screen\" " +
              "rel=\"stylesheet\" type=\"text/css\" />\n" + 
