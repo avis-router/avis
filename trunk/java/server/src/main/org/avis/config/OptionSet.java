@@ -129,7 +129,7 @@ public class OptionSet
    */
   public void add (String option, String defaultValue)
   {
-    add (option, new OptionTypeString (), defaultValue);
+    add (option, OptionTypeString.INSTANCE, defaultValue);
   }
   
   /**

@@ -9,7 +9,9 @@ import static java.util.Arrays.asList;
 
 public class OptionTypeString extends OptionType
 {
-  public static final OptionTypeString ANY_STRING_OPTION = new OptionTypeString ();
+  public static OptionTypeString INSTANCE = new OptionTypeString ();
+  public static final OptionTypeString ANY_STRING_OPTION = 
+    new OptionTypeString ();
   
   protected Set<String> validValues;
 
