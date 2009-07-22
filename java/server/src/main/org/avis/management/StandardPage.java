@@ -16,10 +16,10 @@ import static java.util.Arrays.asList;
  */
 public class StandardPage extends HtmlPage
 {
-  public static final List<String> PAGES = 
+  protected static final List<String> PAGES = 
     asList ("Overview", "Clients", "Federation", "Configuration", "Log");
   
-  public static final List<String> URIs = 
+  protected static final List<String> URIs = 
     asList ("overview", "clients", "federation", "configuration", "log");
 
   /**
