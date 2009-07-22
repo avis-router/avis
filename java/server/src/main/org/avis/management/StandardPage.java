@@ -17,12 +17,10 @@ import static java.util.Arrays.asList;
 public class StandardPage extends HtmlPage
 {
   public static final List<String> PAGES = 
-    asList (new String [] 
-      {"Overview", "Clients", "Federation", "Configuration", "Log"});
+    asList ("Overview", "Clients", "Federation", "Configuration", "Log");
   
   public static final List<String> URIs = 
-    asList (new String [] 
-      {"overview", "clients", "federation", "configuration", "log"});
+    asList ("overview", "clients", "federation", "configuration", "log");
 
   /**
    * Resolves any known standard pages.
