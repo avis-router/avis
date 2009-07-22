@@ -56,7 +56,7 @@ public class StandardPage extends HtmlPage
   {
     HTML html = new HTML ();
     
-    appendXHTMLHeader (html, title + " - Avis Router");
+    appendXHTMLHeader (html, title);
     
     html.append ("<body>\n");
 
@@ -76,7 +76,7 @@ public class StandardPage extends HtmlPage
        "<head>\n" + 
        "  <meta http-equiv=\"content-type\" " +
              "content=\"text/html; charset=UTF-8\" />\n" + 
-       "  <title>${1}</title>\n" + 
+       "  <title>${1} - Avis Router</title>\n" + 
        "  <link href=\"screen.css\" media=\"screen\" " +
              "rel=\"stylesheet\" type=\"text/css\" />\n" + 
        "  <link href=\"print.css\" media=\"print\" " +
