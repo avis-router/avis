@@ -1,9 +1,12 @@
 package org.avis.management.pages;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.avis.management.HTML;
 import org.avis.management.HtmlView;
+
+import static org.avis.util.Text.join;
 
 public class SiteNavigatorView implements HtmlView
 {
@@ -27,17 +30,21 @@ public class SiteNavigatorView implements HtmlView
     {
       String page = pages.get (i);
       String href = uris.get (i);
-              
+      ArrayList<String> classes = new ArrayList<String> (2);
+      
+      if (href.equals (uriFor (currentPage)))
+        classes.add ("nav-current");        
+
+      if (i == pages.size () - 1)
+        classes.add ("nav-last");
+      
       if (i > 0)
         html.append ("\n");
       
-      if (href.equals (uriFor (currentPage)))
-        html.append ("<li class='nav-current'>");        
+      if (classes.isEmpty ())
+        html.append ("<li>");        
       else
-        html.append ("<li>");
-
-      if (i > 0)
-        html.append (" | ");
+        html.append ("<li class='${}'>", join (classes, " "));        
 
       html.append ("<a href='${}'>${}</a></li>", href, page);
     }

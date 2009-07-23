@@ -20,7 +20,6 @@ body
     padding: 10px;
     margin: 10px;
     border: 1px solid #c0c0c0;
-    color: #222;
     background: white;
 }
 
@@ -31,7 +30,6 @@ p
 
 a 
 {
-    color: #283758;
     text-decoration: none;
     border-bottom: 1px dotted #c0c0c0;
 }
@@ -119,6 +117,19 @@ ul#nav
 {
     display: inline;
     margin: 0px;
+/*    border-right: 2px solid #283758;*/
+    border-right: 1px solid DarkGrey;
+    padding-right: 4px;
+}
+
+#nav li.nav-last
+{
+    border-right: 0px;
+}
+
+#nav a 
+{
+    color: #283758;
 }
 
 #nav li a:hover
@@ -129,6 +140,10 @@ ul#nav
 #nav .nav-current
 {
   font-weight: bold;
+}
+
+#nav .nav-last
+{
 }
 
 .client-list
