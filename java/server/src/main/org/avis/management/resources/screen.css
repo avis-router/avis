@@ -117,7 +117,6 @@ ul#nav
 {
     display: inline;
     margin: 0px;
-/*    border-right: 2px solid #283758;*/
     border-right: 1px solid DarkGrey;
     padding-right: 4px;
 }
