@@ -21,24 +21,28 @@ public class SiteNavigatorView implements HtmlView
 
   public void render (HTML html)
   {
-    html.append ("<p class='nav'>\n").indent ();
+    html.append ("<ul id='nav'>\n").indent ();
     
     for (int i = 0; i < pages.size (); i++)
     {
       String page = pages.get (i);
       String href = uris.get (i);
-      String cssClass = 
-        href.equals (uriFor (currentPage)) ? 
-          "nav-item nav-current" : "nav-item";
-      
+              
       if (i > 0)
-        html.append ("&nbsp;| \n");
+        html.append ("\n");
       
-      html.append ("<span class='${}'><a href='${}'>${}</a></span>",
-                   cssClass, href, page);
+      if (href.equals (uriFor (currentPage)))
+        html.append ("<li class='nav-current'>");        
+      else
+        html.append ("<li>");
+
+      if (i > 0)
+        html.append (" | ");
+
+      html.append ("<a href='${}'>${}</a></li>", href, page);
     }
     
-    html.outdent ().append ("\n</p>\n");
+    html.outdent ().append ("\n</ul>\n");
   }
 
   private String uriFor (String page)
