@@ -88,7 +88,7 @@ public class ManagementManager implements Closeable, CloseListener
 
     // resolve resources
     PatternMatchResolver resourceResolver = new PatternMatchResolver ();
-    resourceResolver.addPatternMapping ("/.*\\.(css|png|ico)", "resources");
+    resourceResolver.addPatternMapping ("/.*\\.(css|png|ico|js)$", "resources");
         
     CompositeResolver mainResolver = new CompositeResolver ();
 
