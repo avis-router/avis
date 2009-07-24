@@ -72,7 +72,7 @@
           overwrite="yes" filtering="yes" />
     
     <copy todir="classes/main">
-      <fileset dir="src/main" includes="org/avis/management/web/resources/*" />
+      <fileset dir="src/main" includes="org/avis/management/resources/*" />
     </copy>
       
   </target>
@@ -126,7 +126,7 @@
     <dependset>
       <srcfileset dir="${common}/classes/main" includes="**/*.class" />
       <srcfileset dir="classes/main" includes="**/*.class" />
-      <srcfileset dir="src/main/org/avis/management/web/resources" includes="**/*" />
+      <srcfileset dir="src/main/org/avis/management/resources" includes="**/*" />
       
       <targetfileset dir="build">
         <include name="avis-router.jar" />
@@ -154,9 +154,9 @@
           classpathref="classpath">
       
       <include name="avis.properties" />
-      <include name="org/avis/management/web/resources/*.png" />
-      <include name="org/avis/management/web/resources/*.css" />
-      <include name="org/avis/management/web/resources/*.js" />
+      <include name="org/avis/management/resources/*.png" />
+      <include name="org/avis/management/resources/*.css" />
+      <include name="org/avis/management/resources/*.js" />
       <include name="org/apache/asyncweb/server/errorReporting/strings.properties" />
     </jarx>
     
