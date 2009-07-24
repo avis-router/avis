@@ -54,12 +54,12 @@ public class ClientsView implements HtmlView, JavascriptView
        "  $('.expandable').click (function (event)\n" +
        "  {\n" + 
        "    event.preventDefault ();\n" + 
-       "    $(this).children ().eq (1).toggle ()\n" +
+       "    $(this).children ().eq (1).toggleClass ('contracted');\n" +
        "  })};\n" +
        "  $(document).ready (function ()\n" +
        "  {\n" + 
-       "    $('.expandable:nth-child(2)').hide ();\n" + 
-       "    $('.expandable:nth-child(1) > *:nth-child(1)').prepend (`<span class='expander'>+</span> `);" +
+       "    $('.expandable:nth-child(1) > *:nth-child(2)').addClass ('contracted');\n" + 
+       "    $('.expandable:nth-child(1) > *:nth-child(1)').prepend (`<span class='expander'>+ </span>`);\n" +
        "    behaviours ();\n" + 
        "  });\n" +
       " </script>");

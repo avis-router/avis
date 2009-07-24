@@ -247,6 +247,16 @@ pre.exception-trace
     background-color: inherit;
 }
 
+.expandable > *:first-child
+{
+    cursor: pointer;
+}
+
+.contracted
+{
+    display: none;
+}
+
 .log-info
 {
     color: green;
