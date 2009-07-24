@@ -54,12 +54,12 @@ public class ClientsView implements HtmlView, JavascriptView
        "  $('.expandable').click (function (event)\n" +
        "  {\n" + 
        "    event.preventDefault ();\n" + 
-       "    $(this).children ().eq (1).toggleClass ('contracted');\n" +
+       "    $(this).children ('.expand-body').toggleClass ('contracted');\n" +
        "  })};\n" +
        "  $(document).ready (function ()\n" +
        "  {\n" + 
-       "    $('.expandable:nth-child(1) > *:nth-child(2)').addClass ('contracted');\n" + 
-       "    $('.expandable:nth-child(1) > *:nth-child(1)').prepend (`<span class='expander'>+ </span>`);\n" +
+       "    $('.expandable .expand-header').prepend (`<span class='expander'>+ </span>`);\n" +
+       "    $('.expandable .expand-body').addClass ('contracted');\n" + 
        "    behaviours ();\n" + 
        "  });\n" +
       " </script>");
@@ -163,8 +163,8 @@ public class ClientsView implements HtmlView, JavascriptView
   private static void outputSubscriptions (HTML html, Connection connection)
   {
     html.append ("<div class='expandable'>");
-    html.append ("<h2>Subscriptions</h2>");
-    html.append ("<table class='sub-list'>\n");
+    html.append ("<h2 class='expand-header'>Subscriptions</h2>");
+    html.append ("<table class='sub-list expand-body'>\n");
 
     html.indent ();
    
