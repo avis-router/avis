@@ -1,8 +1,8 @@
 $(document).ready (function () 
 { 
-  var header = $('.expand-header');
-  header.prepend ('<span class="expander-toggle">+ </span>');
-  header.append  ('<span class="expander-ellipsis">…</span>');
+  var headers = $('.expand-header');
+  headers.prepend ('<span class="expander-toggle">+ </span>');
+  headers.append  ('<span class="expander-ellipsis">…</span>');
 
   $('.expand-body').addClass ('contracted'); 
 
