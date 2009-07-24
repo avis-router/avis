@@ -82,7 +82,7 @@ public class StandardPage extends HtmlPage
     
     if (main instanceof JavascriptView)
     {
-      html.indent ();
+      html.append ("\n").indent ();
       ((JavascriptView)main).renderJavascript (html);
       html.outdent ();
     }
