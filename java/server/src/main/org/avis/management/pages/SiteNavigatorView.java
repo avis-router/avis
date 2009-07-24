@@ -26,6 +26,7 @@ public class SiteNavigatorView implements HtmlView
   {    
     html.append ("<ul id='nav'>\n").indent ();
     
+    String currentPageUri = uriFor (currentPage);
     ArrayList<String> classes = new ArrayList<String> (2);
     
     for (int i = 0; i < pages.size (); i++)
@@ -35,7 +36,7 @@ public class SiteNavigatorView implements HtmlView
     
       classes.clear ();
       
-      if (href.equals (uriFor (currentPage)))
+      if (href.equals (currentPageUri))
         classes.add ("nav-current");        
 
       if (i == pages.size () - 1)
