@@ -1,5 +1,3 @@
-/* v2 */
-
 *
 {
     border: none;
@@ -141,10 +139,6 @@ ul#nav
   font-weight: bold;
 }
 
-#nav .nav-last
-{
-}
-
 .client-list
 {
     text-align: left;
@@ -178,7 +172,7 @@ table.log
 
 .number, .date, .net-address, .sub-exp, .fixed
 {
-    font-family: consolas,monaco,courier,fixed;    
+    font-family: Consolas, Monaco, Courier,fixed;    
 }
 
 table .number
