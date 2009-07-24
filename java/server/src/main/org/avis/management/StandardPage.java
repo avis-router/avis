@@ -54,7 +54,7 @@ public class StandardPage extends HtmlPage
   {
     HTML html = new HTML ();
     
-    appendXHTMLHeader (html, title);
+    appendXHTMLHeader (html);
     
     html.append ("<body>\n");
 
@@ -67,7 +67,7 @@ public class StandardPage extends HtmlPage
     return html.asText ();
   }
   
-  private static void appendXHTMLHeader (HTML html, String title)
+  private void appendXHTMLHeader (HTML html)
   {
     html.append 
       ("<!DOCTYPE html>\n" + 
@@ -78,7 +78,15 @@ public class StandardPage extends HtmlPage
        "  <link href=\"screen.css\" media=\"screen\" " +
              "rel=\"stylesheet\" type=\"text/css\" />\n" + 
        "  <link href=\"print.css\" media=\"print\" " +
-             "rel=\"stylesheet\" type=\"text/css\" />\n" + 
-      "</head>\n", title);
+             "rel=\"stylesheet\" type=\"text/css\" />", title);
+    
+    if (main instanceof JavascriptView)
+    {
+      html.indent ();
+      ((JavascriptView)main).renderJavascript (html);
+      html.outdent ();
+    }
+    
+    html.append ("\n</head>\n");
   }
 }

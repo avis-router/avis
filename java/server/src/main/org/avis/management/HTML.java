@@ -152,8 +152,11 @@ public class HTML
     {      
       char c = text.charAt (i);
       
+      // translate ' -> "", ` -> '
       if (c == '\'')
         c = '"';
+      else if (c == '`')
+        c = '\'';
 
       appendChar (c);
     }

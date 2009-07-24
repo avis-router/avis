@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import org.avis.common.ElvinURI;
 import org.avis.management.HTML;
+import org.avis.management.JavascriptView;
 import org.avis.management.HtmlView;
 import org.avis.router.Connection;
 import org.avis.router.Router;
@@ -16,7 +17,7 @@ import static org.avis.management.HTML.formatNum;
 import static org.avis.management.HTML.formatTime;
 import static org.avis.util.Collections.sort;
 
-public class ClientsView implements HtmlView
+public class ClientsView implements HtmlView, JavascriptView
 {
   private static final Comparator<Connection> CONNECTION_COMPARATOR = 
     new Comparator<Connection> ()
@@ -44,6 +45,27 @@ public class ClientsView implements HtmlView
     this.router = router;
   }
 
+  public void renderJavascript (HTML html)
+  {
+    html.append 
+      ("<script src='jquery-1.3.js' />\n" + 
+       "<script>\n" + 
+       "  $(document).ready (function ()\n" +
+       "  {\n" + 
+       "    $('.sub-list').hide ();\n" + 
+       "    $('.sub-table h2')\n" + 
+       "       .prepend (`<span class='expander'>+</span> `);" +
+       "    behaviours ();\n" + 
+       "  });\n" +
+       "  var behaviours = function () {" +
+       "  $('h2').click (function (event)\n" +
+       "  {\n" + 
+       "    event.preventDefault ();\n" + 
+       "    $(event.target).parents ('td').children ('.sub-list').toggle ();\n" +
+       "  })};\n" + 
+      " </script>");
+  }
+  
   public void render (HTML html)
   {
     // endpoints
