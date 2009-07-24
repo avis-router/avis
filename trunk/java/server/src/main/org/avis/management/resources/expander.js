@@ -10,13 +10,12 @@ $(document).ready (function ()
   { 
     event.preventDefault (); 
 
-    var body = $(this).next ('.expand-body');
-    body.toggleClass ('contracted');
-
     $(this).children ('.expander-ellipsis').toggle ();
 
-    var toggle = $(body).hasClass ('contracted') ? '+ ' : '- ';
+    var body = $(this).next ('.expand-body');
+    var toggle = body.hasClass ('contracted') ? '+ ' : '- ';
 
+    body.toggleClass ('contracted');
     $(this).children ('.expander-toggle').text (toggle);
   })
 });
