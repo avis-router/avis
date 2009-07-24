@@ -247,7 +247,7 @@ pre.exception-trace
     background-color: inherit;
 }
 
-.expandable > *:first-child
+.expand-header
 {
     cursor: pointer;
 }
