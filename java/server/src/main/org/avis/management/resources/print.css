@@ -39,10 +39,10 @@ pre.exception-trace
 
 .contracted
 {
-    display: inherit;
+    display: inherit !important;
 }
 
-.expander
+.expander-toggle, .expander-ellipsis
 {
-    display: none;
+    display: none !important;
 }

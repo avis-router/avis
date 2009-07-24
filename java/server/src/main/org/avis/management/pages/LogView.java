@@ -11,10 +11,11 @@ import org.avis.logging.LogEvent;
 import org.avis.logging.LogEventBuffer;
 import org.avis.management.HTML;
 import org.avis.management.HtmlView;
+import org.avis.management.JavascriptView;
 
 import static org.avis.logging.Log.eventTypeToString;
 
-public class LogView implements HtmlView
+public class LogView implements HtmlView, JavascriptView
 {
   private static final ThreadLocal<DateFormat> dateFormat =
     new ThreadLocal<DateFormat> ()
@@ -40,6 +41,13 @@ public class LogView implements HtmlView
   public void dispose ()
   {
     events.dispose ();
+  }
+  
+  public void renderJavascript (HTML html)
+  {
+    html.append 
+      ("<script src='jquery-1.3.js'></script>\n" + 
+       "<script src='expander.js'></script>");
   }
   
   public void render (HTML html)
@@ -83,8 +91,9 @@ public class LogView implements HtmlView
         html.append 
         ("<tr class='${}'>" +
          "<td colspan='3'>" +
-         "<div class='exception'>Exception trace:" +
-           "<pre class='exception-trace'>${}</pre></div></td>" +
+         "<div class='exception'>" +
+         "<span class='expand-header'>Exception trace:</span>" +
+           "<pre class='exception-trace expand-body'>${}</pre></div></td>" +
          "</tr>\n", rowClass, formatException (event.exception));
       }
     }

@@ -48,20 +48,8 @@ public class ClientsView implements HtmlView, JavascriptView
   public void renderJavascript (HTML html)
   {
     html.append 
-      ("<script src='jquery-1.3.js' />\n" + 
-       "<script>\n" + 
-       "  var behaviours = function () {\n" +
-       "    $('.expand-header').click (function (event)\n" +
-       "    {\n" + 
-       "      event.preventDefault ();\n" + 
-       "      $(this).next ('.expand-body').toggleClass ('contracted');\n" +
-       "    })};\n" +
-       "  $(document).ready (function () {\n" + 
-       "    $('.expand-header').prepend (`<span class='expander'>+ </span>`);\n" +
-       "    $('.expand-body').addClass ('contracted');\n" + 
-       "    behaviours ();\n" + 
-       "  });\n" +
-      " </script>");
+      ("<script src='jquery-1.3.js'></script>\n" + 
+       "<script src='expander.js'></script>");
   }
   
   public void render (HTML html)
