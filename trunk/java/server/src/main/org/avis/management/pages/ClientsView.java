@@ -50,16 +50,15 @@ public class ClientsView implements HtmlView, JavascriptView
     html.append 
       ("<script src='jquery-1.3.js' />\n" + 
        "<script>\n" + 
-       "  var behaviours = function () {" +
-       "  $('.expandable').click (function (event)\n" +
-       "  {\n" + 
-       "    event.preventDefault ();\n" + 
-       "    $(this).children ('.expand-body').toggleClass ('contracted');\n" +
-       "  })};\n" +
-       "  $(document).ready (function ()\n" +
-       "  {\n" + 
-       "    $('.expandable .expand-header').prepend (`<span class='expander'>+ </span>`);\n" +
-       "    $('.expandable .expand-body').addClass ('contracted');\n" + 
+       "  var behaviours = function () {\n" +
+       "    $('.expand-header').parent ().click (function (event)\n" +
+       "    {\n" + 
+       "      event.preventDefault ();\n" + 
+       "      $(this).children ('.expand-body').toggleClass ('contracted');\n" +
+       "    })};\n" +
+       "  $(document).ready (function () {\n" + 
+       "    $('.expand-header').prepend (`<span class='expander'>+ </span>`);\n" +
+       "    $('.expand-body').addClass ('contracted');\n" + 
        "    behaviours ();\n" + 
        "  });\n" +
       " </script>");
@@ -162,7 +161,6 @@ public class ClientsView implements HtmlView, JavascriptView
 
   private static void outputSubscriptions (HTML html, Connection connection)
   {
-    html.append ("<div class='expandable'>");
     html.append ("<h2 class='expand-header'>Subscriptions</h2>");
     html.append ("<table class='sub-list expand-body'>\n");
 
@@ -195,8 +193,6 @@ public class ClientsView implements HtmlView, JavascriptView
     }
     
     html.outdent ();
-    
-    html.append ("</div>\n");
     html.append ("</table>\n");
   }
   
