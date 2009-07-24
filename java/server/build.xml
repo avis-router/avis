@@ -156,6 +156,7 @@
       <include name="avis.properties" />
       <include name="org/avis/management/web/resources/*.png" />
       <include name="org/avis/management/web/resources/*.css" />
+      <include name="org/avis/management/web/resources/*.js" />
       <include name="org/apache/asyncweb/server/errorReporting/strings.properties" />
     </jarx>
     
