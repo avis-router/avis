@@ -51,10 +51,10 @@ public class ClientsView implements HtmlView, JavascriptView
       ("<script src='jquery-1.3.js' />\n" + 
        "<script>\n" + 
        "  var behaviours = function () {\n" +
-       "    $('.expand-header').parent ().click (function (event)\n" +
+       "    $('.expand-header').click (function (event)\n" +
        "    {\n" + 
        "      event.preventDefault ();\n" + 
-       "      $(this).children ('.expand-body').toggleClass ('contracted');\n" +
+       "      $(this).next ('.expand-body').toggleClass ('contracted');\n" +
        "    })};\n" +
        "  $(document).ready (function () {\n" + 
        "    $('.expand-header').prepend (`<span class='expander'>+ </span>`);\n" +
@@ -138,10 +138,12 @@ public class ClientsView implements HtmlView, JavascriptView
         
         if (!connection.options.options ().isEmpty ())
         {
-          html.append ("<h2>Options</h2>");
+          html.append ("<h2 class='expand-header'>Options</h2>");
+          html.append ("<div class='expand-body'>\n");
           html.indent ();
-          new OptionsView (connection.options, false).render (html);
+          new OptionsView (connection.options, true).render (html);
           html.outdent ();
+          html.append ("</div>\n");
         }
         
         html.indent ();
