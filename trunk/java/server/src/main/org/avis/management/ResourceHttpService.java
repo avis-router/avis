@@ -151,13 +151,15 @@ public class ResourceHttpService implements HttpService
   {
     String type = URLConnection.guessContentTypeFromName (path);
     
+    if (path.endsWith (".css"))
+      type = "text/css";
+    else if (path.endsWith (".ico"))
+      type = "image/vnd.microsoft.icon";
+    else if (path.endsWith (".js"))
+      type = "text/javascript; charset=UTF-8";
+    
     if (type == null)
-    {
-      if (path.endsWith (".css"))
-        return "text/css";
-      else if (path.endsWith (".ico"))
-        return "image/vnd.microsoft.icon";
-    }
+      type = URLConnection.guessContentTypeFromName (path);
     
     return type;
   }
