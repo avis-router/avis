@@ -171,12 +171,12 @@ public class Main
     parseCommandLine (args, config);
     
     Router router = new Router (config);
-    
-    if (config.getBoolean ("Federation.Activated"))
-      new FederationManager (router, config);
-    
+
     if (config.getBoolean ("Management.Activated"))
       new ManagementManager (router, config);
+
+    if (config.getBoolean ("Federation.Activated"))
+      new FederationManager (router, config);
 
     return router;
   }
