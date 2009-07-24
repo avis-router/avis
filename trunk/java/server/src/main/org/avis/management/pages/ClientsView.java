@@ -141,7 +141,7 @@ public class ClientsView implements HtmlView, JavascriptView
           html.append ("<h2 class='expand-header'>Options</h2>");
           html.append ("<div class='expand-body'>\n");
           html.indent ();
-          new OptionsView (connection.options, true).render (html);
+          new OptionsView (connection.options, false).render (html);
           html.outdent ();
           html.append ("</div>\n");
         }
