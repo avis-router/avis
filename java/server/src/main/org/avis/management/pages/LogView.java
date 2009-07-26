@@ -89,12 +89,12 @@ public class LogView implements HtmlView, JavascriptView
       if (event.exception != null)
       {
         html.append 
-        ("<tr class='${}'>" +
-         "<td colspan='3'>" +
-         "<div class='exception'>" +
-         "<span class='expand-header'>Exception trace:</span>" +
-           "<pre class='exception-trace expand-body'>${}</pre></div></td>" +
-         "</tr>\n", rowClass, formatException (event.exception));
+          ("<tr class='${}'>" +
+           "<td colspan='3'>" +
+           "<div class='exception'>" +
+           "<span class='expand-header'>Exception trace:</span>" +
+             "<pre class='exception-trace expand-body'>${}</pre></div></td>" +
+           "</tr>\n", rowClass, formatException (event.exception));
       }
     }
     
