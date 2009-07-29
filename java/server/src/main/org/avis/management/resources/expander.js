@@ -1,12 +1,13 @@
 $(document).ready (function () 
 { 
+  $('.expand-body').addClass ('contracted'); 
+
   var headers = $('.expand-header');
+
   headers.prepend ('<span class="expander-toggle">+ </span>');
   headers.append  ('<span class="expander-ellipsis">…</span>');
 
-  $('.expand-body').addClass ('contracted'); 
-
-  $('.expand-header').click (function (event)
+  headers.click (function (event)
   { 
     event.preventDefault (); 
 
