@@ -180,9 +180,7 @@ public class ResourceHttpService implements HttpService
       while ((bytesRead = in.read (bytes)) != -1)
         buffer.put (bytes, 0, bytesRead);
       
-      buffer.flip ();
-      
-      return buffer;
+      return buffer.flip ();
     } finally
     {
       in.close ();
