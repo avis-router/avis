@@ -87,6 +87,7 @@ public class ResourceHttpService implements HttpService
 
     long lastModified = connection.getLastModified ();
     
+    // TODO add support for If-Unmodified-Since => 412 Precondition Failed
     if (lastModified != 0 && 
         lastModified <= ifModifiedSince (context.getRequest ()))
     {
