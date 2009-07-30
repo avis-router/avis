@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 
 import org.apache.asyncweb.common.DefaultHttpResponse;
 import org.apache.asyncweb.common.HttpRequest;
-import org.apache.asyncweb.common.MutableHttpResponse;
 import org.apache.asyncweb.server.HttpService;
 import org.apache.asyncweb.server.HttpServiceContext;
 import org.apache.mina.core.buffer.IoBuffer;
@@ -40,7 +39,7 @@ public class ResourceHttpService implements HttpService
 {
   private static final int MAX_CACHE_AGE = 6 * 60 * 60 * 1000;
 
-  private static final ThreadLocal<DateFormat> HTTP_DATE_FORMAT = 
+  private static final ThreadLocal<DateFormat> httpDateFormat = 
     new ThreadLocal<DateFormat> ()
   {
     protected DateFormat initialValue ()
@@ -64,7 +63,7 @@ public class ResourceHttpService implements HttpService
   public void handleRequest (HttpServiceContext context)
     throws Exception
   {
-    MutableHttpResponse response = new DefaultHttpResponse ();
+    DefaultHttpResponse response = new DefaultHttpResponse ();
     
     String path = 
       context.getRequest ().getRequestUri ().getPath ().substring (1);
@@ -130,7 +129,8 @@ public class ResourceHttpService implements HttpService
         return parseDate (ifModifiedSince).getTime ();
       } catch (ParseException ex)
       {
-        diagnostic ("Invalid HTTP date from client", ResourceHttpService.class, ex);
+        diagnostic ("Invalid HTTP date from client", 
+                    ResourceHttpService.class, ex);
       }      
     }
     
@@ -139,13 +139,13 @@ public class ResourceHttpService implements HttpService
   
   private static String formatDate (long date)
   {
-    return HTTP_DATE_FORMAT.get ().format (new Date (date));
+    return httpDateFormat.get ().format (new Date (date));
   }
 
   private static Date parseDate (String date) 
     throws ParseException
   {
-    return HTTP_DATE_FORMAT.get ().parse (date);
+    return httpDateFormat.get ().parse (date);
   }
 
   private static String guessContentType (String path)
