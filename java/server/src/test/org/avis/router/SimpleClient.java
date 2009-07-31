@@ -169,6 +169,11 @@ public class SimpleClient implements IoHandler, Closeable
     return message;
   }
 
+  public void drain ()
+  {
+    incomingMessages.clear ();
+  }
+
   private void checkConnected ()
     throws NoConnectionException
   {
