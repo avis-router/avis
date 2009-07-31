@@ -8,10 +8,8 @@ import java.net.InetSocketAddress;
 
 import org.avis.io.messages.NotifyEmit;
 
-import static java.lang.Thread.currentThread;
-
 import static java.lang.Math.random;
-
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 public class ActiveRouterTester
@@ -134,11 +132,10 @@ public class ActiveRouterTester
 
           byte [] payload = randomPayload ();
           
-//          System.out.println ("Client " + id + " message to " + group + 
-//                              " payload " + payload.length);
-//          
           elvin.send (new NotifyEmit ("From", id, "Group", group, "Payload",
                                       payload));
+
+          elvin.drain ();
           
           if (++count % 100 == 0)
             System.out.println ("Client " + id + " has sent " + 
