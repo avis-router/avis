@@ -1000,7 +1000,7 @@ public class Router implements IoHandler, Closeable
       {
         if (connection.isOpen ())
         {
-          diagnostic ("Client" + idFor (session) + 
+          diagnostic ("Client " + idFor (session) + 
                       " disconnected without warning", this);
 
           connection.close ();
