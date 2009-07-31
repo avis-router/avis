@@ -19,10 +19,14 @@ public class ActiveRouterTester
   static final InetSocketAddress ELVIN_ADDRESS = 
     new InetSocketAddress ("127.0.0.1", 29170);
 
+  /* Average notification rate (ntfns / sec) */
   static final int NOTIFY_RATE = 3;
   static final double NOTIFY_DELAY = 1000.0 / NOTIFY_RATE;
 
   static final int MAX_PAYLOAD = 20 * 1024;
+  
+  /* Must be multiple of 8 */
+  static final int CLIENTS = 1 * 8;
   
   public static void main (String [] args) 
     throws Exception
@@ -33,21 +37,24 @@ public class ActiveRouterTester
   private void run () 
     throws Exception
   {
-    ArrayList<Client> clients = new ArrayList<Client> (8);
+    ArrayList<Client> clients = new ArrayList<Client> (CLIENTS);
     
-    clients.add (new Client (1, 7, 5, 6));
-    clients.add (new Client (2, 7, 6, 5));
-    clients.add (new Client (3, 6, 5, 4));
-    clients.add (new Client (4, 4, 5));
-    clients.add (new Client (5, 1, 4, 3));
-    clients.add (new Client (6, 2, 1, 3));
-    clients.add (new Client (7, 2, 1, 3));
-    clients.add (new Client (8, 2, 3, 6));
+    for (int i = CLIENTS; i > 0; i -= 8)
+    {
+      clients.add (new Client (1, 7, 5, 6));
+      clients.add (new Client (2, 7, 6, 5));
+      clients.add (new Client (3, 6, 5, 4));
+      clients.add (new Client (4, 4, 5));
+      clients.add (new Client (5, 1, 4, 3));
+      clients.add (new Client (6, 2, 1, 3));
+      clients.add (new Client (7, 2, 1, 3));
+      clients.add (new Client (8, 2, 3, 6));
+    }
     
     for (Client client : clients)
       client.start ();
     
-    sleep (30000);
+    sleep (1000000);
     
     for (Client client : clients)
       client.stop ();
@@ -114,6 +121,8 @@ public class ActiveRouterTester
     
     public void run ()
     {
+      int count = 0;
+      
       try
       {
         while (!currentThread ().isInterrupted ())
@@ -130,6 +139,11 @@ public class ActiveRouterTester
 //          
           elvin.send (new NotifyEmit ("From", id, "Group", group, "Payload",
                                       payload));
+          
+          if (++count % 100 == 0)
+            System.out.println ("Client " + id + " has sent " + 
+                                count + " messages");
+          
         }
       } catch (InterruptedException ex)
       {
