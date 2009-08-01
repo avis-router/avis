@@ -57,6 +57,9 @@ import static org.avis.subscription.ast.Node.EMPTY_NOTIFICATION;
 import static org.avis.subscription.ast.Node.FALSE;
 import static org.avis.subscription.ast.Node.TRUE;
 import static org.avis.subscription.ast.Nodes.unparse;
+import static org.avis.subscription.ast.nodes.Const.int32;
+import static org.avis.subscription.ast.nodes.Const.int64;
+import static org.avis.subscription.ast.nodes.Const.real64;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.Mode.DECOMPOSE;
 import static org.avis.subscription.ast.nodes.StrUnicodeDecompose.Mode.DECOMPOSE_COMPAT;
 
@@ -384,7 +387,7 @@ public class JUTestEvaluation
     
     Node node = Compare.createEquals (argsList (field ("name"),
                                                    Const.string ("foobar"),
-                                                   Const.int32 (42)));
+                                                   int32 (42)));
     assertEquals (TRUE, node.evaluate (ntfn));
     
     ntfn.put ("name", 42);
@@ -428,66 +431,66 @@ public class JUTestEvaluation
   public void mathOps ()
     throws Exception
   {
-    testMathOp (MathMinus.class, 20 - 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathMinus.class, 20L - 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathMinus.class, 10.5 - 20.25, Const.real64 (10.5), Const.real64 (20.25));
-    testMathOp (MathMinus.class, 10 - 20.25, Const.int32 (10), Const.real64 (20.25));
-    testMathOp (MathMinus.class, null, new Field ("string"), Const.real64 (20.25));
-    testMathOp (MathMinus.class, null, Const.int32 (10), new Field (""));
+    testMathOp (MathMinus.class, 20 - 30, int32 (20), int32 (30));
+    testMathOp (MathMinus.class, 20L - 30L, int64 (20), int64 (30));
+    testMathOp (MathMinus.class, 10.5 - 20.25, real64 (10.5), real64 (20.25));
+    testMathOp (MathMinus.class, 10 - 20.25, int32 (10), real64 (20.25));
+    testMathOp (MathMinus.class, null, new Field ("string"), real64 (20.25));
+    testMathOp (MathMinus.class, null, int32 (10), new Field (""));
     
-    testMathOp (MathPlus.class, 20 + 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathPlus.class, 20L + 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathPlus.class, 10.5 + 20.25, Const.real64 (10.5), Const.real64 (20.25));
-    testMathOp (MathPlus.class, 10 + 20.25, Const.int32 (10), Const.real64 (20.25));
+    testMathOp (MathPlus.class, 20 + 30, int32 (20), int32 (30));
+    testMathOp (MathPlus.class, 20L + 30L, int64 (20), int64 (30));
+    testMathOp (MathPlus.class, 10.5 + 20.25, real64 (10.5), real64 (20.25));
+    testMathOp (MathPlus.class, 10 + 20.25, int32 (10), real64 (20.25));
     
-    testMathOp (MathMult.class, 20 * 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathMult.class, 20L * 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathMult.class, 10.5 * 20.25, Const.real64 (10.5), Const.real64 (20.25));
-    testMathOp (MathMult.class, 10 * 20.25, Const.int32 (10), Const.real64 (20.25));
+    testMathOp (MathMult.class, 20 * 30, int32 (20), int32 (30));
+    testMathOp (MathMult.class, 20L * 30L, int64 (20), int64 (30));
+    testMathOp (MathMult.class, 10.5 * 20.25, real64 (10.5), real64 (20.25));
+    testMathOp (MathMult.class, 10 * 20.25, int32 (10), real64 (20.25));
     
-    testMathOp (MathDiv.class, 20 / 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathDiv.class, 20L / 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathDiv.class, 10.5 / 20.25, Const.real64 (10.5), Const.real64 (20.25));
-    testMathOp (MathDiv.class, 10 / 20.25, Const.int32 (10), Const.real64 (20.25));
+    testMathOp (MathDiv.class, 20 / 30, int32 (20), int32 (30));
+    testMathOp (MathDiv.class, 20L / 30L, int64 (20), int64 (30));
+    testMathOp (MathDiv.class, 10.5 / 20.25, real64 (10.5), real64 (20.25));
+    testMathOp (MathDiv.class, 10 / 20.25, int32 (10), real64 (20.25));
     
     // div by 0
-    testMathOp (MathDiv.class, BOTTOM, Const.int32 (10), Const.int32 (0));
-    testMathOp (MathDiv.class, BOTTOM, Const.int64 (10), Const.int64 (0));
-    testMathOp (MathDiv.class, Double.POSITIVE_INFINITY, Const.real64 (10), Const.real64 (0));
+    testMathOp (MathDiv.class, BOTTOM, int32 (10), int32 (0));
+    testMathOp (MathDiv.class, BOTTOM, int64 (10), int64 (0));
+    testMathOp (MathDiv.class, Double.POSITIVE_INFINITY, real64 (10), real64 (0));
     
-    testMathOp (MathMod.class, BOTTOM, Const.int32 (20), Const.int32 (0));
-    testMathOp (MathMod.class, Double.NaN, Const.real64 (20), Const.real64 (0));
+    testMathOp (MathMod.class, BOTTOM, int32 (20), int32 (0));
+    testMathOp (MathMod.class, Double.NaN, real64 (20), real64 (0));
 
     // modulo div
-    testMathOp (MathMod.class, 20 % 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathMod.class, 20L % 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathMod.class, 10.5 % 20.25, Const.real64 (10.5), Const.real64 (20.25));
-    testMathOp (MathMod.class, 10 % 20.25, Const.int32 (10), Const.real64 (20.25));
+    testMathOp (MathMod.class, 20 % 30, int32 (20), int32 (30));
+    testMathOp (MathMod.class, 20L % 30L, int64 (20), int64 (30));
+    testMathOp (MathMod.class, 10.5 % 20.25, real64 (10.5), real64 (20.25));
+    testMathOp (MathMod.class, 10 % 20.25, int32 (10), real64 (20.25));
     
     // bitwise ops
-    testMathOp (MathBitAnd.class, 20 & 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathBitAnd.class, 20L & 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathBitAnd.class, 20L & 30, Const.int64 (20), Const.int32 (30));
+    testMathOp (MathBitAnd.class, 20 & 30, int32 (20), int32 (30));
+    testMathOp (MathBitAnd.class, 20L & 30L, int64 (20), int64 (30));
+    testMathOp (MathBitAnd.class, 20L & 30, int64 (20), int32 (30));
     
-    testMathOp (MathBitOr.class, 20 | 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathBitOr.class, 20L | 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathBitOr.class, 20L | 30, Const.int64 (20), Const.int32 (30));
+    testMathOp (MathBitOr.class, 20 | 30, int32 (20), int32 (30));
+    testMathOp (MathBitOr.class, 20L | 30L, int64 (20), int64 (30));
+    testMathOp (MathBitOr.class, 20L | 30, int64 (20), int32 (30));
     
-    testMathOp (MathBitXor.class, 20 ^ 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathBitXor.class, 20L ^ 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathBitXor.class, 20L ^ 30, Const.int64 (20), Const.int32 (30));
+    testMathOp (MathBitXor.class, 20 ^ 30, int32 (20), int32 (30));
+    testMathOp (MathBitXor.class, 20L ^ 30L, int64 (20), int64 (30));
+    testMathOp (MathBitXor.class, 20L ^ 30, int64 (20), int32 (30));
     
-    testMathOp (MathBitShiftLeft.class, 20 << 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathBitShiftLeft.class, 20L << 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathBitShiftLeft.class, 20L << 30, Const.int64 (20), Const.int32 (30));
+    testMathOp (MathBitShiftLeft.class, 20 << 30, int32 (20), int32 (30));
+    testMathOp (MathBitShiftLeft.class, 20L << 30L, int64 (20), int64 (30));
+    testMathOp (MathBitShiftLeft.class, 20L << 30, int64 (20), int32 (30));
     
-    testMathOp (MathBitShiftRight.class, 20 >> 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathBitShiftRight.class, 20L >> 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathBitShiftRight.class, 20L >> 30, Const.int64 (20), Const.int32 (30));
+    testMathOp (MathBitShiftRight.class, 20 >> 30, int32 (20), int32 (30));
+    testMathOp (MathBitShiftRight.class, 20L >> 30L, int64 (20), int64 (30));
+    testMathOp (MathBitShiftRight.class, 20L >> 30, int64 (20), int32 (30));
     
-    testMathOp (MathBitLogShiftRight.class, 20 >>> 30, Const.int32 (20), Const.int32 (30));
-    testMathOp (MathBitLogShiftRight.class, 20L >>> 30L, Const.int64 (20), Const.int64 (30));
-    testMathOp (MathBitLogShiftRight.class, 20L >>> 30, Const.int64 (20), Const.int32 (30));
+    testMathOp (MathBitLogShiftRight.class, 20 >>> 30, int32 (20), int32 (30));
+    testMathOp (MathBitLogShiftRight.class, 20L >>> 30L, int64 (20), int64 (30));
+    testMathOp (MathBitLogShiftRight.class, 20L >>> 30, int64 (20), int32 (30));
     
     // bitwise complement ~
     Map<String, Object> ntfn = new HashMap<String, Object> ();
@@ -495,29 +498,29 @@ public class JUTestEvaluation
     
     MathBitInvert invert;
     
-    invert = new MathBitInvert (Const.int32 (10));
+    invert = new MathBitInvert (int32 (10));
     assertEquals (~10, invert.evaluate (ntfn));
     
-    invert = new MathBitInvert (Const.int64 (1234567890L));
+    invert = new MathBitInvert (int64 (1234567890L));
     assertEquals (~1234567890L, invert.evaluate (ntfn));
     
     invert = new MathBitInvert (new Field ("string"));
     assertEquals (null, invert.evaluate (ntfn));
     
     // unary minus
-    MathUnaryMinus unaryMinus = new MathUnaryMinus (Const.int32 (42));
+    MathUnaryMinus unaryMinus = new MathUnaryMinus (int32 (42));
     assertEquals (-42, unaryMinus.evaluate (ntfn));
     
-    unaryMinus = new MathUnaryMinus (Const.int32 (-42));
+    unaryMinus = new MathUnaryMinus (int32 (-42));
     assertEquals (42, unaryMinus.evaluate (ntfn));
     
-    unaryMinus = new MathUnaryMinus (Const.int32 (0));
+    unaryMinus = new MathUnaryMinus (int32 (0));
     assertEquals (0, unaryMinus.evaluate (ntfn));
     
-    unaryMinus = new MathUnaryMinus (Const.int64 (123));
+    unaryMinus = new MathUnaryMinus (int64 (123));
     assertEquals (-123l, unaryMinus.evaluate (ntfn));
     
-    unaryMinus = new MathUnaryMinus (Const.real64 (3.14));
+    unaryMinus = new MathUnaryMinus (real64 (3.14));
     assertEquals (-3.14, unaryMinus.evaluate (ntfn));
     
     unaryMinus = new MathUnaryMinus (new Field ("string"));
