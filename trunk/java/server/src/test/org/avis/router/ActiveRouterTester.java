@@ -17,15 +17,15 @@ public class ActiveRouterTester
   static final InetSocketAddress ELVIN_ADDRESS = 
     new InetSocketAddress ("127.0.0.1", 29170);
 
+  /* Must be multiple of 8 */
+  static final int CLIENTS = 4 * 8;
   /* Average notification rate (ntfns / sec) */
-  static final int NOTIFY_RATE = 3;
+  static final int NOTIFY_RATE = 9;
+  /* Max payload body size */
+  static final int MAX_PAYLOAD = 120 * 1024;
+
   static final double NOTIFY_DELAY = 1000.0 / NOTIFY_RATE;
 
-  static final int MAX_PAYLOAD = 20 * 1024;
-  
-  /* Must be multiple of 8 */
-  static final int CLIENTS = 1 * 8;
-  
   public static void main (String [] args) 
     throws Exception
   {
