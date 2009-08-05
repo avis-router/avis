@@ -19,10 +19,13 @@ public class ActiveRouterTester
 
   /* Must be multiple of 8 */
   static final int CLIENTS = 4 * 8;
+  // static final int CLIENTS = 1 * 8;
   /* Average notification rate (ntfns / sec) */
   static final int NOTIFY_RATE = 9;
+  // static final int NOTIFY_RATE = 2;
   /* Max payload body size */
   static final int MAX_PAYLOAD = 120 * 1024;
+  // static final int MAX_PAYLOAD = 2 * 1024;
 
   static final double NOTIFY_DELAY = 1000.0 / NOTIFY_RATE;
 
