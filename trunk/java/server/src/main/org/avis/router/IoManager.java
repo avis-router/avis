@@ -39,6 +39,7 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.common.ElvinURI;
+import org.avis.federation.Acceptor;
 import org.avis.io.FrameCodec;
 import org.avis.io.Net;
 import org.avis.io.messages.Message;
@@ -95,6 +96,8 @@ public class IoManager
 
   private Map<ElvinURI, Collection<NioSocketAcceptor>> uriToAcceptors;
   private Map<ElvinURI, NioSocketConnector> uriToConnectors;
+
+  private LowMemoryThrottler lowMemoryThrottler;
   
   /**
    * Create a new instance.
@@ -126,12 +129,15 @@ public class IoManager
     this.filterExecutor = 
       new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
 //    this.throttleExecutor = newScheduledThreadPool (1);
+    this.lowMemoryThrottler = new LowMemoryThrottler (this);
     
     setUseDirectBuffer (useDirectBuffers);
   }
 
   public void close ()
   {
+    lowMemoryThrottler.shutdown ();
+    
     for (Collection<NioSocketAcceptor> acceptors : uriToAcceptors.values ())
     {
       for (NioSocketAcceptor acceptor : acceptors)
@@ -233,6 +239,8 @@ public class IoManager
           acceptor.setFilterChainBuilder (filters);
         }
 
+        acceptor.getFilterChain ().addFirst ("memory", lowMemoryThrottler);
+        
         acceptor.setCloseOnDeactivation (false);
         acceptor.setHandler (handler);
         acceptor.bind (address);
@@ -396,7 +404,26 @@ public class IoManager
     
     return acceptors;
   }
-  
+
+  /**
+   * All sessions created by acceptors and/or connectors.
+   */
+  public Collection<IoSession> sessions ()
+  {
+    ArrayList<IoSession> sessions = new ArrayList<IoSession> ();
+    
+    for (Collection<NioSocketAcceptor> acceptors : uriToAcceptors.values ())
+    {
+      for (NioSocketAcceptor acceptor : acceptors)
+        sessions.addAll (acceptor.getManagedSessions ().values ());
+    }
+    
+    for (NioSocketConnector connector : uriToConnectors.values ())
+      sessions.addAll (connector.getManagedSessions ().values ());
+    
+    return sessions;
+  }
+
   /**
    * Get the sessions for all URI's bound with bind ().
    */
