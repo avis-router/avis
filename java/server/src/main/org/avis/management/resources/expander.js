@@ -14,9 +14,9 @@ $(document).ready (function ()
     $(this).children ('.expander-ellipsis').toggle ();
 
     var body = $(this).next ('.expand-body');
-    var toggle = body.hasClass ('contracted') ? '- ' : '+ ';
+    var switcher = body.hasClass ('contracted') ? '- ' : '+ ';
 
     body.toggleClass ('contracted');
-    $(this).children ('.expander-toggle').text (toggle);
+    $(this).children ('.expander-toggle').text (switcher);
   })
 });
