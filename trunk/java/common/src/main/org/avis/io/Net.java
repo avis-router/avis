@@ -210,6 +210,9 @@ public final class Net
    */
   public static InetAddress remoteHostAddressFor (IoSession session)
   {
+    if (session.getRemoteAddress () == null)
+      throw new IllegalStateException ("Session is not connected");
+    
     if (session.getRemoteAddress () instanceof InetSocketAddress)
     {
       return ((InetSocketAddress)session.getRemoteAddress ()).getAddress ();
