@@ -105,19 +105,45 @@ public class ActiveRouterTester
     {
       this.id = id;
       this.groups = groups;
-      this.elvin = new SimpleClient ("client " + id, ELVIN_ADDRESS);      
+      this.elvin = null;
     }
 
     public void start () 
       throws Exception
     {
-      elvin.connect ();
-      elvin.subscribe 
-        ("To == " + id + " || " +
-         "equals (Group, " + join (groups) + ") || Group == 0");
-      
+      open ();
       runner = new Thread (this, "Client " + id);
       runner.start ();
+    }
+
+    private void open () 
+    {
+      System.out.println ("**** client " + id + " open");
+      try
+      {
+        if (elvin != null)
+          elvin.close ();
+      } catch (Throwable ex)
+      {
+        // zip
+      }
+      
+      elvin = new SimpleClient ("client " + id, ELVIN_ADDRESS);      
+
+      while (!elvin.connected ())
+      {
+        try
+        {
+          elvin.connect ();
+          elvin.subscribe 
+            ("To == " + id + " || " +
+             "equals (Group, " + join (groups) + ") || Group == 0");
+        } catch (Exception ex)
+        {
+          if (elvin.connected ())
+            elvin.closeImmediately ();
+        }
+      }
     }
     
     public void run ()
@@ -128,30 +154,39 @@ public class ActiveRouterTester
       {
         while (!currentThread ().isInterrupted ())
         {
-          sleep (randomisedDelay ());
-
-          int groupIndex = (int)(random () * groups.length) - 1;
-          int group = groupIndex == -1 ? 0 : groups [groupIndex];
-
-          byte [] payload = randomPayload ();
-          
-          elvin.send (new NotifyEmit ("From", id, "Group", group, "Payload",
-                                      payload));
-
-          elvin.drain ();
-          
-          if (++count % 100 == 0)
-            System.out.println ("Client " + id + " has sent " + 
-                                count + " messages");
-          
+          try
+          {
+            sleep (randomisedDelay ());
+  
+            int groupIndex = (int)(random () * groups.length) - 1;
+            int group = groupIndex == -1 ? 0 : groups [groupIndex];
+  
+            byte [] payload = randomPayload ();
+            
+            elvin.send (new NotifyEmit ("From", id, "Group", group, "Payload",
+                                        payload));
+  
+            elvin.drain ();
+            
+            if (++count % 100 == 0)
+              System.out.println ("Client " + id + " has sent " + 
+                                  count + " messages");
+            
+          } catch (NoConnectionException ex)
+          {
+            open ();
+          } catch (Throwable ex)
+          {
+            if (ex instanceof InterruptedException)
+              throw (InterruptedException)ex;
+            
+            open ();
+          }
         }
       } catch (InterruptedException ex)
       {
         currentThread ().interrupt ();
-      } catch (NoConnectionException ex)
-      {
-        // exit
-      }
+      } 
     }
 
     public void stop () 
