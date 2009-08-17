@@ -17,6 +17,21 @@ import static org.avis.logging.Log.warn;
 import static org.avis.router.StatsFilter.readBytesThroughput;
 import static org.avis.router.StatsFilter.updateThroughput;
 
+/**
+ * Checks free memory at every message send/receive, and triggers low
+ * memory state protection when memory has dropped to a certain level.
+ * 
+ * In low memory state:
+ * <ul>
+ * <li>Each time the low memory trigger is hit, the "spammiest" client
+ * (if any) gets dropped.
+ * <li>All reads from clients are suspended
+ * <li>Client reads are resumed in round-robin for a second each until enough
+ * memory is available.
+ * </ul>
+ * 
+ * @author Matthew Phillips
+ */
 public class LowMemoryThrottler extends IoFilterAdapter
 {
   // TODO these should be based in max frame size
