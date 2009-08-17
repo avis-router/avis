@@ -20,6 +20,9 @@ import static org.avis.management.HTML.formatBytes;
 import static org.avis.management.HTML.formatHost;
 import static org.avis.management.HTML.formatNum;
 import static org.avis.management.HTML.formatTime;
+import static org.avis.router.StatsFilter.readBytesThroughput;
+import static org.avis.router.StatsFilter.updateThroughput;
+import static org.avis.router.StatsFilter.writtenBytesThroughput;
 import static org.avis.util.Collections.sort;
 
 public class FederationView implements HtmlView
@@ -100,6 +103,8 @@ public class FederationView implements HtmlView
     
     for (Link link : sort (manager.links (), LINK_COMPARATOR))
     {
+      updateThroughput (link.session);
+      
       html.append ("<tr><td class='number' rowspan='2'>${}</td>" +
                    "<td class='net-address'>${}</td>" +
                    "<td>${}</td>" +
@@ -113,8 +118,8 @@ public class FederationView implements HtmlView
       		   formatTime (link.createdAt),
                    formatBytes (link.session.getReadBytes ()),
                    formatBytes (link.session.getWrittenBytes ()),
-                   formatBandwidth (link.session.getReadBytesThroughput ()),
-                   formatBandwidth (link.session.getWrittenBytesThroughput ()),
+                   formatBandwidth (readBytesThroughput (link.session)),
+                   formatBandwidth (writtenBytesThroughput (link.session)),
       		   formatNum (link.receivedNotificationCount), 
       		   formatNum (link.sentNotificationCount));
       
