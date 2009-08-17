@@ -20,7 +20,7 @@ public class ActiveRouterTester
   static boolean HARSH = true;
   
   /* Must be multiple of 8 */
-  static final int CLIENTS = HARSH ? 4 * 8 : 2 * 8;
+  static final int CLIENTS = HARSH ? 3 * 8 : 2 * 8;
   /* Average notification rate (ntfns / sec) */
   static final int NOTIFY_RATE = HARSH ? 9 : 2;
   /* Max payload body size */
