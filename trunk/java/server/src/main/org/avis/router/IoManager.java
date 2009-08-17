@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,18 +18,13 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.service.SimpleIoProcessorPool;
-import org.apache.mina.core.session.IoEvent;
-import org.apache.mina.core.session.IoEventType;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.executor.ExecutorFilter;
-import org.apache.mina.filter.executor.IoEventQueueThrottle;
-import org.apache.mina.filter.executor.IoEventSizeEstimator;
 import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSession;
@@ -39,16 +32,11 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import org.avis.common.ElvinURI;
-import org.avis.federation.Acceptor;
-import org.avis.io.FrameCodec;
 import org.avis.io.Net;
-import org.avis.io.messages.Message;
 import org.avis.util.Filter;
 
-import static java.lang.Math.max;
 import static java.lang.Runtime.getRuntime;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.apache.mina.core.buffer.IoBuffer.setUseDirectBuffer;
@@ -66,30 +54,10 @@ import static org.avis.logging.Log.warn;
  */
 public class IoManager
 {
-  /**
-   * Used by read throttle to estimate size of messages in buffer.
-   */
-  private static final IoEventSizeEstimator MESSAGE_SIZE_ESTIMATOR = 
-    new IoEventSizeEstimator ()
-  {
-    public int estimateSize (IoEvent event)
-    {
-      Object param = event.getParameter ();
-      
-      if (param instanceof Message)
-        return max (0, ((Message)param).frameSize * 2);
-      else if (param instanceof IoBuffer)
-        return ((IoBuffer)param).capacity ();
-      else
-        return 16;
-    }
-  };
-
   private SimpleIoProcessorPool<NioSession> processorPool;
   
   private ExecutorService ioExecutor;
   private OrderedThreadPoolExecutor filterExecutor;
-//  private ScheduledExecutorService throttleExecutor;
   
   private String keystorePassphrase;
   private KeyStore keystore;
@@ -128,7 +96,6 @@ public class IoManager
          getRuntime ().availableProcessors () + 1);
     this.filterExecutor = 
       new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
-//    this.throttleExecutor = newScheduledThreadPool (1);
     this.lowMemoryThrottler = new LowMemoryThrottler (this);
     
     setUseDirectBuffer (useDirectBuffers);
@@ -149,7 +116,6 @@ public class IoManager
     
     ioExecutor.shutdown ();
     filterExecutor.shutdown ();
-//    throttleExecutor.shutdown ();
     
     try
     {
@@ -161,28 +127,11 @@ public class IoManager
     }
   }
 
+  // TODO do we need a thread pool?
   public IoFilter createThreadPoolFilter ()
   {
     return new ExecutorFilter (filterExecutor);
-//    return new ExecutorFilter (0, 16, 32, SECONDS, new IoEventQueueThrottle (MESSAGE_SIZE_ESTIMATOR, 10 * 1024), IoEventType.WRITE, IoEventType.MESSAGE_RECEIVED, IoEventType.MESSAGE_SENT);
   }
-
-  /**
-   * Create a filter that throttles incoming data after a max buffer
-   * size is passed. This only works for connections using
-   * {@link FrameCodec} for messages
-   */
-//  public IoEventQueueThrottle createThrottleFilter (int maxBufferSize)
-//  {
-////    IoEventQueueThrottle readThrottle = 
-////      new IoEventQueueThrottle (throttleExecutor, IoEventQueueThrottle.BLOCK, 
-////                              MESSAGE_SIZE_ESTIMATOR);
-//
-//    IoEventQueueThrottle readThrottle = 
-//      new IoEventQueueThrottle (MESSAGE_SIZE_ESTIMATOR, maxBufferSize);
-//
-//    return readThrottle;
-//  }
 
   public NioSocketAcceptor createAcceptor ()
   {
@@ -239,7 +188,9 @@ public class IoManager
           acceptor.setFilterChainBuilder (filters);
         }
 
+        // TODO factor filters common code from here and createConnector ()
         acceptor.getFilterChain ().addFirst ("memory", lowMemoryThrottler);
+        acceptor.getFilterChain ().addFirst ("stats", StatsFilter.INSTANCE);
         
         acceptor.setCloseOnDeactivation (false);
         acceptor.setHandler (handler);
@@ -505,6 +456,9 @@ public class IoManager
     else
       filters = createStandardFilters (filters, authenticationRequiredHosts);
     
+    filters.addFirst ("memory", lowMemoryThrottler);
+    filters.addFirst ("stats", StatsFilter.INSTANCE);
+
     connector.setFilterChainBuilder (filters);
     connector.setHandler (handler);
     connector.setConnectTimeoutMillis (timeout);
