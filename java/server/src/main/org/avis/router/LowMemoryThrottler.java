@@ -197,10 +197,7 @@ public class LowMemoryThrottler extends IoFilterAdapter
                         " free memory", this);
           }
           
-          synchronized (this)
-          {
-            wait (1000);
-          }
+          sleep (1000);
         }
       } catch (InterruptedException ex)
       {
