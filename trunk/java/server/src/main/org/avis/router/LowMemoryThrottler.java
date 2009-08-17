@@ -9,13 +9,16 @@ import org.apache.mina.core.write.WriteRequest;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.Thread.currentThread;
 
+import static org.avis.io.Net.idFor;
 import static org.avis.logging.Log.DIAGNOSTIC;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
+import static org.avis.router.StatsFilter.readBytesThroughput;
 
 public class LowMemoryThrottler extends IoFilterAdapter
 {
+  // TODO these should be based in max frame size
   private static final long HIGH_WATER = 4 * 1024 * 1024;
   private static final long LOW_WATER = 4 * 1024 * 1024;
 
@@ -152,12 +155,13 @@ public class LowMemoryThrottler extends IoFilterAdapter
     @Override
     public void run ()
     {
+      killASpammyClient ();
+      
       Iterator<IoSession> sessionIter = ioManager.sessions ().iterator ();
       IoSession lastSession = null;
       
       try
       {
-        // TODO think of more intelligent way to re-enable: use frame size
         while (getRuntime ().freeMemory () < LOW_WATER)
         {
           IoSession session;
@@ -182,7 +186,7 @@ public class LowMemoryThrottler extends IoFilterAdapter
           
           if (shouldLog (DIAGNOSTIC))
           {
-            diagnostic ("Low memory state poller: " + 
+            diagnostic ("Low memory manager: " + 
                         formatBytes (getRuntime ().freeMemory ()) + 
                         " free memory", this);
           }
@@ -198,6 +202,28 @@ public class LowMemoryThrottler extends IoFilterAdapter
       } finally
       {
         unthrottle ();
+      }
+    }
+
+    /**
+     * Kil the first client with more than 50Kb/s incoming.
+     */
+    private void killASpammyClient ()
+    {
+      for (IoSession session : ioManager.sessions ())
+      {
+        long throughput = (long)readBytesThroughput (session);
+        
+        if (throughput > 50 * 1024)
+        {
+          diagnostic ("Low memory manager: killing spammy client " + 
+                      idFor (session) + " with " + 
+                      formatBytes (throughput) + " throughput", this);
+          
+          session.close (true);
+          
+          break;
+        }
       }
     }
   }
