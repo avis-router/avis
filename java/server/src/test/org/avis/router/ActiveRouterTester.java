@@ -17,10 +17,10 @@ public class ActiveRouterTester
   static final InetSocketAddress ELVIN_ADDRESS = 
     new InetSocketAddress ("127.0.0.1", 29170);
 
-  static boolean HARSH = false;
+  static boolean HARSH = true;
   
   /* Must be multiple of 8 */
-  static final int CLIENTS = HARSH ? 8 : 4 * 8;
+  static final int CLIENTS = HARSH ? 4 * 8 : 8;
   /* Average notification rate (ntfns / sec) */
   static final int NOTIFY_RATE = HARSH ? 9 : 2;
   /* Max payload body size */
