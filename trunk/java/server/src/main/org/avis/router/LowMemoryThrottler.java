@@ -9,6 +9,11 @@ import org.apache.mina.core.write.WriteRequest;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.Thread.currentThread;
 
+import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.diagnostic;
+import static org.avis.logging.Log.shouldLog;
+import static org.avis.logging.Log.warn;
+
 public class LowMemoryThrottler extends IoFilterAdapter
 {
   private static final long HIGH_WATER = 4 * 1024 * 1024;
@@ -59,9 +64,13 @@ public class LowMemoryThrottler extends IoFilterAdapter
           }
           
           System.gc ();
-          System.out.println ("*** Poller: free = " + 
-                              getRuntime ().freeMemory ());
-
+          
+          if (shouldLog (DIAGNOSTIC))
+          {
+            diagnostic ("Low memory state poller:  " + 
+                        getRuntime ().freeMemory () + " free memory", this);
+          }
+          
           synchronized (this)
           {
             wait (1000);
@@ -82,6 +91,19 @@ public class LowMemoryThrottler extends IoFilterAdapter
   public LowMemoryThrottler (IoManager ioManager)
   {
     this.ioManager = ioManager;
+  }
+  
+  @Override
+  public void sessionCreated (NextFilter nextFilter, IoSession session)
+    throws Exception
+  { 
+    super.sessionCreated (nextFilter, session);
+    
+    synchronized (this)
+    {
+      if (inLowMemoryState ())
+        session.suspendRead ();
+    }
   }
 
   @Override
@@ -110,23 +132,30 @@ public class LowMemoryThrottler extends IoFilterAdapter
     {
       synchronized (this)
       {
-        if (poller == null)
-        {
-          throttle ();
-          
-          poller = new PollingThread ();
-          poller.start ();
-        }
+        if (!inLowMemoryState ())
+          enterLowMemoryState ();
       }
     }
   }
 
-  protected void throttle ()
+  private void enterLowMemoryState ()
   {
-    System.out.println ("--- Throttle on Low memory " +
-                        getRuntime ().freeMemory ());
+    throttle ();
     
-    // TODO suspend new connections
+    poller = new PollingThread ();
+    poller.start ();
+  }
+
+  private boolean inLowMemoryState ()
+  {
+    return poller != null;
+  }
+
+  private void throttle ()
+  {
+    warn ("Entering low memory state: throttling clients: " +
+          getRuntime ().freeMemory () + " < " + LOW_WATER + " bytes free", this);
+    
     for (IoSession session : ioManager.sessions ())
       session.suspendRead ();
   }
@@ -135,8 +164,10 @@ public class LowMemoryThrottler extends IoFilterAdapter
   {
     poller = null;
     
-    System.out.println ("+++ Unthrottle " + getRuntime ().freeMemory ());
-    
+    diagnostic ("Leaving low memory state: unthrottling clients: " +
+                getRuntime ().freeMemory () + " > " + HIGH_WATER + 
+                " bytes free", this);
+
     for (IoSession session : ioManager.sessions ())
       session.resumeRead ();
   }
