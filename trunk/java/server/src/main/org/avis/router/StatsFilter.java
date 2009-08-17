@@ -42,7 +42,7 @@ public class StatsFilter extends IoFilterAdapter
     
     if (message instanceof IoBuffer)
     {
-      synchronized (statsLock (session))
+      synchronized (lockFor (session))
       {
         long now = currentTimeMillis ();
         AbstractIoSession ioSession = (AbstractIoSession)session;
@@ -53,7 +53,7 @@ public class StatsFilter extends IoFilterAdapter
     }
   }
   
-  private static Object statsLock (IoSession session)
+  private static Object lockFor (IoSession session)
   {
     return session.getAttribute ("statsLock");
   }
@@ -67,7 +67,7 @@ public class StatsFilter extends IoFilterAdapter
     
     if (writeRequest.getMessage () instanceof IoBuffer)
     {
-      synchronized (statsLock (session))
+      synchronized (lockFor (session))
       {
         long now = currentTimeMillis ();
         AbstractIoSession ioSession = (AbstractIoSession)session;
@@ -85,7 +85,7 @@ public class StatsFilter extends IoFilterAdapter
    */
   public static void updateThroughput (IoSession session)
   {
-    synchronized (statsLock (session))
+    synchronized (lockFor (session))
     {
       ((AbstractIoSession)session).updateThroughput (currentTimeMillis (), 
                                                      false);
@@ -98,7 +98,7 @@ public class StatsFilter extends IoFilterAdapter
    */
   public static double readBytesThroughput (IoSession session)
   {
-    synchronized (statsLock (session))
+    synchronized (lockFor (session))
     {
       return session.getReadBytesThroughput ();
     }
@@ -110,7 +110,7 @@ public class StatsFilter extends IoFilterAdapter
    */
   public static double writtenBytesThroughput (IoSession session)
   {
-    synchronized (statsLock (session))
+    synchronized (lockFor (session))
     {
       return session.getWrittenBytesThroughput ();
     }
