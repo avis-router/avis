@@ -289,6 +289,11 @@ public class SimpleClient implements IoHandler, Closeable
     }
   }
 
+  public boolean connected ()
+  {
+    return connected;
+  }
+  
   public ConnRply connect ()
     throws Exception
   {
