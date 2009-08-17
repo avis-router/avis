@@ -4,8 +4,8 @@ import java.util.Comparator;
 
 import org.avis.common.ElvinURI;
 import org.avis.management.HTML;
-import org.avis.management.JavascriptView;
 import org.avis.management.HtmlView;
+import org.avis.management.JavascriptView;
 import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;
@@ -15,6 +15,9 @@ import static org.avis.management.HTML.formatBytes;
 import static org.avis.management.HTML.formatHost;
 import static org.avis.management.HTML.formatNum;
 import static org.avis.management.HTML.formatTime;
+import static org.avis.router.StatsFilter.readBytesThroughput;
+import static org.avis.router.StatsFilter.updateThroughput;
+import static org.avis.router.StatsFilter.writtenBytesThroughput;
 import static org.avis.util.Collections.sort;
 
 public class ClientsView implements HtmlView, JavascriptView
@@ -98,6 +101,8 @@ public class ClientsView implements HtmlView, JavascriptView
         if (!connection.isOpen ())
           continue;
         
+        updateThroughput (connection.session);
+        
         html.append 
           ("<tr><td rowspan='2' class='number'>${}</td>" +
                "<td class='net-address'>${}</td>" +
@@ -117,8 +122,8 @@ public class ClientsView implements HtmlView, JavascriptView
            formatNum (connection.subscriptions.size ()),
            formatBytes (connection.session.getReadBytes ()),
            formatBytes (connection.session.getWrittenBytes ()),
-           formatBandwidth (connection.session.getReadBytesThroughput ()),
-           formatBandwidth (connection.session.getWrittenBytesThroughput ()),
+           formatBandwidth (readBytesThroughput (connection.session)),
+           formatBandwidth (writtenBytesThroughput (connection.session)),
            formatNum (connection.receivedNotificationCount), 
            formatNum (connection.sentNotificationCount));
 
