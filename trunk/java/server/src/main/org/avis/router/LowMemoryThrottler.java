@@ -15,6 +15,7 @@ import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
 import static org.avis.router.StatsFilter.readBytesThroughput;
+import static org.avis.router.StatsFilter.updateThroughput;
 
 public class LowMemoryThrottler extends IoFilterAdapter
 {
@@ -67,10 +68,15 @@ public class LowMemoryThrottler extends IoFilterAdapter
   {
     if (getRuntime ().freeMemory () < HIGH_WATER)
     {
-      synchronized (this)
+      System.gc ();
+      
+      if (getRuntime ().freeMemory () < HIGH_WATER)
       {
-        if (!inLowMemoryState ())
-          enterLowMemoryState ();
+        synchronized (this)
+        {
+          if (!inLowMemoryState ())
+            enterLowMemoryState ();
+        }
       }
     }
   }
@@ -210,20 +216,29 @@ public class LowMemoryThrottler extends IoFilterAdapter
      */
     private void killASpammyClient ()
     {
+      long maxThrougput = 50 * 1024;
+      IoSession spammyClient = null;
+      
       for (IoSession session : ioManager.sessions ())
       {
+        updateThroughput (session);
+        
         long throughput = (long)readBytesThroughput (session);
         
-        if (throughput > 50 * 1024)
+        if (throughput > maxThrougput)
         {
-          diagnostic ("Low memory manager: killing spammy client " + 
-                      idFor (session) + " with " + 
-                      formatBytes (throughput) + " throughput", this);
-          
-          session.close (true);
-          
-          break;
+          maxThrougput = throughput;          
+          spammyClient = session;
         }
+      }
+      
+      if (spammyClient != null)
+      {
+        diagnostic ("Low memory manager: killing spammy client " + 
+                    idFor (spammyClient) + " with " + 
+                    formatBytes (maxThrougput) + " throughput", this);
+        
+        spammyClient.close (true);
       }
     }
   }
