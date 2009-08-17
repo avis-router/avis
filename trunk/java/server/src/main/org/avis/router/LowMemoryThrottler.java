@@ -75,8 +75,8 @@ public class LowMemoryThrottler extends IoFilterAdapter
   private void enterLowMemoryState ()
   {
     warn ("Entering low memory state: throttling clients: " +
-          getRuntime ().freeMemory () + " < " + LOW_WATER + " bytes free", 
-          this);
+          formatBytes (getRuntime ().freeMemory ()) + " < " + 
+          formatBytes (LOW_WATER) + " bytes free", this);
     
     throttle ();
     
@@ -98,8 +98,8 @@ public class LowMemoryThrottler extends IoFilterAdapter
   protected void unthrottle ()
   {
     diagnostic ("Leaving low memory state: unthrottling clients: " +
-                getRuntime ().freeMemory () + " > " + HIGH_WATER + 
-                " bytes free", this);
+                formatBytes (getRuntime ().freeMemory ()) + " > " + 
+                formatBytes (HIGH_WATER) + " bytes free", this);
 
     synchronized (this)
     {
@@ -129,6 +129,11 @@ public class LowMemoryThrottler extends IoFilterAdapter
     }
   }
   
+  static String formatBytes (long bytes)
+  {
+    return String.format ("%,d", bytes);
+  }
+
   /**
    * While in low memory condition, loops though sessions periodically
    * enabling one per second to allow draining to occur.
@@ -177,8 +182,9 @@ public class LowMemoryThrottler extends IoFilterAdapter
           
           if (shouldLog (DIAGNOSTIC))
           {
-            diagnostic ("Low memory state poller:  " + 
-                        getRuntime ().freeMemory () + " free memory", this);
+            diagnostic ("Low memory state poller: " + 
+                        formatBytes (getRuntime ().freeMemory ()) + 
+                        " free memory", this);
           }
           
           synchronized (this)
