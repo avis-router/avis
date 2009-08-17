@@ -245,6 +245,6 @@ public class HTML
   
   public static String formatBandwidth (double bytesPerSecond)
   {
-    return String.format ("%,.2f", bytesPerSecond);
+    return String.format ("%,.0f", bytesPerSecond);
   }
 }
