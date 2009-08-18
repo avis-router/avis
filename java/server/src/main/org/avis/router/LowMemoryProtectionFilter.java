@@ -92,12 +92,12 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
 
   private void checkForLowMemory ()
   {
-    if (getRuntime ().freeMemory () < lowMemoryTrigger)
+    if (!inLowMemoryState () && getRuntime ().freeMemory () < lowMemoryTrigger)
     {
+      System.gc ();
+
       synchronized (this)
       {
-        System.gc ();
-        
         long freeMemory = getRuntime ().freeMemory ();
         
         if (freeMemory < lowMemoryTrigger && !inLowMemoryState ())
