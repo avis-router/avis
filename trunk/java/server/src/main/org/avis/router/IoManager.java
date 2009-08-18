@@ -65,8 +65,8 @@ public class IoManager
   private Map<ElvinURI, Collection<NioSocketAcceptor>> uriToAcceptors;
   private Map<ElvinURI, NioSocketConnector> uriToConnectors;
 
-  private LowMemoryThrottler lowMemoryThrottler;
-  
+  private LowMemoryProtectionFilter lowMemoryFilter;
+
   /**
    * Create a new instance.
    * 
@@ -74,12 +74,16 @@ public class IoManager
    *          which case attempting to use a secure Elvin URI will
    *          fail.
    * @param keystorePassphrase The keystore passphrase.
-   * @param maxFrameSize The maximum size of a frame. Used to help manage
-   * low memory checking.
-   * @param useDirectBuffers True if MINA should use direct IO buffers.
+   * @param maxFrameSize The maximum size of a frame. Used to help
+   *          manage low memory checking.
+   * @param useLowMemoryProtection True if LowMemoryProtectionFilter
+   *          should be used to prevent crashes due to low memory.
+   * @param useDirectBuffers True if MINA should use direct IO
+   *          buffers.
    */
   public IoManager (URI keystoreUri, String keystorePassphrase,
-                    int maxFrameSize, boolean useDirectBuffers) 
+                    int maxFrameSize, boolean useLowMemoryProtection,
+                    boolean useDirectBuffers) 
     throws IOException
   {
     this.uriToAcceptors = 
@@ -98,14 +102,17 @@ public class IoManager
          getRuntime ().availableProcessors () + 1);
     this.filterExecutor = 
       new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
-    this.lowMemoryThrottler = new LowMemoryThrottler (this, maxFrameSize);
+    
+    if (useLowMemoryProtection)
+      this.lowMemoryFilter = new LowMemoryProtectionFilter (this, maxFrameSize);
     
     setUseDirectBuffer (useDirectBuffers);
   }
 
   public void close ()
   {
-    lowMemoryThrottler.shutdown ();
+    if (lowMemoryFilter != null)
+      lowMemoryFilter.shutdown ();
     
     for (Collection<NioSocketAcceptor> acceptors : uriToAcceptors.values ())
     {
@@ -191,7 +198,10 @@ public class IoManager
         }
 
         // TODO factor filters common code from here and createConnector ()
-        acceptor.getFilterChain ().addFirst ("memory", lowMemoryThrottler);
+        
+        if (lowMemoryFilter != null)
+          acceptor.getFilterChain ().addFirst ("memory", lowMemoryFilter);
+        
         acceptor.getFilterChain ().addFirst ("stats", StatsFilter.INSTANCE);
         
         acceptor.setCloseOnDeactivation (false);
@@ -458,7 +468,9 @@ public class IoManager
     else
       filters = createStandardFilters (filters, authenticationRequiredHosts);
     
-    filters.addFirst ("memory", lowMemoryThrottler);
+    if (lowMemoryFilter != null)
+      filters.addFirst ("memory", lowMemoryFilter);
+    
     filters.addFirst ("stats", StatsFilter.INSTANCE);
 
     connector.setFilterChainBuilder (filters);
