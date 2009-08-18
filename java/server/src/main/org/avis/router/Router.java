@@ -178,7 +178,8 @@ public class Router implements IoHandler, Closeable
     
     this.ioManager = 
       new IoManager 
-        (keystoreUri, options.getString ("TLS.Keystore-Passphrase"), 
+        (keystoreUri, options.getString ("TLS.Keystore-Passphrase"),
+         options.getInt ("Packet.Max-Length"),
          options.getBoolean ("IO.Use-Direct-Buffers")); 
     
     /*
@@ -193,13 +194,6 @@ public class Router implements IoHandler, Closeable
     filters.addLast ("codec", ClientFrameCodec.FILTER);
     
     filters.addLast ("threadPool", ioManager.createThreadPoolFilter ());
-
-    // TODO re-add throttle. looks like it will have to become the actual
-    // executor.
-//    filters.addLast
-//      ("readThrottle", 
-//       ioManager.createThrottleFilter 
-//         (routerOptions.getInt ("Receive-Queue.Max-Length")));
 
     boolean bindSucceeded = false;
     
