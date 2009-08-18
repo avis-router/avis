@@ -28,9 +28,9 @@ public class StatsFilter extends IoFilterAdapter
   public void sessionCreated (NextFilter nextFilter, IoSession session)
     throws Exception
   {
-    super.sessionCreated (nextFilter, session);
-    
     session.setAttribute ("statsLock", new Object ());
+
+    super.sessionCreated (nextFilter, session);
   }
   
   @Override
