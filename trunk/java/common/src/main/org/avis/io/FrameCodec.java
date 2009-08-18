@@ -12,7 +12,10 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
+import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.XidMessage;
+
+import static org.avis.io.XdrCoding.putLongArray;
 
 /**
  * Base class for Elvin XDR frame codecs. Reads/writes messages
@@ -31,6 +34,20 @@ public abstract class FrameCodec
                       ProtocolEncoderOutput out)
     throws Exception
   {
+    // check if we can optimise a NotifyDeliver
+    if (messageObject instanceof NotifyDeliver)
+    {
+      NotifyDeliver notifyDeliver = (NotifyDeliver)messageObject;
+      
+      if (notifyDeliver.original != null && 
+          notifyDeliver.original.rawAttributes != null)
+      {
+        encodeOptimisedNotifyDeliver (out, notifyDeliver);
+        
+        return;
+      }
+    }
+    
     // buffer is auto deallocated
     IoBuffer buffer = IoBuffer.allocate (4096); 
     buffer.setAutoExpand (true);
@@ -71,6 +88,41 @@ public abstract class FrameCodec
     {
       throw new FrameTooLargeException (maxLength, frameSize);
     }
+  }
+
+  /**
+   * Optimised encoding for NotifyDeliver which avoids re-serialising
+   * attributes: we just output the raw serialised attributes we read
+   * in for the Notify. This avoids wasting a lot of memory exploding
+   * duplicate attributes out when a notification is sent to many
+   * clients, and saves time not re-serialising attributes.
+   */
+  private static void encodeOptimisedNotifyDeliver (ProtocolEncoderOutput out,
+                                                    NotifyDeliver notifyDeliver)
+  {
+    IoBuffer headerBuffer = IoBuffer.allocate (20);
+    IoBuffer matchesBuffer = IoBuffer.allocate (256);
+    
+    matchesBuffer.setAutoExpand (true);
+    
+    putLongArray (matchesBuffer, notifyDeliver.secureMatches);
+    putLongArray (matchesBuffer, notifyDeliver.insecureMatches);
+    
+    matchesBuffer.flip ();
+    
+    int frameSize = 
+      4 + notifyDeliver.original.rawAttributes.limit () + matchesBuffer.limit ();
+    
+    notifyDeliver.frameSize = frameSize;
+    
+    headerBuffer.putInt (frameSize);
+    headerBuffer.putInt (NotifyDeliver.ID);
+    
+    headerBuffer.flip ();
+    
+    out.write (headerBuffer);
+    out.write (notifyDeliver.original.rawAttributes.asReadOnlyBuffer ());
+    out.write (matchesBuffer);
   }
 
   @Override

@@ -27,6 +27,12 @@ public abstract class Notify extends Message
   public Map<String, Object> attributes;
   public boolean deliverInsecure;
   public Keys keys;
+  
+  /**
+   * The raw serialised attributes for this notification. See
+   * {@link #decode(IoBuffer)}.
+   */
+  public transient IoBuffer rawAttributes;
  
   protected Notify ()
   {
@@ -53,7 +59,17 @@ public abstract class Notify extends Message
   public void decode (IoBuffer in)
     throws ProtocolCodecException
   {
+    /* Store a view on the raw attributes. This allows potential optimisation 
+     * if this is used as the basis of a NotifyDeliver: we can just write the
+     * raw attribtes back out rather than re-serialising them. */
+    int start = in.position ();
+    
+    rawAttributes = in.slice ();
+    
     attributes = getNameValues (in);
+
+    rawAttributes.limit (in.position () - start);
+    
     deliverInsecure = getBool (in);
     keys = Keys.decode (in);
   }
