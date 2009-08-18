@@ -74,10 +74,12 @@ public class IoManager
    *          which case attempting to use a secure Elvin URI will
    *          fail.
    * @param keystorePassphrase The keystore passphrase.
+   * @param maxFrameSize The maximum size of a frame. Used to help manage
+   * low memory checking.
    * @param useDirectBuffers True if MINA should use direct IO buffers.
    */
   public IoManager (URI keystoreUri, String keystorePassphrase,
-                    boolean useDirectBuffers) 
+                    int maxFrameSize, boolean useDirectBuffers) 
     throws IOException
   {
     this.uriToAcceptors = 
@@ -96,7 +98,7 @@ public class IoManager
          getRuntime ().availableProcessors () + 1);
     this.filterExecutor = 
       new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
-    this.lowMemoryThrottler = new LowMemoryThrottler (this);
+    this.lowMemoryThrottler = new LowMemoryThrottler (this, maxFrameSize);
     
     setUseDirectBuffer (useDirectBuffers);
   }

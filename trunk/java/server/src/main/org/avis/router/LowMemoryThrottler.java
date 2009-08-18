@@ -6,6 +6,7 @@ import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.core.write.WriteRequest;
 
+import static java.lang.Math.max;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.Thread.currentThread;
 
@@ -34,16 +35,17 @@ import static org.avis.router.StatsFilter.updateThroughput;
  */
 public class LowMemoryThrottler extends IoFilterAdapter
 {
-  // TODO these should be based in max frame size
-  private static final long HIGH_WATER = 4 * 1024 * 1024;
-  private static final long LOW_WATER = 4 * 1024 * 1024;
-
   protected IoManager ioManager;
   protected Thread poller;
+  protected long lowMemoryTrigger;
+  protected long lowMemoryUntrigger;
 
-  public LowMemoryThrottler (IoManager ioManager)
+  public LowMemoryThrottler (IoManager ioManager, int maxFrameSize)
   {
+    // TODO check that current memory is greater than low water
     this.ioManager = ioManager;
+    this.lowMemoryTrigger = max (maxFrameSize * 2, 4 * 1024 * 1024);
+    this.lowMemoryUntrigger = lowMemoryTrigger + (maxFrameSize / 2);
   }
   
   @Override
@@ -81,16 +83,21 @@ public class LowMemoryThrottler extends IoFilterAdapter
 
   private void checkForLowMemory ()
   {
-    if (getRuntime ().freeMemory () < HIGH_WATER)
+    if (getRuntime ().freeMemory () < lowMemoryTrigger)
     {
-      System.gc ();
-      
-      if (getRuntime ().freeMemory () < HIGH_WATER)
+      synchronized (this)
       {
-        synchronized (this)
+        System.gc ();
+        
+        long freeMemory = getRuntime ().freeMemory ();
+        
+        if (freeMemory < lowMemoryTrigger && !inLowMemoryState ())
         {
-          if (!inLowMemoryState ())
-            enterLowMemoryState ();
+          warn ("Entering low memory state: throttling clients: " +
+                formatBytes (freeMemory) + " < " + 
+                formatBytes (lowMemoryTrigger) + " bytes free", this);        
+  
+          enterLowMemoryState ();
         }
       }
     }
@@ -98,10 +105,6 @@ public class LowMemoryThrottler extends IoFilterAdapter
 
   private void enterLowMemoryState ()
   {
-    warn ("Entering low memory state: throttling clients: " +
-          formatBytes (getRuntime ().freeMemory ()) + " < " + 
-          formatBytes (LOW_WATER) + " bytes free", this);
-    
     throttle ();
     
     poller = new PollingThread ();
@@ -121,10 +124,6 @@ public class LowMemoryThrottler extends IoFilterAdapter
   
   protected void unthrottle ()
   {
-    diagnostic ("Leaving low memory state: unthrottling clients: " +
-                formatBytes (getRuntime ().freeMemory ()) + " > " + 
-                formatBytes (HIGH_WATER) + " bytes free", this);
-
     synchronized (this)
     {
       poller = null;
@@ -183,7 +182,7 @@ public class LowMemoryThrottler extends IoFilterAdapter
       
       try
       {
-        while (getRuntime ().freeMemory () < LOW_WATER)
+        while (getRuntime ().freeMemory () < lowMemoryUntrigger)
         {
           IoSession session;
           
@@ -219,6 +218,10 @@ public class LowMemoryThrottler extends IoFilterAdapter
         interrupt ();
       } finally
       {
+        diagnostic ("Leaving low memory state: unthrottling clients: " +
+                    formatBytes (getRuntime ().freeMemory ()) + " > " + 
+                    formatBytes (lowMemoryUntrigger) + " bytes free", this);
+        
         unthrottle ();
       }
     }
