@@ -42,10 +42,19 @@ public class LowMemoryThrottler extends IoFilterAdapter
 
   public LowMemoryThrottler (IoManager ioManager, int maxFrameSize)
   {
-    // TODO check that current memory is greater than low water
     this.ioManager = ioManager;
     this.lowMemoryTrigger = max (maxFrameSize * 2, 4 * 1024 * 1024);
     this.lowMemoryUntrigger = lowMemoryTrigger + (maxFrameSize / 2);
+    
+    if (getRuntime ().freeMemory () < lowMemoryTrigger)
+    {
+      warn 
+        ("Low memory trigger has been reached before router has started: " +
+         "disabling low memory crash protection. Consider raising the VM's" +
+         "maximum memory allocation to avoid this.", this);
+      
+      lowMemoryTrigger = Long.MAX_VALUE;
+    }
   }
   
   @Override
