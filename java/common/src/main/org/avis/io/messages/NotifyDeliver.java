@@ -17,12 +17,25 @@ public class NotifyDeliver extends Message
   public Map<String, Object> attributes;
   public long [] secureMatches;
   public long [] insecureMatches;
+
+  /**
+   * The original notification that this derives from (if any).
+   */
+  public transient Notify original;
   
   public NotifyDeliver ()
   {
     // zip
   }
   
+  public NotifyDeliver (Notify notify, 
+                        long [] secureMatches, long [] insecureMatches)
+  {
+    this (notify.attributes, secureMatches, insecureMatches);
+    
+    this.original = notify;
+  }
+
   public NotifyDeliver (Map<String, Object> attributes,
                         long [] secureMatches, long [] insecureMatches)
   {
@@ -30,7 +43,7 @@ public class NotifyDeliver extends Message
     this.secureMatches = secureMatches;
     this.insecureMatches = insecureMatches;
   }
-
+  
   @Override
   public int typeId ()
   {

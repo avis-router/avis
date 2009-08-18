@@ -770,7 +770,7 @@ public class Router implements IoHandler, Closeable
                    " to client " + idFor (session), this);
           }
           
-          send (session, new NotifyDeliver (message.attributes,
+          send (session, new NotifyDeliver (message,
                                             matches.secure (),
                                             matches.insecure ()));
           
