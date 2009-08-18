@@ -33,14 +33,14 @@ import static org.avis.router.StatsFilter.updateThroughput;
  * 
  * @author Matthew Phillips
  */
-public class LowMemoryThrottler extends IoFilterAdapter
+public class LowMemoryProtectionFilter extends IoFilterAdapter
 {
   protected IoManager ioManager;
   protected Thread poller;
   protected long lowMemoryTrigger;
   protected long lowMemoryUntrigger;
 
-  public LowMemoryThrottler (IoManager ioManager, int maxFrameSize)
+  public LowMemoryProtectionFilter (IoManager ioManager, int maxFrameSize)
   {
     this.ioManager = ioManager;
     this.lowMemoryTrigger = max (maxFrameSize * 2, 4 * 1024 * 1024);

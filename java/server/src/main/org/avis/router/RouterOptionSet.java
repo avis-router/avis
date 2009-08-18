@@ -23,6 +23,7 @@ public class RouterOptionSet extends OptionSet
     add ("Listen", "elvin://0.0.0.0");
     add ("IO.Idle-Connection-Timeout", 1, 15, Integer.MAX_VALUE);
     add ("IO.Use-Direct-Buffers", false);
+    add ("IO.Use-Low-Memory-Crash-Protection", true);
     add ("TLS.Keystore", new OptionTypeURI (), EMPTY_URI);
     add ("TLS.Keystore-Passphrase", "");
     add ("Require-Authenticated", 

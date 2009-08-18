@@ -60,7 +60,7 @@ public class BrokenRouter
   {
     this.connectionEnabled = connectionEnabled;
     this.subAddEnabled = subAddEnabled;
-    this.ioManager = new IoManager (null, null, 2 * 1024 * 1024, false); 
+    this.ioManager = new IoManager (null, null, 2 * 1024 * 1024, false, false); 
     
     /*
      * Setup IO filter chain. NOTE re thread pool: we do this in order

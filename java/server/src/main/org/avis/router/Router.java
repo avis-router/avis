@@ -180,6 +180,7 @@ public class Router implements IoHandler, Closeable
       new IoManager 
         (keystoreUri, options.getString ("TLS.Keystore-Passphrase"),
          options.getInt ("Packet.Max-Length"),
+         options.getBoolean ("IO.Use-Low-Memory-Crash-Protection"),
          options.getBoolean ("IO.Use-Direct-Buffers")); 
     
     /*
