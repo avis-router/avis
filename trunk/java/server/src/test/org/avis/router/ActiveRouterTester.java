@@ -116,6 +116,7 @@ public class ActiveRouterTester
     }
 
     private void open () 
+      throws InterruptedException 
     {
       System.out.println ("**** client " + id + " open");
       try
@@ -127,22 +128,25 @@ public class ActiveRouterTester
         // zip
       }
       
-      elvin = new SimpleClient ("client " + id, ELVIN_ADDRESS);      
-
-      while (!elvin.connected ())
+      do
       {
+        elvin = new SimpleClient ("client " + id, ELVIN_ADDRESS);
+        
         try
         {
           elvin.connect ();
           elvin.subscribe 
             ("To == " + id + " || " +
              "equals (Group, " + join (groups) + ") || Group == 0");
-        } catch (Exception ex)
+        } catch (Throwable ex)
         {
           if (elvin.connected ())
             elvin.closeImmediately ();
+          
+          if (ex instanceof InterruptedException)
+            throw (InterruptedException)ex;
         }
-      }
+      } while (!elvin.connected ());
     }
     
     public void run ()
