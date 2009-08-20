@@ -110,7 +110,6 @@ public class ActiveRouterTester
     public void start () 
       throws Exception
     {
-      open ();
       runner = new Thread (this, "Client " + id);
       runner.start ();
     }
@@ -119,6 +118,7 @@ public class ActiveRouterTester
       throws InterruptedException 
     {
       System.out.println ("**** client " + id + " open");
+      
       try
       {
         if (elvin != null)
@@ -151,6 +151,14 @@ public class ActiveRouterTester
     
     public void run ()
     {
+      try
+      {
+        open ();
+      } catch (InterruptedException ex1)
+      {
+        // zip
+      }
+
       int count = 0;
       
       try
