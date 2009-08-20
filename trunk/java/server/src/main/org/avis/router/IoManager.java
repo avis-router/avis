@@ -3,6 +3,7 @@ package org.avis.router;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -369,9 +370,10 @@ public class IoManager
   }
 
   /**
-   * All sessions created by acceptors and/or connectors.
+   * All sessions created by acceptors and/or connectors. This returns
+   * a mutable copy.
    */
-  public Collection<IoSession> sessions ()
+  public List<IoSession> sessions ()
   {
     ArrayList<IoSession> sessions = new ArrayList<IoSession> ();
     
