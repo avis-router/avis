@@ -1,12 +1,15 @@
 package org.avis.router;
 
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.core.write.WriteRequest;
 
-import static java.lang.Math.max;
+import org.avis.util.Collections;
+
 import static java.lang.Runtime.getRuntime;
 import static java.lang.Thread.currentThread;
 
@@ -43,8 +46,11 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
   public LowMemoryProtectionFilter (IoManager ioManager, int maxFrameSize)
   {
     this.ioManager = ioManager;
-    this.lowMemoryTrigger = max (maxFrameSize * 2, 4 * 1024 * 1024);
-    this.lowMemoryUntrigger = lowMemoryTrigger + (maxFrameSize / 2);
+//    this.lowMemoryTrigger = max (maxFrameSize * 2, 4 * 1024 * 1024);
+//    this.lowMemoryUntrigger = lowMemoryTrigger + (maxFrameSize / 2);
+    this.lowMemoryTrigger = 3 * 1024 * 1024;
+//    this.lowMemoryUntrigger = lowMemoryTrigger + 1024 * 1024;
+    this.lowMemoryUntrigger = lowMemoryTrigger;
     
     if (getRuntime ().freeMemory () < lowMemoryTrigger)
     {
@@ -186,29 +192,25 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     {
       killASpammyClient ();
       
-      Iterator<IoSession> sessionIter = ioManager.sessions ().iterator ();
+      SessionIterator sessionIter = new SessionIterator (ioManager);
       IoSession lastSession = null;
       
       try
       {
         while (getRuntime ().freeMemory () < lowMemoryUntrigger)
         {
-          IoSession session;
-          
           if (lastSession != null)
             lastSession.suspendRead ();
           
-          if (!sessionIter.hasNext ())
-            sessionIter = ioManager.sessions ().iterator ();
-          
           if (sessionIter.hasNext ())
           {
-            session = sessionIter.next ();
-            session.resumeRead ();
-            lastSession = session;
+            lastSession = sessionIter.next ();
+            lastSession.resumeRead ();
+            
+            System.out.println ("**** resumed " + lastSession.getId ());
           } else
           {
-            session = null;
+            lastSession = null;
           }
           
           System.gc ();
@@ -264,6 +266,87 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
         
         spammyClient.close (true);
       }
+    }
+  }
+  
+  private static class SessionIterator implements Iterator<IoSession>
+  {
+    private IoManager ioManager;
+    private IoSession currentSession;
+
+    public SessionIterator (IoManager ioManager)
+    {
+      this.ioManager = ioManager;
+      this.currentSession = null;
+      
+      advance ();
+    }
+
+    public IoSession current ()
+    {
+      return currentSession;
+    }
+
+    private void advance ()
+    {
+      List<IoSession> sessions = sort (ioManager.sessions ());
+      
+      long currentSessionId = 
+        currentSession == null ? 0 : currentSession.getId () + 1;
+      
+      for (IoSession session : sessions)
+      {
+        if (session.getId () >= currentSessionId)
+        {
+          currentSession = session;
+          break;
+        }
+      }
+      
+      if (currentSession == null && !sessions.isEmpty ())
+        currentSession = sessions.iterator ().next ();
+    }
+
+    private List<IoSession> sort (List<IoSession> sessions)
+    {
+      Collections.sort (sessions, new Comparator<IoSession> ()
+      {
+        public int compare (IoSession s1, IoSession s2)
+        {
+          long diff = s1.getId () - s2.getId ();
+          
+          if (diff < 0)
+            return -1;
+          else if (diff > 0)
+            return 1;
+          else
+            return 0;
+        }
+      });
+      
+      return sessions;
+    }
+
+    public boolean hasNext ()
+    {
+      return currentSession != null;
+    }
+
+    public IoSession next ()
+    {
+      if (currentSession == null)
+        throw new UnsupportedOperationException ();
+      
+      IoSession session = currentSession;
+      
+      advance ();
+      
+      return session;
+    }
+
+    public void remove ()
+    {
+      throw new UnsupportedOperationException ();
     }
   }
 }
