@@ -48,7 +48,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     this.ioManager = ioManager;
 //    this.lowMemoryTrigger = max (maxFrameSize * 2, 4 * 1024 * 1024);
 //    this.lowMemoryUntrigger = lowMemoryTrigger + (maxFrameSize / 2);
-    this.lowMemoryTrigger = 3 * 1024 * 1024;
+    this.lowMemoryTrigger = 4 * 1024 * 1024;
 //    this.lowMemoryUntrigger = lowMemoryTrigger + 1024 * 1024;
     this.lowMemoryUntrigger = lowMemoryTrigger;
     
