@@ -123,6 +123,32 @@ public abstract class FrameCodec
     out.write (headerBuffer);
     out.write (notifyDeliver.original.rawAttributes.asReadOnlyBuffer ());
     out.write (matchesBuffer);
+    
+//    IoBuffer rawAttrs = IoBuffer.allocate (notifyDeliver.original.rawAttributes.limit ());
+
+    
+//    // reuse array
+//    byte [] bytes = new byte [notifyDeliver.original.rawAttributes.limit ()];
+//    System.arraycopy (notifyDeliver.original.rawAttributes.array (), 0, bytes, 0, bytes.length);
+//    
+//    rawAttrs.put (bytes);
+
+    
+//    // reserialise
+//    try
+//    {
+//      XdrCoding.putNameValues (rawAttrs, notifyDeliver.attributes);
+//    } catch (ProtocolCodecException ex)
+//    {
+//      ex.printStackTrace ();
+//    }
+    
+    
+//    rawAttrs.flip ();
+//    
+//    out.write (headerBuffer);
+//    out.write (rawAttrs);
+//    out.write (matchesBuffer);    
   }
 
   @Override
