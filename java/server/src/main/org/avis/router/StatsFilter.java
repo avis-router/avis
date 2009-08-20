@@ -85,10 +85,16 @@ public class StatsFilter extends IoFilterAdapter
    */
   public static void updateThroughput (IoSession session)
   {
-    synchronized (lockFor (session))
+    Object lock = lockFor (session);
+    
+    // TODO work out why this is null in rare cases
+    if (lock != null)
     {
-      ((AbstractIoSession)session).updateThroughput (currentTimeMillis (), 
-                                                     false);
+      synchronized (lock)
+      {
+        ((AbstractIoSession)session).updateThroughput (currentTimeMillis (), 
+                                                       false);
+      }
     }
   }
 
