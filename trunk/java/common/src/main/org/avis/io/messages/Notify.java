@@ -55,6 +55,25 @@ public abstract class Notify extends Message
     this.keys = keys;
   }
   
+//  @Override
+//  public void decode (IoBuffer in)
+//    throws ProtocolCodecException
+//  {
+//    /* Store a view on the raw attributes. This allows potential optimisation 
+//     * if this is used as the basis of a NotifyDeliver: we can just write the
+//     * raw attribtes back out rather than re-serialising them. */
+//    int start = in.position ();
+//    
+//    rawAttributes = in.slice ();
+//    
+//    attributes = getNameValues (in);
+//
+//    rawAttributes.limit (in.position () - start);
+//    
+//    deliverInsecure = getBool (in);
+//    keys = Keys.decode (in);
+//  }
+
   @Override
   public void decode (IoBuffer in)
     throws ProtocolCodecException
@@ -63,12 +82,20 @@ public abstract class Notify extends Message
      * if this is used as the basis of a NotifyDeliver: we can just write the
      * raw attribtes back out rather than re-serialising them. */
     int start = in.position ();
-    
-    rawAttributes = in.slice ();
-    
+        
     attributes = getNameValues (in);
 
-    rawAttributes.limit (in.position () - start);
+    int finish = in.position ();
+    
+    rawAttributes = IoBuffer.allocate (finish - start);
+    byte [] bytes = new byte [finish - start];
+    
+    in.position (start);
+    in.get (bytes, 0, bytes.length);
+    in.position (finish);
+    
+    rawAttributes.put (bytes);
+    rawAttributes.flip ();
     
     deliverInsecure = getBool (in);
     keys = Keys.decode (in);
