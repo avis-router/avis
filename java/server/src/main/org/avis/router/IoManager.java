@@ -21,6 +21,7 @@ import java.security.KeyStore;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.service.SimpleIoProcessorPool;
@@ -207,6 +208,7 @@ public class IoManager
         
         acceptor.setCloseOnDeactivation (false);
         acceptor.setHandler (handler);
+        acceptor.setDefaultLocalAddress (address); // allow unbind/bind later
         acceptor.bind (address);
 
         uriAcceptors.add (acceptor);
@@ -354,9 +356,25 @@ public class IoManager
     return addresses;
   }
   
-  public Collection<IoService> acceptorsFor (Set<? extends ElvinURI> uris)
+  /**
+   * All acceptors created with bind ().
+   */
+  public Collection<IoAcceptor> acceptors ()
   {
-    ArrayList<IoService> acceptors = new ArrayList<IoService> ();
+    ArrayList<IoAcceptor> acceptors = new ArrayList<IoAcceptor> ();
+    
+    for (Collection<NioSocketAcceptor> values : uriToAcceptors.values ())
+      acceptors.addAll (values);
+
+    return acceptors;
+  }
+
+  /**
+   * All acceptors created for the given URI's.
+   */
+  public Collection<IoAcceptor> acceptorsFor (Set<? extends ElvinURI> uris)
+  {
+    ArrayList<IoAcceptor> acceptors = new ArrayList<IoAcceptor> ();
     
     for (ElvinURI uri : uris)
     {
