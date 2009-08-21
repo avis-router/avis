@@ -12,11 +12,21 @@ import static java.lang.Math.random;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
+import static org.avis.logging.Log.info;
+
+/**
+ * Stresses a router, especially its memory footprint when in "harsh"
+ * mode. Generates clusters of clients communicating with sub-clusters
+ * and occasionally in broadcast to all. Notifications vary in size.
+ * 
+ * @author Matthew Phillips
+ */
 public class ActiveRouterTester
 {
   static final InetSocketAddress ELVIN_ADDRESS = 
     new InetSocketAddress ("127.0.0.1", 29170);
 
+  /* Flip to true to generate enough traffic to kill an unprotected router. */
   static boolean HARSH = true;
   
   /* Must be multiple of 8 */
@@ -117,7 +127,7 @@ public class ActiveRouterTester
     private void open () 
       throws InterruptedException 
     {
-      System.out.println ("**** client " + id + " open");
+      info ("Client " + id + " start open", this);
       
       try
       {
@@ -131,17 +141,19 @@ public class ActiveRouterTester
       do
       {
         elvin = new SimpleClient ("client " + id, ELVIN_ADDRESS);
-        
+
         try
         {
           elvin.connect ();
+          
+          info ("Client " + id + " opened", this);
+          
           elvin.subscribe 
             ("To == " + id + " || " +
              "equals (Group, " + join (groups) + ") || Group == 0");
         } catch (Throwable ex)
         {
-          if (elvin.connected ())
-            elvin.closeImmediately ();
+          elvin.closeImmediately ();
           
           if (ex instanceof InterruptedException)
             throw (InterruptedException)ex;
