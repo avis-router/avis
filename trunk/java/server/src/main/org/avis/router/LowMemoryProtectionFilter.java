@@ -4,17 +4,23 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import java.io.IOException;
+
 import org.apache.mina.core.filterchain.IoFilterAdapter;
+import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.core.write.WriteRequest;
 
 import org.avis.util.Collections;
 
+import static java.lang.Math.max;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.Thread.currentThread;
 
+import static org.avis.common.Common.MB;
 import static org.avis.io.Net.idFor;
 import static org.avis.logging.Log.DIAGNOSTIC;
+import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.warn;
@@ -46,20 +52,19 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
   public LowMemoryProtectionFilter (IoManager ioManager, int maxFrameSize)
   {
     this.ioManager = ioManager;
-//    this.lowMemoryTrigger = max (maxFrameSize * 2, 4 * 1024 * 1024);
-//    this.lowMemoryUntrigger = lowMemoryTrigger + (maxFrameSize / 2);
-    this.lowMemoryTrigger = 4 * 1024 * 1024;
-//    this.lowMemoryUntrigger = lowMemoryTrigger + 1024 * 1024;
-    this.lowMemoryUntrigger = lowMemoryTrigger;
+    this.lowMemoryTrigger = max (maxFrameSize * 2, 4*MB);
+    this.lowMemoryUntrigger = lowMemoryTrigger + 1*MB;
     
-    if (getRuntime ().freeMemory () < lowMemoryTrigger)
+    System.gc ();
+    
+    if (freeMemory () < lowMemoryTrigger)
     {
       warn 
         ("Low memory trigger has been reached before router has started: " +
-         "disabling low memory crash protection. Consider raising the VM's" +
+         "disabling low memory crash protection. Consider raising the VM's " +
          "maximum memory allocation to avoid this.", this);
       
-      lowMemoryTrigger = Long.MAX_VALUE;
+      lowMemoryTrigger = 0;
     }
   }
   
@@ -98,13 +103,13 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
 
   private void checkForLowMemory ()
   {
-    if (!inLowMemoryState () && getRuntime ().freeMemory () < lowMemoryTrigger)
+    if (!inLowMemoryState () && freeMemory () < lowMemoryTrigger)
     {
       System.gc ();
 
       synchronized (this)
       {
-        long freeMemory = getRuntime ().freeMemory ();
+        long freeMemory = freeMemory ();
         
         if (freeMemory < lowMemoryTrigger && !inLowMemoryState ())
         {
@@ -133,6 +138,9 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
 
   private void throttle ()
   {
+    for (IoAcceptor acceptor : ioManager.acceptors ())
+      acceptor.unbind ();
+    
     for (IoSession session : ioManager.sessions ())
       session.suspendRead ();
   }
@@ -142,6 +150,19 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     synchronized (this)
     {
       poller = null;
+      
+      for (IoAcceptor acceptor : ioManager.acceptors ())
+      {
+        try
+        {
+          acceptor.bind ();
+        } catch (IOException ex)
+        {
+          alarm ("Failed to rebind acceptor for " + 
+                 acceptor.getDefaultLocalAddresses () + 
+                 " after low memory throttle", this, ex);
+        }
+      }
       
       for (IoSession session : ioManager.sessions ())
         session.resumeRead ();      
@@ -171,6 +192,11 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
   {
     return String.format ("%,d", bytes);
   }
+  
+  private static long freeMemory ()
+  {
+    return getRuntime ().freeMemory ();
+  }
 
   /**
    * While in low memory condition, loops though sessions periodically
@@ -190,8 +216,6 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     @Override
     public void run ()
     {
-      killASpammyClient ();
-      
       SessionIterator sessionIter = new SessionIterator (ioManager);
       IoSession lastSession = null;
       
@@ -199,6 +223,8 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       {
         while (getRuntime ().freeMemory () < lowMemoryUntrigger)
         {
+          killASpammyClient ();
+          
           if (lastSession != null)
             lastSession.suspendRead ();
           
@@ -280,11 +306,6 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       this.currentSession = null;
       
       advance ();
-    }
-
-    public IoSession current ()
-    {
-      return currentSession;
     }
 
     private void advance ()
