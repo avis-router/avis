@@ -363,8 +363,13 @@ public class SimpleClient implements IoHandler, Closeable
   public synchronized void closeImmediately ()
   {
     connected = false;
-    clientSession.close (true);
-    clientSession = null;
+    
+    if (clientSession != null)
+    {
+      clientSession.close (true);
+      clientSession = null;
+    }
+    
     connector.dispose ();
   }
 
