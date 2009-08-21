@@ -119,11 +119,24 @@ public abstract class FrameCodec
     headerBuffer.putInt (NotifyDeliver.ID);
     
     headerBuffer.flip ();
-    
+
     out.write (headerBuffer);
     out.write (notifyDeliver.original.rawAttributes.asReadOnlyBuffer ());
     out.write (matchesBuffer);
-    
+
+//    // consolidate and write
+//    IoBuffer buff = IoBuffer.allocate (frameSize + 4);
+//    
+//    buff.put (headerBuffer);
+//    buff.put (notifyDeliver.original.rawAttributes.asReadOnlyBuffer ());
+//    buff.put (matchesBuffer);
+//    
+//    headerBuffer.free ();
+//    matchesBuffer.free ();
+//    
+//    buff.flip ();
+//    out.write (buff);
+        
 //    IoBuffer rawAttrs = IoBuffer.allocate (notifyDeliver.original.rawAttributes.limit ());
 
     
