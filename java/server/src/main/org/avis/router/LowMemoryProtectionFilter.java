@@ -218,6 +218,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     {
       SessionIterator sessionIter = new SessionIterator (ioManager);
       IoSession lastSession = null;
+      long lastGc = 0;
       
       try
       {
@@ -239,7 +240,12 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
             lastSession = null;
           }
           
-          System.gc ();
+          if (System.currentTimeMillis () - lastGc > 2000)
+          {
+            lastGc = System.currentTimeMillis ();
+
+            System.gc ();
+          }
           
           if (shouldLog (DIAGNOSTIC))
           {
@@ -248,7 +254,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
                         " free memory", this);
           }
           
-          sleep (1000);
+          sleep (300);
         }
       } catch (InterruptedException ex)
       {
