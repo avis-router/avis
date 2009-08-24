@@ -6,6 +6,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolCodecException;
+import org.apache.mina.filter.codec.ProtocolDecoderException;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
@@ -164,6 +165,34 @@ public abstract class FrameCodec
 //    out.write (matchesBuffer);    
   }
 
+  @Override
+  public void decode (IoSession session, IoBuffer in,
+                      ProtocolDecoderOutput out)
+    throws Exception
+  {
+    try
+    {
+      super.decode (session, in, out);
+    } catch (Throwable t)
+    {
+      /*
+       * Stop ProtocolCodecFilter in MINA 2.0M6 blowing heap with hex
+       * dumps (see ProtocolCodecFilter.messageReceived () exception
+       * handler)
+       */
+      ProtocolDecoderException pde;
+      
+      if (t instanceof ProtocolDecoderException)
+        pde = (ProtocolDecoderException)t;
+      else
+        pde = new ProtocolDecoderException (t);
+      
+      pde.setHexdump ("<none>");
+      
+      throw pde;
+    }
+  }
+  
   @Override
   protected boolean doDecode (IoSession session, IoBuffer in,
                               ProtocolDecoderOutput out)
