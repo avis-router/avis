@@ -6,6 +6,9 @@ import java.util.List;
 
 import java.io.IOException;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
+
 import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IoSession;
@@ -53,7 +56,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
   {
     this.ioManager = ioManager;
     this.lowMemoryTrigger = max (maxFrameSize * 2, 4*MB);
-    this.lowMemoryUntrigger = lowMemoryTrigger + 1*MB;
+    this.lowMemoryUntrigger = lowMemoryTrigger;
     
     System.gc ();
     
@@ -105,10 +108,10 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
   {
     if (!inLowMemoryState () && freeMemory () < lowMemoryTrigger)
     {
-      System.gc ();
-
       synchronized (this)
       {
+        System.gc ();
+
         long freeMemory = freeMemory ();
         
         if (freeMemory < lowMemoryTrigger && !inLowMemoryState ())
@@ -125,8 +128,6 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
 
   private void enterLowMemoryState ()
   {
-    throttle ();
-    
     poller = new PollingThread ();
     poller.start ();
   }
@@ -136,7 +137,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     return poller != null;
   }
 
-  private void throttle ()
+  protected void throttle ()
   {
     for (IoAcceptor acceptor : ioManager.acceptors ())
       acceptor.unbind ();
@@ -195,7 +196,19 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
   
   private static long freeMemory ()
   {
-    return getRuntime ().freeMemory ();
+    /*
+     * Using getRuntime ().freeMemory () on the 1.6 server VM appears
+     * to sometimes just return (committed - used), which can be far
+     * smaller than what could be available. Also, System.gc () has no
+     * effect in this case, so low memory could be fired early and
+     * never exit. So, we use (max - used), which is the most
+     * optimistic case (a memory alloc could still fail due to lack of
+     * system RAM).
+     */
+    MemoryUsage usage = 
+      ManagementFactory.getMemoryMXBean ().getHeapMemoryUsage ();
+    
+    return usage.getMax () - usage.getUsed ();
   }
 
   /**
@@ -216,6 +229,8 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     @Override
     public void run ()
     {
+      throttle ();
+      
       SessionIterator sessionIter = new SessionIterator (ioManager);
       IoSession lastSession = null;
       long lastGc = 0;
@@ -244,6 +259,8 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
           {
             lastGc = System.currentTimeMillis ();
 
+            System.out.println ("*** GC");
+            
             System.gc ();
           }
           
@@ -274,7 +291,8 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
      */
     private void killASpammyClient ()
     {
-      long maxThrougput = 50 * 1024;
+//      long maxThrougput = 50 * 1024;
+      long maxThrougput = 0;
       IoSession spammyClient = null;
       
       for (IoSession session : ioManager.sessions ())
@@ -292,7 +310,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       
       if (spammyClient != null)
       {
-        diagnostic ("Low memory manager: killing spammy client " + 
+        diagnostic ("Low memory manager: killing client " + 
                     idFor (spammyClient) + " with " + 
                     formatBytes (maxThrougput) + " throughput", this);
         
@@ -323,7 +341,9 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       
       for (IoSession session : sessions)
       {
-        if (session.getId () >= currentSessionId)
+        if (!session.isClosing () && 
+            session.isConnected () && 
+            session.getId () >= currentSessionId)
         {
           currentSession = session;
           break;
