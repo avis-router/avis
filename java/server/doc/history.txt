@@ -2,10 +2,12 @@ Release 1.3.0 (???)
 ----------------------------------------------------------------------
 
  * Added low memory crash protection. Controlled via the
-   "IO.Use-Low-Memory-Crash-Protection" configuration option. Avis can
-   monitor available memory and throttle I/O if it becomes likely that
-   it will run out of memory. This will prevent most crashes due to
-   hostile/buggy clients "spamming" the router.
+   "IO.Low-Memory-Protection.Min-Free-Memory" configuration option and
+   be implementing limits on per-client send queues (the
+   "Send-Queue.Max-Length" option). Avis will now monitor available
+   memory and throttle back I/O if it becomes likely that it will
+   fail. This will prevent most crashes due to hostile or buggy
+   clients "spamming" the router.
 
 * Added support for ranges (e.g "[a-z]") in wildcards.
 
