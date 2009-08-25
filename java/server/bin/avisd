@@ -50,7 +50,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:+UseParallelGC $jvm_opts"
+java_options="-server -Xms12M -Xmx96M -Xverify:none -XX:-UseParallelGC -XX:-UseParallelOldGC $jvm_opts"
 
 command="java $java_options -jar $avisd_jar $avis_opts"
 
