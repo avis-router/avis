@@ -78,6 +78,23 @@ public class OptionSet
   }
   
   /**
+   * Get the default value for an option in this set or any inherited sets.
+   * @param option The option.
+   * @return The default value.
+   * 
+   * @throws IllegalArgumentException if the option is not defined.
+   */
+  public Object defaultValue (String option)
+  {
+    Object value = peekDefaultValue (option);
+    
+    if (value == null)
+      throw new IllegalArgumentException ("No default value for " + option);
+    
+    return value;
+  }
+  
+  /**
    * Look for the default value specified by this option set or any of
    * its inherited sets.
    * 
