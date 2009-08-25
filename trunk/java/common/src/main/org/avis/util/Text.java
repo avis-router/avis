@@ -72,6 +72,14 @@ public final class Text
   }
   
   /**
+   * Format a number, adding thousands separators for long numbers.
+   */
+  public static String formatNumber (long value)
+  {
+    return String.format ("%,d", value);
+  }
+  
+  /**
    * Generate a string value of the notification.
    * 
    * @param attributes The attribute name/value pairs.
