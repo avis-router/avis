@@ -43,11 +43,11 @@ public class ConnectionOptionSet extends OptionSet
     
     add ("Packet.Max-Length", 1*K, 2*MB, 500*MB);
 
-    add ("Send-Queue.Max-Length", 10*K, 1*MB, 20*MB);
+    add ("Send-Queue.Max-Length", 10*K, 3*MB, 20*MB);
     
     /* We only implement Send-Queue.Drop-Policy "oldest" and "fail".
        All standard options are: "oldest", "newest", "largest", "fail". */
-    add ("Send-Queue.Drop-Policy", "oldest", "fail");
+    add ("Send-Queue.Drop-Policy", "fail", "oldest");
 
     /*
      * todo: we only enforce max packet length, which by implication
