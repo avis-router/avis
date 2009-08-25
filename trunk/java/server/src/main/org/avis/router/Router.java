@@ -87,6 +87,8 @@ import static org.avis.logging.Log.shouldLog;
 import static org.avis.logging.Log.trace;
 import static org.avis.logging.Log.warn;
 import static org.avis.router.ConnectionOptionSet.CONNECTION_OPTION_SET;
+import static org.avis.router.RouterOptionSet.setSendQueueDropPolicy;
+import static org.avis.router.RouterOptionSet.setSendQueueMaxLength;
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
 import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -180,7 +182,7 @@ public class Router implements IoHandler, Closeable
       new IoManager 
         (keystoreUri, options.getString ("TLS.Keystore-Passphrase"),
          options.getInt ("Packet.Max-Length"),
-         options.getBoolean ("IO.Use-Low-Memory-Crash-Protection"),
+         options.getInt ("IO.Low-Memory-Protection.Min-Free-Memory"),
          options.getBoolean ("IO.Use-Direct-Buffers")); 
     
     /*
@@ -1016,11 +1018,19 @@ public class Router implements IoHandler, Closeable
       (READER_IDLE, 
        routerOptions.getInt ("IO.Idle-Connection-Timeout"));
     
-    // set default max length for connectionless sessions
+    // set defaults for connectionless sessions
     setMaxFrameLengthFor
       (session,
        CONNECTION_OPTION_SET.defaults.getInt ("Packet.Max-Length"));
 
+    setSendQueueDropPolicy 
+      (session, 
+       CONNECTION_OPTION_SET.defaults.getString ("Send-Queue.Drop-Policy"));
+    
+    setSendQueueMaxLength 
+      (session, 
+       CONNECTION_OPTION_SET.defaults.getInt ("Send-Queue.Max-Length"));
+    
     sessions.add (session);
   }
 
@@ -1054,6 +1064,12 @@ public class Router implements IoHandler, Closeable
     
     setMaxFrameLengthFor
       (session, connection.options.getInt ("Packet.Max-Length"));
+    
+    setSendQueueDropPolicy 
+      (session, connection.options.getString ("Send-Queue.Drop-Policy"));
+    
+    setSendQueueMaxLength 
+      (session, connection.options.getInt ("Send-Queue.Max-Length"));
   }
   
   /**
