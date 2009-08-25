@@ -78,13 +78,13 @@ public class IoManager
    * @param keystorePassphrase The keystore passphrase.
    * @param maxFrameSize The maximum size of a frame. Used to help
    *          manage low memory checking.
-   * @param useLowMemoryProtection True if LowMemoryProtectionFilter
-   *          should be used to prevent crashes due to low memory.
+   * @param lowMemoryProtectionMinFreeMemory Min free memory for 
+   *          LowMemoryProtectionFilter. Use 0 for no protection.
    * @param useDirectBuffers True if MINA should use direct IO
    *          buffers.
    */
   public IoManager (URI keystoreUri, String keystorePassphrase,
-                    int maxFrameSize, boolean useLowMemoryProtection,
+                    int maxFrameSize, int lowMemoryProtectionMinFreeMemory,
                     boolean useDirectBuffers) 
     throws IOException
   {
@@ -105,16 +105,15 @@ public class IoManager
     this.filterExecutor = 
       new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
     
-    if (useLowMemoryProtection)
-      this.lowMemoryFilter = new LowMemoryProtectionFilter (this, maxFrameSize);
+    this.lowMemoryFilter = 
+      new LowMemoryProtectionFilter (this, lowMemoryProtectionMinFreeMemory);
     
     setUseDirectBuffer (useDirectBuffers);
   }
 
   public void close ()
   {
-    if (lowMemoryFilter != null)
-      lowMemoryFilter.shutdown ();
+    lowMemoryFilter.shutdown ();
     
     for (Collection<NioSocketAcceptor> acceptors : uriToAcceptors.values ())
     {
@@ -201,10 +200,8 @@ public class IoManager
 
         // TODO factor filters common code from here and createConnector ()
         
-        acceptor.getFilterChain ().addFirst ("stats", StatsFilter.INSTANCE);
-
-        if (lowMemoryFilter != null)
-          acceptor.getFilterChain ().addFirst ("memory", lowMemoryFilter);
+        acceptor.getFilterChain ().addLast ("memory", lowMemoryFilter);
+        acceptor.getFilterChain ().addLast ("stats", StatsFilter.INSTANCE);
         
         acceptor.setCloseOnDeactivation (false);
         acceptor.setHandler (handler);
@@ -489,9 +486,6 @@ public class IoManager
       filters = createStandardFilters (filters, authenticationRequiredHosts);
     
     filters.addFirst ("stats", StatsFilter.INSTANCE);
-
-    if (lowMemoryFilter != null)
-      filters.addFirst ("memory", lowMemoryFilter);
 
     connector.setFilterChainBuilder (filters);
     connector.setHandler (handler);
