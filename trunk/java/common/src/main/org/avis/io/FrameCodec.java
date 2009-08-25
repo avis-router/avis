@@ -103,6 +103,8 @@ public abstract class FrameCodec
   {
     IoBuffer headerBuffer = IoBuffer.allocate (20);
     IoBuffer matchesBuffer = IoBuffer.allocate (256);
+    IoBuffer attributesBuffer = 
+      notifyDeliver.original.rawAttributes.asReadOnlyBuffer ();
     
     matchesBuffer.setAutoExpand (true);
     
@@ -111,8 +113,7 @@ public abstract class FrameCodec
     
     matchesBuffer.flip ();
     
-    int frameSize = 
-      4 + notifyDeliver.original.rawAttributes.limit () + matchesBuffer.limit ();
+    int frameSize = 4 + attributesBuffer.limit () + matchesBuffer.limit ();
     
     notifyDeliver.frameSize = frameSize;
     
@@ -122,47 +123,8 @@ public abstract class FrameCodec
     headerBuffer.flip ();
 
     out.write (headerBuffer);
-    out.write (notifyDeliver.original.rawAttributes.asReadOnlyBuffer ());
+    out.write (attributesBuffer);
     out.write (matchesBuffer);
-
-//    // consolidate and write
-//    IoBuffer buff = IoBuffer.allocate (frameSize + 4);
-//    
-//    buff.put (headerBuffer);
-//    buff.put (notifyDeliver.original.rawAttributes.asReadOnlyBuffer ());
-//    buff.put (matchesBuffer);
-//    
-//    headerBuffer.free ();
-//    matchesBuffer.free ();
-//    
-//    buff.flip ();
-//    out.write (buff);
-        
-//    IoBuffer rawAttrs = IoBuffer.allocate (notifyDeliver.original.rawAttributes.limit ());
-
-    
-//    // reuse array
-//    byte [] bytes = new byte [notifyDeliver.original.rawAttributes.limit ()];
-//    System.arraycopy (notifyDeliver.original.rawAttributes.array (), 0, bytes, 0, bytes.length);
-//    
-//    rawAttrs.put (bytes);
-
-    
-//    // reserialise
-//    try
-//    {
-//      XdrCoding.putNameValues (rawAttrs, notifyDeliver.attributes);
-//    } catch (ProtocolCodecException ex)
-//    {
-//      ex.printStackTrace ();
-//    }
-    
-    
-//    rawAttrs.flip ();
-//    
-//    out.write (headerBuffer);
-//    out.write (rawAttrs);
-//    out.write (matchesBuffer);    
   }
 
   @Override
