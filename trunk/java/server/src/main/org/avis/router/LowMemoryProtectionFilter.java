@@ -99,16 +99,16 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     {
       if (session.getAttribute (IN_DROPWARN_STATE) == null)
       {
-        String policy = sendQueueDropPolicy (session);
+        boolean disconnect = sendQueueDropPolicy (session).equals ("fail");
         
         warn 
           ("Session " + idFor (session) + " has passed its maximum send " +
            "queue size (Send-Queue.Max-Length) of " + 
            formatNumber (sendQueueMaxLength (session)) + ": " + 
-           (policy.equals ("fail") ? "killing session" : "dropping packets"), 
+           (disconnect ? "killing session" : "dropping packets"), 
            this);
         
-        if (policy.equals ("fail"))
+        if (disconnect)
         {
           session.close (true);
         } else 
@@ -125,7 +125,9 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       
       // drop NotifyDeliver
       return;
-    } else if (session.getAttribute (IN_DROPWARN_STATE) != null)
+    }
+    
+    if (session.getAttribute (IN_DROPWARN_STATE) != null)
     {
       session.removeAttribute (IN_DROPWARN_STATE);
       
@@ -231,7 +233,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     }
   }
   
-  static String formatBytes (long bytes)
+  protected static String formatBytes (long bytes)
   {
     return String.format ("%,d", bytes);
   }
