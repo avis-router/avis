@@ -93,6 +93,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
   {
     checkForLowMemory ();
     
+    // if a notification and either low on memory or over send queue length...
     if (writeRequest.getMessage () instanceof NotifyDeliver && 
         (inLowMemoryState () || 
           session.getScheduledWriteBytes () > sendQueueMaxLength (session)))
@@ -318,7 +319,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     private void killBiggestClient ()
     {
       long maxThrougput = 0;
-      IoSession spammyClient = null;
+      IoSession busiestClient = null;
       
       for (IoSession session : ioManager.sessions ())
       {
@@ -329,17 +330,17 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
         if (throughput > maxThrougput)
         {
           maxThrougput = throughput;          
-          spammyClient = session;
+          busiestClient = session;
         }
       }
       
-      if (spammyClient != null)
+      if (busiestClient != null)
       {
         diagnostic ("Low memory manager: killing client " + 
-                    idFor (spammyClient) + " with " + 
+                    idFor (busiestClient) + " with " + 
                     formatBytes (maxThrougput) + " throughput", this);
         
-        spammyClient.close (true);
+        busiestClient.close (true);
       }
     }
   }  
