@@ -19,6 +19,9 @@ import static org.avis.logging.Log.info;
  * mode. Generates clusters of clients communicating with sub-clusters
  * and occasionally in broadcast to all. Notifications vary in size.
  * 
+ * Harsh mode is designed to crash Avis if no memory overload
+ * protection is in place. It was developed to test whether crash
+ * protection added in Avis 1.3 is effective.
  * @author Matthew Phillips
  */
 public class ActiveRouterTester
@@ -27,7 +30,7 @@ public class ActiveRouterTester
     new InetSocketAddress ("127.0.0.1", 29170);
 
   /* Flip to true to generate enough traffic to kill an unprotected router. */
-  static boolean HARSH = true;
+  static boolean HARSH = false;
   
   /* Must be multiple of 8 */
   static final int CLIENTS = HARSH ? 3 * 8 : 2 * 8;
