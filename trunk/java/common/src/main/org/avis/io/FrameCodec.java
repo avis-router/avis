@@ -333,12 +333,12 @@ public abstract class FrameCodec
 
   public static void setMaxFrameLengthFor (IoSession session, int length)
   {
-    session.setAttribute ("maxFrameLength", length);
+    session.setAttribute ("Packet.Max-Length", length);
   }
 
   private static int maxFrameLengthFor (IoSession session)
   {
-    Integer length = (Integer)session.getAttribute ("maxFrameLength");
+    Integer length = (Integer)session.getAttribute ("Packet.Max-Length");
     
     if (length == null)
       return Integer.MAX_VALUE;
