@@ -42,7 +42,13 @@ public class ConnectionOptionSet extends OptionSet
     // ------------ Options required for all Elvin implementations
     
     add ("Packet.Max-Length", 1*K, 2*MB, 500*MB);
+
+    add ("Send-Queue.Max-Length", 10*K, 1*MB, 20*MB);
     
+    /* We only implement Send-Queue.Drop-Policy "oldest" and "fail".
+       All standard options are: "oldest", "newest", "largest", "fail". */
+    add ("Send-Queue.Drop-Policy", "oldest", "fail");
+
     /*
      * todo: we only enforce max packet length, which by implication
      * limits the values below. The correct min, default, max values
@@ -63,15 +69,10 @@ public class ConnectionOptionSet extends OptionSet
     add ("Subscription.Max-Count", 16, 2*K, 2*K);
     add ("Subscription.Max-Length", 1*K, 2*K, 4*K);
     
-    add ("Receive-Queue.Max-Length", 1*K, 2*MB, 10*MB);
+    add ("Receive-Queue.Max-Length", 0, 0, 0);
 
     // todo: enforce following queue-related options
-    add ("Receive-Queue.Drop-Policy",
-         "oldest", "newest", "largest", "fail");
-    
-    add ("Send-Queue.Drop-Policy",
-         "oldest", "newest", "largest", "fail");
-    add ("Send-Queue.Max-Length", MAX, MAX, MAX);
+    add ("Receive-Queue.Drop-Policy", "oldest");
 
     add ("Supported-Key-Schemes", "SHA-1");    
     
