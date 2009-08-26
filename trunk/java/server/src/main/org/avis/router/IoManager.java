@@ -200,8 +200,11 @@ public class IoManager
 
         // TODO factor filters common code from here and createConnector ()
         
-        acceptor.getFilterChain ().addLast ("memory", lowMemoryFilter);
-        acceptor.getFilterChain ().addLast ("stats", StatsFilter.INSTANCE);
+        if (!acceptor.getFilterChain ().contains ("memory"))
+        {
+          acceptor.getFilterChain ().addLast ("memory", lowMemoryFilter);
+          acceptor.getFilterChain ().addLast ("stats", StatsFilter.INSTANCE);
+        }
         
         acceptor.setCloseOnDeactivation (false);
         acceptor.setHandler (handler);
@@ -485,7 +488,11 @@ public class IoManager
     else
       filters = createStandardFilters (filters, authenticationRequiredHosts);
     
-    filters.addFirst ("stats", StatsFilter.INSTANCE);
+    if (!connector.getFilterChain ().contains ("memory"))
+    {
+      connector.getFilterChain ().addLast ("memory", lowMemoryFilter);
+      connector.getFilterChain ().addLast ("stats", StatsFilter.INSTANCE);
+    }
 
     connector.setFilterChainBuilder (filters);
     connector.setHandler (handler);
