@@ -7,9 +7,16 @@ import org.avis.util.IllegalConfigOptionException;
 
 import static java.util.Arrays.asList;
 
+/**
+ * An option type taking a string value, optionally checked against a
+ * set of valid values.
+ * 
+ * @author Matthew Phillips
+ */
 public class OptionTypeString extends OptionType
 {
-  public static OptionTypeString INSTANCE = new OptionTypeString ();
+  public static final OptionTypeString INSTANCE = new OptionTypeString ();
+  
   public static final OptionTypeString ANY_STRING_OPTION = 
     new OptionTypeString ();
   
