@@ -23,18 +23,6 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
  */
 public class FederationClasses
 {
-  private static class Entry
-  {
-    public Filter<InetAddress> filter;
-    public FederationClass     fedClass;
-
-    public Entry (Filter<InetAddress> filter, FederationClass fedClass)
-    {
-      this.filter = filter;
-      this.fedClass = fedClass;
-    }
-  }
-  
   private FederationClass defaultClass;
   private Map<String, FederationClass> classes;
   private List<Entry> hostToClass;
@@ -159,5 +147,17 @@ public class FederationClasses
   {
     classes.clear ();
     hostToClass.clear ();
+  }
+  
+  private static class Entry
+  {
+    public Filter<InetAddress> filter;
+    public FederationClass     fedClass;
+
+    public Entry (Filter<InetAddress> filter, FederationClass fedClass)
+    {
+      this.filter = filter;
+      this.fedClass = fedClass;
+    }
   }
 }
