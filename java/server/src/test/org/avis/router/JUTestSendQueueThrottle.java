@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.DropWarn;
-import org.avis.io.messages.Message;
 import org.avis.util.AutoClose;
 
 import static org.junit.Assert.assertEquals;
@@ -72,11 +71,7 @@ public class JUTestSendQueueThrottle
     
     for (int i = 0; i < 1000 && !dropWarned; i++)
     {
-      Message message = client.receive ();
-      
-      System.out.println ("message = " + message.name ());
-      
-      if (message instanceof DropWarn)
+      if (client.receive () instanceof DropWarn)
         dropWarned = true;
     }
  
