@@ -55,9 +55,7 @@ public class JUTestSendQueueThrottle
     
     for (int i = 0; i < 22 && !dropWarned; i++)
     {
-      Message message = client.receive ();
-      
-      if (message instanceof DropWarn)
+      if (client.receive () instanceof DropWarn)
         dropWarned = true;
     }
  
