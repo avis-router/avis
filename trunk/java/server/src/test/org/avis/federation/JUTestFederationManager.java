@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.avis.config.Options;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.logging.Log;
+import org.avis.router.JUTestRouter;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.util.LogFailTester;
@@ -27,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 public class JUTestFederationManager
 {
-  private static final int PORT1 = 29170;
+  private static final int PORT1 = JUTestRouter.PORT;
   private static final int PORT2 = PORT1 + 10;
 
   private LogFailTester logTester;

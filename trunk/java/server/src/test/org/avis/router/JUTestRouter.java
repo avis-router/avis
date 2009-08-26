@@ -52,7 +52,7 @@ import static org.avis.security.Keys.EMPTY_KEYS;
  */
 public class JUTestRouter
 {
-  static final int PORT = 29177;
+  public static final int PORT = 29177;
 
   private Router router;
   private Random random;
