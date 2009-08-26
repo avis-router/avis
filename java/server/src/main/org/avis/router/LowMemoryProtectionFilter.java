@@ -287,7 +287,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
         {
           long now = currentTimeMillis ();
           
-          if (now - lastKill > 250)
+          if (now - lastKill > 500)
           {            
             killBiggestClient ();            
             lastKill = now;
