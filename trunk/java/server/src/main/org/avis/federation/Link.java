@@ -328,12 +328,13 @@ public class Link implements NotifyListener
     }
     
     if (containsDomain (message.routing, remoteServerDomain))
-    {
-      message.attributes =
-        union (message.attributes, federationClass.incomingAttributes);
-      
+    {      
       if (shouldPull (message))
       {
+        message.attributes =
+          union (message.attributes, federationClass.incomingAttributes);
+        message.rawAttributes = null;
+
         router.injectNotify (message);
         
         receivedNotificationCount++;
