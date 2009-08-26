@@ -34,6 +34,7 @@ import org.avis.io.messages.Nack;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
 import org.avis.io.messages.SecRqst;
+import org.avis.router.JUTestRouter;
 import org.avis.router.Router;
 import org.avis.router.SimpleClient;
 import org.avis.security.Key;
@@ -65,8 +66,8 @@ import static org.avis.util.Collections.set;
 
 public class JUTestFederation
 {
-  static final int PORT1 = 29170;
-  static final int PORT2 = 29180;
+  static final int PORT1 = JUTestRouter.PORT;
+  static final int PORT2 = PORT1 + 10;
   
   private static final String MANTARA_ELVIN = "/usr/local/sbin/elvind";
   
@@ -80,7 +81,7 @@ public class JUTestFederation
   {
     // enableLogging (Log.TRACE, true);
     // enableLogging (Log.DIAGNOSTIC, true);
-
+     
     autoClose = new ArrayList<Closeable> ();
     
     oldLogInfoState = shouldLog (INFO);

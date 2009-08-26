@@ -30,7 +30,7 @@ public class ActiveRouterTester
     new InetSocketAddress ("127.0.0.1", 29170);
 
   /* Flip to true to generate enough traffic to kill an unprotected router. */
-  static boolean HARSH = false;
+  static boolean HARSH = true;
   
   /* Must be multiple of 8 */
   static final int CLIENTS = HARSH ? 3 * 8 : 2 * 8;

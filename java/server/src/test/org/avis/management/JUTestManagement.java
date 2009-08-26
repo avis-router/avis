@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.config.Options;
+import org.avis.router.JUTestRouter;
 import org.avis.router.Router;
 import org.avis.util.AutoClose;
 import org.avis.util.LogFailTester;
@@ -18,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 public class JUTestManagement
 {
-  private static final int PORT1 = 29170;
+  private static final int PORT1 = JUTestRouter.PORT;
   
   private AutoClose autoClose;
   private LogFailTester logTester;
