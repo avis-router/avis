@@ -2,6 +2,10 @@ package org.avis.config;
 
 import org.avis.util.IllegalConfigOptionException;
 
+import static java.lang.Integer.parseInt;
+
+import static org.avis.common.Common.K;
+import static org.avis.common.Common.MB;
 
 public class OptionTypeInt extends OptionType
 {
@@ -27,15 +31,15 @@ public class OptionTypeInt extends OptionType
       
       if (text.endsWith ("m"))
       {
-        unit = 1024*1024;
+        unit = MB;
         text = text.substring (0, text.length () - 1);
       } else if (text.endsWith ("k"))
       {
-        unit = 1024;
+        unit = K;
         text = text.substring (0, text.length () - 1);
       }
-      
-      return Integer.parseInt (text) * unit;
+
+      return parseInt (text) * unit;
     } catch (NumberFormatException ex)
     {
       throw new IllegalConfigOptionException
