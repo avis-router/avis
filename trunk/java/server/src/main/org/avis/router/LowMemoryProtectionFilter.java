@@ -13,7 +13,7 @@ import org.apache.mina.core.write.WriteRequest;
 import org.avis.io.messages.DropWarn;
 import org.avis.io.messages.NotifyDeliver;
 
-import static java.lang.Runtime.getRuntime;
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.lang.management.ManagementFactory.getMemoryMXBean;
 
@@ -103,10 +103,10 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
         boolean disconnect = sendQueueDropPolicy (session).equals ("fail");
         
         warn 
-          ("Session " + idFor (session) + " has passed its maximum send " +
+          ("Client " + idFor (session) + " has passed its maximum send " +
            "queue size (Send-Queue.Max-Length) of " + 
            formatNumber (sendQueueMaxLength (session)) + ": " + 
-           (disconnect ? "killing session" : "dropping packets"), 
+           (disconnect ? "closing connection" : "started dropping packets"), 
            this);
         
         if (disconnect)
@@ -133,7 +133,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       session.removeAttribute (IN_DROPWARN_STATE);
       
       diagnostic 
-        ("Stopped dropping packets for session " + idFor (session), this);
+        ("Stopped dropping packets for client " + idFor (session), this);
     }
     
     super.filterWrite (nextFilter, session, writeRequest);
@@ -239,7 +239,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     return String.format ("%,d", bytes);
   }
   
-  private static long freeMemory ()
+  protected static long freeMemory ()
   {
     /*
      * Using getRuntime ().freeMemory () on the 1.6 server VM appears
@@ -250,9 +250,9 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
      * optimistic case (a memory alloc could still fail due to lack of
      * system RAM).
      */
-    MemoryUsage usage = getMemoryMXBean ().getHeapMemoryUsage ();
+    MemoryUsage memory = getMemoryMXBean ().getHeapMemoryUsage ();
     
-    return usage.getMax () - usage.getUsed ();
+    return memory.getMax () - memory.getUsed ();
   }
 
   /**
@@ -276,29 +276,34 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       throttle ();
       
       long lastGc = 0;
+      long lastKill = 0;
       
       try
       {
-        while (getRuntime ().freeMemory () < lowMemoryThreshold)
+        while (freeMemory () < lowMemoryThreshold)
         {
-          killBiggestClient ();
+          long now = currentTimeMillis ();
           
-          if (System.currentTimeMillis () - lastGc > 2000)
+          if (now - lastKill > 250)
+          {            
+            killBiggestClient ();            
+            lastKill = now;
+          }
+          
+          if (now - lastGc > 2000)
           {
-            lastGc = System.currentTimeMillis ();
-
             System.gc ();
+            lastGc = now;
           }
           
           if (shouldLog (DIAGNOSTIC))
           {
             diagnostic 
-              ("Low memory manager: " + 
-               formatBytes (getRuntime ().freeMemory ()) + 
+              ("Low memory manager: " + formatBytes (freeMemory ()) + 
                " free memory", this);
           }
           
-          sleep (300);
+          sleep (250);
         }
       } catch (InterruptedException ex)
       {
@@ -306,7 +311,7 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
       } finally
       {
         diagnostic ("Leaving low memory state: unthrottling clients: " +
-                    formatBytes (getRuntime ().freeMemory ()) + " > " + 
+                    formatBytes (freeMemory ()) + " > " + 
                     formatBytes (lowMemoryThreshold) + " bytes free", this);
         
         unthrottle ();
@@ -343,5 +348,5 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
         busiestClient.close (true);
       }
     }
-  }  
+  }
 }
