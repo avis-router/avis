@@ -9,7 +9,12 @@ Release 1.3.0 (???)
    fail. This will prevent most crashes due to hostile or buggy
    clients "spamming" the router.
 
-* Added support for ranges (e.g "[a-z]") in wildcards.
+ * Attributes added to incoming federated notifications
+   (Federation.Add-Incoming-Attribute option) are now added *after*
+   the filter check, i.e. filtering is applied to the content of the
+   original message, not the modified version.
+ 
+ * Added support for ranges (e.g "[a-z]") in wildcards.
 
 
 Release 1.2.2 (February 20, 2009)
