@@ -98,29 +98,23 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
         (inLowMemoryState () || 
           session.getScheduledWriteBytes () > sendQueueMaxLength (session)))
     {
-      if (session.getAttribute (IN_DROPWARN_STATE) == null)
+      boolean disconnect = sendQueueDropPolicy (session).equals ("fail");
+      
+      if (disconnect)
       {
-        boolean disconnect = sendQueueDropPolicy (session).equals ("fail");
+        warnQueueOverflow (session, "closing connection");
         
-        warn 
-          ("Client " + idFor (session) + " has passed its maximum send " +
-           "queue size (Send-Queue.Max-Length) of " + 
-           formatNumber (sendQueueMaxLength (session)) + ": " + 
-           (disconnect ? "closing connection" : "started dropping packets"), 
-           this);
-        
-        if (disconnect)
+        session.close (true);
+      } else 
+      {
+        if (session.getAttribute (IN_DROPWARN_STATE) == null)
         {
-          session.close (true);
-        } else 
-        {
-          if (session.getAttribute (IN_DROPWARN_STATE) == null)
-          {
-            session.setAttribute (IN_DROPWARN_STATE);
-            
-            super.filterWrite (nextFilter, session, 
-                               new DefaultWriteRequest (new DropWarn ()));
-          }
+          warnQueueOverflow (session, "started dropping packets");
+          
+          session.setAttribute (IN_DROPWARN_STATE);
+          
+          super.filterWrite (nextFilter, session, 
+                             new DefaultWriteRequest (new DropWarn ()));
         }
       }
       
@@ -253,6 +247,15 @@ public class LowMemoryProtectionFilter extends IoFilterAdapter
     MemoryUsage memory = getMemoryMXBean ().getHeapMemoryUsage ();
     
     return memory.getMax () - memory.getUsed ();
+  }
+
+  private static void warnQueueOverflow (IoSession session, String action)
+  {
+    warn 
+      ("Client " + idFor (session) + " has overflowed its maximum send " +
+       "queue size (Send-Queue.Max-Length) of " + 
+       formatNumber (sendQueueMaxLength (session)) + ": " + action, 
+       LowMemoryProtectionFilter.class);
   }
 
   /**
