@@ -3,10 +3,14 @@ package org.avis.router;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.DropWarn;
+import org.avis.io.messages.Message;
+import org.avis.util.AutoClose;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +20,20 @@ import static org.avis.router.JUTestRouter.PORT;
 
 public class JUTestSendQueueThrottle
 {
+  private AutoClose autoClose;
+  
+  @Before
+  public void setup ()
+  {
+    autoClose = new AutoClose ();
+  }
+  
+  @After
+  public void cleanup ()
+  {
+    autoClose.close ();
+  }
+  
   /**
    * Test that router implements Send-Queue.Drop-Policy and
    * Send-Queue.Max-Length.
@@ -26,6 +44,9 @@ public class JUTestSendQueueThrottle
   {
     Router router = new Router (PORT);
     SimpleClient client = new SimpleClient ("localhost", PORT);
+    
+    autoClose.add (router);
+    autoClose.add (client);
     
     Map<String, Object> options = new HashMap<String, Object> ();
     
@@ -44,23 +65,21 @@ public class JUTestSendQueueThrottle
     // send more than 20K of messages to myself, make sure I get a DropWarn 
     client.subscribe ("To == 'me'");
     
-    Map<String, Object> notification = 
-      asAttributes ("To", "me", "Payload", new byte [1024]);
-
-    for (int i = 0; i < 22; i++)
-      client.sendNotify (notification);
+    for (int i = 0; i < 1000; i++)
+      client.sendNotify (asAttributes ("To", "me", "Payload", new byte [1024]));
     
     boolean dropWarned = false;
     
-    for (int i = 0; i < 22 && !dropWarned; i++)
+    for (int i = 0; i < 1000 && !dropWarned; i++)
     {
-      if (client.receive () instanceof DropWarn)
+      Message message = client.receive ();
+      
+      System.out.println ("message = " + message.name ());
+      
+      if (message instanceof DropWarn)
         dropWarned = true;
     }
  
     assertTrue ("No DropWarn", dropWarned);
-    
-    client.close ();
-    router.close ();
   }
 }
