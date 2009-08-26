@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import org.avis.io.messages.ConnRply;
 import org.avis.io.messages.DropWarn;
-import org.avis.io.messages.Message;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,7 +27,7 @@ public class JUTestSendQueueThrottle
     Router router = new Router (PORT);
     SimpleClient client = new SimpleClient ("localhost", PORT);
     
-    HashMap<String, Object> options = new HashMap<String, Object> ();
+    Map<String, Object> options = new HashMap<String, Object> ();
     
     options.put ("Send-Queue.Drop-Policy", "oldest");
     options.put ("Send-Queue.Max-Length", 20*1024);
@@ -61,7 +60,7 @@ public class JUTestSendQueueThrottle
  
     assertTrue ("No DropWarn", dropWarned);
     
-    client.close (5000);
+    client.close ();
     router.close ();
   }
 }
