@@ -46,8 +46,6 @@ public class AvisMinaTransport implements Transport
         (chain, (Filter<InetAddress>)MATCH_NONE, false);
     }
     
-    chain.addFirst ("threadPool", ioManager.createThreadPoolFilter ());
-    
     // TODO make this configurable?
     acceptor.setBacklog (100);
   }
