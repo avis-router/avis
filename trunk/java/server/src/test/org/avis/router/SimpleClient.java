@@ -142,6 +142,14 @@ public class SimpleClient implements IoHandler, Closeable
      }
   }
   
+  public synchronized void sendAsync (Message message)
+    throws NoConnectionException
+  {
+    checkConnected ();
+  
+     clientSession.write (message);
+  }
+  
   public Message receive ()
     throws InterruptedException, MessageTimeoutException, NoConnectionException
   {
@@ -326,7 +334,7 @@ public class SimpleClient implements IoHandler, Closeable
       throw new IOException (ex.getMessage ());
     } catch (MessageTimeoutException ex)
     {
-      throw new IOException (ex.getMessage ());
+      throw (IOException)new IOException (ex.getMessage ()).initCause (ex);
     } catch (InterruptedException ex)
     {
       currentThread ().interrupt ();
