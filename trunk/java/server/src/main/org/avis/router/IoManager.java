@@ -20,14 +20,11 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
-import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.service.SimpleIoProcessorPool;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.executor.ExecutorFilter;
-import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
@@ -59,7 +56,6 @@ public class IoManager
   private SimpleIoProcessorPool<NioSession> processorPool;
   
   private ExecutorService ioExecutor;
-  private OrderedThreadPoolExecutor filterExecutor;
   
   private String keystorePassphrase;
   private KeyStore keystore;
@@ -102,8 +98,6 @@ public class IoManager
       new SimpleIoProcessorPool<NioSession> 
         (NioProcessor.class, ioExecutor, 
          getRuntime ().availableProcessors () + 1);
-    this.filterExecutor = 
-      new OrderedThreadPoolExecutor (0, 16, 32, SECONDS);
     
     this.lowMemoryFilter = 
       new LowMemoryProtectionFilter (this, lowMemoryProtectionMinFreeMemory);
@@ -125,7 +119,6 @@ public class IoManager
       connector.dispose ();
     
     ioExecutor.shutdown ();
-    filterExecutor.shutdown ();
     
     try
     {
@@ -135,12 +128,6 @@ public class IoManager
     {
       diagnostic ("Interrupted while waiting for shutdown", this, ex);
     }
-  }
-
-  // TODO do we need a thread pool?
-  public IoFilter createThreadPoolFilter ()
-  {
-    return new ExecutorFilter (filterExecutor);
   }
 
   public NioSocketAcceptor createAcceptor ()
@@ -488,10 +475,10 @@ public class IoManager
     else
       filters = createStandardFilters (filters, authenticationRequiredHosts);
     
-    if (!connector.getFilterChain ().contains ("memory"))
+    if (!filters.contains ("memory"))
     {
-      connector.getFilterChain ().addLast ("memory", lowMemoryFilter);
-      connector.getFilterChain ().addLast ("stats", StatsFilter.INSTANCE);
+      filters.addLast ("memory", lowMemoryFilter);
+      filters.addLast ("stats", StatsFilter.INSTANCE);
     }
 
     connector.setFilterChainBuilder (filters);
