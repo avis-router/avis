@@ -119,7 +119,6 @@ public class Router implements IoHandler, Closeable
   private ListenerList<CloseListener> closeListeners;
 
   public int sentNotificationCount;
-
   public int receivedNotificationCount;
 
   /**
