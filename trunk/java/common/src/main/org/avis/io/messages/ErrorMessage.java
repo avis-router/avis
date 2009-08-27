@@ -43,5 +43,11 @@ public class ErrorMessage extends SyntheticMessage
   public int typeId ()
   {
     return ID;
-  }  
+  }
+  
+  @Override
+  public String toString ()
+  {
+    return "ErrorMessage: " + formattedMessage ();
+  }
 }
