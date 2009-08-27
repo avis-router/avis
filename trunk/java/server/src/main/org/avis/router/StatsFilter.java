@@ -55,7 +55,12 @@ public class StatsFilter extends IoFilterAdapter
   
   private static Object lockFor (IoSession session)
   {
-    return session.getAttribute ("statsLock");
+    Object lock = session.getAttribute ("statsLock");
+    
+    if (lock == null)
+      throw new IllegalStateException ("No stats filter for session");
+    
+    return lock;
   }
 
   @Override
