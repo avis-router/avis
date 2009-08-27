@@ -13,6 +13,8 @@ import java.nio.charset.CharsetEncoder;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolCodecException;
 
+import org.avis.common.Common;
+
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.CharBuffer.wrap;
 import static java.util.Collections.emptyMap;
@@ -117,7 +119,7 @@ public final class XdrCoding
   {
     try
     {
-      int length = getPositiveInt (in);
+      int length = getSize (in);
 
       if (length == 0)
       {
@@ -210,7 +212,7 @@ public final class XdrCoding
   public static Map<String, Object> getNameValues (IoBuffer in)
     throws ProtocolCodecException
   {
-    int pairs = getPositiveInt (in);
+    int pairs = getSize (in);
     
     if (pairs == 0)
       return emptyMap ();
@@ -235,7 +237,7 @@ public final class XdrCoding
   public static Object [] getObjects (IoBuffer in)
     throws ProtocolCodecException
   {
-    Object [] objects = new Object [getPositiveInt (in)];
+    Object [] objects = new Object [getSize (in)];
     
     for (int i = 0; i < objects.length; i++)
       objects [i] = getObject (in);
@@ -322,7 +324,7 @@ public final class XdrCoding
   public static byte [] getBytes (IoBuffer in) 
     throws ProtocolCodecException
   {
-    return getBytes (in, getPositiveInt (in));
+    return getBytes (in, getSize (in));
   }
   
   /**
@@ -363,7 +365,7 @@ public final class XdrCoding
   public static long [] getLongArray (IoBuffer in)
     throws ProtocolCodecException
   {
-    long [] longs = new long [getPositiveInt (in)];
+    long [] longs = new long [getSize (in)];
     
     for (int i = 0; i < longs.length; i++)
       longs [i] = in.getLong ();
@@ -388,7 +390,7 @@ public final class XdrCoding
   public static String [] getStringArray (IoBuffer in)
     throws BufferUnderflowException, ProtocolCodecException
   {
-    String [] strings = new String [getPositiveInt (in)];
+    String [] strings = new String [getSize (in)];
     
     for (int i = 0; i < strings.length; i++)
       strings [i] = getString (in);
@@ -406,18 +408,20 @@ public final class XdrCoding
     for (String s : strings)
       putString (out, s);
   }
-  
+
   /**
-   * Read an int >= 0 or generate an exception.
+   * Read an int >= 0 && <= 20MB or generate an exception.
    */
-  private static int getPositiveInt (IoBuffer in) 
+  private static int getSize (IoBuffer in) 
     throws ProtocolCodecException
   {
-    int value = in.getInt ();
+    int size = in.getInt ();
     
-    if (value >= 0)
-      return value;
-    else
-      throw new ProtocolCodecException ("Length cannot be negative: " + value);
+    if (size < 0)
+      throw new ProtocolCodecException ("Size cannot be negative: " + size);
+    if (size > 20 * Common.MB)
+      throw new ProtocolCodecException ("Size too big: " + size);
+    
+    return size;
   }
 }
