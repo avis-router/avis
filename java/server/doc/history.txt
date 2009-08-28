@@ -1,20 +1,45 @@
-Release 1.3.0 (???)
+Release 1.3.0 (August 31, 2009)
 ----------------------------------------------------------------------
 
- * Added low memory crash protection. Controlled via the
-   "IO.Low-Memory-Protection.Min-Free-Memory" configuration option and
-   be implementing limits on per-client send queues (the
-   "Send-Queue.Max-Length" option). Avis will now monitor available
+ * Added web management interface. Basic information is available
+   about the current state of the router, connected clients,
+   throughput, federation links, configuration and log
+   messages. Enable with Management.Activated option, point browser at
+   http://example.com:8017.
+
+ * Added several measures to prevent crashes from low memory when
+   under heavy load (IO.Low-Memory-Protection.Min-Free-Memory
+   configuration option). When enabled, Avis will monitor available
    memory and throttle back I/O if it becomes likely that it will
-   fail. This will prevent most crashes due to hostile or buggy
-   clients "spamming" the router.
+   fail. This will prevent most router failures due to hostile or
+   buggy clients "spamming" the router. The router also now implements
+   per-client limits on outgoing message queues (the
+   Send-Queue.Max-Length option).
+
+ * Optimised the case when a large notification is delivered to
+   several clients to significantly reduce memory usage.
+
+ * Optimised concurrency management to reduce the router spinning off
+   an unnecessarily-large number of threads under load.
+
+ * The router now stops accepting new connections as its first action
+   during shutdown, meaning that clients who immediately re-connect
+   when disconnected will no longer hold up the shutdown process.
+
+ * Updated to MINA 2.0 network framework, with associated performance
+   and stability improvements.
 
  * Attributes added to incoming federated notifications
    (Federation.Add-Incoming-Attribute option) are now added *after*
    the filter check, i.e. filtering is applied to the content of the
    original message, not the modified version.
  
- * Added support for ranges (e.g "[a-z]") in wildcards.
+ * Fixed a bug in the evaluation of string functions in subscription
+   expressions (fold-case (), ends-with (), decompose (), etc) when
+   applied to a field that contains a non-string.
+
+ * Added support for ranges (e.g "[0-9]") in wildcards used in
+   subscription expressions and the configuration file.
 
 
 Release 1.2.2 (February 20, 2009)
