@@ -37,14 +37,15 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
 import static org.avis.logging.Log.alarm;
 import static org.avis.logging.Log.trace;
 import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
 import static org.avis.util.Text.className;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Basic Avis test client.
@@ -53,14 +54,13 @@ public class SimpleClient implements IoHandler, Closeable
 {
   protected static final int RECEIVE_TIMEOUT = 5000;
   
+  public String clientName;
+
   protected NioSocketConnector connector;
   protected IoSession clientSession;
   protected boolean connected;
   protected BlockingQueue<Message> incomingMessages =
     new LinkedBlockingQueue<Message> ();
-
-  public String clientName;
-
   
   public SimpleClient ()
     throws IOException
@@ -110,14 +110,14 @@ public class SimpleClient implements IoHandler, Closeable
   {
     this.clientName = clientName;
     
-    connector = new NioSocketConnector ();
+    connector = new NioSocketConnector (1);
 
     connector.setFilterChainBuilder (filters);
    
     connector.setHandler (this);
 
     ConnectFuture future = connector.connect (address);
-                                     
+
     future.awaitUninterruptibly ();
     
     clientSession = future.getSession ();
@@ -147,7 +147,7 @@ public class SimpleClient implements IoHandler, Closeable
   {
     checkConnected ();
   
-     clientSession.write (message);
+    clientSession.write (message);
   }
   
   public Message receive ()
@@ -353,6 +353,9 @@ public class SimpleClient implements IoHandler, Closeable
       receive (DisconnRply.class, timeout);
     }
 
+    if (!clientSession.getWriteRequestQueue ().isEmpty (clientSession))
+      throw new Error ("Write queue not cleared");
+    
     try
     {
       if (!clientSession.close (false).await (RECEIVE_TIMEOUT))
@@ -390,11 +393,11 @@ public class SimpleClient implements IoHandler, Closeable
   }
 
   public void messageReceived (IoSession session,
-                                            Object message)
+                               Object message)
     throws Exception
   {
     trace (clientName + ": message received: " + message, this);
-    
+
     incomingMessages.add ((Message)message);
   }
 
