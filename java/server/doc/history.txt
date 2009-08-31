@@ -1,6 +1,9 @@
 Release 1.3.0 (August 31, 2009)
 ----------------------------------------------------------------------
 
+Release 1.3.0 adds a web-based management interface and improves
+performance and stability in a number of areas.
+
  * Added web management interface. Basic information is available
    about the current state of the router, connected clients,
    throughput, federation links, configuration and log
