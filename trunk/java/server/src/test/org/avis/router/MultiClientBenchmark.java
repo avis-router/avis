@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import javax.swing.text.Element;
 
 import org.avis.common.ElvinURI;
+import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.NotifyDeliver;
 import org.avis.io.messages.NotifyEmit;
@@ -112,10 +113,10 @@ public class MultiClientBenchmark
     elvin.close ();
     
     for (Client client : clients)
-      client.sendStopMessage ();
+      client.drainToQuitMessage ();
     
     for (Client client : clients)
-      client.waitStop ();
+      client.waitQuit ();
   }
  
   static String join (int [] numbers)
@@ -171,7 +172,7 @@ public class MultiClientBenchmark
       this.elvin = null;
     }
 
-    public void sendStopMessage ()
+    public void drainToQuitMessage ()
     {
       runner = new Thread ("Client " + id)
       {
@@ -190,10 +191,11 @@ public class MultiClientBenchmark
       runner.start ();
     }
 
-    public void waitStop () 
-      throws InterruptedException
+    public void waitQuit () 
+      throws Exception
     {
       runner.join ();
+      elvin.close ();
     }
 
     public void sendMessages () 
@@ -245,13 +247,13 @@ public class MultiClientBenchmark
         int groupIndex = (int)(random () * groups.length) - 1;
         int group = groupIndex == -1 ? 0 : groups [groupIndex];
 
-        byte [] payload = randomPayload ();
-        
         try
         {
-          elvin.sendAsync (new NotifyEmit ("From", id, "Group", group, "Payload",
-                                           payload));
-        } catch (NoConnectionException ex)
+          elvin.send
+            (new NotifyEmit 
+              ("From", id, "Group", group, "Payload", randomPayload ()));
+          
+        } catch (Exception ex)
         {
           ex.printStackTrace ();
           
@@ -267,12 +269,12 @@ public class MultiClientBenchmark
     private void drain () 
       throws InterruptedException
     {
-      System.out.println ("*** drain");
       Message message;
       
       while (!quit && (message = elvin.incomingMessages.take ()) != null)
       {
-        System.out.println ("message = " + message);
+        if (message instanceof ErrorMessage)
+          System.err.println ("client " + id + " message = " + message);
         
         if (message instanceof NotifyDeliver)
         {
