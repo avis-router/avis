@@ -472,6 +472,7 @@ public final class Elvin implements Closeable
   {
     try
     {
+      // TODO
 //      SocketConnector connector = new NioSocketConnector (1, ioExecutor);
 //      SimpleIoProcessorPool<NioSession> processorPool = 
 //        new SimpleIoProcessorPool<NioSession> (NioProcessor.class, ioExecutor, 1);
