@@ -255,6 +255,7 @@
         <include name="src/avis_java_header.txt" />
         <include name="packaging/**" />
         <include name="avis-server.properties" />
+        <include name="src/main/org/avis/management/resources/**" />
       </zipfileset>
       
       <zipfileset dir="." prefix="${src-zip-root}/server" filemode="755">
