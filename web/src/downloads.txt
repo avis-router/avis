@@ -3,7 +3,7 @@ Avis Downloads
 
 The downloads listed here are for the latest stable version of the
 Avis event router (${server.version}): see the [Avis Sourceforge
-download page][all_downloads] for older releases.
+download page][all_downloads] for unstable and older releases.
 
 After you've downloaded the router, you may want to look at the
 [installation guide][install].
@@ -26,7 +26,7 @@ command line.
     daemon.
 
 * **[Download the Avis Mac OS X installer][router_mac]** for Mac OS X
-    10.4 and 10.5. Includes a `launchd` profile to run as a startup
+    10.4 though 10.6. Includes a `launchd` profile to run as a startup
     service.
 
 * **[Download the Avis Unix installer][router_unix]**. This is a
