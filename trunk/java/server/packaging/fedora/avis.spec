@@ -4,7 +4,7 @@ Vendor:       Matthew Phillips
 Packager:     Avis Project <avis@mattp.name>
 Distribution: Sourceforge
 Group:        System/Servers
-License:      GPL
+License:      GPLv3
 Version:      %{_avis_version}
 Release:      %{_avis_release}
 URL:          http://avis.sourceforge.net/
@@ -18,14 +18,16 @@ BuildArchitectures: noarch
 # Requires:     java >= 0:1.5
 # Requires:     jdk >= 0:1.5
 
-%description
-    Avis is a multicast event bus. It provides a fast, publish/subscribe
-    event routing service compatible with the commercial Elvin
-    implementation developed by Mantara Software. Elvin routers can be
-    federated together to form wide-area event notification networks.
-    Clients can exchange events with other clients anywhere on the bus,
-    subscribing to messages using pattern-matching expressions that
-    select messages based on their content.
+%description 
+    Avis is a high-performance event router. It provides a fast
+    publish/subscribe event routing service compatible with the
+    commercial Elvin implementation developed by Mantara Software.
+
+    Elvin routers can be federated together to form wide-area event
+    notification networks. Clients can exchange events with other
+    clients anywhere on the bus by subscribing to messages using
+    pattern-matching expressions that select messages based on their
+    content.
 
 %install
     # create installation hierarchy
