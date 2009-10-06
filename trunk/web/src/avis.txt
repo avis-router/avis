@@ -1,9 +1,9 @@
 About Avis
 ======================================================================
 
-Avis is a multicast event bus. It provides a fast publish/subscribe
-event routing service compatible with the commercial Elvin
-implementation developed by [Mantara Software][mantara].
+Avis is a high-performance event router. It provides a fast
+publish/subscribe event routing service compatible with the commercial
+Elvin implementation developed by [Mantara Software][mantara].
 
 Elvin routers can be federated together to form wide-area event
 notification networks. Clients can exchange events with other clients
