@@ -21,8 +21,8 @@ import org.avis.io.ExceptionMonitorLogger;
 
 public class JUTestRouterTLS
 {
-  private static final int DEFAULT_PORT = 29170;
-  private static final int SECURE_PORT = 29171;
+  private static final int DEFAULT_PORT = JUTestRouter.PORT;
+  private static final int SECURE_PORT = DEFAULT_PORT + 1;
 
   @Before
   public void setup ()
