@@ -69,7 +69,7 @@ static bool receive_reply (Elvin *elvin, Message message);
 
 static bool poll_receive_message (Elvin *elvin, Message message);
 
-static bool receive_control_message (socket_t socket, Message message,
+static bool receive_control_message (socket_t input_socket, Message message,
                                      ElvinError *error);
 
 static void handle_control_message (Elvin *elvin, Message message);
@@ -175,9 +175,9 @@ bool elvin_close (Elvin *elvin)
 {
   alloc_message (disconn_rqst);
   alloc_message (disconn_rply);
-  bool open = elvin->router_socket != -1;
+  bool socket_opened = elvin->router_socket != -1;
 
-  if (open)
+  if (socket_opened)
   {
     avis_message_init (disconn_rqst, MESSAGE_ID_DISCONN_RQST);
 
@@ -189,7 +189,7 @@ bool elvin_close (Elvin *elvin)
   
   elvin_free (elvin);
         
-  return open;
+  return socket_opened;
 }
 
 void elvin_reset (Elvin *elvin)
@@ -385,7 +385,7 @@ bool send_liveness (Elvin *elvin)
 bool elvin_invoke (Elvin *elvin, InvokeHandler handler, void *parameter)
 {
   ControlMessage message;
-  int bytes_written;
+  size_t bytes_written;
    
   message.handler = handler;
   message.parameter = parameter;
@@ -409,14 +409,14 @@ bool elvin_invoke_close (Elvin *elvin)
   return elvin_invoke (elvin, elvin_invoke_close_handler, NULL);
 }
 
-bool receive_control_message (socket_t socket, Message message,
+bool receive_control_message (socket_t input_socket, Message message,
                               ElvinError *error)
 {
-  int bytes_read;
+  size_t bytes_read;
 
   message_type_of (message) = MESSAGE_ID_CONTROL;
 
-  bytes_read = pipe_read (socket, message + 4, sizeof (ControlMessage));
+  bytes_read = pipe_read (input_socket, message + 4, sizeof (ControlMessage));
 
   if (bytes_read == sizeof (ControlMessage))
     return true;
@@ -488,7 +488,7 @@ void handle_notify_deliver (Elvin *elvin, Message message)
 void deliver_notification (Elvin *elvin, Array *ids,
                            Attributes *attributes, bool secure)
 {
-  int i;
+  size_t i;
   int64_t *id = ids->items;
   ListenersIterator l;
 

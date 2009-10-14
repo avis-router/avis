@@ -310,7 +310,7 @@ bool byte_buffer_write_string (ByteBuffer *buffer, const char *string,
     byte_buffer_ensure_capacity (buffer, buffer->position + length + 8, error) &&
     byte_buffer_write_int32 (buffer, (uint32_t)length, error) &&
     byte_buffer_write_bytes (buffer, (uint8_t *)string, length, error) &&
-    write_padding_for (buffer, length, error);
+    write_padding_for (buffer, (uint32_t)length, error);
 }
 
 char *byte_buffer_read_string (ByteBuffer *buffer, ElvinError *error)
@@ -370,10 +370,12 @@ bool byte_buffer_read_byte_array (ByteBuffer *buffer, Array *array,
 bool byte_buffer_write_byte_array (ByteBuffer *buffer, Array *array,
                                    ElvinError *error)
 {
+  assert (array->item_count < UINT32_MAX);
+  
   return
-    byte_buffer_write_int32 (buffer, array->item_count, error) &&
+    byte_buffer_write_int32 (buffer, (uint32_t)array->item_count, error) &&
     byte_buffer_write_bytes (buffer, array->items, array->item_count, error) &&
-    write_padding_for (buffer, array->item_count, error);
+    write_padding_for (buffer, (uint32_t)array->item_count, error);
 }
 
 bool write_padding_for (ByteBuffer *buffer, uint32_t length, ElvinError *error)

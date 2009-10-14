@@ -39,7 +39,7 @@ void listeners_add (Listeners *listeners, Listener listener, void *user_data)
 bool listeners_remove (Listeners *listeners, Listener listener)
 {
   ListenerEntry *entry;
-  int count;
+  size_t count;
 
   if (*listeners == NULL)
     return false;

@@ -255,9 +255,9 @@ START_TEST (test_message_io)
 
   /* write message out */
   avis_message_init (connRqst, MESSAGE_ID_CONN_RQST,
-                (uint32_t)DEFAULT_CLIENT_PROTOCOL_MAJOR,
-                (uint32_t)DEFAULT_CLIENT_PROTOCOL_MINOR,
-                EMPTY_ATTRIBUTES, EMPTY_KEYS, EMPTY_KEYS);
+                     (uint32_t)DEFAULT_CLIENT_PROTOCOL_MAJOR,
+                     (uint32_t)DEFAULT_CLIENT_PROTOCOL_MINOR,
+                     EMPTY_ATTRIBUTES, EMPTY_KEYS, EMPTY_KEYS);
 
   avis_message_write (buffer, connRqst, &error);
 

@@ -36,6 +36,8 @@ static void SHA1Init(SHA1_CTX* context);
 static void SHA1Update(SHA1_CTX* context, unsigned char* data, unsigned int len);
 static void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
 
+Key avis_sha1 (Key input);
+
 Key avis_sha1 (Key input)
 {
   SHA1_CTX context;
