@@ -74,10 +74,12 @@ FuncPtr array_list_get_func (ArrayList *list, size_t index);
   (array_list_remove_item (list, index, sizeof (item_type)))
 
 AVIS_PUBLIC
-void array_list_remove_item_using_ptr (ArrayList *list, void *item, size_t item_size);
+void array_list_remove_item_using_ptr (ArrayList *list, void *item, 
+                                       size_t item_size);
 
 AVIS_PUBLIC
-void array_list_remove_item (ArrayList *list, size_t index, size_t item_size);
+void array_list_remove_item (ArrayList *list, size_t list_index, 
+                             size_t item_size);
 
 AVIS_PUBLIC
 int32_t *array_list_find_int (ArrayList *list, int32_t int_value);

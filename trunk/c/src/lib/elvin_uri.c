@@ -24,14 +24,14 @@
 #include "errors_private.h"
 
 static bool parse_version (ElvinURI *uri,
-                           const char *index,
+                           const char *index1,
                            ElvinError *error);
 
 static bool parse_protocol (ElvinURI *uri,
                             const char *index,
                             ElvinError *error);
 
-static const char *parse_options (ElvinURI *uri, const char *index,
+static const char *parse_options (ElvinURI *uri, const char *str_index,
                                   ElvinError *error);
 
 static char *substring (const char *start, const char *end);
@@ -183,22 +183,22 @@ bool elvin_uri_from_string (ElvinURI *uri, const char *uri_string,
   }
 }
 
-bool parse_version (ElvinURI *uri, const char *index, ElvinError *error)
+bool parse_version (ElvinURI *uri, const char *index1, ElvinError *error)
 {
   char *index2;
-  long value = strtol (index, &index2, 10);
+  long value = strtol (index1, &index2, 10);
 
-  fail_if (index == index2 || value < 0, "Invalid version number");
+  fail_if (index1 == index2 || value < 0, "Invalid version number");
 
   uri->version_major = (uint16_t)value;
 
   if (*index2 == '.')
   {
-    index = index2 + 1;
+    index1 = index2 + 1;
 
-    value = strtol (index, &index2, 10);
+    value = strtol (index1, &index2, 10);
 
-    fail_if (index == index2 || value < 0, "Invalid version number");
+    fail_if (index1 == index2 || value < 0, "Invalid version number");
 
     uri->version_minor = (uint16_t)value;
   } else
@@ -274,7 +274,7 @@ bool parse_protocol (ElvinURI *uri, const char *index1, ElvinError *error)
 /** Finish adding chars to the buffer: generate a string and reset */
 #define buffer_finish(buff, curr) (*curr = '\0', curr = buff, estrdup (buff))
 
-const char *parse_options (ElvinURI *uri, const char *index,
+const char *parse_options (ElvinURI *uri, const char *str_index,
                            ElvinError *error)
 {
   Attributes *options = attributes_create ();
@@ -285,7 +285,7 @@ const char *parse_options (ElvinURI *uri, const char *index,
 
   while (true)
   {
-    switch (*index)
+    switch (*str_index)
     {
     case ';':
     case '\0':
@@ -314,9 +314,9 @@ const char *parse_options (ElvinURI *uri, const char *index,
       }
       break;
     case '\\':
-      index++;
+      str_index++;
 
-      if (*index == '\0')
+      if (*str_index == '\0')
       {
         fail ("Trailing \\");
         break;
@@ -324,15 +324,15 @@ const char *parse_options (ElvinURI *uri, const char *index,
       /* drop through to default append behaviour */
     default:
       if (current < end)
-        *current++ = *index;
+        *current++ = *str_index;
       else
         fail (name ? "Name too long" : "Value too long");
     }
 
-    if (*index == '\0')
+    if (*str_index == '\0')
       break;
     else
-      index++;
+      str_index++;
   }
 
   if (name)
@@ -342,7 +342,7 @@ const char *parse_options (ElvinURI *uri, const char *index,
   {
     uri->options = options;
 
-    return index;
+    return str_index;
   } else
   {
     attributes_destroy (options);

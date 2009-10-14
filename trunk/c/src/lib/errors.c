@@ -116,12 +116,12 @@ void *do_avis_emalloc (size_t size, const char *file, int line)
 
 char *do_avis_estrdup (const char *str, const char *file, int line)
 {
-  char *dup = strdup (str);
+  char *str_copy = strdup (str);
 
-  if (dup == NULL)
+  if (str_copy == NULL)
     avis_fail ("Out of memory: could not copy string", file, line);
 
-  return dup;
+  return str_copy;
 }
 
 static bool in_fail = false;

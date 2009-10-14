@@ -115,11 +115,11 @@ def_array_list_add (void *, ptr)
 def_array_list_add (FuncPtr, func)
 
 #define def_array_list_get(item_type, postfix) \
-  item_type array_list_get_##postfix (ArrayList *list, size_t index)\
+  item_type array_list_get_##postfix (ArrayList *list, size_t list_index)\
   {\
-    assert (index >= 0 && index < list->item_count);\
+    assert (list_index >= 0 && list_index < list->item_count);\
     \
-    return ((item_type *)list->items) [index];\
+    return ((item_type *)list->items) [list_index];\
   }\
 
 def_array_list_get (int, int)
@@ -130,9 +130,9 @@ def_array_list_get (FuncPtr, func)
   item_type *array_list_find_##postfix (ArrayList *list, item_type value)\
   {\
     item_type *ptr; \
-    int index = list->item_count; \
+    size_t list_index = list->item_count; \
     \
-    for (ptr = list->items; index > 0; index--, ptr++) \
+    for (ptr = list->items; list_index > 0; list_index--, ptr++) \
     { \
       if (*ptr == value) \
         return ptr;\
@@ -165,12 +165,13 @@ def_array_list_remove (int32_t, int)
 def_array_list_remove (void *, ptr)
 def_array_list_remove (FuncPtr, func)
 
-void array_list_remove_item (ArrayList *list, size_t index, size_t item_size)
+void array_list_remove_item (ArrayList *list, size_t list_index, 
+                             size_t item_size)
 {
-  assert (index >= 0 && index < list->item_count);
+  assert (list_index >= 0 && list_index < list->item_count);
 
   array_list_remove_item_using_ptr
-    (list, (int8_t *)list->items + (index * item_size), item_size);
+    (list, (int8_t *)list->items + (list_index * item_size), item_size);
 }
 
 void array_list_remove_item_using_ptr (ArrayList *list, void *item,

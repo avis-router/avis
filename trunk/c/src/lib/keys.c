@@ -15,6 +15,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <assert.h>
+
 #include <avis/errors.h>
 #include <avis/keys.h>
 #include <avis/defs.h>
@@ -180,8 +183,10 @@ Key elvin_key_create_from_string (const char *str)
   size_t length = strlen (str);
   Key key;
 
+  assert (length < UINT32_MAX);
+  
   key.data = avis_memdup (str, length);
-  key.length = length;
+  key.length = (uint32_t)length;
 
   return key;
 }
@@ -190,8 +195,10 @@ Key elvin_key_create_from_data (const uint8_t *data, size_t length)
 {
   Key key;
 
+  assert (length < UINT32_MAX);
+  
   key.data = avis_memdup (data, length);
-  key.length = length;
+  key.length = (uint32_t)length;
 
   return key;
 }
@@ -341,7 +348,7 @@ bool read_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
       Key *key = array_list_add (keyset, Key);
 
       key->data = array.items;
-      key->length = array.item_count;
+      key->length = (uint32_t)array.item_count;
     }
   }
 
@@ -350,10 +357,12 @@ bool read_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
 
 bool write_keyset (ByteBuffer *buffer, ArrayList *keyset, ElvinError *error)
 {
-  uint32_t key_count = keyset->item_count;
+  uint32_t key_count = (uint32_t)keyset->item_count;
   Key *key = keyset->items;
   Array array;
 
+  assert (keyset->item_count < UINT32_MAX);
+  
   byte_buffer_write_int32 (buffer, key_count, error);
 
   for ( ; key_count > 0 && elvin_error_ok (error); key_count--, key++)

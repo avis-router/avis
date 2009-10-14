@@ -92,11 +92,11 @@ static void values_free (Array *values);
 
 typedef enum
 {
-  FIELD_XID = 0, FIELD_INT32 = 1, FIELD_INT64 = 2, FIELD_POINTER = 3
+  FIELD_XID = 1, FIELD_INT32 = 2, FIELD_INT64 = 3, FIELD_POINTER = 4
 } FieldType;
 
 /** Size of FieldType values */
-static const int field_sizes [4] = {4, 4, 8, sizeof (void *)};
+static const int field_sizes [5] = {0, 4, 4, 8, sizeof (void *)};
 
 typedef void (*MessageIOFunction) (ByteBuffer *buffer, Message message,
                                    ElvinError *error);
@@ -169,7 +169,7 @@ static MessageFormat MESSAGE_FORMATS [] =
   {MESSAGE_ID_CONF_CONN,
     {END}},
 
-  {-1, {END}}
+  {0, {END}}
 };
 
 static uint32_t xid_counter = 1;
@@ -341,7 +341,7 @@ MessageFormat *message_format_for (MessageTypeID type)
   if (type == 0)
     return NULL;
 
-  for (format = MESSAGE_FORMATS; format->id != -1; format++)
+  for (format = MESSAGE_FORMATS; format->id != 0; format++)
   {
     if (format->id == type)
       return format;
@@ -352,7 +352,8 @@ MessageFormat *message_format_for (MessageTypeID type)
   return NULL;
 }
 
-bool avis_send_message (socket_t socket, Message message, ElvinError *error)
+bool avis_send_message (socket_t output_socket, Message message, 
+                        ElvinError *error)
 {
   ByteBuffer buffer;
   size_t position = 0;
@@ -373,8 +374,8 @@ bool avis_send_message (socket_t socket, Message message, ElvinError *error)
 
   do
   {
-    int bytes_written = send (socket, buffer.data + position,
-                              buffer.position - position, 0);
+    ssize_t bytes_written = send (output_socket, buffer.data + position,
+                                  buffer.position - position, 0);
 
     if (bytes_written == -1)
       elvin_error_from_socket (error);
@@ -387,14 +388,15 @@ bool avis_send_message (socket_t socket, Message message, ElvinError *error)
   return elvin_error_ok (error);
 }
 
-bool avis_receive_message (socket_t socket, Message message, ElvinError *error)
+bool avis_receive_message (socket_t input_socket, Message message, 
+                           ElvinError *error)
 {
   ByteBuffer buffer;
   uint32_t frame_size;
   size_t position = 0;
-  int bytes_read;
+  ssize_t bytes_read;
 
-  bytes_read = recv (socket, (void *)&frame_size, 4, 0);
+  bytes_read = recv (input_socket, (void *)&frame_size, 4, 0);
 
   if (bytes_read != 4)
   {
@@ -424,7 +426,7 @@ bool avis_receive_message (socket_t socket, Message message, ElvinError *error)
 
   do
   {
-    bytes_read = recv (socket, buffer.data + position,
+    bytes_read = recv (input_socket, buffer.data + position,
                        buffer.max_data_length - position, 0);
 
     if (bytes_read == -1)
@@ -489,7 +491,9 @@ void write_int64_array (ByteBuffer *buffer, Message message,
   size_t item_count = (*(Array **)message)->item_count;
   int64_t *item = (int64_t *)(*(Array **)message)->items;
 
-  byte_buffer_write_int32 (buffer, item_count, error);
+  assert (item_count < UINT32_MAX);
+  
+  byte_buffer_write_int32 (buffer, (uint32_t)item_count, error);
 
   for ( ; item_count > 0 && elvin_error_ok (error); item_count--, item++)
     byte_buffer_write_int64 (buffer, *item, error);
@@ -583,7 +587,9 @@ void write_values (ByteBuffer *buffer, Message message, ElvinError *error)
   size_t item_count = (*(Array **)message)->item_count;
   Value *value = (Value *)(*(Array **)message)->items;
 
-  byte_buffer_write_int32 (buffer, item_count, error);
+  assert (item_count < UINT32_MAX);
+  
+  byte_buffer_write_int32 (buffer, (uint32_t)item_count, error);
 
   for ( ; item_count > 0 && elvin_error_ok (error); item_count--, value++)
     value_write (buffer, value, error);

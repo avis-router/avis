@@ -114,10 +114,10 @@ AVIS_PUBLIC
 bool avis_message_write (ByteBuffer *buffer, Message message, ElvinError *error);
 
 AVIS_PUBLIC
-bool avis_send_message (socket_t socket, Message message, ElvinError *error);
+bool avis_send_message (socket_t output_socket, Message message, ElvinError *error);
 
 AVIS_PUBLIC
-bool avis_receive_message (socket_t socket, Message message, ElvinError *error);
+bool avis_receive_message (socket_t input_socket, Message message, ElvinError *error);
 
 /** The message's type ID. */
 #define message_type_of(message) (*(uint32_t *)(message))

@@ -38,7 +38,7 @@ typedef struct
 typedef struct
 {
   ListenerEntry * entry;
-  int             remaining;
+  size_t          remaining;
 } ListenersIterator;
 
 #define listeners_init(listeners) {(listeners) = NULL;}
@@ -48,6 +48,7 @@ void listeners_free (Listeners *listeners);
 #define listeners_iter_init(listeners, i) \
     if ((listeners) == NULL) \
     { \
+      (i).entry = NULL; \
       (i).remaining = 0; \
     } else \
     { \
