@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Copy avis.framework from Avis C client area to here
+
+# NOTE: need to use Xcode to build avis.framework first
+
+avis_home="../../../c/platforms/macosx"
+
+rsync -arv --delete --exclude "*.svn*" \
+  "$avis_home/build/Release/avis.framework/"* Frameworks/avis.framework/
