@@ -195,8 +195,11 @@ public class Router implements IoHandler, Closeable
 
     filters.addLast ("codec", ClientFrameCodec.FILTER);
     
-    // TODO 
-    //    filters.addLast ("threadPool", ioManager.createThreadPoolFilter ());
+    /*
+     * We use a thread pool to avoid bunging up the IO processors when
+     * under load. 
+     */
+    filters.addLast ("threadPool", ioManager.createThreadPoolFilter ());
 
     boolean bindSucceeded = false;
     
