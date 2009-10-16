@@ -42,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 import static org.avis.io.messages.ConnRqst.EMPTY_OPTIONS;
 import static org.avis.logging.Log.alarm;
+import static org.avis.logging.Log.diagnostic;
 import static org.avis.logging.Log.trace;
 import static org.avis.router.JUTestRouter.PORT;
 import static org.avis.security.Keys.EMPTY_KEYS;
@@ -177,9 +178,18 @@ public class SimpleClient implements IoHandler, Closeable
     return message;
   }
 
-  public void drain ()
+  /**
+   * Clear all queued incoming messages.
+   * 
+   * @return The number cleared.
+   */
+  public int drain ()
   {
+    int drained = incomingMessages.size ();
+    
     incomingMessages.clear ();
+    
+    return drained;
   }
 
   private void checkConnected ()
@@ -389,7 +399,12 @@ public class SimpleClient implements IoHandler, Closeable
   public void exceptionCaught (IoSession session, Throwable ex) 
     throws Exception
   {
-    alarm (clientName + ": client internal exception", this, ex);
+    if (ex instanceof IOException)
+      diagnostic (clientName + ": IO exception (closing)", this, ex);
+    else
+      alarm (clientName + ": internal exception (closing)", this, ex);
+    
+    closeImmediately ();
   }
 
   public void messageReceived (IoSession session,
