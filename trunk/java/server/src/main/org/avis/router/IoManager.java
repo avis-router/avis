@@ -20,11 +20,14 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.service.SimpleIoProcessorPool;
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
@@ -56,6 +59,7 @@ public class IoManager
   private SimpleIoProcessorPool<NioSession> processorPool;
   
   private ExecutorService ioExecutor;
+  private OrderedThreadPoolExecutor filterExecutor;
   
   private String keystorePassphrase;
   private KeyStore keystore;
@@ -94,6 +98,9 @@ public class IoManager
       this.keystore = loadKeystore (keystoreUri);
 
     this.ioExecutor = newCachedThreadPool ();
+    this.filterExecutor = 
+      new OrderedThreadPoolExecutor (0, 16, 20, SECONDS);
+    
     this.processorPool = 
       new SimpleIoProcessorPool<NioSession> 
         (NioProcessor.class, ioExecutor, 
@@ -130,6 +137,11 @@ public class IoManager
     }
   }
 
+  public IoFilter createThreadPoolFilter ()
+  {
+    return new ExecutorFilter (filterExecutor);
+  }
+  
   public NioSocketAcceptor createAcceptor ()
   {
     NioSocketAcceptor acceptor = new NioSocketAcceptor (processorPool);
