@@ -250,7 +250,7 @@ public final class Net
    */
   public static String idFor (IoSession session)
   {
-    return Long.toString (session.getId ());
+    return session == null ? "<null>" : Long.toString (session.getId ());
   }
   
   /**
