@@ -87,7 +87,7 @@ static Subscription *elvin_subscription_init (Subscription *subscription);
 
 static void elvin_subscription_free (Subscription *subscription);
 
-#define str_equals(str1, str2) strcmp ((str1), (str2)) == 0
+#define str_equals(str1, str2) (strcmp ((str1), (str2)) == 0)
 
 static bool is_supported_protocol (char **protocol);
 
