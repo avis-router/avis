@@ -168,7 +168,7 @@ public final class ElvinOptions implements Cloneable
   public void setKeystore (String keystorePath, String passphrase)
     throws IOException 
   {
-    setKeystore (new File (keystorePath).toURL (), passphrase);
+    setKeystore (new File (keystorePath).toURI ().toURL (), passphrase);
   }
   
   /**
