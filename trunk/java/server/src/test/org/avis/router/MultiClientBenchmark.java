@@ -5,9 +5,6 @@ import java.util.Random;
 
 import java.net.InetSocketAddress;
 
-import javax.swing.text.Element;
-
-import org.avis.common.ElvinURI;
 import org.avis.io.messages.ErrorMessage;
 import org.avis.io.messages.Message;
 import org.avis.io.messages.NotifyDeliver;
@@ -16,7 +13,6 @@ import org.avis.io.messages.NotifyEmit;
 import static java.lang.Math.round;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.sort;
 
@@ -266,7 +262,7 @@ public class MultiClientBenchmark
       }      
     }
 
-    private void drain () 
+    protected void drain () 
       throws InterruptedException
     {
       Message message;
