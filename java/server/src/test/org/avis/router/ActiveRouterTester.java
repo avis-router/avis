@@ -1,6 +1,7 @@
 package org.avis.router;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 import java.io.IOException;
 
@@ -11,8 +12,6 @@ import org.avis.io.messages.NotifyEmit;
 import static java.lang.Math.random;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
-
-import static org.avis.logging.Log.info;
 
 /**
  * Stresses a router, especially its memory footprint when in "harsh"
@@ -41,6 +40,9 @@ public class ActiveRouterTester
 
   static final double NOTIFY_DELAY = 1000.0 / NOTIFY_RATE;
 
+  protected final AtomicLong totalMessagesSent = new AtomicLong ();
+  protected final AtomicLong totalMessagesReceived = new AtomicLong ();
+  
   public static void main (String [] args) 
     throws Exception
   {
@@ -130,7 +132,7 @@ public class ActiveRouterTester
     private void open () 
       throws InterruptedException 
     {
-      info ("Client " + id + " start open", this);
+      // info ("Client " + id + " start open", this);
       
       try
       {
@@ -149,7 +151,7 @@ public class ActiveRouterTester
         {
           elvin.connect ();
           
-          info ("Client " + id + " opened", this);
+          // info ("Client " + id + " opened", this);
           
           elvin.subscribe 
             ("To == " + id + " || " +
@@ -178,7 +180,7 @@ public class ActiveRouterTester
       
       try
       {
-        while (!currentThread ().isInterrupted ())
+        while (!currentThread ().isInterrupted () && elvin.connected ())
         {
           try
           {
@@ -192,11 +194,23 @@ public class ActiveRouterTester
             elvin.send (new NotifyEmit ("From", id, "Group", group, "Payload",
                                         payload));
   
-            elvin.drain ();
+            int received = elvin.drain ();
             
-            if (++count % 100 == 0)
+            count++;
+            long totalSent = totalMessagesSent.incrementAndGet ();
+            long totalReceived = totalMessagesReceived.addAndGet (received);
+            
+            if (count % 100 == 0)
+            {
               System.out.println ("Client " + id + " has sent " + 
                                   count + " messages");
+            }
+            
+            if (totalSent % 100 == 0)
+              System.out.println ("Total messages sent = " + totalSent);
+            
+            if (totalReceived / 100 != (totalReceived - received) / 100)
+              System.out.println ("Total messages received = " + totalReceived);
             
           } catch (NoConnectionException ex)
           {
