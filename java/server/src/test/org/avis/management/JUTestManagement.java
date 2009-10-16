@@ -45,7 +45,7 @@ public class JUTestManagement
   {
     Options options = new Options (ManagementOptionSet.OPTION_SET);
     
-    URL webURL = new URL ("http://127.0.0.1:" + (PORT1 + 1));
+    URL webURL = new URL ("http://127.0.0.1:" + (PORT1 + 10));
     
     options.set ("Management.Listen", webURL.toString ());
     options.set ("Management.Admin-Name", "admin");
