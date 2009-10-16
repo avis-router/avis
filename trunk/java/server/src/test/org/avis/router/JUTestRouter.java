@@ -662,16 +662,19 @@ public class JUTestRouter
     ntfn.put ("client", "client 1");
     
     client1.send (new UNotify (4, 0, ntfn));
-    
-    // NOTE: MINA 1.1.5 close can eat messages in queue: 
-    // 2.0 does not seem to have this problem
-    
-    client1.close ();
-    
+        
     NotifyDeliver reply = (NotifyDeliver)client2.receive ();
     assertEquals ("client 1", reply.attributes.get ("client"));
     
     client2.close ();
+    
+    /*
+     * NOTE: MINA close () can eat messages in queue despite
+     * SimpleClient asking for a flush before close: doing it here
+     * means it doesn't matter.
+     */
+
+    client1.close ();
   }
   
   /**
