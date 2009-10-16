@@ -61,9 +61,13 @@ public class Main
     Properties avisProperties = readAvisProperties ();
     System.getProperties ().putAll (avisProperties);
     
-    info ("Avis event router version " +
-          avisProperties.getProperty ("avis.router.version"), Main.class);
+    String version = avisProperties.getProperty ("avis.router.version");
+    String release = avisProperties.getProperty ("avis.release");
     
+    info ("Avis event router version " +
+          (release == null ? version : version + " (" + release + ")"), 
+          Main.class);
+
     try
     {
       final Router router = start (args);
