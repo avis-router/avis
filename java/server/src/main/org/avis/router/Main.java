@@ -63,9 +63,11 @@ public class Main
     
     String version = avisProperties.getProperty ("avis.router.version");
     String release = avisProperties.getProperty ("avis.release");
+    String build = avisProperties.getProperty ("avis.build-date");
     
     info ("Avis event router version " +
-          (release == null ? version : version + " (" + release + ")"), 
+          (release == null ? version + " (" + build + ")": 
+                             version + " (" + release + ": " + build + ")"), 
           Main.class);
 
     try
