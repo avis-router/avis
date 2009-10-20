@@ -33,7 +33,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * have no associated request</li>
  * <li>Generates TimeoutMessage's for requests that do not receive a
  * reply within a given timeout.</li>
- * <ul>
+ * </ul>
  * 
  * @author Matthew Phillips
  */
@@ -47,8 +47,8 @@ public class RequestTrackingFilter
   /**
    * Create a new instance. Uses a {@link SharedExecutor}.
    * 
-   * @param replyTimeout The amount of time (in millis) to wait for
-   *                a reply.
+   * @param replyTimeout The amount of time (in millis) to wait for a
+   *          reply.
    */
   public RequestTrackingFilter (long replyTimeout)
   {
@@ -59,8 +59,8 @@ public class RequestTrackingFilter
    * Create a new instance.
    * 
    * @param executor The executor to use for timed callbacks.
-   * @param replyTimeout The amount of time (in millis) to wait for
-   *                a reply.
+   * @param replyTimeout The amount of time (in millis) to wait for a
+   *          reply.
    */
   public RequestTrackingFilter (ScheduledExecutorService executor,
                                 long replyTimeout)
