@@ -62,8 +62,7 @@
     <mkdir dir="classes/main" />
   
     <tstamp>
-      <format property="build-date"
-              pattern="dd-MMM-yyyy HH:mm:ss ZZ" locale="en" />
+      <format property="build-date" pattern="yyyyMMdd" locale="en" />
     </tstamp>
         
     <filter token="build-date" value="${build-date}" />
