@@ -4,7 +4,7 @@
 	<classpathentry kind="src" output="classes/test" path="src/test"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry exported="true" kind="lib" path="lib/mina-core-2.0.0-M6.jar" sourcepath="/Users/matt/Development/mina-2.0.0-M6/src/mina-core/src/main/java"/>
 	<classpathentry kind="lib" path="lib/slf4j-avis.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mina-core-2.0.0-RC1.jar" sourcepath="/Users/matt/Development/mina-2.0.0-RC1/src/mina-core/src/main/java"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
