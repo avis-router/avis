@@ -440,10 +440,15 @@ bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error)
       if (array_list_get (list, 0, ArrayList).item_count > 0 ||
           array_list_get (list, 1, ArrayList).item_count > 0)
       {
-        byte_buffer_write_int32 (buffer, (*scheme)->id, error) &&
-        byte_buffer_write_int32 (buffer, 2, error) &&
-        write_keyset (buffer, &array_list_get (list, 0, ArrayList), error) &&
-        write_keyset (buffer, &array_list_get (list, 1, ArrayList), error);
+        if (!(byte_buffer_write_int32 (buffer, (*scheme)->id, error) &&
+              byte_buffer_write_int32 (buffer, 2, error) &&
+              write_keyset 
+                (buffer, &array_list_get (list, 0, ArrayList), error) &&
+              write_keyset 
+                (buffer, &array_list_get (list, 1, ArrayList), error)))
+        {
+          return false;
+        }
 
         scheme_count++;
       }
@@ -451,9 +456,12 @@ bool elvin_keys_write (ByteBuffer *buffer, Keys *keys, ElvinError *error)
     {
       if (list->item_count > 0)
       {
-        byte_buffer_write_int32 (buffer, (*scheme)->id, error) &&
-        byte_buffer_write_int32 (buffer, 1, error) &&
-        write_keyset (buffer, list, error);
+        if (!(byte_buffer_write_int32 (buffer, (*scheme)->id, error) &&
+              byte_buffer_write_int32 (buffer, 1, error) &&
+              write_keyset (buffer, list, error)))
+        {
+          return false;
+        }
 
         scheme_count++;
       }
