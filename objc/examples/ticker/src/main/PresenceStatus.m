@@ -42,6 +42,17 @@
   return status;
 }
 
++ (PresenceStatus *) awayStatus
+{
+  PresenceStatus *status = [[PresenceStatus new] autorelease];
+  
+  status.statusCode = UNAVAILABLE;
+  status.statusText = @"Away";
+  status.changedAt = [NSDate date];
+  
+  return status;
+}
+
 + (PresenceStatus *) inactiveStatus
 {
   PresenceStatus *status = [[PresenceStatus new] autorelease];

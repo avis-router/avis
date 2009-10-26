@@ -174,6 +174,16 @@
   [presence refresh];
 }
 
+- (IBAction) presenceSetOnline: (id) sender
+{
+  presence.presenceStatus = [PresenceStatus onlineStatus];
+}
+
+- (IBAction) presenceSetAway: (id) sender
+{
+  presence.presenceStatus = [PresenceStatus awayStatus];
+}
+
 #pragma mark -
 
 /*
