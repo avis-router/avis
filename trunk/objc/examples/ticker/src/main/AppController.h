@@ -27,4 +27,8 @@
 
 - (IBAction) refreshPresence: (id) sender;
 
+- (IBAction) presenceSetOnline: (id) sender;
+
+- (IBAction) presenceSetAway: (id) sender;
+
 @end
