@@ -82,6 +82,7 @@
 		C9C88E120E39BBC40010C768 /* arrays.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E0F0E39BBC40010C768 /* arrays.h */; };
 		C9C88E130E39BBC40010C768 /* defs.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E100E39BBC40010C768 /* defs.h */; };
 		C9C88E140E39BBC40010C768 /* net.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C88E110E39BBC40010C768 /* net.h */; };
+		C9CEFA9F1096A2AD0068CCFD /* stdint_msvc.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CEFA9E1096A2AD0068CCFD /* stdint_msvc.h */; };
 		C9E7FF330DF9533B00F0210C /* libavis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libavis.dylib */; };
 		C9E7FF390DF9535700F0210C /* event_loop_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E7FF020DF951D800F0210C /* event_loop_test.c */; };
 		C9E7FF420DF9538300F0210C /* libavis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C906FBED0DD3FBB300375E7D /* libavis.dylib */; };
@@ -242,6 +243,7 @@
 		C9C88E0F0E39BBC40010C768 /* arrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arrays.h; path = ../../src/include/avis/arrays.h; sourceTree = SOURCE_ROOT; };
 		C9C88E100E39BBC40010C768 /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defs.h; path = ../../src/include/avis/defs.h; sourceTree = SOURCE_ROOT; };
 		C9C88E110E39BBC40010C768 /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = net.h; path = ../../src/include/avis/net.h; sourceTree = SOURCE_ROOT; };
+		C9CEFA9E1096A2AD0068CCFD /* stdint_msvc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdint_msvc.h; path = ../../src/include/avis/stdint_msvc.h; sourceTree = SOURCE_ROOT; };
 		C9E217F40E133A8E00FD24D9 /* check_ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = check_ext.h; path = ../../src/test/check_ext.h; sourceTree = SOURCE_ROOT; };
 		C9E7FF020DF951D800F0210C /* event_loop_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = event_loop_test.c; path = ../../src/test/event_loop_test.c; sourceTree = SOURCE_ROOT; };
 		C9ED37320DFA358A00FB55CE /* attributes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = attributes.c; path = ../../src/lib/attributes.c; sourceTree = SOURCE_ROOT; };
@@ -478,6 +480,7 @@
 				C97363F70DF7D04900DCE905 /* stdtypes.h */,
 				C9F0DAA80E060C3600DB5A88 /* values.h */,
 				C906FBF30DD3FC3900375E7D /* elvin.h */,
+				C9CEFA9E1096A2AD0068CCFD /* stdint_msvc.h */,
 			);
 			name = "Public Headers";
 			sourceTree = "<group>";
@@ -565,6 +568,7 @@
 				C9B03B280E493AB700B59216 /* stdtypes.h in Headers */,
 				C9B03B290E493AB700B59216 /* values.h in Headers */,
 				C9B03B2A0E493AB700B59216 /* elvin.h in Headers */,
+				C9CEFA9F1096A2AD0068CCFD /* stdint_msvc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
