@@ -1,0 +1,10 @@
+#!/bin/sh
+
+src=$1
+header=$2
+temp=$(dirname $src)/bare.tmp
+
+mv  "$src" "$temp"
+cat "$header" > "$src"
+cat "$temp" >> "$src"
+rm  "$temp"

@@ -1,0 +1,125 @@
+Release 1.2.2 (October 27, 2009)
+----------------------------------------------------------------------
+
+This release adds support for 64-bit operating environments.
+
+* Fixed crash in SHA-1 implementation when compiled for 64-bit mode.
+
+* Fixed type warnings, added assertion checks when truncating from 64
+  bits to 32.
+
+* Added x86_64 architecture to Mac OS X Universal binary framework to
+  support 10.6 Snow Leopard.
+
+
+Release 1.2.1 (January 12, 2009)
+----------------------------------------------------------------------
+
+This release fixes a memory leak and adds a few minor features.
+
+* Fixed minor memory leak in elvin_close ().
+
+* Added elvin_reset ().
+
+* Added error check for elvin_invoke ().
+
+* elvin_close () now invokes shutdown () on socket: should result in
+  better behaviour on BSD.
+
+
+Release 1.2.0 (December 27, 2008)
+----------------------------------------------------------------------
+
+This release improves overall reliability.
+
+* Added liveness checking to detect crashed router and low-level
+  network failures.
+
+* Fixed bug that meant requests requiring a router response did not
+  time out if the router failed to respond. This involved changing
+  elvin_poll () to return on timeout (see API doc for details).
+
+* Library now closes the connection on various fatal errors.
+
+* Added API for iterating over notification attributes.
+
+* Fixed crash on some kinds of router failure.
+
+
+Release 1.1.0 (November 21, 2008)
+----------------------------------------------------------------------
+
+This release adds some minor improvements to the API and documentation
+and adds binary packages for Mac OS X and Microsoft Windows.
+
+* Added attributes_copy () and related copy methods to other 
+  structures.
+
+* Fixed doc for elvin_poll (): this does not time out as previously 
+  documented.
+
+* Added target for building avis.framework for Mac OS X.
+
+* Visual Studio project now generates a .DLL rather than a static
+  .LIB.
+
+* Added binary distributions for Mac OS X and Windows.
+
+* Various documentation fixes.
+
+
+Release 1.0.0 (August 2, 2008)
+----------------------------------------------------------------------
+
+This release completes the API and adds support for multithreaded
+applications.
+
+* Added multi-threaded application support with elvin_invoke () and
+  elvin_event_loop ().
+
+* Elvin connection struct now has an embedded error context, removing
+  the need for clients to create one and pass it in at every call.
+
+* Added programming examples.
+
+* Improved auto config for Solaris.
+
+
+Release 0.2.0 (July 8, 2008)
+----------------------------------------------------------------------
+
+This is a beta-quality release with most of the API complete.
+
+* Added support for changing subscriptions and security keys on a live
+  connection.
+
+* Added listener callbacks for any notification on any subscription.
+
+* Added connection close listener callback support.
+
+* Added checking for array sizes in router messages to better protect
+  against broken/malicious messages from a router.
+
+* Added support for IPv6 addresses in elvin:// URI's and to the socket
+  connection logic.
+
+* Completed Elvin URI parser, including protocol version and protocol
+  stack.
+
+* Improved platform support. Now runs on Solaris.
+
+* Added better handling for fatal conditions such as memory allocation
+  failure.
+
+* Added support for using headers in C++ development.
+
+* Added missing project files for Visual Studio 2005.
+
+* Code cleanups.
+
+
+Release 0.1.0 (June 27, 2008)
+----------------------------------------------------------------------
+
+Initial alpha release. Missing some security options, no connection
+option support.
