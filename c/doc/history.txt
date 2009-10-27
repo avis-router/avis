@@ -1,3 +1,14 @@
+Release 1.2.2 (October 27, 2009)
+----------------------------------------------------------------------
+
+This release adds support for 64-bit operating environments.
+
+* Fixed crash in SHA-1 implementation when compiled for 64-bit mode.
+
+* Fixed type warnings, added assertion checks when truncating from 64
+  bits to 32.
+
+
 Release 1.2.1 (January 12, 2009)
 ----------------------------------------------------------------------
 
