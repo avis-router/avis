@@ -56,4 +56,5 @@ include_HEADERS = \
   $(public_inc)/keys.h \
   $(public_inc)/net.h \
   $(public_inc)/stdtypes.h \
+  $(public_inc)/stdint_msvc.h \
   $(public_inc)/values.h
