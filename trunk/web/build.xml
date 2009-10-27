@@ -22,7 +22,7 @@
     value="${avis-root}/../avis-java-client-${java-client-release}/java/client" />
   <property 
     name="c-client" 
-    value="${avis-root}/../avis-c-client-${c-client-release}/c" />
+    value="${avis-root}/../avis-c-client-${c-client-release}" />
   <property 
       name="server" 
       value="${avis-root}/../avis-${server-release}/java/server" />
