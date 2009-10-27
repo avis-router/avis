@@ -16,10 +16,10 @@ Supported Platforms
 ======================================================================
 
 The client library is written in portable C and is actively supported
-on Mac OS X (10.4 and 10.5), Linux (Fedora Core 3 onwards), Solaris
-(5.9 and later), and Microsoft Windows (XP and later). It can be built
-from the command line using the GNU autoconf-based configure script,
-or using the projects provided for the Apple Xcode (3.1 and later) and
+on Mac OS X (10.4 - 10.6), Linux (Fedora Core 3 onwards), Solaris (5.9
+and later), and Microsoft Windows (XP and later). It can be built from
+the command line using the GNU autoconf-based configure script, or
+using the projects provided for the Apple Xcode (3.1 and later) and
 Microsoft Visual Studio (2005 and later) IDE's.
 
 
@@ -52,6 +52,7 @@ platforms/
 Building The Client Library
 ======================================================================
 
+
 GNU Automake
 ----------------------------------------------------------------------
 
@@ -69,12 +70,22 @@ the router. e.g.
 
   > export ELVIN="elvin://public.elvin.org"
 
+NOTE: if you get some build errors like:
+
+  ../../libtool: line 787: X--tag=CC: command not found
+
+run this before building:
+
+  export echo=/bin/echo
+
+
 Mac OS X
 ----------------------------------------------------------------------
 
 The client library will build from the command line using the steps
 above, or you can build in Xcode (3.1 or later) using the project in
 "platforms/macosx".
+
 
 Microsoft Windows
 ----------------------------------------------------------------------
