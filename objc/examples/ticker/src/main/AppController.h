@@ -33,4 +33,6 @@
 
 - (IBAction) presenceSetAway: (id) sender;
 
+- (IBAction) presenceSetCoffee: (id) sender;
+
 @end
