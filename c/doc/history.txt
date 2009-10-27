@@ -8,6 +8,9 @@ This release adds support for 64-bit operating environments.
 * Fixed type warnings, added assertion checks when truncating from 64
   bits to 32.
 
+* Added x86_64 architecture to Mac OS X Universal binary framework to
+  support 10.6 Snow Leopard.
+
 
 Release 1.2.1 (January 12, 2009)
 ----------------------------------------------------------------------
