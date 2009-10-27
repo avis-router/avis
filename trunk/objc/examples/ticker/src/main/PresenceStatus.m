@@ -20,48 +20,40 @@
     return OFFLINE;
 }
 
-+ (PresenceStatus *) onlineStatus
+static inline PresenceStatus *status (OnlineStatus statusCode, NSString *text)
 {
   PresenceStatus *status = [[PresenceStatus new] autorelease];
   
-  status.statusCode = ONLINE;
-  status.statusText = @"Online";
-  status.changedAt = [NSDate date];
+  status.statusCode = statusCode;
+  status.statusText = text;
+  status.changedAt = nil; // wildcard
   
   return status;
+}
+
++ (PresenceStatus *) onlineStatus
+{
+  return status (ONLINE, @"Online");
 }
 
 + (PresenceStatus *) offlineStatus
 {
-  PresenceStatus *status = [[PresenceStatus new] autorelease];
-  
-  status.statusCode = OFFLINE;
-  status.statusText = @"Logged off";
-  status.changedAt = [NSDate date];
-  
-  return status;
+  return status (OFFLINE, @"Logged off");
+}
+
++ (PresenceStatus *) coffeeStatus
+{
+  return status (COFFEE,  @"Coffee break!");
 }
 
 + (PresenceStatus *) awayStatus
 {
-  PresenceStatus *status = [[PresenceStatus new] autorelease];
-  
-  status.statusCode = UNAVAILABLE;
-  status.statusText = @"Away";
-  status.changedAt = [NSDate date];
-  
-  return status;
+  return status (UNAVAILABLE, @"Away");
 }
 
 + (PresenceStatus *) inactiveStatus
 {
-  PresenceStatus *status = [[PresenceStatus new] autorelease];
-  
-  status.statusCode = MAYBE_UNAVAILABLE;
-  status.statusText = @"Inactive";
-  status.changedAt = [NSDate date];
-  
-  return status;
+  return status (MAYBE_UNAVAILABLE, @"Inactive");
 }
 
 - (void) dealloc
@@ -90,7 +82,8 @@
     PresenceStatus *status = object;
     
     return status->statusCode == statusCode && 
-           [status->changedAt isEqual: changedAt] &&
+           (status->changedAt == nil || 
+             [status->changedAt isEqual: changedAt]) &&
            [status->statusText isEqual: statusText];
   } else
   {
@@ -141,6 +134,11 @@
 - (uint32_t) statusDurationAsSecondsElapsed
 {
   return (uint32_t)[[NSDate date] timeIntervalSinceDate: changedAt];
+}
+
+- (NSString *) description
+{
+  return statusText;
 }
 
 @end

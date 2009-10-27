@@ -17,4 +17,6 @@ extern NSString *PresenceUserWasDoubleClicked;
 
 @property (readonly) IBOutlet AppController * appController;
 
+@property (readonly) IBOutlet NSArray * statuses;
+
 @end
