@@ -184,6 +184,46 @@
   presence.presenceStatus = [PresenceStatus awayStatus];
 }
 
+- (IBAction) presenceSetCoffee: (id) sender
+{
+  presence.presenceStatus = [PresenceStatus coffeeStatus];
+}
+
+/**
+ * Set the selected state of a presence status menu item to reflect the 
+ * current status.
+ */
+- (BOOL) setPresenceItemSelected: (NSMenuItem *) item
+                          status: (PresenceStatus *) status
+{
+  [item setState: 
+    [presence.presenceStatus isEqual: status] ? NSOnState : NSOffState];
+  
+  return YES;
+}
+
+- (BOOL) validateMenuItem: (NSMenuItem *) item
+{
+  SEL action = [item action];
+  
+  if (action == @selector (presenceSetOnline:))
+  {
+    return [self setPresenceItemSelected: item 
+                                  status: [PresenceStatus onlineStatus]];
+  } else if (action == @selector (presenceSetAway:))
+  {
+    return [self setPresenceItemSelected: item 
+                                  status: [PresenceStatus awayStatus]];
+  } else if (action == @selector (presenceSetCoffee:))
+  {
+    return [self setPresenceItemSelected: item 
+                                  status: [PresenceStatus coffeeStatus]];
+  } else
+  {
+    return YES;
+  }
+}
+
 #pragma mark -
 
 /*
