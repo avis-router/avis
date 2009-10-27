@@ -154,7 +154,10 @@ static NSString *listToParameterString (NSArray *list)
   {
     [presenceStatus release];
   
-    presenceStatus = [newStatus retain];
+    presenceStatus = [newStatus copy];
+    
+    if (presenceStatus.changedAt == nil)
+      presenceStatus.changedAt = [NSDate date];
   }
 }
 

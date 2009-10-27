@@ -13,6 +13,7 @@ typedef enum
 + (OnlineStatus)     statusCodeFromString: (NSString *) string;
 + (PresenceStatus *) onlineStatus;
 + (PresenceStatus *) awayStatus;
++ (PresenceStatus *) coffeeStatus;
 + (PresenceStatus *) offlineStatus;
 + (PresenceStatus *) inactiveStatus;
 

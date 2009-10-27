@@ -1,12 +1,14 @@
 #import <Cocoa/Cocoa.h>
 
+#import "Growl/GrowlApplicationBridge.h"
+
 @class ElvinConnection;
 @class PresenceConnection;
 @class TickerController;
 @class PresenceController;
 @class PreferencesController;
 
-@interface AppController : NSObject
+@interface AppController : NSObject <GrowlApplicationBridgeDelegate>
 {
   ElvinConnection *       elvin;
   PresenceConnection *    presence;

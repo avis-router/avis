@@ -78,4 +78,17 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
   }
 }
 
+- (NSArray *) statuses
+{
+  // TODO reuse this
+  NSArray *statuses = 
+    [NSArray arrayWithObjects:
+      [PresenceStatus onlineStatus], 
+      [PresenceStatus awayStatus],
+      [PresenceStatus coffeeStatus], nil];
+  
+  return statuses;
+}
+
+
 @end

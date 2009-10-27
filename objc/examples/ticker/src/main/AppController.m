@@ -79,7 +79,7 @@
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
-  [GrowlApplicationBridge setGrowlDelegate: @""];
+  [GrowlApplicationBridge setGrowlDelegate: self];
     
   // listen for sleep/wake
   NSNotificationCenter *workspaceNotifications = 
