@@ -57,6 +57,8 @@
         [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"]];
     
     elvin.userAgent = userAgent;
+    
+    tickerEditCount = 0;
   }
 
   return self;
@@ -107,6 +109,15 @@
   [notifications addObserver: self selector: @selector (handleTickerMessage:)
                         name: TickerMessageReceivedNotification object: nil];
 
+  // listen for ticker message edit start/stop
+  [notifications addObserver: self selector: @selector (handleTickerEditStart:)
+                        name: TickerMessageStartedEditingNotification 
+                      object: nil];
+
+  [notifications addObserver: self selector: @selector (handleTickerEditStop:)
+                        name: TickerMessageStoppedEditingNotification 
+                      object: nil];
+  
   // listen for preference changes
   NSUserDefaultsController *userPreferences = 
     [NSUserDefaultsController sharedUserDefaultsController];
@@ -389,6 +400,24 @@
   
   [[NSNotificationCenter defaultCenter] removeObserver: self 
     name: PresenceStatusChangedNotification object: nil];
+}
+
+- (void) handleTickerEditStart: (NSNotification *) notification
+{
+  if (++tickerEditCount == 1)
+  {
+    if (presence.presenceStatus.statusCode != UNAVAILABLE)
+      presence.presenceStatus = [PresenceStatus composingStatus];
+  }
+}
+
+- (void) handleTickerEditStop: (NSNotification *) notification
+{
+  if (--tickerEditCount == 0)
+  {
+    if ([presence.presenceStatus isEqual: [PresenceStatus composingStatus]])
+      presence.presenceStatus = [PresenceStatus onlineStatus];
+  }
 }
 
 @end

@@ -15,6 +15,8 @@
   TickerController *      tickerController;
   PresenceController *    presenceController;
   PreferencesController * preferencesController;
+  
+  NSInteger               tickerEditCount;
 }
 
 @property (readonly) ElvinConnection *    elvin;
