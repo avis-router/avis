@@ -11,8 +11,14 @@
 #define TICKER_SUBSCRIPTION \
   @"string (Message) && string (Group) && string (From)"
 
-NSString *TickerMessageReceivedNotification = 
+NSString * TickerMessageReceivedNotification = 
   @"TickerMessageReceivedNotification";
+
+NSString * TickerMessageStartedEditingNotification = 
+  @"TickerMessageStartedEditingNotification";
+
+NSString * TickerMessageStoppedEditingNotification = 
+  @"TickerMessageStoppedEditingNotification";
 
 #pragma mark -
 
@@ -93,6 +99,8 @@ static NSAttributedString *attributedString (NSString *string,
 
   self.allowInsecure = YES;
   self.canSend = [elvin isConnected];
+  
+  tickerIsEditing = NO;
 }
 
 - (void) windowDidLoad
@@ -112,6 +120,12 @@ static NSAttributedString *attributedString (NSString *string,
   
   [notifications addObserver: self selector: @selector (handlePresenceUserDoubleClick:)
                         name: PresenceUserWasDoubleClicked object: nil];
+  [notifications addObserver:self selector: @selector (tickerBeganEditing:)
+                        name: NSTextDidBeginEditingNotification 
+                      object: messageText];
+  [notifications addObserver:self selector: @selector (tickerEndedEditing:)
+                        name: NSTextDidEndEditingNotification 
+                      object: messageText];
   
   [dragTarget 
     registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];  
@@ -173,6 +187,30 @@ static NSAttributedString *attributedString (NSString *string,
   PresenceEntity *user = [[notification userInfo] valueForKey: @"user"];
   
   [messageGroup setStringValue: user.name];
+}
+
+- (void) tickerBeganEditing: (NSNotification *) notification
+{
+  if (!tickerIsEditing)
+  {
+    tickerIsEditing = YES;
+    
+    [[NSNotificationCenter defaultCenter] 
+       postNotificationName: TickerMessageStartedEditingNotification 
+       object: self userInfo: nil];
+  }
+}
+
+- (void) tickerEndedEditing: (NSNotification *) notification
+{
+  if (tickerIsEditing)
+  {
+    tickerIsEditing = NO;
+    
+    [[NSNotificationCenter defaultCenter] 
+       postNotificationName: TickerMessageStoppedEditingNotification 
+       object: self userInfo: nil];
+  }
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
@@ -416,6 +454,13 @@ static NSAttributedString *attributedString (NSString *string,
   self.allowInsecure = YES;
   
   [messageText setString: @""];
+
+  // flip focus from/to message text to fire start/end editing events
+  if ([[messageText window] firstResponder] == messageText)
+  {
+    [[messageGroup window] makeFirstResponder: messageGroup];
+    [[messageText window] makeFirstResponder: messageText];
+  }
 }
 
 - (void) setAttachedURLPanelHidden: (BOOL) hidden

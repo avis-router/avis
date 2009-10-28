@@ -46,6 +46,11 @@ static inline PresenceStatus *status (OnlineStatus statusCode, NSString *text)
   return status (COFFEE,  @"Coffee break!");
 }
 
++ (PresenceStatus *) composingStatus
+{
+  return status (ONLINE,  @"Composing...");
+}
+
 + (PresenceStatus *) awayStatus
 {
   return status (UNAVAILABLE, @"Away");
@@ -54,6 +59,11 @@ static inline PresenceStatus *status (OnlineStatus statusCode, NSString *text)
 + (PresenceStatus *) inactiveStatus
 {
   return status (MAYBE_UNAVAILABLE, @"Inactive");
+}
+
++ (PresenceStatus *) status: (OnlineStatus) code text: (NSString *) text
+{
+  return status (code, text);
 }
 
 - (void) dealloc

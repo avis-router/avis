@@ -1,6 +1,8 @@
 #import <Cocoa/Cocoa.h>
 
 extern NSString * TickerMessageReceivedNotification;
+extern NSString * TickerMessageStartedEditingNotification;
+extern NSString * TickerMessageStoppedEditingNotification;
 
 @class ElvinConnection;
 @class RolloverButton;
@@ -25,6 +27,7 @@ extern NSString * TickerMessageReceivedNotification;
   BOOL              allowPublic;
   BOOL              allowInsecure;
   BOOL              canSend;
+  BOOL              tickerIsEditing;
 }
 
 @property (readwrite, retain) IBOutlet NSString * subscription;
