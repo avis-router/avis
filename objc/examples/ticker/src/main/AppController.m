@@ -200,6 +200,11 @@
   presence.presenceStatus = [PresenceStatus coffeeStatus];
 }
 
+- (IBAction) presenceSetDoNotDisturb: (id) sender
+{
+  presence.presenceStatus = [PresenceStatus doNotDisturbStatus];
+}
+
 /**
  * Set the selected state of a presence status menu item to reflect the 
  * current status.
@@ -229,6 +234,10 @@
   {
     return [self setPresenceItemSelected: item 
                                   status: [PresenceStatus coffeeStatus]];
+  }else if (action == @selector (presenceSetDoNotDisturb:))
+  {
+    return [self setPresenceItemSelected: item 
+                                  status: [PresenceStatus doNotDisturbStatus]];
   } else
   {
     return YES;

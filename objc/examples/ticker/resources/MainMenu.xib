@@ -661,10 +661,19 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
-								<object class="NSMenuItem" id="110325781">
+								<object class="NSMenuItem" id="965076749">
 									<reference key="NSMenu" ref="441186761"/>
 									<string key="NSTitle">Coffee Break!</string>
 									<string key="NSKeyEquiv">c</string>
+									<int key="NSKeyEquivModMask">1310720</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
+								<object class="NSMenuItem" id="479614206">
+									<reference key="NSMenu" ref="441186761"/>
+									<string key="NSTitle">Do Not Disturb</string>
+									<string key="NSKeyEquiv">d</string>
 									<int key="NSKeyEquivModMask">1310720</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="35465992"/>
@@ -1164,9 +1173,17 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">presenceSetCoffee:</string>
 						<reference key="source" ref="940462991"/>
-						<reference key="destination" ref="110325781"/>
+						<reference key="destination" ref="965076749"/>
 					</object>
 					<int key="connectionID">543</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">presenceSetDoNotDisturb:</string>
+						<reference key="source" ref="940462991"/>
+						<reference key="destination" ref="479614206"/>
+					</object>
+					<int key="connectionID">545</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1746,7 +1763,8 @@
 							<reference ref="714659446"/>
 							<reference ref="102271120"/>
 							<reference ref="43570315"/>
-							<reference ref="110325781"/>
+							<reference ref="965076749"/>
+							<reference ref="479614206"/>
 						</object>
 						<reference key="parent" ref="29306163"/>
 					</object>
@@ -1792,7 +1810,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">542</int>
-						<reference key="object" ref="110325781"/>
+						<reference key="object" ref="965076749"/>
+						<reference key="parent" ref="441186761"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">544</int>
+						<reference key="object" ref="479614206"/>
 						<reference key="parent" ref="441186761"/>
 					</object>
 				</object>
@@ -1950,6 +1973,7 @@
 					<string>535.IBPluginDependency</string>
 					<string>536.IBPluginDependency</string>
 					<string>542.IBPluginDependency</string>
+					<string>544.IBPluginDependency</string>
 					<string>56.IBPluginDependency</string>
 					<string>56.ImportedFromIB2</string>
 					<string>57.IBEditorWindowLastContentRect</string>
@@ -2115,7 +2139,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{614, 743}, {180, 93}}</string>
+					<string>{{614, 723}, {193, 113}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2168,7 +2193,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">543</int>
+			<int key="maxID">545</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2182,6 +2207,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>presenceSetAway:</string>
 							<string>presenceSetCoffee:</string>
+							<string>presenceSetDoNotDisturb:</string>
 							<string>presenceSetOnline:</string>
 							<string>refreshPresence:</string>
 							<string>showPreferencesWindow:</string>
@@ -2190,6 +2216,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
