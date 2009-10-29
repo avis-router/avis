@@ -61,6 +61,11 @@ static inline PresenceStatus *status (OnlineStatus statusCode, NSString *text)
   return status (MAYBE_UNAVAILABLE, @"Inactive");
 }
 
++ (PresenceStatus *) doNotDisturbStatus
+{
+  return status (UNAVAILABLE, @"Please do not disturb");
+}
+
 + (PresenceStatus *) status: (OnlineStatus) code text: (NSString *) text
 {
   return status (code, text);

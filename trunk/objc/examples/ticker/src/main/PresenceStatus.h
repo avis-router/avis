@@ -15,6 +15,7 @@ typedef enum
 + (PresenceStatus *) onlineStatus;
 + (PresenceStatus *) awayStatus;
 + (PresenceStatus *) composingStatus;
++ (PresenceStatus *) doNotDisturbStatus;
 + (PresenceStatus *) coffeeStatus;
 + (PresenceStatus *) offlineStatus;
 + (PresenceStatus *) inactiveStatus;

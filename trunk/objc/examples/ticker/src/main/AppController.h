@@ -37,4 +37,6 @@
 
 - (IBAction) presenceSetCoffee: (id) sender;
 
+- (IBAction) presenceSetDoNotDisturb: (id) sender;
+
 @end

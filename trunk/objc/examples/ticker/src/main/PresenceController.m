@@ -85,6 +85,7 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
     [NSArray arrayWithObjects:
       [PresenceStatus onlineStatus], 
       [PresenceStatus awayStatus],
+      [PresenceStatus doNotDisturbStatus],
       [PresenceStatus coffeeStatus], nil];
   
   return statuses;
