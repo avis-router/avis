@@ -51,9 +51,8 @@ C Library
 
 The Avis client library for C is a very small, portable C library for
 accessing Elvin router services from native applications. It is
-actively supported on Mac OS X (10.4 and 10.5), Linux (Fedora Core 3
-and later), Solaris (5.9 and later), and Microsoft Windows (XP and
-later).
+actively supported on Mac OS X (10.4 - 10.6), Linux, Solaris
+(5.9 and later), and Microsoft Windows (XP and later).
 
  * **[Download the C client library source][c-client-src]** (release
    ${c-client.version}).

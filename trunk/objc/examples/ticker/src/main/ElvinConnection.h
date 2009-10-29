@@ -28,6 +28,8 @@ extern NSString *ElvinConnectionWillCloseNotification;
 
 @property (readwrite, copy) NSString *userAgent;
 
++ (NSString *) escapedSubscriptionString: (NSString *) str;
+
 - (id) initWithUrl: (NSString *) url;
 
 - (void) disconnect;
