@@ -48,8 +48,7 @@ static NSString *computerName ()
   [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
             forKey: PrefPresenceGroups];
   [defaults setObject: [NSArray array] forKey: PrefPresenceBuddies];
-  [defaults setObject: @"Group != 'lawley-rcvstore'" 
-               forKey: PrefTickerSubscription];
+  [defaults setObject: @"" forKey: PrefTickerSubscription];
   
   // presence column sorting
   NSSortDescriptor *statusDescriptor = 

@@ -14,6 +14,15 @@
 
 #define MAX_GROWL_MESSAGE_LENGTH 200
 
+static inline NSString *escapeSubscriptionString (NSString *str)
+{
+  str = [str stringByReplacingOccurrencesOfString: @"\\" withString: @"\\\\"];
+  
+  str = [str stringByReplacingOccurrencesOfString: @"'" withString: @"\\'"];
+  
+  return str;
+}
+
 #pragma mark Declare Private Methods
 
 @interface AppController (Private)
@@ -22,6 +31,7 @@
   - (void) handlePresenceChange: (NSNotification *) notification;
   - (void) registerForPresenceChangesAfterDelay;
   - (void) unregisterForPresenceChanges;
+  - (NSString *) createTickerSubscription;
 @end
 
 @implementation AppController
@@ -125,7 +135,9 @@
   [userPreferences addObserver: self forKeyPath: @"values.ElvinURL" 
                    options: 0 context: self];
   [userPreferences addObserver: self forKeyPath: @"values.TickerSubscription" 
-                       options: 0 context: self];
+                   options: 0 context: self];
+  [userPreferences addObserver: self forKeyPath: @"values.TickerGroups" 
+                   options: 0 context: self];
                    
   [elvin connect];
 }
@@ -150,13 +162,50 @@
 
 #pragma mark -
 
+- (NSString *) createTickerSubscription
+{
+  NSArray *groups = prefArray (PrefTickerGroups);
+  NSString *subscription = trim (prefString (PrefTickerSubscription));
+  
+  NSMutableString *fullSubscription = 
+    [NSMutableString stringWithString: 
+       @"string (Message) && string (From) && string (Group)"];
+  
+  if ([groups count] > 0 || [subscription length] > 0)
+    [fullSubscription appendString: @" && ("];
+  
+  if ([groups count] > 0)
+  {
+    [fullSubscription appendString: @"equals (Group"];
+    
+    for (NSString *group in groups)
+      [fullSubscription appendFormat: @", '%@'",
+         escapeSubscriptionString (group)];
+    
+    [fullSubscription appendString: @")"];
+  }
+  
+  if ([subscription length] > 0)
+  {
+    if ([groups count] > 0)
+      [fullSubscription appendString: @" || "];
+  
+    [fullSubscription appendFormat: @"(%@)", subscription];
+  }
+  
+  if ([groups count] > 0 || [subscription length] > 0)
+    [fullSubscription appendString: @")"];
+  
+  return fullSubscription;
+}
+
 - (IBAction) showTickerWindow: (id) sender
 {
   if (!tickerController)
   {
     tickerController = 
       [[TickerController alloc] initWithElvin: elvin 
-        subscription: trim (prefString (PrefTickerSubscription))];
+         subscription: [self createTickerSubscription]];
   }
   
   [tickerController showWindow: self];
@@ -256,9 +305,13 @@
   if (context == self)
   {
     if ([keyPath hasSuffix: PrefElvinURL])
+    {
       elvin.elvinUrl = prefString (PrefElvinURL);
-    else if ([keyPath hasSuffix: PrefTickerSubscription])
-      tickerController.subscription = prefString (PrefTickerSubscription);
+    } else if ([keyPath hasSuffix: PrefTickerSubscription] ||
+               [keyPath hasSuffix: PrefTickerGroups])
+    {
+      tickerController.subscription = [self createTickerSubscription];
+    }
   } else 
   {
     [super observeValueForKeyPath: keyPath ofObject: object change: change 
