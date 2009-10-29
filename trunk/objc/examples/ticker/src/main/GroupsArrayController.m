@@ -1,8 +1,8 @@
-#import "PresenceGroupsController.h"
+#import "GroupsArrayController.h"
 
 #import "utils.h"
 
-@implementation PresenceGroupsController
+@implementation GroupsArrayController
 
 - (void) awakeFromNib
 {
