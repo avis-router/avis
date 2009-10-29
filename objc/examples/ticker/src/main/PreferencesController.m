@@ -43,6 +43,8 @@ static NSString *computerName ()
   
   [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
   [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];  
+  [defaults setObject: [NSArray arrayWithObject: @"Chat"] 
+               forKey: PrefTickerGroups];
   [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
             forKey: PrefPresenceGroups];
   [defaults setObject: [NSArray array] forKey: PrefPresenceBuddies];
@@ -188,6 +190,15 @@ static NSString *computerName ()
 
 #pragma mark Add presence group stuff
 
+- (IBAction) addPresenceGroup: (id) sender
+{
+  [NSApp beginSheet: presenceGroupAddSheet
+     modalForWindow: [self window]
+      modalDelegate: self
+     didEndSelector: @selector (addPresenceGroupSheetDidEnd:returnCode:contextInfo:)
+        contextInfo: nil];
+}
+
 - (void) addPresenceGroupSheetDidEnd: (NSWindow *) sheet 
                           returnCode: (int) returnCode 
                          contextInfo: (void *) contextInfo
@@ -206,13 +217,30 @@ static NSString *computerName ()
   [NSApp endSheet: presenceGroupAddSheet returnCode: [sender tag]];
 }
 
-- (IBAction) addPresenceGroup: (id) sender
+#pragma mark Add ticker group stuff
+
+- (IBAction) addTickerGroup: (id) sender
 {
-  [NSApp beginSheet: presenceGroupAddSheet
+  [NSApp beginSheet: tickerGroupAddSheet
      modalForWindow: [self window]
       modalDelegate: self
-     didEndSelector: @selector (addPresenceGroupSheetDidEnd:returnCode:contextInfo:)
+     didEndSelector: @selector (addTickerGroupSheetDidEnd:returnCode:contextInfo:)
         contextInfo: nil];
+}
+
+- (IBAction) closeTickerGroupAddSheet: (id) sender
+{
+  [NSApp endSheet: tickerGroupAddSheet returnCode: [sender tag]];
+}
+
+- (void) addTickerGroupSheetDidEnd: (NSWindow *) sheet 
+                        returnCode: (int) returnCode 
+                       contextInfo: (void *) contextInfo
+{
+  if (returnCode == NSOKButton)
+    [tickerGroupsController addObject: [addTickerGroupTextField stringValue]];
+  
+  [sheet orderOut: self];
 }
 
 @end

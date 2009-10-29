@@ -18,7 +18,7 @@ NSString *uuidString ()
   
   createUUID (uuid);
   
-  return [NSString stringWithCString: uuid];
+  return [NSString stringWithCString: uuid encoding: NSASCIIStringEncoding];
 }
 
 void randomiseBytes (unsigned char *bytes, NSUInteger length)

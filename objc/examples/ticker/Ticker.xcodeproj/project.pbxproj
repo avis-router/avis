@@ -35,7 +35,7 @@
 		C923924E0F7F7BC30083FC13 /* PresenceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C923922F0F7F7BC30083FC13 /* PresenceConnection.m */; };
 		C923924F0F7F7BC30083FC13 /* PresenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392310F7F7BC30083FC13 /* PresenceController.m */; };
 		C92392500F7F7BC30083FC13 /* PresenceEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392330F7F7BC30083FC13 /* PresenceEntity.m */; };
-		C92392520F7F7BC30083FC13 /* PresenceGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392370F7F7BC30083FC13 /* PresenceGroupsController.m */; };
+		C92392520F7F7BC30083FC13 /* GroupsArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392370F7F7BC30083FC13 /* GroupsArrayController.m */; };
 		C92392530F7F7BC30083FC13 /* PresenceStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392390F7F7BC30083FC13 /* PresenceStatus.m */; };
 		C92392540F7F7BC30083FC13 /* PresenceWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */; };
 		C92392550F7F7BC30083FC13 /* RHSystemIdleTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = C923923C0F7F7BC30083FC13 /* RHSystemIdleTimer.m */; };
@@ -147,8 +147,8 @@
 		C92392310F7F7BC30083FC13 /* PresenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceController.m; path = src/main/PresenceController.m; sourceTree = "<group>"; };
 		C92392320F7F7BC30083FC13 /* PresenceEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceEntity.h; path = src/main/PresenceEntity.h; sourceTree = "<group>"; };
 		C92392330F7F7BC30083FC13 /* PresenceEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceEntity.m; path = src/main/PresenceEntity.m; sourceTree = "<group>"; };
-		C92392360F7F7BC30083FC13 /* PresenceGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceGroupsController.h; path = src/main/PresenceGroupsController.h; sourceTree = "<group>"; };
-		C92392370F7F7BC30083FC13 /* PresenceGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceGroupsController.m; path = src/main/PresenceGroupsController.m; sourceTree = "<group>"; };
+		C92392360F7F7BC30083FC13 /* GroupsArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupsArrayController.h; path = src/main/GroupsArrayController.h; sourceTree = "<group>"; };
+		C92392370F7F7BC30083FC13 /* GroupsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GroupsArrayController.m; path = src/main/GroupsArrayController.m; sourceTree = "<group>"; };
 		C92392380F7F7BC30083FC13 /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceStatus.h; path = src/main/PresenceStatus.h; sourceTree = "<group>"; };
 		C92392390F7F7BC30083FC13 /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceStatus.m; path = src/main/PresenceStatus.m; sourceTree = "<group>"; };
 		C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceWindow.xib; path = src/main/PresenceWindow.xib; sourceTree = "<group>"; };
@@ -261,8 +261,8 @@
 				C923922A0F7F7BC30083FC13 /* Preferences.m */,
 				C923922C0F7F7BC30083FC13 /* PreferencesController.h */,
 				C923922D0F7F7BC30083FC13 /* PreferencesController.m */,
-				C92392360F7F7BC30083FC13 /* PresenceGroupsController.h */,
-				C92392370F7F7BC30083FC13 /* PresenceGroupsController.m */,
+				C92392360F7F7BC30083FC13 /* GroupsArrayController.h */,
+				C92392370F7F7BC30083FC13 /* GroupsArrayController.m */,
 				C9CC2D250F83266D009FC112 /* KeysArrayController.h */,
 				C9CC2D260F83266D009FC112 /* KeysArrayController.m */,
 				C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */,
@@ -572,7 +572,7 @@
 				C923924E0F7F7BC30083FC13 /* PresenceConnection.m in Sources */,
 				C923924F0F7F7BC30083FC13 /* PresenceController.m in Sources */,
 				C92392500F7F7BC30083FC13 /* PresenceEntity.m in Sources */,
-				C92392520F7F7BC30083FC13 /* PresenceGroupsController.m in Sources */,
+				C92392520F7F7BC30083FC13 /* GroupsArrayController.m in Sources */,
 				C92392530F7F7BC30083FC13 /* PresenceStatus.m in Sources */,
 				C92392550F7F7BC30083FC13 /* RHSystemIdleTimer.m in Sources */,
 				C92392560F7F7BC30083FC13 /* RolloverButton.m in Sources */,

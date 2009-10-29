@@ -5,6 +5,7 @@ extern NSString *PrefOnlineUserUUID;
 extern NSString *PrefElvinURL;
 extern NSString *PrefDefaultSendGroup;
 extern NSString *PrefPresenceGroups;
+extern NSString *PrefTickerGroups;
 extern NSString *PrefPresenceBuddies;
 extern NSString *PrefTickerSubscription;
 extern NSString *PrefPresenceColumnSorting;
