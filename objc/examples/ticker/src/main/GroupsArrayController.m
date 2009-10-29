@@ -22,7 +22,7 @@
     if ([g localizedCaseInsensitiveCompare: group] == NSOrderedSame)
       return YES;
   }
-  
+
   return NO;
 }
 
