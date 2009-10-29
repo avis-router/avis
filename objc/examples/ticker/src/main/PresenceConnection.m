@@ -41,8 +41,8 @@ static NSString *listToBarDelimitedString (NSArray *list)
   for (NSString *item in list)
   {
     [string appendString: @"|"];
-    // TODO escape item
-    [string appendString: [item lowercaseString]];
+    [string appendString: 
+      [ElvinConnection escapedSubscriptionString: [item lowercaseString]]];
   }
   
   [string appendString: @"|"];
@@ -57,9 +57,9 @@ static NSString *listToParameterString (NSArray *list)
 {
   NSMutableString *string = [NSMutableString string];
   
-  // TODO escape item
   for (NSString *item in list)
-    [string appendFormat: @", \"|%@|\"", [item lowercaseString]];
+    [string appendFormat: @", \"|%@|\"", 
+      [ElvinConnection escapedSubscriptionString: [item lowercaseString]]];
 
   return string;
 }
@@ -206,15 +206,16 @@ static NSString *listToParameterString (NSArray *list)
 
 - (NSString *) presenceRequestSubscription
 {
-  NSString *userName = prefString (PrefOnlineUserName);
+  NSString *userName = 
+    [ElvinConnection escapedSubscriptionString: 
+      prefString (PrefOnlineUserName)];
   
-  // TODO escape user name
   NSMutableString *expr = 
     [NSMutableString stringWithFormat: 
-     @"Presence-Protocol < 2000 && string (Presence-Request) && \
-     Requestor != \"%@\" && ", userName];
+     @"Presence-Protocol < 2000 && string (Presence-Request) && Requestor != '%@' && ", 
+     userName];
      
-  [expr appendFormat: @"(contains (fold-case (Users), \"|%@|\")", 
+  [expr appendFormat: @"(contains (fold-case (Users), '|%@|')", 
     [userName lowercaseString]];
   
   NSArray *groups = prefArray (PrefPresenceGroups);
@@ -240,10 +241,10 @@ static NSString *listToParameterString (NSArray *list)
 
 - (NSString *) presenceInfoSubscription
 {
-  // TODO escape user name
   NSMutableString *expr = [NSMutableString stringWithFormat: 
-    @"Presence-Protocol < 2000 && string (Groups) && string (User) && \
-      Client-Id != \"%@\" ", prefString (PrefOnlineUserUUID)];
+    @"Presence-Protocol < 2000 && string (Groups) && string (User) && Client-Id != '%@'", 
+      [ElvinConnection escapedSubscriptionString: 
+        prefString (PrefOnlineUserUUID)]];
   
   // TODO this subs to all groups when array is empty
   NSArray *groups = prefArray (PrefPresenceGroups);

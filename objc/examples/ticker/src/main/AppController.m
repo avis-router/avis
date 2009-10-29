@@ -14,15 +14,6 @@
 
 #define MAX_GROWL_MESSAGE_LENGTH 200
 
-static inline NSString *escapeSubscriptionString (NSString *str)
-{
-  str = [str stringByReplacingOccurrencesOfString: @"\\" withString: @"\\\\"];
-  
-  str = [str stringByReplacingOccurrencesOfString: @"'" withString: @"\\'"];
-  
-  return str;
-}
-
 #pragma mark Declare Private Methods
 
 @interface AppController (Private)
@@ -180,7 +171,7 @@ static inline NSString *escapeSubscriptionString (NSString *str)
     
     for (NSString *group in groups)
       [fullSubscription appendFormat: @", '%@'",
-         escapeSubscriptionString (group)];
+         [ElvinConnection escapedSubscriptionString: group]];
     
     [fullSubscription appendString: @")"];
   }

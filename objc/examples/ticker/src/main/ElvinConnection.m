@@ -98,6 +98,15 @@ static Keys *notificationKeysFor (NSArray *keys);
 
 @implementation ElvinConnection
 
++ (NSString *) escapedSubscriptionString: (NSString *) str
+{
+  str = [str stringByReplacingOccurrencesOfString: @"\\" withString: @"\\\\"];
+  
+  str = [str stringByReplacingOccurrencesOfString: @"'" withString: @"\\'"];
+  
+  return str;
+}
+
 - (id) initWithUrl: (NSString *) url
 {
   if (![super init])

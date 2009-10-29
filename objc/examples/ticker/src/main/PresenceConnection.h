@@ -9,17 +9,17 @@ extern NSString *PresenceStatusChangedNotification;
 
 @interface PresenceConnection : NSObject
 {
-  ElvinConnection * elvin;
-  NSMutableSet *    entities;
-  PresenceStatus *  presenceStatus;
-  RHSystemIdleTimer *idleTimer;
+  ElvinConnection    * elvin;
+  NSMutableSet       * entities;
+  PresenceStatus     * presenceStatus;
+  RHSystemIdleTimer  * idleTimer;
 }
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection;
 
 - (void) refresh;
 
-@property (readonly, assign) IBOutlet  NSMutableSet * entities;
+@property (readonly, assign)  IBOutlet NSMutableSet   * entities;
 @property (readwrite, retain) IBOutlet PresenceStatus * presenceStatus;
 
 @end
