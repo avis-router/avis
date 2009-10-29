@@ -8,9 +8,6 @@
 #import "PresenceEntity.h"
 #import "Preferences.h"
 
-#define TICKER_SUBSCRIPTION \
-  @"string (Message) && string (Group) && string (From)"
-
 NSString * TickerMessageReceivedNotification = 
   @"TickerMessageReceivedNotification";
 
@@ -377,28 +374,16 @@ static NSAttributedString *attributedString (NSString *string,
     
     subscription = [newSubscription retain];
     
-    NSString *fullSubscription;
-
-    if ([subscription length] == 0)
-    {
-      fullSubscription = TICKER_SUBSCRIPTION;
-    } else
-    {
-      fullSubscription = 
-        [NSString stringWithFormat: @"%@ && (%@)", 
-          TICKER_SUBSCRIPTION, subscription];
-    }
-    
-    TRACE (@"Full ticker subscription: %@", fullSubscription);
+    TRACE (@"Full ticker subscription: %@", subscription);
     
     if (subscriptionContext)
     {
       [elvin resubscribe: subscriptionContext 
-        usingSubscription: fullSubscription];
+        usingSubscription: subscription];
     } else
     {
       subscriptionContext = 
-        [elvin subscribe: fullSubscription withDelegate: self 
+        [elvin subscribe: subscription withDelegate: self 
           usingSelector: @selector (handleNotify:)];
     }
   }
