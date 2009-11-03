@@ -460,7 +460,13 @@
   if (++tickerEditCount == 1)
   {
     if (presence.presenceStatus.statusCode != UNAVAILABLE)
-      presence.presenceStatus = [PresenceStatus composingStatus];
+    {
+      PresenceStatus *composingStatus = [PresenceStatus composingStatus];
+      
+      composingStatus.changedAt = presence.presenceStatus.changedAt;
+      
+      presence.presenceStatus = composingStatus;
+    }
   }
 }
 
@@ -469,7 +475,13 @@
   if (--tickerEditCount == 0)
   {
     if ([presence.presenceStatus isEqual: [PresenceStatus composingStatus]])
-      presence.presenceStatus = [PresenceStatus onlineStatus];
+    {
+      PresenceStatus *onlineStatus = [PresenceStatus onlineStatus];
+      
+      onlineStatus.changedAt = presence.presenceStatus.changedAt;
+      
+      presence.presenceStatus = onlineStatus; 
+    }
   }
 }
 

@@ -69,9 +69,15 @@ static NSAttributedString *attributedString (NSString *string,
     
   }
   
+  NSFont *baseFont = [defaultAttrs valueForKey: NSFontAttributeName];
+  NSFont *durationFont = 
+    [[NSFontManager sharedFontManager] 
+      convertFont: baseFont toSize: ([baseFont pointSize] - 2)];
+  
   NSDictionary *durationAttrs = 
-    [NSDictionary dictionaryWithObject: color (153, 153, 153) 
-                                forKey: NSForegroundColorAttributeName];
+    [NSDictionary dictionaryWithObjectsAndKeys: 
+     color (153, 153, 153), NSForegroundColorAttributeName,
+     durationFont, NSFontAttributeName, nil];
   
   NSMutableAttributedString *string = 
     [[NSMutableAttributedString new] autorelease]; 
