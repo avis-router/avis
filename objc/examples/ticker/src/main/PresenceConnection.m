@@ -98,6 +98,8 @@ static NSString *listToParameterString (NSArray *list)
   entities = [[NSMutableSet setWithCapacity: 5] retain];
   presenceStatus = [[PresenceStatus onlineStatus] retain];
   
+  presenceStatus.changedAt = [NSDate date];
+  
   // subscribe to incoming presence info
   // TODO resub on user name/groups change
   // TODO re-emit presence on groups change
@@ -178,7 +180,15 @@ static NSString *listToParameterString (NSArray *list)
 {
   if ([[NSThread currentThread] isMainThread])
   {
-    [self setPresenceStatusSilently: [PresenceStatus onlineStatus]];
+    if (presenceStatus.statusCode == OFFLINE)
+    {
+      [self willChangeValueForKey: @"presenceStatus"];
+    
+      [self setPresenceStatusSilently: [PresenceStatus onlineStatus]];
+      
+      [self didChangeValueForKey: @"presenceStatus"];
+    }
+    
     [self clearEntities];
     [self requestPresenceInfo];
     [self emitPresenceInfo];
@@ -194,7 +204,9 @@ static NSString *listToParameterString (NSArray *list)
   if ([[NSThread currentThread] isMainThread])
   {
     [self clearEntities];
-    [self setPresenceStatus: [PresenceStatus offlineStatus]];
+    
+    if (presenceStatus.statusCode == ONLINE)
+      [self setPresenceStatus: [PresenceStatus offlineStatus]];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
