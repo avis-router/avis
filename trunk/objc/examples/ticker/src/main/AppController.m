@@ -326,16 +326,30 @@
 
 - (void) handleSleep: (void *) unused
 {
-  NSLog (@"Disconnect on sleep");
-  
-  [elvin disconnect];
+  if ([[NSThread currentThread] isMainThread])
+  {
+    NSLog (@"Disconnect on sleep");
+    
+    [elvin disconnect];
+  } else
+  {
+    [self performSelectorOnMainThread: @selector (handleSleep:) 
+                           withObject: nil waitUntilDone: NO];
+  }
 }
 
 - (void) handleWake: (void *) unused
 {
-  NSLog (@"Reconnect on wake");
-  
-  [elvin connect];
+  if ([[NSThread currentThread] isMainThread])
+  {
+    NSLog (@"Reconnect on wake");
+    
+    [elvin connect];
+  } else
+  {
+    [self performSelectorOnMainThread: @selector (handleWake:) 
+                           withObject: nil waitUntilDone: NO];
+  }
 }
 
 - (void) handleElvinOpen: (void *) unused
