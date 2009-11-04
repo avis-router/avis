@@ -617,7 +617,7 @@ static NSAttributedString *attributedString (NSString *string,
     
     [messageGroup setStringValue: message->group];
     
-    self.inReplyTo = message->messageId;
+    self.inReplyTo = message;
     self.allowPublic = message->public;
     self.allowInsecure = !message->secure;
     

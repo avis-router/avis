@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 
 #import "PresenceStatus.h"
+#import "TickerMessage.h"
 
 #include <avis/elvin.h>
 
@@ -41,7 +42,7 @@ extern NSString *ElvinConnectionWillCloseNotification;
 - (void) sendTickerMessage: (NSString *) messageText 
                 fromSender: (NSString *) from
                    toGroup: (NSString *) group
-                 inReplyTo: (NSString *) replyToId 
+                 inReplyTo: (TickerMessage *) replyTo 
                attachedURL: (NSURL *) url
                 sendPublic: (BOOL) isPublic
               sendInsecure: (BOOL) allowInsecure;

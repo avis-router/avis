@@ -5,6 +5,7 @@
   @public
   
   NSString * messageId;
+  NSString * threadId;
   NSString * from;
   NSString * message;
   NSString * group;
