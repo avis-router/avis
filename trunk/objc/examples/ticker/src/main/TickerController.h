@@ -6,6 +6,7 @@ extern NSString * TickerMessageStoppedEditingNotification;
 
 @class ElvinConnection;
 @class RolloverButton;
+@class TickerMessage;
 
 @interface TickerController : NSWindowController
 {
@@ -23,19 +24,19 @@ extern NSString * TickerMessageStoppedEditingNotification;
   ElvinConnection * elvin;
   NSString *        subscription;
   id                subscriptionContext;
-  NSString *        inReplyTo;
+  TickerMessage   * inReplyTo;
   BOOL              allowPublic;
   BOOL              allowInsecure;
   BOOL              canSend;
   BOOL              tickerIsEditing;
 }
 
-@property (readwrite, retain) IBOutlet NSString * subscription;
-@property (readwrite, retain) IBOutlet NSURL *    attachedURL;
-@property (readwrite, retain) IBOutlet NSString * inReplyTo;
-@property (readwrite, assign) IBOutlet BOOL       allowPublic;
-@property (readwrite, assign) IBOutlet BOOL       allowInsecure;
-@property (readwrite, assign) IBOutlet BOOL       canSend;
+@property (readwrite, retain) IBOutlet NSString      * subscription;
+@property (readwrite, retain) IBOutlet NSURL         * attachedURL;
+@property (readwrite, retain) IBOutlet TickerMessage * inReplyTo;
+@property (readwrite, assign) IBOutlet BOOL            allowPublic;
+@property (readwrite, assign) IBOutlet BOOL            allowInsecure;
+@property (readwrite, assign) IBOutlet BOOL            canSend;
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection 
         subscription: (NSString *) theSubscription;

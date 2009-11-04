@@ -157,13 +157,23 @@
 {
   NSArray *groups = prefArray (PrefTickerGroups);
   NSString *subscription = trim (prefString (PrefTickerSubscription));
+  NSString *user = 
+    [ElvinConnection escapedSubscriptionString: prefString (PrefOnlineUserName)];
   
   NSMutableString *fullSubscription = 
     [NSMutableString stringWithString: 
-       @"string (Message) && string (From) && string (Group)"];
+       @"(string (Message) && string (From) && string (Group))"];
+  
+  // user's messages
+  
+  [fullSubscription appendFormat: 
+     @" && ((From == '%@' || Group == '%@' || Thread-Id == '%@')",
+     user, user, user];
+  
+  // groups
   
   if ([groups count] > 0 || [subscription length] > 0)
-    [fullSubscription appendString: @" && ("];
+    [fullSubscription appendString: @" || ("];
   
   if ([groups count] > 0)
   {
@@ -176,6 +186,8 @@
     [fullSubscription appendString: @")"];
   }
   
+  // extra subscription
+  
   if ([subscription length] > 0)
   {
     if ([groups count] > 0)
@@ -186,6 +198,8 @@
   
   if ([groups count] > 0 || [subscription length] > 0)
     [fullSubscription appendString: @")"];
+  
+  [fullSubscription appendString: @")"];
   
   return fullSubscription;
 }

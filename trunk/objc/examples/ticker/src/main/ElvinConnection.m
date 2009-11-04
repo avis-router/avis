@@ -1,5 +1,7 @@
 #import "ElvinConnection.h"
 
+#import "TickerMessage.h"
+
 #import "utils.h"
 
 NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
@@ -288,7 +290,7 @@ void notification_listener (Subscription *sub,
 - (void) sendTickerMessage: (NSString *) messageText 
                 fromSender: (NSString *) from
                    toGroup: (NSString *) group
-                 inReplyTo: (NSString *) replyToId 
+                 inReplyTo: (TickerMessage *) replyTo
                attachedURL: (NSURL *) url
                 sendPublic: (BOOL) isPublic
               sendInsecure: (BOOL) isInsecure
@@ -306,9 +308,24 @@ void notification_listener (Subscription *sub,
   attributes_set_string (message, "User-Agent", [userAgent UTF8String]);
   attributes_set_int32  (message, "org.tickertape.message", 3001);
   
-  if (replyToId != nil)
-    attributes_set_string (message, "In-Reply-To", [replyToId UTF8String]);
+  NSString *threadId = nil;
+  
+  if (replyTo)
+  {
+    attributes_set_string (message, "In-Reply-To", 
+                           [replyTo->messageId UTF8String]);
+    
+    threadId = replyTo->threadId;
+  }
 
+  // for messages to personal groups, use my user name as a Thread-Id to 
+  // allow me to see replies regardless of reply group
+  if (!threadId && [group rangeOfString: @"@"].location != NSNotFound)
+    threadId = from;
+  
+  if (threadId)
+    attributes_set_string (message, "Thread-Id", [threadId UTF8String]);
+  
   if (isPublic)
     attributes_set_string (message, "Distribution", "world");
   
