@@ -334,7 +334,7 @@
   } else
   {
     [self performSelectorOnMainThread: @selector (handleSleep:) 
-                           withObject: nil waitUntilDone: NO];
+                           withObject: nil waitUntilDone: YES];
   }
 }
 
