@@ -24,6 +24,9 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
 static void resubscribe (Elvin *elvin, SubscriptionContext *context);
 
+static void notifySubscriptionError (Elvin *elvin, 
+                                     SubscriptionContext *context);
+
 static void close_listener (Elvin *elvin, CloseReason reason,
                             const char *message,
                             ElvinConnection *self);
@@ -49,17 +52,22 @@ static Keys *notificationKeysFor (NSArray *keys);
   NSString *     subscriptionExpr;
   Subscription * subscription;
   id             delegate;
-  SEL            selector;
+  SEL            onNotify;
+  SEL            onError;
 }
 
 - (void) deliverNotification: (NSDictionary *) notification;
-  
+
+- (void) deliverError: (NSError *) error;
+
 @end
 
 @implementation SubscriptionContext
 
 + (id) contextFor: (NSString *) newSubscriptionExpr 
-      delegate: (id) newDelegate selector: (SEL) newSelector
+         delegate: (id) delegate
+         onNotify: (SEL) onNotify
+          onError: (SEL) onError
 {
   SubscriptionContext *context = [[SubscriptionContext new] retain];
   
@@ -67,8 +75,9 @@ static Keys *notificationKeysFor (NSArray *keys);
     return nil;
   
   context->subscriptionExpr = [newSubscriptionExpr retain];
-  context->delegate = newDelegate;
-  context->selector = newSelector;
+  context->delegate = delegate;
+  context->onNotify = onNotify;
+  context->onError = onError;
   context->subscription = nil;
   
   return context;
@@ -83,9 +92,16 @@ static Keys *notificationKeysFor (NSArray *keys);
 
 - (void) deliverNotification: (NSDictionary *) notification
 {
-  [delegate performSelector: selector withObject: notification];
+  [delegate performSelector: onNotify withObject: notification];
   
   [notification release];
+}
+
+- (void) deliverError: (NSError *) error
+{
+  [delegate performSelector: onError withObject: error];
+  
+  [error release];
 }
 
 @end
@@ -182,11 +198,15 @@ static Keys *notificationKeysFor (NSArray *keys);
 #pragma Elvin publish/subscribe
 
 - (id) subscribe: (NSString *) subscriptionExpr
-        withDelegate: (id) delegate usingSelector: (SEL) selector
+    withDelegate: (id) delegate 
+        onNotify: (SEL) onNotify
+         onError: (SEL) onError
 {
   SubscriptionContext *context = 
     [SubscriptionContext contextFor: subscriptionExpr 
-                         delegate: delegate selector: selector];
+                           delegate: delegate 
+                           onNotify: onNotify
+                            onError: onError];
   
   [subscriptions addObject: context];
   
@@ -194,30 +214,6 @@ static Keys *notificationKeysFor (NSArray *keys);
     elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
   
   return context;
-}
-
-- (void) resubscribe: (id) subscriptionContext 
-         usingSubscription: (NSString *) newSubscription
-{
-  SubscriptionContext *context = subscriptionContext;
-  
-  [context->subscriptionExpr release];
-  context->subscriptionExpr = [newSubscription retain];
-  
-  if (elvin_is_open (&elvin))
-    elvin_invoke (&elvin, (InvokeHandler)resubscribe, context);
-}
-
-void resubscribe (Elvin *elvin, SubscriptionContext *context)
-{
-  elvin_subscription_set_expr 
-    (context->subscription, [context->subscriptionExpr UTF8String]);
-
-  if (!elvin_error_ok (&elvin->error))
-  {
-    NSLog (@"Error while trying to resubscribe: %s (%i)", 
-           elvin->error.message, elvin->error.code);
-  }
 }
 
 void subscribe (Elvin *elvin, SubscriptionContext *context)
@@ -234,7 +230,67 @@ void subscribe (Elvin *elvin, SubscriptionContext *context)
   {
     NSLog (@"Error while trying to subscribe: %s (%i)", 
            elvin->error.message, elvin->error.code);
+    
+    notifySubscriptionError (elvin, context);
   }
+}
+
+- (void) resubscribe: (id) subscriptionContext 
+         usingSubscription: (NSString *) newSubscription
+{
+  SubscriptionContext *context = subscriptionContext;
+  
+  [context->subscriptionExpr release];
+  context->subscriptionExpr = [newSubscription retain];
+  
+  if (elvin_is_open (&elvin))
+  {
+    if (context->subscription == NULL)
+      elvin_invoke (&elvin, (InvokeHandler)subscribe, context);
+    else
+      elvin_invoke (&elvin, (InvokeHandler)resubscribe, context);
+  }
+}
+
+void resubscribe (Elvin *elvin, SubscriptionContext *context)
+{
+  elvin_subscription_set_expr 
+    (context->subscription, [context->subscriptionExpr UTF8String]);
+
+  if (!elvin_error_ok (&elvin->error))
+  {
+    NSLog (@"Error while trying to resubscribe: %s (%i)", 
+           elvin->error.message, elvin->error.code);
+    
+    notifySubscriptionError (elvin, context);
+  }
+}
+
+void notifySubscriptionError (Elvin *elvin, SubscriptionContext *context)
+{
+  NSString *message = 
+    [NSString stringWithFormat: 
+      @"You may have entered an invalid subscription in the Preferences.\
+        \n\nMessage from Elvin: %@",
+      [NSString stringWithUTF8String: elvin->error.message]];
+  
+  NSDictionary *info = 
+    [NSDictionary dictionaryWithObjectsAndKeys: 
+       @"Failed to subscribe to ticker messages",
+       NSLocalizedDescriptionKey, 
+       message,
+       NSLocalizedRecoverySuggestionErrorKey, nil];
+  
+  NSError *error =
+    [NSError errorWithDomain: @"elvin" code: elvin->error.code userInfo: info];
+    
+  [error retain];
+  
+  elvin_error_reset (&elvin->error);
+  
+  [context
+    performSelectorOnMainThread: @selector (deliverError:)
+      withObject: error waitUntilDone: NO];
 }
 
 void notification_listener (Subscription *sub, 

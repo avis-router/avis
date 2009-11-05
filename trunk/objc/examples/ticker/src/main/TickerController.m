@@ -63,6 +63,7 @@ static NSAttributedString *attributedString (NSString *string,
            clickedOnLink: (id) link atIndex: (unsigned) charIndex;
   - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
            contextInfo: (void *) contextInfo;
+  - (void) handleSubscribeError: (NSError *) error;
 @end
 
 @implementation TickerController
@@ -384,9 +385,15 @@ static NSAttributedString *attributedString (NSString *string,
     {
       subscriptionContext = 
         [elvin subscribe: subscription withDelegate: self 
-          usingSelector: @selector (handleNotify:)];
+          onNotify: @selector (handleNotify:) 
+           onError: @selector (handleSubscribeError:)];
     }
   }
+}
+
+- (void) handleSubscribeError: (NSError *) error
+{
+  [[messageText window] presentError: error]; 
 }
 
 - (BOOL) canSend
