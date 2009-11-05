@@ -58,7 +58,6 @@
 		C92FE9360F3D06260037FA15 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C92FE9860F3D08D70037FA15 /* PresenceTester.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92FE9850F3D08D70037FA15 /* PresenceTester.xib */; };
 		C92FE9AE0F3D09740037FA15 /* PresenceTesterAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */; };
-		C930AB900FB27F3300B6E043 /* crash_20090504.txt in Resources */ = {isa = PBXBuildFile; fileRef = C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */; };
 		C930AD4B0FB7F23A00B6E043 /* Ticker_512.png in Resources */ = {isa = PBXBuildFile; fileRef = C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */; };
 		C934A7310FB937EC003C2B41 /* Message_Public.png in Resources */ = {isa = PBXBuildFile; fileRef = C934A7300FB937EC003C2B41 /* Message_Public.png */; };
 		C934A8290FC11E61003C2B41 /* TestRelativeDateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C934A8270FC11E61003C2B41 /* TestRelativeDateFormatter.m */; };
@@ -178,7 +177,6 @@
 		C92FE9850F3D08D70037FA15 /* PresenceTester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceTester.xib; path = PresenceTester/PresenceTester.xib; sourceTree = "<group>"; };
 		C92FE9AC0F3D09740037FA15 /* PresenceTesterAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceTesterAppController.h; path = PresenceTester/PresenceTesterAppController.h; sourceTree = "<group>"; };
 		C92FE9AD0F3D09740037FA15 /* PresenceTesterAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceTesterAppController.m; path = PresenceTester/PresenceTesterAppController.m; sourceTree = "<group>"; };
-		C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090504.txt; sourceTree = "<group>"; };
 		C930AD4A0FB7F23A00B6E043 /* Ticker_512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Ticker_512.png; path = Icon/Ticker_512.png; sourceTree = "<group>"; };
 		C934A7300FB937EC003C2B41 /* Message_Public.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Message_Public.png; path = resources/Message_Public.png; sourceTree = "<group>"; };
 		C934A8270FC11E61003C2B41 /* TestRelativeDateFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestRelativeDateFormatter.m; path = src/tests/TestRelativeDateFormatter.m; sourceTree = "<group>"; };
@@ -187,8 +185,6 @@
 		C934A82B0FC11E79003C2B41 /* RelativeDateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RelativeDateFormatter.h; path = src/main/RelativeDateFormatter.h; sourceTree = "<group>"; };
 		C934AA300FC2489D003C2B41 /* PresenceStatusFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceStatusFormatter.m; path = src/main/PresenceStatusFormatter.m; sourceTree = "<group>"; };
 		C934AA310FC2489D003C2B41 /* PresenceStatusFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceStatusFormatter.h; path = src/main/PresenceStatusFormatter.h; sourceTree = "<group>"; };
-		C93D56350F305C6B0005EE00 /* crash_20090128.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090128.txt; sourceTree = "<group>"; };
-		C93D56890F355B600005EE00 /* crash_20090131.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090131.txt; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = "Growl Registration Ticket.growlRegDict"; sourceTree = "<group>"; };
 		C94B47A70F1731C900BADAE8 /* Ticker.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Ticker.icns; path = Icon/Ticker.icns; sourceTree = "<group>"; };
@@ -199,7 +195,6 @@
 		C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ElvinKeyIO.m; path = src/main/ElvinKeyIO.m; sourceTree = "<group>"; };
 		C9D10E2C0FC3A08800BC77E7 /* TickerMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TickerMessage.h; path = src/main/TickerMessage.h; sourceTree = "<group>"; };
 		C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TickerMessage.m; path = src/main/TickerMessage.m; sourceTree = "<group>"; };
-		C9DA04280F327946004A663D /* crash_20090129.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = crash_20090129.txt; sourceTree = "<group>"; };
 		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -314,10 +309,6 @@
 			isa = PBXGroup;
 			children = (
 				C9F55FA20EFF1DF0005D9245 /* notes.txt */,
-				C9DA04280F327946004A663D /* crash_20090129.txt */,
-				C930AB8F0FB27F3200B6E043 /* crash_20090504.txt */,
-				C93D56350F305C6B0005EE00 /* crash_20090128.txt */,
-				C93D56890F355B600005EE00 /* crash_20090131.txt */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				C92391570F7F01380083FC13 /* Tests */,
 				C92FE90E0F3D05AB0037FA15 /* Presence Tester */,
@@ -499,7 +490,6 @@
 				C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */,
 				C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */,
 				C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */,
-				C930AB900FB27F3300B6E043 /* crash_20090504.txt in Resources */,
 				C930AD4B0FB7F23A00B6E043 /* Ticker_512.png in Resources */,
 				C934A7310FB937EC003C2B41 /* Message_Public.png in Resources */,
 			);
