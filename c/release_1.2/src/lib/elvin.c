@@ -141,7 +141,7 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
 
   /* init other fields */
   elvin->polling = false;
-  array_list_init (&elvin->subscriptions, sizeof (Subscription), 5);
+  array_list_init (&elvin->subscriptions, sizeof (Subscription *), 5);
   listeners_init (elvin->close_listeners);
   listeners_init (elvin->notification_listeners);
   elvin->notification_keys = notification_keys;
@@ -157,7 +157,6 @@ bool elvin_open_with_keys (Elvin *elvin, ElvinURI *uri,
 
   if (send_and_receive (elvin, conn_rqst, conn_rply, MESSAGE_ID_CONN_RPLY))
   {
-
     /* TODO check message reply options */
 
     avis_message_free (conn_rply);
@@ -215,13 +214,11 @@ void elvin_shutdown (Elvin *elvin, CloseReason reason, const char *message)
 
 void elvin_free (Elvin *elvin)
 {
+  Subscription **sub = elvin->subscriptions.items;
   size_t i;
-  Subscription *sub;
-
-  sub = elvin->subscriptions.items;
 
   for (i = elvin->subscriptions.item_count; i > 0; i--, sub++)
-    elvin_subscription_free (sub);
+    elvin_subscription_free (*sub);
 
   array_list_free (&elvin->subscriptions);
 
@@ -595,9 +592,9 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
 
   if (send_and_receive (elvin, sub_add_rqst, sub_rply, MESSAGE_ID_SUB_RPLY))
   {
-    Subscription *subscription =
-      array_list_add (&elvin->subscriptions, Subscription);
-
+    Subscription *subscription = emalloc (sizeof (Subscription));
+    Subscription **item;
+    
     elvin_subscription_init (subscription);
 
     subscription->elvin = elvin;
@@ -605,6 +602,10 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     subscription->id = int64_at_offset (sub_rply, 4);
     subscription->keys = keys;
 
+    item = array_list_add (&elvin->subscriptions, Subscription *);
+  
+    *item = subscription;
+    
     /* no free needed for sub_rply */
 
     return subscription;
@@ -618,20 +619,29 @@ bool elvin_unsubscribe (Elvin *elvin, Subscription *subscription)
 {
   alloc_message (sub_del_rqst);
   alloc_message (sub_rply);
-  bool succeeded;
+  bool succeeded = false;
 
-  avis_message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
+  Subscription **item = 
+    (Subscription **)array_list_find_ptr (&elvin->subscriptions, subscription);
+  
+  if (item)
+  {    
+    avis_message_init (sub_del_rqst, MESSAGE_ID_SUB_DEL_RQST, subscription->id);
+    
+    succeeded =
+      send_and_receive (elvin, sub_del_rqst, sub_rply, MESSAGE_ID_SUB_RPLY);
+    
+    /* no free needed for sub_rply */
+   
+    array_list_remove_item_using_ptr
+      (&elvin->subscriptions, item, sizeof (Subscription *));
 
-  succeeded =
-    send_and_receive (elvin, sub_del_rqst, sub_rply, MESSAGE_ID_SUB_RPLY);
-
-  /* no free needed for sub_rply */
-
-  elvin_subscription_free (subscription);
-
-  array_list_remove_item_using_ptr
-    (&elvin->subscriptions, subscription, sizeof (Subscription));
-
+    elvin_subscription_free (subscription);  
+  } else
+  {
+    elvin_error_set (&elvin->error, ELVIN_ERROR_USAGE, "Invalid subscription");
+  }
+  
   return succeeded;
 }
 
@@ -763,13 +773,13 @@ bool receive_reply (Elvin *elvin, Message message)
 
 Subscription *subscription_with_id (Elvin *elvin, uint64_t id)
 {
-  Subscription *subscription = elvin->subscriptions.items;
+  Subscription **subscription = elvin->subscriptions.items;
   size_t i;
 
   for (i = elvin->subscriptions.item_count; i > 0; i--, subscription++)
   {
-    if (subscription->id == id)
-      return subscription;
+    if ((*subscription)->id == id)
+      return *subscription;
   }
 
   return NULL;
