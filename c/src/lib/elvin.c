@@ -593,6 +593,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
   if (send_and_receive (elvin, sub_add_rqst, sub_rply, MESSAGE_ID_SUB_RPLY))
   {
     Subscription *subscription = emalloc (sizeof (Subscription));
+    Subscription **item;
     
     elvin_subscription_init (subscription);
 
@@ -601,8 +602,7 @@ Subscription *elvin_subscribe_with_keys (Elvin *elvin,
     subscription->id = int64_at_offset (sub_rply, 4);
     subscription->keys = keys;
 
-    Subscription **item =
-      array_list_add (&elvin->subscriptions, Subscription *);
+    item = array_list_add (&elvin->subscriptions, Subscription *);
   
     *item = subscription;
     
