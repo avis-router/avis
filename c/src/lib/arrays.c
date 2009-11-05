@@ -130,9 +130,9 @@ def_array_list_get (FuncPtr, func)
   item_type *array_list_find_##postfix (ArrayList *list, item_type value)\
   {\
     item_type *ptr; \
-    size_t list_index = list->item_count; \
+    size_t count = list->item_count; \
     \
-    for (ptr = list->items; list_index > 0; list_index--, ptr++) \
+    for (ptr = list->items; count > 0; count--, ptr++) \
     { \
       if (*ptr == value) \
         return ptr;\
