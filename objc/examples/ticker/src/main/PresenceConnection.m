@@ -104,11 +104,12 @@ static NSString *listToParameterString (NSArray *list)
   // TODO resub on user name/groups change
   // TODO re-emit presence on groups change
   [elvin subscribe: [self presenceInfoSubscription] withDelegate: self 
-     usingSelector: @selector (handlePresenceInfo:)];
+     onNotify: @selector (handlePresenceInfo:)
+     onError: nil];
 
   // subscribe to requests
   [elvin subscribe: [self presenceRequestSubscription] withDelegate: self 
-     usingSelector: @selector (handlePresenceRequest:)];
+     onNotify: @selector (handlePresenceRequest:) onError: nil];
     
   // listen for elvin open/close
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
