@@ -33,6 +33,7 @@
   [name release];
   [status release];
   [lastUpdatedAt release];
+  [userAgent release];
   
   [super dealloc];
 }
