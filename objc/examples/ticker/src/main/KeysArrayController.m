@@ -14,15 +14,15 @@
 @implementation KeysArrayController
 
 /**
- * For some reason, setting "select new objects" in the controller has no
- * effect, so we're doing it manually.
+ * For some reason, setting "select new objects" in the controller and binding 
+ * selection indexes has no effect, so we're doing it manually.
  */
 - (void) addObject: (id) newObject
 {
   [super addObject: newObject];
   
   [self setSelectedObjects: [NSArray arrayWithObject: newObject]];
-  
+
   [[keysTableView superview] becomeFirstResponder];
 }
 
