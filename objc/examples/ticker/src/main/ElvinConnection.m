@@ -522,8 +522,9 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
 
 - (void) disconnect
 {
-  [eventLoopThread cancel];
-  
+  if (eventLoopThread == nil)
+    return;
+
   if (elvin_is_open (&elvin) && elvin_error_ok (&elvin.error))
   {
     NSLog (@"Disconnect from Elvin");
@@ -532,15 +533,17 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
       postNotificationName: ElvinConnectionWillCloseNotification object: self];
       
     elvin_invoke_close (&elvin);    
-    
-    // TODO: this should not be potentially infinite
-    while (![eventLoopThread isFinished])
-      usleep (100000);
-    
-    // nuke defunct Elvin subscription pointers
-    for (SubscriptionContext *context in subscriptions)
-      context->subscription = nil;
   }
+
+  [eventLoopThread cancel];
+  
+  // TODO: this should not be potentially infinite
+  while (![eventLoopThread isFinished])
+    usleep (100000);
+  
+  // nuke defunct Elvin subscription pointers
+  for (SubscriptionContext *context in subscriptions)
+    context->subscription = nil;
   
   [eventLoopThread release];
   eventLoopThread = nil;
@@ -585,13 +588,17 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
 - (BOOL) openConnection
 {  
   ElvinURI uri;
-
+  
   elvin_error_init (&elvin.error);  
   elvin_uri_from_string (&uri, [elvinUrl UTF8String], &elvin.error);
   
   if (elvin_error_occurred (&elvin.error))
+  {
+    elvin_uri_free (&uri);
+    
     return NO;
-  
+  }
+
   Keys *subscriptionKeys = subscriptionKeysFor (keys);
   
   if (elvin_open_with_keys (&elvin, &uri, EMPTY_KEYS, subscriptionKeys))
@@ -604,12 +611,11 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
       postNotificationName: ElvinConnectionOpenedNotification object: self];
    
     elvin_add_close_listener (&elvin, (CloseListener)close_listener, self);
- 
-    return YES;
-  } else
-  {
-    return NO;
   }
+  
+  elvin_uri_free (&uri);
+  
+  return elvin_error_ok (&elvin.error);
 }
 
 - (void) runElvinEventLoop
