@@ -22,8 +22,7 @@ static NSString *computerName ()
 @implementation PreferencesController
 
 #define TOOLBAR_GENERAL     @"TOOLBAR_GENERAL"
-#define TOOLBAR_TICKER      @"TOOLBAR_TICKER"
-#define TOOLBAR_PRESENCE    @"TOOLBAR_PRESENCE"
+#define TOOLBAR_ADVANCED    @"TOOLBAR_ADVANCED"
 
 + (void) registerUserDefaults
 {
@@ -105,14 +104,10 @@ static NSString *computerName ()
   {
     [item setLabel: @"General"];
     [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
-  } else if ([ident isEqualToString: TOOLBAR_TICKER])
+  } else if ([ident isEqualToString: TOOLBAR_ADVANCED])
   {
-    [item setLabel: @"Ticker"];
+    [item setLabel: @"Advanced"];
     [item setImage: [NSImage imageNamed: @"Ticker_512"]];
-  } else if ([ident isEqualToString: TOOLBAR_PRESENCE])
-  {
-    [item setLabel: @"Presence"];
-    [item setImage: [NSImage imageNamed: @"NSUserGroup"]];
   } else
   {
     return nil;
@@ -133,8 +128,7 @@ static NSString *computerName ()
 
 - (NSArray *) toolbarAllowedItemIdentifiers: (NSToolbar *) toolbar
 {
-  return [NSArray arrayWithObjects: TOOLBAR_GENERAL, TOOLBAR_TICKER,
-                                    TOOLBAR_PRESENCE, nil];
+  return [NSArray arrayWithObjects: TOOLBAR_GENERAL, TOOLBAR_ADVANCED, nil];
 }
 
 - (void) setPrefView: (id) sender
@@ -142,10 +136,8 @@ static NSString *computerName ()
   NSView *view;  
   NSString *identifier = [sender itemIdentifier];
   
-  if ([identifier isEqualToString: TOOLBAR_TICKER])
-    view = tickerPanel;
-  else if ([identifier isEqualToString: TOOLBAR_PRESENCE])
-    view = presencePanel;
+  if ([identifier isEqualToString: TOOLBAR_ADVANCED])
+    view = advancedPanel;
   else
     view = generalPanel;
 
