@@ -7,8 +7,7 @@
   IBOutlet id tickerGroupAddSheet;
   IBOutlet id addTickerGroupTextField;
   IBOutlet id generalPanel;
-  IBOutlet id tickerPanel;
-  IBOutlet id presencePanel;
+  IBOutlet id advancedPanel;
   IBOutlet id addPresenceGroupSheet;
 
   IBOutlet NSArrayController *presenceGroupsController;
