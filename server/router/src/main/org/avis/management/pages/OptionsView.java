@@ -89,7 +89,7 @@ public class OptionsView implements HtmlView
       String name = baseName + '[' + e.getKey () + ']';
       Object value = e.getValue ();
       
-      if (value instanceof Map)
+      if (value instanceof Map<?, ?>)
         row = renderParamOption (html, name, (Map<String, Object>)value, row);
       else
         renderOptionValue (html, name, value, row++);
