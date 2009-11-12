@@ -141,7 +141,11 @@
     <property name="server_header" 
               value="${server}/src/avis_java_header.txt" />
 
-    <copy todir="${src_tmp}/client">
+    <mkdir dir="${src_tmp}/client/java" />
+    <mkdir dir="${src_tmp}/server/router" />
+    <mkdir dir="${src_tmp}/server/common" />
+      
+    <copy todir="${src_tmp}/client/java">
       <fileset dir=".">
         <include name="src/**/*.java"/>
       </fileset>
@@ -151,7 +155,7 @@
       </filterchain>
     </copy>
 
-    <copy todir="${src_tmp}/common">
+    <copy todir="${src_tmp}/server/common">
       <fileset dir="${common}">
         <include name="src/**/*.java"/>
       </fileset>
@@ -161,7 +165,7 @@
       </filterchain>
     </copy>
     
-    <copy todir="${src_tmp}/server">
+    <copy todir="${src_tmp}/server/router">
       <fileset dir="${server}">
         <include name="src/**/*.java"/>
       </fileset>
@@ -186,7 +190,7 @@ It is NOT a full Avis distribution: see http://avis.sourceforge.net.
       
       <!-- others -->
       
-      <zipfileset dir="." prefix="${src-zip-root}/client">
+      <zipfileset dir="." prefix="${src-zip-root}/client/java">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -204,23 +208,23 @@ It is NOT a full Avis distribution: see http://avis.sourceforge.net.
         <include name="README.txt" />
       </zipfileset>
 
-      <zipfileset dir="." prefix="${src-zip-root}/client">
+      <zipfileset dir="." prefix="${src-zip-root}/client/java">
         <include name="doc/examples.txt" />
         <include name="doc/history.txt" />
         <include name="doc/java5-package-list/**" />
       </zipfileset>
      
-      <zipfileset dir="." prefix="${src-zip-root}/client" filemode="755">
+      <zipfileset dir="." prefix="${src-zip-root}/client/java" filemode="755">
         <include name="bin/ec" />
         <include name="bin/ep" />
         <include name="bin/sha1" />
       </zipfileset> 
      
-      <zipfileset dir="build" prefix="${src-zip-root}/client">
+      <zipfileset dir="build" prefix="${src-zip-root}/client/java/doc">
          <include name="javadoc/**" />
       </zipfileset> 
       
-      <zipfileset dir="${common}" prefix="${src-zip-root}/common">
+      <zipfileset dir="${common}" prefix="${src-zip-root}/server/common">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
@@ -229,12 +233,13 @@ It is NOT a full Avis distribution: see http://avis.sourceforge.net.
         <include name="lib/*.jar" />
       </zipfileset>
 
-      <zipfileset dir="${server}" prefix="${src-zip-root}/server">
+      <zipfileset dir="${server}" prefix="${src-zip-root}/server/router">
         <include name=".project" />
         <include name=".classpath" />
         <include name=".settings/*" />
         <include name="build.xml" />
         <include name="lib/fastutil-subset.jar" />
+        <include name="src/avis_java_header.txt" />
       </zipfileset>
     </zip>
     
@@ -249,14 +254,14 @@ It is NOT a full Avis distribution: see http://avis.sourceforge.net.
     
     <unzip dest="${tmp}" src="${src-zip}" />
     
-    <ant dir="${tmp}/${src-zip-root}/client" target="clean"
+    <ant dir="${tmp}/${src-zip-root}/client/java" target="clean"
          inheritall="false">
-      <property name="common" value="${common}" />
+      <property name="common" value="${tmp}/${src-zip-root}/server/common" />
     </ant>
     
-    <ant dir="${tmp}/${src-zip-root}/client" target="dist-client"
+    <ant dir="${tmp}/${src-zip-root}/client/java" target="dist-client"
          inheritall="false">
-      <property name="common" value="${common}" />
+      <property name="common" value="${tmp}/${src-zip-root}/server/common" />
     </ant>
     
     <delete dir="${tmp}" />
