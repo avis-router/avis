@@ -9,6 +9,7 @@ extern NSString *PrefTickerGroups;
 extern NSString *PrefPresenceBuddies;
 extern NSString *PrefTickerSubscription;
 extern NSString *PrefPresenceColumnSorting;
+extern NSString *PrefElvinKeys;
 
 static inline NSString *prefString (const NSString *name)
 {

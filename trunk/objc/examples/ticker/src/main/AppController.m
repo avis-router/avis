@@ -124,12 +124,14 @@
     [NSUserDefaultsController sharedUserDefaultsController];
 		
   [userPreferences addObserver: self forKeyPath: @"values.ElvinURL" 
-                   options: 0 context: self];
+                       options: 0 context: self];
   [userPreferences addObserver: self forKeyPath: @"values.TickerSubscription" 
-                   options: 0 context: self];
+                       options: 0 context: self];
   [userPreferences addObserver: self forKeyPath: @"values.TickerGroups" 
-                   options: 0 context: self];
-                   
+                       options: 0 context: self];
+  [userPreferences addObserver: self forKeyPath: @"values.Keys" 
+                       options: 0 context: self];
+  
   [elvin connect];
 }
 
@@ -288,7 +290,7 @@
   {
     return [self setPresenceItemSelected: item 
                                   status: [PresenceStatus coffeeStatus]];
-  }else if (action == @selector (presenceSetDoNotDisturb:))
+  } else if (action == @selector (presenceSetDoNotDisturb:))
   {
     return [self setPresenceItemSelected: item 
                                   status: [PresenceStatus doNotDisturbStatus]];
@@ -316,6 +318,9 @@
                [keyPath hasSuffix: PrefTickerGroups])
     {
       tickerController.subscription = [self createTickerSubscription];
+    } else if ([keyPath hasSuffix: PrefElvinKeys])
+    {
+      elvin.keys = prefArray (PrefElvinKeys);
     }
   } else 
   {

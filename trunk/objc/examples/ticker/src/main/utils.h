@@ -3,9 +3,9 @@
 #define UUID_STRING_LENGTH 100
 
 #ifdef LOG_TRACE
-  #define TRACE(m, a...) NSLog (m, a)
+  #define TRACE(m, ...) NSLog (m, ##__VA_ARGS__)
 #else
-  #define TRACE(m, a...) 
+  #define TRACE(m, ...) 
 #endif
 
 void createUUID (char *uuid);

@@ -24,6 +24,8 @@ static void subscribe (Elvin *elvin, SubscriptionContext *context);
 
 static void resubscribe (Elvin *elvin, SubscriptionContext *context);
 
+static void set_keys (Elvin *elvin, Keys *keys);
+
 static void notifySubscriptionError (Elvin *elvin, 
                                      SubscriptionContext *context);
 
@@ -192,7 +194,15 @@ static Keys *notificationKeysFor (NSArray *keys);
   
   keys = [newKeys retain];
   
-  // TODO change connection keys
+  if ([self isConnected])
+    elvin_invoke (&elvin, (InvokeHandler)set_keys, subscriptionKeysFor (keys));
+}
+
+void set_keys (Elvin *elvin, Keys *keys)
+{
+  TRACE (@"Update security keys");
+
+  elvin_set_keys (elvin, EMPTY_KEYS, keys);
 }
 
 #pragma Elvin publish/subscribe

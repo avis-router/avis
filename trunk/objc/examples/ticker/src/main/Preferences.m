@@ -9,3 +9,4 @@ NSString *PrefPresenceGroups        = @"PresenceGroups";
 NSString *PrefPresenceBuddies       = @"PresenceBuddies";
 NSString *PrefTickerSubscription    = @"TickerSubscription";
 NSString *PrefPresenceColumnSorting = @"PresenceColumnSorting";
+NSString *PrefElvinKeys             = @"Keys";
