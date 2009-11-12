@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>Ticker.icns</string>
+	<string>Tinkle.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>name.mattp.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

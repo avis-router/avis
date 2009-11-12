@@ -107,7 +107,7 @@ static NSString *computerName ()
   } else if ([ident isEqualToString: TOOLBAR_ADVANCED])
   {
     [item setLabel: @"Advanced"];
-    [item setImage: [NSImage imageNamed: @"Ticker_512"]];
+    [item setImage: [NSImage imageNamed: @"Tinkle_512"]];
   } else
   {
     return nil;
