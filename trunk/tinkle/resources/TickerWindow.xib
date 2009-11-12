@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="76"/>
+			<integer value="3"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -43,7 +43,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{325, 320}, {667, 437}}</string>
 				<int key="NSWTFlags">1946157056</int>
-				<string key="NSWindowTitle">Ticker</string>
+				<string key="NSWindowTitle">Messages</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -927,7 +927,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMinSize">{500, 222}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
-				<string key="NSFrameAutosaveName">Ticker</string>
+				<string key="NSFrameAutosaveName">Messages</string>
 			</object>
 			<object class="NSUserDefaultsController" id="816690533">
 				<bool key="NSSharedInstance">YES</bool>
@@ -1749,7 +1749,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
-							<string>NSString</string>
+							<string>TickerMessage</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1771,6 +1771,14 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TickerMessage</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">src/main/TickerMessage.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
