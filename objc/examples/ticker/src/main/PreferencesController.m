@@ -93,13 +93,13 @@ static NSString *computerName ()
                     itemForItemIdentifier: (NSString *) ident
                     willBeInsertedIntoToolbar: (BOOL) flag
 {
-  NSToolbarItem *item = 
+  NSToolbarItem * item = 
     [[[NSToolbarItem alloc] initWithItemIdentifier: ident] autorelease];
 
   [item setTarget: self];
   [item setAction: @selector (setPrefView:)];
   [item setAutovalidates: NO];
-    
+
   if ([ident isEqualToString: TOOLBAR_GENERAL])
   {
     [item setLabel: @"General"];
