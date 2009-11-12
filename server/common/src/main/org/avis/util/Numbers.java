@@ -22,7 +22,7 @@ public final class Numbers
    * 
    * @throws IllegalArgumentException if type is not valid.
    */
-  public static Number upconvert (Number value, Class<? extends Number> type)
+  public static Number upconvert (Number value, Class<?> type)
   {
     if (type == Long.class)
       return value.longValue ();
@@ -38,9 +38,9 @@ public final class Numbers
    * 
    * @throws IllegalArgumentException if class1 or class2 is not a number.
    */
-  public static Class<? extends Number>
-    highestPrecision (Class<? extends Number> class1,
-                      Class<? extends Number> class2)
+  public static Class<?>
+    highestPrecision (Class<?> class1,
+                      Class<?> class2)
   {
     if (precision (class1) >= precision (class2))
       return class1;
@@ -48,7 +48,7 @@ public final class Numbers
       return class2;
   }
 
-  private static int precision (Class<? extends Number> type)
+  private static int precision (Class<?> type)
   {
     if (type == Integer.class)
       return 0;
