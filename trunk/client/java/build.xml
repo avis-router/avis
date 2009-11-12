@@ -17,8 +17,8 @@
   <property name="release-name" value="${version}${avis.release}" />
   
   <property name="client" value="${basedir}" />
-  <property name="common" value="${client}/../common" />
-  <property name="server" value="${client}/../server" />
+  <property name="common" value="${client}/../../server/common" />
+  <property name="server" value="${client}/../../server/router" />
   <property name="avis-root" value="${client}/../.." />
 
   <property name="src-zip-root" value="avis-client-${release-name}" />

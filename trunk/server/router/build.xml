@@ -23,7 +23,7 @@
   <property name="server" value="${basedir}" />
   
   <property name="common" value="${server}/../common" />
-  <property name="client" value="${server}/../client" />
+  <property name="client" value="${server}/../../client/java" />
   
   <property name="avis-root" value="${server}/../.." />
 
