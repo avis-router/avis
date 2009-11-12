@@ -173,7 +173,7 @@
 		C92394020F82BEEA0083FC13 /* key_error_hexdata.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_hexdata.key; path = src/tests/resources/test_keys/key_error_hexdata.key; sourceTree = "<group>"; };
 		C92394030F82BEEA0083FC13 /* key2.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key2.key; path = src/tests/resources/test_keys/key2.key; sourceTree = "<group>"; };
 		C92394040F82BEEA0083FC13 /* key1.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key1.key; path = src/tests/resources/test_keys/key1.key; sourceTree = "<group>"; };
-		C92FE93A0F3D06270037FA15 /* Tinkle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Tinkle.app; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C92FE93A0F3D06270037FA15 /* Ticker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C92FE96B0F3D072C0037FA15 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PresenceTester/Info.plist; sourceTree = "<group>"; };
 		C92FE9850F3D08D70037FA15 /* PresenceTester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PresenceTester.xib; path = PresenceTester/PresenceTester.xib; sourceTree = "<group>"; };
 		C92FE9AC0F3D09740037FA15 /* PresenceTesterAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceTesterAppController.h; path = PresenceTester/PresenceTesterAppController.h; sourceTree = "<group>"; };
@@ -301,7 +301,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* Tinkle.app */,
-				C92FE93A0F3D06270037FA15 /* Tinkle.app */,
+				C92FE93A0F3D06270037FA15 /* Ticker.app */,
 				C923915D0F7F01D40083FC13 /* Unit Tests.octest */,
 			);
 			name = Products;
@@ -455,7 +455,7 @@
 			name = "Presence Tester";
 			productInstallPath = "$(HOME)/Applications";
 			productName = ticker;
-			productReference = C92FE93A0F3D06270037FA15 /* Tinkle.app */;
+			productReference = C92FE93A0F3D06270037FA15 /* Ticker.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
