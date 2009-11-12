@@ -15,11 +15,11 @@ The Avis web site is http://avis.sourceforge.net.
 Distribution Layout
 ======================================================================
 
-common/                         Avis common packages
+server/
+  common/                       Avis common packages
+  router/                       Avis router sources for testing
 
-server/                         Avis router sources for testing
-
-client/                         Avis client library packages
+client/java                     Avis client library packages
   build.xml                     Ant build targets
 
   src/main/                     Source for client packages
@@ -28,12 +28,13 @@ client/                         Avis client library packages
 
   doc/examples.txt              How to use the example code
 
+  doc/javadoc/                  API documentation
+
   bin/                          The ec, ep and sha1 utilities
 
   lib/avis-client.jar           The Avis client library
   lib/avis-tools.jar            The Avis tools library (for ec, etc)
 
-  javadoc/                      API documentation
 
 
 Using In Eclipse

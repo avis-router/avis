@@ -17,7 +17,7 @@ Supported Platforms
 ----------------------------------------------------------------------
 
 Avis will run on platforms with a Java 5 Standard Edition runtime. It
-has been tested on Mac OS X (10.4 and 10.5), Windows XP/Server 2003, 
+has been tested on Mac OS X (10.4 - 10.6), Windows XP/Server 2003,
 Fedora (Core 2 through 11), Debian (3.1) and Solaris.
 
 Although Avis is platform-independent, the "avisd" script and example
@@ -53,11 +53,11 @@ Optional:
   * JavaCC 4.0 or later. Only required if you wish to change the
     subscription parser. http://javacc.dev.java.net/.
 
-To build the router with Ant, change to the "server" sub-directory of
-where you extracted Avis and simply run Ant with the default build
-target:
+To build the router with Ant, change to the "server/router"
+sub-directory of where you extracted Avis and simply run Ant with the
+default build target:
 
-  > cd avis-1.3/server
+  > cd avis-1.3/server/router
   > ant
 
 This will build the file "lib/avis-router.jar", which is the Avis
@@ -73,7 +73,7 @@ Usage
 
 To run the Avis event router service using the bash helper script:
 
-  > cd avis-1.3/server
+  > cd avis-1.3/server/router
   > ./bin/avisd
 
 To see command line options:
