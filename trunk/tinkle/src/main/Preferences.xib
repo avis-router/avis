@@ -87,7 +87,7 @@
 													<object class="NSTableView" id="849521546">
 														<reference key="NSNextResponder" ref="837284975"/>
 														<int key="NSvFlags">256</int>
-														<string key="NSFrameSize">{299, 113}</string>
+														<string key="NSFrameSize">{314, 113}</string>
 														<reference key="NSSuperview" ref="837284975"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="_NSCornerView" key="NSCornerView">
@@ -98,7 +98,7 @@
 														<object class="NSMutableArray" key="NSTableColumns">
 															<bool key="EncodedWithXMLCoder">YES</bool>
 															<object class="NSTableColumn" id="632816303">
-																<double key="NSWidth">296</double>
+																<double key="NSWidth">311</double>
 																<double key="NSMinWidth">40</double>
 																<double key="NSMaxWidth">1000</double>
 																<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -185,7 +185,7 @@
 														<int key="NSTableViewDraggingDestinationStyle">0</int>
 													</object>
 												</object>
-												<string key="NSFrame">{{1, 1}, {299, 113}}</string>
+												<string key="NSFrame">{{1, 1}, {314, 113}}</string>
 												<reference key="NSSuperview" ref="325493178"/>
 												<reference key="NSNextKeyView" ref="849521546"/>
 												<reference key="NSDocView" ref="849521546"/>
@@ -194,7 +194,7 @@
 											</object>
 											<object class="NSScroller" id="369231159">
 												<reference key="NSNextResponder" ref="325493178"/>
-												<int key="NSvFlags">256</int>
+												<int key="NSvFlags">-2147483392</int>
 												<string key="NSFrame">{{300, 1}, {15, 113}}</string>
 												<reference key="NSSuperview" ref="325493178"/>
 												<reference key="NSTarget" ref="325493178"/>
@@ -215,7 +215,7 @@
 										<string key="NSFrame">{{8, 30}, {316, 115}}</string>
 										<reference key="NSSuperview" ref="848450192"/>
 										<reference key="NSNextKeyView" ref="837284975"/>
-										<int key="NSsFlags">18</int>
+										<int key="NSsFlags">530</int>
 										<reference key="NSVScroller" ref="369231159"/>
 										<reference key="NSHScroller" ref="1063247105"/>
 										<reference key="NSContentView" ref="837284975"/>
@@ -459,7 +459,7 @@
 								<reference key="NSSuperview" ref="408373363"/>
 							</object>
 						</object>
-						<string key="NSFrame">{{17, 185}, {333, 183}}</string>
+						<string key="NSFrame">{{17, 191}, {333, 183}}</string>
 						<reference key="NSSuperview" ref="78294905"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
@@ -475,14 +475,14 @@
 						</object>
 						<reference key="NSContentView" ref="339735859"/>
 						<int key="NSBorderType">1</int>
-						<int key="NSBoxType">0</int>
+						<int key="NSBoxType">1</int>
 						<int key="NSTitlePosition">2</int>
 						<bool key="NSTransparent">NO</bool>
 					</object>
 					<object class="NSTextField" id="410758519">
 						<reference key="NSNextResponder" ref="78294905"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 378}, {90, 17}}</string>
+						<string key="NSFrame">{{17, 391}, {90, 17}}</string>
 						<reference key="NSSuperview" ref="78294905"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="1041188666">
@@ -503,7 +503,7 @@
 					<object class="NSTextField" id="423369106">
 						<reference key="NSNextResponder" ref="78294905"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{112, 375}, {235, 22}}</string>
+						<string key="NSFrame">{{112, 388}, {235, 22}}</string>
 						<reference key="NSSuperview" ref="78294905"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="538167087">
@@ -524,7 +524,7 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{367, 418}</string>
+				<string key="NSFrameSize">{367, 431}</string>
 				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSCustomView" id="923103643">
@@ -2090,10 +2090,10 @@
 						<reference key="object" ref="78294905"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="408373363"/>
 							<reference ref="410758519"/>
-							<reference ref="470196020"/>
 							<reference ref="423369106"/>
+							<reference ref="408373363"/>
+							<reference ref="470196020"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">General</string>
@@ -2481,7 +2481,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{148, 697}, {367, 418}}</string>
+					<string>{{148, 684}, {367, 431}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2542,9 +2542,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{146, 647}, {379, 350}}</string>
+					<string>{{681, 700}, {379, 350}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{146, 647}, {379, 350}}</string>
+					<string>{{681, 700}, {379, 350}}</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2560,7 +2560,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>GroupsArrayController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{146, 346}, {381, 315}}</string>
+					<string>{{164, 257}, {381, 315}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
