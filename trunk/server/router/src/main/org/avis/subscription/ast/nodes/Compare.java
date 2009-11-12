@@ -150,16 +150,16 @@ public class Compare extends ParentBiNode
   {
     Object result1 = child1.evaluate (attrs);
     
-    if (!(result1 instanceof Comparable))
+    if (!(result1 instanceof Comparable<?>))
       return BOTTOM;
 
     Object result2 = child2.evaluate (attrs);
     
-    if (!(result2 instanceof Comparable))
+    if (!(result2 instanceof Comparable<?>))
       return BOTTOM;
     
-    Class class1 = result1.getClass ();
-    Class class2 = result2.getClass ();
+    Class<?> class1 = result1.getClass ();
+    Class<?> class2 = result2.getClass ();
     
     // check for compatible types
     if (class1 != class2)
@@ -168,7 +168,7 @@ public class Compare extends ParentBiNode
       if (class1.getSuperclass () == Number.class &&
           class2.getSuperclass () == Number.class)
       {
-        Class newType = highestPrecision (class1, class2);
+        Class<?> newType = highestPrecision (class1, class2);
         
         if (class1 != newType)
           result1 = upconvert ((Number)result1, class2);
@@ -181,7 +181,7 @@ public class Compare extends ParentBiNode
       }
     }
     
-    int compare = ((Comparable)result1).compareTo (result2);
+    int compare = ((Comparable<Object>)result1).compareTo (result2);
     
     if (compare == 0)
       return equality;

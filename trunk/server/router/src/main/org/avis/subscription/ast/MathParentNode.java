@@ -64,7 +64,7 @@ public abstract class MathParentNode extends ParentBiNode
     // check if upconvert needed
     if (type1 != type2)
     {
-      Class<? extends Number> newType = highestPrecision (type1, type2);
+      Class<?> newType = highestPrecision (type1, type2);
       
       if (type1 != newType)
         number1 = upconvert (number1, type2);
