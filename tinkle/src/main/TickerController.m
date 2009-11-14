@@ -360,6 +360,11 @@ static NSAttributedString *attributedString (NSString *string,
      userInfo: [NSDictionary dictionaryWithObject: message forKey: @"message"]];
 }
 
+- (void) handleSubscribeError: (NSError *) error
+{
+  [[messageText window] presentError: error]; 
+}
+
 #pragma mark -
 
 - (NSString *) subscription
@@ -389,11 +394,6 @@ static NSAttributedString *attributedString (NSString *string,
            onError: @selector (handleSubscribeError:)];
     }
   }
-}
-
-- (void) handleSubscribeError: (NSError *) error
-{
-  [[messageText window] presentError: error]; 
 }
 
 - (BOOL) canSend
