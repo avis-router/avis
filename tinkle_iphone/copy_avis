@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Copy the pre-built Avis client library files from the client lib
+# project.
+
+client="../client/c"
+builds="Release-iphoneos Debug-iphoneos \
+        Debug-iphonesimulator Release-iphonesimulator"
+
+for build in $builds; do
+  mkdir -p "lib/avis/$build"
+  cp "$client/platforms/iphone/build/$build/libavis.a" "lib/avis/$build"
+done
+
+mkdir -p include
+
+rsync -av --delete --filter "+ */" --filter "+ *.h" --filter "- *" \
+  "$client/src/include/avis" "include"
+
+cp "$client/platforms/macosx/avis_client_config.h" "include"
