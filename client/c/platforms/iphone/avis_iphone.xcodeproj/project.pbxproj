@@ -1,0 +1,401 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA747D9F0F9514B9006C5449 /* avis_iphone_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* avis_iphone_Prefix.pch */; };
+		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		C9CDFA5010AE7BD100DBE18C /* avis_client_config.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2610AE7BD100DBE18C /* avis_client_config.h */; };
+		C9CDFA5110AE7BD100DBE18C /* arrays.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2710AE7BD100DBE18C /* arrays.h */; };
+		C9CDFA5210AE7BD100DBE18C /* attributes.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2810AE7BD100DBE18C /* attributes.h */; };
+		C9CDFA5310AE7BD100DBE18C /* defs.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2910AE7BD100DBE18C /* defs.h */; };
+		C9CDFA5410AE7BD100DBE18C /* elvin_uri.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2A10AE7BD100DBE18C /* elvin_uri.h */; };
+		C9CDFA5510AE7BD100DBE18C /* errors.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2B10AE7BD100DBE18C /* errors.h */; };
+		C9CDFA5610AE7BD100DBE18C /* keys.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2C10AE7BD100DBE18C /* keys.h */; };
+		C9CDFA5710AE7BD100DBE18C /* net.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2D10AE7BD100DBE18C /* net.h */; };
+		C9CDFA5810AE7BD100DBE18C /* stdtypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2E10AE7BD100DBE18C /* stdtypes.h */; };
+		C9CDFA5910AE7BD100DBE18C /* values.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA2F10AE7BD100DBE18C /* values.h */; };
+		C9CDFA5A10AE7BD100DBE18C /* elvin.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3010AE7BD100DBE18C /* elvin.h */; };
+		C9CDFA5B10AE7BD100DBE18C /* stdint_msvc.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3110AE7BD100DBE18C /* stdint_msvc.h */; };
+		C9CDFA5C10AE7BD100DBE18C /* elvin.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA3310AE7BD100DBE18C /* elvin.c */; };
+		C9CDFA5D10AE7BD100DBE18C /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA3410AE7BD100DBE18C /* net.c */; };
+		C9CDFA5E10AE7BD100DBE18C /* errors_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3510AE7BD100DBE18C /* errors_private.h */; };
+		C9CDFA5F10AE7BD100DBE18C /* listeners.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA3610AE7BD100DBE18C /* listeners.c */; };
+		C9CDFA6010AE7BD100DBE18C /* listeners.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3710AE7BD100DBE18C /* listeners.h */; };
+		C9CDFA6110AE7BD100DBE18C /* arrays_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3810AE7BD100DBE18C /* arrays_private.h */; };
+		C9CDFA6210AE7BD100DBE18C /* arrays.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA3910AE7BD100DBE18C /* arrays.c */; };
+		C9CDFA6310AE7BD100DBE18C /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA3A10AE7BD100DBE18C /* sha1.c */; };
+		C9CDFA6410AE7BD100DBE18C /* keys_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3B10AE7BD100DBE18C /* keys_private.h */; };
+		C9CDFA6510AE7BD100DBE18C /* avis_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3C10AE7BD100DBE18C /* avis_endian.h */; };
+		C9CDFA6610AE7BD100DBE18C /* attributes_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3D10AE7BD100DBE18C /* attributes_private.h */; };
+		C9CDFA6710AE7BD100DBE18C /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA3E10AE7BD100DBE18C /* log.h */; };
+		C9CDFA6810AE7BD100DBE18C /* attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA3F10AE7BD100DBE18C /* attributes.c */; };
+		C9CDFA6910AE7BD100DBE18C /* byte_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4010AE7BD100DBE18C /* byte_buffer.c */; };
+		C9CDFA6A10AE7BD100DBE18C /* byte_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA4110AE7BD100DBE18C /* byte_buffer.h */; };
+		C9CDFA6B10AE7BD100DBE18C /* elvin_uri.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4210AE7BD100DBE18C /* elvin_uri.c */; };
+		C9CDFA6C10AE7BD100DBE18C /* errors.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4310AE7BD100DBE18C /* errors.c */; };
+		C9CDFA6D10AE7BD100DBE18C /* keys.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4410AE7BD100DBE18C /* keys.c */; };
+		C9CDFA6E10AE7BD100DBE18C /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4510AE7BD100DBE18C /* log.c */; };
+		C9CDFA6F10AE7BD100DBE18C /* values.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4610AE7BD100DBE18C /* values.c */; };
+		C9CDFA7010AE7BD100DBE18C /* values_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA4710AE7BD100DBE18C /* values_private.h */; };
+		C9CDFA7110AE7BD100DBE18C /* messages.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA4810AE7BD100DBE18C /* messages.h */; };
+		C9CDFA7210AE7BD100DBE18C /* messages.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4910AE7BD100DBE18C /* messages.c */; };
+		C9CDFA7310AE7BD100DBE18C /* hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4B10AE7BD100DBE18C /* hashtable.c */; };
+		C9CDFA7410AE7BD100DBE18C /* hashtable.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA4C10AE7BD100DBE18C /* hashtable.h */; };
+		C9CDFA7510AE7BD100DBE18C /* hashtable_itr.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFA4D10AE7BD100DBE18C /* hashtable_itr.c */; };
+		C9CDFA7610AE7BD100DBE18C /* hashtable_itr.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA4E10AE7BD100DBE18C /* hashtable_itr.h */; };
+		C9CDFA7710AE7BD100DBE18C /* hashtable_private.h in Headers */ = {isa = PBXBuildFile; fileRef = C9CDFA4F10AE7BD100DBE18C /* hashtable_private.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA747D9E0F9514B9006C5449 /* avis_iphone_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avis_iphone_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C9CDFA2610AE7BD100DBE18C /* avis_client_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = avis_client_config.h; path = ../macosx/avis_client_config.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2710AE7BD100DBE18C /* arrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arrays.h; path = ../../src/include/avis/arrays.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2810AE7BD100DBE18C /* attributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attributes.h; path = ../../src/include/avis/attributes.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2910AE7BD100DBE18C /* defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defs.h; path = ../../src/include/avis/defs.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2A10AE7BD100DBE18C /* elvin_uri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = elvin_uri.h; path = ../../src/include/avis/elvin_uri.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2B10AE7BD100DBE18C /* errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = errors.h; path = ../../src/include/avis/errors.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2C10AE7BD100DBE18C /* keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../../src/include/avis/keys.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2D10AE7BD100DBE18C /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = net.h; path = ../../src/include/avis/net.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2E10AE7BD100DBE18C /* stdtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdtypes.h; path = ../../src/include/avis/stdtypes.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA2F10AE7BD100DBE18C /* values.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = values.h; path = ../../src/include/avis/values.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3010AE7BD100DBE18C /* elvin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = elvin.h; path = ../../src/include/avis/elvin.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3110AE7BD100DBE18C /* stdint_msvc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdint_msvc.h; path = ../../src/include/avis/stdint_msvc.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3310AE7BD100DBE18C /* elvin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin.c; path = ../../src/lib/elvin.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA3410AE7BD100DBE18C /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = net.c; path = ../../src/lib/net.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA3510AE7BD100DBE18C /* errors_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = errors_private.h; path = ../../src/lib/errors_private.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3610AE7BD100DBE18C /* listeners.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listeners.c; path = ../../src/lib/listeners.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA3710AE7BD100DBE18C /* listeners.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = listeners.h; path = ../../src/lib/listeners.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3810AE7BD100DBE18C /* arrays_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arrays_private.h; path = ../../src/lib/arrays_private.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3910AE7BD100DBE18C /* arrays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = arrays.c; path = ../../src/lib/arrays.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA3A10AE7BD100DBE18C /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sha1.c; path = ../../src/lib/sha1.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA3B10AE7BD100DBE18C /* keys_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keys_private.h; path = ../../src/lib/keys_private.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3C10AE7BD100DBE18C /* avis_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = avis_endian.h; path = ../../src/lib/avis_endian.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3D10AE7BD100DBE18C /* attributes_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attributes_private.h; path = ../../src/lib/attributes_private.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3E10AE7BD100DBE18C /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../src/lib/log.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA3F10AE7BD100DBE18C /* attributes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = attributes.c; path = ../../src/lib/attributes.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4010AE7BD100DBE18C /* byte_buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = byte_buffer.c; path = ../../src/lib/byte_buffer.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4110AE7BD100DBE18C /* byte_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = byte_buffer.h; path = ../../src/lib/byte_buffer.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA4210AE7BD100DBE18C /* elvin_uri.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = elvin_uri.c; path = ../../src/lib/elvin_uri.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4310AE7BD100DBE18C /* errors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = errors.c; path = ../../src/lib/errors.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4410AE7BD100DBE18C /* keys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = keys.c; path = ../../src/lib/keys.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4510AE7BD100DBE18C /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = log.c; path = ../../src/lib/log.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4610AE7BD100DBE18C /* values.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = values.c; path = ../../src/lib/values.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4710AE7BD100DBE18C /* values_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = values_private.h; path = ../../src/lib/values_private.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA4810AE7BD100DBE18C /* messages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = messages.h; path = ../../src/lib/messages.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA4910AE7BD100DBE18C /* messages.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = messages.c; path = ../../src/lib/messages.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4B10AE7BD100DBE18C /* hashtable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hashtable.c; path = ../../packages/hashtable/hashtable.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4C10AE7BD100DBE18C /* hashtable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hashtable.h; path = ../../packages/hashtable/hashtable.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA4D10AE7BD100DBE18C /* hashtable_itr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hashtable_itr.c; path = ../../packages/hashtable/hashtable_itr.c; sourceTree = SOURCE_ROOT; };
+		C9CDFA4E10AE7BD100DBE18C /* hashtable_itr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hashtable_itr.h; path = ../../packages/hashtable/hashtable_itr.h; sourceTree = SOURCE_ROOT; };
+		C9CDFA4F10AE7BD100DBE18C /* hashtable_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hashtable_private.h; path = ../../packages/hashtable/hashtable_private.h; sourceTree = SOURCE_ROOT; };
+		D2AAC07E0554694100DB518D /* libavis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libavis.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2AAC07C0554694100DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC07E0554694100DB518D /* libavis.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* avis_iphone */ = {
+			isa = PBXGroup;
+			children = (
+				C9CDFA4A10AE7BD100DBE18C /* Hashtable library */,
+				C9CDFA3210AE7BD100DBE18C /* Client library */,
+				C9CDFA2510AE7BD100DBE18C /* Public Headers */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = avis_iphone;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AA747D9E0F9514B9006C5449 /* avis_iphone_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		C9CDFA2510AE7BD100DBE18C /* Public Headers */ = {
+			isa = PBXGroup;
+			children = (
+				C9CDFA2610AE7BD100DBE18C /* avis_client_config.h */,
+				C9CDFA2710AE7BD100DBE18C /* arrays.h */,
+				C9CDFA2810AE7BD100DBE18C /* attributes.h */,
+				C9CDFA2910AE7BD100DBE18C /* defs.h */,
+				C9CDFA2A10AE7BD100DBE18C /* elvin_uri.h */,
+				C9CDFA2B10AE7BD100DBE18C /* errors.h */,
+				C9CDFA2C10AE7BD100DBE18C /* keys.h */,
+				C9CDFA2D10AE7BD100DBE18C /* net.h */,
+				C9CDFA2E10AE7BD100DBE18C /* stdtypes.h */,
+				C9CDFA2F10AE7BD100DBE18C /* values.h */,
+				C9CDFA3010AE7BD100DBE18C /* elvin.h */,
+				C9CDFA3110AE7BD100DBE18C /* stdint_msvc.h */,
+			);
+			name = "Public Headers";
+			sourceTree = SOURCE_ROOT;
+		};
+		C9CDFA3210AE7BD100DBE18C /* Client library */ = {
+			isa = PBXGroup;
+			children = (
+				C9CDFA3310AE7BD100DBE18C /* elvin.c */,
+				C9CDFA3410AE7BD100DBE18C /* net.c */,
+				C9CDFA3510AE7BD100DBE18C /* errors_private.h */,
+				C9CDFA3610AE7BD100DBE18C /* listeners.c */,
+				C9CDFA3710AE7BD100DBE18C /* listeners.h */,
+				C9CDFA3810AE7BD100DBE18C /* arrays_private.h */,
+				C9CDFA3910AE7BD100DBE18C /* arrays.c */,
+				C9CDFA3A10AE7BD100DBE18C /* sha1.c */,
+				C9CDFA3B10AE7BD100DBE18C /* keys_private.h */,
+				C9CDFA3C10AE7BD100DBE18C /* avis_endian.h */,
+				C9CDFA3D10AE7BD100DBE18C /* attributes_private.h */,
+				C9CDFA3E10AE7BD100DBE18C /* log.h */,
+				C9CDFA3F10AE7BD100DBE18C /* attributes.c */,
+				C9CDFA4010AE7BD100DBE18C /* byte_buffer.c */,
+				C9CDFA4110AE7BD100DBE18C /* byte_buffer.h */,
+				C9CDFA4210AE7BD100DBE18C /* elvin_uri.c */,
+				C9CDFA4310AE7BD100DBE18C /* errors.c */,
+				C9CDFA4410AE7BD100DBE18C /* keys.c */,
+				C9CDFA4510AE7BD100DBE18C /* log.c */,
+				C9CDFA4610AE7BD100DBE18C /* values.c */,
+				C9CDFA4710AE7BD100DBE18C /* values_private.h */,
+				C9CDFA4810AE7BD100DBE18C /* messages.h */,
+				C9CDFA4910AE7BD100DBE18C /* messages.c */,
+			);
+			name = "Client library";
+			sourceTree = SOURCE_ROOT;
+		};
+		C9CDFA4A10AE7BD100DBE18C /* Hashtable library */ = {
+			isa = PBXGroup;
+			children = (
+				C9CDFA4B10AE7BD100DBE18C /* hashtable.c */,
+				C9CDFA4C10AE7BD100DBE18C /* hashtable.h */,
+				C9CDFA4D10AE7BD100DBE18C /* hashtable_itr.c */,
+				C9CDFA4E10AE7BD100DBE18C /* hashtable_itr.h */,
+				C9CDFA4F10AE7BD100DBE18C /* hashtable_private.h */,
+			);
+			name = "Hashtable library";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC07A0554694100DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA747D9F0F9514B9006C5449 /* avis_iphone_Prefix.pch in Headers */,
+				C9CDFA5010AE7BD100DBE18C /* avis_client_config.h in Headers */,
+				C9CDFA5110AE7BD100DBE18C /* arrays.h in Headers */,
+				C9CDFA5210AE7BD100DBE18C /* attributes.h in Headers */,
+				C9CDFA5310AE7BD100DBE18C /* defs.h in Headers */,
+				C9CDFA5410AE7BD100DBE18C /* elvin_uri.h in Headers */,
+				C9CDFA5510AE7BD100DBE18C /* errors.h in Headers */,
+				C9CDFA5610AE7BD100DBE18C /* keys.h in Headers */,
+				C9CDFA5710AE7BD100DBE18C /* net.h in Headers */,
+				C9CDFA5810AE7BD100DBE18C /* stdtypes.h in Headers */,
+				C9CDFA5910AE7BD100DBE18C /* values.h in Headers */,
+				C9CDFA5A10AE7BD100DBE18C /* elvin.h in Headers */,
+				C9CDFA5B10AE7BD100DBE18C /* stdint_msvc.h in Headers */,
+				C9CDFA5E10AE7BD100DBE18C /* errors_private.h in Headers */,
+				C9CDFA6010AE7BD100DBE18C /* listeners.h in Headers */,
+				C9CDFA6110AE7BD100DBE18C /* arrays_private.h in Headers */,
+				C9CDFA6410AE7BD100DBE18C /* keys_private.h in Headers */,
+				C9CDFA6510AE7BD100DBE18C /* avis_endian.h in Headers */,
+				C9CDFA6610AE7BD100DBE18C /* attributes_private.h in Headers */,
+				C9CDFA6710AE7BD100DBE18C /* log.h in Headers */,
+				C9CDFA6A10AE7BD100DBE18C /* byte_buffer.h in Headers */,
+				C9CDFA7010AE7BD100DBE18C /* values_private.h in Headers */,
+				C9CDFA7110AE7BD100DBE18C /* messages.h in Headers */,
+				C9CDFA7410AE7BD100DBE18C /* hashtable.h in Headers */,
+				C9CDFA7610AE7BD100DBE18C /* hashtable_itr.h in Headers */,
+				C9CDFA7710AE7BD100DBE18C /* hashtable_private.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D2AAC07D0554694100DB518D /* avis */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "avis" */;
+			buildPhases = (
+				D2AAC07A0554694100DB518D /* Headers */,
+				D2AAC07B0554694100DB518D /* Sources */,
+				D2AAC07C0554694100DB518D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = avis;
+			productName = avis_iphone;
+			productReference = D2AAC07E0554694100DB518D /* libavis.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "avis_iphone" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* avis_iphone */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC07D0554694100DB518D /* avis */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2AAC07B0554694100DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9CDFA5C10AE7BD100DBE18C /* elvin.c in Sources */,
+				C9CDFA5D10AE7BD100DBE18C /* net.c in Sources */,
+				C9CDFA5F10AE7BD100DBE18C /* listeners.c in Sources */,
+				C9CDFA6210AE7BD100DBE18C /* arrays.c in Sources */,
+				C9CDFA6310AE7BD100DBE18C /* sha1.c in Sources */,
+				C9CDFA6810AE7BD100DBE18C /* attributes.c in Sources */,
+				C9CDFA6910AE7BD100DBE18C /* byte_buffer.c in Sources */,
+				C9CDFA6B10AE7BD100DBE18C /* elvin_uri.c in Sources */,
+				C9CDFA6C10AE7BD100DBE18C /* errors.c in Sources */,
+				C9CDFA6D10AE7BD100DBE18C /* keys.c in Sources */,
+				C9CDFA6E10AE7BD100DBE18C /* log.c in Sources */,
+				C9CDFA6F10AE7BD100DBE18C /* values.c in Sources */,
+				C9CDFA7210AE7BD100DBE18C /* messages.c in Sources */,
+				C9CDFA7310AE7BD100DBE18C /* hashtable.c in Sources */,
+				C9CDFA7510AE7BD100DBE18C /* hashtable_itr.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB921F08733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/avis_iphone.dst;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = avis_iphone_Prefix.pch;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = avis;
+			};
+			name = Debug;
+		};
+		1DEB922008733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				DSTROOT = /tmp/avis_iphone.dst;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = avis_iphone_Prefix.pch;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = avis;
+			};
+			name = Release;
+		};
+		1DEB922308733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../src/include,
+					../../packages/hashtable,
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PREBINDING = NO;
+				SDKROOT = iphoneos3.1.2;
+			};
+			name = Debug;
+		};
+		1DEB922408733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../src/include,
+					../../packages/hashtable,
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PREBINDING = NO;
+				SDKROOT = iphoneos3.1.2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "avis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB921F08733DC00010E9CD /* Debug */,
+				1DEB922008733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "avis_iphone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB922308733DC00010E9CD /* Debug */,
+				1DEB922408733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
