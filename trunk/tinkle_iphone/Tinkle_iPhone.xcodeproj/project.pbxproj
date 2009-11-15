@@ -21,6 +21,7 @@
 		C9CDFB1D10AE8D9700DBE18C /* PresenceEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFB1910AE8D9700DBE18C /* PresenceEntity.m */; };
 		C9CDFB1E10AE8D9700DBE18C /* PresenceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFB1B10AE8D9700DBE18C /* PresenceConnection.m */; };
 		C9CDFB2110AE8E3100DBE18C /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFB1F10AE8E3100DBE18C /* Preferences.m */; };
+		C9CDFC8110AFE99B00DBE18C /* Tinkle.png in Resources */ = {isa = PBXBuildFile; fileRef = C9CDFC8010AFE99B00DBE18C /* Tinkle.png */; };
 		C9E6699610AE584000C875D4 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9E6699510AE584000C875D4 /* MessageView.xib */; };
 		C9E66A0A10AE653700C875D4 /* PresenceTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,7 @@
 		C9CDFB1C10AE8D9700DBE18C /* PresenceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceConnection.h; path = Classes/Avis/PresenceConnection.h; sourceTree = SOURCE_ROOT; };
 		C9CDFB1F10AE8E3100DBE18C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = Classes/Avis/Preferences.m; sourceTree = SOURCE_ROOT; };
 		C9CDFB2010AE8E3100DBE18C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = Classes/Avis/Preferences.h; sourceTree = SOURCE_ROOT; };
+		C9CDFC8010AFE99B00DBE18C /* Tinkle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tinkle.png; sourceTree = SOURCE_ROOT; };
 		C9E6699510AE584000C875D4 /* MessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		C9E66A0810AE653700C875D4 /* PresenceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresenceTableViewController.h; sourceTree = "<group>"; };
 		C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceTableViewController.m; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C9CDFAF010AE8B6C00DBE18C /* Avis */,
 				1D3623240D0F684500981E51 /* Tinkle_AppDelegate.h */,
 				1D3623250D0F684500981E51 /* Tinkle_AppDelegate.m */,
 				28216C950DB411BC00E5133A /* MessagesViewController.h */,
@@ -95,7 +98,6 @@
 		29B97314FDCFA39411CA2CEA /* tinkle_iphone */ = {
 			isa = PBXGroup;
 			children = (
-				C9CDFAF010AE8B6C00DBE18C /* Avis */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -117,6 +119,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C9CDFC8010AFE99B00DBE18C /* Tinkle.png */,
 				28AD73870D9D96C1002E5188 /* MainWindow.xib */,
 				C9E6699510AE584000C875D4 /* MessageView.xib */,
 				8D1107310486CEB800E47090 /* Tinkle-Info.plist */,
@@ -137,22 +140,23 @@
 		C9CDFAF010AE8B6C00DBE18C /* Avis */ = {
 			isa = PBXGroup;
 			children = (
-				C9CDFB1F10AE8E3100DBE18C /* Preferences.m */,
-				C9CDFB2010AE8E3100DBE18C /* Preferences.h */,
-				C9CDFB1910AE8D9700DBE18C /* PresenceEntity.m */,
-				C9CDFB1A10AE8D9700DBE18C /* PresenceEntity.h */,
-				C9CDFB1B10AE8D9700DBE18C /* PresenceConnection.m */,
-				C9CDFB1C10AE8D9700DBE18C /* PresenceConnection.h */,
-				C9CDFB0310AE8CB000DBE18C /* utils.m */,
-				C9CDFB0410AE8CB000DBE18C /* utils.h */,
-				C9CDFAFD10AE8C9300DBE18C /* TickerMessage.m */,
-				C9CDFAFE10AE8C9300DBE18C /* TickerMessage.h */,
-				C9CDFAFF10AE8C9300DBE18C /* PresenceStatus.m */,
-				C9CDFB0010AE8C9300DBE18C /* PresenceStatus.h */,
 				C9CDFAFA10AE8C6300DBE18C /* ElvinConnection.m */,
 				C9CDFAFB10AE8C6300DBE18C /* ElvinConnection.h */,
+				C9CDFB1C10AE8D9700DBE18C /* PresenceConnection.h */,
+				C9CDFB1B10AE8D9700DBE18C /* PresenceConnection.m */,
+				C9CDFB1910AE8D9700DBE18C /* PresenceEntity.m */,
+				C9CDFB1A10AE8D9700DBE18C /* PresenceEntity.h */,
+				C9CDFAFF10AE8C9300DBE18C /* PresenceStatus.m */,
+				C9CDFB0010AE8C9300DBE18C /* PresenceStatus.h */,
+				C9CDFAFD10AE8C9300DBE18C /* TickerMessage.m */,
+				C9CDFAFE10AE8C9300DBE18C /* TickerMessage.h */,
+				C9CDFB1F10AE8E3100DBE18C /* Preferences.m */,
+				C9CDFB2010AE8E3100DBE18C /* Preferences.h */,
+				C9CDFB0310AE8CB000DBE18C /* utils.m */,
+				C9CDFB0410AE8CB000DBE18C /* utils.h */,
 			);
 			name = Avis;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,6 +203,7 @@
 			files = (
 				28AD73880D9D96C1002E5188 /* MainWindow.xib in Resources */,
 				C9E6699610AE584000C875D4 /* MessageView.xib in Resources */,
+				C9CDFC8110AFE99B00DBE18C /* Tinkle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +270,7 @@
 				LIBRARY_SEARCH_PATHS = "lib/avis/${CONFIGURATION}-${PLATFORM_NAME}";
 				OTHER_LDFLAGS = "-lavis";
 				PREBINDING = NO;
+				PRODUCT_NAME = Tinkle;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.1.2;
@@ -284,6 +290,7 @@
 				LIBRARY_SEARCH_PATHS = "lib/avis/${CONFIGURATION}-${PLATFORM_NAME}";
 				OTHER_LDFLAGS = "-lavis";
 				PREBINDING = NO;
+				PRODUCT_NAME = Tinkle;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos3.1.2;

@@ -15,6 +15,8 @@
 
 - (id) initWithId: (NSString *) newId;
 
+- (NSComparisonResult) sortByUserName: (PresenceEntity *) entity;
+
 @property (readonly, retain)  NSString *       presenceId;
 @property (readwrite, retain) NSString *       name;
 @property (readwrite, retain) PresenceStatus * status;
