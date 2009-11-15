@@ -79,13 +79,12 @@ static NSString *listToParameterString (NSArray *list)
   - (void) clearEntities;
   - (PresenceEntity *) findUserWithId: (NSString *) presenceId;
   - (void) resetLivenessTimer;
-  - (void) startAutoAwayTimer;
-  - (void) stopAutoAwayTimer;
 @end
 
 @implementation PresenceConnection
 
 @synthesize entities;
+@synthesize delegate;
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection
 {
@@ -93,7 +92,7 @@ static NSString *listToParameterString (NSArray *list)
     return nil;
 
   elvin = theElvinConnection;
-  entities = [[NSMutableSet setWithCapacity: 5] retain];
+  entities = [[NSMutableArray arrayWithCapacity: 5] retain];
   presenceStatus = [[PresenceStatus onlineStatus] retain];
   
   presenceStatus.changedAt = [NSDate date];
@@ -102,12 +101,12 @@ static NSString *listToParameterString (NSArray *list)
   // TODO resub on user name/groups change
   // TODO re-emit presence on groups change
   [elvin subscribe: [self presenceInfoSubscription] withDelegate: self 
-     onNotify: @selector (handlePresenceInfo:)
-     onError: nil];
+          onNotify: @selector (handlePresenceInfo:)
+           onError: nil];
 
   // subscribe to requests
   [elvin subscribe: [self presenceRequestSubscription] withDelegate: self 
-     onNotify: @selector (handlePresenceRequest:) onError: nil];
+          onNotify: @selector (handlePresenceRequest:) onError: nil];
     
   // listen for elvin open/close
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
@@ -132,8 +131,6 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) dealloc
 {
-  [self stopAutoAwayTimer];
-  
   [entities release];
   [presenceStatus release];
   
@@ -290,8 +287,6 @@ static NSString *listToParameterString (NSArray *list)
     createdUser = NO;
   }
 
-  OnlineStatus oldStatusCode = user.status.statusCode;
-  
   user.name = userName;
   
   if (statusCode)
@@ -315,25 +310,12 @@ static NSString *listToParameterString (NSArray *list)
   
   if (createdUser)
   {
-    NSSet *addedObjects = [NSSet setWithObject: user];
-    
-    [self willChangeValueForKey: @"entities" 
-                withSetMutation: NSKeyValueUnionSetMutation
-                   usingObjects: addedObjects];
-    
     [entities addObject: user];
-
-    [self didChangeValueForKey: @"entities" 
-               withSetMutation: NSKeyValueUnionSetMutation
-                  usingObjects: addedObjects];
+    
+    [entities sortUsingSelector: @selector (sortByUserName:)];
   }
   
-  if (user.status.statusCode != oldStatusCode)
-  {
-    [[NSNotificationCenter defaultCenter] 
-      postNotificationName: PresenceStatusChangedNotification object: self
-      userInfo: [NSDictionary dictionaryWithObject: user forKey: @"user"]];
-  }
+  [delegate performSelector: @selector (presenceEntitiesChanged)];
 }
 
 - (void) requestPresenceInfo

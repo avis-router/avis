@@ -9,15 +9,17 @@ extern NSString *PresenceStatusChangedNotification;
 @interface PresenceConnection : NSObject
 {
   ElvinConnection    * elvin;
-  NSMutableSet       * entities;
+  NSMutableArray     * entities;
   PresenceStatus     * presenceStatus;
+  id                   delegate;
 }
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection;
 
 - (void) refresh;
 
-@property (readonly, assign)  IBOutlet NSMutableSet   * entities;
+@property (readonly, assign)  IBOutlet NSMutableArray * entities;
 @property (readwrite, retain) IBOutlet PresenceStatus * presenceStatus;
+@property (readwrite, assign) IBOutlet id delegate;
 
 @end

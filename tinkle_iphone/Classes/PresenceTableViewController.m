@@ -1,4 +1,6 @@
 #import "PresenceTableViewController.h"
+#import "PresenceConnection.h"
+#import "PresenceEntity.h"
 
 @implementation PresenceTableViewController
 
@@ -24,6 +26,27 @@
   
   // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
   // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+- (void) setPresence: (PresenceConnection *) newPresence
+{
+  [presence release];
+  
+  presence = [newPresence retain];
+  
+  presence.delegate = self;
+  
+  [self.tableView reloadData];
+}
+
+- (void) presenceEntitiesChanged
+{
+  [self.tableView reloadData];
+}
+
+- (PresenceConnection *) presence
+{
+  return presence;
 }
 
 /*
@@ -74,12 +97,11 @@
   return 1;
 }
 
-
 // Customize the number of rows in the table view.
 - (NSInteger) tableView: (UITableView *) tableView 
   numberOfRowsInSection: (NSInteger) section 
 {
-  return 2;
+  return [presence.entities count];
 }
 
 // Customize the appearance of table view cells.
@@ -98,9 +120,9 @@
                reuseIdentifier: CellIdentifier] autorelease];
   } 
   
-  // Set up the cell...
-	cell.textLabel.text = 
-    [NSString stringWithFormat: @"Person %u", indexPath.row];
+  PresenceEntity *entity = [presence.entities objectAtIndex: indexPath.row];
+
+	cell.textLabel.text = entity.name;
 
   return cell;
 }

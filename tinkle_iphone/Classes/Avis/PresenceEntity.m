@@ -63,4 +63,9 @@
   }
 }
 
+- (NSComparisonResult) sortByUserName: (PresenceEntity *) entity
+{
+  return [name localizedCaseInsensitiveCompare: entity.name];
+}
+
 @end
