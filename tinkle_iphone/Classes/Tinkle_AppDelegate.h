@@ -20,6 +20,6 @@
 @property (nonatomic, retain) IBOutlet UITabBarController *tabBarController;
 @property (nonatomic, readonly) IBOutlet PresenceConnection *presence;
 
-- (void) close;
+- (void) disconnect;
 
 @end

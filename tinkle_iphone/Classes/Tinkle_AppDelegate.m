@@ -42,7 +42,7 @@
   [tabBarController release];
   [window release];
   
-  [self close];
+  [self disconnect];
   
   [presence release];
   [elvin release];
@@ -70,12 +70,12 @@
 
 - (void) applicationWillTerminate: (UIApplication *) application
 {
-  [self close];
+  [self disconnect];
 }
 
-- (void) close
+- (void) disconnect
 {
-    [elvin disconnect];
+  [elvin disconnect];
 }
 
 - (void) handleElvinOpen: (void *) unused
