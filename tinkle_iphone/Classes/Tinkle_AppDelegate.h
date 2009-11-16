@@ -10,7 +10,7 @@
   UIWindow *window;
   UITabBarController *tabBarController;
   
-  PresenceTableViewController *presenceController;
+  IBOutlet PresenceTableViewController *presenceController;
   
   ElvinConnection *elvin;
   PresenceConnection *presence;
@@ -18,7 +18,7 @@
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UITabBarController *tabBarController;
-@property (nonatomic, readonly) IBOutlet PresenceConnection *presence;
+@property (nonatomic, readonly) PresenceConnection *presence;
 
 - (void) disconnect;
 

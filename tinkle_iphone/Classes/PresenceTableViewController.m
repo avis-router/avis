@@ -41,9 +41,15 @@ static NSString *formatDuration (NSDate *value);
   [self.tableView reloadData];
 }
 
-- (void) presenceEntitiesChanged
+- (void) presenceEntitiesAdded
 {
   [self.tableView reloadData];
+}
+
+- (void) presenceEntityChanged: (NSIndexPath *) row
+{
+  [self.tableView reloadRowsAtIndexPaths: [NSArray arrayWithObject: row]
+    withRowAnimation: UITableViewRowAnimationFade];
 }
 
 - (PresenceConnection *) presence
