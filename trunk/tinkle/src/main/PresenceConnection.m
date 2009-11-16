@@ -242,8 +242,7 @@ static NSString *listToParameterString (NSArray *list)
   {
     [self setPresenceStatusSilently: newStatus];
     
-    if ([elvin isConnected])
-      [self emitPresenceInfoAsStatusUpdate];
+    [self emitPresenceInfoAsStatusUpdate];
   }
 }
 
@@ -323,17 +322,21 @@ static NSString *listToParameterString (NSArray *list)
 
 - (NSString *) presenceInfoSubscription
 {
-  NSMutableString *expr = [NSMutableString stringWithFormat: 
-    @"Presence-Protocol < 2000 && string (Groups) && string (User) && Client-Id != '%@'", 
+  NSMutableString *expr = 
+    [NSMutableString stringWithFormat: 
+      @"Presence-Protocol < 2000 && string (Groups) && string (User) && Client-Id != '%@'", 
       [ElvinConnection escapedSubscriptionString: userId]];
   
-  // TODO this subs to all groups when array is empty  
   if ([groups count] > 0)
   {
     [expr appendFormat: @" && contains (fold-case (Groups) %@)", 
       listToParameterString (groups)];
+  } else
+  {
+    // don't sub to all groups when array is empty
+    [expr append: @" && contains (Groups, '__nothing__')"];
   }
-  
+
   TRACE (@"Presence info subscription is: %@", expr);
   
   return expr;
