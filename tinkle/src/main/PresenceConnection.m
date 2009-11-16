@@ -87,7 +87,7 @@ static NSString *listToParameterString (NSArray *list)
 
 @implementation PresenceConnection
 
-@synthesize entities;
+@synthesize entities, userId;
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection 
             userId: (NSString *) newUserId userName: (NSString *) newUserName
@@ -155,11 +155,6 @@ static NSString *listToParameterString (NSArray *list)
 - (PresenceStatus *) presenceStatus
 {
   return presenceStatus;
-}
-
-- (NSString *) userId
-{
-  return userId;
 }
 
 - (NSString *) userName
