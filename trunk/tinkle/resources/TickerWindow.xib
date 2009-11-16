@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
+			<integer value="4"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -930,7 +930,26 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 				<string key="NSFrameAutosaveName">Messages</string>
 			</object>
 			<object class="NSUserDefaultsController" id="816690533">
+				<object class="NSMutableArray" key="NSDeclaredKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>TickerGroups</string>
+				</object>
 				<bool key="NSSharedInstance">YES</bool>
+			</object>
+			<object class="NSArrayController" id="978314344">
+				<object class="NSMutableArray" key="NSDeclaredKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSMutableString">
+						<characters key="NS.bytes">TickerGroups</characters>
+					</object>
+				</object>
+				<string key="NSObjectClassName">NSString</string>
+				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
+				<bool key="NSAvoidsEmptySelection">YES</bool>
+				<bool key="NSPreservesSelection">YES</bool>
+				<bool key="NSSelectsInsertedObjects">YES</bool>
+				<bool key="NSFilterRestrictsInsertion">YES</bool>
+				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -1240,6 +1259,46 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					</object>
 					<int key="connectionID">156</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentArray: values.TickerGroups</string>
+						<reference key="source" ref="978314344"/>
+						<reference key="destination" ref="816690533"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="978314344"/>
+							<reference key="NSDestination" ref="816690533"/>
+							<string key="NSLabel">contentArray: values.TickerGroups</string>
+							<string key="NSBinding">contentArray</string>
+							<string key="NSKeyPath">values.TickerGroups</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">161</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentValues: arrangedObjects</string>
+						<reference key="source" ref="683708684"/>
+						<reference key="destination" ref="978314344"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="683708684"/>
+							<reference key="NSDestination" ref="978314344"/>
+							<string key="NSLabel">contentValues: arrangedObjects</string>
+							<string key="NSBinding">contentValues</string>
+							<string key="NSKeyPath">arrangedObjects</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">164</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tickerGroupsController</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="978314344"/>
+					</object>
+					<int key="connectionID">165</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1483,6 +1542,12 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<reference key="object" ref="1048291106"/>
 						<reference key="parent" ref="157058093"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">159</int>
+						<reference key="object" ref="978314344"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Ticker Groups Controller</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1505,6 +1570,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					<string>150.IBAttributePlaceholdersKey</string>
 					<string>150.IBPluginDependency</string>
 					<string>151.IBPluginDependency</string>
+					<string>159.IBPluginDependency</string>
 					<string>18.IBPluginDependency</string>
 					<string>19.IBPluginDependency</string>
 					<string>20.IBPluginDependency</string>
@@ -1596,6 +1662,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="0"/>
 					<reference ref="743761704"/>
 					<integer value="0"/>
@@ -1657,7 +1724,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">156</int>
+			<int key="maxID">165</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1741,6 +1808,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 							<string>sendButton</string>
 							<string>subscription</string>
 							<string>subscriptionContext</string>
+							<string>tickerGroupsController</string>
 							<string>tickerMessagesTextView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -1757,6 +1825,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 							<string>id</string>
 							<string>NSString</string>
 							<string>id</string>
+							<string>NSArrayController</string>
 							<string>id</string>
 						</object>
 					</object>
@@ -1844,6 +1913,14 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">NSArrayController</string>
+					<string key="superclassName">NSObjectController</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">AppKit.framework/Headers/NSArrayController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">NSButton</string>
 					<string key="superclassName">NSControl</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -1905,6 +1982,14 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">Foundation.framework/Headers/NSFormatter.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSManagedObjectContext</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">CoreData.framework/Headers/NSManagedObjectContext.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2167,6 +2252,14 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">NSObjectController</string>
+					<string key="superclassName">NSController</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">AppKit.framework/Headers/NSObjectController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">NSResponder</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
@@ -2352,7 +2445,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 			<integer value="3000" key="NS.object.0"/>
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
-		<string key="IBDocument.LastKnownRelativeProjectPath">../Ticker.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../Tinkle.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 	</data>
 </archive>

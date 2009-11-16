@@ -73,11 +73,11 @@ static NSAttributedString *attributedString (NSString *string,
 {
   self = [super initWithWindowNibName: @"TickerWindow"];
   
-  if (self)
-  {
-    elvin = theElvinConnection;
-    self.subscription = theSubscription;
-  }
+  if (!self)
+    return nil;
+  
+  elvin = theElvinConnection;
+  self.subscription = theSubscription;
   
   return self;
 }
@@ -99,6 +99,12 @@ static NSAttributedString *attributedString (NSString *string,
   self.canSend = [elvin isConnected];
   
   tickerIsEditing = NO;
+    
+  [tickerGroupsController 
+    setSortDescriptors: 
+     [NSArray arrayWithObject: 
+       [[NSSortDescriptor alloc] initWithKey: @"" ascending: YES
+        selector: @selector (caseInsensitiveCompare:)]]];
 }
 
 - (void) windowDidLoad
