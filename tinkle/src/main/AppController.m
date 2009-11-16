@@ -14,6 +14,9 @@
 
 #define MAX_GROWL_MESSAGE_LENGTH 200
 
+static void observe (id observer, NSUserDefaultsController *prefs, 
+                     NSString *property);
+
 #pragma mark Declare Private Methods
 
 @interface AppController (Private)
@@ -48,7 +51,13 @@
       [[[ElvinConnection alloc] initWithUrl: prefString (PrefElvinURL)] 
         retain];
     
-    presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
+    presence = 
+      [[[PresenceConnection alloc]
+        initWithElvin: elvin
+        userId: prefString (PrefOnlineUserUUID) 
+        userName: prefString (PrefOnlineUserName)
+        groups: prefArray (PrefPresenceGroups)
+        buddies: prefArray (PrefPresenceBuddies)] retain];
     
     elvin.keys = prefArray (@"Keys");
     
@@ -122,17 +131,22 @@
   // listen for preference changes
   NSUserDefaultsController *userPreferences = 
     [NSUserDefaultsController sharedUserDefaultsController];
-		
-  [userPreferences addObserver: self forKeyPath: @"values.ElvinURL" 
-                       options: 0 context: self];
-  [userPreferences addObserver: self forKeyPath: @"values.TickerSubscription" 
-                       options: 0 context: self];
-  [userPreferences addObserver: self forKeyPath: @"values.TickerGroups" 
-                       options: 0 context: self];
-  [userPreferences addObserver: self forKeyPath: @"values.Keys" 
-                       options: 0 context: self];
-  
+
+  observe (self, userPreferences, PrefElvinURL);
+  observe (self, userPreferences, PrefTickerSubscription);
+  observe (self, userPreferences, PrefTickerGroups);
+  observe (self, userPreferences, PrefElvinKeys);
+  observe (self, userPreferences, PrefOnlineUserName);
+  observe (self, userPreferences, PrefPresenceGroups);
+
   [elvin connect];
+}
+
+void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
+{
+  [prefs addObserver: observer 
+          forKeyPath: [NSString stringWithFormat: @"values.%@", property]
+             options: 0 context: observer];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) notification 
@@ -141,6 +155,38 @@
   
   [[NSNotificationCenter defaultCenter] removeObserver: self];
   [NSObject cancelPreviousPerformRequestsWithTarget: self];
+}
+
+/*
+ * Handle preference changes.
+ */
+- (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
+                         change: (NSDictionary *) change context: (void *) context
+{
+  if (context == self)
+  {
+    if ([keyPath hasSuffix: PrefElvinURL])
+    {
+      elvin.elvinUrl = prefString (PrefElvinURL);
+    } else if ([keyPath hasSuffix: PrefTickerSubscription] ||
+               [keyPath hasSuffix: PrefTickerGroups])
+    {
+      tickerController.subscription = [self createTickerSubscription];
+    } else if ([keyPath hasSuffix: PrefElvinKeys])
+    {
+      elvin.keys = prefArray (PrefElvinKeys);
+    } else if ([keyPath hasSuffix: PrefOnlineUserName])
+    {
+      presence.userName = prefString (PrefOnlineUserName);
+    } else if ([keyPath hasSuffix: PrefPresenceGroups])
+    {
+      presence.groups = prefArray (PrefPresenceGroups);
+    }
+  } else 
+  {
+    [super observeValueForKeyPath: keyPath ofObject: object change: change 
+                          context: context];
+  }
 }
 
 /**
@@ -301,33 +347,6 @@
 }
 
 #pragma mark -
-
-/*
- * Handle preference changes.
- */
-- (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
-         change: (NSDictionary *) change context: (void *) context
-{
-  // TODO ticker controller should handle pref change OR bind prefs to properties
-  if (context == self)
-  {
-    if ([keyPath hasSuffix: PrefElvinURL])
-    {
-      elvin.elvinUrl = prefString (PrefElvinURL);
-    } else if ([keyPath hasSuffix: PrefTickerSubscription] ||
-               [keyPath hasSuffix: PrefTickerGroups])
-    {
-      tickerController.subscription = [self createTickerSubscription];
-    } else if ([keyPath hasSuffix: PrefElvinKeys])
-    {
-      elvin.keys = prefArray (PrefElvinKeys);
-    }
-  } else 
-  {
-    [super observeValueForKeyPath: keyPath ofObject: object change: change 
-           context: context];
-  }
-}
 
 - (void) handleSleep: (void *) unused
 {
