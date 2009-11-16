@@ -313,9 +313,18 @@ static NSString *listToParameterString (NSArray *list)
     [entities addObject: user];
     
     [entities sortUsingSelector: @selector (sortByUserName:)];
+    
+    [delegate performSelector: @selector (presenceEntitiesAdded)];
+  } else
+  {
+    NSUInteger indexes [2] = {0, [entities indexOfObjectIdenticalTo: user]};
+    
+    NSIndexPath *path = 
+      [NSIndexPath indexPathWithIndexes: indexes length: 2];
+      
+    [delegate performSelector: @selector (presenceEntityChanged:) 
+                   withObject: path];
   }
-  
-  [delegate performSelector: @selector (presenceEntitiesChanged)];
 }
 
 - (void) requestPresenceInfo
