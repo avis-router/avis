@@ -334,7 +334,7 @@ static NSString *listToParameterString (NSArray *list)
   } else
   {
     // don't sub to all groups when array is empty
-    [expr append: @" && contains (Groups, '__nothing__')"];
+    [expr appendString: @" && contains (Groups, '__nothing__')"];
   }
 
   TRACE (@"Presence info subscription is: %@", expr);
