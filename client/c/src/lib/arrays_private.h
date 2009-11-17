@@ -82,6 +82,9 @@ void array_list_remove_item (ArrayList *list, size_t list_index,
                              size_t item_size);
 
 AVIS_PUBLIC
+Array array_list_add_all (ArrayList *target, const ArrayList *source);
+
+AVIS_PUBLIC
 int32_t *array_list_find_int (ArrayList *list, int32_t int_value);
 
 AVIS_PUBLIC
