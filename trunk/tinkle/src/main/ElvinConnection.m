@@ -202,7 +202,8 @@ void set_keys (Elvin *elvin, Keys *keys)
 {
   TRACE (@"Update security keys");
 
-  elvin_set_keys (elvin, EMPTY_KEYS, keys);
+  if (!elvin_set_keys (elvin, EMPTY_KEYS, keys))
+    elvin_keys_destroy (keys);
 }
 
 #pragma Elvin publish/subscribe
