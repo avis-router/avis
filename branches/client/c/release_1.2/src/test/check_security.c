@@ -21,7 +21,7 @@
 #include <math.h>
 #include <string.h>
 
-#ifndef _WIN32
+#ifndef WIN32
   #include <unistd.h>
 #endif
 
@@ -36,6 +36,8 @@
 #include "check_ext.h"
 
 static ElvinError error = ELVIN_EMPTY_ERROR;
+
+TCase *security_tests ();
 
 static void setup ()
 {
@@ -78,6 +80,90 @@ START_TEST (test_keys)
 
   elvin_keys_destroy (keys1);
   elvin_keys_destroy (keys2);
+}
+END_TEST
+
+START_TEST (test_keys_delta)
+{
+  KeysDelta delta;
+  Keys *keys1 = elvin_keys_create ();
+  Keys *keys2 = elvin_keys_create ();  
+  Key key1 = elvin_key_create_from_string ("key 1");
+  Key key2 = elvin_key_create_from_string ("key 2");
+  Key key3 = elvin_key_create_from_string ("key 3");
+  Key key;
+
+  elvin_keys_compute_delta (&delta, keys1, keys2);
+  
+  fail_unless (single_keyset (delta.add, SHA1_PRODUCER_ID)->item_count == 0, "Not empty");
+  fail_unless (single_keyset (delta.add, SHA1_CONSUMER_ID)->item_count == 0, "Not empty");
+  fail_unless (dual_producer_keyset (delta.add, SHA1_DUAL_ID)->item_count == 0, "Not empty");
+  fail_unless (dual_consumer_keyset (delta.add, SHA1_DUAL_ID)->item_count == 0, "Not empty");
+  
+  elvin_keys_free_shallow (delta.add);
+  elvin_keys_free_shallow (delta.del);
+
+  /* add a single producer key */
+  elvin_keys_add (keys2, KEY_SCHEME_SHA1_PRODUCER, key1);
+
+  elvin_keys_compute_delta (&delta, keys1, keys2);
+  
+  fail_unless (single_keyset (delta.add, SHA1_PRODUCER_ID)->item_count == 1, "Not 1");
+  key = key_at (single_keyset (delta.add, SHA1_PRODUCER_ID), 0);
+  
+  fail_unless (elvin_key_equal (key, key1), "Not equal");
+  
+  fail_unless (single_keyset (delta.add, SHA1_CONSUMER_ID)->item_count == 0, "Not empty");
+  fail_unless (dual_producer_keyset (delta.add, SHA1_DUAL_ID)->item_count == 0, "Not empty");
+
+  elvin_keys_free_shallow (delta.add);
+  elvin_keys_free_shallow (delta.del);
+  
+  /* remove a single producer key */
+  elvin_keys_add (keys1, KEY_SCHEME_SHA1_PRODUCER, key2);
+
+  elvin_keys_compute_delta (&delta, keys1, keys2);
+  
+  fail_unless (single_keyset (delta.add, SHA1_PRODUCER_ID)->item_count == 1, "Not 1");
+  key = key_at (single_keyset (delta.add, SHA1_PRODUCER_ID), 0);
+  
+  fail_unless (elvin_key_equal (key, key1), "Not equal");
+  
+  fail_unless (single_keyset (delta.del, SHA1_PRODUCER_ID)->item_count == 1, "Not 1");
+  key = key_at (single_keyset (delta.del, SHA1_PRODUCER_ID), 0);
+  
+  fail_unless (elvin_key_equal (key, key2), "Not equal");
+  
+  elvin_keys_free_shallow (delta.add);
+  elvin_keys_free_shallow (delta.del);
+  
+  /* compute with dual key set */
+  
+  elvin_keys_free (keys1);
+  elvin_keys_free (keys2);
+    
+  keys1 = elvin_keys_create ();
+  keys2 = elvin_keys_create (); 
+  
+  elvin_keys_add_dual_producer (keys1, KEY_SCHEME_SHA1_DUAL, elvin_key_copy (key1));
+  elvin_keys_add_dual_consumer (keys1, KEY_SCHEME_SHA1_DUAL, elvin_key_copy (key2));
+  elvin_keys_add_dual_consumer (keys1, KEY_SCHEME_SHA1_DUAL, elvin_key_copy (key3));
+
+  elvin_keys_add_dual_producer (keys2, KEY_SCHEME_SHA1_DUAL, elvin_key_copy (key3));
+  elvin_keys_add_dual_consumer (keys2, KEY_SCHEME_SHA1_DUAL, elvin_key_copy (key3));
+
+  elvin_keys_compute_delta (&delta, keys1, keys2);
+  fail_unless (dual_producer_keyset (delta.add, SHA1_DUAL_ID)->item_count == 1, "Not 1");
+  fail_unless (dual_producer_keyset (delta.del, SHA1_DUAL_ID)->item_count == 1, "Not 1");
+
+  fail_unless (dual_consumer_keyset (delta.add, SHA1_DUAL_ID)->item_count == 0, "Not 0");
+  fail_unless (dual_consumer_keyset (delta.del, SHA1_DUAL_ID)->item_count == 1, "Not 1");
+
+  elvin_keys_free_shallow (delta.add);
+  elvin_keys_free_shallow (delta.del);
+  
+  elvin_keys_free (keys1);
+  elvin_keys_free (keys2);
 }
 END_TEST
 
@@ -140,8 +226,9 @@ TCase *security_tests ()
   TCase *tc_core = tcase_create ("security");
 
   tcase_add_test (tc_core, test_keys);
+  tcase_add_test (tc_core, test_keys_delta);
   tcase_add_test (tc_core, test_key_io);
-
+  
   tcase_add_checked_fixture (tc_core, setup, teardown);
 
   return tc_core;

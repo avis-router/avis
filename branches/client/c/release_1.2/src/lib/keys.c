@@ -26,23 +26,6 @@
 #include "arrays_private.h"
 #include "errors_private.h"
 
-Key avis_sha1 (Key input);
-
-typedef Key (*HashFunc) (Key key);
-
-#define PRODUCER 1
-#define CONSUMER 2
-#define DUAL     (PRODUCER + CONSUMER)
-
-#define KEY_SCHEME_COUNT 3
-
-struct KeyScheme_t
-{
-  int id;
-  int type;
-  HashFunc hash;
-};
-
 struct KeyScheme_t _KEY_SCHEME_SHA1_DUAL =     {1, DUAL,     avis_sha1};
 struct KeyScheme_t _KEY_SCHEME_SHA1_PRODUCER = {2, PRODUCER, avis_sha1};
 struct KeyScheme_t _KEY_SCHEME_SHA1_CONSUMER = {3, CONSUMER, avis_sha1};
@@ -57,22 +40,6 @@ static KeyScheme schemes [KEY_SCHEME_COUNT] =
 static ArrayList _empty_dual_keys [2] = {{NULL, 0, 0}, {NULL, 0, 0}};
 
 Keys _empty_keys = {{{&_empty_dual_keys, 0, 2}, {NULL, 0, 0}, {NULL, 0, 0}}};
-
-#define index_for(scheme) ((scheme)->id - 1)
-
-/** The key set (actually an array list) for a key collection and scheme ID */
-#define keyset_for_scheme(k, id) (&(k->keys [(id) - 1]))
-
-/** The single key list for a single key scheme. */
-#define single_keyset(k, id) (keyset_for_scheme (k, id))
-
-/** The dual producer key list for a key collection & scheme ID. */
-#define dual_producer_keyset(k, id) \
-  (ArrayList *)(keyset_for_scheme(k, id))->items
-
-/** The dual consumer key list for a key collection & scheme ID. */
-#define dual_consumer_keyset(k, id) \
-  (((ArrayList *)(keyset_for_scheme(k, id))->items) + 1)
 
 static KeyScheme scheme_for (uint32_t id, ElvinError *error);
 
@@ -143,6 +110,77 @@ Keys *elvin_keys_copy (Keys *keys)
   return copy;
 }
 
+static bool key_set_contains (const ArrayList *keyset, const Key *key)
+{
+  Key *otherkey;
+  size_t count = keyset->item_count;
+  
+  for (otherkey = keyset->items; count > 0; count--, otherkey++)
+  {
+    if (elvin_key_equal (*key, *otherkey))
+      return true;
+  }
+  
+  return false;
+}
+
+static void key_set_subtract (ArrayList *target,
+                              const ArrayList *keys1,
+                              const ArrayList *keys2)
+{
+  Key *key;
+  size_t count = keys1->item_count;
+  
+  for (key = keys1->items; count > 0; count--, key++)
+  {
+    if (!key_set_contains (keys2, key))
+      *array_list_add (target, Key) = *key;
+  }
+}
+
+void elvin_keys_compute_delta (KeysDelta *delta, 
+                               const Keys *keys1, 
+                               const Keys *keys2)
+{
+  int id;
+  
+  delta->add = elvin_keys_create ();
+  delta->del = elvin_keys_create ();
+  
+  KeyScheme *scheme = schemes;
+  
+  for (id = 1; id <= KEY_SCHEME_COUNT; id++, scheme++)
+  {
+    if ((*scheme)->type == DUAL)
+    {
+      key_set_subtract (dual_producer_keyset (delta->add, id),
+                        dual_producer_keyset (keys2, id),
+                        dual_producer_keyset (keys1, id));
+
+      key_set_subtract (dual_producer_keyset (delta->del, id),
+                        dual_producer_keyset (keys1, id),
+                        dual_producer_keyset (keys2, id));
+
+      key_set_subtract (dual_consumer_keyset (delta->add, id),
+                        dual_consumer_keyset (keys2, id),
+                        dual_consumer_keyset (keys1, id));
+      
+      key_set_subtract (dual_consumer_keyset (delta->del, id),
+                        dual_consumer_keyset (keys1, id),
+                        dual_consumer_keyset (keys2, id));
+    } else
+    {
+      key_set_subtract (single_keyset (delta->add, id),
+                        single_keyset (keys2, id),
+                        single_keyset (keys1, id));
+      
+      key_set_subtract (single_keyset (delta->del, id),
+                        single_keyset (keys1, id),
+                        single_keyset (keys2, id));
+    }
+  }   
+}
+
 void elvin_keys_free (Keys *keys)
 {
   if (keys == EMPTY_KEYS || keys == NULL)
@@ -155,6 +193,18 @@ void elvin_keys_free (Keys *keys)
 
   free_keyset (keyset_for_scheme (keys, 2));
   free_keyset (keyset_for_scheme (keys, 3));
+}
+
+void elvin_keys_free_shallow (Keys *keys)
+{
+  if (keys == EMPTY_KEYS || keys == NULL)
+    return;
+  
+  array_list_free (dual_producer_keyset (keys, 1));
+  array_list_free (dual_consumer_keyset (keys, 1));
+   
+  array_list_free (keyset_for_scheme (keys, 2));
+  array_list_free (keyset_for_scheme (keys, 3));
 }
 
 void elvin_key_free (Key key)
