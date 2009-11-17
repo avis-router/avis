@@ -438,9 +438,11 @@ static NSAttributedString *attributedString (NSString *string,
     return;
   }
   
+  NSString *group = [messageGroup stringValue];
+  
   [elvin sendTickerMessage: message 
     fromSender: prefString (PrefOnlineUserName)
-    toGroup: [messageGroup stringValue] 
+    toGroup: group 
     inReplyTo: self.inReplyTo 
     attachedURL: self.attachedURL
     sendPublic: self.allowPublic
@@ -458,6 +460,19 @@ static NSAttributedString *attributedString (NSString *string,
   {
     [[messageGroup window] makeFirstResponder: messageGroup];
     [[messageText window] makeFirstResponder: messageText];
+  }
+  
+  // add group to groups pref if not there
+  NSArray *groups = prefArray (PrefTickerGroups);
+  
+  if (![groups containsObject: group])
+  {
+    NSMutableArray *newGroups = [NSMutableArray arrayWithArray: groups];
+    
+    [newGroups addObject: group];
+    
+    [[NSUserDefaults standardUserDefaults] 
+       setObject: newGroups forKey: PrefTickerGroups];
   }
 }
 
