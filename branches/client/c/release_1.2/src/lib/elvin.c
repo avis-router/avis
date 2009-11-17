@@ -528,8 +528,8 @@ bool elvin_set_keys (Elvin *elvin,
 
   if (send_and_receive (elvin, sec_rqst, sec_rply, MESSAGE_ID_SEC_RPLY))
   {
-    elvin_keys_free (elvin->notification_keys);
-    elvin_keys_free (elvin->subscription_keys);
+    elvin_keys_destroy (elvin->notification_keys);
+    elvin_keys_destroy (elvin->subscription_keys);
 
     elvin->notification_keys = notification_keys;
     elvin->subscription_keys = subscription_keys;
@@ -539,6 +539,11 @@ bool elvin_set_keys (Elvin *elvin,
   elvin_keys_free_shallow (delta_ntfn.del);
   elvin_keys_free_shallow (delta_sub.add);
   elvin_keys_free_shallow (delta_sub.del);
+  
+  free (delta_ntfn.add);
+  free (delta_ntfn.del);
+  free (delta_sub.add);
+  free (delta_sub.del);
   
   return elvin_error_ok (&elvin->error);
 }
