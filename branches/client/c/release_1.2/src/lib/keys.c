@@ -207,7 +207,9 @@ void elvin_keys_free_shallow (Keys *keys)
   
   array_list_free (dual_producer_keyset (keys, 1));
   array_list_free (dual_consumer_keyset (keys, 1));
-   
+  
+  array_list_free (keyset_for_scheme (keys, 1));
+  
   array_list_free (keyset_for_scheme (keys, 2));
   array_list_free (keyset_for_scheme (keys, 3));
 }
