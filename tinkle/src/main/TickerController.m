@@ -465,7 +465,8 @@ static NSAttributedString *attributedString (NSString *string,
   // add group to groups pref if not there
   NSArray *groups = prefArray (PrefTickerGroups);
   
-  if (![groups containsObject: group])
+  if ([group rangeOfString: @"@"].location == NSNotFound &&
+      ![groups containsObject: group])
   {
     NSMutableArray *newGroups = [NSMutableArray arrayWithArray: groups];
     
