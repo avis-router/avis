@@ -45,6 +45,12 @@ static KeyScheme scheme_for (uint32_t id, ElvinError *error);
 
 static void init_dual_keysets (Keys *keys);
 
+static bool key_set_contains (const ArrayList *keyset, const Key *key);
+
+static void key_set_subtract (ArrayList *target,
+                              const ArrayList *keys1,
+                              const ArrayList *keys2);
+
 static void keysets_copy (ArrayList *target, ArrayList *source);
 
 static void free_keyset (ArrayList *keyset);
@@ -110,44 +116,15 @@ Keys *elvin_keys_copy (Keys *keys)
   return copy;
 }
 
-static bool key_set_contains (const ArrayList *keyset, const Key *key)
-{
-  Key *otherkey;
-  size_t count = keyset->item_count;
-  
-  for (otherkey = keyset->items; count > 0; count--, otherkey++)
-  {
-    if (elvin_key_equal (*key, *otherkey))
-      return true;
-  }
-  
-  return false;
-}
-
-static void key_set_subtract (ArrayList *target,
-                              const ArrayList *keys1,
-                              const ArrayList *keys2)
-{
-  Key *key;
-  size_t count = keys1->item_count;
-  
-  for (key = keys1->items; count > 0; count--, key++)
-  {
-    if (!key_set_contains (keys2, key))
-      *array_list_add (target, Key) = *key;
-  }
-}
-
 void elvin_keys_compute_delta (KeysDelta *delta, 
                                const Keys *keys1, 
                                const Keys *keys2)
 {
   int id;
+  KeyScheme *scheme = schemes;
   
   delta->add = elvin_keys_create ();
   delta->del = elvin_keys_create ();
-  
-  KeyScheme *scheme = schemes;
   
   for (id = 1; id <= KEY_SCHEME_COUNT; id++, scheme++)
   {
@@ -179,6 +156,34 @@ void elvin_keys_compute_delta (KeysDelta *delta,
                         single_keyset (keys2, id));
     }
   }   
+}
+
+void key_set_subtract (ArrayList *target,
+                       const ArrayList *keys1,
+                       const ArrayList *keys2)
+{
+  Key *key;
+  size_t count = keys1->item_count;
+  
+  for (key = keys1->items; count > 0; count--, key++)
+  {
+    if (!key_set_contains (keys2, key))
+      *array_list_add (target, Key) = *key;
+  }
+}
+
+bool key_set_contains (const ArrayList *keyset, const Key *key)
+{
+  Key *otherkey;
+  size_t count = keyset->item_count;
+  
+  for (otherkey = keyset->items; count > 0; count--, otherkey++)
+  {
+    if (elvin_key_equal (*key, *otherkey))
+      return true;
+  }
+  
+  return false;
 }
 
 void elvin_keys_free (Keys *keys)
