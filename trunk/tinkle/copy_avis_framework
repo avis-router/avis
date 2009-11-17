@@ -4,7 +4,7 @@
 
 # NOTE: need to use Xcode to build avis.framework first
 
-avis_home="../../../c/platforms/macosx"
+avis_home="../client/c/platforms/macosx"
 
 rsync -arv --delete --exclude "*.svn*" \
   "$avis_home/build/Release/avis.framework/"* Frameworks/avis.framework/
