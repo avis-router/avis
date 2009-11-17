@@ -35,6 +35,7 @@
 #include "messages.h"
 #include "listeners.h"
 #include "arrays_private.h"
+#include "keys_private.h"
 #include "log.h"
 #include "avis_client_config.h"
 
@@ -512,13 +513,18 @@ void deliver_notification (Elvin *elvin, Array *ids,
 bool elvin_set_keys (Elvin *elvin,
                      Keys *notification_keys, Keys *subscription_keys)
 {
+  KeysDelta delta_ntfn, delta_sub;
   alloc_message (sec_rqst);
   alloc_message (sec_rply);
-
-  /* TODO (opt) could compute delta here to possibly reduce message size */
+  
+  elvin_keys_compute_delta (&delta_ntfn, 
+                            elvin->notification_keys, notification_keys);
+  elvin_keys_compute_delta (&delta_sub, 
+                            elvin->subscription_keys, subscription_keys);
+  
   avis_message_init (sec_rqst, MESSAGE_ID_SEC_RQST,
-                     notification_keys, elvin->notification_keys,
-                     subscription_keys, elvin->subscription_keys);
+                     delta_ntfn.add, delta_ntfn.del,
+                     delta_sub.add, delta_sub.del);
 
   if (send_and_receive (elvin, sec_rqst, sec_rply, MESSAGE_ID_SEC_RPLY))
   {
@@ -527,13 +533,14 @@ bool elvin_set_keys (Elvin *elvin,
 
     elvin->notification_keys = notification_keys;
     elvin->subscription_keys = subscription_keys;
-
-    /* sec_rply does not need to be freed */
-    return true;
-  } else
-  {
-    return false;
   }
+  
+  elvin_keys_free_shallow (delta_ntfn.add);
+  elvin_keys_free_shallow (delta_ntfn.del);
+  elvin_keys_free_shallow (delta_sub.add);
+  elvin_keys_free_shallow (delta_sub.del);
+  
+  return elvin_error_ok (&elvin->error);
 }
 
 bool elvin_send (Elvin *elvin, Attributes *notification)
