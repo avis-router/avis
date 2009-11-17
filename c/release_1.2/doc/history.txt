@@ -1,3 +1,15 @@
+Release 1.2.4 (November 18, 2009)
+----------------------------------------------------------------------
+
+This release fixes a bug when changing security keys when connected to
+Mantara elvind and fixes a minor memory leak.
+
+ * Fixed bug in set_keys () that would cause an error when connected
+   to Mantara elvind, due to it trying to add the existing keys again.
+
+ * Fixed a small memory leak in set_keys ().
+
+
 Release 1.2.3 (November 5, 2009)
 ----------------------------------------------------------------------
 
