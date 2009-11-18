@@ -207,7 +207,13 @@ void elvin_keys_free (Keys *keys);
  * Test if two key collections are logically equal.
  */
 AVIS_PUBLIC
-bool elvin_keys_equal (Keys *keys1, Keys *keys2);
+bool elvin_keys_equal (const Keys *keys1, const Keys *keys2);
+
+/**
+ * Count the number of keys in the collection.
+ */
+AVIS_PUBLIC 
+uint32_t elvin_keys_count (const Keys *keys);
 
 /**
  * Add a key to the collection in a given security scheme.
