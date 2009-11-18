@@ -48,6 +48,8 @@ static NSString *computerName ()
             forKey: PrefPresenceGroups];
   [defaults setObject: [NSArray array] forKey: PrefPresenceBuddies];
   [defaults setObject: @"" forKey: PrefTickerSubscription];
+  [defaults setObject: [NSNumber numberWithBool: YES] forKey: 
+                       PrefShowUnreadMessageCount];
   
   // presence column sorting
   NSSortDescriptor *statusDescriptor = 

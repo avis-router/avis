@@ -148,7 +148,8 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   observe (self, userPreferences, PrefElvinKeys);
   observe (self, userPreferences, PrefOnlineUserName);
   observe (self, userPreferences, PrefPresenceGroups);
-
+  observe (self, userPreferences, PrefShowUnreadMessageCount);
+  
   [self connect];
   
   [[NSApp dockTile] setContentView: dockTile];
@@ -194,6 +195,9 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
     } else if ([keyPath hasSuffix: PrefPresenceGroups])
     {
       presence.groups = prefArray (PrefPresenceGroups);
+    } else if ([keyPath hasSuffix: PrefShowUnreadMessageCount])
+    {
+      [self clearUnreadMessageCount];
     }
   } else 
   {
@@ -482,10 +486,13 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 
 - (void) incrementUnreadMessageCount
 {
-  unreadMessages++;
-  
-  [[NSApp dockTile] setBadgeLabel: 
-    [NSString stringWithFormat: @"%u", unreadMessages]];
+  if (prefBool (PrefShowUnreadMessageCount) == YES)
+  {
+    unreadMessages++;
+    
+    [[NSApp dockTile] setBadgeLabel: 
+      [NSString stringWithFormat: @"%u", unreadMessages]];
+  }
 }
 
 - (void) clearUnreadMessageCount
