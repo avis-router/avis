@@ -55,7 +55,7 @@ static void keysets_copy (ArrayList *target, ArrayList *source);
 
 static void free_keyset (ArrayList *keyset);
 
-static bool keysets_equal (ArrayList *keyset1, ArrayList *keyset2);
+static bool keysets_equal (const ArrayList *keyset1, const ArrayList *keyset2);
 
 static bool write_keyset (ByteBuffer *buffer, ArrayList *keyset,
                           ElvinError *error);
@@ -201,7 +201,7 @@ bool elvin_key_equal (Key key1, Key key2)
          memcmp (key1.data, key2.data, key1.length) == 0;
 }
 
-bool keysets_equal (ArrayList *keyset1, ArrayList *keyset2)
+bool keysets_equal (const ArrayList *keyset1, const ArrayList *keyset2)
 {
   if (keyset1->item_count == keyset2->item_count)
   {
@@ -235,7 +235,7 @@ void keysets_copy (ArrayList *target, ArrayList *source)
     ((Key *)target->items) [i] = elvin_key_copy (((Key *)source->items) [i]);
 }
 
-bool elvin_keys_equal (Keys *keys1, Keys *keys2)
+bool elvin_keys_equal (const Keys *keys1, const Keys *keys2)
 {
   uint32_t id;
   KeyScheme *scheme = schemes;
@@ -264,6 +264,27 @@ bool elvin_keys_equal (Keys *keys1, Keys *keys2)
   }
 
   return true;
+}
+
+uint32_t elvin_keys_count (const Keys *keys)
+{
+  uint32_t count = 0;
+  uint32_t id;
+  KeyScheme *scheme = schemes;
+
+  for (id = 1; id <= KEY_SCHEME_COUNT; id++, scheme++)
+  {
+    if ((*scheme)->type == DUAL)
+    {
+      count += (uint32_t)dual_producer_keyset (keys, id)->item_count;
+      count += (uint32_t)dual_consumer_keyset (keys, id)->item_count;
+    } else
+    {
+      count += (uint32_t)single_keyset (keys, id)->item_count;
+    }
+  }
+
+  return count;
 }
 
 bool elvin_keys_add (Keys *keys, KeyScheme scheme, Key key)
