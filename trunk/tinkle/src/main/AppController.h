@@ -16,8 +16,8 @@
   PresenceController *    presenceController;
   PreferencesController * preferencesController;
   
-  NSInteger               tickerEditCount;
-  NSInteger               unreadMessages;
+  int                     tickerEditCount;
+  int                     unreadMessages;
   
   IBOutlet NSView *       dockTile;
   IBOutlet NSImageView *  warningBadge;

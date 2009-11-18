@@ -312,14 +312,16 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
     tickerController = 
       [[TickerController alloc] initWithElvin: elvin 
          subscription: [self createTickerSubscription]];
+         
+    // listen for activations
+    [[NSNotificationCenter defaultCenter] 
+        addObserver: self
+          selector: @selector (handleAppActivated:)
+          name: NSWindowDidBecomeKeyNotification 
+          object: [tickerController window]];
   }
   
   [tickerController showWindow: self];
-  
-  [[NSNotificationCenter defaultCenter] 
-     addObserver: self
-        selector: @selector (handleAppActivated:)
-        name: NSWindowDidBecomeKeyNotification object: [tickerController window]];
 }
 
 - (IBAction) showPresenceWindow: (id) sender
@@ -434,7 +436,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   }
 }
 
-- (void) handleElvinOpen: (void *) unused
+- (void) handleElvinOpen: (NSNotification *) unused
 {
   if ([[NSThread currentThread] isMainThread])
   {
@@ -450,7 +452,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   }
 }
 
-- (void) handleElvinClose: (void *) unused
+- (void) handleElvinClose: (NSNotification *) unused
 {
   if ([[NSThread currentThread] isMainThread])
   {
@@ -491,7 +493,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
     unreadMessages++;
     
     [[NSApp dockTile] setBadgeLabel: 
-      [NSString stringWithFormat: @"%u", unreadMessages]];
+      [NSString stringWithFormat: @"%i", unreadMessages]];
   }
 }
 
@@ -524,7 +526,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   NSString *description =
     [NSString stringWithFormat: @"%@: %@", message->from, message->message];
   
-  // Growl should really handle long messages...
+  // Growl should really handle long messages sensibly...
   if ([description length] > MAX_GROWL_MESSAGE_LENGTH)
   {
     description = 
@@ -624,8 +626,8 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 }
 
 - (void) handleTickerEditStop: (NSNotification *) notification
-{
-  if (--tickerEditCount == 0)
+{    
+  if (tickerEditCount > 0 && --tickerEditCount == 0)
   {
     if ([presence.presenceStatus isEqual: [PresenceStatus composingStatus]])
     {
