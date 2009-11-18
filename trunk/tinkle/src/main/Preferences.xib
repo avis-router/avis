@@ -485,18 +485,18 @@
 							<int key="NSPeriodicInterval">75</int>
 						</object>
 					</object>
-					<object class="NSButton" id="638915715">
+					<object class="NSButton" id="896244081">
 						<reference key="NSNextResponder" ref="78294905"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{30, 188}, {255, 32}}</string>
+						<string key="NSFrame">{{29, 188}, {255, 32}}</string>
 						<reference key="NSSuperview" ref="78294905"/>
 						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="728112167">
+						<object class="NSButtonCell" key="NSCell" id="82240216">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">0</int>
 							<string key="NSContents">Show unread message count in Dock</string>
 							<reference key="NSSupport" ref="523346097"/>
-							<reference key="NSControlView" ref="638915715"/>
+							<reference key="NSControlView" ref="896244081"/>
 							<int key="NSButtonFlags">-935575041</int>
 							<int key="NSButtonFlags2">2</int>
 							<object class="NSCustomResource" key="NSNormalImage">
@@ -1659,10 +1659,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: values.ShowUnreadMessageCount</string>
-						<reference key="source" ref="638915715"/>
+						<reference key="source" ref="896244081"/>
 						<reference key="destination" ref="139261505"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="638915715"/>
+							<reference key="NSSource" ref="896244081"/>
 							<reference key="NSDestination" ref="139261505"/>
 							<string key="NSLabel">value: values.ShowUnreadMessageCount</string>
 							<string key="NSBinding">value</string>
@@ -2105,11 +2105,11 @@
 							<reference ref="167302679"/>
 							<reference ref="934351999"/>
 							<reference ref="271106680"/>
-							<reference ref="638915715"/>
 							<reference ref="628060210"/>
 							<reference ref="325493178"/>
 							<reference ref="175567401"/>
 							<reference ref="336788506"/>
+							<reference ref="896244081"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">General</string>
@@ -2331,17 +2331,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">325</int>
-						<reference key="object" ref="638915715"/>
+						<reference key="object" ref="896244081"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="728112167"/>
+							<reference ref="82240216"/>
 						</object>
 						<reference key="parent" ref="78294905"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">326</int>
-						<reference key="object" ref="728112167"/>
-						<reference key="parent" ref="638915715"/>
+						<reference key="object" ref="82240216"/>
+						<reference key="parent" ref="896244081"/>
 					</object>
 				</object>
 			</object>
