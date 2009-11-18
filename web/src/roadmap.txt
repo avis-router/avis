@@ -31,6 +31,10 @@ Router Release 1.3 alpha (September 2009)
 
  * Improved robustness/performance.
 
+C Client Library 1.2 (December 2008)
+
+ * Improved overall reliability and robustness.
+
 C Client Library 1.1 (November 2008)
 
  * Improved packaging for Mac OS X and Windows.
