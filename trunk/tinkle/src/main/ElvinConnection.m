@@ -519,6 +519,11 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
   return elvin_is_open (&elvin);
 }
 
+- (BOOL) inErrorState
+{
+  return elvin_error_occurred (&elvin.error);
+}
+
 - (void) connect
 {
   NSAssert (eventLoopThread == nil, @"Attempt to close when still connected");

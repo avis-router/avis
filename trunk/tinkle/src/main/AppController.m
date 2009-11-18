@@ -26,6 +26,7 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   - (void) registerForPresenceChangesAfterDelay;
   - (void) unregisterForPresenceChanges;
   - (NSString *) createTickerSubscription;
+  - (void) showNotConnectedDockBadgeAfterDelay;
 @end
 
 @implementation AppController
@@ -139,7 +140,10 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   observe (self, userPreferences, PrefOnlineUserName);
   observe (self, userPreferences, PrefPresenceGroups);
 
-  [elvin connect];
+  [self connect];
+  
+  [[NSApp dockTile] setContentView: dockTile];
+  [[NSApp dockTile] display];
 }
 
 void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
@@ -151,7 +155,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 
 - (void) applicationWillTerminate: (NSNotification *) notification 
 {
-  [elvin disconnect];
+  [self disconnect];
   
   [[NSNotificationCenter defaultCenter] removeObserver: self];
   [NSObject cancelPreviousPerformRequestsWithTarget: self];
@@ -200,6 +204,42 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 }
 
 #pragma mark -
+
+- (void) connect
+{
+  [elvin connect];
+  
+  [self showNotConnectedDockBadgeAfterDelay];
+}
+
+- (void) showNotConnectedDockBadgeAfterDelay
+{
+  [self performSelector: @selector (showNotConnectedDockBadge) 
+             withObject: nil afterDelay: 5];
+}
+
+- (void) disconnect
+{
+  [elvin disconnect];
+  
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (showNotConnectedDockBadge) object: nil];
+}
+
+- (void) showNotConnectedDockBadge
+{
+  [warningBadge setHidden: NO];
+  [[NSApp dockTile] display];
+}
+
+- (void) hideNotConnectedDockBadge
+{
+  [warningBadge setHidden: YES];
+  [[NSApp dockTile] display];
+  
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (showNotConnectedDockBadge) object: nil];
+}
 
 - (NSString *) createTickerSubscription
 {
@@ -354,7 +394,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   {
     NSLog (@"Disconnect on sleep");
     
-    [elvin disconnect];
+    [self disconnect];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleSleep:) 
@@ -368,7 +408,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   {
     NSLog (@"Reconnect on wake");
     
-    [elvin connect];
+    [self connect];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleWake:) 
@@ -383,6 +423,8 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
     [self handleElvinStatusChange: @"connected"];
     
     [self registerForPresenceChangesAfterDelay];
+    
+    [self hideNotConnectedDockBadge];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
@@ -397,6 +439,8 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
     [self handleElvinStatusChange: @"disconnected"];
     
     [self unregisterForPresenceChanges];
+   
+    [self showNotConnectedDockBadgeAfterDelay];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 

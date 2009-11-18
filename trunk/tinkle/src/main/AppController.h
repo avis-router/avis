@@ -17,11 +17,18 @@
   PreferencesController * preferencesController;
   
   NSInteger               tickerEditCount;
+  
+  IBOutlet NSView *       dockTile;
+  IBOutlet NSImageView *  warningBadge;
 }
 
 @property (readonly) ElvinConnection *    elvin;
 
 @property (readonly) PresenceConnection * presence;
+
+- (void) connect;
+
+- (void) disconnect;
 
 - (IBAction) showTickerWindow: (id) userAgent;
 
