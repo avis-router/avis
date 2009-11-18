@@ -17,6 +17,7 @@
   PreferencesController * preferencesController;
   
   NSInteger               tickerEditCount;
+  NSInteger               unreadMessages;
   
   IBOutlet NSView *       dockTile;
   IBOutlet NSImageView *  warningBadge;
