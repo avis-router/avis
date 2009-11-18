@@ -521,18 +521,32 @@ bool elvin_set_keys (Elvin *elvin,
                             elvin->notification_keys, notification_keys);
   elvin_keys_compute_delta (&delta_sub, 
                             elvin->subscription_keys, subscription_keys);
-  
-  avis_message_init (sec_rqst, MESSAGE_ID_SEC_RQST,
-                     delta_ntfn.add, delta_ntfn.del,
-                     delta_sub.add, delta_sub.del);
 
-  if (send_and_receive (elvin, sec_rqst, sec_rply, MESSAGE_ID_SEC_RPLY))
+  if (elvin_keys_count (delta_ntfn.add) > 0 || 
+      elvin_keys_count (delta_ntfn.del) > 0 ||
+      elvin_keys_count (delta_sub.add) > 0 ||
+      elvin_keys_count (delta_sub.del) > 0)
+  {    
+    avis_message_init (sec_rqst, MESSAGE_ID_SEC_RQST,
+                       delta_ntfn.add, delta_ntfn.del,
+                       delta_sub.add, delta_sub.del);
+
+    send_and_receive (elvin, sec_rqst, sec_rply, MESSAGE_ID_SEC_RPLY);
+  }
+  
+  if (elvin_error_ok (&elvin->error))
   {
     elvin_keys_destroy (elvin->notification_keys);
     elvin_keys_destroy (elvin->subscription_keys);
 
     elvin->notification_keys = notification_keys;
     elvin->subscription_keys = subscription_keys;
+  } else
+  {
+    // destroy orig keys, since client will likely expect not to free them
+    // TODO for release 1.4 this function should copy the keys
+    elvin_keys_destroy (notification_keys);
+    elvin_keys_destroy (subscription_keys); 
   }
   
   elvin_keys_free_shallow (delta_ntfn.add);
