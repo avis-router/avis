@@ -27,6 +27,10 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   - (void) unregisterForPresenceChanges;
   - (NSString *) createTickerSubscription;
   - (void) showNotConnectedDockBadgeAfterDelay;
+  - (BOOL) isTickerActive;
+  - (void) handleAppActivated: (NSNotification *) notification;
+  - (void) incrementUnreadMessageCount;
+  - (void) clearUnreadMessageCount;
 @end
 
 @implementation AppController
@@ -115,10 +119,15 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   
   [notifications addObserver: self selector: @selector (handleElvinClose:)
                         name: ElvinConnectionClosedNotification object: nil]; 
-  
-  // listen for ticker messages
+
+  [notifications addObserver: self selector: @selector (handleAppActivated:)
+                        name: NSApplicationDidBecomeActiveNotification object: nil]; 
+
+  // application activated
   [notifications addObserver: self selector: @selector (handleTickerMessage:)
                         name: TickerMessageReceivedNotification object: nil];
+
+  // listen for ticker messages
 
   // listen for ticker message edit start/stop
   [notifications addObserver: self selector: @selector (handleTickerEditStart:)
@@ -302,6 +311,11 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   }
   
   [tickerController showWindow: self];
+  
+  [[NSNotificationCenter defaultCenter] 
+     addObserver: self
+        selector: @selector (handleAppActivated:)
+        name: NSWindowDidBecomeKeyNotification object: [tickerController window]];
 }
 
 - (IBAction) showPresenceWindow: (id) sender
@@ -448,6 +462,39 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   }
 }
 
+/**
+ * True if the app is active and the ticker window is visible.
+ */
+- (BOOL) isTickerActive
+{
+  return tickerController && [[tickerController window] isVisible] &&
+         [[NSApplication sharedApplication] isActive];
+}
+
+/**
+ * Handle app and ticker activatation: clear unread count.
+ */
+- (void) handleAppActivated: (NSNotification *) notification
+{
+  if ([self isTickerActive])
+    [self clearUnreadMessageCount];
+}
+
+- (void) incrementUnreadMessageCount
+{
+  unreadMessages++;
+  
+  [[NSApp dockTile] setBadgeLabel: 
+    [NSString stringWithFormat: @"%u", unreadMessages]];
+}
+
+- (void) clearUnreadMessageCount
+{
+  unreadMessages = 0;
+  
+  [[NSApp dockTile] setBadgeLabel: nil];
+}
+
 - (void) handleElvinStatusChange: (NSString *) status
 {
   NSString *message = 
@@ -462,6 +509,9 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 
 - (void) handleTickerMessage: (NSNotification *) notification
 {
+  if (![self isTickerActive])
+    [self incrementUnreadMessageCount];
+  
   TickerMessage *message = [[notification userInfo] valueForKey: @"message"];
   
   NSString *description =
