@@ -25,7 +25,7 @@
  http://www.zathras.de/angelweb/sourcecode.htm (UKIdleTimer)
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 @interface RHSystemIdleTimer : NSObject {
 	NSTimer *idleTimer, *continuingIdleTimer;
