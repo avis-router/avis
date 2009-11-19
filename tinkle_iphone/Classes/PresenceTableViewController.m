@@ -129,11 +129,23 @@ static NSString *formatDuration (NSDate *value);
   } 
   
   PresenceEntity *entity = [presence.entities objectAtIndex: indexPath.row];
-
+  PresenceStatus *status = entity.status;
+  
 	cell.textLabel.text = entity.name;
   cell.detailTextLabel.text = 
-    [NSString stringWithFormat: @"%@ (%@)", entity.status.statusText, 
-     formatDuration (entity.status.changedAt)];
+    [NSString stringWithFormat: @"%@ (%@)", status.statusText, 
+     formatDuration (status.changedAt)];
+     
+  NSString *image;
+  
+  if (status.statusCode == ONLINE)
+    image = @"lolly_green.png";
+  else if (status.statusCode == OFFLINE)
+    image = @"lolly_grey.png";
+  else
+    image = @"lolly_yellow.png";
+
+  cell.imageView.image = [UIImage imageNamed: image];
 
   return cell;
 }
