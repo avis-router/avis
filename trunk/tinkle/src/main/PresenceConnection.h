@@ -27,11 +27,11 @@ extern NSString *PresenceStatusChangedNotification;
 
 - (void) refresh;
 
-@property (readonly, assign)  IBOutlet NSMutableSet   * entities;
+@property (readonly)  IBOutlet NSMutableSet           * entities;
 @property (readwrite, retain) IBOutlet PresenceStatus * presenceStatus;
 @property (readwrite, retain) NSArray                 * groups;
 @property (readwrite, retain) NSArray                 * buddies;
-@property (readonly, retain)  NSString                * userId;
+@property (readonly)          NSString                * userId;
 @property (readwrite, retain) NSString                * userName;
 
 @end

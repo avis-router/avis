@@ -19,9 +19,8 @@ extern NSString * TickerMessageStoppedEditingNotification;
   IBOutlet id     sendButton;
   IBOutlet id     dragTarget;
   
-  IBOutlet NSArrayController *tickerGroupsController;
-  
-  IBOutlet RolloverButton *replyButton;
+  IBOutlet NSArrayController * tickerGroupsController;
+  IBOutlet RolloverButton    * replyButton;
   
   ElvinConnection * elvin;
   NSString *        subscription;

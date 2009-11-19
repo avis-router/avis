@@ -2,7 +2,7 @@
 
 @interface TickerMessage : NSObject
 {
-  @public
+@public
   
   NSString * messageId;
   NSString * threadId;
