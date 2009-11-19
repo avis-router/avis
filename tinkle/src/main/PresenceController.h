@@ -7,9 +7,9 @@ extern NSString *PresenceUserWasDoubleClicked;
 @interface PresenceController : NSWindowController 
 {
   AppController * appController;
-  NSTimer *       refreshTimer;
+  NSTimer       * refreshTimer;
   
-  IBOutlet NSTableView * presenceTable;
+  IBOutlet NSTableView       * presenceTable;
   IBOutlet NSArrayController * presenceTableController;
 }
 
