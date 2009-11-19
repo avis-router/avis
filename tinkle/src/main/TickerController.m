@@ -275,15 +275,8 @@ static NSAttributedString *attributedString (NSString *string,
   // build formatted message
   NSMutableAttributedString *displayedMessage = 
     [[NSMutableAttributedString new] autorelease]; 
-
-  [displayedMessage appendAttributedString: 
-    attributedString ([dateFormatter stringFromDate: message->receivedAt], 
-                      lowlightAttrs)];
   
-  [displayedMessage 
-    appendAttributedString: attributedString (@": ", lowlightAttrs)];
-  
-  // save start of actual message (minus date)
+  // save start of actual message
   range.location = [displayedMessage length];
 
   [displayedMessage appendAttributedString: 
@@ -305,7 +298,7 @@ static NSAttributedString *attributedString (NSString *string,
   range.length = [displayedMessage length] - range.location;
   
   [displayedMessage addAttributes: replyLinkAttrs range: range];
-  
+
   if (message->url)
   {    
     NSDictionary *linkAttrs = 
@@ -315,7 +308,7 @@ static NSAttributedString *attributedString (NSString *string,
        message->url, NSLinkAttributeName, nil];
 
     [displayedMessage 
-      appendAttributedString: attributedString (@" (", lowlightAttrs)];
+      appendAttributedString: attributedString (@" <", lowlightAttrs)];
 
     if ([[message->url absoluteString] length] <= 70)
     {
@@ -338,9 +331,19 @@ static NSAttributedString *attributedString (NSString *string,
     }           
     
     [displayedMessage 
-      appendAttributedString: attributedString (@")", lowlightAttrs)];
+      appendAttributedString: attributedString (@">", lowlightAttrs)];
   }
   
+  // date  
+  [displayedMessage appendAttributedString: 
+    attributedString (@" (", lowlightAttrs)];
+
+  [displayedMessage appendAttributedString: 
+    attributedString ([dateFormatter stringFromDate: message->receivedAt], 
+                      lowlightAttrs)];
+  [displayedMessage appendAttributedString: 
+    attributedString (@")", lowlightAttrs)];
+
   // set font
   [displayedMessage addAttributes: fontAttrs 
                             range: NSMakeRange (0, [displayedMessage length])];

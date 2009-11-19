@@ -615,9 +615,8 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
     return NO;
   }
 
-  Keys *subscriptionKeys = subscriptionKeysFor (keys);
-  
-  if (elvin_open_with_keys (&elvin, &uri, EMPTY_KEYS, subscriptionKeys))
+  if (elvin_open_with_keys (&elvin, &uri, EMPTY_KEYS, 
+                            subscriptionKeysFor (keys)))
   {
     // renew any existing subscriptions
     for (SubscriptionContext *context in subscriptions)
