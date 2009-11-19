@@ -97,7 +97,7 @@ static void observe (id observer, NSUserDefaultsController *prefs,
 - (void) applicationDidFinishLaunching: (NSNotification *) notification 
 {
   [GrowlApplicationBridge setGrowlDelegate: self];
-    
+
   // listen for sleep/wake
   NSNotificationCenter *workspaceNotifications = 
     [[NSWorkspace sharedWorkspace] notificationCenter];
@@ -556,7 +556,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   [GrowlApplicationBridge
     notifyWithTitle: type
     description: description notificationName: type
-    iconData: nil priority: priority isSticky: sticky clickContext: nil];
+    iconData: nil priority: priority isSticky: sticky clickContext: @"message"];
 }
 
 - (void) handlePresenceChange: (NSNotification *) notification
@@ -581,7 +581,15 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
     notifyWithTitle: @"Status Changed"
     description: description notificationName: @"Presence Status"
     iconData: [[NSImage imageNamed: @"NSUser"] TIFFRepresentation] 
-    priority: 0 isSticky: NO clickContext: nil];
+    priority: 0 isSticky: NO clickContext: @"presence_status"];
+}
+
+- (void) growlNotificationWasClicked: (id) context
+{
+  if ([context isEqual: @"message"])
+    [self showTickerWindow: self];
+  else if ([context isEqual: @"presence_status"])
+    [self showPresenceWindow: self];  
 }
 
 - (void) registerForPresenceChangesAfterDelay
