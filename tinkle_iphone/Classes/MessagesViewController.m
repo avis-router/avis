@@ -18,12 +18,17 @@
 }
 */
 
-/*
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (void) viewDidLoad
+{
+  [super viewDidLoad];
+  
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+  
+  [notifications addObserver: self selector: @selector (handleKeyboardShowOrHide:)
+                        name: UIKeyboardWillShowNotification object: nil]; 
+  [notifications addObserver: self selector: @selector (handleKeyboardShowOrHide:)
+                        name: UIKeyboardWillHideNotification object: nil]; 
 }
-*/
 
 /*
 // Override to allow orientations other than the default portrait orientation.
@@ -48,6 +53,53 @@
 
 - (void)dealloc {
     [super dealloc];
+}
+
+- (void) handleKeyboardShowOrHide: (NSNotification *) ntfn
+{
+  CGPoint centerStart;
+  CGPoint centreEnd;
+  
+  [[[ntfn userInfo] valueForKey: UIKeyboardCenterBeginUserInfoKey] 
+    getValue: &centerStart];
+  [[[ntfn userInfo] valueForKey: UIKeyboardCenterEndUserInfoKey] 
+    getValue: &centreEnd];
+  
+  CGRect windowFrame = self.view.window.frame;
+  CGRect myBounds = [self.view convertRect: self.view.bounds toView: nil];
+  
+  // adjustment for my frame's vertical offset from bottom
+  CGFloat vertOffset = 
+    (windowFrame.origin.y + windowFrame.size.height) - 
+    (myBounds.origin.y + myBounds.size.height);
+                 
+  // insert offset depending on movement direction
+  if (centerStart.y < centreEnd.y)
+    vertOffset = -vertOffset;
+
+  // extract keyboard's animation params
+  double duration;
+  UIViewAnimationCurve curve;
+  
+  [[[ntfn userInfo] valueForKey: UIKeyboardAnimationDurationUserInfoKey]
+    getValue: &duration];
+  [[[ntfn userInfo] valueForKey: UIKeyboardAnimationCurveUserInfoKey] 
+    getValue: &curve];
+  
+  [UIView beginAnimations: @"showKeyboard" context: nil];
+  [UIView setAnimationDuration: duration];
+  [UIView setAnimationCurve: curve];
+    
+  self.view.bounds = 
+    CGRectOffset (self.view.bounds, centerStart.x - centreEnd.x, 
+                  (centerStart.y - centreEnd.y) - vertOffset);
+
+  [UIView commitAnimations];
+}
+
+- (void) handleKeyboardHide: (NSNotification *) ntfn
+{
+  NSLog (@"Hide keyboard");
 }
 
 @end
