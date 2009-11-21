@@ -57,11 +57,11 @@
 
 - (void) handleKeyboardShowOrHide: (NSNotification *) ntfn
 {
-  CGPoint centerStart;
+  CGPoint centreStart;
   CGPoint centreEnd;
   
   [[[ntfn userInfo] valueForKey: UIKeyboardCenterBeginUserInfoKey] 
-    getValue: &centerStart];
+    getValue: &centreStart];
   [[[ntfn userInfo] valueForKey: UIKeyboardCenterEndUserInfoKey] 
     getValue: &centreEnd];
   
@@ -74,7 +74,7 @@
     (myBounds.origin.y + myBounds.size.height);
                  
   // insert offset depending on movement direction
-  if (centerStart.y < centreEnd.y)
+  if (centreStart.y < centreEnd.y)
     vertOffset = -vertOffset;
 
   // extract keyboard's animation params
@@ -91,8 +91,8 @@
   [UIView setAnimationCurve: curve];
     
   self.view.bounds = 
-    CGRectOffset (self.view.bounds, centerStart.x - centreEnd.x, 
-                  (centerStart.y - centreEnd.y) - vertOffset);
+    CGRectOffset (self.view.bounds, centreStart.x - centreEnd.x, 
+                  (centreStart.y - centreEnd.y) - vertOffset);
 
   [UIView commitAnimations];
 }
