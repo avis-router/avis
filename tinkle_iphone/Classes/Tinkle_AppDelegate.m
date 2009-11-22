@@ -59,7 +59,7 @@
   presenceController.presence = presence;
   messagesController.elvin = elvin;
   messagesController.subscription = [self tickerSubscription];
-  
+    
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
   [notifications addObserver: self selector: @selector (handleElvinOpen:)
