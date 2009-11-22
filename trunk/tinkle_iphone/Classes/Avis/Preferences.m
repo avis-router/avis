@@ -43,7 +43,7 @@ void registerUserDefaults ()
   
   [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
   [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];  
-  [defaults setObject: [NSArray arrayWithObject: @"Chat"] 
+  [defaults setObject: [NSArray arrayWithObjects: @"Chat", @"Test", nil] 
                forKey: PrefTickerGroups];
   [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
             forKey: PrefPresenceGroups];

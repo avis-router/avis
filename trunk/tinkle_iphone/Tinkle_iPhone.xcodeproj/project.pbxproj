@@ -149,8 +149,8 @@
 		C9CDFAF010AE8B6C00DBE18C /* Avis */ = {
 			isa = PBXGroup;
 			children = (
-				C9CDFAFA10AE8C6300DBE18C /* ElvinConnection.m */,
 				C9CDFAFB10AE8C6300DBE18C /* ElvinConnection.h */,
+				C9CDFAFA10AE8C6300DBE18C /* ElvinConnection.m */,
 				C9CDFB1C10AE8D9700DBE18C /* PresenceConnection.h */,
 				C9CDFB1B10AE8D9700DBE18C /* PresenceConnection.m */,
 				C9CDFB1910AE8D9700DBE18C /* PresenceEntity.m */,
