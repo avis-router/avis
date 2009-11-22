@@ -22,4 +22,6 @@ extern NSString *TickerMessageReceivedNotification;
 
 - (IBAction) sendMessage: (id) sender;
 
+- (IBAction) selectGroup: (id) sender;
+
 @end

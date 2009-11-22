@@ -74,6 +74,12 @@ static inline float bottomY (CGRect rect)
     [super dealloc];
 }
 
+
+- (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation
+{
+  return YES;
+}
+
 - (NSString *) subscription
 {
   return subscription;
@@ -145,6 +151,31 @@ static inline float bottomY (CGRect rect)
 //    [[NSUserDefaults standardUserDefaults] 
 //       setObject: newGroups forKey: PrefTickerGroups];
 //  }
+}
+
+- (IBAction) selectGroup: (id) sender
+{
+   UIViewController *selectController = [[UIViewController alloc]
+                       initWithNibName: @"MessagesSelectGroup" bundle: nil];
+   //selectController.delegate = self;
+  
+   selectController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+
+   // Create the navigation controller and present it modally.
+   UINavigationController *navigationController = 
+     [[UINavigationController alloc] initWithRootViewController: selectController];
+    
+  navigationController.toolbarHidden = YES;
+  navigationController.navigationBarHidden = YES;
+  
+  [self.tabBarController presentModalViewController: navigationController 
+     animated: YES];
+ 
+   // The navigation controller is now owned by the current view controller
+   // and the root view controller is owned by the navigation controller,
+   // so both objects should be released to prevent over-retention.
+   [navigationController release];
+   [selectController release]; 
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
