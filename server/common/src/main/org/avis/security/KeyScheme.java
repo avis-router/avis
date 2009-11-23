@@ -148,17 +148,18 @@ public abstract class KeyScheme
   /**
    * Match a set of private keys with a set of public keys.
    * 
-   * @param privateKeys A set of private (aka raw) keys.
-   * @param publicKeys A set of public (aka prime) keys.
-   * @return True if at least one private key mapped to its public
-   *         version (using this scheme's hash) was in the given
-   *         public key set.
+   * @param sourceKeys The set of keys to check against the target
+   *          set.
+   * @param targetKeys If a source key is a member of this set, the
+   *          keys match.
+   * @return True if at least one key in the source set appears in the
+   *         target set.
    */
-  protected boolean matchKeys (Set<Key> privateKeys, Set<Key> publicKeys)
+  protected boolean matchKeys (Set<Key> sourceKeys, Set<Key> targetKeys)
   {
-    for (Key privateKey : privateKeys)
+    for (Key sourceKey : sourceKeys)
     {
-      if (publicKeys.contains (privateKey))
+      if (targetKeys.contains (sourceKey))
         return true;
     }
     
