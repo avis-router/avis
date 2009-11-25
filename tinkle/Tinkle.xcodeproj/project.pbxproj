@@ -78,7 +78,6 @@
 		C9D10E2E0FC3A08800BC77E7 /* TickerMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */; };
 		C9DB78D110ABC0DB00BB747C /* Tinkle_512.png in Resources */ = {isa = PBXBuildFile; fileRef = C9DB78CF10ABC0DB00BB747C /* Tinkle_512.png */; };
 		C9DB78D210ABC0DB00BB747C /* Tinkle.icns in Resources */ = {isa = PBXBuildFile; fileRef = C9DB78D010ABC0DB00BB747C /* Tinkle.icns */; };
-		C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F55FA20EFF1DF0005D9245 /* notes.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -207,7 +206,6 @@
 		C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TickerMessage.m; path = src/main/TickerMessage.m; sourceTree = "<group>"; };
 		C9DB78CF10ABC0DB00BB747C /* Tinkle_512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tinkle_512.png; path = Icon/Tinkle_512.png; sourceTree = "<group>"; };
 		C9DB78D010ABC0DB00BB747C /* Tinkle.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Tinkle.icns; path = Icon/Tinkle.icns; sourceTree = "<group>"; };
-		C9F55FA20EFF1DF0005D9245 /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -320,7 +318,6 @@
 		29B97314FDCFA39411CA2CEA /* ticker */ = {
 			isa = PBXGroup;
 			children = (
-				C9F55FA20EFF1DF0005D9245 /* notes.txt */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				C92391570F7F01380083FC13 /* Tests */,
 				C92FE90E0F3D05AB0037FA15 /* Presence Tester */,
@@ -500,7 +497,6 @@
 			files = (
 				C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
-				C9F55FA30EFF1DF0005D9245 /* notes.txt in Resources */,
 				C923924C0F7F7BC30083FC13 /* Preferences.xib in Resources */,
 				C92392540F7F7BC30083FC13 /* PresenceWindow.xib in Resources */,
 				C923925D0F7F7C310083FC13 /* Reply_Normal.tiff in Resources */,
