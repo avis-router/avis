@@ -191,6 +191,8 @@ static NSAttributedString *attributedString (NSString *string,
   PresenceEntity *user = [[notification userInfo] valueForKey: @"user"];
   
   [messageGroup setStringValue: user.name];
+  [[self window] makeFirstResponder: messageText];
+  [[self window] makeKeyAndOrderFront: self];
 }
 
 - (void) tickerBeganEditing: (NSNotification *) notification
