@@ -225,6 +225,7 @@
 		C97363F70DF7D04900DCE905 /* stdtypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdtypes.h; path = ../../src/include/avis/stdtypes.h; sourceTree = SOURCE_ROOT; };
 		C9739E930E11EC3100B7727F /* arrays_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arrays_private.h; path = ../../src/lib/arrays_private.h; sourceTree = SOURCE_ROOT; };
 		C9739E940E11EC3100B7727F /* arrays.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = arrays.c; path = ../../src/lib/arrays.c; sourceTree = SOURCE_ROOT; };
+		C985CB9A10B23AAB00FE1DFA /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../packages/check/config.h; sourceTree = SOURCE_ROOT; };
 		C99B745A0E1B3E6900D0A7B0 /* listeners.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listeners.c; path = ../../src/lib/listeners.c; sourceTree = SOURCE_ROOT; };
 		C99B745B0E1B3E6900D0A7B0 /* listeners.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = listeners.h; path = ../../src/lib/listeners.h; sourceTree = SOURCE_ROOT; };
 		C9B03B1B0E493A1A00B59216 /* avis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = avis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -393,7 +394,6 @@
 				C9739E930E11EC3100B7727F /* arrays_private.h */,
 				C9739E940E11EC3100B7727F /* arrays.c */,
 				C9F0DAB00E060C5D00DB5A88 /* sha1.c */,
-				C9F0DAB10E060C5D00DB5A88 /* keys_private.h */,
 				C9F0DAB20E060C5D00DB5A88 /* avis_endian.h */,
 				C9F0DAB30E060C5D00DB5A88 /* attributes_private.h */,
 				C9F0DAA90E060C3600DB5A88 /* log.h */,
@@ -402,6 +402,7 @@
 				FA4D5B4F0DF420DE0098EE7D /* byte_buffer.h */,
 				FA4D5B500DF420DE0098EE7D /* elvin_uri.c */,
 				FA4D5B510DF420DE0098EE7D /* errors.c */,
+				C9F0DAB10E060C5D00DB5A88 /* keys_private.h */,
 				FA4D5B520DF420DE0098EE7D /* keys.c */,
 				FA4D5B530DF420DE0098EE7D /* log.c */,
 				FA4D5B550DF420DE0098EE7D /* values.c */,
@@ -488,6 +489,7 @@
 		C9B4665C0DD936D000A1C448 /* Check library */ = {
 			isa = PBXGroup;
 			children = (
+				C985CB9A10B23AAB00FE1DFA /* config.h */,
 				C931A0AD0DF642E500313558 /* check.c */,
 				C931A0AE0DF642E500313558 /* check.h */,
 				C931A0AF0DF642E500313558 /* check_error.c */,
@@ -1107,6 +1109,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1129,6 +1132,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
