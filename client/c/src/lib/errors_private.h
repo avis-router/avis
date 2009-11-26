@@ -20,17 +20,17 @@
 
 #include <avis/errors.h>
 
-#define error_fail(message) avis_fail ((message), __FILE__, __LINE__)
+#define error_fail(message) avis_fail ((message))
 
-#define emalloc(size) do_avis_emalloc ((size), __FILE__, __LINE__)
+#define emalloc(size) avis_emalloc ((size))
 
-#define estrdup(str) do_avis_estrdup ((str), __FILE__, __LINE__)
+#define estrdup(str) avis_estrdup ((str))
 
 #define check_max_size(value, max, message, error) \
   if ((value) > (max)) \
     elvin_error_set (error, ELVIN_ERROR_PROTOCOL, message);
 
 AVIS_PUBLIC
-void avis_fail (const char *message, const char *file, int line, ...);
+void avis_fail (const char *message, ...);
 
 #endif /* ERRORS_PRIVATE_H_ */

@@ -104,29 +104,29 @@ bool elvin_error_from_errno (ElvinError *error)
   return false;
 }
 
-void *do_avis_emalloc (size_t size, const char *file, int line)
+void *avis_emalloc (size_t size)
 {
   void *data = malloc (size);
 
   if (!data)
-    avis_fail ("Out of memory: could not allocate %ul bytes", file, line, size);
+    avis_fail ("Out of memory: could not allocate %ul bytes", size);
 
-   return data;
+  return data;
 }
 
-char *do_avis_estrdup (const char *str, const char *file, int line)
+char *avis_estrdup (const char *str)
 {
   char *str_copy = strdup (str);
 
   if (str_copy == NULL)
-    avis_fail ("Out of memory: could not copy string", file, line);
+    avis_fail ("Out of memory: could not copy string");
 
   return str_copy;
 }
 
 static bool in_fail = false;
 
-void avis_fail (const char *message, const char *file, int line, ...)
+void avis_fail (const char *message, ...)
 {
   char *formatted_message = NULL;
 
@@ -139,12 +139,11 @@ void avis_fail (const char *message, const char *file, int line, ...)
 
   in_fail = true;
 
-  avis_vnsprintf (formatted_message, message, line);
+  avis_vnsprintf (formatted_message, message, message);
 
   fprintf
     (stderr,
-     "Avis client library fatal error: file %s, line %i: %s\n", file, line,
-     formatted_message);
+     "Avis client library fatal error: %s\n", formatted_message);
 
   free (formatted_message);
 
