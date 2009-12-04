@@ -16,10 +16,10 @@ Applications
 
 Current uses for Elvin routers include providing a message bus for
 [instant messaging and presence][tickertape.org], device discovery and
-coordination for smart meeting rooms, and as a carrier of [distributed
-speech transcription for meetings][AuTM]. The commercial
-implementation developed by Mantara has been used extensively for
-high-volume financial transaction routing.
+coordination for [Livespace smart meeting rooms][livespaces], and as a
+carrier of [distributed speech transcription for meetings][AuTM]. The
+commercial implementation developed by Mantara has been used
+extensively for high-volume financial transaction routing.
 
 Elvin has been useful in a wide variety of applications due to its
 robust, lightweight nature and ability to be federated to form
@@ -83,3 +83,4 @@ mattp.name` or `phillipsm at users.sourceforge.net` (replace "at" with
 [roadmap]: roadmap.html "Avis roadmap" 
 [why_avis]: why_avis.html "Why choose Avis"
 [mantara]: http://mantara.com "Mantara web site"
+[livespaces]: http://livespaces.sf.net/ "Livespaces project site"
