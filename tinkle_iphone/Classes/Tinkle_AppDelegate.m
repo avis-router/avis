@@ -59,6 +59,7 @@
   presenceController.presence = presence;
   messagesController.elvin = elvin;
   messagesController.subscription = [self tickerSubscription];
+  messagesController.group = prefString (PrefDefaultSendGroup);
     
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   

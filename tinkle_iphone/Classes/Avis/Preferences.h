@@ -16,6 +16,11 @@ static inline NSString *prefString (const NSString *name)
   return [[NSUserDefaults standardUserDefaults] stringForKey: (NSString *)name];
 }
 
+static inline void setPref (NSString *name, NSObject *value)
+{
+  [[NSUserDefaults standardUserDefaults] setObject: value forKey: name];
+}
+
 static inline NSArray *prefArray (const NSString *name)
 {
   return [[NSUserDefaults standardUserDefaults] arrayForKey: (NSString *)name];

@@ -22,7 +22,7 @@ static NSString *computerName ()
   NSString *computerName = 
     [systemPrefs valueForKeyPath: @"System.System.ComputerName"];
     
-  return computerName ? computerName : @"sticker";
+  return computerName ? computerName : @"tinkle";
 }
 
 void registerUserDefaults ()
@@ -37,13 +37,13 @@ void registerUserDefaults ()
   if (![preferences objectForKey: PrefOnlineUserName])
   {
     [defaults setObject: [NSString stringWithFormat: @"%@@%@", 
-                          NSFullUserName (), computerName ()] 
+                          @"Tinkle User", computerName ()] 
       forKey: PrefOnlineUserName];
   }
   
   [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
   [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];  
-  [defaults setObject: [NSArray arrayWithObjects: @"Chat", @"Test", nil] 
+  [defaults setObject: [NSArray arrayWithObjects: @"Chat", @"Test", @"News", nil] 
                forKey: PrefTickerGroups];
   [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
             forKey: PrefPresenceGroups];
