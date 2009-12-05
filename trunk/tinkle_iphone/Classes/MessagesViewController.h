@@ -8,6 +8,7 @@ extern NSString *TickerMessageReceivedNotification;
 {
   ElvinConnection      *elvin;
   NSString             *subscription;
+  NSString             *group;
   id                    subscriptionContext;
   BOOL                  canSend;
   
@@ -17,6 +18,7 @@ extern NSString *TickerMessageReceivedNotification;
 }
 
 @property (readwrite, retain) ElvinConnection   *elvin;
+@property (readwrite, retain) NSString          *group;
 @property (readwrite, retain) IBOutlet NSString *subscription;
 @property (readwrite, assign) IBOutlet BOOL      canSend;
 

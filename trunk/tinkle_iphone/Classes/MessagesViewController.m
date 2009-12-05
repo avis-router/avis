@@ -1,4 +1,5 @@
 #import "MessagesViewController.h"
+#import "MessageSelectGroupController.h"
 
 #import "Preferences.h"
 #import "ElvinConnection.h"
@@ -34,6 +35,8 @@ static inline float bottomY (CGRect rect)
 - (void) viewDidLoad
 {
   [super viewDidLoad];
+
+  [self setGroup: @"Test"];
   
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
@@ -112,7 +115,6 @@ static inline float bottomY (CGRect rect)
   NSString *message = messageCompositionField.text;
 
   // TODO
-  NSString *group = @"Test";
 //  NSString *group = [messageGroup stringValue];
   
   [elvin sendTickerMessage: message 
@@ -155,9 +157,14 @@ static inline float bottomY (CGRect rect)
 
 - (IBAction) selectGroup: (id) sender
 {
-   UIViewController *selectController = [[UIViewController alloc]
-                       initWithNibName: @"MessagesSelectGroup" bundle: nil];
-   //selectController.delegate = self;
+   MessageSelectGroupController *selectController = 
+     [[MessageSelectGroupController alloc]
+       initWithNibName: @"MessagesSelectGroup" bundle: nil];
+
+   selectController.group = prefString (PrefDefaultSendGroup);
+   selectController.groups = prefArray (PrefTickerGroups);
+  
+   selectController.delegate = self;
   
    selectController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
 
@@ -176,6 +183,23 @@ static inline float bottomY (CGRect rect)
    // so both objects should be released to prevent over-retention.
    [navigationController release];
    [selectController release]; 
+}
+
+- (NSString *) group
+{
+  return group;
+}
+
+- (void) setGroup: (NSString *) newGroup
+{
+  [group release];
+  
+  group = [newGroup retain];
+  
+  messageCompositionField.placeholder = 
+    [NSString stringWithFormat: @"Post to “%@”", group];
+    
+  setPref (PrefDefaultSendGroup, group);
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
