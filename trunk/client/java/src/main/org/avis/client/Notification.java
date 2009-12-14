@@ -218,26 +218,61 @@ public final class Notification
    * @return The next line, or null if at eof or the notification
    *         "---" terminator.
    */
-  private static String nextLine (BufferedReader in)
+  protected static String nextLine (BufferedReader in)
     throws IOException
   {
-    String line;
+    StringBuilder line = new StringBuilder ();
+    int c;
+    boolean inString = false;
+    boolean inData = false;
+    boolean atEol = false;
+    boolean inEscape = false;
     
-    do
+    while (!atEol)
     {
-      line = in.readLine ();
+      c = in.read ();
       
-      if (line != null)
-        line = line.trim ();
-    } while (line != null && (line.startsWith ("$") || line.length () == 0));
-    
-    if (line != null)
-    {
-      if (line.startsWith ("---"))
-        line = null;
+      if (c == -1)
+      {
+        atEol = true;
+      } else if (inEscape)
+      {
+        inEscape = false;
+      } else
+      {
+        switch (c)
+        {
+          case '\\':
+            inEscape = true;
+            break;
+          case '"':
+            inString = !inString;
+            break;
+          case '[':
+            if (!inString)
+              inData = true;
+            break;
+          case ']':
+            if (!inString)
+              inData = false;
+            break;
+          case '\n':
+            if (!inData && !inString)
+              atEol = true;
+            break;
+        }
+      }
+      
+      if (c != -1 && c != '\n' && c != '\r')
+        line.append ((char)c);
     }
     
-    return line;
+    String result = line.toString ().trim ();
+    
+    if (result.length () == 0)
+      return null;
+    else
+      return result;
   }
 
   private static void parseLine (Notification ntfn, String line)

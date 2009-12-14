@@ -1,13 +1,21 @@
 package org.avis.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 
 import org.junit.Test;
 
 import org.avis.util.InvalidFormatException;
+
+import static java.util.Arrays.asList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -91,6 +99,41 @@ public class JUTestNotification
        "string: \"hello \\\"world\\\"\"", toString);
   }
   
+  @Test
+  public void readLine ()
+    throws Exception
+  {
+    String basic = "test: 1\ntest: 2";
+    assertEquals (asList ("test: 1", "test: 2"), readLines (basic));
+    
+    String quotes = "test: \"1\"\ntest: \"2\"";
+    assertEquals (asList ("test: \"1\"", "test: \"2\""), readLines (quotes));
+    
+    String quotesWithNl = "test: \"1\n2\n 3\"\ntest: \"2\"";
+    assertEquals (asList ("test: \"12 3\"", "test: \"2\""), 
+                  readLines (quotesWithNl));
+    String dataWithNl = "test: [de ad\n\n be ef]\ntest: 2";
+    assertEquals (asList ("test: [de ad be ef]", "test: 2"), 
+                  readLines (dataWithNl));
+    
+    String continuation = "test: \\\n1\ntest: 2";
+    assertEquals (asList ("test: 1", "test: 2"), readLines (continuation));
+  }
+  
+  private static List<String> readLines (String content) 
+    throws IOException
+  {
+    ArrayList<String> lines = new ArrayList<String> ();
+    
+    BufferedReader reader = new BufferedReader (new StringReader (content));
+    String line;
+    
+    while ((line = Notification.nextLine (reader)) != null)
+      lines.add (line);
+    
+    return lines;
+  }
+
   @Test
   public void parseSimple ()
     throws Exception
