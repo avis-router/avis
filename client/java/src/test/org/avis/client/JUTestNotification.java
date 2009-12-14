@@ -116,8 +116,8 @@ public class JUTestNotification
     assertEquals (asList ("test: [de ad be ef]", "test: 2"), 
                   readLines (dataWithNl));
     
-    String continuation = "test: \\\n1\ntest: 2";
-    assertEquals (asList ("test: 1", "test: 2"), readLines (continuation));
+    String continuation = "test: \\\n1\\\n 2\ntest: 2";
+    assertEquals (asList ("test: 1 2", "test: 2"), readLines (continuation));
   }
   
   private static List<String> readLines (String content) 

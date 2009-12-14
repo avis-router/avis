@@ -235,9 +235,16 @@ public final class Notification
       if (c == -1)
       {
         atEol = true;
+      } if (c == '\n')
+      {
+        if (!inEscape && !inData && !inString)
+          atEol = true;
+        
+        inEscape = false;
       } else if (inEscape)
       {
         inEscape = false;
+        line.append ('\\');
       } else
       {
         switch (c)
@@ -256,14 +263,10 @@ public final class Notification
             if (!inString)
               inData = false;
             break;
-          case '\n':
-            if (!inData && !inString)
-              atEol = true;
-            break;
         }
       }
       
-      if (c != -1 && c != '\n' && c != '\r')
+      if (c != -1 && c != '\n' && c != '\r' && c != '\\')
         line.append ((char)c);
     }
     
