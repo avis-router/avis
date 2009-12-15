@@ -8,8 +8,8 @@ import java.io.Reader;
 
 /**
  * A buffered stream reader that hacks around lack of EOF flag on
- * standard Reader's and avoids blocking on EOF test. Only readLine ()
- * is fixed in this version.
+ * standard Reader's and avoids blocking on EOF test. Only read () and
+ * readLine () are fixed in this version.
  * 
  * @author Matthew Phillips
  */
@@ -28,6 +28,24 @@ public class StreamReader extends BufferedReader
     this (new InputStreamReader (in, "UTF-8"));
   }
 
+  @Override
+  public int read ()
+    throws IOException
+  {
+    if (eof)
+    {
+      return -1;
+    } else
+    {
+      int c = super.read ();
+      
+      if (c == -1)
+        eof = true;
+      
+      return c;
+    }
+  }
+  
   @Override
   public String readLine ()
     throws IOException
