@@ -213,9 +213,11 @@ public final class Notification
   }
 
   /**
-   * Read the next line of a notification.
+   * Read the next line of a notification. Allows line continuation with
+   * "\", and newlines in strings and data blocks. "---" can be used to
+   * terminate.
    * 
-   * @return The next line, or null if at eof or the notification
+   * @return The next line, or null if at EOF or the notification
    *         "---" terminator.
    */
   protected static String nextLine (BufferedReader in)
@@ -236,12 +238,14 @@ public final class Notification
         atEol = true;
       } if (c == '\n')
       {
+        // allow line cont and newlines in data and strings
         if (!inEscape && !inData && !inString)
           atEol = true;
         
         inEscape = false;
       } else if (inEscape)
       {
+        // "\" is not output immediately in case it's a line continuation
         inEscape = false;
         line.append ('\\');
       } else
@@ -265,6 +269,7 @@ public final class Notification
         }
       }
       
+      // never append EOF or \, only append newlines in strings
       if (c != -1 && c != '\\' &&
           (inString || (c != '\n' && c != '\r')))
       {
