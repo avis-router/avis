@@ -109,20 +109,33 @@ public class JUTestNotification
     String basic2 = "test: 1\ntest: 2\n\n";
     assertEquals (asList ("test: 1", "test: 2"), readLines (basic2));
     
-    String quotes = "test: \"1\"\ntest: \"\\\"2\"";
-    assertEquals (asList ("test: \"1\"", "test: \"\\\"2\""), readLines (quotes));
+    // DOS \r\n newlines
+    String basicDos = "test: 1\r\ntest: 2\r\n";
+    assertEquals (asList ("test: 1", "test: 2"), readLines (basicDos));
     
+    String basicDosStrWithNl = "test: \"hello\r\nworld\"\r\ntest: 2\r\n";
+    assertEquals (asList ("test: \"hello\r\nworld\"", "test: 2"), 
+                  readLines (basicDosStrWithNl));
+    
+    // escaped quotes in strings
+    String escQuotes = "test: \"1\"\ntest: \"\\\"2\"";
+    assertEquals (asList ("test: \"1\"", "test: \"\\\"2\""), 
+                  readLines (escQuotes));
+    
+    // quotes with newlines in them
     String quotesWithNl = "test: \"1\n2\n 3\"\ntest: \"2\"";
     assertEquals (asList ("test: \"1\n2\n 3\"", "test: \"2\""), 
                   readLines (quotesWithNl));
+    
     String dataWithNl = "test: [de ad\n\n be ef]\ntest: 2";
     assertEquals (asList ("test: [de ad be ef]", "test: 2"), 
                   readLines (dataWithNl));
     
+    // a \ at the end of the line should catenate next line
     String continuation = "test: \\\n1\\\n 2\ntest: 2";
     assertEquals (asList ("test: 1 2", "test: 2"), readLines (continuation));
     
-    // test --- terminator
+    // test "---" terminator
     assertEquals (asList ("test: 1"), readLines ("test: 1\n\n---"));
   }
   
