@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
 import org.junit.Test;
 
+import org.avis.io.StreamReader;
 import org.avis.util.InvalidFormatException;
 
 import static java.util.Arrays.asList;
@@ -103,14 +103,17 @@ public class JUTestNotification
   public void readLine ()
     throws Exception
   {
-    String basic = "test: 1\ntest: 2";
-    assertEquals (asList ("test: 1", "test: 2"), readLines (basic));
+    String basic1 = "test: 1";
+    assertEquals (asList ("test: 1"), readLines (basic1));
     
-    String quotes = "test: \"1\"\ntest: \"2\"";
-    assertEquals (asList ("test: \"1\"", "test: \"2\""), readLines (quotes));
+    String basic2 = "test: 1\ntest: 2\n\n";
+    assertEquals (asList ("test: 1", "test: 2"), readLines (basic2));
+    
+    String quotes = "test: \"1\"\ntest: \"\\\"2\"";
+    assertEquals (asList ("test: \"1\"", "test: \"\\\"2\""), readLines (quotes));
     
     String quotesWithNl = "test: \"1\n2\n 3\"\ntest: \"2\"";
-    assertEquals (asList ("test: \"12 3\"", "test: \"2\""), 
+    assertEquals (asList ("test: \"1\n2\n 3\"", "test: \"2\""), 
                   readLines (quotesWithNl));
     String dataWithNl = "test: [de ad\n\n be ef]\ntest: 2";
     assertEquals (asList ("test: [de ad be ef]", "test: 2"), 
@@ -118,6 +121,9 @@ public class JUTestNotification
     
     String continuation = "test: \\\n1\\\n 2\ntest: 2";
     assertEquals (asList ("test: 1 2", "test: 2"), readLines (continuation));
+    
+    // test --- terminator
+    assertEquals (asList ("test: 1"), readLines ("test: 1\n\n---"));
   }
   
   private static List<String> readLines (String content) 
@@ -125,7 +131,7 @@ public class JUTestNotification
   {
     ArrayList<String> lines = new ArrayList<String> ();
     
-    BufferedReader reader = new BufferedReader (new StringReader (content));
+    StreamReader reader = new StreamReader (new StringReader (content));
     String line;
     
     while ((line = Notification.nextLine (reader)) != null)

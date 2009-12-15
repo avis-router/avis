@@ -265,8 +265,11 @@ public final class Notification
         }
       }
       
-      if (c != -1 && c != '\n' && c != '\r' && c != '\\')
+      if (c != -1 && c != '\\' &&
+          (inString || (c != '\n' && c != '\r')))
+      {
         line.append ((char)c);
+      }
     }
     
     String result = line.toString ().trim ();
