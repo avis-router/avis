@@ -222,7 +222,6 @@ public final class Notification
     throws IOException
   {
     StringBuilder line = new StringBuilder ();
-    int c;
     boolean inString = false;
     boolean inData = false;
     boolean atEol = false;
@@ -230,7 +229,7 @@ public final class Notification
     
     while (!atEol)
     {
-      c = in.read ();
+      int c = in.read ();
       
       if (c == -1)
       {
@@ -272,7 +271,7 @@ public final class Notification
     
     String result = line.toString ().trim ();
     
-    if (result.length () == 0)
+    if (result.length () == 0 || result.startsWith ("---"))
       return null;
     else
       return result;
