@@ -165,7 +165,7 @@ public final class Elvin implements Closeable
    * responses to XID-based requests, using replyLock to synchronize
    * access.
    */
-  protected volatile XidMessage lastReply;
+  protected XidMessage lastReply;
   protected Object replyLock;
   
   protected ListenerList<CloseListener> closeListeners;
