@@ -1,0 +1,23 @@
+Dec 16 14:46:29: Info: Completed cycle 1
+Dec 16 14:46:31: Info: Completed cycle 2
+java.io.IOException: Timeout error: router did not respond within 10 seconds
+	at org.avis.client.Elvin.receiveReply(Elvin.java:1375)
+	at org.avis.client.Elvin.receiveReply(Elvin.java:1397)
+	at org.avis.client.Elvin.sendAndReceive(Elvin.java:1335)
+	at org.avis.client.Elvin.unsubscribe(Elvin.java:1044)
+	at org.avis.client.Subscription.remove(Subscription.java:67)
+	at org.avis.client.ActiveClientTester$Worker.unsubscribe(ActiveClientTester.java:144)
+	at org.avis.client.ActiveClientTester$Worker.run(ActiveClientTester.java:96)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:637)
+java.io.IOException: Protocol violation: Transaction ID mismatch in reply from router: reply SubRply XID 1682 != request SubDelRqst XID 1683
+	at org.avis.client.Elvin.receiveReply(Elvin.java:1408)
+	at org.avis.client.Elvin.sendAndReceive(Elvin.java:1335)
+	at org.avis.client.Elvin.unsubscribe(Elvin.java:1044)
+	at org.avis.client.Subscription.remove(Subscription.java:67)
+	at org.avis.client.ActiveClientTester$Worker.unsubscribe(ActiveClientTester.java:144)
+	at org.avis.client.ActiveClientTester$Worker.run(ActiveClientTester.java:96)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:637)
