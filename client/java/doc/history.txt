@@ -1,3 +1,14 @@
+Release 1.1.1 (December 16, 2009)
+----------------------------------------------------------------------
+
+This release fixes a concurrency bug.
+
+ * Fixed a bug that could cause spurious receive timeouts and/or
+   XID-based protocol errors when a connection is used concurrently by
+   a number of threads. This primarily occurs on very fast machines
+   under JDK 1.6.
+
+
 Release 1.1.0 (January 21, 2008)
 ----------------------------------------------------------------------
 
