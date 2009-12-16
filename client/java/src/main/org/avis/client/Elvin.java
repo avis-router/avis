@@ -165,7 +165,7 @@ public final class Elvin implements Closeable
    * responses to XID-based requests, using replyLock to synchronize
    * access.
    */
-  protected XidMessage lastReply;
+  protected volatile XidMessage lastReply;
   protected Object replyLock;
   
   protected ListenerList<CloseListener> closeListeners;
@@ -1344,11 +1344,24 @@ public final class Elvin implements Closeable
   {
     synchronized (replyLock)
     {
-      if (lastReply == null)
+      long timeoutAt = currentTimeMillis () + options.receiveTimeout;
+      long now;
+      
+      /*
+       * The spec for Object.wait () indicates that, as well as being
+       * notify()'d and interrupted, a wait () may also exit on a
+       * "spurious" interrupt. So we need to potentially keep looping
+       * until we have a reply or the timeout has passed. This
+       * spurious timeout has actually been seen on release 1.1.0
+       * under JDK 1.6.0, and can be triggered by the
+       * "ConcurrentClientTest" class in the test area of the client
+       * project.
+       */
+      while (lastReply == null && (now = currentTimeMillis ()) < timeoutAt)
       {
         try
         {
-          replyLock.wait (options.receiveTimeout);
+          replyLock.wait (timeoutAt - now);
         } catch (InterruptedException ex)
         {
           // clear reply and continue interrupt
