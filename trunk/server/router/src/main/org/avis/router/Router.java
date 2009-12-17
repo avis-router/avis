@@ -69,7 +69,9 @@ import static org.avis.common.Common.DEFAULT_PORT;
 import static org.avis.io.FrameCodec.setMaxFrameLengthFor;
 import static org.avis.io.LegacyConnectionOptions.setWithLegacy;
 import static org.avis.io.Net.enableTcpNoDelay;
+import static org.avis.io.Net.hostIdFor;
 import static org.avis.io.Net.idFor;
+import static org.avis.io.Net.remoteHostAddressFor;
 import static org.avis.io.messages.Disconn.REASON_PROTOCOL_VIOLATION;
 import static org.avis.io.messages.Disconn.REASON_SHUTDOWN;
 import static org.avis.io.messages.Nack.EMPTY_ARGS;
@@ -1053,10 +1055,10 @@ public class Router implements IoHandler, Closeable
   public void sessionOpened (IoSession session)
     throws Exception
   {
-    diagnostic ("Client session " + idFor (session) + 
-                " opened for connection on " + session.getServiceAddress () + 
-                (isSecure (session) ? " (using TLS)" : ""), this);
-    
+    diagnostic ("Client " + hostIdFor (remoteHostAddressFor (session)) + 
+                " opened session " + idFor (session) + 
+                " for connection on " + session.getServiceAddress () + 
+                (isSecure (session) ? " using TLS" : ""), this);
   }
   
   private static void setConnection (IoSession session,
