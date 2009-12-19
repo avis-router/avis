@@ -13,6 +13,7 @@ import org.apache.mina.filter.codec.ProtocolCodecException;
 import org.avis.security.DualKeyScheme.Subset;
 
 import static org.avis.io.XdrCoding.getBytes;
+import static org.avis.io.XdrCoding.getSize;
 import static org.avis.io.XdrCoding.putBytes;
 import static org.avis.security.DualKeyScheme.Subset.CONSUMER;
 import static org.avis.security.DualKeyScheme.Subset.PRODUCER;
@@ -563,7 +564,7 @@ public class Keys
   private static void decodeKeys (IoBuffer in, Set<Key> keys) 
     throws ProtocolCodecException
   {
-    for (int keysetCount = in.getInt (); keysetCount > 0; keysetCount--)
+    for (int keysetCount = getSize (in); keysetCount > 0; keysetCount--)
       keys.add (new Key (getBytes (in)));
   }
   
