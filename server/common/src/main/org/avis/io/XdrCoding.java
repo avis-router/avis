@@ -412,7 +412,7 @@ public final class XdrCoding
   /**
    * Read an int >= 0 && <= 20MB or generate an exception.
    */
-  private static int getSize (IoBuffer in) 
+  public static int getSize (IoBuffer in) 
     throws ProtocolCodecException
   {
     int size = in.getInt ();
