@@ -329,7 +329,7 @@ static NSAttributedString *attributedString (NSString *string,
         attributedString ([message->url host], linkAttrs)];
 
       [displayedMessage appendAttributedString: 
-        attributedString (@"/...", linkAttrs)];
+        attributedString (@"/…", linkAttrs)];
     }           
     
     [displayedMessage 
