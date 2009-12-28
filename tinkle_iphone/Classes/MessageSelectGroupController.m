@@ -71,10 +71,9 @@
   [self.parentViewController dismissModalViewControllerAnimated: YES];
 }
 
-- (IBAction) groupSelected: (id) sender
-{  
-  [self.delegate setGroup:
-    [groups objectAtIndex: [groupsList indexPathForSelectedRow].row]];
+- (void) selectGroup: (NSString *) groupName
+{
+  [self.delegate setGroup: groupName];
 
   [groupTextField resignFirstResponder];
 
@@ -88,11 +87,11 @@
 #pragma mark -
 #pragma mark UITableViewDelegate
 
-//- (void) tableView: (UITableView *) tableView 
-//         didSelectRowAtIndexPath: (NSIndexPath *) indexPath
-//{
-//  
-//}
+- (void) tableView: (UITableView *) tableView 
+         didSelectRowAtIndexPath: (NSIndexPath *) indexPath
+{ 
+  [self selectGroup: [groups objectAtIndex: indexPath.row]];
+}
 
 //- (void) pickerView: (UIPickerView *) pickerView didSelectRow: (NSInteger) row 
 //         inComponent: (NSInteger) component
