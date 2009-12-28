@@ -27,4 +27,6 @@ extern NSString *TickerMessageReceivedNotification;
 
 - (IBAction) selectGroup: (id) sender;
 
+- (void) groupsChanged: (NSArray *) newGroups;
+
 @end

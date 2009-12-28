@@ -1,5 +1,7 @@
 #import "MessageSelectGroupController.h"
 
+#import "utils.h"
+
 @implementation MessageSelectGroupController
 
 @synthesize group, groups, delegate;
@@ -32,38 +34,37 @@
 {
   [super viewWillAppear: animated];
   
-//  [picker selectRow: [groups indexOfObject: group] inComponent: 0 animated: NO];
-
   [groupsList selectRowAtIndexPath: 
     [NSIndexPath indexPathWithIndex: [groups indexOfObject: group]] 
     animated: NO scrollPosition: UITableViewScrollPositionNone];
 }
 
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+- (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation
+{
+  return YES;
 }
-*/
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning
+{
 	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
+  [super didReceiveMemoryWarning];
 	
 	// Release any cached data, images, etc that aren't in use.
 }
 
-- (void)viewDidUnload {
+- (void) viewDidUnload 
+{
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
 }
 
-
-- (void)dealloc 
+- (void) dealloc 
 {
   [super dealloc];
 }
+
+#pragma mark -
+#pragma mark Event handlers
 
 - (IBAction) cancel: (id) sender
 {
@@ -82,6 +83,30 @@
 
 - (IBAction) addButtonClicked: (id) sender
 {
+  NSString *addedGroup = trim (groupTextField.text);
+  
+  if ([addedGroup length] > 0 && ![groups containsObject: addedGroup])
+    [delegate groupsChanged: [groups arrayByAddingObject: addedGroup]];
+    
+  [self selectGroup: addedGroup];
+}
+
+- (void) setGroup: (NSString *) newGroup
+{
+  [group release];
+  group = [newGroup retain];
+  
+  [groupsList selectRowAtIndexPath: 
+    [NSIndexPath indexPathWithIndex: [groups indexOfObject: group]] 
+    animated: NO scrollPosition: UITableViewScrollPositionNone];
+}
+
+- (void) setGroups: (NSArray *) newGroups
+{
+  [groups release];
+  groups = 
+    [[newGroups sortedArrayUsingSelector: 
+      @selector (localizedCaseInsensitiveCompare:)] retain];
 }
 
 #pragma mark -
@@ -92,18 +117,6 @@
 { 
   [self selectGroup: [groups objectAtIndex: indexPath.row]];
 }
-
-//- (void) pickerView: (UIPickerView *) pickerView didSelectRow: (NSInteger) row 
-//         inComponent: (NSInteger) component
-//{
-////	if (pickerView == myPickerView)	// don't show selection for the custom picker
-////	{
-////		// report the selection to the UI label
-////		label.text = [NSString stringWithFormat:@"%@ - %d",
-////						[pickerViewArray objectAtIndex:[pickerView selectedRowInComponent:0]],
-////						[pickerView selectedRowInComponent:1]];
-////	}
-//}
 
 #pragma mark -
 #pragma mark UITableViewDataSource
@@ -140,37 +153,5 @@
 
   return cell;
 }
-
-//#pragma mark -
-//#pragma mark UIPickerViewDataSource
-//
-//- (NSString *) pickerView: (UIPickerView *) pickerView 
-//               titleForRow: (NSInteger) row forComponent: (NSInteger) component
-//{
-//  return [groups objectAtIndex: row];
-//}
-//
-//- (CGFloat) pickerView: (UIPickerView *) pickerView 
-//            widthForComponent: (NSInteger) component
-//{
-//	return 240.0;
-//}
-//
-//- (CGFloat) pickerView: (UIPickerView *) pickerView 
-//            rowHeightForComponent: (NSInteger) component
-//{
-//	return 40.0;
-//}
-//
-//- (NSInteger) pickerView: (UIPickerView *) pickerView 
-//              numberOfRowsInComponent: (NSInteger) component
-//{
-//	return [groups count];
-//}
-//
-//- (NSInteger) numberOfComponentsInPickerView: (UIPickerView *) pickerView
-//{
-//	return 1;
-//}
 
 @end

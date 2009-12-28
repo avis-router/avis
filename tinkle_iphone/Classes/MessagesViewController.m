@@ -205,6 +205,11 @@ static inline float bottomY (CGRect rect)
   setPref (PrefDefaultSendGroup, group);
 }
 
+- (void) groupsChanged: (NSArray *) newGroups
+{
+  setPref (PrefTickerGroups, newGroups);
+}
+
 - (void) handleNotify: (NSDictionary *) ntfn
 {
   TickerMessage *message = [TickerMessage messageForNotification: ntfn];
