@@ -24,15 +24,19 @@
 {
   [super viewDidLoad];
   
-  picker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-  picker.showsSelectionIndicator = YES;
+//  picker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+//  picker.showsSelectionIndicator = YES;
 }
 
 - (void) viewWillAppear: (BOOL) animated
 {
   [super viewWillAppear: animated];
   
-  [picker selectRow: [groups indexOfObject: group] inComponent: 0 animated: NO];
+//  [picker selectRow: [groups indexOfObject: group] inComponent: 0 animated: NO];
+
+  [groupsList selectRowAtIndexPath: 
+    [NSIndexPath indexPathWithIndex: [groups indexOfObject: group]] 
+    animated: NO scrollPosition: UITableViewScrollPositionNone];
 }
 
 /*
@@ -56,68 +60,118 @@
 }
 
 
-- (void)dealloc {
-    [super dealloc];
+- (void)dealloc 
+{
+  [super dealloc];
 }
 
 - (IBAction) cancel: (id) sender
 {
+  [groupTextField resignFirstResponder];
   [self.parentViewController dismissModalViewControllerAnimated: YES];
 }
 
 - (IBAction) groupSelected: (id) sender
-{
+{  
   [self.delegate setGroup:
-    [groups objectAtIndex: [picker selectedRowInComponent: 0]]];
+    [groups objectAtIndex: [groupsList indexPathForSelectedRow].row]];
+
+  [groupTextField resignFirstResponder];
 
   [self.parentViewController dismissModalViewControllerAnimated: YES];
 }
 
-#pragma mark -
-#pragma mark UIPickerViewDelegate
-
-- (void) pickerView: (UIPickerView *) pickerView didSelectRow: (NSInteger) row 
-         inComponent: (NSInteger) component
+- (IBAction) addButtonClicked: (id) sender
 {
-//	if (pickerView == myPickerView)	// don't show selection for the custom picker
-//	{
-//		// report the selection to the UI label
-//		label.text = [NSString stringWithFormat:@"%@ - %d",
-//						[pickerViewArray objectAtIndex:[pickerView selectedRowInComponent:0]],
-//						[pickerView selectedRowInComponent:1]];
-//	}
 }
 
 #pragma mark -
-#pragma mark UIPickerViewDataSource
+#pragma mark UITableViewDelegate
 
-- (NSString *) pickerView: (UIPickerView *) pickerView 
-               titleForRow: (NSInteger) row forComponent: (NSInteger) component
+//- (void) tableView: (UITableView *) tableView 
+//         didSelectRowAtIndexPath: (NSIndexPath *) indexPath
+//{
+//  
+//}
+
+//- (void) pickerView: (UIPickerView *) pickerView didSelectRow: (NSInteger) row 
+//         inComponent: (NSInteger) component
+//{
+////	if (pickerView == myPickerView)	// don't show selection for the custom picker
+////	{
+////		// report the selection to the UI label
+////		label.text = [NSString stringWithFormat:@"%@ - %d",
+////						[pickerViewArray objectAtIndex:[pickerView selectedRowInComponent:0]],
+////						[pickerView selectedRowInComponent:1]];
+////	}
+//}
+
+#pragma mark -
+#pragma mark UITableViewDataSource
+
+- (NSInteger) numberOfSectionsInTableView: (UITableView *) tableView
 {
-  return [groups objectAtIndex: row];
+  return 1;
 }
 
-- (CGFloat) pickerView: (UIPickerView *) pickerView 
-            widthForComponent: (NSInteger) component
+// Customize the number of rows in the table view.
+- (NSInteger) tableView: (UITableView *) tableView 
+  numberOfRowsInSection: (NSInteger) section 
 {
-	return 240.0;
+  return [groups count];
 }
 
-- (CGFloat) pickerView: (UIPickerView *) pickerView 
-            rowHeightForComponent: (NSInteger) component
+// Customize the appearance of table view cells.
+- (UITableViewCell *) tableView: (UITableView *) tableView
+    cellForRowAtIndexPath: (NSIndexPath *) indexPath 
 {
-	return 40.0;
+  static NSString *CellIdentifier = @"GroupCell";
+    
+  UITableViewCell *cell = 
+    [tableView dequeueReusableCellWithIdentifier: CellIdentifier];
+
+  if (cell == nil)
+  {
+    cell = [[[UITableViewCell alloc]
+             initWithStyle: UITableViewCellStyleDefault
+               reuseIdentifier: CellIdentifier] autorelease];
+  } 
+  
+  cell.textLabel.text = [groups objectAtIndex: indexPath.row];
+
+  return cell;
 }
 
-- (NSInteger) pickerView: (UIPickerView *) pickerView 
-              numberOfRowsInComponent: (NSInteger) component
-{
-	return [groups count];
-}
-
-- (NSInteger) numberOfComponentsInPickerView: (UIPickerView *) pickerView
-{
-	return 1;
-}
+//#pragma mark -
+//#pragma mark UIPickerViewDataSource
+//
+//- (NSString *) pickerView: (UIPickerView *) pickerView 
+//               titleForRow: (NSInteger) row forComponent: (NSInteger) component
+//{
+//  return [groups objectAtIndex: row];
+//}
+//
+//- (CGFloat) pickerView: (UIPickerView *) pickerView 
+//            widthForComponent: (NSInteger) component
+//{
+//	return 240.0;
+//}
+//
+//- (CGFloat) pickerView: (UIPickerView *) pickerView 
+//            rowHeightForComponent: (NSInteger) component
+//{
+//	return 40.0;
+//}
+//
+//- (NSInteger) pickerView: (UIPickerView *) pickerView 
+//              numberOfRowsInComponent: (NSInteger) component
+//{
+//	return [groups count];
+//}
+//
+//- (NSInteger) numberOfComponentsInPickerView: (UIPickerView *) pickerView
+//{
+//	return 1;
+//}
 
 @end

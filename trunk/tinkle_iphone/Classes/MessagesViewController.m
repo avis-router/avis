@@ -13,15 +13,16 @@ static inline float bottomY (CGRect rect)
 
 @implementation MessagesViewController
 
-/*
-// The designated initializer. Override to perform setup that is required before the view is loaded.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        // Custom initialization
-    }
-    return self;
+- (id) initWithNibName: (NSString *) nibNameOrNil 
+       bundle: (NSBundle *) nibBundleOrNil
+{
+  if (self = [super initWithNibName: nibNameOrNil bundle: nibBundleOrNil])
+  {
+    keyboardShown = NO;
+  }
+  
+  return self;
 }
-*/
 
 /*
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
@@ -60,14 +61,16 @@ static inline float bottomY (CGRect rect)
 }
 */
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning 
+{
 	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
+  [super didReceiveMemoryWarning];
 	
 	// Release any cached data, images, etc that aren't in use.
 }
 
-- (void)viewDidUnload {
+- (void) viewDidUnload 
+{
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
 }
@@ -206,44 +209,6 @@ static inline float bottomY (CGRect rect)
 {
   TickerMessage *message = [TickerMessage messageForNotification: ntfn];
 
-//  // decide on whether we're scrolled to the end of the messages
-//  CGPoint containerOrigin = [messagesTextView textContainerOrigin];
-//  CGRect visibleRect = CGOffsetRect ([messagesTextView visibleRect], 
-//                                     -containerOrigin.x, -containerOrigin.y);
-//  CGRect tickerMessagesRect = [messagesTextView bounds];
-//  
-//  BOOL wasScrolledToEnd = 
-//    bottomY (visibleRect) == bottomY (tickerMessagesRect);
-
-//  NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
-//  [dateFormatter setDateStyle: NSDateFormatterLongStyle];
-//  [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
-//
-//  // define display attributes
-//  NSDictionary *replyLinkAttrs = 
-//    [NSDictionary dictionaryWithObject: message forKey: NSLinkAttributeName];
-//     
-//  NSDictionary *lowlightAttrs = 
-//    [NSDictionary dictionaryWithObject: color (102, 102, 102) 
-//      forKey: NSForegroundColorAttributeName];
-//      
-//  NSDictionary *groupAttrs = 
-//    [NSDictionary dictionaryWithObject: color (48, 80, 10) 
-//      forKey: NSForegroundColorAttributeName];
-//
-//  NSDictionary *fromAttrs = 
-//    [NSDictionary dictionaryWithObject: color (86, 56, 12) 
-//      forKey: NSForegroundColorAttributeName];
-//
-//  NSDictionary *messageAttrs = 
-//    [NSDictionary dictionaryWithObject: color (0, 64, 128) 
-//      forKey: NSForegroundColorAttributeName];
-//
-//  NSDictionary *fontAttrs = 
-//    [NSDictionary dictionaryWithObject: 
-//       [NSFont fontWithName: @"Lucida Grande" size: 11] 
-//                     forKey: NSFontAttributeName];
-  
   NSMutableString *messagesViewText = 
     [NSMutableString stringWithString: messagesTextView.text];
   NSRange range;
@@ -358,26 +323,13 @@ static inline float bottomY (CGRect rect)
 
 - (void) handleKeyboardShowOrHide: (NSNotification *) ntfn
 {
-  CGPoint centreStart;
-  CGPoint centreEnd;
+  BOOL willShow = [[ntfn name] isEqual: UIKeyboardWillShowNotification];
   
-  [[[ntfn userInfo] valueForKey: UIKeyboardCenterBeginUserInfoKey] 
-    getValue: &centreStart];
-  [[[ntfn userInfo] valueForKey: UIKeyboardCenterEndUserInfoKey] 
-    getValue: &centreEnd];
+  if (willShow == keyboardShown)
+    return;
+    
+  keyboardShown = willShow;
   
-  CGRect windowFrame = self.view.window.frame;
-  CGRect myBounds = [self.view convertRect: self.view.bounds toView: nil];
-  
-  // adjustment for my frame's vertical offset from bottom
-  CGFloat vertOffset = 
-    (windowFrame.origin.y + windowFrame.size.height) - 
-    (myBounds.origin.y + myBounds.size.height);
-                 
-  // invert offset depending on movement direction
-  if (centreStart.y < centreEnd.y)
-    vertOffset = -vertOffset;
-
   // extract keyboard's animation params
   double duration;
   UIViewAnimationCurve curve;
@@ -386,15 +338,25 @@ static inline float bottomY (CGRect rect)
     getValue: &duration];
   [[[ntfn userInfo] valueForKey: UIKeyboardAnimationCurveUserInfoKey] 
     getValue: &curve];
-  
+
   [UIView beginAnimations: @"showKeyboard" context: nil];
   [UIView setAnimationDuration: duration];
   [UIView setAnimationCurve: curve];
-    
-  self.view.bounds = 
-    CGRectOffset (self.view.bounds, centreStart.x - centreEnd.x, 
-                  (centreStart.y - centreEnd.y) - vertOffset);
 
+  // get the size of the keyboard.
+  CGSize keyboardSize = 
+    [[[ntfn userInfo] 
+      objectForKey: UIKeyboardBoundsUserInfoKey] CGRectValue].size;
+  CGRect viewFrame = self.view.frame;
+  CGFloat vertOffset = self.tabBarController.tabBar.frame.size.height;
+
+  if (willShow)
+    viewFrame.size.height -= keyboardSize.height - vertOffset;
+  else
+    viewFrame.size.height += keyboardSize.height - vertOffset;
+    
+  self.view.frame = viewFrame;
+    
   [UIView commitAnimations];
 }
 

@@ -1,13 +1,14 @@
 #import <UIKit/UIKit.h>
 
 @interface MessageSelectGroupController : 
-  UIViewController <UIPickerViewDelegate, UIPickerViewDataSource>
+  UIViewController <UITableViewDelegate, UITableViewDataSource>
 {
   NSArray *groups;
   NSString *group;
   id delegate;
   
-  IBOutlet UIPickerView *picker;
+  IBOutlet UITableView *groupsList;
+  IBOutlet UITextField *groupTextField;
 }
 
 @property (readwrite, retain) NSArray *groups;
@@ -17,5 +18,7 @@
 - (IBAction) cancel: (id) sender;
 
 - (IBAction) groupSelected: (id) sender;
+
+- (IBAction) addButtonClicked: (id) sender;
 
 @end
