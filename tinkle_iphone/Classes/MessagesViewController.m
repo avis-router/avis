@@ -220,7 +220,7 @@ static inline float bottomY (CGRect rect)
      [[MessageSelectGroupController alloc]
        initWithNibName: @"MessagesSelectGroup" bundle: nil];
   
-   selectController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+   selectController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
    // Create the navigation controller and present it modally.
    UINavigationController *navigationController = 
