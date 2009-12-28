@@ -17,9 +17,7 @@ static inline float bottomY (CGRect rect)
        bundle: (NSBundle *) nibBundleOrNil
 {
   if (self = [super initWithNibName: nibNameOrNil bundle: nibBundleOrNil])
-  {
     keyboardShown = NO;
-  }
   
   return self;
 }
@@ -36,8 +34,8 @@ static inline float bottomY (CGRect rect)
 - (void) viewDidLoad
 {
   [super viewDidLoad];
-
-  [self setGroup: @"Test"];
+  
+  [self updateSendGroup];
   
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
@@ -50,7 +48,10 @@ static inline float bottomY (CGRect rect)
                         name: ElvinConnectionOpenedNotification object: nil]; 
   
   [notifications addObserver: self selector: @selector (handleElvinClose:)
-                        name: ElvinConnectionClosedNotification object: nil]; 
+                        name: ElvinConnectionClosedNotification object: nil];
+                        
+  [notifications addObserver: self selector: @selector (handleDefaultsChange:)
+                        name: NSUserDefaultsDidChangeNotification object: nil];  
 }
 
 /*
@@ -86,17 +87,21 @@ static inline float bottomY (CGRect rect)
   return YES;
 }
 
-- (NSString *) subscription
+- (void) setElvin: (ElvinConnection *) newElvin
 {
-  return subscription;
+  [elvin release];
+  elvin = [newElvin retain];
+  
+  [self subscribe];
 }
 
-- (void) setSubscription: (NSString *) newSubscription
+- (void) subscribe
 {
-  if (![newSubscription isEqual: subscription])
+  NSString *newSubscription = [self subscription];
+  
+  if (![subscription isEqual: newSubscription])
   {
     [subscription release];
-    
     subscription = [newSubscription retain];
     
     if (subscriptionContext)
@@ -113,6 +118,57 @@ static inline float bottomY (CGRect rect)
   }
 }
 
+- (NSString *) subscription
+{
+  NSArray *groups = prefArray (PrefTickerGroups);
+  NSString *extraSubscription = prefString (PrefTickerSubscription);
+  NSString *user = 
+    [ElvinConnection escapedSubscriptionString: prefString (PrefOnlineUserName)];
+  
+  NSMutableString *fullSubscription = 
+    [NSMutableString stringWithString: 
+       @"(string (Message) && string (From) && string (Group))"];
+  
+  // user's messages
+  
+  [fullSubscription appendFormat: 
+     @" && ((From == '%@' || Group == '%@' || Thread-Id == '%@')",
+     user, user, user];
+  
+  // groups
+  
+  if ([groups count] > 0 || [extraSubscription length] > 0)
+    [fullSubscription appendString: @" || ("];
+  
+  if ([groups count] > 0)
+  {
+    [fullSubscription appendString: @"equals (Group"];
+    
+    for (NSString *group in groups)
+      [fullSubscription appendFormat: @", '%@'",
+         [ElvinConnection escapedSubscriptionString: group]];
+    
+    [fullSubscription appendString: @")"];
+  }
+  
+  // extra subscription
+  
+  if ([extraSubscription length] > 0)
+  {
+    if ([groups count] > 0)
+      [fullSubscription appendString: @" || "];
+  
+    [fullSubscription appendFormat: @"(%@)", extraSubscription];
+  }
+  
+  if ([groups count] > 0 || [extraSubscription length] > 0)
+    [fullSubscription appendString: @")"];
+  
+  [fullSubscription appendString: @")"];
+  
+  return fullSubscription;
+}
+
 - (IBAction) sendMessage: (id) sender
 {
   NSString *message = messageCompositionField.text;
@@ -122,7 +178,7 @@ static inline float bottomY (CGRect rect)
   
   [elvin sendTickerMessage: message 
     fromSender: prefString (PrefOnlineUserName)
-    toGroup: group 
+    toGroup: prefString (PrefDefaultSendGroup) 
     inReplyTo: nil
     attachedURL: nil
     sendPublic: YES
@@ -188,27 +244,24 @@ static inline float bottomY (CGRect rect)
    [selectController release]; 
 }
 
-- (NSString *) group
+- (void) updateSendGroup
 {
-  return group;
-}
-
-- (void) setGroup: (NSString *) newGroup
-{
-  [group release];
-  
-  group = [newGroup retain];
-  
   messageCompositionField.placeholder = 
-    [NSString stringWithFormat: @"Post to “%@”", group];
-    
-  setPref (PrefDefaultSendGroup, group);
+    [NSString stringWithFormat: @"Post to “%@”", 
+      prefString (PrefDefaultSendGroup)];
 }
 
-- (void) groupsChanged: (NSArray *) newGroups
-{
-  setPref (PrefTickerGroups, newGroups);
-}
+//- (void) setGroup: (NSString *) newGroup
+//{
+//  [group release];
+//  
+//  group = [newGroup retain];
+//  
+//  messageCompositionField.placeholder = 
+//    [NSString stringWithFormat: @"Post to “%@”", group];
+//    
+//  setPref (PrefDefaultSendGroup, group);
+//}
 
 - (void) handleNotify: (NSDictionary *) ntfn
 {
@@ -363,6 +416,13 @@ static inline float bottomY (CGRect rect)
   self.view.frame = viewFrame;
     
   [UIView commitAnimations];
+}
+
+- (void) handleDefaultsChange: (NSNotification *) ntfn
+{
+  [self updateSendGroup];
+      
+  [self subscribe];
 }
 
 @end

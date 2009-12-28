@@ -8,7 +8,6 @@ extern NSString *TickerMessageReceivedNotification;
 {
   ElvinConnection      *elvin;
   NSString             *subscription;
-  NSString             *group;
   id                    subscriptionContext;
   BOOL                  canSend;
   BOOL                  keyboardShown;
@@ -19,14 +18,16 @@ extern NSString *TickerMessageReceivedNotification;
 }
 
 @property (readwrite, retain) ElvinConnection   *elvin;
-@property (readwrite, retain) NSString          *group;
-@property (readwrite, retain) IBOutlet NSString *subscription;
 @property (readwrite, assign) IBOutlet BOOL      canSend;
 
 - (IBAction) sendMessage: (id) sender;
 
 - (IBAction) selectGroup: (id) sender;
 
-- (void) groupsChanged: (NSArray *) newGroups;
+- (void) subscribe;
+
+- (NSString *) subscription;
+
+- (void) updateSendGroup;
 
 @end
