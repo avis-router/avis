@@ -63,12 +63,12 @@
 								<string key="IBUITitle">Select Group</string>
 								<reference key="IBUIToolbar" ref="411235001"/>
 							</object>
-							<object class="IBUIBarButtonItem" id="813899929">
+							<object class="IBUIBarButtonItem" id="984909596">
 								<reference key="IBUIToolbar" ref="411235001"/>
 								<int key="IBUISystemItemIdentifier">5</int>
 							</object>
-							<object class="IBUIBarButtonItem" id="6460856">
-								<string key="IBUITitle">Done</string>
+							<object class="IBUIBarButtonItem" id="778004030">
+								<string key="IBUITitle">Select</string>
 								<int key="IBUIStyle">2</int>
 								<reference key="IBUIToolbar" ref="411235001"/>
 							</object>
@@ -188,7 +188,7 @@
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">addButtonClicked:</string>
-						<reference key="source" ref="6460856"/>
+						<reference key="source" ref="778004030"/>
 						<reference key="destination" ref="372490531"/>
 					</object>
 					<int key="connectionID">38</int>
@@ -233,8 +233,8 @@
 							<reference ref="887146112"/>
 							<reference ref="720060394"/>
 							<reference ref="271518642"/>
-							<reference ref="813899929"/>
-							<reference ref="6460856"/>
+							<reference ref="984909596"/>
+							<reference ref="778004030"/>
 						</object>
 						<reference key="parent" ref="191373211"/>
 					</object>
@@ -280,12 +280,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">36</int>
-						<reference key="object" ref="813899929"/>
+						<reference key="object" ref="984909596"/>
 						<reference key="parent" ref="411235001"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">37</int>
-						<reference key="object" ref="6460856"/>
+						<reference key="object" ref="778004030"/>
 						<reference key="parent" ref="411235001"/>
 					</object>
 				</object>
@@ -312,7 +312,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>MessageSelectGroupController</string>
 					<string>UIResponder</string>
-					<string>{{354, 376}, {320, 480}}</string>
+					<string>{{304, 287}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -366,13 +366,11 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>delegate</string>
 							<string>groupTextField</string>
 							<string>groupsList</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>UITextField</string>
 							<string>UITableView</string>
 						</object>
