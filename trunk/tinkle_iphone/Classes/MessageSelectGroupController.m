@@ -5,8 +5,6 @@
 
 @implementation MessageSelectGroupController
 
-@synthesize group, groups, delegate;
-
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -26,21 +24,19 @@
 - (void) viewDidLoad 
 {
   [super viewDidLoad];
-  
-//  picker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-//  picker.showsSelectionIndicator = YES;
 }
 
 - (void) viewWillAppear: (BOOL) animated
 {
   [super viewWillAppear: animated];
   
-  [groupsList selectRowAtIndexPath: 
-    [NSIndexPath indexPathWithIndex: [groups indexOfObject: group]] 
-    animated: NO scrollPosition: UITableViewScrollPositionNone];
+  groups = 
+    [[prefArray (PrefTickerGroups) sortedArrayUsingSelector: 
+      @selector (localizedCaseInsensitiveCompare:)] retain];
 }
 
-- (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation
+- (BOOL) shouldAutorotateToInterfaceOrientation: 
+         (UIInterfaceOrientation) interfaceOrientation
 {
   return YES;
 }
@@ -95,24 +91,6 @@
   [self selectGroup: addedGroup];
 }
 
-- (void) setGroup: (NSString *) newGroup
-{
-  [group release];
-  group = [newGroup retain];
-  
-  [groupsList selectRowAtIndexPath: 
-    [NSIndexPath indexPathWithIndex: [groups indexOfObject: group]] 
-    animated: NO scrollPosition: UITableViewScrollPositionNone];
-}
-
-- (void) setGroups: (NSArray *) newGroups
-{
-  [groups release];
-  groups = 
-    [[newGroups sortedArrayUsingSelector: 
-      @selector (localizedCaseInsensitiveCompare:)] retain];
-}
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 
@@ -130,14 +108,12 @@
   return 1;
 }
 
-// Customize the number of rows in the table view.
 - (NSInteger) tableView: (UITableView *) tableView 
   numberOfRowsInSection: (NSInteger) section 
 {
   return [groups count];
 }
 
-// Customize the appearance of table view cells.
 - (UITableViewCell *) tableView: (UITableView *) tableView
     cellForRowAtIndexPath: (NSIndexPath *) indexPath 
 {
