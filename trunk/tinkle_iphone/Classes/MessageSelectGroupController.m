@@ -1,5 +1,6 @@
 #import "MessageSelectGroupController.h"
 
+#import "Preferences.h"
 #import "utils.h"
 
 @implementation MessageSelectGroupController
@@ -74,7 +75,7 @@
 
 - (void) selectGroup: (NSString *) groupName
 {
-  [self.delegate setGroup: groupName];
+  setPref (PrefDefaultSendGroup, groupName);
 
   [groupTextField resignFirstResponder];
 
@@ -85,9 +86,12 @@
 {
   NSString *addedGroup = trim (groupTextField.text);
   
-  if ([addedGroup length] > 0 && ![groups containsObject: addedGroup])
-    [delegate groupsChanged: [groups arrayByAddingObject: addedGroup]];
+  if ([addedGroup length] == 0)
+    return;
     
+  if (![groups containsObject: addedGroup])
+    setPref (PrefTickerGroups, [groups arrayByAddingObject: addedGroup]);
+  
   [self selectGroup: addedGroup];
 }
 

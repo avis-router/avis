@@ -58,8 +58,6 @@
 
   presenceController.presence = presence;
   messagesController.elvin = elvin;
-  messagesController.subscription = [self tickerSubscription];
-  messagesController.group = prefString (PrefDefaultSendGroup);
     
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
@@ -104,57 +102,6 @@
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
                            withObject: nil waitUntilDone: NO];
   }
-}
-
-- (NSString *) tickerSubscription
-{
-  NSArray *groups = prefArray (PrefTickerGroups);
-  NSString *subscription = prefString (PrefTickerSubscription);
-  NSString *user = 
-    [ElvinConnection escapedSubscriptionString: prefString (PrefOnlineUserName)];
-  
-  NSMutableString *fullSubscription = 
-    [NSMutableString stringWithString: 
-       @"(string (Message) && string (From) && string (Group))"];
-  
-  // user's messages
-  
-  [fullSubscription appendFormat: 
-     @" && ((From == '%@' || Group == '%@' || Thread-Id == '%@')",
-     user, user, user];
-  
-  // groups
-  
-  if ([groups count] > 0 || [subscription length] > 0)
-    [fullSubscription appendString: @" || ("];
-  
-  if ([groups count] > 0)
-  {
-    [fullSubscription appendString: @"equals (Group"];
-    
-    for (NSString *group in groups)
-      [fullSubscription appendFormat: @", '%@'",
-         [ElvinConnection escapedSubscriptionString: group]];
-    
-    [fullSubscription appendString: @")"];
-  }
-  
-  // extra subscription
-  
-  if ([subscription length] > 0)
-  {
-    if ([groups count] > 0)
-      [fullSubscription appendString: @" || "];
-  
-    [fullSubscription appendFormat: @"(%@)", subscription];
-  }
-  
-  if ([groups count] > 0 || [subscription length] > 0)
-    [fullSubscription appendString: @")"];
-  
-  [fullSubscription appendString: @")"];
-  
-  return fullSubscription;
 }
 
 /*

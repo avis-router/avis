@@ -24,6 +24,4 @@
 
 - (void) disconnect;
 
-- (NSString *) tickerSubscription;
-
 @end
