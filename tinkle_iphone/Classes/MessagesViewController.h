@@ -11,6 +11,7 @@ extern NSString *TickerMessageReceivedNotification;
   NSString             *group;
   id                    subscriptionContext;
   BOOL                  canSend;
+  BOOL                  keyboardShown;
   
   IBOutlet UITextView  *messagesTextView;
   IBOutlet UIButton    *sendButton;
