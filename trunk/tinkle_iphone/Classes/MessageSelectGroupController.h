@@ -17,7 +17,7 @@
 
 - (IBAction) cancel: (id) sender;
 
-- (IBAction) groupSelected: (id) sender;
+- (void) selectGroup: (NSString *) groupName;
 
 - (IBAction) addButtonClicked: (id) sender;
 
