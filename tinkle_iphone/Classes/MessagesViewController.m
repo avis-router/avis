@@ -219,11 +219,6 @@ static inline float bottomY (CGRect rect)
    MessageSelectGroupController *selectController = 
      [[MessageSelectGroupController alloc]
        initWithNibName: @"MessagesSelectGroup" bundle: nil];
-
-   selectController.group = prefString (PrefDefaultSendGroup);
-   selectController.groups = prefArray (PrefTickerGroups);
-  
-   selectController.delegate = self;
   
    selectController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
 
