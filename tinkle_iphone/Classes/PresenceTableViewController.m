@@ -1,6 +1,7 @@
 #import "PresenceTableViewController.h"
 #import "PresenceConnection.h"
 #import "PresenceEntity.h"
+#import "Preferences.h"
 
 static NSString *formatDuration (NSDate *value);
 
@@ -98,6 +99,20 @@ static NSString *formatDuration (NSDate *value);
 	// e.g. self.myOutlet = nil;
 }
 
+#pragma mark -
+#pragma mark UITableViewDelegate
+
+- (void) tableView: (UITableView *) tableView 
+         didSelectRowAtIndexPath: (NSIndexPath *) indexPath
+{ 
+  PresenceEntity *entity = [presence.entities objectAtIndex: indexPath.row];
+  
+  setPref (PrefDefaultSendGroup, entity.name);
+  
+  self.tabBarController.selectedIndex = 1;
+}
+
+#pragma mark -
 #pragma mark Table view methods
 
 - (NSInteger) numberOfSectionsInTableView: (UITableView *) tableView
@@ -149,16 +164,6 @@ static NSString *formatDuration (NSDate *value);
 
   return cell;
 }
-
-- (void) tableView: (UITableView *) tableView 
-    didSelectRowAtIndexPath: (NSIndexPath *)indexPath 
-{
-  // Navigation logic may go here. Create and push another view controller.
-	// AnotherViewController *anotherViewController = [[AnotherViewController alloc] initWithNibName:@"AnotherView" bundle:nil];
-	// [self.navigationController pushViewController:anotherViewController];
-	// [anotherViewController release];
-}
-
 
 /*
 // Override to support conditional editing of the table view.
