@@ -15,14 +15,7 @@ NSString *PrefElvinKeys             = @"Keys";
 
 static NSString *computerName ()
 {
-  NSDictionary *systemPrefs = 
-    [NSDictionary dictionaryWithContentsOfFile: 
-      @"/Library/Preferences/SystemConfiguration/preferences.plist"];
-      
-  NSString *computerName = 
-    [systemPrefs valueForKeyPath: @"System.System.ComputerName"];
-    
-  return computerName ? computerName : @"tinkle";
+  return [[UIDevice currentDevice] name];
 }
 
 void registerUserDefaults ()
