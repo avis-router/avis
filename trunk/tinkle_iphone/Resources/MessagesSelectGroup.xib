@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="8"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -60,14 +60,14 @@
 								<int key="IBUISystemItemIdentifier">5</int>
 							</object>
 							<object class="IBUIBarButtonItem" id="887146112">
-								<string key="IBUITitle">Select Group</string>
+								<string key="IBUITitle">Group</string>
 								<reference key="IBUIToolbar" ref="411235001"/>
 							</object>
-							<object class="IBUIBarButtonItem" id="984909596">
+							<object class="IBUIBarButtonItem" id="336375343">
 								<reference key="IBUIToolbar" ref="411235001"/>
 								<int key="IBUISystemItemIdentifier">5</int>
 							</object>
-							<object class="IBUIBarButtonItem" id="778004030">
+							<object class="IBUIBarButtonItem" id="168216707">
 								<string key="IBUITitle">Select</string>
 								<int key="IBUIStyle">2</int>
 								<reference key="IBUIToolbar" ref="411235001"/>
@@ -188,7 +188,7 @@
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">addButtonClicked:</string>
-						<reference key="source" ref="778004030"/>
+						<reference key="source" ref="168216707"/>
 						<reference key="destination" ref="372490531"/>
 					</object>
 					<int key="connectionID">38</int>
@@ -233,8 +233,8 @@
 							<reference ref="887146112"/>
 							<reference ref="720060394"/>
 							<reference ref="271518642"/>
-							<reference ref="984909596"/>
-							<reference ref="778004030"/>
+							<reference ref="336375343"/>
+							<reference ref="168216707"/>
 						</object>
 						<reference key="parent" ref="191373211"/>
 					</object>
@@ -280,12 +280,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">36</int>
-						<reference key="object" ref="984909596"/>
+						<reference key="object" ref="336375343"/>
 						<reference key="parent" ref="411235001"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">37</int>
-						<reference key="object" ref="778004030"/>
+						<reference key="object" ref="168216707"/>
 						<reference key="parent" ref="411235001"/>
 					</object>
 				</object>
