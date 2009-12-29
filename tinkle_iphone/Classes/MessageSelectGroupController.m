@@ -31,8 +31,9 @@
   [super viewWillAppear: animated];
   
   groups = 
-    [[prefArray (PrefTickerGroups) sortedArrayUsingSelector: 
-      @selector (localizedCaseInsensitiveCompare:)] retain];
+    [[NSMutableArray arrayWithArray: 
+      [prefArray (PrefTickerGroups) sortedArrayUsingSelector: 
+        @selector (localizedCaseInsensitiveCompare:)]] retain];
 }
 
 - (BOOL) shouldAutorotateToInterfaceOrientation: 
@@ -98,6 +99,18 @@
          didSelectRowAtIndexPath: (NSIndexPath *) indexPath
 { 
   [self selectGroup: [groups objectAtIndex: indexPath.row]];
+}
+
+- (void) tableView: (UITableView *) tableView 
+         commitEditingStyle: (UITableViewCellEditingStyle) editingStyle 
+         forRowAtIndexPath: (NSIndexPath *) indexPath
+{
+  [groups removeObjectAtIndex: indexPath.row];
+  
+  [tableView deleteRowsAtIndexPaths: 
+    [NSArray arrayWithObject: indexPath] withRowAnimation: YES];
+    
+  setPref (PrefTickerGroups, [NSArray arrayWithArray: groups]);
 }
 
 #pragma mark -

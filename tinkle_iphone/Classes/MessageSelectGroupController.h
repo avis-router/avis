@@ -3,7 +3,7 @@
 @interface MessageSelectGroupController : 
   UIViewController <UITableViewDelegate, UITableViewDataSource>
 {
-  NSArray *groups;
+  NSMutableArray *groups;
   
   IBOutlet UITableView *groupsList;
   IBOutlet UITextField *groupTextField;
