@@ -54,14 +54,14 @@
 		C9CDFAFE10AE8C9300DBE18C /* TickerMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TickerMessage.h; path = Classes/Avis/TickerMessage.h; sourceTree = SOURCE_ROOT; };
 		C9CDFAFF10AE8C9300DBE18C /* PresenceStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceStatus.m; path = Classes/Avis/PresenceStatus.m; sourceTree = SOURCE_ROOT; };
 		C9CDFB0010AE8C9300DBE18C /* PresenceStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceStatus.h; path = Classes/Avis/PresenceStatus.h; sourceTree = SOURCE_ROOT; };
-		C9CDFB0310AE8CB000DBE18C /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = utils.m; path = Classes/Avis/utils.m; sourceTree = SOURCE_ROOT; };
-		C9CDFB0410AE8CB000DBE18C /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = Classes/Avis/utils.h; sourceTree = SOURCE_ROOT; };
+		C9CDFB0310AE8CB000DBE18C /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = utils.m; path = Classes/Avis/utils.m; sourceTree = "<group>"; };
+		C9CDFB0410AE8CB000DBE18C /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = Classes/Avis/utils.h; sourceTree = "<group>"; };
 		C9CDFB1910AE8D9700DBE18C /* PresenceEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceEntity.m; path = Classes/Avis/PresenceEntity.m; sourceTree = SOURCE_ROOT; };
 		C9CDFB1A10AE8D9700DBE18C /* PresenceEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceEntity.h; path = Classes/Avis/PresenceEntity.h; sourceTree = SOURCE_ROOT; };
 		C9CDFB1B10AE8D9700DBE18C /* PresenceConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceConnection.m; path = Classes/Avis/PresenceConnection.m; sourceTree = SOURCE_ROOT; };
 		C9CDFB1C10AE8D9700DBE18C /* PresenceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceConnection.h; path = Classes/Avis/PresenceConnection.h; sourceTree = SOURCE_ROOT; };
-		C9CDFB1F10AE8E3100DBE18C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = Classes/Avis/Preferences.m; sourceTree = SOURCE_ROOT; };
-		C9CDFB2010AE8E3100DBE18C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = Classes/Avis/Preferences.h; sourceTree = SOURCE_ROOT; };
+		C9CDFB1F10AE8E3100DBE18C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = Avis/Preferences.m; sourceTree = "<group>"; };
+		C9CDFB2010AE8E3100DBE18C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = Classes/Avis/Preferences.h; sourceTree = "<group>"; };
 		C9E66A0810AE653700C875D4 /* PresenceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceTableViewController.h; path = Classes/PresenceTableViewController.h; sourceTree = "<group>"; };
 		C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceTableViewController.m; sourceTree = "<group>"; };
 		C9FB8AC510B600BE00D15441 /* lolly_yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_yellow.png; path = Resources/lolly_yellow.png; sourceTree = SOURCE_ROOT; };
@@ -95,6 +95,7 @@
 				C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */,
 				28216C960DB411BC00E5133A /* MessagesViewController.m */,
 				C988F67810CA100200BF5B11 /* MessageSelectGroupController.m */,
+				C9CDFB1F10AE8E3100DBE18C /* Preferences.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -124,9 +125,11 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				29B97316FDCFA39411CA2CEA /* main.m */,
+				C9CDFB0310AE8CB000DBE18C /* utils.m */,
+				C9CDFB0410AE8CB000DBE18C /* utils.h */,
 				C9FB8AD410B600E000D15441 /* Tinkle-Info.plist */,
 				28A0AB4B0D9B1048005BE974 /* Tinkle_Prefix.pch */,
-				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -163,6 +166,7 @@
 				28216C950DB411BC00E5133A /* MessagesViewController.h */,
 				C988F67710CA100200BF5B11 /* MessageSelectGroupController.h */,
 				C9E66A0810AE653700C875D4 /* PresenceTableViewController.h */,
+				C9CDFB2010AE8E3100DBE18C /* Preferences.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -180,10 +184,6 @@
 				C9CDFB0010AE8C9300DBE18C /* PresenceStatus.h */,
 				C9CDFAFD10AE8C9300DBE18C /* TickerMessage.m */,
 				C9CDFAFE10AE8C9300DBE18C /* TickerMessage.h */,
-				C9CDFB1F10AE8E3100DBE18C /* Preferences.m */,
-				C9CDFB2010AE8E3100DBE18C /* Preferences.h */,
-				C9CDFB0310AE8CB000DBE18C /* utils.m */,
-				C9CDFB0410AE8CB000DBE18C /* utils.h */,
 			);
 			name = Avis;
 			sourceTree = "<group>";
