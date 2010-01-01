@@ -13,11 +13,6 @@ NSString *PrefTickerSubscription    = @"TickerSubscription";
 NSString *PrefPresenceColumnSorting = @"PresenceColumnSorting";
 NSString *PrefElvinKeys             = @"Keys";
 
-static NSString *computerName ()
-{
-  return [[UIDevice currentDevice] name];
-}
-
 void registerUserDefaults ()
 {
   NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
@@ -30,7 +25,7 @@ void registerUserDefaults ()
   if (![preferences objectForKey: PrefOnlineUserName])
   {
     [defaults setObject: [NSString stringWithFormat: @"%@@%@", 
-                          @"Tinkle User", computerName ()] 
+                          @"Tinkle User", [[UIDevice currentDevice] name]] 
       forKey: PrefOnlineUserName];
   }
   
