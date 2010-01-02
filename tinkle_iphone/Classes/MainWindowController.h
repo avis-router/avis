@@ -13,4 +13,6 @@
 
 - (IBAction) panelSelectorItemChanged: (id) sender;
 
+- (IBAction) showPreferences: (id) sender;
+
 @end

@@ -2,6 +2,7 @@
 
 #import "PresenceTableViewController.h"
 #import "MessagesViewController.h"
+#import "PreferencesController.h"
 
 @implementation MainWindowController
 
@@ -50,6 +51,26 @@
       messagesController.view.hidden = NO;
       break;
   }
+}
+
+- (IBAction) showPreferences: (id) sender
+{
+  PreferencesController *prefsController = 
+     [[PreferencesController alloc]
+       initWithNibName: @"Preferences" bundle: nil];
+  
+   prefsController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+
+   UINavigationController *navigationController = 
+     [[UINavigationController alloc] initWithRootViewController: prefsController];
+    
+  navigationController.toolbarHidden = YES;
+  navigationController.navigationBarHidden = YES;
+  
+  [self presentModalViewController: navigationController animated: YES];
+ 
+  [navigationController release];
+  [prefsController release]; 
 }
 
 - (BOOL) shouldAutorotateToInterfaceOrientation: 
