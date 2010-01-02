@@ -4,12 +4,12 @@
 @class PresenceConnection;
 @class PresenceTableViewController;
 @class MessagesViewController;
+@class MainWindowController;
 
-@interface Tinkle_AppDelegate : 
-  NSObject <UIApplicationDelegate, UITabBarControllerDelegate> 
+@interface Tinkle_AppDelegate : NSObject <UIApplicationDelegate> 
 {
   UIWindow *window;
-  UITabBarController *tabBarController;
+  MainWindowController *mainWindowController;
   
   IBOutlet PresenceTableViewController *presenceController;
   IBOutlet MessagesViewController      *messagesController;
@@ -19,7 +19,7 @@
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet UITabBarController *tabBarController;
+@property (nonatomic, retain) IBOutlet MainWindowController *mainWindowController;
 @property (nonatomic, readonly) PresenceConnection *presence;
 
 - (void) disconnect;
