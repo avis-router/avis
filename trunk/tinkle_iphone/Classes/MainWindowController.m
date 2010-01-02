@@ -31,6 +31,8 @@
   presenceController.view.frame = contentView.frame;
   messagesController.view.frame = contentView.frame;
   
+  messagesController.parentViewController = self;
+  
   [contentView addSubview: presenceController.view];
   [contentView addSubview: messagesController.view];
 }

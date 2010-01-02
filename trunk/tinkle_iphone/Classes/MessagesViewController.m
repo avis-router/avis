@@ -28,8 +28,7 @@ static inline float bottomY (CGRect rect)
 }
 */
 
-@synthesize elvin;
-@synthesize canSend;
+@synthesize elvin, canSend, parentViewController;
 
 - (void) viewDidLoad
 {
@@ -220,7 +219,7 @@ static inline float bottomY (CGRect rect)
      [[MessageSelectGroupController alloc]
        initWithNibName: @"MessagesSelectGroup" bundle: nil];
   
-   selectController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+   selectController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
 
    // Create the navigation controller and present it modally.
    UINavigationController *navigationController = 
@@ -229,7 +228,7 @@ static inline float bottomY (CGRect rect)
   navigationController.toolbarHidden = YES;
   navigationController.navigationBarHidden = YES;
   
-  [self.tabBarController presentModalViewController: navigationController 
+  [self.parentViewController presentModalViewController: navigationController 
      animated: YES];
  
    // The navigation controller is now owned by the current view controller

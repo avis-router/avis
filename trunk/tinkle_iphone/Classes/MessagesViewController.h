@@ -12,7 +12,7 @@ extern NSString *TickerMessageReceivedNotification;
   BOOL                  canSend;
   BOOL                  keyboardShown;
   CGFloat               startViewVertOffset;
-  
+  UIViewController     *parentViewController;
   IBOutlet UITextView  *messagesTextView;
   IBOutlet UIButton    *sendButton;
   IBOutlet UITextField *messageCompositionField;
@@ -20,6 +20,7 @@ extern NSString *TickerMessageReceivedNotification;
 
 @property (readwrite, retain) ElvinConnection   *elvin;
 @property (readwrite, assign) IBOutlet BOOL      canSend;
+@property (readwrite, assign, nonatomic) UIViewController *parentViewController;
 
 - (IBAction) sendMessage: (id) sender;
 
