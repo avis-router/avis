@@ -13,7 +13,7 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		28216C970DB411BC00E5133A /* MessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28216C960DB411BC00E5133A /* MessagesViewController.m */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
-		C94DCEA510B8FA0200A51688 /* MainWindowTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = C94DCEA410B8FA0200A51688 /* MainWindowTabController.m */; };
+		C94DCEA510B8FA0200A51688 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = C94DCEA410B8FA0200A51688 /* MainWindowController.m */; };
 		C94DCEE210B8FFB800A51688 /* MessagesSelectGroup.xib in Resources */ = {isa = PBXBuildFile; fileRef = C94DCEE110B8FFB800A51688 /* MessagesSelectGroup.xib */; };
 		C988F67910CA100200BF5B11 /* MessageSelectGroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = C988F67810CA100200BF5B11 /* MessageSelectGroupController.m */; };
 		C9CDFAFC10AE8C6300DBE18C /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFAFA10AE8C6300DBE18C /* ElvinConnection.m */; };
@@ -29,7 +29,6 @@
 		C9FB8ACD10B600BE00D15441 /* lolly_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C9FB8AC710B600BE00D15441 /* lolly_green.png */; };
 		C9FB8ACE10B600BE00D15441 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9FB8AC810B600BE00D15441 /* MainWindow.xib */; };
 		C9FB8ACF10B600BE00D15441 /* Tinkle.png in Resources */ = {isa = PBXBuildFile; fileRef = C9FB8AC910B600BE00D15441 /* Tinkle.png */; };
-		C9FB8AD010B600BE00D15441 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9FB8ACA10B600BE00D15441 /* MessageView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,8 +42,8 @@
 		288765070DF74369002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		28A0AB4B0D9B1048005BE974 /* Tinkle_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tinkle_Prefix.pch; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		C94DCEA310B8FA0200A51688 /* MainWindowTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowTabController.h; path = Classes/MainWindowTabController.h; sourceTree = "<group>"; };
-		C94DCEA410B8FA0200A51688 /* MainWindowTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowTabController.m; sourceTree = "<group>"; };
+		C94DCEA310B8FA0200A51688 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowController.h; path = Classes/MainWindowController.h; sourceTree = "<group>"; };
+		C94DCEA410B8FA0200A51688 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		C94DCEE110B8FFB800A51688 /* MessagesSelectGroup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MessagesSelectGroup.xib; path = Resources/MessagesSelectGroup.xib; sourceTree = "<group>"; };
 		C988F67710CA100200BF5B11 /* MessageSelectGroupController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSelectGroupController.h; path = Classes/MessageSelectGroupController.h; sourceTree = "<group>"; };
 		C988F67810CA100200BF5B11 /* MessageSelectGroupController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageSelectGroupController.m; sourceTree = "<group>"; };
@@ -69,7 +68,6 @@
 		C9FB8AC710B600BE00D15441 /* lolly_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_green.png; path = Resources/lolly_green.png; sourceTree = SOURCE_ROOT; };
 		C9FB8AC810B600BE00D15441 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindow.xib; path = Resources/MainWindow.xib; sourceTree = SOURCE_ROOT; };
 		C9FB8AC910B600BE00D15441 /* Tinkle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Tinkle.png; path = Resources/Tinkle.png; sourceTree = SOURCE_ROOT; };
-		C9FB8ACA10B600BE00D15441 /* MessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MessageView.xib; path = Resources/MessageView.xib; sourceTree = SOURCE_ROOT; };
 		C9FB8AD410B600E000D15441 /* Tinkle-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Tinkle-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,7 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				1D3623250D0F684500981E51 /* Tinkle_AppDelegate.m */,
-				C94DCEA410B8FA0200A51688 /* MainWindowTabController.m */,
+				C94DCEA410B8FA0200A51688 /* MainWindowController.m */,
 				C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */,
 				28216C960DB411BC00E5133A /* MessagesViewController.m */,
 				C988F67810CA100200BF5B11 /* MessageSelectGroupController.m */,
@@ -139,7 +137,6 @@
 			children = (
 				C9FB8AC810B600BE00D15441 /* MainWindow.xib */,
 				C94DCEE110B8FFB800A51688 /* MessagesSelectGroup.xib */,
-				C9FB8ACA10B600BE00D15441 /* MessageView.xib */,
 				C9FB8AC510B600BE00D15441 /* lolly_yellow.png */,
 				C9FB8AC610B600BE00D15441 /* lolly_grey.png */,
 				C9FB8AC710B600BE00D15441 /* lolly_green.png */,
@@ -162,7 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				1D3623240D0F684500981E51 /* Tinkle_AppDelegate.h */,
-				C94DCEA310B8FA0200A51688 /* MainWindowTabController.h */,
+				C94DCEA310B8FA0200A51688 /* MainWindowController.h */,
 				28216C950DB411BC00E5133A /* MessagesViewController.h */,
 				C988F67710CA100200BF5B11 /* MessageSelectGroupController.h */,
 				C9E66A0810AE653700C875D4 /* PresenceTableViewController.h */,
@@ -235,7 +232,6 @@
 				C9FB8ACD10B600BE00D15441 /* lolly_green.png in Resources */,
 				C9FB8ACE10B600BE00D15441 /* MainWindow.xib in Resources */,
 				C9FB8ACF10B600BE00D15441 /* Tinkle.png in Resources */,
-				C9FB8AD010B600BE00D15441 /* MessageView.xib in Resources */,
 				C94DCEE210B8FFB800A51688 /* MessagesSelectGroup.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,7 +254,7 @@
 				C9CDFB1D10AE8D9700DBE18C /* PresenceEntity.m in Sources */,
 				C9CDFB1E10AE8D9700DBE18C /* PresenceConnection.m in Sources */,
 				C9CDFB2110AE8E3100DBE18C /* Preferences.m in Sources */,
-				C94DCEA510B8FA0200A51688 /* MainWindowTabController.m in Sources */,
+				C94DCEA510B8FA0200A51688 /* MainWindowController.m in Sources */,
 				C988F67910CA100200BF5B11 /* MessageSelectGroupController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

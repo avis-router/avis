@@ -382,6 +382,20 @@ static inline float bottomY (CGRect rect)
     return;
     
   keyboardShown = willShow;
+
+  CGRect viewFrame = self.view.frame;
+  
+  if (willShow)
+  {
+    // when showing, compute and store original vertical offset from bottom
+    CGRect windowFrame = 
+      [self.view.window convertRect: self.view.window.bounds toView: self.view];
+    CGRect viewFrameAbs = self.view.bounds;
+
+    startViewVertOffset = 
+      (windowFrame.origin.y + windowFrame.size.height) - 
+      (viewFrameAbs.origin.y + viewFrameAbs.size.height);
+  }
   
   // extract keyboard's animation params
   double duration;
@@ -396,17 +410,15 @@ static inline float bottomY (CGRect rect)
   [UIView setAnimationDuration: duration];
   [UIView setAnimationCurve: curve];
 
-  // get the size of the keyboard.
+  // get the size of the keyboard
   CGSize keyboardSize = 
     [[[ntfn userInfo] 
       objectForKey: UIKeyboardBoundsUserInfoKey] CGRectValue].size;
-  CGRect viewFrame = self.view.frame;
-  CGFloat vertOffset = self.tabBarController.tabBar.frame.size.height;
 
   if (willShow)
-    viewFrame.size.height -= keyboardSize.height - vertOffset;
+    viewFrame.size.height -= keyboardSize.height - startViewVertOffset;
   else
-    viewFrame.size.height += keyboardSize.height - vertOffset;
+    viewFrame.size.height += keyboardSize.height - startViewVertOffset;
     
   self.view.frame = viewFrame;
     

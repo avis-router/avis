@@ -14,9 +14,10 @@ NSString *PrefPresenceColumnSorting = @"PresenceColumnSorting";
 NSString *PrefElvinKeys             = @"Keys";
 
 NSString *defaultUserName ()
-{
+{ 
+  NSString *device = [[UIDevice currentDevice] name];
   NSRange iphonePostfix = 
-    [[[UIDevice currentDevice] name] rangeOfString: @"’s iPhone"];
+    [device rangeOfString: @"’s iPhone"];
   NSString *name;
   
   if (iphonePostfix.location == NSNotFound)

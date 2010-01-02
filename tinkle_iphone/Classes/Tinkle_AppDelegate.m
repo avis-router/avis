@@ -4,12 +4,13 @@
 #import "PresenceConnection.h"
 #import "PresenceTableViewController.h"
 #import "MessagesViewController.h"
+#import "MainWindowController.h"
 #import "Preferences.h"
 
 @implementation Tinkle_AppDelegate
 
 @synthesize window;
-@synthesize tabBarController;
+@synthesize mainWindowController;
 @synthesize presence;
 
 - (id) init
@@ -40,7 +41,7 @@
 
 - (void) dealloc 
 {
-  [tabBarController release];
+  [mainWindowController release];
   [window release];
   
   [self disconnect];
@@ -53,12 +54,11 @@
 
 - (void) applicationDidFinishLaunching: (UIApplication *) application 
 {
-  // Add the tab bar controller's current view as a subview of the window
-  [window addSubview: tabBarController.view];
-
   presenceController.presence = presence;
   messagesController.elvin = elvin;
-    
+ 
+  [window addSubview: mainWindowController.view];
+
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
   [notifications addObserver: self selector: @selector (handleElvinOpen:)
@@ -103,18 +103,6 @@
                            withObject: nil waitUntilDone: NO];
   }
 }
-
-/*
-// Optional UITabBarControllerDelegate method
-- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
-}
-*/
-
-/*
-// Optional UITabBarControllerDelegate method
-- (void)tabBarController:(UITabBarController *)tabBarController didEndCustomizingViewControllers:(NSArray *)viewControllers changed:(BOOL)changed {
-}
-*/
 
 @end
 
