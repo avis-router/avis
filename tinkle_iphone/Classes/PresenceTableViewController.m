@@ -12,23 +12,9 @@ static NSString *formatDuration (NSDate *value);
   [super dealloc];
 }
 
-/*
-- (id)initWithStyle:(UITableViewStyle)style {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if (self = [super initWithStyle:style]) {
-    }
-    return self;
-}
-*/
-
 - (void) viewDidLoad
 {
   [super viewDidLoad];
-
-  self.title = @"Presence";
-  
-  // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-  // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void) setPresence: (PresenceConnection *) newPresence

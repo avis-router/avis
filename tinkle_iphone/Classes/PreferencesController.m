@@ -1,7 +1,7 @@
 #import "PreferencesController.h"
+#import "Preferences.h"
 
-const NSInteger kViewTag =  1;
-const NSInteger kLabelTag = 2;
+#import "utils.h"
 
 @implementation PreferencesController
 
@@ -37,6 +37,8 @@ const NSInteger kLabelTag = 2;
         @"Views",
       nil],
     nil] retain];
+    
+  userNameTextField.text = prefString (PrefOnlineUserName);
 }
 
 - (BOOL) shouldAutorotateToInterfaceOrientation: 
@@ -58,6 +60,23 @@ const NSInteger kLabelTag = 2;
 
 - (IBAction) doneClicked: (id) sender
 {
+  [userNameTextField resignFirstResponder];
+  
+  NSString *newUserName = trim (userNameTextField.text);
+  
+  BOOL presenceChanged = ![prefString (PrefOnlineUserName) isEqual: newUserName];
+  
+  if (presenceChanged)
+  {
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: PresenceDefaultsWillChangeNotification object: self];
+      
+    setPref (PrefOnlineUserName, userNameTextField.text);
+  
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: PresenceDefaultsChangedNotification object: self];
+  }
+
   [self.parentViewController dismissModalViewControllerAnimated: YES];
 }
 

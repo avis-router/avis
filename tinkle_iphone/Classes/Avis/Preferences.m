@@ -13,6 +13,9 @@ NSString *PrefTickerSubscription    = @"TickerSubscription";
 NSString *PrefPresenceColumnSorting = @"PresenceColumnSorting";
 NSString *PrefElvinKeys             = @"Keys";
 
+NSString *PresenceDefaultsChangedNotification = @"PresenceDefaultsChanged";
+NSString *PresenceDefaultsWillChangeNotification = @"PresenceDefaultsWillChange";
+
 NSString *defaultUserName ()
 { 
   NSString *device = [[UIDevice currentDevice] name];

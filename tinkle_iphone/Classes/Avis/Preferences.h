@@ -11,6 +11,9 @@ extern NSString *PrefTickerSubscription;
 extern NSString *PrefPresenceColumnSorting;
 extern NSString *PrefElvinKeys;
 
+extern NSString *PresenceDefaultsChangedNotification;
+extern NSString *PresenceDefaultsWillChangeNotification;
+
 static inline NSString *prefString (const NSString *name)
 {
   return [[NSUserDefaults standardUserDefaults] stringForKey: (NSString *)name];

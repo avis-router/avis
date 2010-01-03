@@ -100,13 +100,15 @@ static NSString *listToParameterString (NSArray *list)
   // subscribe to incoming presence info
   // TODO resub on user name/groups change
   // TODO re-emit presence on groups change
-  [elvin subscribe: [self presenceInfoSubscription] withDelegate: self 
-          onNotify: @selector (handlePresenceInfo:)
-           onError: nil];
+  presenceInfoSubscription =
+    [elvin subscribe: [self presenceInfoSubscription] withDelegate: self 
+            onNotify: @selector (handlePresenceInfo:)
+             onError: nil];
 
   // subscribe to requests
-  [elvin subscribe: [self presenceRequestSubscription] withDelegate: self 
-          onNotify: @selector (handlePresenceRequest:) onError: nil];
+  presenceRequestSubscription = 
+    [elvin subscribe: [self presenceRequestSubscription] withDelegate: self 
+            onNotify: @selector (handlePresenceRequest:) onError: nil];
     
   // listen for elvin open/close
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
@@ -119,7 +121,13 @@ static NSString *listToParameterString (NSArray *list)
 
   [notifications addObserver: self selector: @selector (handleElvinClose:)
                         name: ElvinConnectionClosedNotification object: nil]; 
-                          
+  
+  [notifications addObserver: self selector: @selector (handleDefaultsWillChange:)
+                        name: PresenceDefaultsWillChangeNotification object: nil]; 
+                                      
+  [notifications addObserver: self selector: @selector (handleDefaultsChanged:)
+                        name: PresenceDefaultsChangedNotification object: nil];
+
   if ([elvin isConnected])
   {
     [self emitPresenceInfo];
@@ -264,6 +272,21 @@ static NSString *listToParameterString (NSArray *list)
   TRACE (@"Presence info subscription is: %@", expr);
   
   return expr;
+}
+
+- (void) handleDefaultsWillChange: (NSNotification *) ntfn
+{
+  self.presenceStatus = [PresenceStatus offlineStatus];
+}
+
+- (void) handleDefaultsChanged: (NSNotification *) ntfn
+{
+  NSLog (@"Defaults changed");
+  
+  [elvin resubscribe: presenceRequestSubscription
+         usingSubscription: [self presenceRequestSubscription]];
+
+  self.presenceStatus = [PresenceStatus onlineStatus];
 }
 
 - (void) handlePresenceInfo: (NSDictionary *) notification

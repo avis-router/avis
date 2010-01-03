@@ -12,6 +12,8 @@ extern NSString *PresenceStatusChangedNotification;
   NSMutableArray     * entities;
   PresenceStatus     * presenceStatus;
   id                   delegate;
+  id                   presenceInfoSubscription;
+  id                   presenceRequestSubscription;
 }
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection;
