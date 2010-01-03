@@ -53,10 +53,7 @@
 }
 
 - (void) applicationDidFinishLaunching: (UIApplication *) application 
-{
-  presenceController.presence = presence;
-  messagesController.elvin = elvin;
- 
+{ 
   [window addSubview: mainWindowController.view];
 
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
@@ -84,7 +81,8 @@
 {
   if ([[NSThread currentThread] isMainThread])
   {
-    // TODO
+    messagesController.elvin = elvin;
+    presenceController.presence = presence;
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 

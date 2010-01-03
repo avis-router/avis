@@ -4,9 +4,10 @@
   UIViewController <UITableViewDelegate, UITableViewDataSource>
 {
   NSArray *prefsInfo;
+  
+  IBOutlet UITableViewCell *userNameCell;
+  IBOutlet UITextField *userNameTextField;
 }
-
-- (UITextField *) userNameField;
 
 - (IBAction) doneClicked: (id) sender;
 
