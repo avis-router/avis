@@ -23,18 +23,19 @@
   [super viewDidLoad];
   
   prefsInfo = 
-    [NSArray arrayWithObjects:
+    [[NSArray arrayWithObjects:
       [NSDictionary dictionaryWithObjectsAndKeys:
-        @"User Name", @"Title",
+        @"Account", @"Title",
         [NSArray arrayWithObjects:
           [NSDictionary dictionaryWithObjectsAndKeys:
+            @"User Name", @"Title"
             [self userNameField], @"View",
             @"UserName", @"CellID",
           nil],
         nil],
         @"Views",
       nil],
-    nil];
+    nil] retain];
 }
 
 - (BOOL) shouldAutorotateToInterfaceOrientation: 
@@ -119,7 +120,7 @@
   NSDictionary *info = 
     [[section objectForKey: @"Views"] objectAtIndex: indexPath.row];
   
-  UITableViewCell *cell;
+  UITableViewCell *cell =
     [tableView dequeueReusableCellWithIdentifier: [info objectForKey: @"CellID"]];
 
   if (cell == nil)
