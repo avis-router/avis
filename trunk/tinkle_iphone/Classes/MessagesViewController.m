@@ -221,7 +221,6 @@ static inline float bottomY (CGRect rect)
   
    selectController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
 
-   // Create the navigation controller and present it modally.
    UINavigationController *navigationController = 
      [[UINavigationController alloc] initWithRootViewController: selectController];
     
@@ -231,11 +230,8 @@ static inline float bottomY (CGRect rect)
   [self.parentViewController presentModalViewController: navigationController 
      animated: YES];
  
-   // The navigation controller is now owned by the current view controller
-   // and the root view controller is owned by the navigation controller,
-   // so both objects should be released to prevent over-retention.
-   [navigationController release];
-   [selectController release]; 
+  [navigationController release];
+  [selectController release]; 
 }
 
 - (void) updateSendGroup
@@ -377,9 +373,12 @@ static inline float bottomY (CGRect rect)
 {
   BOOL willShow = [[ntfn name] isEqual: UIKeyboardWillShowNotification];
   
-  if (willShow == keyboardShown)
+  if (willShow == keyboardShown || 
+      willShow && ![messageCompositionField isFirstResponder])
+  {
     return;
-    
+  }
+
   keyboardShown = willShow;
 
   CGRect viewFrame = self.view.frame;
@@ -420,7 +419,7 @@ static inline float bottomY (CGRect rect)
     viewFrame.size.height += keyboardSize.height - startViewVertOffset;
     
   self.view.frame = viewFrame;
-    
+
   [UIView commitAnimations];
 }
 
