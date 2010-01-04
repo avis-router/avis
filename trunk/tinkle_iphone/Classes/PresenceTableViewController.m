@@ -39,6 +39,11 @@ static NSString *formatDuration (NSDate *value);
     withRowAnimation: UITableViewRowAnimationFade];
 }
 
+- (void) presenceEntitiesCleared
+{
+  [self.tableView reloadData];
+}
+
 - (PresenceConnection *) presence
 {
   return presence;

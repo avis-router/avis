@@ -13,8 +13,10 @@ NSString *PrefTickerSubscription    = @"TickerSubscription";
 NSString *PrefPresenceColumnSorting = @"PresenceColumnSorting";
 NSString *PrefElvinKeys             = @"Keys";
 
-NSString *PresenceDefaultsChangedNotification = @"PresenceDefaultsChanged";
+NSString *PresenceDefaultsDidChangeNotification = @"PresenceDefaultsChanged";
 NSString *PresenceDefaultsWillChangeNotification = @"PresenceDefaultsWillChange";
+NSString *ElvinDefaultsWillChangeNotification = @"ElvinDefaultsWillChange";
+NSString *ElvinDefaultsDidChangeNotification = @"ElvinDefaultsDidChange";
 
 NSString *defaultUserName ()
 { 
