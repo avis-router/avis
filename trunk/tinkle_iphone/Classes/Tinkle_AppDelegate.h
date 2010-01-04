@@ -2,7 +2,7 @@
 
 @class ElvinConnection;
 @class PresenceConnection;
-@class PresenceTableViewController;
+@class PresenceViewController;
 @class MessagesViewController;
 @class MainWindowController;
 
@@ -11,7 +11,7 @@
   UIWindow *window;
   MainWindowController *mainWindowController;
   
-  IBOutlet PresenceTableViewController *presenceController;
+  IBOutlet PresenceViewController *presenceController;
   IBOutlet MessagesViewController      *messagesController;
   
   ElvinConnection    *elvin;

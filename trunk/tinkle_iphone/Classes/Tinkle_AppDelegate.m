@@ -2,7 +2,7 @@
 
 #import "ElvinConnection.h"
 #import "PresenceConnection.h"
-#import "PresenceTableViewController.h"
+#import "PresenceViewController.h"
 #import "MessagesViewController.h"
 #import "MainWindowController.h"
 #import "Preferences.h"

@@ -1,4 +1,4 @@
-#import "PresenceTableViewController.h"
+#import "PresenceViewController.h"
 #import "PresenceConnection.h"
 #import "PresenceEntity.h"
 #import "Preferences.h"
@@ -7,7 +7,7 @@ NSString *PresenceEntityClickedNotification = @"PresenceEntityClicked";
 
 static NSString *formatDuration (NSDate *value);
 
-@implementation PresenceTableViewController
+@implementation PresenceViewController
 
 - (void) dealloc
 {
@@ -30,6 +30,11 @@ static NSString *formatDuration (NSDate *value);
   [self.tableView reloadData];
 }
 
+- (PresenceConnection *) presence
+{
+  return presence;
+}
+
 - (void) presenceEntitiesAdded
 {
   [self.tableView reloadData];
@@ -44,11 +49,6 @@ static NSString *formatDuration (NSDate *value);
 - (void) presenceEntitiesCleared
 {
   [self.tableView reloadData];
-}
-
-- (PresenceConnection *) presence
-{
-  return presence;
 }
 
 // Override to allow orientations other than the default portrait orientation.

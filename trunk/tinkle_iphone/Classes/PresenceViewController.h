@@ -4,7 +4,7 @@ extern NSString *PresenceEntityClickedNotification;
 
 @class PresenceConnection;
 
-@interface PresenceTableViewController : UITableViewController
+@interface PresenceViewController : UITableViewController
 {
   IBOutlet PresenceConnection *presence;
 }

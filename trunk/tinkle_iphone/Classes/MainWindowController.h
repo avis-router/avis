@@ -1,11 +1,11 @@
 #import <UIKit/UIKit.h>
 
-@class PresenceTableViewController;
+@class PresenceViewController;
 @class MessagesViewController;
 
 @interface MainWindowController : UIViewController
 {
-  IBOutlet PresenceTableViewController *presenceController;
+  IBOutlet PresenceViewController *presenceController;
   IBOutlet MessagesViewController *messagesController;
   IBOutlet UISegmentedControl *panelSelector;
   IBOutlet UIView *contentView;
