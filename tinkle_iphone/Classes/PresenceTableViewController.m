@@ -3,6 +3,8 @@
 #import "PresenceEntity.h"
 #import "Preferences.h"
 
+NSString *PresenceEntityClickedNotification = @"PresenceEntityClicked";
+
 static NSString *formatDuration (NSDate *value);
 
 @implementation PresenceTableViewController
@@ -49,27 +51,6 @@ static NSString *formatDuration (NSDate *value);
   return presence;
 }
 
-/*
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-*/
-/*
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-*/
-/*
-- (void)viewWillDisappear:(BOOL)animated {
-	[super viewWillDisappear:animated];
-}
-*/
-/*
-- (void)viewDidDisappear:(BOOL)animated {
-	[super viewDidDisappear:animated];
-}
-*/
-
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) orientation
 {
@@ -98,9 +79,8 @@ static NSString *formatDuration (NSDate *value);
 { 
   PresenceEntity *entity = [presence.entities objectAtIndex: indexPath.row];
   
-  setPref (PrefDefaultSendGroup, entity.name);
-  
-  self.tabBarController.selectedIndex = 1;
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName: PresenceEntityClickedNotification object: entity];
 }
 
 #pragma mark -
