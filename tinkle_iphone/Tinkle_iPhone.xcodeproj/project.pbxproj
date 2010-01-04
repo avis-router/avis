@@ -25,7 +25,7 @@
 		C9CDFB1D10AE8D9700DBE18C /* PresenceEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFB1910AE8D9700DBE18C /* PresenceEntity.m */; };
 		C9CDFB1E10AE8D9700DBE18C /* PresenceConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFB1B10AE8D9700DBE18C /* PresenceConnection.m */; };
 		C9CDFB2110AE8E3100DBE18C /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CDFB1F10AE8E3100DBE18C /* Preferences.m */; };
-		C9E66A0A10AE653700C875D4 /* PresenceTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */; };
+		C9E66A0A10AE653700C875D4 /* PresenceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E66A0910AE653700C875D4 /* PresenceViewController.m */; };
 		C9FB8ACB10B600BE00D15441 /* lolly_yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = C9FB8AC510B600BE00D15441 /* lolly_yellow.png */; };
 		C9FB8ACC10B600BE00D15441 /* lolly_grey.png in Resources */ = {isa = PBXBuildFile; fileRef = C9FB8AC610B600BE00D15441 /* lolly_grey.png */; };
 		C9FB8ACD10B600BE00D15441 /* lolly_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C9FB8AC710B600BE00D15441 /* lolly_green.png */; };
@@ -66,8 +66,8 @@
 		C9CDFB1C10AE8D9700DBE18C /* PresenceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceConnection.h; path = Classes/Avis/PresenceConnection.h; sourceTree = SOURCE_ROOT; };
 		C9CDFB1F10AE8E3100DBE18C /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Preferences.m; path = Avis/Preferences.m; sourceTree = "<group>"; };
 		C9CDFB2010AE8E3100DBE18C /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = Classes/Avis/Preferences.h; sourceTree = "<group>"; };
-		C9E66A0810AE653700C875D4 /* PresenceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceTableViewController.h; path = Classes/PresenceTableViewController.h; sourceTree = "<group>"; };
-		C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceTableViewController.m; sourceTree = "<group>"; };
+		C9E66A0810AE653700C875D4 /* PresenceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceViewController.h; path = Classes/PresenceViewController.h; sourceTree = "<group>"; };
+		C9E66A0910AE653700C875D4 /* PresenceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PresenceViewController.m; sourceTree = "<group>"; };
 		C9FB8AC510B600BE00D15441 /* lolly_yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_yellow.png; path = Resources/lolly_yellow.png; sourceTree = SOURCE_ROOT; };
 		C9FB8AC610B600BE00D15441 /* lolly_grey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_grey.png; path = Resources/lolly_grey.png; sourceTree = SOURCE_ROOT; };
 		C9FB8AC710B600BE00D15441 /* lolly_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_green.png; path = Resources/lolly_green.png; sourceTree = SOURCE_ROOT; };
@@ -95,7 +95,7 @@
 			children = (
 				1D3623250D0F684500981E51 /* Tinkle_AppDelegate.m */,
 				C94DCEA410B8FA0200A51688 /* MainWindowController.m */,
-				C9E66A0910AE653700C875D4 /* PresenceTableViewController.m */,
+				C9E66A0910AE653700C875D4 /* PresenceViewController.m */,
 				28216C960DB411BC00E5133A /* MessagesViewController.m */,
 				C988F67810CA100200BF5B11 /* MessageSelectGroupController.m */,
 				C91B09FF10EF27F20060F1C1 /* PreferencesController.m */,
@@ -169,7 +169,7 @@
 				C94DCEA310B8FA0200A51688 /* MainWindowController.h */,
 				28216C950DB411BC00E5133A /* MessagesViewController.h */,
 				C988F67710CA100200BF5B11 /* MessageSelectGroupController.h */,
-				C9E66A0810AE653700C875D4 /* PresenceTableViewController.h */,
+				C9E66A0810AE653700C875D4 /* PresenceViewController.h */,
 				C91B09FE10EF27F20060F1C1 /* PreferencesController.h */,
 				C9CDFB2010AE8E3100DBE18C /* Preferences.h */,
 			);
@@ -255,7 +255,7 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* Tinkle_AppDelegate.m in Sources */,
 				28216C970DB411BC00E5133A /* MessagesViewController.m in Sources */,
-				C9E66A0A10AE653700C875D4 /* PresenceTableViewController.m in Sources */,
+				C9E66A0A10AE653700C875D4 /* PresenceViewController.m in Sources */,
 				C9CDFAFC10AE8C6300DBE18C /* ElvinConnection.m in Sources */,
 				C9CDFB0110AE8C9300DBE18C /* TickerMessage.m in Sources */,
 				C9CDFB0210AE8C9300DBE18C /* PresenceStatus.m in Sources */,

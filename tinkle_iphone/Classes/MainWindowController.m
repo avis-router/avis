@@ -1,6 +1,6 @@
 #import "MainWindowController.h"
 
-#import "PresenceTableViewController.h"
+#import "PresenceViewController.h"
 #import "MessagesViewController.h"
 #import "PreferencesController.h"
 #import "Preferences.h"

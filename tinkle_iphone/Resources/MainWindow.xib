@@ -12,7 +12,6 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="170"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -37,12 +36,10 @@
 			</object>
 			<object class="IBUICustomObject" id="664661524"/>
 			<object class="IBUIWindow" id="380026005">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">1316</int>
 				<object class="NSPSMatrix" key="NSFrameMatrix"/>
 				<string key="NSFrameSize">{320, 480}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<object class="NSColor" key="IBUIBackgroundColor" id="310776341">
 					<int key="NSColorSpace">6</int>
 					<string key="NSCatalogName">System</string>
@@ -59,7 +56,7 @@
 			</object>
 			<object class="IBUIViewController" id="431104535">
 				<object class="IBUIView" key="IBUIView" id="403947374">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">274</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -145,7 +142,6 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{320, 460}</string>
-					<reference key="NSSuperview"/>
 					<object class="NSColor" key="IBUIBackgroundColor">
 						<int key="NSColorSpace">3</int>
 						<bytes key="NSWhite">MQA</bytes>
@@ -159,7 +155,7 @@
 			</object>
 			<object class="IBUIViewController" id="727735426">
 				<object class="IBUIView" key="IBUIView" id="134384531">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">274</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -168,7 +164,6 @@
 							<int key="NSvFlags">274</int>
 							<string key="NSFrameSize">{320, 411}</string>
 							<reference key="NSSuperview" ref="134384531"/>
-							<reference key="NSWindow"/>
 							<object class="NSColor" key="IBUIBackgroundColor">
 								<int key="NSColorSpace">3</int>
 								<bytes key="NSWhite">MCAwAA</bytes>
@@ -198,7 +193,6 @@
 									<int key="NSvFlags">266</int>
 									<string key="NSFrame">{{51, 7}, {201, 30}}</string>
 									<reference key="NSSuperview" ref="516443699"/>
-									<reference key="NSWindow"/>
 									<bool key="IBUIOpaque">NO</bool>
 									<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 									<int key="IBUIContentVerticalAlignment">0</int>
@@ -228,7 +222,6 @@
 									<int key="NSvFlags">265</int>
 									<string key="NSFrame">{{258, 7}, {59, 30}}</string>
 									<reference key="NSSuperview" ref="516443699"/>
-									<reference key="NSWindow"/>
 									<bool key="IBUIOpaque">NO</bool>
 									<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 									<int key="IBUIContentHorizontalAlignment">0</int>
@@ -258,7 +251,6 @@
 									<int key="NSvFlags">292</int>
 									<string key="NSFrame">{{4, 7}, {39, 30}}</string>
 									<reference key="NSSuperview" ref="516443699"/>
-									<reference key="NSWindow"/>
 									<bool key="IBUIOpaque">NO</bool>
 									<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 									<int key="IBUIContentHorizontalAlignment">0</int>
@@ -280,7 +272,6 @@
 							</object>
 							<string key="NSFrame">{{0, 419}, {320, 44}}</string>
 							<reference key="NSSuperview" ref="134384531"/>
-							<reference key="NSWindow"/>
 							<object class="NSColor" key="IBUIBackgroundColor">
 								<int key="NSColorSpace">6</int>
 								<string key="NSCatalogName">System</string>
@@ -291,8 +282,6 @@
 						</object>
 					</object>
 					<string key="NSFrame">{{0, -2}, {320, 463}}</string>
-					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<object class="NSColor" key="IBUIBackgroundColor">
 						<int key="NSColorSpace">3</int>
 						<bytes key="NSWhite">MQA</bytes>
@@ -304,11 +293,9 @@
 			</object>
 			<object class="IBUITableViewController" id="360271255">
 				<object class="IBUITableView" key="IBUIView" id="974671366">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">274</int>
 					<string key="NSFrame">{{-6, -1}, {332, 461}}</string>
-					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<reference key="IBUIBackgroundColor" ref="126626612"/>
 					<bool key="IBUIOpaque">NO</bool>
 					<bool key="IBUIClipsSubviews">YES</bool>
@@ -695,7 +682,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>UIApplication</string>
 					<string>UIResponder</string>
-					<string>PresenceTableViewController</string>
+					<string>PresenceViewController</string>
 					<string>{{329, 364}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -783,7 +770,7 @@
 							<string>UIView</string>
 							<string>MessagesViewController</string>
 							<string>UISegmentedControl</string>
-							<string>PresenceTableViewController</string>
+							<string>PresenceViewController</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -869,15 +856,15 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">PresenceTableViewController</string>
+					<string key="className">PresenceViewController</string>
 					<string key="superclassName">UITableViewController</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<string key="NS.key.0">presence</string>
 						<string key="NS.object.0">PresenceConnection</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Classes/PresenceTableViewController.h</string>
+						<string key="majorKey">IBUserSource</string>
+						<string key="minorKey"/>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -896,7 +883,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>MainWindowController</string>
 							<string>MessagesViewController</string>
-							<string>PresenceTableViewController</string>
+							<string>PresenceViewController</string>
 							<string>UIWindow</string>
 						</object>
 					</object>
