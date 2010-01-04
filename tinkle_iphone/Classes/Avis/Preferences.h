@@ -11,8 +11,10 @@ extern NSString *PrefTickerSubscription;
 extern NSString *PrefPresenceColumnSorting;
 extern NSString *PrefElvinKeys;
 
-extern NSString *PresenceDefaultsChangedNotification;
+extern NSString *PresenceDefaultsDidChangeNotification;
 extern NSString *PresenceDefaultsWillChangeNotification;
+extern NSString *ElvinDefaultsWillChangeNotification;
+extern NSString *ElvinDefaultsDidChangeNotification;
 
 static inline NSString *prefString (const NSString *name)
 {

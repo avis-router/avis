@@ -7,6 +7,9 @@
   
   IBOutlet UITableViewCell *userNameCell;
   IBOutlet UITextField *userNameTextField;
+  
+  IBOutlet UITableViewCell *elvinUrlCell;
+  IBOutlet UITextField *elvinUrlTextField;
 }
 
 - (IBAction) doneClicked: (id) sender;

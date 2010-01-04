@@ -126,7 +126,7 @@ static NSString *listToParameterString (NSArray *list)
                         name: PresenceDefaultsWillChangeNotification object: nil]; 
                                       
   [notifications addObserver: self selector: @selector (handleDefaultsChanged:)
-                        name: PresenceDefaultsChangedNotification object: nil];
+                        name: PresenceDefaultsDidChangeNotification object: nil];
 
   if ([elvin isConnected])
   {
@@ -422,6 +422,8 @@ static NSString *listToParameterString (NSArray *list)
 - (void) clearEntities
 {
   [self.entities removeAllObjects];
+  
+  [delegate performSelector: @selector (presenceEntitiesCleared)];
 }
 
 - (void) refresh
@@ -437,7 +439,7 @@ static NSString *listToParameterString (NSArray *list)
     if ([[e presenceId] isEqual: presenceId])
       return e;
   }
-  
+
   return nil;
 }
 

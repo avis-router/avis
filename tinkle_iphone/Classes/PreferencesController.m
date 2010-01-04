@@ -5,22 +5,6 @@
 
 @implementation PreferencesController
 
-/*
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        // Custom initialization
-    }
-    return self;
-}
-*/
-
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView {
-}
-*/
-
 - (void) viewDidLoad
 {
   [super viewDidLoad];
@@ -33,12 +17,16 @@
           [NSDictionary dictionaryWithObjectsAndKeys:
             userNameCell, @"Cell",
           nil],
+          [NSDictionary dictionaryWithObjectsAndKeys:
+            elvinUrlCell, @"Cell",
+          nil],
         nil],
         @"Views",
       nil],
     nil] retain];
     
   userNameTextField.text = prefString (PrefOnlineUserName);
+  elvinUrlTextField.text = prefString (PrefElvinURL);
 }
 
 - (BOOL) shouldAutorotateToInterfaceOrientation: 
@@ -63,18 +51,31 @@
   [userNameTextField resignFirstResponder];
   
   NSString *newUserName = trim (userNameTextField.text);
+  NSString *newElvinUrl = trim (elvinUrlTextField.text);
   
   BOOL presenceChanged = ![prefString (PrefOnlineUserName) isEqual: newUserName];
+  BOOL elvinChanged = ![prefString (PrefElvinURL) isEqual: newElvinUrl];
   
   if (presenceChanged)
   {
     [[NSNotificationCenter defaultCenter] 
       postNotificationName: PresenceDefaultsWillChangeNotification object: self];
       
-    setPref (PrefOnlineUserName, userNameTextField.text);
+    setPref (PrefOnlineUserName, newUserName);
   
     [[NSNotificationCenter defaultCenter] 
-      postNotificationName: PresenceDefaultsChangedNotification object: self];
+      postNotificationName: PresenceDefaultsDidChangeNotification object: self];
+  }
+  
+  if (elvinChanged)
+  {
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: ElvinDefaultsWillChangeNotification object: self];
+      
+    setPref (PrefElvinURL, newElvinUrl);
+  
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName: ElvinDefaultsDidChangeNotification object: self];
   }
 
   [self.parentViewController dismissModalViewControllerAnimated: YES];

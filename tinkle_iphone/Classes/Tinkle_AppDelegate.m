@@ -22,10 +22,8 @@
 
   registerUserDefaults ();
   
-//  elvin = 
-//    [[ElvinConnection alloc] initWithUrl: @"elvin://pearl.local:29170"];
   elvin = 
-    [[ElvinConnection alloc] initWithUrl: @"elvin://public.elvin.org"];
+    [[ElvinConnection alloc] initWithUrl: prefString (PrefElvinURL)];
     
   presence = [[[PresenceConnection alloc] initWithElvin: elvin] retain];
     
@@ -64,6 +62,9 @@
   [notifications addObserver: self selector: @selector (handleElvinClose:)
                         name: ElvinConnectionClosedNotification object: nil]; 
 
+  [notifications addObserver: self selector: @selector (handleElvinDefaultsChange:)
+                        name: ElvinDefaultsDidChangeNotification object: nil];
+                        
   [elvin connect];
 }
 
@@ -100,6 +101,11 @@
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
                            withObject: nil waitUntilDone: NO];
   }
+}
+
+- (void) handleElvinDefaultsChange: (NSNotification *) ntfn
+{
+  elvin.elvinUrl = prefString (PrefElvinURL);
 }
 
 @end
