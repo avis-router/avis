@@ -3,6 +3,8 @@
 #import "PresenceTableViewController.h"
 #import "MessagesViewController.h"
 #import "PreferencesController.h"
+#import "Preferences.h"
+#import "PresenceEntity.h"
 
 @implementation MainWindowController
 
@@ -19,6 +21,20 @@
   
   [contentView addSubview: presenceController.view];
   [contentView addSubview: messagesController.view];
+  
+  NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
+  
+  [notifications addObserver: self selector: @selector (handlePresenceUserClicked:)
+                        name: PresenceEntityClickedNotification object: nil]; 
+}
+
+- (void) handlePresenceUserClicked: (NSNotification *) ntfn
+{
+  PresenceEntity *entity = [ntfn object];
+  
+  setPref (PrefDefaultSendGroup, entity.name);
+  
+  panelSelector.selectedSegmentIndex = 1;
 }
 
 - (IBAction) panelSelectorItemChanged: (id) sender
@@ -42,10 +58,10 @@
      [[PreferencesController alloc]
        initWithNibName: @"Preferences" bundle: nil];
   
-   prefsController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+  prefsController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
-   UINavigationController *navigationController = 
-     [[UINavigationController alloc] initWithRootViewController: prefsController];
+  UINavigationController *navigationController = 
+    [[UINavigationController alloc] initWithRootViewController: prefsController];
     
   navigationController.toolbarHidden = YES;
   navigationController.navigationBarHidden = YES;

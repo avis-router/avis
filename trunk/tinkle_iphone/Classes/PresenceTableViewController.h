@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 
+extern NSString *PresenceEntityClickedNotification;
+
 @class PresenceConnection;
 
 @interface PresenceTableViewController : UITableViewController
