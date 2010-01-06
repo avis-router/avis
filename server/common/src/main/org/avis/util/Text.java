@@ -1,5 +1,6 @@
 package org.avis.util;
 
+import java.util.List;
 import java.util.Map;
 
 import java.nio.charset.CharacterCodingException;
@@ -515,6 +516,25 @@ public final class Text
   public static String join (Object [] items, String separator)
   {
     return join (asList (items), separator);
+  }
+
+  /**
+   * Slightly optimised version of {{@link #join(Iterable, String)}} for 
+   * lists.
+   * 
+   * @param items The items to join.
+   * @param separator The separator.
+   * 
+   * @return The joined string.
+   */
+  public static String join (List<?> items, String separator)
+  {
+    if (items.isEmpty ())
+      return "";
+    else if (items.size () == 1)
+      return items.get (0).toString ();
+    else
+      return join ((Iterable<?>)items, separator);
   }
 
   /**
