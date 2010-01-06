@@ -150,7 +150,7 @@ public class ResourceHttpService implements HttpService
 
   private static String guessContentType (String path)
   {
-    String type = null;
+    String type;
     
     if (path.endsWith (".css"))
       type = "text/css; charset=UTF-8";
@@ -158,8 +158,7 @@ public class ResourceHttpService implements HttpService
       type = "image/vnd.microsoft.icon";
     else if (path.endsWith (".js"))
       type = "text/javascript; charset=UTF-8";
-    
-    if (type == null)
+    else
       type = URLConnection.guessContentTypeFromName (path);
     
     return type;
