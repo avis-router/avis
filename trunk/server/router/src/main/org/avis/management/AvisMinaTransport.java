@@ -50,6 +50,11 @@ public class AvisMinaTransport implements Transport
     acceptor.setBacklog (100);
   }
 
+  public void setServiceContainer (ServiceContainer container)
+  {
+    this.container = container;
+  }
+
   public void start ()
     throws TransportException
   {
@@ -90,10 +95,5 @@ public class AvisMinaTransport implements Transport
 
     acceptor.dispose ();
     acceptor = null;
-  }
-
-  public void setServiceContainer (ServiceContainer container)
-  {
-    this.container = container;
   }
 }
