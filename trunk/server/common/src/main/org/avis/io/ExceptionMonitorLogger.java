@@ -2,7 +2,7 @@ package org.avis.io;
 
 import org.apache.mina.util.ExceptionMonitor;
 
-import static org.avis.logging.Log.internalError;
+import static org.avis.logging.Log.warn;
 
 /**
  * MINA exception monitor that routes exceptions to the log.
@@ -22,6 +22,6 @@ public class ExceptionMonitorLogger extends ExceptionMonitor
   @Override
   public void exceptionCaught (Throwable cause)
   {
-    internalError ("Unexpected exception during IO", this, cause);
+    warn ("Unexpected exception during IO", this, cause);
   }
 }
