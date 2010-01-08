@@ -1,10 +1,14 @@
 #import <UIKit/UIKit.h>
 
+#import <Three20/Three20.h>
+
 @class PresenceViewController;
 @class MessagesViewController;
 
-@interface MainWindowController : UIViewController
+@interface MainWindowController : UIViewController <TTScrollViewDataSource>
 {
+//  TTScrollView *scrollView;
+  
   IBOutlet PresenceViewController *presenceController;
   IBOutlet MessagesViewController *messagesController;
   IBOutlet UISegmentedControl *panelSelector;
