@@ -18,6 +18,7 @@
 		C91B0D7B10F1D7B20060F1C1 /* libThree20.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C91B0D6C10F1D7630060F1C1 /* libThree20.a */; };
 		C91B0D8210F1D8020060F1C1 /* Three20.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C91B0D8110F1D8020060F1C1 /* Three20.bundle */; };
 		C91B0DA210F1D83C0060F1C1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C91B0DA110F1D83C0060F1C1 /* QuartzCore.framework */; };
+		C91B0E6010F6ADD90060F1C1 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = C91B0E5F10F6ADD90060F1C1 /* iTunesArtwork.png */; };
 		C94DCEA510B8FA0200A51688 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = C94DCEA410B8FA0200A51688 /* MainWindowController.m */; };
 		C94DCEE210B8FFB800A51688 /* MessagesSelectGroup.xib in Resources */ = {isa = PBXBuildFile; fileRef = C94DCEE110B8FFB800A51688 /* MessagesSelectGroup.xib */; };
 		C988F67910CA100200BF5B11 /* MessageSelectGroupController.m in Sources */ = {isa = PBXBuildFile; fileRef = C988F67810CA100200BF5B11 /* MessageSelectGroupController.m */; };
@@ -77,6 +78,7 @@
 		C91B0D6610F1D7630060F1C1 /* Three20.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Three20.xcodeproj; path = ../../three20/src/Three20.xcodeproj; sourceTree = SOURCE_ROOT; };
 		C91B0D8110F1D8020060F1C1 /* Three20.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Three20.bundle; path = ../../three20/src/Three20.bundle; sourceTree = SOURCE_ROOT; };
 		C91B0DA110F1D83C0060F1C1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		C91B0E5F10F6ADD90060F1C1 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iTunesArtwork.png; path = Resources/iTunesArtwork.png; sourceTree = SOURCE_ROOT; };
 		C94DCEA310B8FA0200A51688 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowController.h; path = Classes/MainWindowController.h; sourceTree = "<group>"; };
 		C94DCEA410B8FA0200A51688 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		C94DCEE110B8FFB800A51688 /* MessagesSelectGroup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MessagesSelectGroup.xib; path = Resources/MessagesSelectGroup.xib; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C91B0E5F10F6ADD90060F1C1 /* iTunesArtwork.png */,
 				C9FB8AC810B600BE00D15441 /* MainWindow.xib */,
 				C94DCEE110B8FFB800A51688 /* MessagesSelectGroup.xib */,
 				C91B09F510EF26F00060F1C1 /* Preferences.xib */,
@@ -311,6 +314,7 @@
 				C94DCEE210B8FFB800A51688 /* MessagesSelectGroup.xib in Resources */,
 				C91B09F610EF26F00060F1C1 /* Preferences.xib in Resources */,
 				C91B0D8210F1D8020060F1C1 /* Three20.bundle in Resources */,
+				C91B0E6010F6ADD90060F1C1 /* iTunesArtwork.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

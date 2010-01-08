@@ -17,6 +17,8 @@ static NSString *formatDuration (NSDate *value);
 - (void) viewDidLoad
 {
   [super viewDidLoad];
+  
+  // self.tableView.directionalLockEnabled = YES;
 }
 
 - (void) setPresence: (PresenceConnection *) newPresence

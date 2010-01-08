@@ -12,6 +12,8 @@
 {
   [super viewDidLoad];
   
+  messagesController.parentViewController = self;
+
   messagesController.view.hidden = YES;
   
   presenceController.view.frame = contentView.frame;
@@ -21,6 +23,12 @@
   
   [contentView addSubview: presenceController.view];
   [contentView addSubview: messagesController.view];
+  
+//  scrollView = [[TTScrollView alloc] initWithFrame: contentView.frame];
+//  scrollView.dataSource = self;
+//  scrollView.backgroundColor = [UIColor whiteColor];
+//  
+//  [self.view addSubview: scrollView];
   
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
@@ -50,6 +58,10 @@
       messagesController.view.hidden = NO;
       break;
   }
+
+//  [scrollView moveToPageAtIndex: panelSelector.selectedSegmentIndex resetEdges: NO];
+//  
+//  scrollView.centerPageIndex = panelSelector.selectedSegmentIndex;
 }
 
 - (IBAction) showPreferences: (id) sender
@@ -95,6 +107,37 @@
 - (void) dealloc
 {
   [super dealloc];
+}
+
+#pragma mark -
+#pragma mark TTScrollViewDataSource
+
+- (NSInteger) numberOfPagesInScrollView: (TTScrollView*) scrollView
+{
+  return 2;
+}
+
+- (UIView *) scrollView: (TTScrollView *) scrollView 
+             pageAtIndex: (NSInteger) pageIndex
+{
+  presenceController.view.userInteractionEnabled = NO;
+  messagesController.view.userInteractionEnabled = NO;
+  
+  switch (pageIndex)
+  {
+    case 0:
+      return presenceController.view;
+    case 1:
+      return messagesController.view;
+    default:
+      return nil;
+  }
+}
+
+- (CGSize) scrollView: (TTScrollView *) scrollView 
+  sizeOfPageAtIndex: (NSInteger) pageIndex
+{
+  return contentView.frame.size;
 }
 
 @end
