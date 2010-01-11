@@ -80,7 +80,7 @@ To list the keys in a keystore:
              MD5:  17:4C:C7:0E:5E:F3:CB:4F:8E:74:84:9E:B8:AF:64:16
              SHA1: FC:FD:F0:80:E1:FA:27:60:7A:E0:39:69:68:41:51:97:09:9B:BB:AE
 
-<a id="creating-trust" />
+<a id="creating-trust"></a>
 Creating A Trust Relationship
 ----------------------------------------------------------------------
 
