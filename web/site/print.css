@@ -1,0 +1,39 @@
+@import "screen.css";
+
+#left-col
+{
+  visibility: hidden;
+}
+
+#nav
+{
+  visibility: hidden;
+}
+
+#main 
+{
+  width: 100%;
+}
+
+#article
+{
+  width: 100%;
+}
+
+#foot
+{
+  visibility: hidden;
+}
+
+#right-col
+{
+  position: relative;
+  float:none;
+  padding: 0 0 0 0;
+}
+
+#article pre
+{
+  overflow-x: hidden;
+  font-size: 0.8em;
+}
