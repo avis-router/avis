@@ -140,6 +140,8 @@ Footnotes
 
 </ol>
 
+</div>
+
 [1]: #fn1-tls
 [tickertape]: http://tickertape.org/documents/what_is_tickertape.html "About tickertape messaging"
 
