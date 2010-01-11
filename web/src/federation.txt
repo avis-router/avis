@@ -10,8 +10,8 @@ Federation Classes
 
 To federate two routers you first need to decide which events to
 exchange. For trusted routers this may be simply be all events,
-however you will usually want to be more specific as to what sorts of
-events you want to accept and provide.
+however you will usually want to be more specific as to what you want
+to accept and provide.
 
 In Avis, a _federation class_ is used to specify events to import and
 export using [subscription expressions][subscription]. For example,
@@ -87,8 +87,8 @@ setting up federation.
 Using TLS Authentication
 ----------------------------------------------------------------------
 
-To use TLS authentication to restrict federation to only routers that
-you have established a pre-existing trust relationship with, you first
+To use TLS authentication to restrict federation to routers that you
+have established a pre-existing trust relationship with, you first
 need to either [exchange certificates][trust] to establish trust, or
 use certificates signed by the root Certification Authorities (CA's)
 trusted by both routers.
