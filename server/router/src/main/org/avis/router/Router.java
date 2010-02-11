@@ -714,6 +714,7 @@ public class Router implements IoHandler, Closeable
     
     Connection connection = connectionFor (session);
     
+    // todo this is a read-only ref to connection: ++ could race
     connection.receivedNotificationCount++;
     
     deliverNotification (message, connection.notificationKeys);
