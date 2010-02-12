@@ -121,7 +121,7 @@ socket_t avis_open_socket (const char *host, uint16_t port, ElvinError *error)
 }
 
 bool avis_open_socket_pair (socket_t *socket_read, socket_t *socket_write,
-                       ElvinError *error)
+                            ElvinError *error)
 {
   #ifdef _WIN32
 
