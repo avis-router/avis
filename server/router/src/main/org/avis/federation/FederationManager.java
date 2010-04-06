@@ -283,11 +283,7 @@ public class FederationManager implements CloseListener
       (Map<String, Node>)config.getParamOption ("Federation.Provide");
     
     for (Entry<String, Node> entry : provide.entrySet ())
-    {
-      FederationClass fedClass = classes.define (entry.getKey ());
-      
-      fedClass.outgoingFilter = entry.getValue ();
-    }
+      classes.define (entry.getKey ()).outgoingFilter = entry.getValue ();
     
     Map<String, Node> subscribe = 
       (Map<String, Node>)config.getParamOption ("Federation.Subscribe");
@@ -311,14 +307,14 @@ public class FederationManager implements CloseListener
       classes.define (entry.getKey ()).incomingFilter = incomingFilter;
     }
     
-    Map<String, ?> applyClass = 
-      config.getParamOption ("Federation.Apply-Class");
-    
-    for (Entry<String, ?> entry : applyClass.entrySet ())
+    Map<String, Set<String>> applyClass = 
+      (Map<String, Set<String>>)config.getParamOption ("Federation.Apply-Class");
+
+    for (Entry<String, Set<String>> entry : applyClass.entrySet ())
     {
       FederationClass fedClass = classes.define (entry.getKey ());
       
-      for (String hostPatterns : (Set<String>)entry.getValue ())
+      for (String hostPatterns : entry.getValue ())
       {
         // compatibility with Avis 1.1
         if (hostPatterns.contains ("@"))
@@ -339,25 +335,19 @@ public class FederationManager implements CloseListener
   private static void initAddAttributes (Options config,
                                          FederationClasses classes)
   {
-    Map<String, ?> incoming = 
-      config.getParamOption ("Federation.Add-Incoming-Attribute");
+    Map<String, Map<String, Object>> incoming = 
+      (Map<String, Map<String, Object>>)config.getParamOption 
+        ("Federation.Add-Incoming-Attribute");
+
+    for (Entry<String, Map<String, Object>> entry : incoming.entrySet ())
+      classes.define (entry.getKey ()).incomingAttributes = entry.getValue ();
     
-    for (Entry<String, ?> entry : incoming.entrySet ())
-    {
-      FederationClass fedClass = classes.define (entry.getKey ());
-      
-      fedClass.incomingAttributes = (Map<String, Object>)entry.getValue ();
-    }
+    Map<String, Map<String, Object>> outgoing = 
+      (Map<String, Map<String, Object>>)config.getParamOption 
+        ("Federation.Add-Outgoing-Attribute");
     
-    Map<String, ?> outgoing = 
-      config.getParamOption ("Federation.Add-Outgoing-Attribute");
-    
-    for (Entry<String, ?> entry : outgoing.entrySet ())
-    {
-      FederationClass fedClass = classes.define (entry.getKey ());
-      
-      fedClass.outgoingAttributes = (Map<String, Object>)entry.getValue ();
-    }
+    for (Entry<String, Map<String, Object>> entry : outgoing.entrySet ())
+      classes.define (entry.getKey ()).outgoingAttributes = entry.getValue ();
   }
   
   private static void checkProtocol (String option, EwafURI uri)
