@@ -1,6 +1,8 @@
 package org.avis.management;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import org.avis.management.pages.ConfigurationView;
 import org.avis.management.pages.FederationView;
 import org.avis.management.pages.LogView;
 import org.avis.management.pages.OverviewView;
+import org.avis.management.pages.SiteNavigatorView;
 import org.avis.router.CloseListener;
 import org.avis.router.Router;
 
@@ -60,25 +63,28 @@ public class ManagementManager implements Closeable, CloseListener
     Authoriser authoriser = new Authoriser (adminName, adminPassword);
     RedirectRootToDefault redirectDefault = new RedirectRootToDefault ("overview");
     
+    // add authorisation first and redirect any reqs for "/" to "overview"
     handler.addHttpService (Authoriser.SERVICE_NAME, authoriser);
     handler.addHttpService (RedirectRootToDefault.SERVICE_NAME, redirectDefault);
     
-    handler.addHttpService 
-      ("overview", 
-       new StandardPage ("Overview", new OverviewView (router)));
-    handler.addHttpService 
-      ("clients", 
-       new StandardPage ("Clients", new ClientsView (router)));
-    handler.addHttpService 
-      ("federation", 
-       new StandardPage ("Federation", new FederationView (router)));
-    handler.addHttpService 
-      ("configuration", 
-       new StandardPage ("Configuration", 
-                         new ConfigurationView (router.options ())));
-    handler.addHttpService 
-      ("log", new StandardPage ("Log", new LogView ()));
-
+    // add standard presentation pages
+    List<Page> standardPages = 
+      pageList 
+        ("overview", "Overview", new OverviewView (router),
+         "clients", "Clients", new ClientsView (router),
+         "federation", "Federation", new FederationView (router),
+         "configuration", "Configuration", new ConfigurationView (router.options ()),
+         "log", "Log", new LogView ());
+    
+    for (Page page : standardPages)
+    {
+      handler.addHttpService 
+        (page.uri, 
+         new StandardPage (page.title, page.view, 
+                           new SiteNavigatorView (page, standardPages)));
+    }
+    
+    // resolve resources from class path
     handler.addHttpService 
       ("resources", 
        new ResourceHttpService 
@@ -94,7 +100,7 @@ public class ManagementManager implements Closeable, CloseListener
 
     // allow authorisation resolver first crack at everything
     mainResolver.addResolver (authoriser);
-    mainResolver.addResolver (StandardPage.RESOLVER);
+    mainResolver.addResolver (new StandardPage.Resolver (standardPages));
     mainResolver.addResolver (resourceResolver);
     mainResolver.addResolver (redirectDefault);
     
@@ -184,5 +190,22 @@ public class ManagementManager implements Closeable, CloseListener
     {
       throw new IllegalArgumentException ("Invalid URL " + path);
     }
+  }
+  
+  /**
+   * Create an array of Page's from a list of (uri, title, view) triples.
+   */
+  private static List<Page> pageList (Object... items)
+  {
+    ArrayList<Page> pages = new ArrayList<Page> (items.length / 3);
+    
+    for (int i = 0; i < items.length; i += 3)
+    {
+      pages.add 
+        (new Page ((String)items [i], (String)items [i + 1], 
+                   (HtmlView)items [i + 2]));
+    }
+    
+    return pages;
   }
 }
