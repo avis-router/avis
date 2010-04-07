@@ -40,20 +40,14 @@ public class Authoriser implements ServiceResolver, HttpService
     
     if (authorisation != null && authorisation.startsWith ("Basic "))
     {
-      String auth = base64Decode (authorisation.substring (6));
-      
-      String authName = "";
-      String authPassword = "";
-      
-      int sep = auth.indexOf (':');
+      String authText = base64Decode (authorisation.substring (6));
+      int sep = authText.indexOf (':');
 
       if (sep != -1)
       {
-        authName = auth.substring (0, sep);
-        authPassword = auth.substring (sep + 1);
+        authorised = name.equals (authText.substring (0, sep)) && 
+                     password.equals (authText.substring (sep + 1));
       }
-      
-      authorised = authName.equals (name) && authPassword.equals (password);
     }
     
     return authorised ? null : SERVICE_NAME; 
