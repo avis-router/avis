@@ -32,7 +32,7 @@ public class SiteNavigatorView implements HtmlView
     
       classes.clear ();
       
-      if (page.uri.equals (currentPage.uri))
+      if (page == currentPage)
         classes.add ("nav-current");        
 
       if (i == pages.size () - 1)
