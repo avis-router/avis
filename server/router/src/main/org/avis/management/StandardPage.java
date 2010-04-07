@@ -7,8 +7,6 @@ import org.apache.asyncweb.server.resolver.ServiceResolver;
 
 import org.avis.management.pages.SiteNavigatorView;
 
-import static java.util.Arrays.asList;
-
 /**
  * A standard web management page with a navigator and main content area.
  * 
@@ -16,36 +14,14 @@ import static java.util.Arrays.asList;
  */
 public class StandardPage extends HtmlPage
 {
-  protected static final List<String> PAGES = 
-    asList ("Overview", "Clients", "Federation", "Configuration", "Log");
-  
-  protected static final List<String> URIs = 
-    asList ("overview", "clients", "federation", "configuration", "log");
-
-  /**
-   * Resolves any known standard pages.
-   */
-  public static final ServiceResolver RESOLVER = new ServiceResolver ()
-  {
-    public String resolveService (HttpRequest request)
-    {
-      String service = request.getRequestUri ().getPath ().substring (1);
-      
-      if (URIs.contains (service))
-        return service;
-      else     
-        return null;
-    }
-  };
-
   private String title;
   private HtmlView navigator;
   private HtmlView main;
 
-  public StandardPage (String title, HtmlView main)
+  public StandardPage (String title, HtmlView main, SiteNavigatorView siteNav)
   {
     this.title = title;
-    this.navigator = new SiteNavigatorView (title, PAGES, URIs);
+    this.navigator = siteNav;
     this.main = main;
   }
   
@@ -88,5 +64,31 @@ public class StandardPage extends HtmlPage
     }
     
     html.append ("\n</head>\n");
+  }
+
+  /**
+   * Resolves any known standard pages.
+   */
+  public static class Resolver implements ServiceResolver
+  {
+    private List<Page> pages;
+
+    public Resolver (List<Page> pages)
+    {
+      this.pages = pages;
+    }
+
+    public String resolveService (HttpRequest request)
+    {
+      String service = request.getRequestUri ().getPath ().substring (1);
+      
+      for (Page page : pages)
+      {
+        if (page.uri.equals (service))
+          return service;
+      }
+      
+      return null;
+    }
   }
 }
