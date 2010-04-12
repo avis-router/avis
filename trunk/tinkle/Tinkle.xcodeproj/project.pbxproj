@@ -242,45 +242,25 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				C92392220F7F7BC30083FC13 /* AppController.h */,
 				C92392230F7F7BC30083FC13 /* AppController.m */,
-				C92392410F7F7BC30083FC13 /* TickerController.h */,
 				C92392420F7F7BC30083FC13 /* TickerController.m */,
-				C9D10E2C0FC3A08800BC77E7 /* TickerMessage.h */,
 				C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */,
-				C92392430F7F7BC30083FC13 /* TickerMessagesTextView.h */,
 				C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */,
-				C92392260F7F7BC30083FC13 /* ElvinConnection.h */,
 				C92392270F7F7BC30083FC13 /* ElvinConnection.m */,
-				C923922E0F7F7BC30083FC13 /* PresenceConnection.h */,
 				C923922F0F7F7BC30083FC13 /* PresenceConnection.m */,
-				C92392300F7F7BC30083FC13 /* PresenceController.h */,
 				C92392310F7F7BC30083FC13 /* PresenceController.m */,
-				C934AA310FC2489D003C2B41 /* PresenceStatusFormatter.h */,
 				C934AA300FC2489D003C2B41 /* PresenceStatusFormatter.m */,
-				C92392320F7F7BC30083FC13 /* PresenceEntity.h */,
 				C92392330F7F7BC30083FC13 /* PresenceEntity.m */,
-				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
 				C92392390F7F7BC30083FC13 /* PresenceStatus.m */,
-				C92392290F7F7BC30083FC13 /* Preferences.h */,
 				C923922A0F7F7BC30083FC13 /* Preferences.m */,
-				C923922C0F7F7BC30083FC13 /* PreferencesController.h */,
 				C923922D0F7F7BC30083FC13 /* PreferencesController.m */,
-				C92392360F7F7BC30083FC13 /* GroupsArrayController.h */,
 				C92392370F7F7BC30083FC13 /* GroupsArrayController.m */,
-				C9CC2D250F83266D009FC112 /* KeysArrayController.h */,
 				C9CC2D260F83266D009FC112 /* KeysArrayController.m */,
-				C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */,
 				C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */,
-				C934A82B0FC11E79003C2B41 /* RelativeDateFormatter.h */,
 				C934A82A0FC11E79003C2B41 /* RelativeDateFormatter.m */,
-				C92392240F7F7BC30083FC13 /* DragTarget.h */,
 				C92392250F7F7BC30083FC13 /* DragTarget.m */,
-				C923923D0F7F7BC30083FC13 /* RolloverButton.h */,
 				C923923E0F7F7BC30083FC13 /* RolloverButton.m */,
-				C923923F0F7F7BC30083FC13 /* TextViewWithLinks.h */,
 				C92392400F7F7BC30083FC13 /* TextViewWithLinks.m */,
-				C923923B0F7F7BC30083FC13 /* RHSystemIdleTimer.h */,
 				C923923C0F7F7BC30083FC13 /* RHSystemIdleTimer.m */,
 			);
 			name = Classes;
@@ -319,6 +299,7 @@
 			isa = PBXGroup;
 			children = (
 				080E96DDFE201D6D7F000001 /* Classes */,
+				C922297F1172D35300EFFF2C /* Headers */,
 				C92391570F7F01380083FC13 /* Tests */,
 				C92FE90E0F3D05AB0037FA15 /* Presence Tester */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -343,6 +324,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8D1107310486CEB800E47090 /* Info.plist */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				C92392780F7F7D080083FC13 /* MainMenu.xib */,
+				C92392790F7F7D080083FC13 /* TickerWindow.xib */,
+				C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */,
+				C923922B0F7F7BC30083FC13 /* Preferences.xib */,
+				C9DB78D010ABC0DB00BB747C /* Tinkle.icns */,
 				C985CE0B10B3AC1900FE1DFA /* lolly_green.png */,
 				C985CE0C10B3AC1900FE1DFA /* lolly_grey.png */,
 				C985CE0D10B3AC1900FE1DFA /* lolly_red.png */,
@@ -350,13 +338,6 @@
 				C985CE0F10B3AC1900FE1DFA /* warning16.png */,
 				C985CE1010B3AC1900FE1DFA /* warning32.png */,
 				C9DB78CF10ABC0DB00BB747C /* Tinkle_512.png */,
-				C9DB78D010ABC0DB00BB747C /* Tinkle.icns */,
-				8D1107310486CEB800E47090 /* Info.plist */,
-				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				C92392780F7F7D080083FC13 /* MainMenu.xib */,
-				C92392790F7F7D080083FC13 /* TickerWindow.xib */,
-				C923923A0F7F7BC30083FC13 /* PresenceWindow.xib */,
-				C923922B0F7F7BC30083FC13 /* Preferences.xib */,
 				C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */,
 				C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */,
 				C934A7300FB937EC003C2B41 /* Message_Public.png */,
@@ -374,6 +355,33 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C922297F1172D35300EFFF2C /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				C92392220F7F7BC30083FC13 /* AppController.h */,
+				C92392410F7F7BC30083FC13 /* TickerController.h */,
+				C9D10E2C0FC3A08800BC77E7 /* TickerMessage.h */,
+				C92392430F7F7BC30083FC13 /* TickerMessagesTextView.h */,
+				C92392260F7F7BC30083FC13 /* ElvinConnection.h */,
+				C923922E0F7F7BC30083FC13 /* PresenceConnection.h */,
+				C92392300F7F7BC30083FC13 /* PresenceController.h */,
+				C934AA310FC2489D003C2B41 /* PresenceStatusFormatter.h */,
+				C92392320F7F7BC30083FC13 /* PresenceEntity.h */,
+				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
+				C92392290F7F7BC30083FC13 /* Preferences.h */,
+				C923922C0F7F7BC30083FC13 /* PreferencesController.h */,
+				C92392360F7F7BC30083FC13 /* GroupsArrayController.h */,
+				C9CC2D250F83266D009FC112 /* KeysArrayController.h */,
+				C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */,
+				C934A82B0FC11E79003C2B41 /* RelativeDateFormatter.h */,
+				C92392240F7F7BC30083FC13 /* DragTarget.h */,
+				C923923D0F7F7BC30083FC13 /* RolloverButton.h */,
+				C923923F0F7F7BC30083FC13 /* TextViewWithLinks.h */,
+				C923923B0F7F7BC30083FC13 /* RHSystemIdleTimer.h */,
+			);
+			name = Headers;
 			sourceTree = "<group>";
 		};
 		C92391570F7F01380083FC13 /* Tests */ = {
