@@ -80,7 +80,7 @@
   while (NSMaxRange (attrsRange) < NSMaxRange (visibleCharRange)) 
   {
     // Find the next link inside the range
-    NSString *linkObject = 
+    id linkObject = 
       [attrString attribute: NSLinkAttributeName 
         atIndex: NSMaxRange (attrsRange)
         longestEffectiveRange: &attrsRange inRange: visibleCharRange];
@@ -125,21 +125,6 @@
   }
 }
 
-- (NSCursor *) cursorForLink: (NSObject *) linkObject
-    atIndex: (unsigned) charIndex
-{
-  NSCursor *result = nil;
-
-  //  If the delegate implements the method, consult it.
-  //  if ([[self delegate] respondsToSelector: @selector (cursorForLink:atIndex:ofTextView:)])
-  //    result = [[self delegate] cursorForLink: linkObject atIndex: charIndex ofTextView: self];
-
-  if (result == nil)
-    result = [NSCursor pointingHandCursor];
-
-  return result;
-}
-
 - (NSString *) toolTipForLink: (id) link view: (NSTextView *) view
 {
   return [link description];
@@ -160,9 +145,19 @@
     [self convertPoint: [event locationInWindow] fromView: nil];
   
   if ([self mouse: hitPoint inRect: [[event trackingArea] rect]]) 
+  {
     [[NSCursor pointingHandCursor] set];
-  else
+    
+    if ([[self delegate] respondsToSelector: @selector (mouseOverLink:ofTextView:)])
+    {
+      NSValue *range = [(NSDictionary *)[[event trackingArea] userInfo] valueForKey: @"range"];
+      
+      [[self delegate] mouseOverLink: [range rangeValue] ofTextView: self];
+    }
+  } else
+  {
     [[NSCursor IBeamCursor] set];
+  }
 }
 
 - (void) setUnderlinedRange: (NSValue *) range
@@ -184,11 +179,15 @@
 {
   [self setUnderlinedRange: 
     [(NSDictionary *)[event userData] valueForKey: @"range"]];
+  
+  [super mouseEntered: event];
 }
 
 - (void) mouseExited: (NSEvent *) event
 {
   [self setUnderlinedRange: nil];
+  
+  [super mouseExited: event];
 }
 
 - (void) underline: (NSRange) range underlined: (BOOL) isUnderlined
