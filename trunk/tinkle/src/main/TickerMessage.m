@@ -45,6 +45,7 @@ static NSURL *extractAttachedLink (NSDictionary *message)
   NSString *distribution = [notification valueForKey: @"Distribution"];
   
   message->messageId = [[notification valueForKey: @"Message-Id"] retain];
+  message->inReplyTo = [[notification valueForKey: @"In-Reply-To"] retain];
   message->threadId = [[notification valueForKey: @"Thread-Id"] retain];
   message->from = [[notification valueForKey: @"From"] retain];
   message->message = [[notification valueForKey: @"Message"] retain];
@@ -62,6 +63,7 @@ static NSURL *extractAttachedLink (NSDictionary *message)
 - (void) dealloc
 {
   [messageId release];
+  [inReplyTo release];
   [threadId release];
   [from release];
   [message release];

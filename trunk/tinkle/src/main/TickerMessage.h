@@ -6,6 +6,7 @@
   
   NSString * messageId;
   NSString * threadId;
+  NSString * inReplyTo;
   NSString * from;
   NSString * message;
   NSString * group;
