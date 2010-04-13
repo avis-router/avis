@@ -778,7 +778,7 @@ static NSAttributedString *attributedString (NSString *string,
   NSArray *linkRanges = [self visibleMessageLinkRanges];
   
   NSDictionary *threadAttributes = 
-    [NSDictionary dictionaryWithObject: color (219, 212, 190)
+    [NSDictionary dictionaryWithObject: color (255, 234, 168)
                                 forKey: NSBackgroundColorAttributeName];
   
   TickerMessage *active = [self linkAtIndex: linkRange.location];
