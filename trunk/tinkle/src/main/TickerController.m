@@ -750,8 +750,8 @@ static NSAttributedString *attributedString (NSString *string,
 {
   if ([link isKindOfClass: [TickerMessage class]])
   {
-    // handle clicks on links to messages to initiate a reply
     [self replyToMessage: link];
+    
     return YES;
   } else
   {
