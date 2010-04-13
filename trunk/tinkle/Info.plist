@@ -19,14 +19,14 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleShortVersionString</key>
-	<string>Alpha Release 5.dev</string>
+	<string>Release 1.1</string>
 	<key>CFBundleVersion</key>
-	<string>0.5</string>
+	<string>1.1.0</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2009 Matthew Phillips</string>
+	<string>Copyright © 2010 Matthew Phillips</string>
 </dict>
 </plist>
