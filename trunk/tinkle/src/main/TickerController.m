@@ -125,9 +125,11 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (TickerMessage *) findRecentMessageFromOther
 {
+  NSString *user = prefString (PrefOnlineUserName);
+  
   for (TickerMessage *message in [recentMessages reverseObjectEnumerator])
   {
-    if (![message->from isEqual: prefString (PrefOnlineUserName)])
+    if (![message->from isEqual: user])
       return message;
   }
   
@@ -660,12 +662,15 @@ static NSAttributedString *attributedString (NSString *string,
   self.allowInsecure = !self.allowInsecure;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingTooltipForReply
++ (NSSet *) keyPathsForValuesAffectingInReplyToTooltip
 {
   return [NSSet setWithObject: @"inReplyTo"];
 }
 
-- (NSString *) tooltipForReply
+/**
+ * Tooltip for the inReplyTo property. Bound to the reply indicator icon.
+ */
+- (NSString *) inReplyToTooltip
 {
   if (inReplyTo)
   {
@@ -674,8 +679,10 @@ static NSAttributedString *attributedString (NSString *string,
     [dateFormatter setDateStyle: NSDateFormatterNoStyle];
     [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
     
-    return [NSString stringWithFormat: @"Send as reply to %@'s message received %@", 
-            inReplyTo->from, [dateFormatter stringFromDate: inReplyTo->receivedAt]];
+    return [NSString stringWithFormat: 
+            @"Send as reply to %@'s message received at %@", 
+            inReplyTo->from, 
+            [dateFormatter stringFromDate: inReplyTo->receivedAt]];
   } else
   {
     return nil;
