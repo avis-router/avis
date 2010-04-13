@@ -66,7 +66,7 @@ static NSAttributedString *attributedString (NSString *string,
   - (void) handleSubscribeError: (NSError *) error;
   - (void) mouseEnteredLink: (NSRange) linkRange ofTextView: (NSTextView *) view;
   - (void) mouseExitedLink: (NSRange) linkRange ofTextView: (NSTextView *) view;
-  - (id) messageLinkAtIndex: (NSUInteger) index;
+  - (id) linkAtIndex: (NSUInteger) index;
   - (NSArray *) visibleMessageLinkRanges;
 @end
 
@@ -697,13 +697,13 @@ static NSAttributedString *attributedString (NSString *string,
     [NSDictionary dictionaryWithObject: [NSColor lightGrayColor] 
                                 forKey: NSBackgroundColorAttributeName];
   
-  TickerMessage *active = [self messageLinkAtIndex: linkRange.location];
+  TickerMessage *active = [self linkAtIndex: linkRange.location];
   
   // walk forwards down chain to leaf message
   for (NSValue *range in linkRanges)
   {
     TickerMessage *message = 
-      [self messageLinkAtIndex: [range rangeValue].location];
+      [self linkAtIndex: [range rangeValue].location];
     
     if ([message->inReplyTo isEqual: active->messageId])
       active = message;
@@ -713,7 +713,7 @@ static NSAttributedString *attributedString (NSString *string,
   for (NSValue *range in [linkRanges reverseObjectEnumerator])
   {
     TickerMessage *message = 
-      [self messageLinkAtIndex: [range rangeValue].location];
+      [self linkAtIndex: [range rangeValue].location];
     
     if (message == active || [active->inReplyTo isEqual: message->messageId])
     {
@@ -741,7 +741,10 @@ static NSAttributedString *attributedString (NSString *string,
   }  
 }
 
-- (id) messageLinkAtIndex: (NSUInteger) index
+/**
+ * The link attribute (if any) at the given index in the text view.
+ */
+- (id) linkAtIndex: (NSUInteger) index
 {
   NSTextStorage *text = [tickerMessagesTextView textStorage];
   
@@ -749,31 +752,37 @@ static NSAttributedString *attributedString (NSString *string,
           effectiveRange: nil];     
 }
 
+/**
+ * The list of ranges covering TickerMessage links in the visible part
+ * of the text view.
+ */
 - (NSArray *) visibleMessageLinkRanges
 {
   NSMutableArray *ranges = [[NSMutableArray new] autorelease];
   
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
   NSRect visibleRect = 
-  NSOffsetRect ([tickerMessagesTextView visibleRect], -containerOrigin.x, -containerOrigin.y);
+  NSOffsetRect ([tickerMessagesTextView visibleRect], 
+                -containerOrigin.x, -containerOrigin.y);
   
   NSRange visibleGlyphRange = 
-  [[tickerMessagesTextView layoutManager] glyphRangeForBoundingRect: visibleRect 
-                                                    inTextContainer: [tickerMessagesTextView textContainer]];
+    [[tickerMessagesTextView layoutManager] 
+       glyphRangeForBoundingRect: visibleRect 
+       inTextContainer: [tickerMessagesTextView textContainer]];
   
   NSRange visibleCharRange = 
-  [[tickerMessagesTextView layoutManager] characterRangeForGlyphRange: visibleGlyphRange 
-                                                     actualGlyphRange: NULL];
+    [[tickerMessagesTextView layoutManager] 
+       characterRangeForGlyphRange: visibleGlyphRange actualGlyphRange: NULL];
   
   NSRange attrsRange = NSMakeRange (visibleCharRange.location, 0);
   
   while (NSMaxRange (attrsRange) < NSMaxRange (visibleCharRange)) 
   {
     id linkObject = 
-    [[tickerMessagesTextView textStorage] 
-     attribute: NSLinkAttributeName
-     atIndex: NSMaxRange (attrsRange)
-     longestEffectiveRange: &attrsRange inRange: visibleCharRange];
+      [[tickerMessagesTextView textStorage] 
+          attribute: NSLinkAttributeName
+          atIndex: NSMaxRange (attrsRange)
+          longestEffectiveRange: &attrsRange inRange: visibleCharRange];
     
     if ([linkObject isKindOfClass: [TickerMessage class]])
       [ranges addObject: [NSValue valueWithRange: attrsRange]];
@@ -783,20 +792,6 @@ static NSAttributedString *attributedString (NSString *string,
 }
 
 #pragma mark "Empty Text" sheet delegates
-
-/*
- * Handles request for sheet location: locates the "empty text" sheet on
- * the text area itself rather than the top of the window.
- */
-//- (NSRect) window: (NSWindow *) window willPositionSheet: (NSWindow *) sheet
-//           usingRect: (NSRect) rect 
-//{
-//  NSRect fieldRect = [[[[messageText superview] superview] superview] frame];
-//  
-//  fieldRect.size.height = 0;
-//  
-//  return fieldRect;
-//}
 
 - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
          contextInfo: (void *) contextInfo
