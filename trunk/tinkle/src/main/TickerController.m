@@ -123,6 +123,17 @@ static NSAttributedString *attributedString (NSString *string,
   return nil;
 }
 
+- (TickerMessage *) findRecentMessageFromOther
+{
+  for (TickerMessage *message in recentMessages)
+  {
+    if (![message->from isEqual: prefString (PrefOnlineUserName)])
+      return message;
+  }
+  
+  return nil;
+}
+
 #pragma mark -
 
 - (void) awakeFromNib
@@ -177,6 +188,8 @@ static NSAttributedString *attributedString (NSString *string,
     return self.attachedURL != nil;
   else if (action == @selector (clearReply:))
     return self.inReplyTo != nil;
+  else if (action == @selector (replyToLastMessage:))
+    return [self findRecentMessageFromOther] != nil;
   else if (action == @selector (sendMessage:))
     return self.canSend;
   else if (action == @selector (togglePublic:)) 
@@ -614,6 +627,22 @@ static NSAttributedString *attributedString (NSString *string,
     return [NSURL URLWithString: [attachedUrlLabel stringValue]];
 }
 
+- (void) replyToMessage: (TickerMessage *) message
+{
+  [messageGroup setStringValue: message->group];
+  
+  self.inReplyTo = message;
+  self.allowPublic = message->public;
+  self.allowInsecure = !message->secure;
+  
+  [[messageText window] makeFirstResponder: messageText];
+}
+
+- (IBAction) replyToLastMessage: (id) sender
+{
+  [self replyToMessage: [self findRecentMessageFromOther]];
+}
+
 - (IBAction) clearReply: (id) sender
 {
   self.inReplyTo = nil;
@@ -631,6 +660,28 @@ static NSAttributedString *attributedString (NSString *string,
   self.allowInsecure = !self.allowInsecure;
 }
 
++ (NSSet *) keyPathsForValuesAffectingTooltipForReply
+{
+  return [NSSet setWithObject: @"inReplyTo"];
+}
+
+- (NSString *) tooltipForReply
+{
+  if (inReplyTo)
+  {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
+    
+    [dateFormatter setDateStyle: NSDateFormatterNoStyle];
+    [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
+    
+    return [NSString stringWithFormat: @"Send as reply to %@'s message received %@", 
+            inReplyTo->from, [dateFormatter stringFromDate: inReplyTo->receivedAt]];
+  } else
+  {
+    return nil;
+  }
+}
+
 @synthesize inReplyTo;
 
 @synthesize allowPublic;
@@ -638,7 +689,6 @@ static NSAttributedString *attributedString (NSString *string,
 @synthesize allowInsecure;
 
 #pragma mark -
-
 #pragma mark URL D&D
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>) sender
@@ -694,16 +744,7 @@ static NSAttributedString *attributedString (NSString *string,
   if ([link isKindOfClass: [TickerMessage class]])
   {
     // handle clicks on links to messages to initiate a reply
-    TickerMessage *message = link;
-    
-    [messageGroup setStringValue: message->group];
-    
-    self.inReplyTo = message;
-    self.allowPublic = message->public;
-    self.allowInsecure = !message->secure;
-    
-    [[messageText window] makeFirstResponder: messageText];
-
+    [self replyToMessage: link];
     return YES;
   } else
   {
