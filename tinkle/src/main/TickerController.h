@@ -41,7 +41,7 @@ extern NSString * TickerMessageStoppedEditingNotification;
 @property (readwrite, assign) IBOutlet BOOL            allowPublic;
 @property (readwrite, assign) IBOutlet BOOL            allowInsecure;
 @property (readwrite, assign) IBOutlet BOOL            canSend;
-@property (readonly) NSString *tooltipForReply;
+@property (readonly) NSString *inReplyToTooltip;
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection 
         subscription: (NSString *) theSubscription;

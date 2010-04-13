@@ -12,7 +12,6 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="4"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -49,7 +48,7 @@
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<string key="NSWindowContentMinSize">{500, 200}</string>
 				<object class="NSView" key="NSWindowView" id="228325107">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -66,7 +65,7 @@
 										<object class="NSTextView" id="467236999">
 											<reference key="NSNextResponder" ref="223658256"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{652, 195}</string>
+											<string key="NSFrameSize">{652, 0}</string>
 											<reference key="NSSuperview" ref="223658256"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="356958372">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -922,7 +921,6 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						</object>
 					</object>
 					<string key="NSFrameSize">{667, 437}</string>
-					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMinSize">{500, 222}</string>
@@ -1297,15 +1295,15 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">toolTip: tooltipForReply</string>
+						<string key="label">toolTip: inReplyToTooltip</string>
 						<reference key="source" ref="490774791"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="490774791"/>
 							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">toolTip: tooltipForReply</string>
+							<string key="NSLabel">toolTip: inReplyToTooltip</string>
 							<string key="NSBinding">toolTip</string>
-							<string key="NSKeyPath">tooltipForReply</string>
+							<string key="NSKeyPath">inReplyToTooltip</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
