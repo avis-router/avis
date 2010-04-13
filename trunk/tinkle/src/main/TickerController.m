@@ -8,6 +8,8 @@
 #import "PresenceEntity.h"
 #import "Preferences.h"
 
+#define MAX_RECENT_MESSAGES 100
+
 NSString * TickerMessageReceivedNotification = 
   @"TickerMessageReceivedNotification";
 
@@ -68,6 +70,8 @@ static NSAttributedString *attributedString (NSString *string,
   - (void) mouseExitedLink: (NSRange) linkRange ofTextView: (NSTextView *) view;
   - (id) linkAtIndex: (NSUInteger) index;
   - (NSArray *) visibleMessageLinkRanges;
+  - (void) addRecentMessage: (TickerMessage *) message;
+  - (TickerMessage *) findRecentMessage: (NSString *) messageId;
 @end
 
 @implementation TickerController
@@ -81,6 +85,8 @@ static NSAttributedString *attributedString (NSString *string,
     return nil;
   
   elvin = theElvinConnection;
+  recentMessages = 
+    [[[NSMutableArray alloc] initWithCapacity: MAX_RECENT_MESSAGES] retain];
   self.subscription = theSubscription;
   
   return self;
@@ -89,6 +95,8 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver: self]; 
+  
+  [recentMessages release];
   
   [super dealloc];
 }
@@ -223,6 +231,28 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
+- (void) addRecentMessage: (TickerMessage *) message
+{
+  while ([recentMessages count] >= MAX_RECENT_MESSAGES)
+    [recentMessages removeObjectAtIndex: 0];
+  
+  [recentMessages addObject: message];
+}
+
+- (TickerMessage *) findRecentMessage: (NSString *) messageId
+{
+  if (messageId)
+  {
+    for (TickerMessage *message in recentMessages)
+    {
+      if ([message->messageId isEqual: messageId])
+        return message;
+    }
+  }
+  
+  return nil;
+}
+
 - (void) handleNotify: (NSDictionary *) ntfn
 {
   TickerMessage *message = [TickerMessage messageForNotification: ntfn];
@@ -304,7 +334,8 @@ static NSAttributedString *attributedString (NSString *string,
   range.length = [displayedMessage length] - range.location;
   
   [displayedMessage addAttributes: replyLinkAttrs range: range];
-
+    
+  // URL
   if (message->url)
   {    
     NSDictionary *linkAttrs = 
@@ -340,10 +371,22 @@ static NSAttributedString *attributedString (NSString *string,
       appendAttributedString: attributedString (@">", lowlightAttrs)];
   }
   
-  // date  
+  // date
+  TickerMessage *parentMessage = [self findRecentMessage: message->inReplyTo];
+
   [displayedMessage appendAttributedString: 
     attributedString (@" (", lowlightAttrs)];
 
+  if (parentMessage)
+  {
+    [displayedMessage 
+      appendAttributedString: attributedString (@"↪ ", lowlightAttrs)];
+    [displayedMessage 
+      appendAttributedString: attributedString (parentMessage->from, lowlightAttrs)];
+    [displayedMessage 
+      appendAttributedString: attributedString (@", ", lowlightAttrs)];
+  }
+  
   [displayedMessage appendAttributedString: 
     attributedString ([dateFormatter stringFromDate: message->receivedAt], 
                       lowlightAttrs)];
@@ -363,12 +406,12 @@ static NSAttributedString *attributedString (NSString *string,
   // scroll to end if that's how it was when we started
   if (wasScrolledToEnd)
   {
-    // TODO: bug: very rarely, this segfaults. perhaps something to do with
-    // insertion point?
     [tickerMessagesTextView displayIfNeeded];
     [tickerMessagesTextView scrollRangeToVisible: 
       NSMakeRange ([[tickerMessagesTextView textStorage] length], 0)];
   }
+ 
+  [self addRecentMessage: message];
   
   [[NSNotificationCenter defaultCenter] 
      postNotificationName: TickerMessageReceivedNotification object: self
@@ -694,11 +737,8 @@ static NSAttributedString *attributedString (NSString *string,
   NSArray *linkRanges = [self visibleMessageLinkRanges];
   
   NSDictionary *threadAttributes = 
-    [NSDictionary dictionaryWithObject: 
-       [NSColor colorWithCalibratedRed: 219 / 255.0 
-                                 green: 212 / 255.0 
-                                  blue: 190 / 255.0 alpha: 1.0]
-       forKey: NSBackgroundColorAttributeName];
+    [NSDictionary dictionaryWithObject: color (219, 212, 190)
+                                forKey: NSBackgroundColorAttributeName];
   
   TickerMessage *active = [self linkAtIndex: linkRange.location];
   
