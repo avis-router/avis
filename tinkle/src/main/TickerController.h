@@ -28,6 +28,7 @@ extern NSString * TickerMessageStoppedEditingNotification;
   NSString *        subscription;
   id                subscriptionContext;
   TickerMessage   * inReplyTo;
+  NSMutableArray  * recentMessages;
   BOOL              allowPublic;
   BOOL              allowInsecure;
   BOOL              canSend;
