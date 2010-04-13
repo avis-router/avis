@@ -113,7 +113,7 @@ static NSAttributedString *attributedString (NSString *string,
 {
   if (messageId)
   {
-    for (TickerMessage *message in recentMessages)
+    for (TickerMessage *message in [recentMessages reverseObjectEnumerator])
     {
       if ([message->messageId isEqual: messageId])
         return message;
@@ -125,7 +125,7 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (TickerMessage *) findRecentMessageFromOther
 {
-  for (TickerMessage *message in recentMessages)
+  for (TickerMessage *message in [recentMessages reverseObjectEnumerator])
   {
     if (![message->from isEqual: prefString (PrefOnlineUserName)])
       return message;
