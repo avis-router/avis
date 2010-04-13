@@ -145,19 +145,9 @@
     [self convertPoint: [event locationInWindow] fromView: nil];
   
   if ([self mouse: hitPoint inRect: [[event trackingArea] rect]]) 
-  {
-    [[NSCursor pointingHandCursor] set];
-    
-    if ([[self delegate] respondsToSelector: @selector (mouseOverLink:ofTextView:)])
-    {
-      NSValue *range = [(NSDictionary *)[[event trackingArea] userInfo] valueForKey: @"range"];
-      
-      [[self delegate] mouseOverLink: [range rangeValue] ofTextView: self];
-    }
-  } else
-  {
+    [[NSCursor pointingHandCursor] set];    
+  else
     [[NSCursor IBeamCursor] set];
-  }
 }
 
 - (void) setUnderlinedRange: (NSValue *) range
@@ -179,6 +169,13 @@
 {
   [self setUnderlinedRange: 
     [(NSDictionary *)[event userData] valueForKey: @"range"]];
+  
+  if ([[self delegate] respondsToSelector: @selector (mouseOverLink:ofTextView:)])
+  {
+    NSValue *range = [(NSDictionary *)[[event trackingArea] userInfo] valueForKey: @"range"];
+    
+    [[self delegate] mouseOverLink: [range rangeValue] ofTextView: self];
+  }
   
   [super mouseEntered: event];
 }
