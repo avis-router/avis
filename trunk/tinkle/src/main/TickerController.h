@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+#import "TextViewWithLinks.h"
+
 extern NSString * TickerMessageReceivedNotification;
 extern NSString * TickerMessageStartedEditingNotification;
 extern NSString * TickerMessageStoppedEditingNotification;
@@ -8,7 +10,7 @@ extern NSString * TickerMessageStoppedEditingNotification;
 @class RolloverButton;
 @class TickerMessage;
 
-@interface TickerController : NSWindowController
+@interface TickerController : NSWindowController <LinkCallbacks>
 {
   IBOutlet id     tickerMessagesTextView;
   IBOutlet id     messageGroup;
