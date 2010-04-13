@@ -170,11 +170,11 @@
   [self setUnderlinedRange: 
     [(NSDictionary *)[event userData] valueForKey: @"range"]];
   
-  if ([[self delegate] respondsToSelector: @selector (mouseOverLink:ofTextView:)])
+  if ([[self delegate] respondsToSelector: @selector (mouseEnteredLink:ofTextView:)])
   {
     NSValue *range = [(NSDictionary *)[[event trackingArea] userInfo] valueForKey: @"range"];
     
-    [[self delegate] mouseOverLink: [range rangeValue] ofTextView: self];
+    [[self delegate] mouseEnteredLink: [range rangeValue] ofTextView: self];
   }
   
   [super mouseEntered: event];
@@ -183,6 +183,13 @@
 - (void) mouseExited: (NSEvent *) event
 {
   [self setUnderlinedRange: nil];
+  
+  if ([[self delegate] respondsToSelector: @selector (mouseExitedLink:ofTextView:)])
+  {
+    NSValue *range = [(NSDictionary *)[[event trackingArea] userInfo] valueForKey: @"range"];
+    
+    [[self delegate] mouseExitedLink: [range rangeValue] ofTextView: self];
+  }
   
   [super mouseExited: event];
 }

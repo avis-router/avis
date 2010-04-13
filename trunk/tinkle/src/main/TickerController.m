@@ -64,6 +64,8 @@ static NSAttributedString *attributedString (NSString *string,
   - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
            contextInfo: (void *) contextInfo;
   - (void) handleSubscribeError: (NSError *) error;
+  - (void) mouseEnteredLink: (NSRange) linkRange ofTextView: (NSTextView *) view;
+  - (void) mouseExitedLink: (NSRange) linkRange ofTextView: (NSTextView *) view;
   - (id) messageLinkAtIndex: (NSUInteger) index;
   - (NSArray *) visibleMessageLinkRanges;
 @end
@@ -380,89 +382,6 @@ static NSAttributedString *attributedString (NSString *string,
 
 #pragma mark -
 
-- (void) mouseOverLink: (NSRange) linkRange
-            ofTextView: (NSTextView *) view
-{
-  NSTextStorage *textStorage = [tickerMessagesTextView textStorage];
-  NSArray *linkRanges = [self visibleMessageLinkRanges];
-
-  NSDictionary *threadAttributes = 
-    [NSDictionary dictionaryWithObject: [NSColor lightGrayColor] 
-                                forKey: NSBackgroundColorAttributeName];
-
-  TickerMessage *active = [self messageLinkAtIndex: linkRange.location];
-
-  // reverse back up chain to leaf message
-  for (NSValue *range in linkRanges)
-  {
-    TickerMessage *message = 
-      [self messageLinkAtIndex: [range rangeValue].location];
-    
-    if ([message->inReplyTo isEqual: active->messageId])
-      active = message;
-  }
-
-  // highlight messages in thread
-  for (NSValue *range in [linkRanges reverseObjectEnumerator])
-  {
-    TickerMessage *message = [self messageLinkAtIndex: [range rangeValue].location];
-
-    if (message == active || [active->inReplyTo isEqual: message->messageId])
-    {
-      [textStorage addAttributes: threadAttributes range: [range rangeValue]];
-      
-      active = message;
-    } else
-    {
-      [textStorage removeAttribute: NSBackgroundColorAttributeName 
-                             range: [range rangeValue]];
-    }
-  }
-}
-
-- (id) messageLinkAtIndex: (NSUInteger) index
-{
-  NSTextStorage *text = [tickerMessagesTextView textStorage];
-  
-  return [text attribute: NSLinkAttributeName atIndex: index 
-          effectiveRange: nil];     
-}
-
-- (NSArray *) visibleMessageLinkRanges
-{
-  NSMutableArray *ranges = [[NSMutableArray new] autorelease];
-  
-  NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
-  NSRect visibleRect = 
-    NSOffsetRect ([tickerMessagesTextView visibleRect], -containerOrigin.x, -containerOrigin.y);
-  
-  NSRange visibleGlyphRange = 
-    [[tickerMessagesTextView layoutManager] glyphRangeForBoundingRect: visibleRect 
-                                            inTextContainer: [tickerMessagesTextView textContainer]];
-  
-  NSRange visibleCharRange = 
-    [[tickerMessagesTextView layoutManager] characterRangeForGlyphRange: visibleGlyphRange 
-                                   actualGlyphRange: NULL];
-  
-  NSRange attrsRange = NSMakeRange (visibleCharRange.location, 0);
-  
-  while (NSMaxRange (attrsRange) < NSMaxRange (visibleCharRange)) 
-  {
-    id linkObject = 
-      [[tickerMessagesTextView textStorage] 
-         attribute: NSLinkAttributeName
-         atIndex: NSMaxRange (attrsRange)
-         longestEffectiveRange: &attrsRange inRange: visibleCharRange];
-    
-    if ([linkObject isKindOfClass: [TickerMessage class]])
-      [ranges addObject: [NSValue valueWithRange: attrsRange]];
-  }
-  
-  return ranges;
-}
-
-#pragma mark -
-
 - (NSString *) subscription
 {
   return subscription;
@@ -767,6 +686,102 @@ static NSAttributedString *attributedString (NSString *string,
   {
     return [link description];
   }
+}
+
+- (void) mouseEnteredLink: (NSRange) linkRange
+               ofTextView: (NSTextView *) view
+{
+  NSTextStorage *textStorage = [tickerMessagesTextView textStorage];
+  NSArray *linkRanges = [self visibleMessageLinkRanges];
+  
+  NSDictionary *threadAttributes = 
+  [NSDictionary dictionaryWithObject: [NSColor lightGrayColor] 
+                              forKey: NSBackgroundColorAttributeName];
+  
+  TickerMessage *active = [self messageLinkAtIndex: linkRange.location];
+  
+  // walk forwards down chain to leaf message
+  for (NSValue *range in linkRanges)
+  {
+    TickerMessage *message = 
+    [self messageLinkAtIndex: [range rangeValue].location];
+    
+    if ([message->inReplyTo isEqual: active->messageId])
+      active = message;
+  }
+  
+  // go back down chain, highlighting messages in thread
+  for (NSValue *range in [linkRanges reverseObjectEnumerator])
+  {
+    TickerMessage *message = 
+    [self messageLinkAtIndex: [range rangeValue].location];
+    
+    if (message == active || [active->inReplyTo isEqual: message->messageId])
+    {
+      [textStorage addAttributes: threadAttributes range: [range rangeValue]];
+      
+      active = message;
+    } else
+    {
+      [textStorage removeAttribute: NSBackgroundColorAttributeName 
+                             range: [range rangeValue]];
+    }
+  }
+}
+
+- (void) mouseExitedLink: (NSRange) linkRange
+              ofTextView: (NSTextView *) view
+{
+  // TODO: scrolled messages won't be affected by this
+  NSTextStorage *textStorage = [tickerMessagesTextView textStorage];
+  NSArray *linkRanges = [self visibleMessageLinkRanges];
+  
+  for (NSValue *range in linkRanges)
+  {
+    [textStorage removeAttribute: NSBackgroundColorAttributeName 
+                           range: [range rangeValue]];
+  }  
+}
+
+- (id) messageLinkAtIndex: (NSUInteger) index
+{
+  NSTextStorage *text = [tickerMessagesTextView textStorage];
+  
+  return [text attribute: NSLinkAttributeName atIndex: index 
+          effectiveRange: nil];     
+}
+
+- (NSArray *) visibleMessageLinkRanges
+{
+  NSMutableArray *ranges = [[NSMutableArray new] autorelease];
+  
+  NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
+  NSRect visibleRect = 
+  NSOffsetRect ([tickerMessagesTextView visibleRect], -containerOrigin.x, -containerOrigin.y);
+  
+  NSRange visibleGlyphRange = 
+  [[tickerMessagesTextView layoutManager] glyphRangeForBoundingRect: visibleRect 
+                                                    inTextContainer: [tickerMessagesTextView textContainer]];
+  
+  NSRange visibleCharRange = 
+  [[tickerMessagesTextView layoutManager] characterRangeForGlyphRange: visibleGlyphRange 
+                                                     actualGlyphRange: NULL];
+  
+  NSRange attrsRange = NSMakeRange (visibleCharRange.location, 0);
+  
+  while (NSMaxRange (attrsRange) < NSMaxRange (visibleCharRange)) 
+  {
+    id linkObject = 
+    [[tickerMessagesTextView textStorage] 
+     attribute: NSLinkAttributeName
+     atIndex: NSMaxRange (attrsRange)
+     longestEffectiveRange: &attrsRange inRange: visibleCharRange];
+    
+    if ([linkObject isKindOfClass: [TickerMessage class]])
+      [ranges addObject: [NSValue valueWithRange: attrsRange]];
+  }
+  
+  return ranges;
 }
 
 #pragma mark "Empty Text" sheet delegates
