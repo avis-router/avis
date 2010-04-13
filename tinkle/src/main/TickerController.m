@@ -101,6 +101,28 @@ static NSAttributedString *attributedString (NSString *string,
   [super dealloc];
 }
 
+- (void) addRecentMessage: (TickerMessage *) message
+{
+  while ([recentMessages count] >= MAX_RECENT_MESSAGES)
+    [recentMessages removeObjectAtIndex: 0];
+  
+  [recentMessages addObject: message];
+}
+
+- (TickerMessage *) findRecentMessage: (NSString *) messageId
+{
+  if (messageId)
+  {
+    for (TickerMessage *message in recentMessages)
+    {
+      if ([message->messageId isEqual: messageId])
+        return message;
+    }
+  }
+  
+  return nil;
+}
+
 #pragma mark -
 
 - (void) awakeFromNib
@@ -229,28 +251,6 @@ static NSAttributedString *attributedString (NSString *string,
        postNotificationName: TickerMessageStoppedEditingNotification 
        object: self userInfo: nil];
   }
-}
-
-- (void) addRecentMessage: (TickerMessage *) message
-{
-  while ([recentMessages count] >= MAX_RECENT_MESSAGES)
-    [recentMessages removeObjectAtIndex: 0];
-  
-  [recentMessages addObject: message];
-}
-
-- (TickerMessage *) findRecentMessage: (NSString *) messageId
-{
-  if (messageId)
-  {
-    for (TickerMessage *message in recentMessages)
-    {
-      if ([message->messageId isEqual: messageId])
-        return message;
-    }
-  }
-  
-  return nil;
 }
 
 - (void) handleNotify: (NSDictionary *) ntfn
