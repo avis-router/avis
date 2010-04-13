@@ -688,15 +688,14 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
-- (void) mouseEnteredLink: (NSRange) linkRange
-               ofTextView: (NSTextView *) view
+- (void) mouseEnteredLink: (NSRange) linkRange ofTextView: (NSTextView *) view
 {
-  NSTextStorage *textStorage = [tickerMessagesTextView textStorage];
+  NSTextStorage *text = [tickerMessagesTextView textStorage];
   NSArray *linkRanges = [self visibleMessageLinkRanges];
   
   NSDictionary *threadAttributes = 
-  [NSDictionary dictionaryWithObject: [NSColor lightGrayColor] 
-                              forKey: NSBackgroundColorAttributeName];
+    [NSDictionary dictionaryWithObject: [NSColor lightGrayColor] 
+                                forKey: NSBackgroundColorAttributeName];
   
   TickerMessage *active = [self messageLinkAtIndex: linkRange.location];
   
@@ -704,7 +703,7 @@ static NSAttributedString *attributedString (NSString *string,
   for (NSValue *range in linkRanges)
   {
     TickerMessage *message = 
-    [self messageLinkAtIndex: [range rangeValue].location];
+      [self messageLinkAtIndex: [range rangeValue].location];
     
     if ([message->inReplyTo isEqual: active->messageId])
       active = message;
@@ -714,32 +713,31 @@ static NSAttributedString *attributedString (NSString *string,
   for (NSValue *range in [linkRanges reverseObjectEnumerator])
   {
     TickerMessage *message = 
-    [self messageLinkAtIndex: [range rangeValue].location];
+      [self messageLinkAtIndex: [range rangeValue].location];
     
     if (message == active || [active->inReplyTo isEqual: message->messageId])
     {
-      [textStorage addAttributes: threadAttributes range: [range rangeValue]];
+      [text addAttributes: threadAttributes range: [range rangeValue]];
       
       active = message;
     } else
     {
-      [textStorage removeAttribute: NSBackgroundColorAttributeName 
-                             range: [range rangeValue]];
+      [text removeAttribute: NSBackgroundColorAttributeName 
+                      range: [range rangeValue]];
     }
   }
 }
 
-- (void) mouseExitedLink: (NSRange) linkRange
-              ofTextView: (NSTextView *) view
+- (void) mouseExitedLink: (NSRange) linkRange ofTextView: (NSTextView *) view
 {
   // TODO: scrolled messages won't be affected by this
-  NSTextStorage *textStorage = [tickerMessagesTextView textStorage];
+  NSTextStorage *text = [tickerMessagesTextView textStorage];
   NSArray *linkRanges = [self visibleMessageLinkRanges];
   
   for (NSValue *range in linkRanges)
   {
-    [textStorage removeAttribute: NSBackgroundColorAttributeName 
-                           range: [range rangeValue]];
+    [text removeAttribute: NSBackgroundColorAttributeName 
+                    range: [range rangeValue]];
   }  
 }
 
