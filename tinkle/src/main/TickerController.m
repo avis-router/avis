@@ -64,7 +64,7 @@ static NSAttributedString *attributedString (NSString *string,
   - (void) emptyMessageCheckDidEnd: (NSAlert *) alert returnCode: (int) code
            contextInfo: (void *) contextInfo;
   - (void) handleSubscribeError: (NSError *) error;
-  - (id) linkAtRange: (NSRange) range;
+  - (id) messageLinkAtIndex: (NSUInteger) index;
   - (NSArray *) visibleMessageLinkRanges;
 @end
 
@@ -384,34 +384,47 @@ static NSAttributedString *attributedString (NSString *string,
             ofTextView: (NSTextView *) view
 {
   NSTextStorage *textStorage = [tickerMessagesTextView textStorage];
-  TickerMessage *root =  [self linkAtRange: linkRange];
   NSArray *linkRanges = [self visibleMessageLinkRanges];
 
   NSDictionary *threadAttributes = 
-    [NSDictionary dictionaryWithObject: [NSColor redColor] 
+    [NSDictionary dictionaryWithObject: [NSColor lightGrayColor] 
                                 forKey: NSBackgroundColorAttributeName];
-  
+
+  TickerMessage *active = [self messageLinkAtIndex: linkRange.location];
+
+  // reverse back up chain to leaf message
+  for (NSValue *range in linkRanges)
+  {
+    TickerMessage *message = 
+      [self messageLinkAtIndex: [range rangeValue].location];
+    
+    if ([message->inReplyTo isEqual: active->messageId])
+      active = message;
+  }
+
+  // highlight messages in thread
   for (NSValue *range in [linkRanges reverseObjectEnumerator])
   {
-    TickerMessage *message = [self linkAtRange: [range rangeValue]];
+    TickerMessage *message = [self messageLinkAtIndex: [range rangeValue].location];
 
-    if (message == root || [message->messageId isEqual: root->inReplyTo])
+    if (message == active || [active->inReplyTo isEqual: message->messageId])
     {
       [textStorage addAttributes: threadAttributes range: [range rangeValue]];
       
-      root = message;
+      active = message;
     } else
     {
-      [textStorage removeAttribute: NSBackgroundColorAttributeName range: [range rangeValue]];
+      [textStorage removeAttribute: NSBackgroundColorAttributeName 
+                             range: [range rangeValue]];
     }
   }
 }
 
-- (id) linkAtRange: (NSRange) range
+- (id) messageLinkAtIndex: (NSUInteger) index
 {
-  NSTextStorage *textStorage = [tickerMessagesTextView textStorage];
+  NSTextStorage *text = [tickerMessagesTextView textStorage];
   
-  return [textStorage attribute: NSLinkAttributeName atIndex: range.location
+  return [text attribute: NSLinkAttributeName atIndex: index 
           effectiveRange: nil];     
 }
 
