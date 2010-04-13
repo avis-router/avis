@@ -83,6 +83,7 @@ static NSString *listToParameterString (NSArray *list)
   - (void) resetLivenessTimer;
   - (void) startAutoAwayTimer;
   - (void) stopAutoAwayTimer;
+  - (void) setPresenceStatusSilently: (PresenceStatus *) newStatus;
 @end
 
 @implementation PresenceConnection
@@ -166,12 +167,14 @@ static NSString *listToParameterString (NSArray *list)
 {
   if (![userName isEqual: newUserName])
   {
+    self.presenceStatus = [PresenceStatus offlineStatus];
+ 
     userName = [newUserName retain];
     
     [elvin resubscribe: presenceRequestSubscription
-       usingSubscription: [self presenceRequestSubscription]];
-    
-    [self emitPresenceInfo];
+           usingSubscription: [self presenceRequestSubscription]];
+
+    self.presenceStatus = [PresenceStatus onlineStatus];
   }
 }
 
