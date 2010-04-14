@@ -678,6 +678,8 @@ static NSAttributedString *attributedString (NSString *string,
  */
 - (NSString *) inReplyToTooltip
 {
+  // TODO: handle messages from more than 24 hours ago
+  
   if (inReplyTo)
   {
     NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
@@ -686,7 +688,7 @@ static NSAttributedString *attributedString (NSString *string,
     [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
     
     return [NSString stringWithFormat: 
-            @"Send as reply to %@'s message received at %@", 
+            @"Replying to %@'s message received at %@", 
             inReplyTo->from, 
             [dateFormatter stringFromDate: inReplyTo->receivedAt]];
   } else
