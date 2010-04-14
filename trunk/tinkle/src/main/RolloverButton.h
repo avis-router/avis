@@ -5,6 +5,6 @@
   NSImage *originalImage;
 }
 
-- (void) setRollover: (BOOL) rolledOver;
+@property (readwrite, assign) IBOutlet BOOL rollover;
 
 @end
