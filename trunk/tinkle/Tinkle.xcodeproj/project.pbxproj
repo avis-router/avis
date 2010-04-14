@@ -25,6 +25,8 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C90C275D0F6A1BE5003DE2BE /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90C275C0F6A1BE5003DE2BE /* IOKit.framework */; };
+		C9222CB711758A9200EFFF2C /* ImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C9222CB611758A9200EFFF2C /* ImageAndTextCell.m */; };
+		C9222CD611758CE800EFFF2C /* PresenceEntityNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C9222CD511758CE800EFFF2C /* PresenceEntityNameCell.m */; };
 		C92392470F7F7BC30083FC13 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392230F7F7BC30083FC13 /* AppController.m */; };
 		C92392480F7F7BC30083FC13 /* DragTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392250F7F7BC30083FC13 /* DragTarget.m */; };
 		C92392490F7F7BC30083FC13 /* ElvinConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392270F7F7BC30083FC13 /* ElvinConnection.m */; };
@@ -131,6 +133,10 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Tinkle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tinkle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C90C275C0F6A1BE5003DE2BE /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		C9222CB511758A9200EFFF2C /* ImageAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageAndTextCell.h; path = src/main/ImageAndTextCell.h; sourceTree = "<group>"; };
+		C9222CB611758A9200EFFF2C /* ImageAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageAndTextCell.m; path = src/main/ImageAndTextCell.m; sourceTree = "<group>"; };
+		C9222CD411758CE800EFFF2C /* PresenceEntityNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceEntityNameCell.h; path = src/main/PresenceEntityNameCell.h; sourceTree = "<group>"; };
+		C9222CD511758CE800EFFF2C /* PresenceEntityNameCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceEntityNameCell.m; path = src/main/PresenceEntityNameCell.m; sourceTree = "<group>"; };
 		C923915D0F7F01D40083FC13 /* Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C923915E0F7F01D40083FC13 /* Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Unit Tests-Info.plist"; sourceTree = "<group>"; };
 		C92392220F7F7BC30083FC13 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = src/main/AppController.h; sourceTree = "<group>"; };
@@ -249,6 +255,8 @@
 				C92392270F7F7BC30083FC13 /* ElvinConnection.m */,
 				C923922F0F7F7BC30083FC13 /* PresenceConnection.m */,
 				C92392310F7F7BC30083FC13 /* PresenceController.m */,
+				C9222CD411758CE800EFFF2C /* PresenceEntityNameCell.h */,
+				C9222CD511758CE800EFFF2C /* PresenceEntityNameCell.m */,
 				C934AA300FC2489D003C2B41 /* PresenceStatusFormatter.m */,
 				C92392330F7F7BC30083FC13 /* PresenceEntity.m */,
 				C92392390F7F7BC30083FC13 /* PresenceStatus.m */,
@@ -261,6 +269,8 @@
 				C92392250F7F7BC30083FC13 /* DragTarget.m */,
 				C923923E0F7F7BC30083FC13 /* RolloverButton.m */,
 				C92392400F7F7BC30083FC13 /* TextViewWithLinks.m */,
+				C9222CB511758A9200EFFF2C /* ImageAndTextCell.h */,
+				C9222CB611758A9200EFFF2C /* ImageAndTextCell.m */,
 				C923923C0F7F7BC30083FC13 /* RHSystemIdleTimer.m */,
 			);
 			name = Classes;
@@ -603,6 +613,8 @@
 				C934A82C0FC11E79003C2B41 /* RelativeDateFormatter.m in Sources */,
 				C934AA320FC2489D003C2B41 /* PresenceStatusFormatter.m in Sources */,
 				C9D10E2E0FC3A08800BC77E7 /* TickerMessage.m in Sources */,
+				C9222CB711758A9200EFFF2C /* ImageAndTextCell.m in Sources */,
+				C9222CD611758CE800EFFF2C /* PresenceEntityNameCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
