@@ -667,7 +667,7 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../avis/c/platforms/macosx/build/Release\"",
+					"\"$(SRCROOT)/../../avis/client/c/platforms/macosx/build/Release\"",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -689,7 +689,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../avis/c/platforms/macosx/build/Release\"",
+					"\"$(SRCROOT)/../../avis/client/c/platforms/macosx/build/Release\"",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
