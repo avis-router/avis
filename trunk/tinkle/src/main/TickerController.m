@@ -613,8 +613,8 @@ static NSAttributedString *attributedString (NSString *string,
        url, NSLinkAttributeName, nil];
 
     NSAttributedString *urlText = 
-     [[[NSAttributedString alloc] 
-       initWithString: [url absoluteString] attributes: linkAttrs] autorelease];
+      [[[NSAttributedString alloc] 
+        initWithString: [url absoluteString] attributes: linkAttrs] autorelease];
 
     [attachedUrlLabel setAttributedStringValue: urlText];
 
@@ -863,10 +863,8 @@ static NSAttributedString *attributedString (NSString *string,
  */
 - (id) linkAtIndex: (NSUInteger) index
 {
-  NSTextStorage *text = [tickerMessagesTextView textStorage];
-  
-  return [text attribute: NSLinkAttributeName atIndex: index 
-          effectiveRange: nil];     
+  return [[tickerMessagesTextView textStorage] 
+            attribute: NSLinkAttributeName atIndex: index effectiveRange: nil];     
 }
 
 /**
@@ -932,12 +930,8 @@ static NSAttributedString *attributedString (NSString *string,
   
   if (highlighted)
   {
-    NSDictionary *threadAttributes = 
-      [NSDictionary dictionaryWithObject: color (255, 234, 168)
-                                  forKey: NSBackgroundColorAttributeName];
-    
-
-    [text addAttributes: threadAttributes range: range];
+    [text addAttribute: NSBackgroundColorAttributeName 
+          value: color (255, 234, 168) range: range];
   } else
   {
     [text removeAttribute: NSBackgroundColorAttributeName range: range];
