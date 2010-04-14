@@ -2,9 +2,14 @@
 
 @implementation RolloverButton
 
++ (void) initialize
+{
+  [self exposeBinding: @"rollover"];
+}
+   
 - (void) updateTrackingAreas
 {
-  [self setRollover: NO];
+  self.rollover = NO;
   
   for (NSTrackingArea *area in [self trackingAreas])
   {
@@ -50,14 +55,19 @@
   }
 }
 
+- (BOOL) rollover
+{
+  return originalImage != nil;
+}
+
 - (void) mouseEntered: (NSEvent *) event
 {
-  [self setRollover: YES];
+  self.rollover = YES;
 }
 
 - (void) mouseExited: (NSEvent *) event
 {
-  [self setRollover: NO];
+  self.rollover = NO;
 }
 
 @end
