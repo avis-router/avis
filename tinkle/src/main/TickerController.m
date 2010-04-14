@@ -803,9 +803,9 @@ static NSAttributedString *attributedString (NSString *string,
   {
     TickerMessage *message = link;
     
-    return [NSString stringWithFormat: @"Public: %@\nSecure: %@\nClient: %@", 
-              message->public ? @"Yes" : @"No",
-              message->secure ? @"Yes" : @"No",
+    return [NSString stringWithFormat: @"Visibility: %@%@\nClient: %@", 
+              message->public ? @"Public, " : @"",
+              message->secure ? @"Secure" : @"Not Secure",
               message->userAgent ? message->userAgent : @"Unknown"];
   } else
   {
