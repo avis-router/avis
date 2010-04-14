@@ -11,12 +11,8 @@ NSString *PresenceUserWasDoubleClicked = @"PresenceUserWasDoubleClicked";
 
 - (id) initWithAppController: (AppController *) theAppController
 {
-  self = [super initWithWindowNibName: @"PresenceWindow"];
-  
-  if (self)
-  {
+  if (self = [super initWithWindowNibName: @"PresenceWindow"])
     appController = theAppController;    
-  }
   
   return self;
 }
