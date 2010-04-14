@@ -48,41 +48,27 @@ static NSAttributedString *attributedString (NSString *string,
     withDefaultAttributes: (NSDictionary *) defaultAttrs
 {
   PresenceStatus *status = value; 
-  NSDictionary *statusAttrs;
-  
-  if (status.statusCode == ONLINE)
-  {
-    statusAttrs = 
-      [NSDictionary dictionaryWithObject: color (0, 128, 64) 
-                                  forKey: NSForegroundColorAttributeName];
-  } else if (status.statusCode == MAYBE_UNAVAILABLE || 
-             status.statusCode == COFFEE)
-  {
-    statusAttrs = 
-      [NSDictionary dictionaryWithObject: color (217, 153, 0) 
-                                  forKey: NSForegroundColorAttributeName];
-  } else
-  {
-    statusAttrs = 
-      [NSDictionary dictionaryWithObject: color (102, 102, 102) 
-                                  forKey: NSForegroundColorAttributeName];
-    
-  }
-  
   NSFont *baseFont = [defaultAttrs valueForKey: NSFontAttributeName];
   NSFont *durationFont = 
     [[NSFontManager sharedFontManager] 
       convertFont: baseFont toSize: ([baseFont pointSize] - 2)];
+    
+  NSColor *baseForeground = 
+    [defaultAttrs valueForKey: NSForegroundColorAttributeName];
+  
+  BOOL selectedRow = 
+    [[baseForeground colorNameComponent] isEqual: 
+       @"alternateSelectedControlTextColor"];
   
   NSDictionary *durationAttrs = 
     [NSDictionary dictionaryWithObjectsAndKeys: 
-     color (153, 153, 153), NSForegroundColorAttributeName,
+     selectedRow ? baseForeground : color (153, 153, 153), NSForegroundColorAttributeName,
      durationFont, NSFontAttributeName, nil];
   
   NSMutableAttributedString *string = 
     [[NSMutableAttributedString new] autorelease]; 
   
-  [string appendAttributedString: attributedString (status.statusText, statusAttrs)];
+  [string appendAttributedString: attributedString (status.statusText, defaultAttrs)];
   [string appendAttributedString: attributedString (@" (", durationAttrs)];
   [string appendAttributedString: 
     attributedString ([durationFormatter stringForObjectValue: status.changedAt], durationAttrs)];
