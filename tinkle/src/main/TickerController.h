@@ -28,6 +28,7 @@ extern NSString * TickerMessageStoppedEditingNotification;
   NSString *        subscription;
   id                subscriptionContext;
   TickerMessage   * inReplyTo;
+  NSRange           inReplyToHighlightedRange;
   NSMutableArray  * recentMessages;
   BOOL              allowPublic;
   BOOL              allowInsecure;
@@ -41,6 +42,7 @@ extern NSString * TickerMessageStoppedEditingNotification;
 @property (readwrite, assign) IBOutlet BOOL            allowPublic;
 @property (readwrite, assign) IBOutlet BOOL            allowInsecure;
 @property (readwrite, assign) IBOutlet BOOL            canSend;
+@property (readwrite, assign) IBOutlet BOOL            highlightReplyTo;
 @property (readonly) NSString *inReplyToTooltip;
 
 - (id) initWithElvin: (ElvinConnection *) theElvinConnection 

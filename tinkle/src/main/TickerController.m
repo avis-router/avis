@@ -72,6 +72,8 @@ static NSAttributedString *attributedString (NSString *string,
   - (NSArray *) visibleMessageLinkRanges;
   - (void) addRecentMessage: (TickerMessage *) message;
   - (TickerMessage *) findRecentMessage: (NSString *) messageId;
+  - (NSValue *) rangeForMessage: (TickerMessage *) message;
+  - (void) highlightRange: (NSRange) range highlighted: (BOOL) highlighted;
 @end
 
 @implementation TickerController
@@ -146,12 +148,16 @@ static NSAttributedString *attributedString (NSString *string,
   self.canSend = [elvin isConnected];
   
   tickerIsEditing = NO;
-    
+  
   [tickerGroupsController 
     setSortDescriptors: 
      [NSArray arrayWithObject: 
        [[NSSortDescriptor alloc] initWithKey: @"" ascending: YES
         selector: @selector (caseInsensitiveCompare:)]]];
+  
+  // trigger highlight of reply-to message on rollover
+  [self bind: @"highlightReplyTo" toObject: replyButton
+        withKeyPath: @"rollover" options: nil];
 }
 
 - (void) windowDidLoad
@@ -689,6 +695,34 @@ static NSAttributedString *attributedString (NSString *string,
   }
 }
 
+- (void) setHighlightReplyTo: (BOOL) highlight
+{
+  if (highlight)
+  {
+    NSValue *range = [self rangeForMessage: inReplyTo];
+    
+    if (range)
+    {
+      inReplyToHighlightedRange = [range rangeValue];
+    
+      [self highlightRange: inReplyToHighlightedRange highlighted: YES];
+    }
+  } else
+  {
+    if (inReplyToHighlightedRange.length > 0)
+    {
+      [self highlightRange: inReplyToHighlightedRange highlighted: NO];
+      
+      inReplyToHighlightedRange.length = 0;
+    }
+  }
+}
+
+- (BOOL) highlightReplyTo
+{
+  return inReplyToHighlightedRange.length > 0;
+}
+
 @synthesize inReplyTo;
 
 @synthesize allowPublic;
@@ -781,13 +815,7 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) mouseEnteredLink: (NSRange) linkRange ofTextView: (NSTextView *) view
 {
-  NSTextStorage *text = [tickerMessagesTextView textStorage];
-  NSArray *linkRanges = [self visibleMessageLinkRanges];
-  
-  NSDictionary *threadAttributes = 
-    [NSDictionary dictionaryWithObject: color (255, 234, 168)
-                                forKey: NSBackgroundColorAttributeName];
-  
+  NSArray *linkRanges = [self visibleMessageLinkRanges];  
   TickerMessage *active = [self linkAtIndex: linkRange.location];
   
   // walk forwards down chain to leaf message
@@ -808,13 +836,12 @@ static NSAttributedString *attributedString (NSString *string,
     
     if (message == active || [active->inReplyTo isEqual: message->messageId])
     {
-      [text addAttributes: threadAttributes range: [range rangeValue]];
-      
       active = message;
+      
+      [self highlightRange: [range rangeValue] highlighted: YES];
     } else
     {
-      [text removeAttribute: NSBackgroundColorAttributeName 
-                      range: [range rangeValue]];
+      [self highlightRange: [range rangeValue] highlighted: NO];
     }
   }
 }
@@ -822,15 +849,12 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) mouseExitedLink: (NSRange) linkRange ofTextView: (NSTextView *) view
 {
   // TODO: scrolled messages won't be affected by this
-  NSTextStorage *text = [tickerMessagesTextView textStorage];
-  NSArray *linkRanges = [self visibleMessageLinkRanges];
-  
-  for (NSValue *range in linkRanges)
-  {
-    [text removeAttribute: NSBackgroundColorAttributeName 
-                    range: [range rangeValue]];
-  }  
+  for (NSValue *range in [self visibleMessageLinkRanges])
+    [self highlightRange: [range rangeValue] highlighted: NO];
 }
+
+#pragma mark -
+#pragma mark Text area querying
 
 /**
  * The link attribute (if any) at the given index in the text view.
@@ -880,6 +904,42 @@ static NSAttributedString *attributedString (NSString *string,
   }
   
   return ranges;
+}
+
+/**
+ * The range for a message. Message must be visible.
+ */
+- (NSValue *) rangeForMessage: (TickerMessage *) message
+{
+  NSArray *linkRanges = [self visibleMessageLinkRanges];  
+  
+  for (NSValue *range in linkRanges)
+  {
+    TickerMessage *m = [self linkAtIndex: [range rangeValue].location];
+    
+    if ([m->messageId isEqual: message->messageId])
+      return range;
+  }
+  
+  return nil;
+}
+
+- (void) highlightRange: (NSRange) range highlighted: (BOOL) highlighted
+{
+  NSTextStorage *text = [tickerMessagesTextView textStorage];
+  
+  if (highlighted)
+  {
+    NSDictionary *threadAttributes = 
+      [NSDictionary dictionaryWithObject: color (255, 234, 168)
+                                  forKey: NSBackgroundColorAttributeName];
+    
+
+    [text addAttributes: threadAttributes range: range];
+  } else
+  {
+    [text removeAttribute: NSBackgroundColorAttributeName range: range];
+  }
 }
 
 #pragma mark "Empty Text" sheet delegates
