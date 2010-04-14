@@ -195,11 +195,9 @@
 
 - (void) underline: (NSRange) range underlined: (BOOL) isUnderlined
 {
-  NSDictionary *linkAttributes = 
-    [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: isUnderlined] 
-      forKey: NSUnderlineStyleAttributeName];
-  
-  [[self textStorage] addAttributes: linkAttributes range: range];
+  [[self textStorage]
+    addAttribute: NSUnderlineStyleAttributeName 
+    value: [NSNumber numberWithBool: isUnderlined] range: range];
 }
 
 @end
