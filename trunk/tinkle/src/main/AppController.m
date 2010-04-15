@@ -17,6 +17,13 @@
 static void observe (id observer, NSUserDefaultsController *prefs, 
                      NSString *property);
 
+void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
+{
+  [prefs addObserver: observer 
+          forKeyPath: [NSString stringWithFormat: @"values.%@", property]
+             options: 0 context: observer];
+}
+
 #pragma mark Declare Private Methods
 
 @interface AppController (Private)
@@ -121,14 +128,13 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   [notifications addObserver: self selector: @selector (handleElvinClose:)
                         name: ElvinConnectionClosedNotification object: nil]; 
 
+  // application activated
   [notifications addObserver: self selector: @selector (handleAppActivated:)
                         name: NSApplicationDidBecomeActiveNotification object: nil]; 
 
-  // application activated
+  // listen for ticker messages
   [notifications addObserver: self selector: @selector (handleTickerMessage:)
                         name: TickerMessageReceivedNotification object: nil];
-
-  // listen for ticker messages
 
   // listen for ticker message edit start/stop
   [notifications addObserver: self selector: @selector (handleTickerEditStart:)
@@ -157,13 +163,6 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   [[NSApp dockTile] display];
 }
 
-void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
-{
-  [prefs addObserver: observer 
-          forKeyPath: [NSString stringWithFormat: @"values.%@", property]
-             options: 0 context: observer];
-}
-
 - (void) applicationWillTerminate: (NSNotification *) notification 
 {
   [self disconnect];
@@ -176,7 +175,8 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
  * Handle preference changes.
  */
 - (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
-                         change: (NSDictionary *) change context: (void *) context
+                         change: (NSDictionary *) change
+                        context: (void *) context
 {
   if (context == self)
   {
@@ -226,18 +226,18 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   [self showNotConnectedDockBadgeAfterDelay];
 }
 
-- (void) showNotConnectedDockBadgeAfterDelay
-{
-  [self performSelector: @selector (showNotConnectedDockBadge) 
-             withObject: nil afterDelay: 5];
-}
-
 - (void) disconnect
 {
   [elvin disconnect];
   
   [NSObject cancelPreviousPerformRequestsWithTarget: self 
     selector: @selector (showNotConnectedDockBadge) object: nil];
+}
+
+- (void) showNotConnectedDockBadgeAfterDelay
+{
+  [self performSelector: @selector (showNotConnectedDockBadge) 
+             withObject: nil afterDelay: 5];
 }
 
 - (void) showNotConnectedDockBadge
@@ -481,7 +481,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 - (BOOL) shouldMuteGrowl
 {
   return presence.presenceStatus.statusCode == UNAVAILABLE &&
-  [presence.presenceStatus isEqual: [PresenceStatus doNotDisturbStatus]];
+    [presence.presenceStatus isEqual: [PresenceStatus doNotDisturbStatus]];
 }
 
 /**
