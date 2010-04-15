@@ -13,8 +13,8 @@ static NSAttributedString *attributedString (NSString *string,
                                              NSDictionary *attrs)
 {
   return 
-  [[[NSAttributedString alloc] initWithString: string attributes: attrs] 
-   autorelease];
+    [[[NSAttributedString alloc] initWithString: string attributes: attrs] 
+       autorelease];
 }
 
 @implementation PresenceStatusFormatter
@@ -23,9 +23,9 @@ static NSAttributedString *attributedString (NSString *string,
 {
   if (!(self = [super init]))
     return nil;
-  
+
   durationFormatter = [[RelativeDateFormatter alloc] init];
-  
+
   return self;
 }
 
@@ -36,17 +36,34 @@ static NSAttributedString *attributedString (NSString *string,
   [super dealloc];
 }
 
+- (BOOL) getObjectValue: (id *) obj forString: (NSString *) string 
+         errorDescription: (NSString  **) error
+{
+  return NO;
+}
+
 - (NSString *) stringForObjectValue: (id) value
 {
-  if (![value isKindOfClass: [PresenceEntity class]])
+  if (![value isKindOfClass: [PresenceStatus class]])
     return nil;
-
-  return [value name];
+ 
+  // generate plain text version of attributedStringForObjectValue
+  NSAttributedString *strValue = 
+    [self attributedStringForObjectValue: value 
+       withDefaultAttributes: 
+         [NSDictionary dictionaryWithObjectsAndKeys: 
+           [NSFont systemFontOfSize: 12], NSFontAttributeName,
+           [NSColor selectedTextColor], NSForegroundColorAttributeName, nil]];
+  
+  return [strValue string];
 }
 
 - (NSAttributedString *) attributedStringForObjectValue: (id) value
     withDefaultAttributes: (NSDictionary *) defaultAttrs
 {
+  if (![value isKindOfClass: [PresenceStatus class]])
+    return nil;
+  
   PresenceStatus *status = value; 
   NSFont *baseFont = [defaultAttrs valueForKey: NSFontAttributeName];
   NSFont *durationFont = 
