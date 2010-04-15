@@ -28,6 +28,7 @@ static void observe (id observer, NSUserDefaultsController *prefs,
   - (NSString *) createTickerSubscription;
   - (void) showNotConnectedDockBadgeAfterDelay;
   - (BOOL) isTickerActive;
+  - (BOOL) shouldMuteGrowl;
   - (void) handleAppActivated: (NSNotification *) notification;
   - (void) incrementUnreadMessageCount;
   - (void) clearUnreadMessageCount;
@@ -477,6 +478,12 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
          [[NSApplication sharedApplication] isActive];
 }
 
+- (BOOL) shouldMuteGrowl
+{
+  return presence.presenceStatus.statusCode == UNAVAILABLE &&
+  [presence.presenceStatus isEqual: [PresenceStatus doNotDisturbStatus]];
+}
+
 /**
  * Handle app and ticker activatation: clear unread count.
  */
@@ -521,6 +528,10 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   if (![self isTickerActive])
     [self incrementUnreadMessageCount];
   
+  // no growling when in DND mode
+  if ([self shouldMuteGrowl])
+    return;
+  
   TickerMessage *message = [[notification userInfo] valueForKey: @"message"];
   
   NSString *description =
@@ -561,6 +572,10 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 
 - (void) handlePresenceChange: (NSNotification *) notification
 {
+  // no growling when in DND mode
+  if ([self shouldMuteGrowl])
+    return;
+  
   PresenceEntity *user = [[notification userInfo] valueForKey: @"user"];
   
   NSString *statusCode = user.status.statusCodeAsUIString;
@@ -589,7 +604,9 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   if ([context isEqual: @"message"])
     [self showTickerWindow: self];
   else if ([context isEqual: @"presence_status"])
-    [self showPresenceWindow: self];  
+    [self showPresenceWindow: self];
+  
+  [self clearUnreadMessageCount];
 }
 
 - (void) registerForPresenceChangesAfterDelay
