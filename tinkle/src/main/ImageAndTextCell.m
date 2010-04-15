@@ -42,6 +42,16 @@
 
 #define H_MARGIN 3
 
+static void CenterRect (NSRect containingRect, NSSize size, 
+                        NSRect *centeredRect)
+{
+  centeredRect->size = size;
+  centeredRect->origin = 
+    NSMakePoint 
+      (containingRect.origin.x + (containingRect.size.width - size.width) / 2,
+       containingRect.origin.y + (containingRect.size.height - size.height) / 2);
+}
+
 @implementation ImageAndTextCell
 
 - (void) dealloc
@@ -116,15 +126,6 @@
                   length: selLength];
 }
 
-void CenterRect (NSRect containingRect, NSSize size, NSRect *centeredRect)
-{
-  centeredRect->size = size;
-  centeredRect->origin = 
-    NSMakePoint 
-      (containingRect.origin.x + (containingRect.size.width - size.width) / 2,
-       containingRect.origin.y + (containingRect.size.height - size.height) / 2);
-}
-
 - (void) drawWithFrame: (NSRect) cellFrame inView: (NSView *) controlView
 {
   if (image != nil)
@@ -142,7 +143,6 @@ void CenterRect (NSRect containingRect, NSSize size, NSRect *centeredRect)
     }
 
     imageFrame.origin.x += H_MARGIN;
-    imageFrame.origin.y -= 1;
     imageFrame.size = imageSize;
 
     CenterRect (imageFrame, imageSize, &imageFrame);
