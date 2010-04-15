@@ -129,7 +129,6 @@
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ticker_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Tinkle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tinkle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C90C275C0F6A1BE5003DE2BE /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
@@ -137,6 +136,7 @@
 		C9222CB611758A9200EFFF2C /* ImageAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageAndTextCell.m; path = src/main/ImageAndTextCell.m; sourceTree = "<group>"; };
 		C9222CD411758CE800EFFF2C /* PresenceEntityNameCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceEntityNameCell.h; path = src/main/PresenceEntityNameCell.h; sourceTree = "<group>"; };
 		C9222CD511758CE800EFFF2C /* PresenceEntityNameCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PresenceEntityNameCell.m; path = src/main/PresenceEntityNameCell.m; sourceTree = "<group>"; };
+		C9222E911176E33E00EFFF2C /* Tinkle_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tinkle_Prefix.pch; sourceTree = "<group>"; };
 		C923915D0F7F01D40083FC13 /* Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C923915E0F7F01D40083FC13 /* Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Unit Tests-Info.plist"; sourceTree = "<group>"; };
 		C92392220F7F7BC30083FC13 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = src/main/AppController.h; sourceTree = "<group>"; };
@@ -324,9 +324,9 @@
 			isa = PBXGroup;
 			children = (
 				C92392280F7F7BC30083FC13 /* main.m */,
-				32CA4F630368D1EE00C91783 /* ticker_Prefix.pch */,
 				C92392450F7F7BC30083FC13 /* utils.h */,
 				C92392460F7F7BC30083FC13 /* utils.m */,
+				C9222E911176E33E00EFFF2C /* Tinkle_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -667,8 +667,7 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../avis/client/c/platforms/macosx/build/Release\"",
+					"\"$(SRCROOT)/Frameworks\"/**",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -689,8 +688,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../avis/client/c/platforms/macosx/build/Release\"",
+					"\"$(SRCROOT)/Frameworks\"/**",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
