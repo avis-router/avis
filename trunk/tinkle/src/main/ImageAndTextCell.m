@@ -40,6 +40,8 @@
 
 #import "ImageAndTextCell.h"
 
+#define H_MARGIN 3
+
 @implementation ImageAndTextCell
 
 - (void) dealloc
@@ -77,7 +79,7 @@
     NSRect imageFrame;
     imageFrame.size = [image size];
     imageFrame.origin = cellFrame.origin;
-    imageFrame.origin.x += 3;
+    imageFrame.origin.x += H_MARGIN;
     imageFrame.origin.y += 
       ceil ((cellFrame.size.height - imageFrame.size.height) / 2);
     return imageFrame;
@@ -94,7 +96,7 @@
   NSRect textFrame, imageFrame;
 
   NSDivideRect (aRect, &imageFrame, &textFrame, 
-                3 + [image size].width, NSMinXEdge);
+                H_MARGIN + [image size].width, NSMinXEdge);
 
   [super editWithFrame: textFrame inView: controlView 
                 editor: textObj delegate: anObject event: theEvent];
@@ -107,23 +109,31 @@
   NSRect textFrame, imageFrame;
 
   NSDivideRect (aRect, &imageFrame, &textFrame, 
-                3 + [image size].width, NSMinXEdge);
+                H_MARGIN + [image size].width, NSMinXEdge);
 
   [super selectWithFrame: textFrame inView: controlView 
                   editor: textObj delegate:anObject start: selStart 
                   length: selLength];
 }
 
+void CenterRect (NSRect containingRect, NSSize size, NSRect *centeredRect)
+{
+  centeredRect->size = size;
+  centeredRect->origin = 
+    NSMakePoint 
+      (containingRect.origin.x + (containingRect.size.width - size.width) / 2,
+       containingRect.origin.y + (containingRect.size.height - size.height) / 2);
+}
+
 - (void) drawWithFrame: (NSRect) cellFrame inView: (NSView *) controlView
 {
   if (image != nil)
   {
-    NSSize  imageSize;
-    NSRect  imageFrame;
+    NSSize imageSize = [image size];
+    NSRect imageFrame;
 
-    imageSize = [image size];
     NSDivideRect (cellFrame, &imageFrame, &cellFrame, 
-                  3 + imageSize.width, NSMinXEdge);
+                  H_MARGIN + imageSize.width, NSMinXEdge);
 
     if ([self drawsBackground])
     {
@@ -131,9 +141,12 @@
       NSRectFill (imageFrame);
     }
 
-    imageFrame.origin.x += 3;
+    imageFrame.origin.x += H_MARGIN;
+    imageFrame.origin.y -= 1;
     imageFrame.size = imageSize;
 
+    CenterRect (imageFrame, imageSize, &imageFrame);
+    
     if ([controlView isFlipped])
     {
       imageFrame.origin.y += 
@@ -155,7 +168,7 @@
 {
   NSSize cellSize = [super cellSize];
 
-  cellSize.width += (image ? [image size].width : 0) + 3;
+  cellSize.width += (image ? [image size].width : 0) + H_MARGIN;
 
   return cellSize;
 }
