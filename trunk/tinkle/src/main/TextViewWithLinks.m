@@ -170,10 +170,13 @@
   NSValue *range = 
     [(NSDictionary *)[[event trackingArea] userInfo] valueForKey: @"range"];
 
-  [self setUnderlinedRange: range];
-  
-  if ([[self delegate] respondsToSelector: @selector (mouseEnteredLink:ofTextView:)])
-    [[self delegate] mouseEnteredLink: [range rangeValue] ofTextView: self];
+  if (range)
+  {
+    [self setUnderlinedRange: range];
+    
+    if ([[self delegate] respondsToSelector: @selector (mouseEnteredLink:ofTextView:)])
+      [[self delegate] mouseEnteredLink: [range rangeValue] ofTextView: self];
+  }
   
   [super mouseEntered: event];
 }
@@ -186,8 +189,9 @@
   {
     NSValue *range = 
       [(NSDictionary *)[[event trackingArea] userInfo] valueForKey: @"range"];
-    
-    [[self delegate] mouseExitedLink: [range rangeValue] ofTextView: self];
+      
+    if (range)
+      [[self delegate] mouseExitedLink: [range rangeValue] ofTextView: self];
   }
 
   [super mouseExited: event];

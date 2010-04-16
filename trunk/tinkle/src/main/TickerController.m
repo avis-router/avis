@@ -885,7 +885,7 @@ static NSAttributedString *attributedString (NSString *string,
 - (id) linkAtIndex: (NSUInteger) index
 {
   return [[tickerMessagesTextView textStorage] 
-            attribute: NSLinkAttributeName atIndex: index effectiveRange: nil];     
+           attribute: NSLinkAttributeName atIndex: index effectiveRange: nil];     
 }
 
 /**
