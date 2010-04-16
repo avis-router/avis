@@ -26,7 +26,7 @@ static void resubscribe (Elvin *elvin, SubscriptionContext *context);
 
 static void set_keys (Elvin *elvin, Keys *keys);
 
-static void notifySubscriptionError (Elvin *elvin, 
+static void handleSubscriptionError (Elvin *elvin, 
                                      SubscriptionContext *context);
 
 static void close_listener (Elvin *elvin, CloseReason reason,
@@ -242,7 +242,7 @@ void subscribe (Elvin *elvin, SubscriptionContext *context)
     NSLog (@"Error while trying to subscribe: %s (%i)", 
            elvin->error.message, elvin->error.code);
     
-    notifySubscriptionError (elvin, context);
+    handleSubscriptionError (elvin, context);
   }
 }
 
@@ -272,36 +272,41 @@ void resubscribe (Elvin *elvin, SubscriptionContext *context)
   {
     NSLog (@"Error while trying to resubscribe: %s (%i)", 
            elvin->error.message, elvin->error.code);
-    
-    notifySubscriptionError (elvin, context);
+ 
+    handleSubscriptionError (elvin, context);
   }
 }
 
-void notifySubscriptionError (Elvin *elvin, SubscriptionContext *context)
+void handleSubscriptionError (Elvin *elvin, SubscriptionContext *context)
 {
-  NSString *message = 
-    [NSString stringWithFormat: 
-      @"You may have entered an invalid subscription in the Preferences.\
-        \n\nMessage from Elvin: %@",
-      [NSString stringWithUTF8String: elvin->error.message]];
-  
-  NSDictionary *info = 
-    [NSDictionary dictionaryWithObjectsAndKeys: 
-       @"Failed to subscribe to ticker messages",
-       NSLocalizedDescriptionKey, 
-       message,
-       NSLocalizedRecoverySuggestionErrorKey, nil];
-  
-  NSError *error =
-    [NSError errorWithDomain: @"elvin" code: elvin->error.code userInfo: info];
+  // on syntax error in user's custom expression, notify and keep on truckin
+  if (elvin->error.code == ELVIN_ERROR_SYNTAX ||
+      elvin->error.code == ELVIN_ERROR_TRIVIAL_EXPRESSION)
+  {
+    NSString *message = 
+      [NSString stringWithFormat: 
+        @"You may have entered an invalid subscription in the Preferences.\
+          \n\nMessage from Elvin: %@",
+        [NSString stringWithUTF8String: elvin->error.message]];
     
-  [error retain];
-  
-  elvin_error_reset (&elvin->error);
-  
-  [context
-    performSelectorOnMainThread: @selector (deliverError:)
-      withObject: error waitUntilDone: NO];
+    NSDictionary *info = 
+      [NSDictionary dictionaryWithObjectsAndKeys: 
+         @"Failed to subscribe to ticker messages",
+         NSLocalizedDescriptionKey, 
+         message,
+         NSLocalizedRecoverySuggestionErrorKey, nil];
+    
+    NSError *error =
+      [NSError errorWithDomain: @"elvin" code: elvin->error.code userInfo: info];
+      
+    [error retain];
+    
+    elvin_error_reset (&elvin->error);
+    
+    [context
+      performSelectorOnMainThread: @selector (deliverError:)
+        withObject: error waitUntilDone: NO];
+  }
 }
 
 void notification_listener (Subscription *sub, 
@@ -622,10 +627,16 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
     for (SubscriptionContext *context in subscriptions)
       subscribe (&elvin, context);
 
-    [[NSNotificationCenter defaultCenter] 
-      postNotificationName: ElvinConnectionOpenedNotification object: self];
-   
-    elvin_add_close_listener (&elvin, (CloseListener)close_listener, self);
+    if (elvin_error_ok (&elvin.error))
+    {
+      [[NSNotificationCenter defaultCenter] 
+        postNotificationName: ElvinConnectionOpenedNotification object: self];
+     
+      elvin_add_close_listener (&elvin, (CloseListener)close_listener, self);
+    } else
+    {
+      elvin_close (&elvin);
+    }
   }
   
   elvin_uri_free (&uri);
