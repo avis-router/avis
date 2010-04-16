@@ -822,6 +822,9 @@ static NSAttributedString *attributedString (NSString *string,
   if (![link isKindOfClass: [TickerMessage class]])
     return;
 
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (hideHighlightedLinks) object: nil];
+
   NSArray *linkRanges = [self visibleMessageLinkRanges];  
   TickerMessage *active = link;
   
@@ -860,6 +863,14 @@ static NSAttributedString *attributedString (NSString *string,
   if (![link isKindOfClass: [TickerMessage class]])
     return;
 
+  // hide links with delay to avoid annoying flashing when moving across
+  // a series of threaded messages
+  [self performSelector: @selector (hideHighlightedLinks) 
+             withObject: nil afterDelay: 0.2];
+}
+
+- (void) hideHighlightedLinks
+{             
   // TODO: scrolled messages won't be affected by this
   for (NSValue *range in [self visibleMessageLinkRanges])
     [self highlightRange: [range rangeValue] highlighted: NO];
