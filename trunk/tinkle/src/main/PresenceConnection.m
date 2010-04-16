@@ -515,7 +515,17 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) clearEntities
 {
+  NSSet *empty = [NSSet set];
+  
+  [self willChangeValueForKey: @"entities" 
+              withSetMutation: NSKeyValueSetSetMutation
+                 usingObjects: empty];
+                 
   [self.entities removeAllObjects];
+  
+  [self didChangeValueForKey: @"entities" 
+             withSetMutation: NSKeyValueSetSetMutation
+                usingObjects: empty];
 }
 
 - (void) refresh
