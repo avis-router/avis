@@ -817,8 +817,13 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) mouseEnteredLink: (NSRange) linkRange ofTextView: (NSTextView *) view
 {
+  id link = [self linkAtIndex: linkRange.location];
+  
+  if (![link isKindOfClass: [TickerMessage class]])
+    return;
+
   NSArray *linkRanges = [self visibleMessageLinkRanges];  
-  TickerMessage *active = [self linkAtIndex: linkRange.location];
+  TickerMessage *active = link;
   
   // walk forwards down chain to leaf message
   for (NSValue *range in linkRanges)
@@ -850,6 +855,11 @@ static NSAttributedString *attributedString (NSString *string,
 
 - (void) mouseExitedLink: (NSRange) linkRange ofTextView: (NSTextView *) view
 {
+  id link = [self linkAtIndex: linkRange.location];
+  
+  if (![link isKindOfClass: [TickerMessage class]])
+    return;
+
   // TODO: scrolled messages won't be affected by this
   for (NSValue *range in [self visibleMessageLinkRanges])
     [self highlightRange: [range rangeValue] highlighted: NO];

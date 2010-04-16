@@ -255,7 +255,6 @@
 				C92392270F7F7BC30083FC13 /* ElvinConnection.m */,
 				C923922F0F7F7BC30083FC13 /* PresenceConnection.m */,
 				C92392310F7F7BC30083FC13 /* PresenceController.m */,
-				C9222CD411758CE800EFFF2C /* PresenceEntityNameCell.h */,
 				C9222CD511758CE800EFFF2C /* PresenceEntityNameCell.m */,
 				C934AA300FC2489D003C2B41 /* PresenceStatusFormatter.m */,
 				C92392330F7F7BC30083FC13 /* PresenceEntity.m */,
@@ -269,7 +268,6 @@
 				C92392250F7F7BC30083FC13 /* DragTarget.m */,
 				C923923E0F7F7BC30083FC13 /* RolloverButton.m */,
 				C92392400F7F7BC30083FC13 /* TextViewWithLinks.m */,
-				C9222CB511758A9200EFFF2C /* ImageAndTextCell.h */,
 				C9222CB611758A9200EFFF2C /* ImageAndTextCell.m */,
 				C923923C0F7F7BC30083FC13 /* RHSystemIdleTimer.m */,
 			);
@@ -377,6 +375,7 @@
 				C92392260F7F7BC30083FC13 /* ElvinConnection.h */,
 				C923922E0F7F7BC30083FC13 /* PresenceConnection.h */,
 				C92392300F7F7BC30083FC13 /* PresenceController.h */,
+				C9222CD411758CE800EFFF2C /* PresenceEntityNameCell.h */,
 				C934AA310FC2489D003C2B41 /* PresenceStatusFormatter.h */,
 				C92392320F7F7BC30083FC13 /* PresenceEntity.h */,
 				C92392380F7F7BC30083FC13 /* PresenceStatus.h */,
@@ -389,6 +388,7 @@
 				C92392240F7F7BC30083FC13 /* DragTarget.h */,
 				C923923D0F7F7BC30083FC13 /* RolloverButton.h */,
 				C923923F0F7F7BC30083FC13 /* TextViewWithLinks.h */,
+				C9222CB511758A9200EFFF2C /* ImageAndTextCell.h */,
 				C923923B0F7F7BC30083FC13 /* RHSystemIdleTimer.h */,
 			);
 			name = Headers;
