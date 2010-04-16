@@ -8,6 +8,7 @@
 
 @optional
 
+- (NSString *) toolTipForLink: (id) link view: (NSTextView *) view;
 - (void) mouseEnteredLink: (NSRange) linkRange ofTextView: (NSTextView *) view;
 - (void) mouseExitedLink: (NSRange) linkRange ofTextView: (NSTextView *) view;
 
