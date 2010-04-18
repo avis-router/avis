@@ -11,7 +11,7 @@
 			<string key="NS.object.0">762</string>
 		</object>
 		<array class="NSMutableArray" key="IBDocument.EditedObjectIDs">
-			<integer value="4"/>
+			<integer value="1"/>
 		</array>
 		<array key="IBDocument.PluginDependencies">
 			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -28,7 +28,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSWindowTemplate" id="1005">
-				<int key="NSWindowStyleMask">11</int>
+				<int key="NSWindowStyleMask">4363</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{742, 501}, {373, 238}}</string>
 				<int key="NSWTFlags">536871936</int>
@@ -214,7 +214,7 @@
 								<object class="NSScroller" id="455000188">
 									<reference key="NSNextResponder" ref="688847800"/>
 									<int key="NSvFlags">256</int>
-									<string key="NSFrame">{{358, 17}, {15, 174}}</string>
+									<string key="NSFrame">{{358, 17}, {15, 171}}</string>
 									<reference key="NSSuperview" ref="688847800"/>
 									<reference key="NSTarget" ref="688847800"/>
 									<string key="NSAction">_doScroller:</string>
