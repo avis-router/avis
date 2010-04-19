@@ -86,7 +86,7 @@ static NSAttributedString *attributedString (NSString *string,
     [[NSMutableAttributedString new] autorelease]; 
   
   [string appendAttributedString: attributedString (status.statusText, defaultAttrs)];
-  [string appendAttributedString: attributedString (@" ", durationAttrs)];
+  [string appendAttributedString: attributedString (@" — ", durationAttrs)];
   [string appendAttributedString: 
     attributedString ([durationFormatter stringForObjectValue: status.changedAt], durationAttrs)];
   
