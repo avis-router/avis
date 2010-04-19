@@ -898,8 +898,8 @@ static NSAttributedString *attributedString (NSString *string,
   
   NSPoint containerOrigin = [tickerMessagesTextView textContainerOrigin];
   NSRect visibleRect = 
-  NSOffsetRect ([tickerMessagesTextView visibleRect], 
-                -containerOrigin.x, -containerOrigin.y);
+    NSOffsetRect ([tickerMessagesTextView visibleRect], 
+                  -containerOrigin.x, -containerOrigin.y);
   
   NSRange visibleGlyphRange = 
     [[tickerMessagesTextView layoutManager] 
