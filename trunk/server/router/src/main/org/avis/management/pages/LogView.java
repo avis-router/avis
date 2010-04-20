@@ -11,11 +11,11 @@ import org.avis.logging.LogEvent;
 import org.avis.logging.LogEventBuffer;
 import org.avis.management.HTML;
 import org.avis.management.HtmlView;
-import org.avis.management.JavascriptView;
+import org.avis.management.HtmlViewWithCustomHeaders;
 
 import static org.avis.logging.Log.eventTypeToString;
 
-public class LogView implements HtmlView, JavascriptView
+public class LogView implements HtmlView, HtmlViewWithCustomHeaders
 {
   private static final ThreadLocal<DateFormat> dateFormat =
     new ThreadLocal<DateFormat> ()
@@ -43,7 +43,7 @@ public class LogView implements HtmlView, JavascriptView
     events.dispose ();
   }
   
-  public void renderJavascript (HTML html)
+  public void addHeaders (HTML html)
   {
     html.append 
       ("<script src='jquery-1.3.js'></script>\n" + 

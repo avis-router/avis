@@ -5,7 +5,7 @@ import java.util.Comparator;
 import org.avis.common.ElvinURI;
 import org.avis.management.HTML;
 import org.avis.management.HtmlView;
-import org.avis.management.JavascriptView;
+import org.avis.management.HtmlViewWithCustomHeaders;
 import org.avis.router.Connection;
 import org.avis.router.Router;
 import org.avis.router.Subscription;
@@ -20,7 +20,7 @@ import static org.avis.router.StatsFilter.updateThroughput;
 import static org.avis.router.StatsFilter.writtenBytesThroughput;
 import static org.avis.util.Collections.sort;
 
-public class ClientsView implements HtmlView, JavascriptView
+public class ClientsView implements HtmlView, HtmlViewWithCustomHeaders
 {
   private static final Comparator<Connection> CONNECTION_COMPARATOR = 
     new Comparator<Connection> ()
@@ -48,7 +48,7 @@ public class ClientsView implements HtmlView, JavascriptView
     this.router = router;
   }
 
-  public void renderJavascript (HTML html)
+  public void addHeaders (HTML html)
   {
     html.append 
       ("<script src='jquery-1.3.js'></script>\n" + 
