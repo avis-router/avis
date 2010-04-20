@@ -21,8 +21,6 @@
 
 - (void) awakeFromNib
 {
-  [super awakeFromNib];
-  
   [self setFormatter: [PresenceEntityNameCellFormatter new]];
 }
 
