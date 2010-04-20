@@ -9,15 +9,20 @@ import org.apache.asyncweb.server.resolver.ServiceResolver;
 
 import static org.apache.asyncweb.common.HttpResponseStatus.TEMPORARY_REDIRECT;
 
-public class RedirectRootToDefault implements ServiceResolver, HttpService
+/**
+ * Redirects any requests for "/" to a given default URI.
+ * 
+ * @author Matthew Phillips
+ */
+public class RedirectRoot implements ServiceResolver, HttpService
 {
   public static final String SERVICE_NAME = "redirect-default";
   
-  private String defaultService;
+  private String defaultUri;
 
-  public RedirectRootToDefault (String defaultService)
+  public RedirectRoot (String defaultUri)
   {
-    this.defaultService = defaultService;
+    this.defaultUri = defaultUri;
   }
 
   public String resolveService (HttpRequest request)
@@ -34,7 +39,7 @@ public class RedirectRootToDefault implements ServiceResolver, HttpService
   {
     MutableHttpResponse response = new DefaultHttpResponse ();
     
-    response.setHeader ("Location", "/" + defaultService);
+    response.setHeader ("Location", "/" + defaultUri);
     response.setStatus (TEMPORARY_REDIRECT);
     
     context.commitResponse (response);
