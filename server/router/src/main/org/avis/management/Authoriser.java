@@ -49,7 +49,9 @@ public class Authoriser implements ServiceResolver, HttpService
                      password.equals (authText.substring (sep + 1));
       }
     }
-    
+
+    // if authorised, allow next resolver a go, otherwise nominate
+    // this instance, which 401's and sends a WWW-Authenticate
     return authorised ? null : SERVICE_NAME; 
   }
 
