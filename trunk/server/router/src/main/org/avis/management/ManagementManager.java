@@ -61,11 +61,11 @@ public class ManagementManager implements Closeable, CloseListener
     HttpServiceHandler handler = new HttpServiceHandler ();
     
     Authoriser authoriser = new Authoriser (adminName, adminPassword);
-    RedirectRootToDefault redirectDefault = new RedirectRootToDefault ("overview");
+    RedirectRoot redirectDefault = new RedirectRoot ("overview");
     
     // add authorisation first and redirect any reqs for "/" to "overview"
     handler.addHttpService (Authoriser.SERVICE_NAME, authoriser);
-    handler.addHttpService (RedirectRootToDefault.SERVICE_NAME, redirectDefault);
+    handler.addHttpService (RedirectRoot.SERVICE_NAME, redirectDefault);
     
     // add standard presentation pages
     List<Page> standardPages = 
