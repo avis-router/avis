@@ -5,8 +5,6 @@ import java.util.List;
 import org.apache.asyncweb.common.HttpRequest;
 import org.apache.asyncweb.server.resolver.ServiceResolver;
 
-import org.avis.management.pages.SiteNavigatorView;
-
 /**
  * A standard web management page with a navigator and main content area.
  * 
@@ -18,7 +16,7 @@ public class StandardPage extends HtmlPage
   private HtmlView navigator;
   private HtmlView main;
 
-  public StandardPage (String title, HtmlView main, SiteNavigatorView siteNav)
+  public StandardPage (String title, HtmlView main, HtmlView siteNav)
   {
     this.title = title;
     this.navigator = siteNav;
@@ -56,10 +54,12 @@ public class StandardPage extends HtmlPage
        "  <link href=\"print.css\" media=\"print\" " +
              "rel=\"stylesheet\" type=\"text/css\" />", title);
     
-    if (main instanceof JavascriptView)
+    if (main instanceof HtmlViewWithCustomHeaders)
     {
       html.append ("\n").indent ();
-      ((JavascriptView)main).renderJavascript (html);
+      
+      ((HtmlViewWithCustomHeaders)main).addHeaders (html);
+      
       html.outdent ();
     }
     
