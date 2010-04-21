@@ -154,10 +154,6 @@ static NSAttributedString *attributedString (NSString *string,
      [NSArray arrayWithObject: 
        [[NSSortDescriptor alloc] initWithKey: @"" ascending: YES
         selector: @selector (caseInsensitiveCompare:)]]];
-  
-  // trigger highlight of reply-to message on rollover
-  [self bind: @"highlightReplyTo" toObject: replyButton
-        withKeyPath: @"rollover" options: nil];
 }
 
 - (void) windowDidLoad
@@ -635,6 +631,15 @@ static NSAttributedString *attributedString (NSString *string,
     return [NSURL URLWithString: [attachedUrlLabel stringValue]];
 }
 
+- (void) setInReplyTo: (TickerMessage *) message
+{
+  [inReplyTo release];
+  
+  inReplyTo = [message retain];
+  
+  self.highlightReplyTo = NO;
+}
+
 - (void) replyToMessage: (TickerMessage *) message
 {
   [messageGroup setStringValue: message->group];
@@ -642,6 +647,7 @@ static NSAttributedString *attributedString (NSString *string,
   self.inReplyTo = message;
   self.allowPublic = message->public;
   self.allowInsecure = !message->secure;
+  self.highlightReplyTo = YES;
   
   [[messageText window] makeFirstResponder: messageText];
 }
@@ -656,6 +662,7 @@ static NSAttributedString *attributedString (NSString *string,
   self.inReplyTo = nil;
   self.allowPublic = NO;
   self.allowInsecure = YES;
+  self.highlightReplyTo = NO;
 }
 
 - (IBAction) togglePublic: (id) sender
@@ -716,13 +723,15 @@ static NSAttributedString *attributedString (NSString *string,
       [self highlightRange: inReplyToHighlightedRange highlighted: NO];
       
       inReplyToHighlightedRange.length = 0;
+      inReplyToHighlightedRange.location != -1;
     }
   }
 }
 
 - (BOOL) highlightReplyTo
 {
-  return inReplyToHighlightedRange.length > 0;
+  return inReplyToHighlightedRange.length > 0 && 
+         inReplyToHighlightedRange.location != -1;
 }
 
 @synthesize inReplyTo;
@@ -872,8 +881,14 @@ static NSAttributedString *attributedString (NSString *string,
 - (void) hideHighlightedLinks
 {             
   // TODO: scrolled messages won't be affected by this
-  for (NSValue *range in [self visibleMessageLinkRanges])
-    [self highlightRange: [range rangeValue] highlighted: NO];
+  for (NSValue *r in [self visibleMessageLinkRanges])
+  {
+    NSRange range = [r rangeValue];
+    
+    // leave any highlighted in-reply-to message alone
+    [self highlightRange: range 
+             highlighted: NSEqualRanges (inReplyToHighlightedRange, range)];
+  }
 }
 
 #pragma mark -
