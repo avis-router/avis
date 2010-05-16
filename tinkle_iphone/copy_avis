@@ -12,6 +12,9 @@ for build in $builds; do
   cp "$client/platforms/iphone/build/$build/libavis.a" "lib/avis/$build"
 done
 
+# distribution uses Avis release lib
+(cd lib/avis && ln -s Release-iphoneos Distribution-iphoneos)
+
 mkdir -p include
 
 rsync -av --delete --filter "+ */" --filter "+ *.h" --filter "- *" \
