@@ -29,21 +29,15 @@
   elvinUrlTextField.text = prefString (PrefElvinURL);
 }
 
+- (void) viewDidUnload
+{
+  [prefsInfo release];
+}
+
 - (BOOL) shouldAutorotateToInterfaceOrientation: 
          (UIInterfaceOrientation)interfaceOrientation
 {
   return YES;
-}
-
-- (void) viewDidUnload
-{
-  // TODO
-}
-
-- (void) dealloc
-{
-  [super dealloc];
-  // TODO
 }
 
 - (IBAction) doneClicked: (id) sender

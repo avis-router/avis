@@ -9,17 +9,15 @@ static NSString *formatDuration (NSDate *value);
 
 @implementation PresenceViewController
 
-- (void) dealloc
-{
-  [super dealloc];
-}
+//- (void) dealloc
+//{
+//  [super dealloc];
+//}
 
-- (void) viewDidLoad
-{
-  [super viewDidLoad];
-  
-  // self.tableView.directionalLockEnabled = YES;
-}
+//- (void) viewDidLoad
+//{
+//  [super viewDidLoad];
+//}
 
 - (void) setPresence: (PresenceConnection *) newPresence
 {
@@ -45,7 +43,7 @@ static NSString *formatDuration (NSDate *value);
 - (void) presenceEntityChanged: (NSIndexPath *) row
 {
   [self.tableView reloadRowsAtIndexPaths: [NSArray arrayWithObject: row]
-    withRowAnimation: UITableViewRowAnimationFade];
+                  withRowAnimation: UITableViewRowAnimationFade];
 }
 
 - (void) presenceEntitiesCleared
@@ -59,19 +57,19 @@ static NSString *formatDuration (NSDate *value);
   return YES;
 }
 
-- (void) didReceiveMemoryWarning
-{
-	// Releases the view if it doesn't have a superview.
-  [super didReceiveMemoryWarning];
-	
-	// Release any cached data, images, etc that aren't in use.
-}
-
-- (void) viewDidUnload
-{
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
-}
+//- (void) didReceiveMemoryWarning
+//{
+//	// Releases the view if it doesn't have a superview.
+//  [super didReceiveMemoryWarning];
+//	
+//	// Release any cached data, images, etc that aren't in use.
+//}
+//
+//- (void) viewDidUnload
+//{
+//	// Release any retained subviews of the main view.
+//	// e.g. self.myOutlet = nil;
+//}
 
 #pragma mark -
 #pragma mark UITableViewDelegate
@@ -95,14 +93,14 @@ static NSString *formatDuration (NSDate *value);
 
 // Customize the number of rows in the table view.
 - (NSInteger) tableView: (UITableView *) tableView 
-  numberOfRowsInSection: (NSInteger) section 
+              numberOfRowsInSection: (NSInteger) section 
 {
   return [presence.entities count];
 }
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *) tableView: (UITableView *) tableView
-    cellForRowAtIndexPath: (NSIndexPath *) indexPath 
+                      cellForRowAtIndexPath: (NSIndexPath *) indexPath 
 {
   static NSString *CellIdentifier = @"PresenceCell";
     
