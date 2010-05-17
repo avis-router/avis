@@ -13,22 +13,13 @@
   [super viewDidLoad];
   
   messagesController.parentViewController = self;
-
   messagesController.view.hidden = YES;
   
   presenceController.view.frame = contentView.frame;
   messagesController.view.frame = contentView.frame;
-  
-  messagesController.parentViewController = self;
-  
+
   [contentView addSubview: presenceController.view];
   [contentView addSubview: messagesController.view];
-  
-//  scrollView = [[TTScrollView alloc] initWithFrame: contentView.frame];
-//  scrollView.dataSource = self;
-//  scrollView.backgroundColor = [UIColor whiteColor];
-//  
-//  [self.view addSubview: scrollView];
   
   NSNotificationCenter *notifications = [NSNotificationCenter defaultCenter];
   
@@ -112,7 +103,7 @@
 #pragma mark -
 #pragma mark TTScrollViewDataSource
 
-- (NSInteger) numberOfPagesInScrollView: (TTScrollView*) scrollView
+- (NSInteger) numberOfPagesInScrollView: (TTScrollView *) scrollView
 {
   return 2;
 }
@@ -135,7 +126,7 @@
 }
 
 - (CGSize) scrollView: (TTScrollView *) scrollView 
-  sizeOfPageAtIndex: (NSInteger) pageIndex
+           sizeOfPageAtIndex: (NSInteger) pageIndex
 {
   return contentView.frame.size;
 }
