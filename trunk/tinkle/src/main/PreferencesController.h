@@ -6,7 +6,8 @@
   IBOutlet id addPresenceGroupTextField;
   IBOutlet id tickerGroupAddSheet;
   IBOutlet id addTickerGroupTextField;
-  IBOutlet id generalPanel;
+  IBOutlet id messagingPanel;
+  IBOutlet id presencePanel;
   IBOutlet id advancedPanel;
   IBOutlet id addPresenceGroupSheet;
 
