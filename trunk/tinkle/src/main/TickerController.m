@@ -10,6 +10,9 @@
 
 #define MAX_RECENT_MESSAGES 100
 
+#define THREAD_HIGHLIGHT color (255, 234, 168)
+#define REPLY_HIGHLIGHT  color (195, 255, 135)
+
 NSString * TickerMessageReceivedNotification = 
   @"TickerMessageReceivedNotification";
 
@@ -73,7 +76,7 @@ static NSAttributedString *attributedString (NSString *string,
   - (void) addRecentMessage: (TickerMessage *) message;
   - (TickerMessage *) findRecentMessage: (NSString *) messageId;
   - (NSValue *) rangeForMessage: (TickerMessage *) message;
-  - (void) highlightRange: (NSRange) range highlighted: (BOOL) highlighted;
+  - (void) highlightRange: (NSRange) range highlight: (NSColor *) highlight;
 @end
 
 @implementation TickerController
@@ -714,13 +717,14 @@ static NSAttributedString *attributedString (NSString *string,
     {
       inReplyToHighlightedRange = [range rangeValue];
     
-      [self highlightRange: inReplyToHighlightedRange highlighted: YES];
+      [self highlightRange: inReplyToHighlightedRange 
+            highlight: REPLY_HIGHLIGHT];
     }
   } else
   {
     if (inReplyToHighlightedRange.length > 0)
     {
-      [self highlightRange: inReplyToHighlightedRange highlighted: NO];
+      [self highlightRange: inReplyToHighlightedRange highlight: nil];
       
       inReplyToHighlightedRange.length = 0;
       inReplyToHighlightedRange.location != -1;
@@ -857,10 +861,10 @@ static NSAttributedString *attributedString (NSString *string,
     {
       active = message;
       
-      [self highlightRange: [range rangeValue] highlighted: YES];
+      [self highlightRange: [range rangeValue] highlight: THREAD_HIGHLIGHT];
     } else
     {
-      [self highlightRange: [range rangeValue] highlighted: NO];
+      [self highlightRange: [range rangeValue] highlight: THREAD_HIGHLIGHT];
     }
   }
 }
@@ -884,10 +888,11 @@ static NSAttributedString *attributedString (NSString *string,
   for (NSValue *r in [self visibleMessageLinkRanges])
   {
     NSRange range = [r rangeValue];
+    NSColor *highlight = 
+      NSEqualRanges (inReplyToHighlightedRange, range) ? REPLY_HIGHLIGHT : nil;
     
     // leave any highlighted in-reply-to message alone
-    [self highlightRange: range 
-             highlighted: NSEqualRanges (inReplyToHighlightedRange, range)];
+    [self highlightRange: range highlight: highlight];
   }
 }
 
@@ -960,14 +965,14 @@ static NSAttributedString *attributedString (NSString *string,
   return nil;
 }
 
-- (void) highlightRange: (NSRange) range highlighted: (BOOL) highlighted
+- (void) highlightRange: (NSRange) range highlight: (NSColor *) highlight
 {
   NSTextStorage *text = [tickerMessagesTextView textStorage];
   
-  if (highlighted)
+  if (highlight)
   {
     [text addAttribute: NSBackgroundColorAttributeName 
-          value: color (255, 234, 168) range: range];
+          value: highlight range: range];
   } else
   {
     [text removeAttribute: NSBackgroundColorAttributeName range: range];
