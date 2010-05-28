@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
+			<integer value="4"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -66,7 +66,7 @@
 										<object class="NSTextView" id="467236999">
 											<reference key="NSNextResponder" ref="223658256"/>
 											<int key="NSvFlags">2322</int>
-											<string key="NSFrameSize">{653, 196}</string>
+											<string key="NSFrameSize">{653, 195}</string>
 											<reference key="NSSuperview" ref="223658256"/>
 											<object class="NSTextContainer" key="NSTextContainer" id="356958372">
 												<object class="NSLayoutManager" key="NSLayoutManager">
@@ -908,11 +908,11 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 								<int key="NSButtonFlags2">134</int>
 								<object class="NSCustomResource" key="NSNormalImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">Reply_Normal</string>
+									<string key="NSResourceName">Reply_Normal_Green</string>
 								</object>
 								<object class="NSCustomResource" key="NSAlternateImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">Reply_Rollover</string>
+									<string key="NSResourceName">Reply_Rollover_Green</string>
 								</object>
 								<string key="NSAlternateContents"/>
 								<string key="NSKeyEquivalent"/>
@@ -2470,8 +2470,8 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 				<string>NSLockLockedTemplate</string>
 				<string>NSLockUnlockedTemplate</string>
 				<string>NSStopProgressFreestandingTemplate</string>
-				<string>Reply_Normal</string>
-				<string>Reply_Rollover</string>
+				<string>Reply_Normal_Green</string>
+				<string>Reply_Rollover_Green</string>
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
