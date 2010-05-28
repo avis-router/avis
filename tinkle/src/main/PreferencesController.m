@@ -21,7 +21,8 @@ static NSString *computerName ()
 
 @implementation PreferencesController
 
-#define TOOLBAR_GENERAL     @"TOOLBAR_GENERAL"
+#define TOOLBAR_MESSAGING   @"TOOLBAR_MESSAGING"
+#define TOOLBAR_PRESENCE    @"TOOLBAR_PRESENCE"
 #define TOOLBAR_ADVANCED    @"TOOLBAR_ADVANCED"
 
 + (void) registerUserDefaults
@@ -87,7 +88,7 @@ static NSString *computerName ()
   [toolbar setSizeMode: NSToolbarSizeModeRegular];
   [[self window] setToolbar: toolbar];
 
-  [toolbar setSelectedItemIdentifier: TOOLBAR_GENERAL];
+  [toolbar setSelectedItemIdentifier: TOOLBAR_MESSAGING];
   [self setPrefView: nil];
 }
 
@@ -102,14 +103,18 @@ static NSString *computerName ()
   [item setAction: @selector (setPrefView:)];
   [item setAutovalidates: NO];
 
-  if ([ident isEqualToString: TOOLBAR_GENERAL])
+  if ([ident isEqualToString: TOOLBAR_MESSAGING])
   {
-    [item setLabel: @"General"];
-    [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
+    [item setLabel: @"Messaging"];
+    [item setImage: [NSImage imageNamed: @"Tinkle_512"]];
+  } else if ([ident isEqualToString: TOOLBAR_PRESENCE])
+  {
+    [item setLabel: @"Presence"];
+    [item setImage: [NSImage imageNamed: @"NSUser"]];
   } else if ([ident isEqualToString: TOOLBAR_ADVANCED])
   {
     [item setLabel: @"Advanced"];
-    [item setImage: [NSImage imageNamed: @"Tinkle_512"]];
+    [item setImage: [NSImage imageNamed: @"NSPreferencesGeneral"]];
   } else
   {
     return nil;
@@ -130,7 +135,8 @@ static NSString *computerName ()
 
 - (NSArray *) toolbarAllowedItemIdentifiers: (NSToolbar *) toolbar
 {
-  return [NSArray arrayWithObjects: TOOLBAR_GENERAL, TOOLBAR_ADVANCED, nil];
+  return [NSArray arrayWithObjects: 
+           TOOLBAR_MESSAGING, TOOLBAR_PRESENCE, TOOLBAR_ADVANCED, nil];
 }
 
 - (void) setPrefView: (id) sender
@@ -140,8 +146,10 @@ static NSString *computerName ()
   
   if ([identifier isEqualToString: TOOLBAR_ADVANCED])
     view = advancedPanel;
+  else if ([identifier isEqualToString: TOOLBAR_PRESENCE])
+    view = presencePanel;
   else
-    view = generalPanel;
+    view = messagingPanel;
 
   NSWindow *window = [self window];
   
