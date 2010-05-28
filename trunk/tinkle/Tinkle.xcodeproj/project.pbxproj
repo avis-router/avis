@@ -46,8 +46,6 @@
 		C92392580F7F7BC30083FC13 /* TickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392420F7F7BC30083FC13 /* TickerController.m */; };
 		C92392590F7F7BC30083FC13 /* TickerMessagesTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */; };
 		C923925A0F7F7BC30083FC13 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C92392460F7F7BC30083FC13 /* utils.m */; };
-		C923925D0F7F7C310083FC13 /* Reply_Normal.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */; };
-		C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */; };
 		C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392780F7F7D080083FC13 /* MainMenu.xib */; };
 		C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = C92392790F7F7D080083FC13 /* TickerWindow.xib */; };
 		C92394050F82BEEA0083FC13 /* key_error_version.key in Resources */ = {isa = PBXBuildFile; fileRef = C92394000F82BEEA0083FC13 /* key_error_version.key */; };
@@ -75,6 +73,8 @@
 		C985CE1610B3AC1900FE1DFA /* warning32.png in Resources */ = {isa = PBXBuildFile; fileRef = C985CE1010B3AC1900FE1DFA /* warning32.png */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
+		C9BB54A311AF9F91008B404D /* Reply_Normal_Green.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9BB54A211AF9F91008B404D /* Reply_Normal_Green.tiff */; };
+		C9BB54B811AFA060008B404D /* Reply_Rollover_Green.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9BB54B711AFA060008B404D /* Reply_Rollover_Green.tiff */; };
 		C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2D260F83266D009FC112 /* KeysArrayController.m */; };
 		C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */; };
 		C9D10E2E0FC3A08800BC77E7 /* TickerMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */; };
@@ -174,8 +174,6 @@
 		C92392440F7F7BC30083FC13 /* TickerMessagesTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TickerMessagesTextView.m; path = src/main/TickerMessagesTextView.m; sourceTree = "<group>"; };
 		C92392450F7F7BC30083FC13 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = src/main/utils.h; sourceTree = "<group>"; };
 		C92392460F7F7BC30083FC13 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = utils.m; path = src/main/utils.m; sourceTree = "<group>"; };
-		C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Normal.tiff; path = resources/Reply_Normal.tiff; sourceTree = "<group>"; };
-		C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Rollover.tiff; path = resources/Reply_Rollover.tiff; sourceTree = "<group>"; };
 		C92392780F7F7D080083FC13 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = resources/MainMenu.xib; sourceTree = "<group>"; };
 		C92392790F7F7D080083FC13 /* TickerWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = TickerWindow.xib; path = resources/TickerWindow.xib; sourceTree = "<group>"; };
 		C92394000F82BEEA0083FC13 /* key_error_version.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = key_error_version.key; path = src/tests/resources/test_keys/key_error_version.key; sourceTree = "<group>"; };
@@ -204,6 +202,8 @@
 		C985CE0F10B3AC1900FE1DFA /* warning16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = warning16.png; path = resources/warning16.png; sourceTree = "<group>"; };
 		C985CE1010B3AC1900FE1DFA /* warning32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = warning32.png; path = resources/warning32.png; sourceTree = "<group>"; };
 		C9B03B590E493EDF00B59216 /* avis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = avis.framework; path = Frameworks/avis.framework; sourceTree = "<group>"; };
+		C9BB54A211AF9F91008B404D /* Reply_Normal_Green.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Normal_Green.tiff; path = resources/Reply_Normal_Green.tiff; sourceTree = "<group>"; };
+		C9BB54B711AFA060008B404D /* Reply_Rollover_Green.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Rollover_Green.tiff; path = resources/Reply_Rollover_Green.tiff; sourceTree = "<group>"; };
 		C9CC2D250F83266D009FC112 /* KeysArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeysArrayController.h; path = src/main/KeysArrayController.h; sourceTree = "<group>"; };
 		C9CC2D260F83266D009FC112 /* KeysArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeysArrayController.m; path = src/main/KeysArrayController.m; sourceTree = "<group>"; };
 		C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElvinKeyIO.h; path = src/main/ElvinKeyIO.h; sourceTree = "<group>"; };
@@ -346,8 +346,8 @@
 				C985CE0F10B3AC1900FE1DFA /* warning16.png */,
 				C985CE1010B3AC1900FE1DFA /* warning32.png */,
 				C9DB78CF10ABC0DB00BB747C /* Tinkle_512.png */,
-				C923925B0F7F7C310083FC13 /* Reply_Normal.tiff */,
-				C923925C0F7F7C310083FC13 /* Reply_Rollover.tiff */,
+				C9BB54A211AF9F91008B404D /* Reply_Normal_Green.tiff */,
+				C9BB54B711AFA060008B404D /* Reply_Rollover_Green.tiff */,
 				C934A7300FB937EC003C2B41 /* Message_Public.png */,
 				C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */,
 			);
@@ -517,8 +517,6 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				C923924C0F7F7BC30083FC13 /* Preferences.xib in Resources */,
 				C92392540F7F7BC30083FC13 /* PresenceWindow.xib in Resources */,
-				C923925D0F7F7C310083FC13 /* Reply_Normal.tiff in Resources */,
-				C923925E0F7F7C310083FC13 /* Reply_Rollover.tiff in Resources */,
 				C923927A0F7F7D080083FC13 /* MainMenu.xib in Resources */,
 				C923927B0F7F7D080083FC13 /* TickerWindow.xib in Resources */,
 				C934A7310FB937EC003C2B41 /* Message_Public.png in Resources */,
@@ -530,6 +528,8 @@
 				C985CE1410B3AC1900FE1DFA /* lolly_yellow.png in Resources */,
 				C985CE1510B3AC1900FE1DFA /* warning16.png in Resources */,
 				C985CE1610B3AC1900FE1DFA /* warning32.png in Resources */,
+				C9BB54A311AF9F91008B404D /* Reply_Normal_Green.tiff in Resources */,
+				C9BB54B811AFA060008B404D /* Reply_Rollover_Green.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
