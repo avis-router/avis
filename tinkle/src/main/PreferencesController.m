@@ -51,6 +51,8 @@ static NSString *computerName ()
   [defaults setObject: @"" forKey: PrefTickerSubscription];
   [defaults setObject: [NSNumber numberWithBool: YES] forKey: 
                        PrefShowUnreadMessageCount];
+  [defaults setObject: [NSNumber numberWithBool: YES] forKey: 
+                       PrefShowPresenceWindow];
   
   // presence column sorting
   NSSortDescriptor *statusDescriptor = 

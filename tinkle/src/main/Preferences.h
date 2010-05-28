@@ -11,6 +11,7 @@ extern NSString *PrefTickerSubscription;
 extern NSString *PrefPresenceColumnSorting;
 extern NSString *PrefElvinKeys;
 extern NSString *PrefShowUnreadMessageCount;
+extern NSString *PrefShowPresenceWindow;
 
 static inline NSString *prefString (const NSString *name)
 {
