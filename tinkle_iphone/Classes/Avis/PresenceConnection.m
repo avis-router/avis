@@ -227,7 +227,7 @@ static NSString *listToParameterString (NSArray *list)
   NSMutableString *expr = 
     [NSMutableString stringWithFormat: 
      @"Presence-Protocol < 2000 && string (Presence-Request) && Requestor != '%@' && ", 
-     userName];
+     [ElvinConnection escapedSubscriptionString: prefString (PrefOnlineUserUUID)]];
      
   [expr appendFormat: @"(contains (fold-case (Users), '|%@|')", 
     [userName lowercaseString]];
@@ -356,9 +356,10 @@ static NSString *listToParameterString (NSArray *list)
   NSString *groups = listToBarDelimitedString (prefArray (PrefPresenceGroups));
   NSString *buddies = 
     listToBarDelimitedString (prefArray (PrefPresenceBuddies));
+  NSString *userId = prefString (PrefOnlineUserUUID);
   
-  [elvin sendPresenceRequestMessage: prefString (PrefOnlineUserUUID) 
-                      fromRequestor: prefString (PrefOnlineUserName) 
+  [elvin sendPresenceRequestMessage: userId
+                      fromRequestor: userId
                            toGroups: groups
                            andUsers: buddies
                          sendPublic: YES];
