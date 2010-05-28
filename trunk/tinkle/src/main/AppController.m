@@ -161,6 +161,9 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   
   [[NSApp dockTile] setContentView: dockTile];
   [[NSApp dockTile] display];
+  
+  if (prefBool (PrefShowPresenceWindow))
+    [self showPresenceWindow: self];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) notification 
@@ -169,6 +172,12 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   
   [[NSNotificationCenter defaultCenter] removeObserver: self];
   [NSObject cancelPreviousPerformRequestsWithTarget: self];
+  
+  BOOL presenceVisible =
+    presenceController.window && [presenceController.window isVisible];
+  
+  [[NSUserDefaults standardUserDefaults] 
+    setBool: presenceVisible forKey: PrefShowPresenceWindow];
 }
 
 /*
