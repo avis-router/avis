@@ -11,4 +11,4 @@ NSString *PrefTickerSubscription     = @"TickerSubscription";
 NSString *PrefPresenceColumnSorting  = @"PresenceColumnSorting";
 NSString *PrefElvinKeys              = @"Keys";
 NSString *PrefShowUnreadMessageCount = @"ShowUnreadMessageCount";
-NSString *PrefShowPresenceWindow     = @"PrefShowPresenceWindow";
+NSString *PrefShowPresenceWindow     = @"PresenceWindowVisible";
