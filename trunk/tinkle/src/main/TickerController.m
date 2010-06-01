@@ -864,7 +864,7 @@ static NSAttributedString *attributedString (NSString *string,
       [self highlightRange: [range rangeValue] highlight: THREAD_HIGHLIGHT];
     } else
     {
-      [self highlightRange: [range rangeValue] highlight: THREAD_HIGHLIGHT];
+      [self highlightRange: [range rangeValue] highlight: nil];
     }
   }
 }
