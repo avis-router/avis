@@ -908,11 +908,11 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 								<int key="NSButtonFlags2">134</int>
 								<object class="NSCustomResource" key="NSNormalImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">Reply_Normal_Green</string>
+									<string key="NSResourceName">Reply_Normal_Blue</string>
 								</object>
 								<object class="NSCustomResource" key="NSAlternateImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">Reply_Rollover_Green</string>
+									<string key="NSResourceName">Reply_Rollover_Blue</string>
 								</object>
 								<string key="NSAlternateContents"/>
 								<string key="NSKeyEquivalent"/>
@@ -2470,8 +2470,8 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 				<string>NSLockLockedTemplate</string>
 				<string>NSLockUnlockedTemplate</string>
 				<string>NSStopProgressFreestandingTemplate</string>
-				<string>Reply_Normal_Green</string>
-				<string>Reply_Rollover_Green</string>
+				<string>Reply_Normal_Blue</string>
+				<string>Reply_Rollover_Blue</string>
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>

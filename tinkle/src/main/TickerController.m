@@ -11,7 +11,7 @@
 #define MAX_RECENT_MESSAGES 100
 
 #define THREAD_HIGHLIGHT color (255, 234, 168)
-#define REPLY_HIGHLIGHT  color (195, 255, 135)
+#define REPLY_HIGHLIGHT  color (215, 238, 255)
 
 NSString * TickerMessageReceivedNotification = 
   @"TickerMessageReceivedNotification";

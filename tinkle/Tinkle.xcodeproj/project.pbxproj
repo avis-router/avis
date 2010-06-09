@@ -65,6 +65,8 @@
 		C94B46DC0F1355F900BADAE8 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B46DF0F13561D00BADAE8 /* Growl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C94B46DB0F1355F900BADAE8 /* Growl.framework */; };
 		C94B47180F1359F500BADAE8 /* Growl Registration Ticket.growlRegDict in Resources */ = {isa = PBXBuildFile; fileRef = C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */; };
+		C979B40811BF664D00766E0B /* Reply_Rollover_Blue.png in Resources */ = {isa = PBXBuildFile; fileRef = C979B40611BF664D00766E0B /* Reply_Rollover_Blue.png */; };
+		C979B40911BF664D00766E0B /* Reply_Normal_Blue.png in Resources */ = {isa = PBXBuildFile; fileRef = C979B40711BF664D00766E0B /* Reply_Normal_Blue.png */; };
 		C985CE1110B3AC1900FE1DFA /* lolly_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C985CE0B10B3AC1900FE1DFA /* lolly_green.png */; };
 		C985CE1210B3AC1900FE1DFA /* lolly_grey.png in Resources */ = {isa = PBXBuildFile; fileRef = C985CE0C10B3AC1900FE1DFA /* lolly_grey.png */; };
 		C985CE1310B3AC1900FE1DFA /* lolly_red.png in Resources */ = {isa = PBXBuildFile; fileRef = C985CE0D10B3AC1900FE1DFA /* lolly_red.png */; };
@@ -73,8 +75,6 @@
 		C985CE1610B3AC1900FE1DFA /* warning32.png in Resources */ = {isa = PBXBuildFile; fileRef = C985CE1010B3AC1900FE1DFA /* warning32.png */; };
 		C9B03B5A0E493EDF00B59216 /* avis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
 		C9B03B830E49403600B59216 /* avis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9B03B590E493EDF00B59216 /* avis.framework */; };
-		C9BB54A311AF9F91008B404D /* Reply_Normal_Green.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9BB54A211AF9F91008B404D /* Reply_Normal_Green.tiff */; };
-		C9BB54B811AFA060008B404D /* Reply_Rollover_Green.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9BB54B711AFA060008B404D /* Reply_Rollover_Green.tiff */; };
 		C9CC2D270F83266D009FC112 /* KeysArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2D260F83266D009FC112 /* KeysArrayController.m */; };
 		C9CC2DAB0F8B120F009FC112 /* ElvinKeyIO.m in Sources */ = {isa = PBXBuildFile; fileRef = C9CC2DAA0F8B120F009FC112 /* ElvinKeyIO.m */; };
 		C9D10E2E0FC3A08800BC77E7 /* TickerMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = C9D10E2D0FC3A08800BC77E7 /* TickerMessage.m */; };
@@ -195,6 +195,8 @@
 		C934AA310FC2489D003C2B41 /* PresenceStatusFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PresenceStatusFormatter.h; path = src/main/PresenceStatusFormatter.h; sourceTree = "<group>"; };
 		C94B46DB0F1355F900BADAE8 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = "Growl Registration Ticket.growlRegDict"; sourceTree = "<group>"; };
+		C979B40611BF664D00766E0B /* Reply_Rollover_Blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Reply_Rollover_Blue.png; path = resources/Reply_Rollover_Blue.png; sourceTree = "<group>"; };
+		C979B40711BF664D00766E0B /* Reply_Normal_Blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Reply_Normal_Blue.png; path = resources/Reply_Normal_Blue.png; sourceTree = "<group>"; };
 		C985CE0B10B3AC1900FE1DFA /* lolly_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_green.png; path = resources/lolly_green.png; sourceTree = "<group>"; };
 		C985CE0C10B3AC1900FE1DFA /* lolly_grey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_grey.png; path = resources/lolly_grey.png; sourceTree = "<group>"; };
 		C985CE0D10B3AC1900FE1DFA /* lolly_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lolly_red.png; path = resources/lolly_red.png; sourceTree = "<group>"; };
@@ -202,8 +204,6 @@
 		C985CE0F10B3AC1900FE1DFA /* warning16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = warning16.png; path = resources/warning16.png; sourceTree = "<group>"; };
 		C985CE1010B3AC1900FE1DFA /* warning32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = warning32.png; path = resources/warning32.png; sourceTree = "<group>"; };
 		C9B03B590E493EDF00B59216 /* avis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = avis.framework; path = Frameworks/avis.framework; sourceTree = "<group>"; };
-		C9BB54A211AF9F91008B404D /* Reply_Normal_Green.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Normal_Green.tiff; path = resources/Reply_Normal_Green.tiff; sourceTree = "<group>"; };
-		C9BB54B711AFA060008B404D /* Reply_Rollover_Green.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reply_Rollover_Green.tiff; path = resources/Reply_Rollover_Green.tiff; sourceTree = "<group>"; };
 		C9CC2D250F83266D009FC112 /* KeysArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeysArrayController.h; path = src/main/KeysArrayController.h; sourceTree = "<group>"; };
 		C9CC2D260F83266D009FC112 /* KeysArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeysArrayController.m; path = src/main/KeysArrayController.m; sourceTree = "<group>"; };
 		C9CC2DA90F8B120F009FC112 /* ElvinKeyIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElvinKeyIO.h; path = src/main/ElvinKeyIO.h; sourceTree = "<group>"; };
@@ -346,8 +346,8 @@
 				C985CE0F10B3AC1900FE1DFA /* warning16.png */,
 				C985CE1010B3AC1900FE1DFA /* warning32.png */,
 				C9DB78CF10ABC0DB00BB747C /* Tinkle_512.png */,
-				C9BB54A211AF9F91008B404D /* Reply_Normal_Green.tiff */,
-				C9BB54B711AFA060008B404D /* Reply_Rollover_Green.tiff */,
+				C979B40611BF664D00766E0B /* Reply_Rollover_Blue.png */,
+				C979B40711BF664D00766E0B /* Reply_Normal_Blue.png */,
 				C934A7300FB937EC003C2B41 /* Message_Public.png */,
 				C94B46F10F13570E00BADAE8 /* Growl Registration Ticket.growlRegDict */,
 			);
@@ -528,8 +528,8 @@
 				C985CE1410B3AC1900FE1DFA /* lolly_yellow.png in Resources */,
 				C985CE1510B3AC1900FE1DFA /* warning16.png in Resources */,
 				C985CE1610B3AC1900FE1DFA /* warning32.png in Resources */,
-				C9BB54A311AF9F91008B404D /* Reply_Normal_Green.tiff in Resources */,
-				C9BB54B811AFA060008B404D /* Reply_Rollover_Green.tiff in Resources */,
+				C979B40811BF664D00766E0B /* Reply_Rollover_Blue.png in Resources */,
+				C979B40911BF664D00766E0B /* Reply_Normal_Blue.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
