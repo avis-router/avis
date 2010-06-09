@@ -285,17 +285,21 @@ static NSAttributedString *attributedString (NSString *string,
   
   BOOL wasScrolledToEnd = 
     bottomY (visibleRect) == bottomY (tickerMessagesRect);
-
+  BOOL fromMe = 
+    [[ntfn valueForKey: @"From"] isEqual: prefString (PrefOnlineUserName)];
+  
   NSDateFormatter *dateFormatter = [[NSDateFormatter new] autorelease];
   [dateFormatter setDateStyle: NSDateFormatterLongStyle];
   [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];  
 
   // define display attributes
+  NSColor *lowlightColour = color (102, 102, 102);
+  
   NSDictionary *replyLinkAttrs = 
     [NSDictionary dictionaryWithObject: message forKey: NSLinkAttributeName];
      
   NSDictionary *lowlightAttrs = 
-    [NSDictionary dictionaryWithObject: color (102, 102, 102) 
+    [NSDictionary dictionaryWithObject: lowlightColour 
       forKey: NSForegroundColorAttributeName];
       
   NSDictionary *groupAttrs = 
@@ -303,16 +307,23 @@ static NSAttributedString *attributedString (NSString *string,
       forKey: NSForegroundColorAttributeName];
 
   NSDictionary *fromAttrs = 
-    [NSDictionary dictionaryWithObject: color (86, 56, 12) 
+    [NSDictionary dictionaryWithObject: 
+      fromMe ? lowlightColour : color (86, 56, 12) 
       forKey: NSForegroundColorAttributeName];
 
   NSDictionary *messageAttrs = 
-    [NSDictionary dictionaryWithObject: color (0, 64, 128) 
+    [NSDictionary dictionaryWithObject:
+      fromMe ? lowlightColour : color (0, 64, 128)
       forKey: NSForegroundColorAttributeName];
 
   NSDictionary *fontAttrs = 
     [NSDictionary dictionaryWithObject: 
        [NSFont fontWithName: @"Lucida Grande" size: 11] 
+                     forKey: NSFontAttributeName];
+  
+  NSDictionary *boldFontAttrs = 
+    [NSDictionary dictionaryWithObject: 
+       [NSFont fontWithName: @"Lucida Grande Bold" size: 11] 
                      forKey: NSFontAttributeName];
   
   NSRange range;
@@ -347,8 +358,13 @@ static NSAttributedString *attributedString (NSString *string,
   [displayedMessage appendAttributedString: 
     attributedString (@": ", lowlightAttrs)];
   
+  NSRange messageRange;
+  messageRange.location = [displayedMessage length];
+  
   [displayedMessage appendAttributedString: 
     attributedString (message->message, messageAttrs)];
+  
+  messageRange.length = [displayedMessage length] - messageRange.location;
   
   // create link to message
   range.length = [displayedMessage length] - range.location;
@@ -413,9 +429,11 @@ static NSAttributedString *attributedString (NSString *string,
   [displayedMessage appendAttributedString: 
     attributedString (@")", lowlightAttrs)];
 
-  // set font
+  // set fonts
   [displayedMessage addAttributes: fontAttrs 
                             range: NSMakeRange (0, [displayedMessage length])];
+  
+  [displayedMessage addAttributes: boldFontAttrs range: messageRange];  
   
   // append text
   [[tickerMessagesTextView textStorage] 
