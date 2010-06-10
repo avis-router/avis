@@ -107,14 +107,26 @@
   {
     if ([[existingKey valueForKey: @"Data"] isEqual: keyData])
     {
-      error = 
+      if ([[key valueForKey: @"Name"] isEqual: [existingKey valueForKey: @"Name"]])
+      {
+        error = 
         makeError 
           (@"ticker.key", KEY_IO_DUPLICATE_KEY, 
            @"The key “%@” was not imported. " 
-           "This key already exists in your key set as “%@”.", 
-           @"You may have previously imported the same key under a "
-           "different name.", 
-           [key valueForKey: @"Name"], [existingKey valueForKey: @"Name"]);
+           "This key already exists in your key set.", 
+           @"You may have imported this key previously.", 
+           [key valueForKey: @"Name"]);
+        
+      } else
+      {
+        error = 
+          makeError 
+            (@"ticker.key", KEY_IO_DUPLICATE_KEY, 
+             @"The key “%@” was not imported. " 
+             "This key already exists in your key set, named “%@”.", 
+             @"You may have previously imported this key with a different name.", 
+             [key valueForKey: @"Name"], [existingKey valueForKey: @"Name"]);
+      }
       
       break;
     }
