@@ -11,8 +11,7 @@
 
 static BOOL readNameValue (NSString *line, 
                            NSString **returnName, 
-                           NSString **returnValue, 
-                           NSError **error);
+                           NSString **returnValue);
 
 static NSData *unhexify (NSString *text, NSError **error);
 
@@ -60,8 +59,8 @@ NSString *KeyFieldData = @"Data";
     if ([line length] == 0)
       continue;
     
-    if (readNameValue (line, &field, &value, error))
-      break;
+    if (!readNameValue (line, &field, &value))
+      continue;
     
     if ([field isEqual: @"Version"])
     {
@@ -138,9 +137,9 @@ NSString *KeyFieldData = @"Data";
 
 BOOL readNameValue (NSString *line, 
                     NSString **returnName, 
-                    NSString **returnValue, 
-                    NSError **error)
+                    NSString **returnValue)
 {
+  BOOL error = NO;
   NSMutableString *field = [[NSMutableString alloc] initWithCapacity: 20];
   NSMutableString *value = [[NSMutableString alloc] initWithCapacity: 80];
   NSMutableString *target = field;
@@ -171,13 +170,11 @@ BOOL readNameValue (NSString *line,
   
   if (target == value)
   {
-    *error = nil;
     *returnName = trim (field);
     *returnValue = trim (value);    
   } else
   {
-    *error = keyError (KEY_IO_MISSING_VALUE, 
-                       @"Do not know how to parse line “%@”", field);
+    error = YES;
     
     *returnName = *returnValue = nil;
   }
@@ -185,7 +182,7 @@ BOOL readNameValue (NSString *line,
   [field release];
   [value release];
   
-  return *error != nil;
+  return !error;
 }
 
 NSData *unhexify (NSString *text, NSError **error)
