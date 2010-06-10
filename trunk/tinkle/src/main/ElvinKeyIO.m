@@ -90,10 +90,6 @@ NSString *KeyFieldData = @"Data";
       else
         *error = 
           keyError (KEY_IO_BAD_HEX_DATA, @"Key data is empty", field);
-    } else 
-    {
-      *error = 
-        keyError (KEY_IO_UNKNOWN_FIELD, @"Unknown field: “%@”", field);
     }
     
     if (*error)
@@ -117,12 +113,15 @@ NSString *KeyFieldData = @"Data";
   }
   
   if (*error)
+  {
     return nil;
-  else
+  } else
+  {
     return [NSMutableDictionary dictionaryWithObjectsAndKeys: 
               name, KeyFieldName,
               [NSNumber numberWithBool: type == KEY_TYPE_PRIVATE], 
               KeyFieldIsPrivate, data, KeyFieldData, nil];
+  }
 }
 
 + (NSString *) stringFromKey: (NSDictionary *) key;
