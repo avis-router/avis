@@ -7,6 +7,7 @@
 NSString *ElvinConnectionOpenedNotification = @"ElvinConnectionOpened";
 NSString *ElvinConnectionClosedNotification = @"ElvinConnectionClosed";
 NSString *ElvinConnectionWillCloseNotification = @"ElvinConnectionWillClose";
+NSString *ElvinConnectionFailedNotification = @"ElvinConnectionFailed";
 
 NSString *KEY_RECEIVED_SECURE = @"_ElvinConnection::SECURE";
 
@@ -593,7 +594,10 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
     {
       NSLog (@"Failed to connect to elvin %@: %s (%i): will retry shortly...", 
              elvinUrl, elvin.error.message, elvin.error.code);
-             
+
+      [[NSNotificationCenter defaultCenter] 
+         postNotificationName: ElvinConnectionFailedNotification object: self];
+      
       if (![eventLoopThread isCancelled])
         [NSThread sleepForTimeInterval: 5];
     }

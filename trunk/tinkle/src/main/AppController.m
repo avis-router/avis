@@ -128,6 +128,9 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   [notifications addObserver: self selector: @selector (handleElvinClose:)
                         name: ElvinConnectionClosedNotification object: nil]; 
 
+  [notifications addObserver: self selector: @selector (handleElvinConnectionFail:)
+                        name: ElvinConnectionFailedNotification object: nil]; 
+  
   // application activated
   [notifications addObserver: self selector: @selector (handleAppActivated:)
                         name: NSApplicationDidBecomeActiveNotification object: nil]; 
@@ -350,6 +353,26 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   [preferencesController showWindow: self];
 }
 
+- (void) showElvinConnectionHelper
+{
+  [connectionHelperWindow makeKeyAndOrderFront: self];
+}
+
+- (IBAction) connectionHelperCancel: (id) sender
+{
+  [connectionHelperWindow close];
+  
+  [[NSUserDefaults standardUserDefaults] 
+     setBool: NO forKey: PrefShowConnectHelper];
+}
+
+- (IBAction) connectionHelperShowElvin: (id) sender
+{
+  [connectionHelperWindow close];
+  [self showPreferencesWindow: self];
+  [preferencesController showAdvancedTab];
+}
+
 - (IBAction) refreshPresence: (id) sender
 {
   [self registerForPresenceChangesAfterDelay];
@@ -455,6 +478,9 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
     [self registerForPresenceChangesAfterDelay];
     
     [self hideNotConnectedDockBadge];
+    
+    [[NSUserDefaults standardUserDefaults] 
+       setBool: NO forKey: PrefShowConnectHelper];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
@@ -474,6 +500,26 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
+                           withObject: nil waitUntilDone: NO];
+  }
+}
+
+- (void) handleElvinConnectionFail: (NSNotification *) ntfn
+{
+  static BOOL handled = NO;
+  
+  if (handled)
+    return;
+  
+  if ([[NSThread currentThread] isMainThread])
+  {
+    handled = YES;
+    
+    if (prefBool (PrefShowConnectHelper))
+      [self showElvinConnectionHelper];
+  } else
+  {
+    [self performSelectorOnMainThread: @selector (handleElvinConnectionFail:) 
                            withObject: nil waitUntilDone: NO];
   }
 }

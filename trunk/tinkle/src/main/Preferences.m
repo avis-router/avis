@@ -14,12 +14,13 @@ NSString *PrefElvinKeys              = @"Keys";
 NSString *PrefShowUnreadMessageCount = @"ShowUnreadMessageCount";
 NSString *PrefShowPresenceWindow     = @"PresenceWindowVisible";
 NSString *PrefSecureGroups           = @"SecureGroups";
+NSString *PrefShowConnectHelper      = @"ShowElvinConnectionHelper";
 
 static NSString *computerName ()
 {
   NSDictionary *systemPrefs = 
   [NSDictionary dictionaryWithContentsOfFile: 
-   @"/Library/Preferences/SystemConfiguration/preferences.plist"];
+    @"/Library/Preferences/SystemConfiguration/preferences.plist"];
   
   NSString *computerName = 
   [systemPrefs valueForKeyPath: @"System.System.ComputerName"];
@@ -56,19 +57,22 @@ void registerUserDefaults ()
   [defaults setObject: [NSNumber numberWithBool: YES]
                forKey: PrefShowPresenceWindow];
   [defaults setObject: [NSArray array] forKey: PrefSecureGroups];
-  
+  [defaults setObject: [NSNumber numberWithBool: YES]
+               forKey: PrefShowConnectHelper];
+
   // presence column sorting
   NSSortDescriptor *statusDescriptor = 
-  [[[NSSortDescriptor alloc] 
-    initWithKey: @"status.statusCode" ascending: YES] autorelease];
+    [[[NSSortDescriptor alloc] 
+      initWithKey: @"status.statusCode" ascending: YES] autorelease];
+  
   NSSortDescriptor *nameDescriptor = 
-  [[[NSSortDescriptor alloc] 
-    initWithKey: @"name" ascending: YES 
-    selector: @selector (caseInsensitiveCompare:)] autorelease];
+    [[[NSSortDescriptor alloc] 
+      initWithKey: @"name" ascending: YES 
+      selector: @selector (caseInsensitiveCompare:)] autorelease];
   
   [defaults setObject: 
-   [NSArchiver archivedDataWithRootObject:
-    [NSArray arrayWithObjects: statusDescriptor, nameDescriptor, nil]] 
+    [NSArchiver archivedDataWithRootObject:
+      [NSArray arrayWithObjects: statusDescriptor, nameDescriptor, nil]] 
                forKey: PrefPresenceColumnSorting]; 
   
   [preferences registerDefaults: defaults];

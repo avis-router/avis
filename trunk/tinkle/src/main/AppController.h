@@ -21,6 +21,7 @@
   
   IBOutlet NSView *       dockTile;
   IBOutlet NSImageView *  warningBadge;
+  IBOutlet NSWindow *     connectionHelperWindow;
 }
 
 @property (readonly) ElvinConnection *    elvin;
@@ -46,5 +47,9 @@
 - (IBAction) presenceSetCoffee: (id) sender;
 
 - (IBAction) presenceSetDoNotDisturb: (id) sender;
+
+- (IBAction) connectionHelperCancel: (id) sender;
+
+- (IBAction) connectionHelperShowElvin: (id) sender;
 
 @end

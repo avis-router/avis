@@ -85,8 +85,9 @@
 
 - (void) setPrefView: (id) sender
 {
+  NSWindow *window = [self window];
+  NSString *identifier = [[window toolbar] selectedItemIdentifier];
   NSView *view;  
-  NSString *identifier = [sender itemIdentifier];
   
   if ([identifier isEqualToString: TOOLBAR_ADVANCED])
     view = advancedPanel;
@@ -95,8 +96,6 @@
   else
     view = messagingPanel;
 
-  NSWindow *window = [self window];
-  
   if ([window contentView] == view)
     return;
 
@@ -114,23 +113,24 @@
   [view setHidden: NO];
 
   // set title label
-  if (sender)
+  NSToolbar * toolbar = [window toolbar];
+  NSString * itemIdentifier = [toolbar selectedItemIdentifier];
+  
+  for (NSToolbarItem * item in [toolbar items])
   {
-    [window setTitle: [sender label]];
-  } else
-  {
-    NSToolbar * toolbar = [window toolbar];
-    NSString * itemIdentifier = [toolbar selectedItemIdentifier];
-    
-    for (NSToolbarItem * item in [toolbar items])
+    if ([[item itemIdentifier] isEqualToString: itemIdentifier])
     {
-      if ([[item itemIdentifier] isEqualToString: itemIdentifier])
-      {
-        [window setTitle: [item label]];
-        break;
-      }
+      [window setTitle: [item label]];
+      break;
     }
   }
+}
+
+- (void) showAdvancedTab
+{
+  [[[self window] toolbar] setSelectedItemIdentifier: TOOLBAR_ADVANCED];
+  
+  [self setPrefView: self];
 }
 
 #pragma mark Add presence group stuff

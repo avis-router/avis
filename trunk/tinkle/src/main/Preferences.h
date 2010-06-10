@@ -13,6 +13,7 @@ extern NSString *PrefElvinKeys;
 extern NSString *PrefShowUnreadMessageCount;
 extern NSString *PrefShowPresenceWindow;
 extern NSString *PrefSecureGroups;
+extern NSString *PrefShowConnectHelper;
 
 static inline NSString *prefString (const NSString *name)
 {
