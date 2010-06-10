@@ -15,8 +15,6 @@
   IBOutlet NSArrayController *tickerGroupsController;
 }
 
-+ (void) registerUserDefaults;
-
 - (IBAction) addPresenceGroup: (id) sender;
 - (IBAction) closePresenceGroupAddSheet: (id) sender;
 

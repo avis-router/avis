@@ -12,6 +12,7 @@ extern NSString *PrefPresenceColumnSorting;
 extern NSString *PrefElvinKeys;
 extern NSString *PrefShowUnreadMessageCount;
 extern NSString *PrefShowPresenceWindow;
+extern NSString *PrefSecureGroups;
 
 static inline NSString *prefString (const NSString *name)
 {
@@ -23,7 +24,14 @@ static inline NSArray *prefArray (const NSString *name)
   return [[NSUserDefaults standardUserDefaults] arrayForKey: (NSString *)name];
 }
 
+static inline NSDictionary *prefDict (const NSString *name)
+{
+  return [[NSUserDefaults standardUserDefaults] dictionaryForKey: (NSString *)name];
+}
+
 static inline BOOL prefBool (const NSString *name)
 {
   return [[NSUserDefaults standardUserDefaults] boolForKey: (NSString *)name];
 }
+
+void registerUserDefaults ();
