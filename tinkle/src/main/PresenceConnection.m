@@ -76,8 +76,8 @@ static NSString *listToParameterString (NSArray *list)
   - (void) emitPresenceInfoAsStatusUpdate;
   - (void) emitPresenceInfo: (NSString *) inReplyTo 
            includingFields: (PresenceFields) fields;
-  - (void) handleElvinOpen: (void *) unused;
-  - (void) handleElvinClose: (void *) unused;
+  - (void) handleElvinOpen: (NSNotification *) unused;
+  - (void) handleElvinClose: (NSNotification *) unused;
   - (void) clearEntities;
   - (PresenceEntity *) findUserWithId: (NSString *) presenceId;
   - (void) resetLivenessTimer;
