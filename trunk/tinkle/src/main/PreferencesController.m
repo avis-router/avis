@@ -3,18 +3,6 @@
 #import "Preferences.h"
 #import "utils.h"
 
-static NSString *computerName ()
-{
-  NSDictionary *systemPrefs = 
-    [NSDictionary dictionaryWithContentsOfFile: 
-      @"/Library/Preferences/SystemConfiguration/preferences.plist"];
-      
-  NSString *computerName = 
-    [systemPrefs valueForKeyPath: @"System.System.ComputerName"];
-    
-  return computerName ? computerName : @"sticker";
-}
-
 @interface PreferencesController (PRIVATE)
   - (void) setPrefView: (id) sender;
 @end
@@ -24,52 +12,6 @@ static NSString *computerName ()
 #define TOOLBAR_MESSAGING   @"TOOLBAR_MESSAGING"
 #define TOOLBAR_PRESENCE    @"TOOLBAR_PRESENCE"
 #define TOOLBAR_ADVANCED    @"TOOLBAR_ADVANCED"
-
-+ (void) registerUserDefaults
-{
-  NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
-  NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
-
-  // assign user a UUID if needed
-  if (![preferences objectForKey: PrefOnlineUserUUID])
-    [preferences setObject: uuidString () forKey: PrefOnlineUserUUID];
-
-  if (![preferences objectForKey: PrefOnlineUserName])
-  {
-    [defaults setObject: [NSString stringWithFormat: @"%@@%@", 
-                          NSFullUserName (), computerName ()] 
-      forKey: PrefOnlineUserName];
-  }
-  
-  [defaults setObject: @"elvin://public.elvin.org" forKey: PrefElvinURL];
-  [defaults setObject: @"Chat" forKey: PrefDefaultSendGroup];  
-  [defaults setObject: [NSArray arrayWithObject: @"Chat"] 
-               forKey: PrefTickerGroups];
-  [defaults setObject: [NSArray arrayWithObject: @"elvin"] 
-            forKey: PrefPresenceGroups];
-  [defaults setObject: [NSArray array] forKey: PrefPresenceBuddies];
-  [defaults setObject: @"" forKey: PrefTickerSubscription];
-  [defaults setObject: [NSNumber numberWithBool: YES] forKey: 
-                       PrefShowUnreadMessageCount];
-  [defaults setObject: [NSNumber numberWithBool: YES] forKey: 
-                       PrefShowPresenceWindow];
-  
-  // presence column sorting
-  NSSortDescriptor *statusDescriptor = 
-    [[[NSSortDescriptor alloc] 
-      initWithKey: @"status.statusCode" ascending: YES] autorelease];
-  NSSortDescriptor *nameDescriptor = 
-    [[[NSSortDescriptor alloc] 
-      initWithKey: @"name" ascending: YES 
-      selector: @selector (caseInsensitiveCompare:)] autorelease];
-  
-  [defaults setObject: 
-    [NSArchiver archivedDataWithRootObject:
-      [NSArray arrayWithObjects: statusDescriptor, nameDescriptor, nil]] 
-    forKey: PrefPresenceColumnSorting]; 
-  
-  [preferences registerDefaults: defaults];
-}
 
 - (id) init
 {

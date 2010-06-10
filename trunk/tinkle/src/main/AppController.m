@@ -51,7 +51,7 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
 
 + (void) initialize
 {
-  [PreferencesController registerUserDefaults];
+  registerUserDefaults ();
 }
 
 - (id) init

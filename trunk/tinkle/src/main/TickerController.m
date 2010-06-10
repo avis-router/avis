@@ -77,6 +77,7 @@ static NSAttributedString *attributedString (NSString *string,
   - (TickerMessage *) findRecentMessage: (NSString *) messageId;
   - (NSValue *) rangeForMessage: (TickerMessage *) message;
   - (void) highlightRange: (NSRange) range highlight: (NSColor *) highlight;
+  - (void) updateAllowInsecure;
 @end
 
 @implementation TickerController
@@ -152,6 +153,8 @@ static NSAttributedString *attributedString (NSString *string,
   
   tickerIsEditing = NO;
   
+  [self updateAllowInsecure];
+  
   [tickerGroupsController 
     setSortDescriptors: 
      [NSArray arrayWithObject: 
@@ -176,12 +179,23 @@ static NSAttributedString *attributedString (NSString *string,
   
   [notifications addObserver: self selector: @selector (handlePresenceUserDoubleClick:)
                         name: PresenceUserWasDoubleClicked object: nil];
+  
   [notifications addObserver:self selector: @selector (tickerBeganEditing:)
                         name: NSTextDidBeginEditingNotification 
                       object: messageText];
+  
   [notifications addObserver:self selector: @selector (tickerEndedEditing:)
                         name: NSTextDidEndEditingNotification 
                       object: messageText];
+
+  // listen to changes to the messageGroup
+  [notifications addObserver:self selector: @selector (groupComboEdited:)
+                        name: NSTextDidChangeNotification
+                      object: nil]; // using messageGroup here does not work
+
+  [notifications addObserver:self selector: @selector (groupComboEdited:)
+                        name: NSComboBoxSelectionDidChangeNotification
+                      object: messageGroup];
   
   [dragTarget 
     registerForDraggedTypes: [NSArray arrayWithObject: NSURLPboardType]];  
@@ -215,6 +229,49 @@ static NSAttributedString *attributedString (NSString *string,
   } else
     return YES;
 }
+
+#pragma mark -
+#pragma mark Automatic secure message setting
+
+- (void) groupComboEdited: (NSNotification *) notification
+{
+  if ([[notification object] isDescendantOf: messageGroup])
+  {
+    [self updateAllowInsecure];
+  }
+}
+
+- (void) updateAllowInsecure
+{
+  NSArray *secureGroups = prefArray (PrefSecureGroups);
+  
+  self.allowInsecure = 
+    ![secureGroups containsObject: [messageGroup stringValue]];
+}
+
+- (void) saveAllowInsecure
+{
+  NSString *group = [messageGroup stringValue];  
+  NSArray *secureGroups = prefArray (PrefSecureGroups);
+  BOOL defaultSecure = [secureGroups containsObject: group];
+  
+  if (self.allowInsecure == defaultSecure)
+  {    
+    NSMutableArray *newSecureGroups = 
+      [NSMutableArray arrayWithArray: secureGroups];
+    
+    if (defaultSecure)
+      [newSecureGroups removeObject: group];
+    else
+      [newSecureGroups addObject: group];
+    
+    [[NSUserDefaults standardUserDefaults] 
+      setObject: newSecureGroups forKey: PrefSecureGroups];
+  }  
+}
+
+#pragma mark -
+#pragma mark Notification handlers
 
 - (void) handleElvinOpen: (void *) unused
 {
@@ -507,10 +564,8 @@ static NSAttributedString *attributedString (NSString *string,
 }
 
 - (IBAction) sendMessage: (id) sender
-{
+{  
   // TODO error on closed connection
-  NSAssert (messageGroup != nil && messageText != nil, @"IB connection failure");
-    
   NSString *message = [messageText string];
 
   // check for empty text
@@ -537,20 +592,6 @@ static NSAttributedString *attributedString (NSString *string,
     attachedURL: self.attachedURL
     sendPublic: self.allowPublic
     sendInsecure: self.allowInsecure];
-
-  self.attachedURL = nil;
-  self.inReplyTo = nil;
-  self.allowPublic = NO;
-  self.allowInsecure = YES;
-  
-  [messageText setString: @""];
-
-  // flip focus from/to message text to fire start/end editing events
-  if ([[messageText window] firstResponder] == messageText)
-  {
-    [[messageGroup window] makeFirstResponder: messageGroup];
-    [[messageText window] makeFirstResponder: messageText];
-  }
   
   // add group to groups pref if not there
   NSArray *groups = prefArray (PrefTickerGroups);
@@ -565,6 +606,21 @@ static NSAttributedString *attributedString (NSString *string,
     [[NSUserDefaults standardUserDefaults] 
        setObject: newGroups forKey: PrefTickerGroups];
   }
+  
+  [self updateAllowInsecure];
+  
+  self.attachedURL = nil;
+  self.inReplyTo = nil;
+  self.allowPublic = NO;
+  
+  [messageText setString: @""];
+  
+  // flip focus from/to message text to fire start/end editing events
+  if ([[messageText window] firstResponder] == messageText)
+  {
+    [[messageGroup window] makeFirstResponder: messageGroup];
+    [[messageText window] makeFirstResponder: messageText];
+  }  
 }
 
 - (void) setAttachedURLPanelHidden: (BOOL) hidden
@@ -667,7 +723,12 @@ static NSAttributedString *attributedString (NSString *string,
   
   self.inReplyTo = message;
   self.allowPublic = message->public;
-  self.allowInsecure = !message->secure;
+  
+  if (message)
+    self.allowInsecure = !message->secure;
+  else
+    [self updateAllowInsecure];
+  
   self.highlightReplyTo = YES;
   
   [[messageText window] makeFirstResponder: messageText];
@@ -682,7 +743,7 @@ static NSAttributedString *attributedString (NSString *string,
 {
   self.inReplyTo = nil;
   self.allowPublic = NO;
-  self.allowInsecure = YES;
+  [self updateAllowInsecure];
   self.highlightReplyTo = NO;
 }
 
@@ -694,6 +755,8 @@ static NSAttributedString *attributedString (NSString *string,
 - (IBAction) toggleSecure: (id) sender
 {
   self.allowInsecure = !self.allowInsecure;
+  
+  [self saveAllowInsecure];
 }
 
 + (NSSet *) keyPathsForValuesAffectingInReplyToTooltip
