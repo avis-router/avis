@@ -251,7 +251,7 @@ static NSString *listToParameterString (NSArray *list)
 
 #pragma mark -
 
-- (void) handleElvinOpen: (void *) unused
+- (void) handleElvinOpen: (NSNotification *) unused
 {
   if ([[NSThread currentThread] isMainThread])
   {
@@ -274,7 +274,7 @@ static NSString *listToParameterString (NSArray *list)
   }
 }
 
-- (void) handleElvinClose: (void *) unused
+- (void) handleElvinClose: (NSNotification *) unused
 {
   if ([[NSThread currentThread] isMainThread])
   {

@@ -21,4 +21,6 @@
 - (IBAction) addTickerGroup: (id) sender;
 - (IBAction) closeTickerGroupAddSheet: (id) sender;
 
+- (void) showAdvancedTab;
+
 @end
