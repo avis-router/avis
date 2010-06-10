@@ -992,7 +992,7 @@ ayB0aGUgc2VydmVyIHlvdeKAmXJlIHVzaW5nPw</string>
 						<object class="NSButton" id="966665590">
 							<reference key="NSNextResponder" ref="75833126"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{281, 12}, {108, 32}}</string>
+							<string key="NSFrame">{{131, 12}, {108, 32}}</string>
 							<reference key="NSSuperview" ref="75833126"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="533202220">
@@ -1016,7 +1016,7 @@ ayB0aGUgc2VydmVyIHlvdeKAmXJlIHVzaW5nPw</string>
 						<object class="NSButton" id="601258159">
 							<reference key="NSNextResponder" ref="75833126"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{131, 12}, {150, 32}}</string>
+							<string key="NSFrame">{{239, 12}, {150, 32}}</string>
 							<reference key="NSSuperview" ref="75833126"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="184768209">
@@ -2148,8 +2148,8 @@ ayB0aGUgc2VydmVyIHlvdeKAmXJlIHVzaW5nPw</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="475267416"/>
 							<reference ref="10793981"/>
-							<reference ref="966665590"/>
 							<reference ref="601258159"/>
+							<reference ref="966665590"/>
 						</object>
 						<reference key="parent" ref="910092199"/>
 					</object>
@@ -2571,9 +2571,9 @@ ayB0aGUgc2VydmVyIHlvdeKAmXJlIHVzaW5nPw</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{669, 806}, {403, 182}}</string>
+					<string>{{636, 735}, {403, 182}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{669, 806}, {403, 182}}</string>
+					<string>{{636, 735}, {403, 182}}</string>
 					<boolean value="NO"/>
 					<boolean value="NO"/>
 					<string>{365, 193}</string>
