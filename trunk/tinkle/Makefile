@@ -1,3 +1,5 @@
+svn2cl=../support/svn2cl-0.12/svn2cl.sh
+
 BUILD_CONFIG=Release
 
 SOURCES=src/main/*.m src/main/*.h
@@ -13,3 +15,7 @@ $(APP): $(SOURCES) $(PROJECT_FILE)
 
 $(DISK_IMAGE): $(APP)
 	xcodebuild -project Tinkle.xcodeproj -configuration $(BUILD_CONFIG) -target "Disk Image"
+
+changelog:
+	  $(svn2cl) -r {2010-01-05}:HEAD \
+	    https://avis.svn.sourceforge.net/svnroot/avis/trunk/tinkle
