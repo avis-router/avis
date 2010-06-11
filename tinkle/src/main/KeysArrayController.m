@@ -98,7 +98,7 @@
 
 - (void) importKey: (NSString *) contents
 {
-  NSError *error;
+  NSError *error = nil;
   NSDictionary *key = [ElvinKeyIO keyFromString: contents error: &error];
   NSData *keyData = [key valueForKey: @"Data"];
   NSArray *keys = [self content];
@@ -110,12 +110,12 @@
       if ([[key valueForKey: @"Name"] isEqual: [existingKey valueForKey: @"Name"]])
       {
         error = 
-        makeError 
-          (@"ticker.key", KEY_IO_DUPLICATE_KEY, 
-           @"The key “%@” was not imported. " 
-           "This key already exists in your key set.", 
-           @"You may have imported this key previously.", 
-           [key valueForKey: @"Name"]);
+          makeError 
+            (@"ticker.key", KEY_IO_DUPLICATE_KEY, 
+             @"The key “%@” was not imported. " 
+             "This key already exists in your key set.", 
+             @"You may have imported this key previously.", 
+             [key valueForKey: @"Name"]);
         
       } else
       {
