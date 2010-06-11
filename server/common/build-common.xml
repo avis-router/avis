@@ -4,7 +4,7 @@
   <property name="debug" value="true" />
   
   <!-- svn2cl: only needed to generate changelog -->
-  <property name="svn2cl" value="/opt/local/bin/svn2cl" />
+  <property name="svn2cl" value="../../support/svn2cl-0.12/svn2cl.sh" />
       
   <target name="compile" depends="compile-main,compile-tests" />
 
