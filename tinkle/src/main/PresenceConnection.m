@@ -84,6 +84,8 @@ static NSString *listToParameterString (NSArray *list)
   - (void) startAutoAwayTimer;
   - (void) stopAutoAwayTimer;
   - (void) setPresenceStatusSilently: (PresenceStatus *) newStatus;
+  - (void) schedulePresenceLivenessCheck;
+  - (void) cancelPresenceLivenessCheck;
 @end
 
 @implementation PresenceConnection
@@ -267,6 +269,7 @@ static NSString *listToParameterString (NSArray *list)
     [self clearEntities];
     [self requestPresenceInfo];
     [self emitPresenceInfo];
+    [self schedulePresenceLivenessCheck];
   } else
   {
     [self performSelectorOnMainThread: @selector (handleElvinOpen:) 
@@ -279,6 +282,7 @@ static NSString *listToParameterString (NSArray *list)
   if ([[NSThread currentThread] isMainThread])
   {
     [self clearEntities];
+    [self cancelPresenceLivenessCheck];
     
     if (presenceStatus.statusCode == ONLINE)
       [self setPresenceStatus: [PresenceStatus offlineStatus]];
@@ -287,6 +291,79 @@ static NSString *listToParameterString (NSArray *list)
     [self performSelectorOnMainThread: @selector (handleElvinClose:) 
           withObject: nil waitUntilDone: NO];
   }
+}
+
+#pragma mark -
+#pragma mark Liveness
+
+#define MAX_LIVENESS_AGE        (5 * 60)
+#define LIVENESS_REPLY_INTERVAL 10
+
+- (void) schedulePresenceLivenessCheck
+{
+  [self performSelector: @selector (checkLiveness) withObject: nil
+        afterDelay: MAX_LIVENESS_AGE - LIVENESS_REPLY_INTERVAL];
+}
+
+- (void) cancelPresenceLivenessCheck
+{
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (checkLiveness) object: nil];
+    
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (cullStaleEntities) object: nil];
+}
+
+- (void) checkLiveness
+{
+  NSMutableArray *staleEntities = [NSMutableArray array];
+  
+  TRACE (@"Check liveness");
+
+  for (PresenceEntity *entity in entities)
+  {
+    if (entity.status.statusCode != OFFLINE &&
+        -[entity.lastUpdatedAt timeIntervalSinceNow] > 
+          MAX_LIVENESS_AGE - LIVENESS_REPLY_INTERVAL)
+    {
+      [staleEntities addObject: entity.presenceId];
+    }
+  }
+  
+  if ([staleEntities count] > 0)
+  {
+    TRACE (@"Check liveness for: %@", listToBarDelimitedString (staleEntities));
+    
+    [elvin sendPresenceRequestMessage: userId
+                        fromRequestor: userId
+                             toGroups: @""
+                             andUsers: listToBarDelimitedString (staleEntities)
+                           sendPublic: YES];
+                         
+  }
+ 
+  // emit a small presence ping to head off clients requesting my presence 
+  [self emitPresenceInfoAsStatusUpdate];
+
+  [self performSelector: @selector (cullStaleEntities) withObject: nil
+           afterDelay: LIVENESS_REPLY_INTERVAL];
+}
+
+- (void) cullStaleEntities
+{
+  for (PresenceEntity *entity in entities)
+  {
+    if (-[entity.lastUpdatedAt timeIntervalSinceNow] > MAX_LIVENESS_AGE)
+    {
+      PresenceStatus *notResponding = [PresenceStatus notResponding];
+
+      notResponding.changedAt = [NSDate date];
+      
+      entity.status = notResponding;
+    }
+  }
+  
+  [self schedulePresenceLivenessCheck];
 }
 
 #pragma mark -

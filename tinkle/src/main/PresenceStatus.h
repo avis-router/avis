@@ -19,6 +19,7 @@ typedef enum
 + (PresenceStatus *) coffeeStatus;
 + (PresenceStatus *) offlineStatus;
 + (PresenceStatus *) inactiveStatus;
++ (PresenceStatus *) notResponding;
 
 - (id) copyWithZone: (NSZone *) zone;
 
