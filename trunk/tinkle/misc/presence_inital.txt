@@ -1,0 +1,10 @@
+Buddies: ""
+Client-Id: "abcdef123456"
+Distribution: "world"
+Groups: "|elvin|"
+Presence-Info: "initial"
+Presence-Protocol: 1000
+Status: "online"
+Status-Duration: 400
+Status-Text: "Online"
+User: "bogus@nowhere"
