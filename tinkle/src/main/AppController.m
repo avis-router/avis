@@ -167,6 +167,8 @@ void observe (id observer, NSUserDefaultsController *prefs, NSString *property)
   
   if (prefBool (PrefShowPresenceWindow))
     [self showPresenceWindow: self];
+
+  [self showTickerWindow: self];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) notification 
