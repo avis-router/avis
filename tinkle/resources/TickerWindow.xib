@@ -1660,7 +1660,7 @@ FggNCQIIDwoCCF0LFggNCQIIDwoCCGcLFggNCQIIDwoCCNMBCw</bytes>
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
 							<reference key="object" ref="157058093"/>
-							<string key="toolTip">Secure. Only people with matching security keys will receive it (click to cancel)</string>
+							<string key="toolTip">Send message securely. Only people with matching security keys will be able to receive it.</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
