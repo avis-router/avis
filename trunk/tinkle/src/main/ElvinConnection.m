@@ -515,6 +515,8 @@ void send_message_with_keys (Elvin *elvin, SendMessageContext *context)
   }
   
   attributes_destroy (context->message);
+  elvin_keys_destroy (context->keys);
+  
   free (context);
 }
 
