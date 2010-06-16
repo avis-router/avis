@@ -359,7 +359,7 @@ bool dispatch_message (Elvin *elvin, Message message)
     DIAGNOSTIC ("Router sent a dropped packet warning");
     break;
   case MESSAGE_ID_CONF_CONN:
-    DIAGNOSTIC ("Router repied to a liveness check");
+    DIAGNOSTIC ("Router replied to a liveness check");
     break;
   default:
     handled = false;
