@@ -48,7 +48,12 @@ socket_t avis_select_ready (socket_t socket1, socket_t socket2,
   ready_sockets =
     select (max (socket1, socket2) + 1, &socks, NULL, NULL, &timeout);
 
-  if (ready_sockets == 0)
+  if (ready_sockets == -1)
+  {
+    elvin_error_from_errno (error);
+
+    return -1;
+  } else if (ready_sockets == 0)
   {
     elvin_error_set (error, ELVIN_ERROR_TIMEOUT, "Receive timeout");
 
