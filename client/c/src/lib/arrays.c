@@ -59,7 +59,7 @@ void array_free (Array *array)
 Array *array_copy (Array *target, const Array *source, size_t item_size)
 {
   target->items = avis_memdup (source->items, source->item_count * item_size);
-  target->items = source->items;
+  target->item_count = source->item_count;
   
   return target;
 }
