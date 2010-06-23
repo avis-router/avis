@@ -8,9 +8,6 @@
 
 #import "RHSystemIdleTimer.h"
 
-// Time (in seconds) before a user is considered stale and in need of refresh
-#define STALE_USER_AGE (5 * 60)
-
 // Time (in seconds) after idle mode starts before the user is considered away
 #define AUTO_IDLE_TIME (5 * 60)
 
@@ -31,7 +28,7 @@ static NSString *stringValueForAttribute (NSDictionary *notification,
 /**
  * Turn a string list into the format: "|item1|item2|".
  */
-static NSString *listToBarDelimitedString (NSArray *list)
+static NSString *listToBarDelimitedSubExpr (NSArray *list)
 {
   if ([list count] == 0)
     return @"";
@@ -53,7 +50,7 @@ static NSString *listToBarDelimitedString (NSArray *list)
 /**
  * Turn a string list into the format: "|item1|", "|item2|", ...
  */
-static NSString *listToParameterString (NSArray *list)
+static NSString *listToParameterSubExpr (NSArray *list)
 {
   NSMutableString *string = [NSMutableString string];
   
@@ -61,6 +58,24 @@ static NSString *listToParameterString (NSArray *list)
     [string appendFormat: @", \"|%@|\"", 
       [ElvinConnection escapedSubscriptionString: [item lowercaseString]]];
 
+  return string;
+}
+
+static NSString *listToBarDelimitedString (NSArray *list)
+{
+  if ([list count] == 0)
+    return @"";
+  
+  NSMutableString *string = [NSMutableString string];
+  
+  for (NSString *item in list)
+  {
+    [string appendString: @"|"];
+    [string appendString: item];
+  }
+  
+  [string appendString: @"|"];
+  
   return string;
 }
 
@@ -86,6 +101,7 @@ static NSString *listToParameterString (NSArray *list)
   - (void) setPresenceStatusSilently: (PresenceStatus *) newStatus;
   - (void) schedulePresenceLivenessCheck;
   - (void) cancelPresenceLivenessCheck;
+  - (void) checkLiveness;
 @end
 
 @implementation PresenceConnection
@@ -133,10 +149,7 @@ static NSString *listToParameterString (NSArray *list)
                         name: ElvinConnectionClosedNotification object: nil]; 
                           
   if ([elvin isConnected])
-  {
-    [self emitPresenceInfo];
-    [self requestPresenceInfo];
-  }
+    [self handleElvinOpen: nil];
 
   [self startAutoAwayTimer];
   
@@ -218,10 +231,10 @@ static NSString *listToParameterString (NSArray *list)
     buddies = [newBuddies copy];
     
     [elvin resubscribe: presenceInfoSubscription 
-     usingSubscription: [self presenceInfoSubscription]];
+      usingSubscription: [self presenceInfoSubscription]];
     
     [elvin resubscribe: presenceRequestSubscription
-     usingSubscription: [self presenceRequestSubscription]];
+      usingSubscription: [self presenceRequestSubscription]];
     
     [self emitPresenceInfo];
     [self requestPresenceInfo];
@@ -296,13 +309,15 @@ static NSString *listToParameterString (NSArray *list)
 #pragma mark -
 #pragma mark Liveness
 
-#define MAX_LIVENESS_AGE        (5 * 60)
-#define LIVENESS_REPLY_INTERVAL 10
+// Time (in seconds) before a user is considered stale and in need of refresh
+#define STALE_USER_AGE           5 * 60
+#define STALE_SCAN_INTERVAL      60
+#define LIVENESS_REPLY_INTERVAL  10
 
 - (void) schedulePresenceLivenessCheck
 {
   [self performSelector: @selector (checkLiveness) withObject: nil
-        afterDelay: MAX_LIVENESS_AGE - LIVENESS_REPLY_INTERVAL];
+        afterDelay: STALE_SCAN_INTERVAL];
 }
 
 - (void) cancelPresenceLivenessCheck
@@ -316,44 +331,52 @@ static NSString *listToParameterString (NSArray *list)
 
 - (void) checkLiveness
 {
+  TRACE (@"Check liveness");
+  
   NSMutableArray *staleEntities = [NSMutableArray array];
   
-  TRACE (@"Check liveness");
-
   for (PresenceEntity *entity in entities)
   {
     if (entity.status.statusCode != OFFLINE &&
-        -[entity.lastUpdatedAt timeIntervalSinceNow] > 
-          MAX_LIVENESS_AGE - LIVENESS_REPLY_INTERVAL)
+        -[entity.lastUpdatedAt timeIntervalSinceNow] > STALE_USER_AGE)
     {
-      [staleEntities addObject: entity.presenceId];
+      [staleEntities addObject: entity];
     }
   }
   
   if ([staleEntities count] > 0)
   {
-    TRACE (@"Check liveness for: %@", listToBarDelimitedString (staleEntities));
+    NSMutableArray *staleIds = 
+      [NSMutableArray arrayWithCapacity: [staleEntities count]];
+
+    for (PresenceEntity *entity in staleEntities)
+      [staleIds addObject: entity.name];
+
+    TRACE (@"Request liveness for: %@", listToBarDelimitedString (staleIds));
     
     [elvin sendPresenceRequestMessage: userId
                         fromRequestor: userId
                              toGroups: @""
-                             andUsers: listToBarDelimitedString (staleEntities)
+                             andUsers: listToBarDelimitedString (staleIds)
                            sendPublic: YES];
-                         
-  }
- 
-  // emit a small presence ping to head off clients requesting my presence 
-  [self emitPresenceInfoAsStatusUpdate];
 
-  [self performSelector: @selector (cullStaleEntities) withObject: nil
-           afterDelay: LIVENESS_REPLY_INTERVAL];
+    // perform a cull after reply interval
+    [staleEntities retain];
+
+    [self performSelector: @selector (cullStaleEntities:) 
+               withObject: staleEntities afterDelay: LIVENESS_REPLY_INTERVAL];
+  } else
+  {
+    [self schedulePresenceLivenessCheck];
+  }
 }
 
-- (void) cullStaleEntities
+- (void) cullStaleEntities: (NSArray *) staleEntities
 {
-  for (PresenceEntity *entity in entities)
+  for (PresenceEntity *entity in staleEntities)
   {
-    if (-[entity.lastUpdatedAt timeIntervalSinceNow] > MAX_LIVENESS_AGE)
+    if (entity.status.statusCode != OFFLINE &&
+        -[entity.lastUpdatedAt timeIntervalSinceNow] > STALE_USER_AGE)
     {
       PresenceStatus *notResponding = [PresenceStatus notResponding];
 
@@ -363,7 +386,27 @@ static NSString *listToParameterString (NSArray *list)
     }
   }
   
+  [staleEntities release];
+  
   [self schedulePresenceLivenessCheck];
+}
+
+/**
+ * Clear and re-start (if online) the liveness timer that sends out updates
+ * when more than STALE_USER_AGE seconds are about to pass with no global
+ * presence info being sent.
+ */
+- (void) resetLivenessTimer
+{
+  [NSObject cancelPreviousPerformRequestsWithTarget: self 
+    selector: @selector (emitPresenceInfoAsStatusUpdate) object: nil];
+  
+  if (presenceStatus.statusCode != OFFLINE)
+  {
+    [self performSelector: 
+      @selector (emitPresenceInfoAsStatusUpdate) withObject: nil 
+      afterDelay: STALE_USER_AGE - LIVENESS_REPLY_INTERVAL];
+  }
 }
 
 #pragma mark -
@@ -384,7 +427,7 @@ static NSString *listToParameterString (NSArray *list)
   if ([groups count] > 0)
   {
     [expr appendFormat: @" || contains (fold-case (Groups) %@)", 
-      listToParameterString (groups)];
+      listToParameterSubExpr (groups)];
   }
   
   [expr appendString: @")"];
@@ -410,7 +453,7 @@ static NSString *listToParameterString (NSArray *list)
   if ([groups count] > 0)
   {
     [expr appendFormat: @" && contains (fold-case (Groups) %@)", 
-      listToParameterString (groups)];
+      listToParameterSubExpr (groups)];
   } else
   {
     // don't sub to all groups when array is empty
@@ -494,26 +537,9 @@ static NSString *listToParameterString (NSArray *list)
   // TODO support distribution pref
   [elvin sendPresenceRequestMessage: userId
                       fromRequestor: userId
-                           toGroups: listToBarDelimitedString (groups)
-                           andUsers: listToBarDelimitedString (buddies)
+                           toGroups: listToBarDelimitedSubExpr (groups)
+                           andUsers: listToBarDelimitedSubExpr (buddies)
                          sendPublic: YES];
-}
-
-/**
- * Clear and re-start (if online) the liveness timer that sends out updates
- * when more than STALE_USER_AGE seconds are about to pass with no global
- * presence info being sent.
- */
-- (void) resetLivenessTimer
-{
-  [NSObject cancelPreviousPerformRequestsWithTarget: self];
-  
-  if (presenceStatus.statusCode != OFFLINE)
-  {
-    [self performSelector: 
-      @selector (emitPresenceInfoAsStatusUpdate) withObject: nil 
-      afterDelay: STALE_USER_AGE - 5];
-  }
 }
 
 #pragma mark Auto away idle timer methods
@@ -570,10 +596,10 @@ static NSString *listToParameterString (NSArray *list)
   if (![elvin isConnected])
     return;
 
-  NSString *groupsStr = listToBarDelimitedString (groups);
+  NSString *groupsStr = listToBarDelimitedSubExpr (groups);
   NSString *buddiesStr = 
     (fields & FieldBuddies) ? 
-      listToBarDelimitedString (buddies) : nil;
+      listToBarDelimitedSubExpr (buddies) : nil;
 
   [elvin sendPresenceInfoMessage: userId
                          forUser: userName
