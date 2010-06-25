@@ -50,7 +50,7 @@ socket_t avis_select_ready (socket_t socket1, socket_t socket2,
 
   if (ready_sockets == -1)
   {
-    elvin_error_from_errno (error);
+    elvin_error_from_socket (error);
 
     return -1;
   } else if (ready_sockets == 0)
