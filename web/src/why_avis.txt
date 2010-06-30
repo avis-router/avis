@@ -131,8 +131,8 @@ Elvin has been used:
  * To implement a wide-area instant messaging and presence network
    across several organisations,
 
- * To provide communication and service control for smart meeting
-   spaces,
+ * To provide communication and service control for [smart meeting
+   spaces (Livespaces)][livespaces],
 
  * For RSS news dissemenination,
 
@@ -174,4 +174,5 @@ Footnotes
 [2]: #fn2-why
 
 [examples]: examples.html
+[livespaces]: http://livespaces.sf.net
 
