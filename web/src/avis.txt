@@ -86,9 +86,9 @@ or *notification*.
 Contacts
 ----------------------------------------------------------------------
 
-The lead developer of the Avis project can be contacted at `avis at
-mattp.name` or `phillipsm at users.sourceforge.net` (replace "at" with
-"@").
+The lead developer of the Avis project, [Matthew Phillips][matthew],
+can be contacted at `avis at mattp.name` or `phillipsm at
+users.sourceforge.net` (replace "at" with "@").
 
 
 [DSTC_wikipedia]: http://en.wikipedia.org/wiki/Distributed_Systems_Technology_Centre "More about DSTC on wikipedia" 
@@ -105,3 +105,4 @@ mattp.name` or `phillipsm at users.sourceforge.net` (replace "at" with
 [why_avis]: why_avis.html "Why choose Avis"
 [mantara]: http://mantara.com "Mantara web site"
 [livespaces]: http://livespaces.sf.net/ "Livespaces project site"
+[matthew]: http://mattp.name/
