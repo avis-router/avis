@@ -18,9 +18,9 @@ Features
    subscription expressions like `From == 'logger' && Severity > 3` or
    `(string (Message) && Timeout > 0) || regex (Message, 'News:.*')`.
 
- * [Federation of multiple message routers][federation]. Exchange
-   messages between any configuration of routers to form local and
-   wide-area message networks.
+ * [Federation of multiple message routers][federation]. Replicate
+   selected messages between any configuration of routers to form
+   local and wide-area message networks.
 
  * Security. Supports per-subscription access control and [SSL/TLS
    client/server authentication and encryption][tls].
@@ -43,7 +43,7 @@ Current uses for Elvin routers include providing a message bus for
 coordination for [Livespace smart meeting rooms][livespaces], and as a
 carrier of [distributed speech transcription for meetings][AuTM]. The
 commercial implementation developed by Mantara has been used
-extensively for high-volume financial transaction routing.
+extensively for high-volume real-time financial transaction routing.
 
 
 Current Status
