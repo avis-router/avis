@@ -6,7 +6,7 @@ This is a provisional roadmap reflecting current development goals.
 Release Schedule
 ----------------------------------------------------------------------
 
-Router Release 1.3 (December 2009)
+Router Release 1.3 (Unscheduled: alpha release in September 2009)
 
  * Web-based router statistics display and simple router management.
 
