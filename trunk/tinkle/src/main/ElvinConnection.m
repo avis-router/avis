@@ -684,6 +684,11 @@ Keys *subscriptionKeysFor (NSArray *keys)
       
       Key privateKey = 
         elvin_key_create_from_data ([data bytes], [data length]);
+
+      // receive from clients with matching private key
+      elvin_keys_add (elvinKeys, KEY_SCHEME_SHA1_PRODUCER, 
+                      elvin_key_create_public (privateKey, 
+                                               KEY_SCHEME_SHA1_PRODUCER));
       
       elvin_keys_add_dual_consumer 
         (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
@@ -712,6 +717,11 @@ Keys *notificationKeysFor (NSArray *keys)
       
       Key privateKey = 
         elvin_key_create_from_data ([data bytes], [data length]);
+
+      // clients with matching private key can receive
+      elvin_keys_add (elvinKeys, KEY_SCHEME_SHA1_CONSUMER, 
+                      elvin_key_create_public (privateKey, 
+                                               KEY_SCHEME_SHA1_CONSUMER));
       
       elvin_keys_add_dual_producer 
         (elvinKeys, KEY_SCHEME_SHA1_DUAL, privateKey);
